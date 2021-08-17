@@ -582,6 +582,8 @@
 |assets/content/effects/explosions/explosion/prefebs/explosion_7.prefab|
 |assets/content/effects/explosions/explosion/prefebs/explosion_8.prefab|
 |assets/content/effects/explosions/tests/fire/pfx_campfire.prefab|
+|assets/content/effects/explosions/underwater/explosion_underwater.prefab|
+|assets/content/effects/explosions/underwater/explosion_underwater_surface.prefab|
 |assets/content/effects/fireworks/pfx fireworks boomer blue v2.prefab|
 |assets/content/effects/fireworks/pfx fireworks boomer golden xl v2.prefab|
 |assets/content/effects/fireworks/pfx fireworks boomer green v2.prefab|
@@ -681,6 +683,8 @@
 |assets/content/sound/ambience/lifeambienceemitter.prefab|
 |assets/content/sound/ambience/rain/ambience-rain-on-surface.ambience-emitter.prefab|
 |assets/content/sound/ambience/rainambienceemitter.prefab|
+|assets/content/sound/ambience/underwaterambienceemitter.prefab|
+|assets/content/sound/deployable/small-device-deploy.prefab|
 |assets/content/sound/oilrig/oilriglargeaudio.prefab|
 |assets/content/sound/oilrig/oilrigsmallaudio.prefab|
 |assets/content/sound/templates/ambience.sound-template.prefab|
@@ -694,6 +698,7 @@
 |assets/content/sound/templates/event-small.prefab|
 |assets/content/sound/templates/explosion.prefab|
 |assets/content/sound/templates/explosion-debris.prefab|
+|assets/content/sound/templates/explosion-underwater.prefab|
 |assets/content/sound/templates/footstep-hard.sound-template.prefab|
 |assets/content/sound/templates/footstep-light.sound-template.prefab|
 |assets/content/sound/templates/footstep-med.sound-template.prefab|
@@ -721,6 +726,10 @@
 |assets/content/sound/templates/tiny-spread-sound.prefab|
 |assets/content/sound/templates/ui-sound.prefab|
 |assets/content/sound/templates/ultra-tiny-sound.prefab|
+|assets/content/structures/bunker_hatch/sound/bunker-hatch-close-end.prefab|
+|assets/content/structures/bunker_hatch/sound/bunker-hatch-close-start.prefab|
+|assets/content/structures/bunker_hatch/sound/bunker-hatch-open-end.prefab|
+|assets/content/structures/bunker_hatch/sound/bunker-hatch-open-start.prefab|
 |assets/content/structures/carshredder/shredding_pfx.prefab|
 |assets/content/structures/excavator/prefabs/effects/enginerumble.prefab|
 |assets/content/structures/excavator/prefabs/effects/rockvibration.prefab|
@@ -742,6 +751,12 @@
 |assets/content/vehicles/modularcar/sound/modular-car-engine-test-nice-setup.prefab|
 |assets/content/vehicles/scrap heli carrier/effects/debris_effect.prefab|
 |assets/content/vehicles/scrap heli carrier/effects/wheel-impact.prefab|
+|assets/content/vehicles/submarine/effects/effects submarineduo.prefab|
+|assets/content/vehicles/submarine/effects/effects submarinesolo.prefab|
+|assets/content/vehicles/submarine/effects/materials/modeleffects.prefab|
+|assets/content/vehicles/submarine/effects/submarine collision effect abovewater.prefab|
+|assets/content/vehicles/submarine/effects/submarine collision effect underwater.prefab|
+|assets/content/vehicles/submarine/effects/submarine-destroy.prefab|
 |assets/content/vehicles/workcart/effects/pfx_workcart_damage_light.prefab|
 |assets/content/vehicles/workcart/effects/pfx_workcart_damage_medium.prefab|
 |assets/content/vehicles/workcart/effects/pfx_workcart_damage_severe.prefab|
@@ -862,6 +877,7 @@
 |assets/prefabs/deployable/planters/effects/planter-deploy.prefab|
 |assets/prefabs/deployable/playerioents/detectors/hbhfsensor/effects/detect_down.prefab|
 |assets/prefabs/deployable/playerioents/detectors/hbhfsensor/effects/detect_up.prefab|
+|assets/prefabs/deployable/primitive lootbox/sound/primitive-lootbox-destroy.prefab|
 |assets/prefabs/deployable/quarry/effects/mining-quarry-deploy.prefab|
 |assets/prefabs/deployable/reactive target/effects/bullseye.prefab|
 |assets/prefabs/deployable/reactive target/effects/reactive-target-deploy.prefab|
@@ -1136,6 +1152,14 @@
 |assets/prefabs/tools/smoke grenade/effects/smokegrenade_small.prefab|
 |assets/prefabs/tools/surveycharge/effects/deploy.prefab|
 |assets/prefabs/tools/wire/effects/plugeffect.prefab|
+|assets/prefabs/voiceaudio/boombox/effects/boombox-deploy.prefab|
+|assets/prefabs/voiceaudio/cassette/soundtester.prefab|
+|assets/prefabs/voiceaudio/discoball/effects/disco-ball-deploy.prefab|
+|assets/prefabs/voiceaudio/discofloor/effects/disco-floor-deploy.prefab|
+|assets/prefabs/voiceaudio/microphonestand/effects/microphone-stand-deploy.prefab|
+|assets/prefabs/voiceaudio/soundlight/soundlight.deployed.prefab|
+|assets/prefabs/voiceaudio/soundlight/soundlight.item.prefab|
+|assets/prefabs/voiceaudio/soundlight/ui.dialog.soundlight.prefab|
 |assets/prefabs/voiceaudio/telephone/effects/telephone-deploy.prefab|
 |assets/prefabs/weapon mods/flashlight/lighteffect_1p.prefab|
 |assets/prefabs/weapon mods/flashlight/lighteffect_3p.prefab|
@@ -1643,6 +1667,8 @@
 |assets/prefabs/weapons/spas12/effects/pump_back.prefab|
 |assets/prefabs/weapons/spas12/effects/pump_forward.prefab|
 |assets/prefabs/weapons/spas12/effects/w_eject_shotgun_shell.prefab|
+|assets/prefabs/weapons/speargun/effects/speargun-attack.prefab|
+|assets/prefabs/weapons/speargun/effects/speargun-dryfire.prefab|
 |assets/prefabs/weapons/stone hatchet/effects/attack_shake.prefab|
 |assets/prefabs/weapons/stone hatchet/effects/deploy.prefab|
 |assets/prefabs/weapons/stone hatchet/effects/strike.prefab|
@@ -1735,6 +1761,8 @@
 |assets/prefabs/weapons/wooden spear/effects/throw.prefab|
 |assets/rust.ai/agents/bear/sound/breathe.prefab|
 |assets/rust.ai/agents/bear/sound/death.prefab|
+|assets/rust.ai/agents/fish/shark/effects/bloodcloud.prefab|
+|assets/rust.ai/agents/fish/shark/effects/sharkmovement.prefab|
 |assets/rust.ai/nextai/effects/dusttrail.prefab|
 |assets/standard assets/third party/camelotvfx_adv_water_fx/prefabs/splash_v3.prefab|
 |assets/standard assets/third party/detailed_pyro_fx/prefabs/4096/smoke_04.prefab|
