@@ -279,9 +279,9 @@
 |assets/bundled/prefabs/autospawn/monument/cave/cave_small_easy.prefab|
 |assets/bundled/prefabs/autospawn/monument/cave/cave_small_hard.prefab|
 |assets/bundled/prefabs/autospawn/monument/cave/cave_small_medium.prefab|
-|assets/bundled/prefabs/autospawn/monument/harbor/fishing_village_a.prefab|
-|assets/bundled/prefabs/autospawn/monument/harbor/fishing_village_b.prefab|
-|assets/bundled/prefabs/autospawn/monument/harbor/fishing_village_c.prefab|
+|assets/bundled/prefabs/autospawn/monument/fishing_village/fishing_village_a.prefab|
+|assets/bundled/prefabs/autospawn/monument/fishing_village/fishing_village_b.prefab|
+|assets/bundled/prefabs/autospawn/monument/fishing_village/fishing_village_c.prefab|
 |assets/bundled/prefabs/autospawn/monument/harbor/harbor_1.prefab|
 |assets/bundled/prefabs/autospawn/monument/harbor/harbor_2.prefab|
 |assets/bundled/prefabs/autospawn/monument/ice_lakes/ice_lake_1.prefab|
@@ -319,6 +319,10 @@
 |assets/bundled/prefabs/autospawn/monument/tiny/water_well_c.prefab|
 |assets/bundled/prefabs/autospawn/monument/tiny/water_well_d.prefab|
 |assets/bundled/prefabs/autospawn/monument/tiny/water_well_e.prefab|
+|assets/bundled/prefabs/autospawn/monument/underwater_lab/underwater_lab_a.prefab|
+|assets/bundled/prefabs/autospawn/monument/underwater_lab/underwater_lab_b.prefab|
+|assets/bundled/prefabs/autospawn/monument/underwater_lab/underwater_lab_c.prefab|
+|assets/bundled/prefabs/autospawn/monument/underwater_lab/underwater_lab_d.prefab|
 |assets/bundled/prefabs/autospawn/monument/xlarge/launch_site_1.prefab|
 |assets/bundled/prefabs/autospawn/mountain/mountain_1.prefab|
 |assets/bundled/prefabs/autospawn/mountain/mountain_2.prefab|
@@ -577,7 +581,10 @@
 |assets/bundled/prefabs/autospawn/tunnel/straight-we-3.prefab|
 |assets/bundled/prefabs/autospawn/tunnel/straight-we-4.prefab|
 |assets/bundled/prefabs/autospawn/tunnel/straight-we-5.prefab|
-|assets/bundled/prefabs/autospawn/tunnel-entrance/entrance.prefab|
+|assets/bundled/prefabs/autospawn/tunnel-entrance/entrance_bunker_a.prefab|
+|assets/bundled/prefabs/autospawn/tunnel-entrance/entrance_bunker_b.prefab|
+|assets/bundled/prefabs/autospawn/tunnel-entrance/entrance_bunker_c.prefab|
+|assets/bundled/prefabs/autospawn/tunnel-entrance/entrance_bunker_d.prefab|
 |assets/bundled/prefabs/autospawn/tunnel-link/link-corner-a-3m.prefab|
 |assets/bundled/prefabs/autospawn/tunnel-link/link-corner-a-6m.prefab|
 |assets/bundled/prefabs/autospawn/tunnel-link/link-corner-a-9m.prefab|
@@ -595,8 +602,6 @@
 |assets/bundled/prefabs/autospawn/tunnel-link/link-stairwell-bottom-d.prefab|
 |assets/bundled/prefabs/autospawn/tunnel-link/link-stairwell-bottom-e.prefab|
 |assets/bundled/prefabs/autospawn/tunnel-link/link-stairwell-bottom-f.prefab|
-|assets/bundled/prefabs/autospawn/tunnel-link/link-stairwell-bottom-g.prefab|
-|assets/bundled/prefabs/autospawn/tunnel-link/link-stairwell-bottom-h.prefab|
 |assets/bundled/prefabs/autospawn/tunnel-link/link-straight-a-18m.prefab|
 |assets/bundled/prefabs/autospawn/tunnel-link/link-straight-a-36m.prefab|
 |assets/bundled/prefabs/autospawn/tunnel-link/link-straight-a-3m.prefab|
@@ -614,6 +619,43 @@
 |assets/bundled/prefabs/autospawn/tunnel-transition/transition-sn-1.prefab|
 |assets/bundled/prefabs/autospawn/tunnel-transition/transition-we-0.prefab|
 |assets/bundled/prefabs/autospawn/tunnel-transition/transition-we-1.prefab|
+|assets/bundled/prefabs/autospawn/underwater-lab-base/moonpool_1200x1500_1way.prefab|
+|assets/bundled/prefabs/autospawn/underwater-lab-base/moonpool_1200x1500_2way.prefab|
+|assets/bundled/prefabs/autospawn/underwater-lab-base/moonpool_1200x1500_3way.prefab|
+|assets/bundled/prefabs/autospawn/underwater-lab-base/moonpool_1200x1800_ladder.prefab|
+|assets/bundled/prefabs/autospawn/underwater-lab-end/horizontal_end.prefab|
+|assets/bundled/prefabs/autospawn/underwater-lab-end/leg_a.prefab|
+|assets/bundled/prefabs/autospawn/underwater-lab-end/vertical_end.prefab|
+|assets/bundled/prefabs/autospawn/underwater-lab-segment/module_1200x1200_1way.prefab|
+|assets/bundled/prefabs/autospawn/underwater-lab-segment/module_1200x1200_1way_ladder.prefab|
+|assets/bundled/prefabs/autospawn/underwater-lab-segment/module_1200x1200_3way.prefab|
+|assets/bundled/prefabs/autospawn/underwater-lab-segment/module_1200x1200_3way_ladder.prefab|
+|assets/bundled/prefabs/autospawn/underwater-lab-segment/module_1200x1200_4way.prefab|
+|assets/bundled/prefabs/autospawn/underwater-lab-segment/module_1200x1200_4way_ladder.prefab|
+|assets/bundled/prefabs/autospawn/underwater-lab-segment/module_1200x1800_2way.prefab|
+|assets/bundled/prefabs/autospawn/underwater-lab-segment/module_1200x600_2way_corridor.prefab|
+|assets/bundled/prefabs/autospawn/underwater-lab-segment/module_1500x1500_4way_lshaped.prefab|
+|assets/bundled/prefabs/autospawn/underwater-lab-segment/module_1500x1500_ladder.prefab|
+|assets/bundled/prefabs/autospawn/underwater-lab-segment/module_1500x1800_2way_ladder.prefab|
+|assets/bundled/prefabs/autospawn/underwater-lab-segment/module_1500x600_2way_corridor.prefab|
+|assets/bundled/prefabs/autospawn/underwater-lab-segment/module_1800x1800_4way_lshaped.prefab|
+|assets/bundled/prefabs/autospawn/underwater-lab-segment/module_2100x600_3way_corridor.prefab|
+|assets/bundled/prefabs/autospawn/underwater-lab-segment/module_900x900_1way.prefab|
+|assets/bundled/prefabs/autospawn/underwater-lab-segment/module_900x900_1way_ladder.prefab|
+|assets/bundled/prefabs/autospawn/underwater-lab-segment/module_900x900_3way.prefab|
+|assets/bundled/prefabs/autospawn/underwater-lab-segment/module_900x900_3way_ladder.prefab|
+|assets/bundled/prefabs/autospawn/underwater-lab-segment/module_900x900_4way.prefab|
+|assets/bundled/prefabs/autospawn/underwater-lab-segment/module_900x900_4way_ladder.prefab|
+|assets/bundled/prefabs/autospawn/underwater-lab-segment/tube_150.prefab|
+|assets/bundled/prefabs/autospawn/underwater-lab-segment/tube_300.prefab|
+|assets/bundled/prefabs/autospawn/underwater-lab-segment/tube_300_s_left.prefab|
+|assets/bundled/prefabs/autospawn/underwater-lab-segment/tube_300_s_right.prefab|
+|assets/bundled/prefabs/autospawn/underwater-lab-segment/tube_600.prefab|
+|assets/bundled/prefabs/autospawn/underwater-lab-segment/tube_corner_45_left.prefab|
+|assets/bundled/prefabs/autospawn/underwater-lab-segment/tube_corner_45_right.prefab|
+|assets/bundled/prefabs/autospawn/underwater-lab-segment/tube_corner_90_left.prefab|
+|assets/bundled/prefabs/autospawn/underwater-lab-segment/tube_corner_90_right.prefab|
+|assets/bundled/prefabs/autospawn/underwater-lab-transition/hatch_doorway.prefab|
 |assets/bundled/prefabs/bunker_rooms/bunker.room.15.aa.prefab|
 |assets/bundled/prefabs/bunker_rooms/bunker.room.15.aab.prefab|
 |assets/bundled/prefabs/bunker_rooms/bunker.room.15.ab.prefab|
@@ -1237,25 +1279,67 @@
 |assets/bundled/prefabs/hapis/puzzle/hapis_puzzle_blue_1.prefab|
 |assets/bundled/prefabs/hapis/puzzle/hapis_puzzle_green_1.prefab|
 |assets/bundled/prefabs/hapis/puzzle/hapis_puzzle_green_2.prefab|
+|assets/bundled/prefabs/modding/cinematic/cinematic_spotlight.prefab|
+|assets/bundled/prefabs/modding/cinematic/cinematic_spotlight_cool.prefab|
+|assets/bundled/prefabs/modding/cinematic/cinematic_spotlight_long.prefab|
+|assets/bundled/prefabs/modding/cinematic/cinematic_spotlight_med.prefab|
+|assets/bundled/prefabs/modding/cinematic/cinematic_spotlight_wide.prefab|
+|assets/bundled/prefabs/modding/cubes/arctic_dock_concrete_cube.prefab|
+|assets/bundled/prefabs/modding/cubes/black_cube.prefab|
+|assets/bundled/prefabs/modding/cubes/concrete_cube.prefab|
+|assets/bundled/prefabs/modding/cubes/concrete_d_cube.prefab|
+|assets/bundled/prefabs/modding/cubes/crane_floor_cube.prefab|
+|assets/bundled/prefabs/modding/cubes/dock_gounds_concrete_cube.prefab|
+|assets/bundled/prefabs/modding/cubes/factory_metal_panels_cube.prefab|
+|assets/bundled/prefabs/modding/cubes/factory_panels_cube.prefab|
+|assets/bundled/prefabs/modding/cubes/netal_panels_cube.prefab|
+|assets/bundled/prefabs/modding/cubes/site_grounds_concrete_cube.prefab|
+|assets/bundled/prefabs/modding/cubes/terrain_blend_cube.prefab|
+|assets/bundled/prefabs/modding/cubes/white_cube.prefab|
 |assets/bundled/prefabs/modding/dropzone.prefab|
-|assets/bundled/prefabs/modding/environmentvolumebuilding.prefab|
-|assets/bundled/prefabs/modding/environmentvolumetraintunnles.prefab|
-|assets/bundled/prefabs/modding/environmentvolumeunderground.prefab|
-|assets/bundled/prefabs/modding/glass_type_1.prefab|
-|assets/bundled/prefabs/modding/glass_type_houses_nontransparent.prefab|
-|assets/bundled/prefabs/modding/glass_type_industrial.prefab|
-|assets/bundled/prefabs/modding/glass_type_industrial_nontransparent.prefab|
-|assets/bundled/prefabs/modding/glass_type_reinforced.prefab|
-|assets/bundled/prefabs/modding/invisible_collider.prefab|
-|assets/bundled/prefabs/modding/ladder_trigger.prefab|
-|assets/bundled/prefabs/modding/monument_marker.prefab|
-|assets/bundled/prefabs/modding/prevent_building_cube.prefab|
-|assets/bundled/prefabs/modding/prevent_building_sphere.prefab|
-|assets/bundled/prefabs/modding/prevent_movment_volume.prefab|
-|assets/bundled/prefabs/modding/safezonesphere.prefab|
-|assets/bundled/prefabs/modding/spawn_point.prefab|
-|assets/bundled/prefabs/modding/terrain_trigger.prefab|
-|assets/bundled/prefabs/modding/water_trigger.prefab|
+|assets/bundled/prefabs/modding/glass/glass_type_1.prefab|
+|assets/bundled/prefabs/modding/glass/glass_type_houses_nontransparent.prefab|
+|assets/bundled/prefabs/modding/glass/glass_type_industrial.prefab|
+|assets/bundled/prefabs/modding/glass/glass_type_industrial_nontransparent.prefab|
+|assets/bundled/prefabs/modding/glass/glass_type_reinforced.prefab|
+|assets/bundled/prefabs/modding/lootables/barrel_spawner.prefab|
+|assets/bundled/prefabs/modding/lootables/basic_crate_spawner.prefab|
+|assets/bundled/prefabs/modding/lootables/blue_card_spawner.prefab|
+|assets/bundled/prefabs/modding/lootables/crate_normal_2_spawner.prefab|
+|assets/bundled/prefabs/modding/lootables/crate_normal_spawner.prefab|
+|assets/bundled/prefabs/modding/lootables/diesel_barrel_spawner.prefab|
+|assets/bundled/prefabs/modding/lootables/elite_crate_spawner.prefab|
+|assets/bundled/prefabs/modding/lootables/food_crate_spawner.prefab|
+|assets/bundled/prefabs/modding/lootables/green_card_spawner.prefab|
+|assets/bundled/prefabs/modding/lootables/med_crate_spawner.prefab|
+|assets/bundled/prefabs/modding/lootables/mine_crate_spawner.prefab|
+|assets/bundled/prefabs/modding/lootables/oil_barrel_spawner.prefab|
+|assets/bundled/prefabs/modding/lootables/red_card_spawner.prefab|
+|assets/bundled/prefabs/modding/lootables/vehicle_parts_crate_spawner.prefab|
+|assets/bundled/prefabs/modding/radiation/radiation_high.prefab|
+|assets/bundled/prefabs/modding/radiation/radiation_low.prefab|
+|assets/bundled/prefabs/modding/radiation/radiation_med.prefab|
+|assets/bundled/prefabs/modding/volumes_and_triggers/comfort_volume.prefab|
+|assets/bundled/prefabs/modding/volumes_and_triggers/environmentvolumebuilding.prefab|
+|assets/bundled/prefabs/modding/volumes_and_triggers/environmentvolumetraintunnles.prefab|
+|assets/bundled/prefabs/modding/volumes_and_triggers/environmentvolumeunderground.prefab|
+|assets/bundled/prefabs/modding/volumes_and_triggers/heat_volume.prefab|
+|assets/bundled/prefabs/modding/volumes_and_triggers/hurt/damage_trigger_death.prefab|
+|assets/bundled/prefabs/modding/volumes_and_triggers/hurt/damage_trigger_high.prefab|
+|assets/bundled/prefabs/modding/volumes_and_triggers/hurt/damage_trigger_low.prefab|
+|assets/bundled/prefabs/modding/volumes_and_triggers/hurt/damage_trigger_mid.prefab|
+|assets/bundled/prefabs/modding/volumes_and_triggers/invisible_collider.prefab|
+|assets/bundled/prefabs/modding/volumes_and_triggers/ladder_trigger.prefab|
+|assets/bundled/prefabs/modding/volumes_and_triggers/monument_marker.prefab|
+|assets/bundled/prefabs/modding/volumes_and_triggers/prevent_building_cube.prefab|
+|assets/bundled/prefabs/modding/volumes_and_triggers/prevent_building_sphere.prefab|
+|assets/bundled/prefabs/modding/volumes_and_triggers/prevent_movment_volume.prefab|
+|assets/bundled/prefabs/modding/volumes_and_triggers/safezonesphere.prefab|
+|assets/bundled/prefabs/modding/volumes_and_triggers/spawn_point.prefab|
+|assets/bundled/prefabs/modding/volumes_and_triggers/terrain_trigger.prefab|
+|assets/bundled/prefabs/modding/volumes_and_triggers/trigger_force.prefab|
+|assets/bundled/prefabs/modding/volumes_and_triggers/water_culling_volume.prefab|
+|assets/bundled/prefabs/modding/volumes_and_triggers/water_trigger.prefab|
 |assets/bundled/prefabs/napalm.prefab|
 |assets/bundled/prefabs/oilfireballsmall.prefab|
 |assets/bundled/prefabs/radtown/crate_basic.prefab|
@@ -1291,13 +1375,41 @@
 |assets/bundled/prefabs/radtown/ore_metal.prefab|
 |assets/bundled/prefabs/radtown/ore_stone.prefab|
 |assets/bundled/prefabs/radtown/ore_sulfur.prefab|
+|assets/bundled/prefabs/radtown/underwater_labs/crate_ammunition.prefab|
+|assets/bundled/prefabs/radtown/underwater_labs/crate_elite.prefab|
+|assets/bundled/prefabs/radtown/underwater_labs/crate_food_1.prefab|
+|assets/bundled/prefabs/radtown/underwater_labs/crate_food_2.prefab|
+|assets/bundled/prefabs/radtown/underwater_labs/crate_fuel.prefab|
+|assets/bundled/prefabs/radtown/underwater_labs/crate_medical.prefab|
+|assets/bundled/prefabs/radtown/underwater_labs/crate_normal.prefab|
+|assets/bundled/prefabs/radtown/underwater_labs/crate_normal_2.prefab|
+|assets/bundled/prefabs/radtown/underwater_labs/crate_tools.prefab|
+|assets/bundled/prefabs/radtown/underwater_labs/spawners/spawner_ammo_crate.prefab|
+|assets/bundled/prefabs/radtown/underwater_labs/spawners/spawner_card_blue.prefab|
+|assets/bundled/prefabs/radtown/underwater_labs/spawners/spawner_card_green.prefab|
+|assets/bundled/prefabs/radtown/underwater_labs/spawners/spawner_card_red.prefab|
+|assets/bundled/prefabs/radtown/underwater_labs/spawners/spawner_elite_crate.prefab|
+|assets/bundled/prefabs/radtown/underwater_labs/spawners/spawner_food_crates.prefab|
+|assets/bundled/prefabs/radtown/underwater_labs/spawners/spawner_fuel.prefab|
+|assets/bundled/prefabs/radtown/underwater_labs/spawners/spawner_medical_crate.prefab|
+|assets/bundled/prefabs/radtown/underwater_labs/spawners/spawner_normal_crates.prefab|
+|assets/bundled/prefabs/radtown/underwater_labs/spawners/spawner_oil_barrel.prefab|
+|assets/bundled/prefabs/radtown/underwater_labs/spawners/spawner_tech_parts_crate.prefab|
+|assets/bundled/prefabs/radtown/underwater_labs/spawners/spawner_tools_crate.prefab|
+|assets/bundled/prefabs/radtown/underwater_labs/spawners/spawner_vehicle_parts_crate.prefab|
+|assets/bundled/prefabs/radtown/underwater_labs/tech_parts_1.prefab|
+|assets/bundled/prefabs/radtown/underwater_labs/tech_parts_2.prefab|
+|assets/bundled/prefabs/radtown/underwater_labs/vehicle_parts.prefab|
 |assets/bundled/prefabs/radtown/vehicle_parts.prefab|
 |assets/bundled/prefabs/static/bbq.static.prefab|
+|assets/bundled/prefabs/static/bbq.static_hidden.prefab|
 |assets/bundled/prefabs/static/block.stair.lshape.railingl.prefab|
 |assets/bundled/prefabs/static/campfire_static.prefab|
 |assets/bundled/prefabs/static/chair.invisible.static.prefab|
 |assets/bundled/prefabs/static/chair.static.prefab|
+|assets/bundled/prefabs/static/chippyarcademachine.static.prefab|
 |assets/bundled/prefabs/static/door.hinged.bunker.door.prefab|
+|assets/bundled/prefabs/static/door.hinged.bunker_hatch.prefab|
 |assets/bundled/prefabs/static/door.hinged.cargo_ship.prefab|
 |assets/bundled/prefabs/static/door.hinged.elevator_door.prefab|
 |assets/bundled/prefabs/static/door.hinged.garage_a.prefab|
@@ -1312,6 +1424,8 @@
 |assets/bundled/prefabs/static/door.hinged.security.blue.prefab|
 |assets/bundled/prefabs/static/door.hinged.security.green.prefab|
 |assets/bundled/prefabs/static/door.hinged.security.red.prefab|
+|assets/bundled/prefabs/static/door.hinged.underwater_labs.public.prefab|
+|assets/bundled/prefabs/static/door.hinged.underwater_labs.security.prefab|
 |assets/bundled/prefabs/static/door.hinged.vent.prefab|
 |assets/bundled/prefabs/static/door.hinged.wood.static.prefab|
 |assets/bundled/prefabs/static/door_test_static.prefab|
@@ -1416,6 +1530,7 @@
 |assets/bundled/prefabs/ui/lootpanels/lootpanel.samsite.prefab|
 |assets/bundled/prefabs/ui/lootpanels/lootpanel.shopfront.prefab|
 |assets/bundled/prefabs/ui/lootpanels/lootpanel.shotguntrap.prefab|
+|assets/bundled/prefabs/ui/lootpanels/lootpanel.singleslotammo.prefab|
 |assets/bundled/prefabs/ui/lootpanels/lootpanel.skulltrophy.prefab|
 |assets/bundled/prefabs/ui/lootpanels/lootpanel.slotmachine.prefab|
 |assets/bundled/prefabs/ui/lootpanels/lootpanel.smallrefinery.prefab|
@@ -1497,6 +1612,8 @@
 |assets/content/effects/explosions/explosion/prefebs/explosion_7.prefab|
 |assets/content/effects/explosions/explosion/prefebs/explosion_8.prefab|
 |assets/content/effects/explosions/tests/fire/pfx_campfire.prefab|
+|assets/content/effects/explosions/underwater/explosion_underwater.prefab|
+|assets/content/effects/explosions/underwater/explosion_underwater_surface.prefab|
 |assets/content/effects/fireworks/pfx fireworks boomer blue v2.prefab|
 |assets/content/effects/fireworks/pfx fireworks boomer golden xl v2.prefab|
 |assets/content/effects/fireworks/pfx fireworks boomer green v2.prefab|
@@ -2195,6 +2312,7 @@
 |assets/content/props/antenaes/antena_helipad_base.prefab|
 |assets/content/props/antenaes/antena_helipad_mast.prefab|
 |assets/content/props/antenaes/antenae_a.prefab|
+|assets/content/props/autopsy_table/autopsy_table.prefab|
 |assets/content/props/barbedwire_set/barbedwire_set_bend45.prefab|
 |assets/content/props/barbedwire_set/barbedwire_set_bend90.prefab|
 |assets/content/props/barbedwire_set/barbedwire_set_sshape.prefab|
@@ -2227,6 +2345,15 @@
 |assets/content/props/bollard/bollard_c_rope.prefab|
 |assets/content/props/bulk_frame/bulk_frame_300.prefab|
 |assets/content/props/bulk_frame/bulk_frame_600.prefab|
+|assets/content/props/cabin_crew_furniture/crew_cabinet_100.prefab|
+|assets/content/props/cabin_crew_furniture/crew_cabinet_100_desk.prefab|
+|assets/content/props/cabin_crew_furniture/crew_cabinet_100_vanity.prefab|
+|assets/content/props/cabin_crew_furniture/crew_cabinet_100_wall.prefab|
+|assets/content/props/cabin_crew_furniture/crew_cabinet_150x150_corner_in.prefab|
+|assets/content/props/cabin_crew_furniture/crew_cabinet_150x150_wall_corner_in.prefab|
+|assets/content/props/cabin_crew_furniture/crew_cabinet_50x50.prefab|
+|assets/content/props/cabin_crew_furniture/crew_cabinet_75x75_corner_out.prefab|
+|assets/content/props/cabin_crew_furniture/crew_cabinet_75x75_wall_corner_out.prefab|
 |assets/content/props/candles/candlegroup1.prefab|
 |assets/content/props/candles/candlegroup1_lit.prefab|
 |assets/content/props/candles/candlegroup2.prefab|
@@ -2257,6 +2384,20 @@
 |assets/content/props/concrete_debris/concrete_debris_a_tinted.prefab|
 |assets/content/props/concrete_debris/concrete_debris_b.prefab|
 |assets/content/props/concrete_debris/concrete_debris_c.prefab|
+|assets/content/props/control_panels/control_panels_attachement_a.prefab|
+|assets/content/props/control_panels/control_panels_attachement_b.prefab|
+|assets/content/props/control_panels/control_panels_attachement_c.prefab|
+|assets/content/props/control_panels/control_panels_attachement_d.prefab|
+|assets/content/props/control_panels/control_panels_mid_a.prefab|
+|assets/content/props/control_panels/control_panels_mid_b.prefab|
+|assets/content/props/control_panels/control_panels_mid_c.prefab|
+|assets/content/props/control_panels/control_panels_mid_crn.prefab|
+|assets/content/props/control_panels/control_panels_mid_d.prefab|
+|assets/content/props/control_panels/control_panels_tall_a.prefab|
+|assets/content/props/control_panels/control_panels_tall_b.prefab|
+|assets/content/props/control_panels/control_panels_tall_c.prefab|
+|assets/content/props/control_panels/control_panels_tall_crn.prefab|
+|assets/content/props/control_panels/control_panels_tall_d.prefab|
 |assets/content/props/covered_props/covered_bradley.prefab|
 |assets/content/props/covered_props/covered_ch47.prefab|
 |assets/content/props/covers/cover_a.prefab|
@@ -2300,8 +2441,11 @@
 |assets/content/props/fusebox/fuse.prefab|
 |assets/content/props/fusebox/fusebox.prefab|
 |assets/content/props/gas_canisters/gas_canister_pallet_a.prefab|
+|assets/content/props/gas_canisters/gas_canister_pallet_a_steel.prefab|
 |assets/content/props/gas_canisters/gas_canister_pallet_b.prefab|
+|assets/content/props/gas_canisters/gas_canister_pallet_b_steel.prefab|
 |assets/content/props/gas_canisters/gas_canister_pile_a.prefab|
+|assets/content/props/gas_canisters/gas_canister_pile_a_steel.prefab|
 |assets/content/props/gas_pump/gas_pump_a.prefab|
 |assets/content/props/hay_bales/hay_bale_1x1.prefab|
 |assets/content/props/hay_bales/hay_bale_2x1.prefab|
@@ -2345,6 +2489,14 @@
 |assets/content/props/junkyard_stacks/junkyard_stack_h.prefab|
 |assets/content/props/junkyard_stacks/junkyard_stack_i.prefab|
 |assets/content/props/junkyard_stacks/junkyard_stack_j.prefab|
+|assets/content/props/kitchen_furniture/kitchen_cabinet_100.prefab|
+|assets/content/props/kitchen_furniture/kitchen_cooker.prefab|
+|assets/content/props/kitchen_furniture/kitchen_extractor_hood.prefab|
+|assets/content/props/kitchen_furniture/kitchen_fridge.prefab|
+|assets/content/props/kitchen_furniture/kitchen_sink.prefab|
+|assets/content/props/kitchen_furniture/kitchen_table.prefab|
+|assets/content/props/kitchen_furniture/kitchen_wall_cabinet_100.prefab|
+|assets/content/props/kitchen_furniture/kitchen_wall_cabinet_200.prefab|
 |assets/content/props/ladder_set/ladder_300.prefab|
 |assets/content/props/ladder_set/ladder_300_top.prefab|
 |assets/content/props/ladder_set/ladder_600.prefab|
@@ -2369,6 +2521,7 @@
 |assets/content/props/light_fixtures/industrial.wall.lamp.off.prefab|
 |assets/content/props/light_fixtures/industrial.wall.lamp.on.prefab|
 |assets/content/props/light_fixtures/industrial.wall.lamp.on.shadows.prefab|
+|assets/content/props/light_fixtures/retunetemp/w_torch.prefab|
 |assets/content/props/light_fixtures/sirenlight.prefab|
 |assets/content/props/light_fixtures/sirenlight_upright.prefab|
 |assets/content/props/light_fixtures/spotlight.off.prefab|
@@ -2448,6 +2601,12 @@
 |assets/content/props/light_fixtures/v2/radtown work prefabs/trainyard_lighting.prefab|
 |assets/content/props/light_fixtures/v2/radtown work prefabs/wtp_lighting.prefab|
 |assets/content/props/light_fixtures/v2/smallcandleset_static.prefab|
+|assets/content/props/light_fixtures/v2/underwater/lighting.prefab|
+|assets/content/props/light_fixtures/v2/underwater/lighting1.prefab|
+|assets/content/props/light_fixtures/v2/underwater/lighting2.prefab|
+|assets/content/props/light_fixtures/v2/underwater/lighting3(clone).prefab|
+|assets/content/props/light_fixtures/v2/underwater/lighting3.prefab|
+|assets/content/props/light_fixtures/v2/underwater/lighting3x.prefab|
 |assets/content/props/light_fixtures/walllight.prefab|
 |assets/content/props/light_fixtures/walllight_on.prefab|
 |assets/content/props/lightpost/lightpost_a.prefab|
@@ -2459,6 +2618,14 @@
 |assets/content/props/lockers/locker_b.prefab|
 |assets/content/props/lockers/locker_b_open.prefab|
 |assets/content/props/metal wheel/metalwheel.prefab|
+|assets/content/props/metal_bunk_bed/metal_bunk_bed.prefab|
+|assets/content/props/metal_bunk_bed/metal_bunk_bed_mattress.prefab|
+|assets/content/props/metal_bunk_bed/submarine_bunk_bed_frame.prefab|
+|assets/content/props/metal_crates/metal_crate_a.prefab|
+|assets/content/props/metal_crates/metal_crate_b.prefab|
+|assets/content/props/metal_crates/metal_crate_c.prefab|
+|assets/content/props/metal_crates/metal_crate_d.prefab|
+|assets/content/props/metal_crates/metal_crate_e.prefab|
 |assets/content/props/misc_dressing_props/barricade_concrete.prefab|
 |assets/content/props/misc_dressing_props/barricade_sandbags.prefab|
 |assets/content/props/misc_dressing_props/bleach.prefab|
@@ -2505,6 +2672,14 @@
 |assets/content/props/office_furniture/posters/poster_f.prefab|
 |assets/content/props/office_furniture/posters/staticpictureframe.prefab|
 |assets/content/props/office_furniture/potted_plant_a.prefab|
+|assets/content/props/office_furniture/shelf_floorstanding_150.prefab|
+|assets/content/props/office_furniture/shelf_floorstanding_300.prefab|
+|assets/content/props/office_furniture/shelf_wall_mounted_150.prefab|
+|assets/content/props/office_furniture/shelf_wall_mounted_200.prefab|
+|assets/content/props/office_furniture/shelf_wall_mounted_50.prefab|
+|assets/content/props/office_furniture/shelf_wall_mounted_75.prefab|
+|assets/content/props/office_furniture/shelf_wall_mounted_single.prefab|
+|assets/content/props/office_furniture/storagemonitor.prefab|
 |assets/content/props/office_furniture/telephone_a.prefab|
 |assets/content/props/office_furniture/typewriter_a.prefab|
 |assets/content/props/old books/book1.prefab|
@@ -2778,10 +2953,12 @@
 |assets/content/props/signs_generic/sign_restrooms_left.prefab|
 |assets/content/props/signs_generic/sign_restrooms_right.prefab|
 |assets/content/props/signs_generic/sign_warning_authorised.prefab|
+|assets/content/props/small_junk/antiradpills.prefab|
 |assets/content/props/small_junk/apple.prefab|
 |assets/content/props/small_junk/apple_tray.prefab|
 |assets/content/props/small_junk/banana.prefab|
 |assets/content/props/small_junk/banana_tray.prefab|
+|assets/content/props/small_junk/bandage_junk.prefab|
 |assets/content/props/small_junk/beer_bottle.prefab|
 |assets/content/props/small_junk/bottle_cluster_a.prefab|
 |assets/content/props/small_junk/bottle_cluster_b.prefab|
@@ -2802,11 +2979,15 @@
 |assets/content/props/small_junk/cola_can_cluster_a.prefab|
 |assets/content/props/small_junk/crisps.prefab|
 |assets/content/props/small_junk/crisps_cluster_a.prefab|
+|assets/content/props/small_junk/fuel_jar.prefab|
 |assets/content/props/small_junk/ground_cloth_a.prefab|
 |assets/content/props/small_junk/ground_junk_a.prefab|
 |assets/content/props/small_junk/ground_junk_straight_a.prefab|
 |assets/content/props/small_junk/jar_cluster_a.prefab|
 |assets/content/props/small_junk/jar_cluster_b.prefab|
+|assets/content/props/small_junk/meat_human_foot_raw.prefab|
+|assets/content/props/small_junk/meat_human_leg_raw.prefab|
+|assets/content/props/small_junk/meat_human_ribcage_raw.prefab|
 |assets/content/props/small_junk/milk_carton.prefab|
 |assets/content/props/small_junk/milk_carton_cluster_a.prefab|
 |assets/content/props/small_junk/newspaper_a.prefab|
@@ -2817,6 +2998,7 @@
 |assets/content/props/small_junk/pickels_jar.prefab|
 |assets/content/props/small_junk/plastic_tray.prefab|
 |assets/content/props/small_junk/squashed_can.prefab|
+|assets/content/props/small_junk/syringe_junk.prefab|
 |assets/content/props/small_junk/tea_box.prefab|
 |assets/content/props/small_junk/tea_box_cluster_a.prefab|
 |assets/content/props/small_junk/toilet_paper.prefab|
@@ -2846,20 +3028,29 @@
 |assets/content/props/surfboard/surfboard_d.prefab|
 |assets/content/props/surfboard/surfboard_e.prefab|
 |assets/content/props/surfboard/surfboard_sign.prefab|
+|assets/content/props/tables_lab/table_lab_140.prefab|
+|assets/content/props/tables_lab/table_lab_210x125.prefab|
 |assets/content/props/tires/tire_a.prefab|
 |assets/content/props/tires/tire_stack_a.prefab|
 |assets/content/props/tires/tire_stack_b.prefab|
 |assets/content/props/tires/tire_stack_c.prefab|
 |assets/content/props/toilet_furniture/sink_a.prefab|
+|assets/content/props/toilet_furniture/sink_b.prefab|
 |assets/content/props/toilet_furniture/toilet_a.prefab|
+|assets/content/props/toilet_furniture/toilet_b.prefab|
 |assets/content/props/tools/handsaw/handsaw.prefab|
 |assets/content/props/tools/horse yoke/horseyoke.prefab|
 |assets/content/props/tools/rake/rake.prefab|
+|assets/content/props/train_signal_lights/train_signal_lights_a.prefab|
+|assets/content/props/train_signal_lights/train_signal_lights_b.prefab|
 |assets/content/props/train_tunnels/trainbarricade.prefab|
 |assets/content/props/train_tunnels/trainbarricadedamage.prefab|
 |assets/content/props/train_tunnels/trainbarricadegibeffect.prefab|
 |assets/content/props/train_tunnels/trainbarricadeheavy.prefab|
 |assets/content/props/trash_bag_piles/trash_bag_pile_300x300.prefab|
+|assets/content/props/various_chairs/cantinaseating.prefab|
+|assets/content/props/various_chairs/controlchair.prefab|
+|assets/content/props/various_chairs/secretlabchair.prefab|
 |assets/content/props/vehicle_parts/bumper.prefab|
 |assets/content/props/vehicle_parts/carburetor_rusty.prefab|
 |assets/content/props/vehicle_parts/crankshaft_new.prefab|
@@ -2918,6 +3109,8 @@
 |assets/content/sound/ambience/lifeambienceemitter.prefab|
 |assets/content/sound/ambience/rain/ambience-rain-on-surface.ambience-emitter.prefab|
 |assets/content/sound/ambience/rainambienceemitter.prefab|
+|assets/content/sound/ambience/underwaterambienceemitter.prefab|
+|assets/content/sound/deployable/small-device-deploy.prefab|
 |assets/content/sound/oilrig/oilriglargeaudio.prefab|
 |assets/content/sound/oilrig/oilrigsmallaudio.prefab|
 |assets/content/sound/templates/ambience.sound-template.prefab|
@@ -2931,6 +3124,7 @@
 |assets/content/sound/templates/event-small.prefab|
 |assets/content/sound/templates/explosion.prefab|
 |assets/content/sound/templates/explosion-debris.prefab|
+|assets/content/sound/templates/explosion-underwater.prefab|
 |assets/content/sound/templates/footstep-hard.sound-template.prefab|
 |assets/content/sound/templates/footstep-light.sound-template.prefab|
 |assets/content/sound/templates/footstep-med.sound-template.prefab|
@@ -2995,6 +3189,10 @@
 |assets/content/structures/bunker/bunker.room.21.ae.prefab|
 |assets/content/structures/bunker/bunker.room.lshaped.aa.prefab|
 |assets/content/structures/bunker/bunker.room.staircase.900.prefab|
+|assets/content/structures/bunker_hatch/sound/bunker-hatch-close-end.prefab|
+|assets/content/structures/bunker_hatch/sound/bunker-hatch-close-start.prefab|
+|assets/content/structures/bunker_hatch/sound/bunker-hatch-open-end.prefab|
+|assets/content/structures/bunker_hatch/sound/bunker-hatch-open-start.prefab|
 |assets/content/structures/cargo_ship/cargo_ship_anchor_conveyor.prefab|
 |assets/content/structures/cargo_ship/cargo_ship_antena.prefab|
 |assets/content/structures/cargo_ship/cargo_ship_crew_building.prefab|
@@ -3814,6 +4012,8 @@
 |assets/content/structures/train_tunnels/corridor_prefabs/corridor_stairwell_150.prefab|
 |assets/content/structures/train_tunnels/corridor_prefabs/corridor_stairwell_300.prefab|
 |assets/content/structures/train_tunnels/corridor_prefabs/corridor_stairwell_600.prefab|
+|assets/content/structures/train_tunnels/corridor_prefabs/corridor_stairwell_bottom_360.prefab|
+|assets/content/structures/train_tunnels/corridor_prefabs/corridor_stairwell_bottom_360_hallway.prefab|
 |assets/content/structures/train_tunnels/corridor_prefabs/corridor_stairwell_bottom_a.prefab|
 |assets/content/structures/train_tunnels/corridor_prefabs/corridor_stairwell_bottom_b.prefab|
 |assets/content/structures/train_tunnels/corridor_prefabs/corridor_stairwell_top.prefab|
@@ -3825,6 +4025,8 @@
 |assets/content/structures/train_tunnels/corridor_prefabs/corridor_straight_a_72m.prefab|
 |assets/content/structures/train_tunnels/corridor_prefabs/corridor_straight_a_9m.prefab|
 |assets/content/structures/train_tunnels/corridor_prefabs/corridor_train_tunnel_entrance_a.prefab|
+|assets/content/structures/train_tunnels/corridor_prefabs/modules/corridor_bypass_transition_a.prefab|
+|assets/content/structures/train_tunnels/corridor_prefabs/modules/corridor_bypass_transition_b.prefab|
 |assets/content/structures/train_tunnels/corridor_prefabs/modules/corridor_corner_a_3m.prefab|
 |assets/content/structures/train_tunnels/corridor_prefabs/modules/corridor_corner_a_9m.prefab|
 |assets/content/structures/train_tunnels/corridor_prefabs/modules/corridor_corner_b_3m.prefab|
@@ -3841,10 +4043,15 @@
 |assets/content/structures/train_tunnels/corridor_prefabs/modules/stairwell_300.prefab|
 |assets/content/structures/train_tunnels/corridor_prefabs/modules/stairwell_600.prefab|
 |assets/content/structures/train_tunnels/corridor_prefabs/modules/stairwell_bottom.prefab|
+|assets/content/structures/train_tunnels/corridor_prefabs/modules/stairwell_bottom_360.prefab|
+|assets/content/structures/train_tunnels/corridor_prefabs/modules/stairwell_bottom_360_hallway.prefab|
 |assets/content/structures/train_tunnels/corridor_prefabs/modules/stairwell_bottom_90.prefab|
 |assets/content/structures/train_tunnels/corridor_prefabs/modules/stairwell_bottom_to_corridor.prefab|
 |assets/content/structures/train_tunnels/corridor_prefabs/modules/stairwell_elevator.prefab|
 |assets/content/structures/train_tunnels/corridor_prefabs/modules/stairwell_top.prefab|
+|assets/content/structures/train_tunnels/corridor_prefabs/modules/stairwell_top_country_a.prefab|
+|assets/content/structures/train_tunnels/corridor_prefabs/modules/stairwell_top_country_b.prefab|
+|assets/content/structures/train_tunnels/corridor_prefabs/modules/stairwell_top_country_c.prefab|
 |assets/content/structures/train_tunnels/entrance_monuments_a.prefab|
 |assets/content/structures/train_tunnels/entrance_monuments_b.prefab|
 |assets/content/structures/train_tunnels/light_prefabs/train_tunnel_fill_light_cold.prefab|
@@ -3883,6 +4090,8 @@
 |assets/content/structures/train_tunnels/train_tunnel_stop_b_72m.prefab|
 |assets/content/structures/train_tunnels/train_tunnel_stop_transition_36m.prefab|
 |assets/content/structures/train_tunnels/train_tunnel_stop_transition_36m_mirr.prefab|
+|assets/content/structures/train_tunnels/train_tunnel_stop_transition_b_36m.prefab|
+|assets/content/structures/train_tunnels/train_tunnel_stop_transition_b_36m_mirr.prefab|
 |assets/content/structures/train_tunnels/train_tunnel_track_barricade.prefab|
 |assets/content/structures/train_wagons/minecart_a.prefab|
 |assets/content/structures/train_wagons/train_wagon_a.prefab|
@@ -3908,6 +4117,250 @@
 |assets/content/structures/tunnels/tunnel.single.straight.arch.prefab|
 |assets/content/structures/tunnels/tunnel.single.straight.gate.prefab|
 |assets/content/structures/tunnels/tunnel.single.straight.slope.72.prefab|
+|assets/content/structures/underwater_labs/conditionals/hatch_tube_150.prefab|
+|assets/content/structures/underwater_labs/conditionals/hatch_tube_300.prefab|
+|assets/content/structures/underwater_labs/conditionals/hatch_tube_300_s_left.prefab|
+|assets/content/structures/underwater_labs/conditionals/hatch_tube_300_s_right.prefab|
+|assets/content/structures/underwater_labs/conditionals/hatch_tube_600.prefab|
+|assets/content/structures/underwater_labs/conditionals/hatch_tube_cap.prefab|
+|assets/content/structures/underwater_labs/conditionals/hatch_tube_corner_left_45.prefab|
+|assets/content/structures/underwater_labs/conditionals/hatch_tube_corner_left_90.prefab|
+|assets/content/structures/underwater_labs/conditionals/hatch_tube_corner_right_45.prefab|
+|assets/content/structures/underwater_labs/conditionals/hatch_tube_corner_right_90.prefab|
+|assets/content/structures/underwater_labs/conditionals/hatch_tube_doorway.prefab|
+|assets/content/structures/underwater_labs/conditionals/hatch_tube_end.prefab|
+|assets/content/structures/underwater_labs/conditionals/underwater_lab_leg_a.prefab|
+|assets/content/structures/underwater_labs/conditionals/vertical_hatch_cap.prefab|
+|assets/content/structures/underwater_labs/conditionals/vertical_hatch_end.prefab|
+|assets/content/structures/underwater_labs/dwellersdata/dwellerdata_module_1200x1200_1way.prefab|
+|assets/content/structures/underwater_labs/dwellersdata/dwellerdata_module_1200x1200_1way_ladder.prefab|
+|assets/content/structures/underwater_labs/dwellersdata/dwellerdata_module_1200x1200_3way.prefab|
+|assets/content/structures/underwater_labs/dwellersdata/dwellerdata_module_1200x1200_3way_ladder.prefab|
+|assets/content/structures/underwater_labs/dwellersdata/dwellerdata_module_1200x1200_4way.prefab|
+|assets/content/structures/underwater_labs/dwellersdata/dwellerdata_module_1200x1200_4way_ladder.prefab|
+|assets/content/structures/underwater_labs/dwellersdata/dwellerdata_module_1200x1500_1way_moonpool.prefab|
+|assets/content/structures/underwater_labs/dwellersdata/dwellerdata_module_1200x1500_2way_moonpool.prefab|
+|assets/content/structures/underwater_labs/dwellersdata/dwellerdata_module_1200x1500_3way_moonpool.prefab|
+|assets/content/structures/underwater_labs/dwellersdata/dwellerdata_module_1200x1800_2way.prefab|
+|assets/content/structures/underwater_labs/dwellersdata/dwellerdata_module_1200x1800_ladder_moonpool.prefab|
+|assets/content/structures/underwater_labs/dwellersdata/dwellerdata_module_1200x600_2way_corridor.prefab|
+|assets/content/structures/underwater_labs/dwellersdata/dwellerdata_module_1500x1500_4way_lshaped.prefab|
+|assets/content/structures/underwater_labs/dwellersdata/dwellerdata_module_1500x1500_ladder.prefab|
+|assets/content/structures/underwater_labs/dwellersdata/dwellerdata_module_1500x1800_2way_ladder.prefab|
+|assets/content/structures/underwater_labs/dwellersdata/dwellerdata_module_1500x600_2way_corridor.prefab|
+|assets/content/structures/underwater_labs/dwellersdata/dwellerdata_module_1800x1800_4way_lshaped.prefab|
+|assets/content/structures/underwater_labs/dwellersdata/dwellerdata_module_2100x600_3way_corridor.prefab|
+|assets/content/structures/underwater_labs/dwellersdata/dwellerdata_module_900x900_1way.prefab|
+|assets/content/structures/underwater_labs/dwellersdata/dwellerdata_module_900x900_1way_ladder.prefab|
+|assets/content/structures/underwater_labs/dwellersdata/dwellerdata_module_900x900_3way.prefab|
+|assets/content/structures/underwater_labs/dwellersdata/dwellerdata_module_900x900_3way_ladder.prefab|
+|assets/content/structures/underwater_labs/dwellersdata/dwellerdata_module_900x900_4way.prefab|
+|assets/content/structures/underwater_labs/dwellersdata/dwellerdata_module_900x900_4way_ladder.prefab|
+|assets/content/structures/underwater_labs/module_1200x1200_1way.prefab|
+|assets/content/structures/underwater_labs/module_1200x1200_1way_ladder.prefab|
+|assets/content/structures/underwater_labs/module_1200x1200_3way.prefab|
+|assets/content/structures/underwater_labs/module_1200x1200_3way_ladder.prefab|
+|assets/content/structures/underwater_labs/module_1200x1200_4way.prefab|
+|assets/content/structures/underwater_labs/module_1200x1200_4way_ladder.prefab|
+|assets/content/structures/underwater_labs/module_1200x1500_1way_moonpool.prefab|
+|assets/content/structures/underwater_labs/module_1200x1500_2way_moonpool.prefab|
+|assets/content/structures/underwater_labs/module_1200x1500_3way_moonpool.prefab|
+|assets/content/structures/underwater_labs/module_1200x1800_2way.prefab|
+|assets/content/structures/underwater_labs/module_1200x1800_ladder_moonpool.prefab|
+|assets/content/structures/underwater_labs/module_1200x600_2way_corridor.prefab|
+|assets/content/structures/underwater_labs/module_1500x1500_4way_lshaped.prefab|
+|assets/content/structures/underwater_labs/module_1500x1500_ladder.prefab|
+|assets/content/structures/underwater_labs/module_1500x1800_2way_ladder.prefab|
+|assets/content/structures/underwater_labs/module_1500x600_2way_corridor.prefab|
+|assets/content/structures/underwater_labs/module_1800x1800_4way_lshaped.prefab|
+|assets/content/structures/underwater_labs/module_2100x600_3way_corridor.prefab|
+|assets/content/structures/underwater_labs/module_900x900_1way.prefab|
+|assets/content/structures/underwater_labs/module_900x900_1way_ladder.prefab|
+|assets/content/structures/underwater_labs/module_900x900_3way.prefab|
+|assets/content/structures/underwater_labs/module_900x900_3way_ladder.prefab|
+|assets/content/structures/underwater_labs/module_900x900_4way.prefab|
+|assets/content/structures/underwater_labs/module_900x900_4way_ladder.prefab|
+|assets/content/structures/underwater_labs/modules/module_1200x1200_1way.prefab|
+|assets/content/structures/underwater_labs/modules/module_1200x1200_1way_ladder.prefab|
+|assets/content/structures/underwater_labs/modules/module_1200x1200_3way.prefab|
+|assets/content/structures/underwater_labs/modules/module_1200x1200_3way_ladder.prefab|
+|assets/content/structures/underwater_labs/modules/module_1200x1200_4way.prefab|
+|assets/content/structures/underwater_labs/modules/module_1200x1200_4way_ladder.prefab|
+|assets/content/structures/underwater_labs/modules/module_1200x1500_1way_moonpool.prefab|
+|assets/content/structures/underwater_labs/modules/module_1200x1500_2way_moonpool.prefab|
+|assets/content/structures/underwater_labs/modules/module_1200x1500_3way_moonpool.prefab|
+|assets/content/structures/underwater_labs/modules/module_1200x1800_2way.prefab|
+|assets/content/structures/underwater_labs/modules/module_1200x1800_ladder_moonpool.prefab|
+|assets/content/structures/underwater_labs/modules/module_1200x600_2way_corridor.prefab|
+|assets/content/structures/underwater_labs/modules/module_1500x1500_4way_lshaped.prefab|
+|assets/content/structures/underwater_labs/modules/module_1500x1500_ladder.prefab|
+|assets/content/structures/underwater_labs/modules/module_1500x1800_2way_ladder.prefab|
+|assets/content/structures/underwater_labs/modules/module_1500x600_2way_corridor.prefab|
+|assets/content/structures/underwater_labs/modules/module_1800x1800_4way_lshaped.prefab|
+|assets/content/structures/underwater_labs/modules/module_2100x600_3way_corridor.prefab|
+|assets/content/structures/underwater_labs/modules/module_900x900_1way.prefab|
+|assets/content/structures/underwater_labs/modules/module_900x900_1way_ladder.prefab|
+|assets/content/structures/underwater_labs/modules/module_900x900_3way.prefab|
+|assets/content/structures/underwater_labs/modules/module_900x900_3way_ladder.prefab|
+|assets/content/structures/underwater_labs/modules/module_900x900_4way.prefab|
+|assets/content/structures/underwater_labs/modules/module_900x900_4way_ladder.prefab|
+|assets/content/structures/underwater_labs/modules_filler/ladder_full.prefab|
+|assets/content/structures/underwater_labs/modules_filler/ladder_half.prefab|
+|assets/content/structures/underwater_labs/modules_filler/partition_wall_300.prefab|
+|assets/content/structures/underwater_labs/modules_filler/partition_wall_300_doorway.prefab|
+|assets/content/structures/underwater_labs/modules_filler/partition_wall_600.prefab|
+|assets/content/structures/underwater_labs/modules_filler/partition_wall_corner_out.prefab|
+|assets/content/structures/underwater_labs/modules_filler/partition_wall_end.prefab|
+|assets/content/structures/underwater_labs/modules_filler/partition_wall_end_doorway.prefab|
+|assets/content/structures/underwater_labs/modules_filler/partition_wall_serving_hatch.prefab|
+|assets/content/structures/underwater_labs/modules_filler/partition_wall_serving_hatch_window.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_clean/partition_wall_300_clean variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_clean/partition_wall_300_doorway_clean variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_clean/partition_wall_600_clean variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_clean/partition_wall_corner_out_clean variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_clean/partition_wall_end_clean variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_clean/partition_wall_end_doorway_clean variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_clean/partition_wall_serving_hatch_clean variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_clean/wall_single_300_corner_filler_a_clean variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_clean/wall_single_300_corner_filler_b_clean variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_clean/wall_single_300_corner_in_filler_a_clean variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_clean/wall_single_300_filler_a_clean variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_clean/wall_single_300_filler_b_clean variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_cool/partition_wall_300_cool variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_cool/partition_wall_300_doorway_cool variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_cool/partition_wall_600_cool variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_cool/partition_wall_corner_out_cool variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_cool/partition_wall_end_cool variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_cool/partition_wall_end_doorway_cool variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_cool/partition_wall_serving_hatch_cool variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_cool/wall_single_300_corner_filler_a_cool variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_cool/wall_single_300_corner_filler_b_cool variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_cool/wall_single_300_corner_in_filler_a_cool variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_cool/wall_single_300_filler_a_cool variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_cool/wall_single_300_filler_b_cool variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_dark/partition_wall_300_dark variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_dark/partition_wall_300_doorway_dark variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_dark/partition_wall_600_dark variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_dark/partition_wall_corner_out_dark variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_dark/partition_wall_end_dark variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_dark/partition_wall_end_doorway_dark variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_dark/partition_wall_serving_hatch_dark variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_dark/wall_single_300_corner_filler_a_dark variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_dark/wall_single_300_corner_filler_b_dark variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_dark/wall_single_300_corner_in_filler_a_dark variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_dark/wall_single_300_filler_a_dark variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_dark/wall_single_300_filler_b_dark variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_khaki/partition_wall_300_doorway_khaki variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_khaki/partition_wall_300_khaki variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_khaki/partition_wall_600_khaki variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_khaki/partition_wall_corner_out_khaki variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_khaki/partition_wall_end_doorway_khaki variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_khaki/partition_wall_end_khaki variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_khaki/partition_wall_serving_hatch_khaki variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_khaki/wall_single_300_corner_filler_a_khaki variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_khaki/wall_single_300_corner_filler_b_khaki variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_khaki/wall_single_300_corner_in_filler_a_khaki variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_khaki/wall_single_300_filler_a_khaki variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_khaki/wall_single_300_filler_b_khaki variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_warm/partition_wall_300_doorway_warm variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_warm/partition_wall_300_warm variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_warm/partition_wall_600_warm variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_warm/partition_wall_corner_out_warm variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_warm/partition_wall_end_doorway_warm variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_warm/partition_wall_end_warm variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_warm/partition_wall_serving_hatch_warm variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_warm/wall_single_300_corner_filler_a_warm variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_warm/wall_single_300_corner_filler_b_warm variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_warm/wall_single_300_corner_in_filler_a_warm variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_warm/wall_single_300_filler_a_warm variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/skin_warm/wall_single_300_filler_b_warm variant.prefab|
+|assets/content/structures/underwater_labs/modules_filler/wall_single_300_corner_filler_a.prefab|
+|assets/content/structures/underwater_labs/modules_filler/wall_single_300_corner_filler_b.prefab|
+|assets/content/structures/underwater_labs/modules_filler/wall_single_300_corner_in_filler_a.prefab|
+|assets/content/structures/underwater_labs/modules_filler/wall_single_300_filler_a.prefab|
+|assets/content/structures/underwater_labs/modules_filler/wall_single_300_filler_b.prefab|
+|assets/content/structures/underwater_labs/moonpool/moonpool_water.prefab|
+|assets/content/structures/underwater_labs/socketdata/socketdata_module_1200x1200_1way.prefab|
+|assets/content/structures/underwater_labs/socketdata/socketdata_module_1200x1200_1way_ladder.prefab|
+|assets/content/structures/underwater_labs/socketdata/socketdata_module_1200x1200_3way.prefab|
+|assets/content/structures/underwater_labs/socketdata/socketdata_module_1200x1200_3way_ladder.prefab|
+|assets/content/structures/underwater_labs/socketdata/socketdata_module_1200x1200_4way.prefab|
+|assets/content/structures/underwater_labs/socketdata/socketdata_module_1200x1200_4way_ladder.prefab|
+|assets/content/structures/underwater_labs/socketdata/socketdata_module_1200x1500_1way_moonpool.prefab|
+|assets/content/structures/underwater_labs/socketdata/socketdata_module_1200x1500_2way_moonpool.prefab|
+|assets/content/structures/underwater_labs/socketdata/socketdata_module_1200x1500_3way_moonpool.prefab|
+|assets/content/structures/underwater_labs/socketdata/socketdata_module_1200x1800_2way.prefab|
+|assets/content/structures/underwater_labs/socketdata/socketdata_module_1200x1800_ladder_moonpool.prefab|
+|assets/content/structures/underwater_labs/socketdata/socketdata_module_1200x600_2way_corridor.prefab|
+|assets/content/structures/underwater_labs/socketdata/socketdata_module_1500x1500_4way_lshaped.prefab|
+|assets/content/structures/underwater_labs/socketdata/socketdata_module_1500x1500_ladder.prefab|
+|assets/content/structures/underwater_labs/socketdata/socketdata_module_1500x1800_2way_ladder.prefab|
+|assets/content/structures/underwater_labs/socketdata/socketdata_module_1500x600_2way_corridor.prefab|
+|assets/content/structures/underwater_labs/socketdata/socketdata_module_1800x1800_4way_lshaped.prefab|
+|assets/content/structures/underwater_labs/socketdata/socketdata_module_2100x600_3way_corridor.prefab|
+|assets/content/structures/underwater_labs/socketdata/socketdata_module_900x900_1way.prefab|
+|assets/content/structures/underwater_labs/socketdata/socketdata_module_900x900_1way_ladder.prefab|
+|assets/content/structures/underwater_labs/socketdata/socketdata_module_900x900_3way.prefab|
+|assets/content/structures/underwater_labs/socketdata/socketdata_module_900x900_3way_ladder.prefab|
+|assets/content/structures/underwater_labs/socketdata/socketdata_module_900x900_4way.prefab|
+|assets/content/structures/underwater_labs/socketdata/socketdata_module_900x900_4way_ladder.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_150x100_01.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_150x100_01_90bend.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_150x100_01_curved.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_150x100_02.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_150x100_02_90bend.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_150x100_02_curved.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_150x100_02_outercorner.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_150x100_02_outercorner_90bend.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_150x100_03.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_150x100_03_90bend.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_150x100_03_curved.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_150x100_04.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_150x100_04_90bend.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_150x100_04_curved.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_150x100_04_outercorner.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_150x100_04_outercorner_90bend.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_150x100_05.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_150x100_05_90bend.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_150x100_05_curved.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_150x200_01.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_150x200_01_90bend.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_150x200_01_curved.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_150x200_02.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_150x200_02_90bend.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_150x200_02_curved.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_150x200_03.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_150x200_03_90bend.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_150x200_03_curved.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_150x200_04.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_150x200_04_90bend.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_150x200_04_curved.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_150x200_04_outercorner.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_150x200_04_outercorner_90bend.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_150x200_05.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_150x200_05_90bend.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_150x200_05_curved.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_300x200_01.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_300x200_01_90bend.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_300x200_01_curved.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_300x200_02.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_300x200_02_90bend.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_300x200_02_curved.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_300x200_02_outercorner.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_300x200_02_outercorner_90bend.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_300x200_02_outercorner_curve.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_300x200_03.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_300x200_03_90bend.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_300x200_03_curved.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_300x200_04.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_300x200_04_90bend.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_300x200_04_curved.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_300x200_04_outercorner.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_300x200_04_outercorner_01_90bend.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_300x200_05.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_300x200_05_90bend.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_300x200_05_curved.prefab|
+|assets/content/structures/underwater_labs/underwater_lab_corridor_greeble/submarine_greeble_bulkhead_divider.prefab|
 |assets/content/structures/walkways/portacabin_walkway_a.prefab|
 |assets/content/structures/walkways/rocket_factory_elevator_platform.prefab|
 |assets/content/structures/walkways/rocket_factory_stairs_bottom.prefab|
@@ -4078,6 +4531,7 @@
 |assets/content/ui/gameui/aidesigner/addnewevent.prefab|
 |assets/content/ui/gameui/aidesigner/addnewstate.prefab|
 |assets/content/ui/gameui/aidesigner/events/baseevent.prefab|
+|assets/content/ui/gameui/aidesigner/events/new/aggressiontimerevent.prefab|
 |assets/content/ui/gameui/aidesigner/events/new/ammobelowevent.prefab|
 |assets/content/ui/gameui/aidesigner/events/new/andevent.prefab|
 |assets/content/ui/gameui/aidesigner/events/new/attackedevent.prefab|
@@ -4088,11 +4542,13 @@
 |assets/content/ui/gameui/aidesigner/events/new/hungeraboveevent.prefab|
 |assets/content/ui/gameui/aidesigner/events/new/inattackrangeevent.prefab|
 |assets/content/ui/gameui/aidesigner/events/new/inrangeevent.prefab|
+|assets/content/ui/gameui/aidesigner/events/new/inrangeofhomeevent.prefab|
 |assets/content/ui/gameui/aidesigner/events/new/ismountedevent.prefab|
 |assets/content/ui/gameui/aidesigner/events/new/isvisibleevent.prefab|
 |assets/content/ui/gameui/aidesigner/events/new/onpositionmemorysetevent.prefab|
 |assets/content/ui/gameui/aidesigner/events/new/performedattackevent.prefab|
 |assets/content/ui/gameui/aidesigner/events/new/playerdetectedevent.prefab|
+|assets/content/ui/gameui/aidesigner/events/new/reloadingevent.prefab|
 |assets/content/ui/gameui/aidesigner/events/new/stateerrorevent.prefab|
 |assets/content/ui/gameui/aidesigner/events/new/statefinishedevent.prefab|
 |assets/content/ui/gameui/aidesigner/events/new/targetdetectedevent.prefab|
@@ -4135,6 +4591,7 @@
 |assets/content/ui/gameui/gameui.hud.compassmapmarker.teamleader.prefab|
 |assets/content/ui/gameui/gameui.hud.compassstrip.prefab|
 |assets/content/ui/gameui/gameui.hud.crosshair.prefab|
+|assets/content/ui/gameui/gameui.hud.fishing.prefab|
 |assets/content/ui/gameui/gameui.hud.fullblack.prefab|
 |assets/content/ui/gameui/gameui.hud.fullwhite.prefab|
 |assets/content/ui/gameui/gameui.hud.gametip.prefab|
@@ -4444,6 +4901,19 @@
 |assets/content/vehicles/sedan_a/sedan_a_wrecked_white.prefab|
 |assets/content/vehicles/sedan_a/sedan_a_yellow.prefab|
 |assets/content/vehicles/sedan_a/sedantest.entity.prefab|
+|assets/content/vehicles/submarine/effects/effects submarineduo.prefab|
+|assets/content/vehicles/submarine/effects/effects submarinesolo.prefab|
+|assets/content/vehicles/submarine/effects/materials/modeleffects.prefab|
+|assets/content/vehicles/submarine/effects/submarine collision effect abovewater.prefab|
+|assets/content/vehicles/submarine/effects/submarine collision effect underwater.prefab|
+|assets/content/vehicles/submarine/effects/submarine-destroy.prefab|
+|assets/content/vehicles/submarine/subents/flag.prefab|
+|assets/content/vehicles/submarine/subents/submarinefuelstorage.prefab|
+|assets/content/vehicles/submarine/subents/submarinetorpedostorage.prefab|
+|assets/content/vehicles/submarine/submarineduo.entity.prefab|
+|assets/content/vehicles/submarine/submarineduo.item.prefab|
+|assets/content/vehicles/submarine/submarinesolo.entity.prefab|
+|assets/content/vehicles/submarine/submarinesolo.item.prefab|
 |assets/content/vehicles/tank/m2bradley_junkyard.prefab|
 |assets/content/vehicles/trailer/trailer_a.prefab|
 |assets/content/vehicles/truck_cabin/truck_cabin.prefab|
@@ -4594,6 +5064,15 @@
 |assets/prefabs/ammo/shotgun/shotgunbullet.prefab|
 |assets/prefabs/ammo/shotgun/shotgunbullet_fire.prefab|
 |assets/prefabs/ammo/shotgun/shotgunslug.prefab|
+|assets/prefabs/ammo/speargun/speargun_spear.item.prefab|
+|assets/prefabs/ammo/speargun/speargun_spear.prefab|
+|assets/prefabs/ammo/speargun/speargun_spear.worldmodel.prefab|
+|assets/prefabs/ammo/torpedo/torpedorising.item.prefab|
+|assets/prefabs/ammo/torpedo/torpedorising.prefab|
+|assets/prefabs/ammo/torpedo/torpedorising.worldmodel.prefab|
+|assets/prefabs/ammo/torpedo/torpedostraight.item.prefab|
+|assets/prefabs/ammo/torpedo/torpedostraight.prefab|
+|assets/prefabs/ammo/torpedo/torpedostraight.worldmodel.prefab|
 |assets/prefabs/building core/floor.frame/floor.frame.metal.prefab|
 |assets/prefabs/building core/floor.frame/floor.frame.prefab|
 |assets/prefabs/building core/floor.frame/floor.frame.stone.prefab|
@@ -5304,8 +5783,11 @@
 |assets/prefabs/clothes/suit.heavyscientist/suit_heavyscientist.wearable.prefab|
 |assets/prefabs/clothes/suit.jumpsuit/jumpsuit.viewmodel.prefab|
 |assets/prefabs/clothes/suit.jumpsuit/jumpsuit_worldmodel.prefab|
+|assets/prefabs/clothes/suit.jumpsuit/suit.jumpsuit.blue.item.prefab|
+|assets/prefabs/clothes/suit.jumpsuit/suit.jumpsuit.female.blue.prefab|
 |assets/prefabs/clothes/suit.jumpsuit/suit.jumpsuit.female.prefab|
 |assets/prefabs/clothes/suit.jumpsuit/suit.jumpsuit.item.prefab|
+|assets/prefabs/clothes/suit.jumpsuit/suit.jumpsuit.male.blue.prefab|
 |assets/prefabs/clothes/suit.jumpsuit/suit.jumpsuit.male.prefab|
 |assets/prefabs/clothes/suit.makeshifthazmat/makeshifthazmat_suit.prefab|
 |assets/prefabs/clothes/tshirt.long/tshirt.long.blue.item.prefab|
@@ -5430,6 +5912,7 @@
 |assets/prefabs/deployable/card table/cardtable.deployed.prefab|
 |assets/prefabs/deployable/card table/cardtable.item.prefab|
 |assets/prefabs/deployable/card table/cardtable.static_configa.prefab|
+|assets/prefabs/deployable/card table/cardtable.static_configa_hidden.prefab|
 |assets/prefabs/deployable/card table/cardtable.static_configb.prefab|
 |assets/prefabs/deployable/card table/cardtable.static_configc.prefab|
 |assets/prefabs/deployable/card table/cardtable.static_configd.prefab|
@@ -5460,6 +5943,7 @@
 |assets/prefabs/deployable/composter/composter.prefab|
 |assets/prefabs/deployable/computerstation/computerstation.deployed.prefab|
 |assets/prefabs/deployable/computerstation/computerstation.item.prefab|
+|assets/prefabs/deployable/computerstation/computerstation.static.prefab|
 |assets/prefabs/deployable/computerstation/rcbookmarkentry.prefab|
 |assets/prefabs/deployable/door barricades/door_barricade_a.prefab|
 |assets/prefabs/deployable/door barricades/door_barricade_a_large.prefab|
@@ -5705,6 +6189,7 @@
 |assets/prefabs/deployable/playerioents/waterpump/water.pump.deployed.prefab|
 |assets/prefabs/deployable/playerioents/waterpump/water.pump.item.prefab|
 |assets/prefabs/deployable/primitive lootbox/primitivelootbox.prefab|
+|assets/prefabs/deployable/primitive lootbox/sound/primitive-lootbox-destroy.prefab|
 |assets/prefabs/deployable/quarry/effects/mining-quarry-deploy.prefab|
 |assets/prefabs/deployable/quarry/engineswitch.prefab|
 |assets/prefabs/deployable/quarry/fuelstorage.prefab|
@@ -5846,6 +6331,7 @@
 |assets/prefabs/deployable/vendingmachine/npcvendingmachines/npcvendingmachine_components.prefab|
 |assets/prefabs/deployable/vendingmachine/npcvendingmachines/npcvendingmachine_extra.prefab|
 |assets/prefabs/deployable/vendingmachine/npcvendingmachines/npcvendingmachine_farming.prefab|
+|assets/prefabs/deployable/vendingmachine/npcvendingmachines/npcvendingmachine_fishexchange.prefab|
 |assets/prefabs/deployable/vendingmachine/npcvendingmachines/npcvendingmachine_hapisexchange.prefab|
 |assets/prefabs/deployable/vendingmachine/npcvendingmachines/npcvendingmachine_resources.prefab|
 |assets/prefabs/deployable/vendingmachine/npcvendingmachines/npcvendingmachine_tools.prefab|
@@ -5898,11 +6384,11 @@
 |assets/prefabs/effects/weather/sandstorm.prefab|
 |assets/prefabs/engine/game setup.prefab|
 |assets/prefabs/engine/main camera.prefab|
+|assets/prefabs/engine/maplayerrenderer.prefab|
 |assets/prefabs/engine/ocean.prefab|
 |assets/prefabs/engine/screenshot camera.prefab|
 |assets/prefabs/engine/sky dome.prefab|
 |assets/prefabs/engine/testlevel terrain.prefab|
-|assets/prefabs/engine/trainlayerrenderer.prefab|
 |assets/prefabs/engine/water system.prefab|
 |assets/prefabs/engine/world setup.prefab|
 |assets/prefabs/engine/world_setup_v3.prefab|
@@ -5922,14 +6408,33 @@
 |assets/prefabs/food/bota bag/effects/bota-bag-remove-cap.prefab|
 |assets/prefabs/food/bota bag/effects/bota-bag-slosh.prefab|
 |assets/prefabs/food/bota bag/effects/bota-bag-slosh-fast.prefab|
+|assets/prefabs/food/bugs/grub.item.prefab|
+|assets/prefabs/food/bugs/worm.item.prefab|
 |assets/prefabs/food/cactusflesh/cactusflesh.item.prefab|
 |assets/prefabs/food/can of beans/can_beans.item.prefab|
 |assets/prefabs/food/can of tuna/can_tuna.item.prefab|
 |assets/prefabs/food/chocholate/chocholate.item.prefab|
+|assets/prefabs/food/fish/anchovy.item.prefab|
+|assets/prefabs/food/fish/anchovy.worldmodel.prefab|
+|assets/prefabs/food/fish/catfish.item.prefab|
+|assets/prefabs/food/fish/catfish.worldmodel.prefab|
 |assets/prefabs/food/fish/fish_cooked.item.prefab|
 |assets/prefabs/food/fish/fish_raw.item.prefab|
+|assets/prefabs/food/fish/herring.item.prefab|
+|assets/prefabs/food/fish/herring.worldmodel.prefab|
 |assets/prefabs/food/fish/minnows.item.prefab|
+|assets/prefabs/food/fish/orangeroughy.item.prefab|
+|assets/prefabs/food/fish/orangeroughy.worldmodel.prefab|
+|assets/prefabs/food/fish/salmon.item.prefab|
+|assets/prefabs/food/fish/salmon.worldmodel.prefab|
+|assets/prefabs/food/fish/sardine.item.prefab|
+|assets/prefabs/food/fish/sardine.worldmodel.prefab|
+|assets/prefabs/food/fish/smallshark.item.prefab|
+|assets/prefabs/food/fish/smallshark.worldmodel.prefab|
 |assets/prefabs/food/fish/smalltrout.item.prefab|
+|assets/prefabs/food/fish/smalltrout.worldmodel.prefab|
+|assets/prefabs/food/fish/yellowperch.item.prefab|
+|assets/prefabs/food/fish/yellowperch.worldmodel.prefab|
 |assets/prefabs/food/granola bar/granolabar.item.prefab|
 |assets/prefabs/food/meat/bearmeat.worldmodel.prefab|
 |assets/prefabs/food/meat/chicken_burned.item.prefab|
@@ -6073,6 +6578,7 @@
 |assets/prefabs/instruments/xylophone/xylophone.deployed.prefab|
 |assets/prefabs/instruments/xylophone/xylophone.item.prefab|
 |assets/prefabs/io/electric/generators/generator.static.prefab|
+|assets/prefabs/io/electric/generators/generator.static_hidden.prefab|
 |assets/prefabs/io/electric/lights/simplelight.prefab|
 |assets/prefabs/io/electric/lights/sirenlightorange.prefab|
 |assets/prefabs/io/electric/other/alarmsound.prefab|
@@ -6607,6 +7113,69 @@
 |assets/prefabs/misc/twitch/underwear/femaleunderwear_twitch_legs.prefab|
 |assets/prefabs/misc/twitch/underwear/femaleunderwear_twitch_torso.prefab|
 |assets/prefabs/misc/twitch/underwear/maleunderwear_twitch_legs.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/dwellingspawner_300_corner.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/dwellingspawner_300_corner_deep.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/dwellingspawner_300_corridor.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/dwellingspawner_300_edge.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/dwellingspawner_300_edge_deep.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/dwellingspawner_600_corner.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/dwellingspawner_600_corridor.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/dwellingspawner_600_corridor_double.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/dwellingspawner_600_edge.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_corner_a.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_corner_b.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_corner_c.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_corner_d.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_corner_deep_a.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_corner_deep_b.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_corner_deep_c.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_corner_deep_d.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_corner_deep_e.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_corner_deep_f.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_corner_deep_g.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_corner_deep_h.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_corner_deep_i.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_corner_deep_j.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_corner_deep_k.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_corner_deep_l.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_corner_e.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_corner_f.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_corner_g.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_corner_h.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_corner_i.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_corner_j.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_corner_k.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_corner_l.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_corridor_a.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_corridor_b.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_edge_a.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_edge_b.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_edge_c.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_edge_d.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_edge_deep_a.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_edge_deep_b.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_edge_deep_c.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_edge_deep_d.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_edge_deep_e.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_edge_deep_f.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_edge_deep_g.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_edge_e.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_edge_f.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_300_edge_g.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_600_corner_a.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_600_corner_b.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_600_corner_c.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_600_corner_d.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_600_corner_e.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_600_corner_f.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_600_corridor_a.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_600_corridor_b.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_600_corridor_double_a.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_600_corridor_double_b.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_600_corridor_double_c.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_600_corridor_double_d.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_600_edge_a.prefab|
+|assets/prefabs/misc/underwaterlabsdwelling/underwaterlab_dwelling_600_edge_b.prefab|
 |assets/prefabs/misc/xmas/candy cane club/candy_cane.entity.prefab|
 |assets/prefabs/misc/xmas/candy cane club/candy_cane.projectile.prefab|
 |assets/prefabs/misc/xmas/candy cane club/candy_cane.viewmodel.prefab|
@@ -6817,6 +7386,8 @@
 |assets/prefabs/npc/bear/bear_full.prefab|
 |assets/prefabs/npc/bear/sound/breathe.prefab|
 |assets/prefabs/npc/bear/sound/death.prefab|
+|assets/prefabs/npc/birds/birdemission.prefab|
+|assets/prefabs/npc/birds/birdemission_leftright.prefab|
 |assets/prefabs/npc/cargo plane/cargo_plane.prefab|
 |assets/prefabs/npc/ch47/alarmsytstem.prefab|
 |assets/prefabs/npc/ch47/ch47.arttest.prefab|
@@ -6833,6 +7404,16 @@
 |assets/prefabs/npc/ch47/reinforcementslistener.prefab|
 |assets/prefabs/npc/ch47/rotorwashparticles.prefab|
 |assets/prefabs/npc/ch47/servergibs_ch47.prefab|
+|assets/prefabs/npc/fish/anchovy/anchovy.prefab|
+|assets/prefabs/npc/fish/brown_trout/brown_trout.prefab|
+|assets/prefabs/npc/fish/brown_trout/brown_trout_env.prefab|
+|assets/prefabs/npc/fish/fish.prefab|
+|assets/prefabs/npc/fish/herring/herring.prefab|
+|assets/prefabs/npc/fish/orange_roughy/orange_roughy_env.prefab|
+|assets/prefabs/npc/fish/salmon/salmon_env.prefab|
+|assets/prefabs/npc/fish/sardine/sardine.prefab|
+|assets/prefabs/npc/fish/yellow_perch/yellow_perch.prefab|
+|assets/prefabs/npc/fish/yellow_perch/yellow_perch_env.prefab|
 |assets/prefabs/npc/flame turret/effects/flameturret-deploy.prefab|
 |assets/prefabs/npc/flame turret/flameturret.deployed.prefab|
 |assets/prefabs/npc/flame turret/flameturret.item.prefab|
@@ -7125,11 +7706,12 @@
 |assets/prefabs/tools/detonator/effects/deploy.prefab|
 |assets/prefabs/tools/detonator/effects/unpress.prefab|
 |assets/prefabs/tools/detonator/v_detonator.prefab|
-|assets/prefabs/tools/fishing rod/bobber/bobber.prefab|
+|assets/prefabs/tools/fishing rod/bobber.preview.prefab|
+|assets/prefabs/tools/fishing rod/bobber/bobber.entity.prefab|
 |assets/prefabs/tools/fishing rod/fishing_rod.entity.prefab|
 |assets/prefabs/tools/fishing rod/fishing_rod.item.prefab|
 |assets/prefabs/tools/fishing rod/fishing_rod.viewmodel.prefab|
-|assets/prefabs/tools/fishing rod/fishing_rod.weapon.prefab|
+|assets/prefabs/tools/fishing rod/fishing_rod.worldmodel.prefab|
 |assets/prefabs/tools/flareold/effects/deploy.prefab|
 |assets/prefabs/tools/flareold/effects/ignite.prefab|
 |assets/prefabs/tools/flareold/effects/popcap.prefab|
@@ -7285,6 +7867,9 @@
 |assets/prefabs/vehicle/seats/smallboatdriver.prefab|
 |assets/prefabs/vehicle/seats/smallboatpassenger.prefab|
 |assets/prefabs/vehicle/seats/standingdriver.prefab|
+|assets/prefabs/vehicle/seats/submarineduodriverseat.prefab|
+|assets/prefabs/vehicle/seats/submarineduopassengerseat.prefab|
+|assets/prefabs/vehicle/seats/submarinesolodriverstanding.prefab|
 |assets/prefabs/vehicle/seats/testseat.prefab|
 |assets/prefabs/vehicle/seats/transporthelicopilot.prefab|
 |assets/prefabs/vehicle/seats/transporthelipilot.prefab|
@@ -7307,7 +7892,65 @@
 |assets/prefabs/vehicle/vehiclemoduleitems/2module_fuel_tank/2module_fuel_tank.item.prefab|
 |assets/prefabs/vehicle/vehiclemoduleitems/2module_passengers/2module_passengers.item.prefab|
 |assets/prefabs/visualization/sphere.prefab|
+|assets/prefabs/voiceaudio/boombox/boombox.deployed.prefab|
+|assets/prefabs/voiceaudio/boombox/boombox.item.prefab|
+|assets/prefabs/voiceaudio/boombox/boombox.static.prefab|
+|assets/prefabs/voiceaudio/boombox/effects/boombox-deploy.prefab|
+|assets/prefabs/voiceaudio/boombox/favouriteradiobutton.prefab|
+|assets/prefabs/voiceaudio/boombox/ui.dialog.radio.prefab|
+|assets/prefabs/voiceaudio/boomboxportable/boomboxportable.item.prefab|
+|assets/prefabs/voiceaudio/boomboxportable/boomboxportable.viewmodel.prefab|
+|assets/prefabs/voiceaudio/boomboxportable/boomboxportable.weapon.prefab|
+|assets/prefabs/voiceaudio/boomboxportable/boomboxportable.worldmodel.prefab|
+|assets/prefabs/voiceaudio/cassette/cassette.entity.prefab|
+|assets/prefabs/voiceaudio/cassette/cassette.item.prefab|
+|assets/prefabs/voiceaudio/cassette/cassette.medium.entity.prefab|
+|assets/prefabs/voiceaudio/cassette/cassette.medium.item.prefab|
+|assets/prefabs/voiceaudio/cassette/cassette.medium.worldmodel.prefab|
+|assets/prefabs/voiceaudio/cassette/cassette.short.entity.prefab|
+|assets/prefabs/voiceaudio/cassette/cassette.short.item.prefab|
+|assets/prefabs/voiceaudio/cassette/cassette.short.worldmodel.prefab|
+|assets/prefabs/voiceaudio/cassette/cassette.worldmodel.prefab|
+|assets/prefabs/voiceaudio/cassette/soundtester.prefab|
+|assets/prefabs/voiceaudio/cassette/ui/cassettepanel.prefab|
+|assets/prefabs/voiceaudio/cassetterecorder/cassetterecorder.deployed.prefab|
+|assets/prefabs/voiceaudio/cassetterecorder/cassetterecorder.item.prefab|
+|assets/prefabs/voiceaudio/cassetterecorder/cassetterecorder.viewmodel.prefab|
+|assets/prefabs/voiceaudio/cassetterecorder/cassetterecorder.weapon.prefab|
+|assets/prefabs/voiceaudio/cassetterecorder/cassetterecorder.worldmodel.prefab|
+|assets/prefabs/voiceaudio/discoball/discoball.deployed.prefab|
+|assets/prefabs/voiceaudio/discoball/discoball.item.prefab|
+|assets/prefabs/voiceaudio/discoball/effects/disco-ball-deploy.prefab|
+|assets/prefabs/voiceaudio/discofloor/discofloor.deployed.prefab|
+|assets/prefabs/voiceaudio/discofloor/discofloor.item.prefab|
+|assets/prefabs/voiceaudio/discofloor/effects/disco-floor-deploy.prefab|
+|assets/prefabs/voiceaudio/discofloor/skins/discofloor.largetiles.deployed.prefab|
+|assets/prefabs/voiceaudio/discofloor/skins/discofloor.largetiles.item.prefab|
+|assets/prefabs/voiceaudio/hornspeaker/connectedspeaker.deployed.prefab|
+|assets/prefabs/voiceaudio/hornspeaker/connectedspeaker.deployed.static.prefab|
+|assets/prefabs/voiceaudio/hornspeaker/connectedspeaker.item.prefab|
+|assets/prefabs/voiceaudio/intercom mic/intercommic.prefab|
+|assets/prefabs/voiceaudio/laserlight/laserlight.deployed.prefab|
+|assets/prefabs/voiceaudio/laserlight/laserlight.item.prefab|
+|assets/prefabs/voiceaudio/megaphone/megaphone.item.prefab|
+|assets/prefabs/voiceaudio/megaphone/megaphone.viewmodel.prefab|
+|assets/prefabs/voiceaudio/megaphone/megaphone.weapon.prefab|
+|assets/prefabs/voiceaudio/megaphone/megaphone.worldmodel.prefab|
+|assets/prefabs/voiceaudio/microphonestand/effects/microphone-stand-deploy.prefab|
+|assets/prefabs/voiceaudio/microphonestand/microphonestand.deployed.prefab|
+|assets/prefabs/voiceaudio/microphonestand/microphonestand.deployed.static.prefab|
+|assets/prefabs/voiceaudio/microphonestand/microphonestand.item.prefab|
+|assets/prefabs/voiceaudio/microphonestand/microphonestandio.entity.prefab|
+|assets/prefabs/voiceaudio/microphonestand/microphonestandio.entity.static.prefab|
+|assets/prefabs/voiceaudio/mobilephone/mobileinventory.entity.prefab|
+|assets/prefabs/voiceaudio/mobilephone/mobilephone.item.prefab|
+|assets/prefabs/voiceaudio/mobilephone/mobilephone.viewmodel.prefab|
+|assets/prefabs/voiceaudio/mobilephone/mobilephone.weapon.prefab|
+|assets/prefabs/voiceaudio/mobilephone/mobilephone.worldmodel.prefab|
 |assets/prefabs/voiceaudio/phonebooth/phonebooth.prefab|
+|assets/prefabs/voiceaudio/soundlight/soundlight.deployed.prefab|
+|assets/prefabs/voiceaudio/soundlight/soundlight.item.prefab|
+|assets/prefabs/voiceaudio/soundlight/ui.dialog.soundlight.prefab|
 |assets/prefabs/voiceaudio/telephone/effects/telephone-deploy.prefab|
 |assets/prefabs/voiceaudio/telephone/telephone.deployed.prefab|
 |assets/prefabs/voiceaudio/telephone/telephone.item.prefab|
@@ -7315,6 +7958,8 @@
 |assets/prefabs/voiceaudio/telephone/telephone.worldmodel.prefab|
 |assets/prefabs/voiceaudio/telephone/ui/phonedialler.prefab|
 |assets/prefabs/voiceaudio/telephone/ui/phonedirectoryentry.prefab|
+|assets/prefabs/voiceaudio/telephone/ui/voicemaildialog.prefab|
+|assets/prefabs/voiceaudio/telephone/ui/voicemailentry.prefab|
 |assets/prefabs/weapon mods/8x scope/8xscope.entity.prefab|
 |assets/prefabs/weapon mods/8x scope/8xscope.item.prefab|
 |assets/prefabs/weapon mods/8x scope/8xscope.prefab|
@@ -8115,6 +8760,15 @@
 |assets/prefabs/weapons/spas12/spas12.item.prefab|
 |assets/prefabs/weapons/spas12/spas12.viewmodel.prefab|
 |assets/prefabs/weapons/spas12/spas12.worldmodel.prefab|
+|assets/prefabs/weapons/speargun/effects/speargun-attack.prefab|
+|assets/prefabs/weapons/speargun/effects/speargun-dryfire.prefab|
+|assets/prefabs/weapons/speargun/speargun.entity.prefab|
+|assets/prefabs/weapons/speargun/speargun.item.prefab|
+|assets/prefabs/weapons/speargun/speargun.viewmodel.prefab|
+|assets/prefabs/weapons/speargun/v_speargun.prefab|
+|assets/prefabs/weapons/speargun/v_speargunammo.prefab|
+|assets/prefabs/weapons/speargun/w_speargun.prefab|
+|assets/prefabs/weapons/speargun/w_speargunammo.prefab|
 |assets/prefabs/weapons/stone hatchet/effects/attack_shake.prefab|
 |assets/prefabs/weapons/stone hatchet/effects/deploy.prefab|
 |assets/prefabs/weapons/stone hatchet/effects/strike.prefab|
@@ -8308,6 +8962,12 @@
 |assets/rust.ai/agents/chicken/chicken.prefab|
 |assets/rust.ai/agents/chicken/chicken.ragdoll.prefab|
 |assets/rust.ai/agents/chicken/footsteps/decal_footprint_chicken.prefab|
+|assets/rust.ai/agents/fish/shark.corpse.prefab|
+|assets/rust.ai/agents/fish/shark.ragdoll.prefab|
+|assets/rust.ai/agents/fish/shark/effects/bloodcloud.prefab|
+|assets/rust.ai/agents/fish/shark/effects/sharkmovement.prefab|
+|assets/rust.ai/agents/fish/shark_unused.prefab|
+|assets/rust.ai/agents/fish/simpleshark.prefab|
 |assets/rust.ai/agents/horse/footsteps/decal_footprint_horse.prefab|
 |assets/rust.ai/agents/horse/footsteps/decal_footprint_horse_forest.prefab|
 |assets/rust.ai/agents/horse/footsteps/decal_footprint_horse_grawss.prefab|
@@ -8336,7 +8996,10 @@
 |assets/rust.ai/agents/npcplayer/humannpc/scientist/scientistnpc_cargo_turret_lr300.prefab|
 |assets/rust.ai/agents/npcplayer/humannpc/scientist/scientistnpc_excavator.prefab|
 |assets/rust.ai/agents/npcplayer/humannpc/scientist/scientistnpc_oilrig.prefab|
+|assets/rust.ai/agents/npcplayer/humannpc/scientist/scientistnpc_patrol.prefab|
+|assets/rust.ai/agents/npcplayer/humannpc/scientist/scientistnpc_roam.prefab|
 |assets/rust.ai/agents/npcplayer/humannpc/tunneldweller/tunneldweller.prefab|
+|assets/rust.ai/agents/npcplayer/humannpc/underwaterdweller/underwaterdweller.prefab|
 |assets/rust.ai/agents/npcplayer/npcplayertest.prefab|
 |assets/rust.ai/agents/stag/footsteps/decal_footprint_deer.prefab|
 |assets/rust.ai/agents/stag/footsteps/decal_footprint_deer_deer.prefab|
@@ -8506,7 +9169,6 @@
 |assets/third party/kriptofx/explosions/prefabs/pc/explosion8.prefab|
 |assets/third party/kriptofx/explosions/prefabs/pc/explosion9.prefab|
 |assets/third party/volumetriclightbeam/resources/dustparticles.prefab|
-|assets/unimplemented/fishing_rod/fishing_rod.worldmodel.prefab|
 |assets/unimplemented/fishing_rod/vm_fishing_rod/catch_empty.prefab|
 |assets/unimplemented/fishing_rod/vm_fishing_rod/catch_fish.prefab|
 |assets/unimplemented/fishing_rod/vm_fishing_rod/deploy.prefab|
