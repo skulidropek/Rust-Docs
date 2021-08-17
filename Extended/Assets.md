@@ -12,11 +12,14 @@
 |assets/content/image effects/postfx_volumes/main_biome_temperate.asset|
 |assets/content/image effects/postfx_volumes/main_biome_tundra.asset|
 |assets/content/image effects/postfx_volumes/main_underground_neutral.asset|
+|assets/content/image effects/postfx_volumes/main_underwater_lab.asset|
 |assets/content/image effects/postfx_volumes/nvg.asset|
 |assets/content/image effects/postfx_volumes/radiation.asset|
 |assets/content/image effects/postfx_volumes/screen_blur.asset|
 |assets/content/image effects/postfx_volumes/sharpen_vignette.asset|
+|assets/content/image effects/postfx_volumes/submarine_dof.asset|
 |assets/content/image effects/postfx_volumes/water.asset|
+|assets/content/image effects/postfx_volumes/water_goggles.asset|
 |assets/content/nature/ores/sound/ore-break-001.asset|
 |assets/content/nature/reeds/models/billboards/reeds_dead_lod3.asset|
 |assets/content/nature/reeds/models/billboards/reeds_medium_lod3.asset|
@@ -782,6 +785,9 @@
 |assets/content/properties/lootspawn/generated/items/ammunition/arrow.fire.asset|
 |assets/content/properties/lootspawn/generated/items/ammunition/arrow.hv.asset|
 |assets/content/properties/lootspawn/generated/items/ammunition/arrow.wooden.asset|
+|assets/content/properties/lootspawn/generated/items/ammunition/speargun.spear.asset|
+|assets/content/properties/lootspawn/generated/items/ammunition/submarine.torpedo.rising.asset|
+|assets/content/properties/lootspawn/generated/items/ammunition/submarine.torpedo.straight.asset|
 |assets/content/properties/lootspawn/generated/items/attire/attire.bunny.onesie.asset|
 |assets/content/properties/lootspawn/generated/items/attire/attire.hide.boots.asset|
 |assets/content/properties/lootspawn/generated/items/attire/attire.hide.helterneck.asset|
@@ -1229,6 +1235,8 @@
 |assets/content/properties/lootspawn/generated/items/misc/photo.asset|
 |assets/content/properties/lootspawn/generated/items/misc/pumpkinbasket.asset|
 |assets/content/properties/lootspawn/generated/items/misc/rf_pager.asset|
+|assets/content/properties/lootspawn/generated/items/misc/submarineduo.asset|
+|assets/content/properties/lootspawn/generated/items/misc/submarinesolo.asset|
 |assets/content/properties/lootspawn/generated/items/misc/wiretool.asset|
 |assets/content/properties/lootspawn/generated/items/misc/workcart.asset|
 |assets/content/properties/lootspawn/generated/items/res/bone.fragments.asset|
@@ -1320,6 +1328,7 @@
 |assets/content/properties/lootspawn/generated/items/weapon/smg.thompson.asset|
 |assets/content/properties/lootspawn/generated/items/weapon/spear.stone.asset|
 |assets/content/properties/lootspawn/generated/items/weapon/spear.wooden.asset|
+|assets/content/properties/lootspawn/generated/items/weapon/speargun.asset|
 |assets/content/properties/lootspawn/generated/items/weapon/weapon.mod.8x.scope.asset|
 |assets/content/properties/lootspawn/generated/items/weapon/weapon.mod.flashlight.asset|
 |assets/content/properties/lootspawn/generated/items/weapon/weapon.mod.holosight.asset|
@@ -1417,8 +1426,10 @@
 |assets/content/properties/playerinventory/builderinventory.asset|
 |assets/content/properties/playerinventory/combat.asset|
 |assets/content/properties/playerinventory/defaultinventory.asset|
+|assets/content/properties/playerinventory/diving.asset|
 |assets/content/properties/playerinventory/editorinventory.asset|
 |assets/content/properties/playerinventory/electrician.asset|
+|assets/content/properties/playerinventory/fishing.asset|
 |assets/content/properties/playerinventory/garry.asset|
 |assets/content/properties/playerinventory/halloween2020.asset|
 |assets/content/properties/playerinventory/instruments.asset|
@@ -1536,9 +1547,12 @@
 |assets/content/properties/protection/ore_protection.asset|
 |assets/content/properties/protection/paddlingpool.asset|
 |assets/content/properties/protection/player_helicopter_protection.asset|
+|assets/content/properties/protection/rhibprotection.asset|
+|assets/content/properties/protection/rowboatprotection.asset|
 |assets/content/properties/protection/samstatic.asset|
 |assets/content/properties/protection/shelves.asset|
 |assets/content/properties/protection/signprotection.asset|
+|assets/content/properties/protection/submarineprotection.asset|
 |assets/content/properties/protection/tankprotection.asset|
 |assets/content/properties/protection/target_protection.asset|
 |assets/content/properties/protection/trainprotection.asset|
@@ -1735,6 +1749,8 @@
 |assets/content/properties/steamcategories/limited-halloween2020-499.steam.asset|
 |assets/content/properties/steamcategories/limited-halloween2020-599.steam.asset|
 |assets/content/properties/steamcategories/limited-halloween2020-899.steam.asset|
+|assets/content/properties/steamcategories/limited-july4-2021-1000.steam.asset|
+|assets/content/properties/steamcategories/limited-july4-2021-500.steam.asset|
 |assets/content/properties/steamcategories/limited-movember2020.steam.asset|
 |assets/content/properties/steamcategories/limited-newyear-2020-2021-fireworks-cheap.steam.asset|
 |assets/content/properties/steamcategories/limited-newyear-2020-2021-fireworks-expensive.steam.asset|
@@ -1970,6 +1986,23 @@
 |assets/content/sound/ambience/tree/ambience-tree-stings.ambience-list.asset|
 |assets/content/sound/ambience/tree/sting-tree-creak/sting-tree-creak.ambience-def.asset|
 |assets/content/sound/ambience/tree/sting-tree-creak/sting-tree-creak.asset|
+|assets/content/sound/ambience/underwater.ambience-list.asset|
+|assets/content/sound/ambience/underwater/ambience-underwater.ambience-def.asset|
+|assets/content/sound/ambience/underwater/ambience-underwater.asset|
+|assets/content/sound/ambience/underwater-lab/underwater-lab-ambient-stings.ambience-list.asset|
+|assets/content/sound/ambience/underwater-lab/underwater-lab-base-loop.ambience-def.asset|
+|assets/content/sound/ambience/underwater-lab/underwater-lab-base-loop.ambience-list.asset|
+|assets/content/sound/ambience/underwater-lab/underwater-lab-base-loop.asset|
+|assets/content/sound/ambience/underwater-lab/underwater-lab-moonpool-loop.ambience-def.asset|
+|assets/content/sound/ambience/underwater-lab/underwater-lab-moonpool-loop.ambience-list.asset|
+|assets/content/sound/ambience/underwater-lab/underwater-lab-moonpool-loop.asset|
+|assets/content/sound/ambience/underwater-lab/underwater-lab-sting-deep-groan.ambience-def.asset|
+|assets/content/sound/ambience/underwater-lab/underwater-lab-sting-deep-groan.asset|
+|assets/content/sound/ambience/underwater-lab/underwater-lab-sting-large-groan.ambience-def.asset|
+|assets/content/sound/ambience/underwater-lab/underwater-lab-sting-large-groan.asset|
+|assets/content/sound/ambience/underwater-lab/underwater-lab-sting-short-metal.ambience-def.asset|
+|assets/content/sound/ambience/underwater-lab/underwater-lab-sting-short-metal.asset|
+|assets/content/sound/ambience/underwater-stings.ambience-list.asset|
 |assets/content/sound/ambience/waves/ambience-waves-a.ambience-def.asset|
 |assets/content/sound/ambience/waves/ambience-waves-a.asset|
 |assets/content/sound/ambience/waves/ambience-waves-base.ambience-list.asset|
@@ -2955,6 +2988,9 @@
 |assets/content/sound/reverbsettings/tunnel-large.reverb-settings.asset|
 |assets/content/sound/reverbsettings/tunnel-medium.reverb-settings.asset|
 |assets/content/sound/reverbsettings/tunnel-small.reverb-settings.asset|
+|assets/content/sound/reverbsettings/udnerwater-lab-small.reverb-settings.asset|
+|assets/content/sound/reverbsettings/underwater-lab-large.reverb-settings.asset|
+|assets/content/sound/reverbsettings/underwater-lab-medium.reverb-settings.asset|
 |assets/content/sound/soundclasses/ambience-background.sound-class.asset|
 |assets/content/sound/soundclasses/ambience-background-birds.sound-class.asset|
 |assets/content/sound/soundclasses/ambience-crickets.sound-class.asset|
@@ -2993,6 +3029,7 @@
 |assets/content/sound/soundclasses/ui-item-pickup.sound-class.asset|
 |assets/content/sound/soundclasses/ui-subtle.sound-class.asset|
 |assets/content/sound/soundclasses/vehicle-engines.sound-class.asset|
+|assets/content/sound/soundclasses/vehicle-isolated.sound-class.asset|
 |assets/content/sound/soundclasses/vehicle-misc.sound-class.asset|
 |assets/content/sound/soundclasses/vehicle-movement.sound-class.asset|
 |assets/content/sound/soundclasses/water-movement.sound-class.asset|
@@ -3746,6 +3783,35 @@
 |assets/content/vehicles/scrap heli carrier/sound/scrap-transport-heli-rotor-loop.asset|
 |assets/content/vehicles/sedan_a/sound/engine_drive_loop.asset|
 |assets/content/vehicles/sedan_a/sound/idle_loop.asset|
+|assets/content/vehicles/submarine/sound/submarine-active-loop.asset|
+|assets/content/vehicles/submarine/sound/submarine-change-seat.asset|
+|assets/content/vehicles/submarine/sound/submarine-climb-dive-loop.asset|
+|assets/content/vehicles/submarine/sound/submarine-close-fuel-container.asset|
+|assets/content/vehicles/submarine/sound/submarine-damaged-sparks.asset|
+|assets/content/vehicles/submarine/sound/submarine-destroyed.asset|
+|assets/content/vehicles/submarine/sound/submarine-dismount.asset|
+|assets/content/vehicles/submarine/sound/submarine-engine-loop.asset|
+|assets/content/vehicles/submarine/sound/submarine-engine-start.asset|
+|assets/content/vehicles/submarine/sound/submarine-engine-start-fail.asset|
+|assets/content/vehicles/submarine/sound/submarine-engine-stop.asset|
+|assets/content/vehicles/submarine/sound/submarine-foot-pedal.asset|
+|assets/content/vehicles/submarine/sound/submarine-impact.asset|
+|assets/content/vehicles/submarine/sound/submarine-launch-torpedo.asset|
+|assets/content/vehicles/submarine/sound/submarine-mount.asset|
+|assets/content/vehicles/submarine/sound/submarine-open-fuel-container.asset|
+|assets/content/vehicles/submarine/sound/submarine-sonar-ping.asset|
+|assets/content/vehicles/submarine/sound/submarine-torpedo-dryfire.asset|
+|assets/content/vehicles/submarine/sound/submarine-torpedo-flag-down.asset|
+|assets/content/vehicles/submarine/sound/submarine-torpedo-flag-up.asset|
+|assets/content/vehicles/submarine/sound/submarine-torpedo-storage-close.asset|
+|assets/content/vehicles/submarine/sound/submarine-torpedo-storage-open.asset|
+|assets/content/vehicles/submarine/sound/submarine-turn-wheel.asset|
+|assets/content/vehicles/submarine/sound/submarine-underwater-loop.asset|
+|assets/content/vehicles/submarine/sound/submarine-underwater-movement-loop.asset|
+|assets/content/vehicles/submarine/sound/submarine-water-emerge.asset|
+|assets/content/vehicles/submarine/sound/submarine-water-idle-loop.asset|
+|assets/content/vehicles/submarine/sound/submarine-water-movement-loop.asset|
+|assets/content/vehicles/submarine/sound/submarine-water-submerge.asset|
 |assets/content/vehicles/workcart/sound/workcart-active-loop.asset|
 |assets/content/vehicles/workcart/sound/workcart-barricade-break.asset|
 |assets/content/vehicles/workcart/sound/workcart-brake-loop.asset|
@@ -3961,6 +4027,8 @@
 |assets/plugins/rust.ui/controls/rustbutton.toggle.asset|
 |assets/plugins/rust.ui/controls/rustbutton.toggle.demo.asset|
 |assets/plugins/rust.ui/controls/rustbutton.toolbar.normal.asset|
+|assets/plugins/rust.ui/controls/rustimagebutton.toggle.danger.asset|
+|assets/plugins/rust.ui/controls/rustimagebutton.toggle.success.asset|
 |assets/plugins/rust.ui/controls/rustinput.normal.asset|
 |assets/plugins/rust.ui/controls/rustinput.transparent.asset|
 |assets/plugins/rust.ui/controls/rustoption.normal.asset|
@@ -3975,6 +4043,11 @@
 |assets/plugins/rust.ui/controls/tabcontrol.sidebar.asset|
 |assets/plugins/rust.ui/controls/timelinemarker.asset|
 |assets/plugins/rust.ui/icons/rusticon.asset|
+|assets/prefabs/ammo/torpedo/sound/torpedo-explosion.asset|
+|assets/prefabs/ammo/torpedo/sound/torpedo-explosion-splash.asset|
+|assets/prefabs/ammo/torpedo/sound/torpedo-explosion-underwater.asset|
+|assets/prefabs/ammo/torpedo/sound/torpedo-explosion-underwater-splash.asset|
+|assets/prefabs/ammo/torpedo/sound/torpedo-movement-loop.asset|
 |assets/prefabs/building/door.double.hinged/door.double.hinged.metal.skinnable.asset|
 |assets/prefabs/building/door.double.hinged/door.double.hinged.toptier.skinnable.asset|
 |assets/prefabs/building/door.double.hinged/door.double.hinged.wood.skinnable.asset|
@@ -4385,7 +4458,10 @@
 |assets/prefabs/deployable/spinner_wheel/sound/spinner-wheel-spin-loop.asset|
 |assets/prefabs/deployable/spinner_wheel/sound/spinner-wheel-spin-start.asset|
 |assets/prefabs/deployable/spinner_wheel/spinner.wheel.skinnable.asset|
+|assets/prefabs/deployable/survivalfishtrap/anchovy.asset|
+|assets/prefabs/deployable/survivalfishtrap/herring.asset|
 |assets/prefabs/deployable/survivalfishtrap/minnows.asset|
+|assets/prefabs/deployable/survivalfishtrap/sardine.asset|
 |assets/prefabs/deployable/survivalfishtrap/smalltrout.asset|
 |assets/prefabs/deployable/survivalfishtrap/sound/fish-caught.asset|
 |assets/prefabs/deployable/survivalfishtrap/sound/fish-trap-close.asset|
@@ -4424,6 +4500,8 @@
 |assets/prefabs/deployable/vendingmachine/npcsellorders/components.asset|
 |assets/prefabs/deployable/vendingmachine/npcsellorders/compound_extra1.asset|
 |assets/prefabs/deployable/vendingmachine/npcsellorders/compound_extra2.asset|
+|assets/prefabs/deployable/vendingmachine/npcsellorders/fishexchange.asset|
+|assets/prefabs/deployable/vendingmachine/npcsellorders/fishing_village.asset|
 |assets/prefabs/deployable/vendingmachine/npcsellorders/foodvendor.asset|
 |assets/prefabs/deployable/vendingmachine/npcsellorders/hapisvendor.asset|
 |assets/prefabs/deployable/vendingmachine/npcsellorders/resources.asset|
@@ -4991,6 +5069,22 @@
 |assets/prefabs/tools/detonator/sound/detonator-interference-start.asset|
 |assets/prefabs/tools/detonator/sound/detonator-switch.asset|
 |assets/prefabs/tools/detonator/sound/detonator-switch_unpress.asset|
+|assets/prefabs/tools/fishing rod/sound/fishing-rod-cast-aim.asset|
+|assets/prefabs/tools/fishing rod/sound/fishing-rod-cast-aim-cancel.asset|
+|assets/prefabs/tools/fishing rod/sound/fishing-rod-cast-end.asset|
+|assets/prefabs/tools/fishing rod/sound/fishing-rod-cast-splash.asset|
+|assets/prefabs/tools/fishing rod/sound/fishing-rod-cast-start.asset|
+|assets/prefabs/tools/fishing rod/sound/fishing-rod-catch-bite.asset|
+|assets/prefabs/tools/fishing rod/sound/fishing-rod-catch-end.asset|
+|assets/prefabs/tools/fishing rod/sound/fishing-rod-catch-fail.asset|
+|assets/prefabs/tools/fishing rod/sound/fishing-rod-catch-mid.asset|
+|assets/prefabs/tools/fishing rod/sound/fishing-rod-catch-remove.asset|
+|assets/prefabs/tools/fishing rod/sound/fishing-rod-catch-start.asset|
+|assets/prefabs/tools/fishing rod/sound/fishing-rod-caught-loop.asset|
+|assets/prefabs/tools/fishing rod/sound/fishing-rod-deploy-end.asset|
+|assets/prefabs/tools/fishing rod/sound/fishing-rod-deploy-start.asset|
+|assets/prefabs/tools/fishing rod/sound/fishing-rod-line-break.asset|
+|assets/prefabs/tools/fishing rod/sound/fishing-rod-stress-loop.asset|
 |assets/prefabs/tools/flareold/sound/flare-burn-loop.asset|
 |assets/prefabs/tools/flareold/sound/flare-deploy.asset|
 |assets/prefabs/tools/flareold/sound/flare-deploy-3p.asset|
@@ -5435,6 +5529,11 @@
 |assets/prefabs/weapons/spas12/sound/spas12-insert_shell_breach.asset|
 |assets/prefabs/weapons/spas12/sound/spas12-pump_back.asset|
 |assets/prefabs/weapons/spas12/sound/spas12-pump_forward.asset|
+|assets/prefabs/weapons/speargun/sound/speargun-attack.asset|
+|assets/prefabs/weapons/speargun/sound/speargun-deploy.asset|
+|assets/prefabs/weapons/speargun/sound/speargun-reload-end.asset|
+|assets/prefabs/weapons/speargun/sound/speargun-reload-insert-spear.asset|
+|assets/prefabs/weapons/speargun/sound/speargun-reload-start.asset|
 |assets/prefabs/weapons/stone hatchet/sound/hatchet-stone-strike.asset|
 |assets/prefabs/weapons/stone hatchet/sound/hatchet-stone-strike-muted.asset|
 |assets/prefabs/weapons/stone hatchet/sound/hatchet-stone-strike-soft.asset|
@@ -5592,6 +5691,12 @@
 |assets/rust.ai/agents/chicken/sound/flap-wings-idle.asset|
 |assets/rust.ai/agents/chicken/sound/flap-wings-running.asset|
 |assets/rust.ai/agents/chicken/sound/sleeping.asset|
+|assets/rust.ai/agents/fish/fish.aidesign.asset|
+|assets/rust.ai/agents/fish/shark/shark.protection.asset|
+|assets/rust.ai/agents/fish/shark/sharkskeleton.asset|
+|assets/rust.ai/agents/fish/shark/sharkskeletondefinition.asset|
+|assets/rust.ai/agents/fish/shark/sound/shark_bite.asset|
+|assets/rust.ai/agents/fish/shark/sound/shark_movement.asset|
 |assets/rust.ai/agents/horse/footsteps/horse-footstep-concrete.asset|
 |assets/rust.ai/agents/horse/footsteps/horse-footstep-dirt.asset|
 |assets/rust.ai/agents/horse/footsteps/horse-footstep-grass.asset|
@@ -5643,6 +5748,8 @@
 |assets/rust.ai/agents/npcplayer/humannpc/tunneldweller/tunneldweller.aidesign.asset|
 |assets/rust.ai/agents/npcplayer/humannpc/tunneldweller/tunneldwellera.asset|
 |assets/rust.ai/agents/npcplayer/humannpc/tunneldweller/tunneldwellerb.asset|
+|assets/rust.ai/agents/npcplayer/humannpc/underwaterdweller/underwaterdwellera.asset|
+|assets/rust.ai/agents/npcplayer/humannpc/underwaterdweller/underwaterdwellerb.asset|
 |assets/rust.ai/agents/stag/footsteps/stag-footstep-concrete.asset|
 |assets/rust.ai/agents/stag/footsteps/stag-footstep-dirt.asset|
 |assets/rust.ai/agents/stag/footsteps/stag-footstep-grass.asset|
