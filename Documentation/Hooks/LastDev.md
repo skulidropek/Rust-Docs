@@ -1,8 +1,6 @@
 | Текст | Код |
 |-------|-----|
-| OnFireworkStarted<br>вызывается при старте фейверков<br>возвращаемого значения не имеет | `void OnFireworkStarted(BaseFirework baseFirework)`<br>`{`<br>`Puts("OnFireworkStarted works!");`<br>`}` |
-| Called when a server restart is being cancelled | `object OnServerRestartInterrupt() { Puts("OnServerRestartInterrupt works!"); return null; }` |
-| Useful for saving something / etc on server shutdown | `void OnServerShutdown() { Puts("OnServerShutdown works!"); }` |
-| Useful for intercepting commands before they get to their intended target | `object OnServerCommand(ConsoleSystem.Arg arg) { Puts("OnServerCommand works!"); return null; }` |
-| Useful for intercepting server messages before they get to their intended target | `object OnMessagePlayer(string message, BasePlayer player) { Puts("OnMessagePlayer works!"); return null; }` |
-| Called each frame | `void OnFrame() { /* Your code here */ }` |
+| OnFireworkStarted<br>Вызывается при старте фейервеков<br>Возвращаемого значения не имеет | `void OnFireworkStarted(BaseFirework baseFirework)`<br>`{`<br>`Puts("OnFireworkStarted вызвался!");`<br>`}` |
+| OnFireworkExhausted<br>Вызывается при исчервпывании фейервека<br>Возвращаемого значения не имеет | `void OnFireworkExhausted(BaseFirework baseFirework)`<br>`{`<br>`Puts("OnFireworkExhausted вызвался!");`<br>`}` |
+| OnFireworkDamage<br>Вызывается при нанесении урона фейверку<br>Возвращаемое значение переопределяет поведения нанесения урону фейервеку | `object OnFireworkDamage(BaseFirework baseFirework,HitInfo hitInfo)`<br>`{`<br>`Puts("OnFireworkDamage вызвался!");`<br>`}` |
+| OnFireworkDesignChange<br>Вызывается при нанесении урона фейверку<br>Возвращаемое значение переопределяет поведения нанесения урону фейервеку | `OnFireworkDesignChange(PatternFirework patternFirework,ProtoBuf.PatternFirework.Design design,BasePlayer player)`<br>`{`<br>`Puts("OnFireworkDesignChange вызвался!");`<br>`}` |
