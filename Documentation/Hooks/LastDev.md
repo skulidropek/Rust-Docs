@@ -1,6 +1,6 @@
 | Текст | Код |
 |-------|-----|
-| Called when a plugin is being initialized | `void OnFireworkStarted(BaseFirework)() \n{ \nPuts("Init works!"); \n}` |
+| Called when a plugin is being initialized | `void OnFireworkStarted(BaseFirework)() <br>{ <br>Puts("Init works!"); <br>}` |
 | Called when a server restart is being cancelled | `object OnServerRestartInterrupt() { Puts("OnServerRestartInterrupt works!"); return null; }` |
 | Useful for saving something / etc on server shutdown | `void OnServerShutdown() { Puts("OnServerShutdown works!"); }` |
 | Useful for intercepting commands before they get to their intended target | `object OnServerCommand(ConsoleSystem.Arg arg) { Puts("OnServerCommand works!"); return null; }` |
