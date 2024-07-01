@@ -144,6 +144,7 @@ void <CalculateFerryEstimates>g__NextIdx|10_1(<>c__DisplayClass10_0& )
 class: NexusFerry
 inherits from: BaseEntity
 fields:
+Phrase RetiringPhrase
 float TravelVelocity
 float ApproachVelocity
 float StoppingVelocity
@@ -225,7 +226,7 @@ Vector3 GetIslandTransferPosition()
 bool TryFindWaypointsTowards(Vector3 targetPosition, List`1<Vector3> waypoints)
 void .ctor()
 void .cctor()
-Vector3 <MoveTowardsPositionAvoidObstacles>g__ChooseWaypoint|71_0(Vector3 target)
+Vector3 <MoveTowardsPositionAvoidObstacles>g__ChooseWaypoint|72_0(Vector3 target)
 ----------
 class: NexusFerrySounds
 inherits from: MonoBehaviour
@@ -480,6 +481,7 @@ int GetFuelAmount()
 bool HasFuel()
 bool UseFuel(float seconds)
 void UpdateHasPower(int inputAmount, int inputSlot)
+int ConsumptionAmount()
 bool MotionModeEnabled()
 bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 void .ctor()
@@ -508,6 +510,7 @@ void UpdateSpeedFlags()
 void ServerEnableStrobing(bool wantsOn)
 void SelfDamage()
 void UpdateHasPower(int inputAmount, int inputSlot)
+int ConsumptionAmount()
 bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 void .ctor()
 ----------
@@ -660,6 +663,14 @@ int GetClosestNodeToUs()
 void OnDrawGizmosSelected()
 void .ctor()
 ----------
+class: CargoNotifier
+inherits from: MonoBehaviour
+fields:
+BasePath cargoPath
+methods:
+void Start()
+void .ctor()
+----------
 class: CargoShip
 inherits from: BaseEntity
 fields:
@@ -688,12 +699,32 @@ SoundDefinition hornDef
 CargoShipSounds cargoShipSounds
 GameObject[] layouts
 GameObjectRef playerTest
+Transform bowPoint
 UInt32 layoutChoice
+Flags IsDocked
+Flags HasDocked
+Flags DockedHarborIndex0
+Flags DockedHarborIndex1
+Flags Egressing
+bool docking_debug
+bool should_dock
+float dock_time
 bool event_enabled
 float event_duration_minutes
 float egress_duration_minutes
 int loot_rounds
 float loot_round_spacing_minutes
+bool refresh_loot_on_dock
+List`1<HarborInfo> harbors
+int currentHarborApproachNode
+int harborIndex
+bool isDoingHarborApproach
+int dockCount
+bool shouldLookAhead
+float lifetime
+CargoShipContainerDestination[] containerDestinations
+HashSet`1<ulong> boardedPlayerIds
+bool hasCalculatedApproaches
 BaseEntity mapMarkerInstance
 Vector3 currentVelocity
 float currentThrottle
@@ -703,11 +734,29 @@ int lootRoundsPassed
 int hornCount
 float currentRadiation
 bool egressing
+BasePath harborApproachPath
+HarborProximityManager proxManager
+float lastSpeed
+properties:
+bool IsShipDocked
+int TotalAvailableHarborDockingPaths
+bool HasFinishedDocking
+float EventTimeRemaining
 methods:
+bool get_IsShipDocked()
+int get_TotalAvailableHarborDockingPaths()
+List`1<Vector3> GetCargoApproachPath(int index)
 float GetNetworkTime()
+void debug_info(Arg arg)
+void debug_cargo_status(Arg arg)
 void Load(LoadInfo info)
 void RefreshActiveLayout()
+void RegisterHarbor(BasePath path, Transform tf)
 void TriggeredEventSpawn()
+void TriggeredEventSpawnDockingTest(int index)
+void CalculateHarborApproachNodes()
+void OnArrivedAtHarbor()
+void ClearAllHarborEntitiesOnShip()
 void CreateMapMarker()
 void DisableCollisionTest()
 void SpawnCrate(string resourcePath)
@@ -723,9 +772,27 @@ void UpdateRadiation()
 void StartEgress()
 void DelayedDestroy()
 void FindInitialNode()
+int GetHackableCrateCount()
 void BuildingCheck()
 void FixedUpdate()
 void UpdateMovement()
+void Break()
+void UpdateShip(float desiredThrottle, Vector3 desiredWaypoint, Vector3 approachRotationNode)
+void UpdateHarborApproachProgress()
+void InitializeHarborApproach(bool forceInit)
+float CalculateDesiredThrottle(Vector3 desiredMoveNode)
+void CalculateDesiredNodes(Vector3& desiredMoveNode, Vector3& approachRotationNode)
+bool get_HasFinishedDocking()
+void HandleNodeArrival(Vector3 waypointPosition)
+void StartHarborApproach(CargoNotifier cn)
+float GetTimeRemainingFromCrates()
+void EndHarborApproach()
+float get_EventTimeRemaining()
+void AdvanceHarborApproach()
+bool IsOceanPatrolPathAvailable()
+bool IsValidTargetNode()
+void PreHarborLeaveHorn()
+void LeaveHarbor()
 int GetClosestNodeToUs()
 Vector3 GetLocalVelocityServer()
 Quaternion GetAngularVelocityServer()
@@ -738,6 +805,18 @@ bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 void .ctor()
 void .cctor()
 ----------
+class: CargoShipContainerDestination
+inherits from: MonoBehaviour
+methods:
+void .ctor()
+----------
+class: CargoShipDevTrigger
+inherits from: MonoBehaviour
+fields:
+float TimeTrigger
+methods:
+void .ctor()
+----------
 class: CargoShipInteriorSoundTrigger
 inherits from: MonoBehaviour
 fields:
@@ -748,6 +827,7 @@ void .ctor()
 class: CargoShipSounds
 inherits from: MonoBehaviour
 fields:
+CargoShip cargoShip
 SoundDefinition waveSoundDef
 AnimationCurve waveSoundYGainCurve
 AnimationCurve waveSoundEdgeDistanceGainCurve
@@ -758,9 +838,12 @@ Modulator waveSoundRGainMod
 SoundDefinition sternWakeSoundDef
 Sound sternWakeSound
 Modulator sternWakeSoundGainMod
+SoundDefinition idleWaveSoundDef
 SoundDefinition engineHumSoundDef
 Sound engineHumSound
+Modulator enginePitchMod
 GameObject engineHumTarget
+float enginePitchChangeSpeed
 SoundDefinition hugeRumbleSoundDef
 AnimationCurve hugeRumbleYDiffCurve
 AnimationCurve hugeRumbleRelativeSpeedCurve
@@ -773,6 +856,9 @@ Collider soundFollowCollider
 Collider soundFollowColliderL
 Collider soundFollowColliderR
 Collider sternSoundFollowCollider
+SoundDefinition metalGroanSoundDef
+float metalGroanMinInterval
+float metalGroanMaxInterval
 methods:
 void .ctor()
 ----------
@@ -895,14 +981,13 @@ bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 void ClearPoints()
 void FinishEditing()
 bool IsFinalized()
-void AddPoint(Vector3 newPoint, Vector3 newNormal)
+void AddPoint(Vector3 newPoint, Vector3 newNormal, float slackLevel)
 int ConsumptionAmount()
 int GetPickupCount()
 void AddLengthUsed(int addLength)
 void ServerInit()
 void Save(SaveInfo info)
 void Load(LoadInfo info)
-bool IsStyle(AnimationType testType)
 bool CanPlayerManipulate(BasePlayer player)
 void SetAnimationStyle(RPCMessage msg)
 void .ctor()
@@ -1065,7 +1150,7 @@ int GetAmmoBeforeReload()
 bool TryGetAmmoDef(ItemDefinition& ammoDef)
 Vector3 MuzzleMidPoint()
 float GetMinRocketSpeed()
-bool TryGetProjectedHitPos(Vector3& result)
+Vector3 GetProjectedHitPos()
 void ResetFiringTimes()
 void Save(SaveInfo info)
 BasePlayer ToPlayer()
@@ -1198,6 +1283,7 @@ Nullable`1<CameraViewerId> <ControllingViewerId>k__BackingField
 TargetTrigger targetTrigger
 TriggerBase interferenceTrigger
 float maxInterference
+float attachedWeaponZOffsetScale
 Transform socketTransform
 bool authDirty
 bool hasPotentialUnauthedTarget
@@ -1224,7 +1310,6 @@ bool totalAmmoDirty
 float currentAmmoGravity
 float currentAmmoVelocity
 HeldEntity AttachedWeapon
-float attachedWeaponZOffsetScale
 int consumptionAmount
 properties:
 bool CanPing
@@ -1385,6 +1470,7 @@ float MemoryDuration
 bool RefreshKnownLOS
 bool CanBeBlinded
 float BlindDurationMultiplier
+float MovementTickStartDelay
 BasicAIState <CurrentState>k__BackingField
 AIState ClientCurrentState
 Vector3 mainInterestPoint
@@ -1654,6 +1740,7 @@ void ScaleDamage(HitInfo info)
 HitArea SkeletonLookup(UInt32 boneID)
 void Save(SaveInfo info)
 void PostServerLoad()
+void SetJustAttacked()
 void Load(LoadInfo info)
 float get_health()
 void set_health(float value)
@@ -1745,6 +1832,7 @@ List`1<EntityLink> links
 bool linkedToNeighbours
 TimeUntil _transferProtectionRemaining
 Action _disableTransferProtectionAction
+string RpcClientDeprecationNotice
 Spawnable _spawnable
 HashSet`1<BaseEntity> saveList
 BaseEntity creatorEntity
@@ -1923,17 +2011,21 @@ void ClientRPC(Connection sourceConnection, string funcName, T1 arg1, T2 arg2, T
 void ClientRPC(Connection sourceConnection, string funcName, T1 arg1, T2 arg2)
 void ClientRPC(Connection sourceConnection, string funcName, T1 arg1)
 void ClientRPC(Connection sourceConnection, string funcName)
+void ClientRPC(RpcTarget target)
+void ClientRPC(RpcTarget target, T1 arg1)
+void ClientRPC(RpcTarget target, T1 arg1, T2 arg2)
+void ClientRPC(RpcTarget target, T1 arg1, T2 arg2, T3 arg3)
+void ClientRPC(RpcTarget target, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
+void ClientRPC(RpcTarget target, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5)
+void GetRpcTargetNetworkGroup(RpcTarget& target)
+void FreeRPCTarget(RpcTarget target)
 void ClientRPCEx(SendInfo sendInfo, Connection sourceConnection, string funcName, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5)
 void ClientRPCEx(SendInfo sendInfo, Connection sourceConnection, string funcName, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
 void ClientRPCEx(SendInfo sendInfo, Connection sourceConnection, string funcName, T1 arg1, T2 arg2, T3 arg3)
 void ClientRPCEx(SendInfo sendInfo, Connection sourceConnection, string funcName, T1 arg1, T2 arg2)
 void ClientRPCEx(SendInfo sendInfo, Connection sourceConnection, string funcName, T1 arg1)
 void ClientRPCEx(SendInfo sendInfo, Connection sourceConnection, string funcName)
-void ClientRPCPlayerAndSpectators(Connection sourceConnection, BasePlayer player, string funcName)
-void ClientRPCPlayerAndSpectators(Connection sourceConnection, BasePlayer player, string funcName, T1 arg1)
-void ClientRPCPlayerAndSpectators(Connection sourceConnection, BasePlayer player, string funcName, T1 arg1, T2 arg2)
-void ClientRPCPlayerAndSpectators(Connection sourceConnection, BasePlayer player, string funcName, T1 arg1, T2 arg2, T3 arg3)
-NetWrite ClientRPCStart(Connection sourceConnection, string funcName)
+NetWrite ClientRPCStart(string funcName)
 void ClientRPCWrite(NetWrite write, T arg)
 void ClientRPCSend(NetWrite write, SendInfo sendInfo)
 void ClientRPCPlayerList(Connection sourceConnection, BasePlayer player, string funcName, List`1<T1> list)
@@ -1948,7 +2040,6 @@ void EnableGlobalBroadcast(bool wants)
 void EnableSaving(bool wants)
 void ServerInit()
 void OnPlaced(BasePlayer player)
-void OnSensation(Sensation sensation)
 float get_PositionTickRate()
 bool get_PositionTickFixedTime()
 bool ShouldUpdateNetworkGroup()
@@ -2045,7 +2136,6 @@ SoundDefinition strainSoundDef
 AnimationCurve strainGainCurve
 SoundDefinition tensionBreakSoundDef
 UpdateFishingRod updateFishingRodQueue
-FishLookup fishLookup
 TimeUntil nextFishStateChange
 TimeSince fishCatchDuration
 float strainTimer
@@ -2145,6 +2235,7 @@ float respawnDelayOverride
 float startHealthOverride
 float autoHealDelay
 float autoHealDuration
+float corpseRemovalTimeOverride
 bool hasKillFeed
 bool allowPings
 BaseGameMode svActiveGameMode
@@ -2156,7 +2247,6 @@ bool useStaticLoadoutPerPlayer
 bool topUpMagazines
 bool sendKillNotifications
 GameModeTeam[] teams
-float corpseRemovalTimeOverride
 bool isResetting
 methods:
 bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
@@ -2319,6 +2409,7 @@ inherits from: AttackEntity
 fields:
 DamageProperties damageProperties
 List`1<DamageTypeEntry> damageTypes
+List`1<DamageTypeEntry> deployableDamageOverrides
 float maxDistance
 float attackRadius
 bool isAutomatic
@@ -2411,6 +2502,7 @@ bool legacyDismount
 ItemModWearable wearWhileMounted
 bool modifiesPlayerCollider
 CapsuleColliderInfo customPlayerCollider
+float clippingCheckRadius
 bool clippingAndVisChecks
 ClippingCheckLocation clippingChecksLocation
 SoundDefinition mountSoundDef
@@ -2506,6 +2598,7 @@ fields:
 int agentTypeIndex
 bool NewAI
 bool LegacyNavigation
+bool canSwim
 bool <IsStuck>k__BackingField
 Vector3 stepDirection
 bool <AgencyUpdateRequired>k__BackingField
@@ -2523,7 +2616,6 @@ float wakeUpBlockMoveTimeout
 BaseEntity blockTargetingThisEnemy
 float waterDepth
 bool swimming
-bool canSwim
 bool wasSwimming
 AnimationCurve speedFractionResponse
 bool _traversingNavMeshLink
@@ -2576,8 +2668,6 @@ float accumPathPendingDelay
 float TickRate
 Vector3 lastStuckPos
 float nextFlinchTime
-float _lastHeardGunshotTime
-Vector3 <LastHeardGunshotDirection>k__BackingField
 float <TargetSpeed>k__BackingField
 properties:
 int AgentTypeIndex
@@ -2619,8 +2709,6 @@ Behaviour CurrentBehaviour
 bool IsSitting
 bool IsChasing
 bool IsSleeping
-float SecondsSinceLastHeardGunshot
-Vector3 LastHeardGunshotDirection
 float TargetSpeed
 methods:
 bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
@@ -2777,11 +2865,6 @@ void ServerInit()
 void DoServerDestroy()
 void Hurt(HitInfo info)
 void OnKilled(HitInfo hitInfo)
-void OnSensation(Sensation sensation)
-void OnSenseGunshot(Sensation sensation)
-float get_SecondsSinceLastHeardGunshot()
-Vector3 get_LastHeardGunshotDirection()
-void set_LastHeardGunshotDirection(Vector3 value)
 float get_TargetSpeed()
 void set_TargetSpeed(float value)
 void .ctor()
@@ -2804,6 +2887,7 @@ int fuelSlots
 int inputSlots
 int outputSlots
 IndustrialSlotMode IndustrialMode
+Flags Flag_CookingPaused
 int _activeCookingSlot
 int _inputSlotIndex
 int _outputSlotIndex
@@ -2876,11 +2960,18 @@ float speedhackDistance
 float flyhackPauseTime
 float flyhackDistanceVertical
 float flyhackDistanceHorizontal
+Vector3 lastGroundedPosition
+float fallingVelocity
+float fallingDistance
+float timeInAir
+float waterDelay
+Vector3 initialVelocity
 TimeAverageValueLookup`1<UInt32> rpcHistory
 Phrase ClanInviteSuccess
 Phrase ClanInviteFailure
 Phrase ClanInviteFull
 long clanId
+IClan serverClan
 ViewModel GestureViewModel
 float drinkRange
 float drinkMovementSpeed
@@ -2977,6 +3068,7 @@ float cachedCraftLevel
 float nextCheckTime
 Workbench _cachedWorkbench
 PersistantPlayer cachedPersistantPlayer
+OceanPaths cachedOceanPaths
 int WILDERNESS
 int MONUMENT
 int BASE
@@ -3006,15 +3098,10 @@ TimeSince lastSpectateTeamInfoUpdate
 int SpectateOffset
 string spectateFilter
 bool <IsBeingSpectated>k__BackingField
+List`1<NearbyStash> nearbyStashes
 float lastUpdateTime
 float cachedThreatLevel
 float weaponDrawnDuration
-int serverTickRateDefault
-int clientTickRateDefault
-int serverTickRate
-int clientTickRate
-float serverTickInterval
-float clientTickInterval
 InputState <serverInput>k__BackingField
 float lastTickTime
 float lastStallTime
@@ -3066,6 +3153,7 @@ CapsuleColliderInfo playerColliderCrawling
 CapsuleColliderInfo playerColliderLyingDown
 ProtectionProperties cachedProtection
 float nextColliderRefreshTime
+float weaponMoveSpeedScale
 bool clothingBlocksAiming
 float clothingMoveSpeedReduction
 float clothingWaterSpeedBonus
@@ -3147,6 +3235,8 @@ void ResetAntiHack()
 bool CanModifyClan()
 void LoadClanInfo()
 void UpdateClanLastSeen()
+void AddClanScore(ClanScoreEventType type, int multiplier, BasePlayer otherPlayer, IClan otherClan, string arg1, string arg2)
+void HandleClanPlayerKilled(BasePlayer killedByPlayer)
 bool CanBeLooted(BasePlayer player)
 Phrase get_LootPanelTitle()
 void RPC_LootPlayer(RPCMessage msg)
@@ -3212,6 +3302,7 @@ void Server_RequestMarkers(RPCMessage msg)
 void Server_ClearMapMarkers(RPCMessage msg)
 void SendMarkersToClient()
 bool HasAttemptedMission(UInt32 missionID)
+bool CanAcceptMission(BaseMission mission)
 bool CanAcceptMission(UInt32 missionID)
 bool IsMissionActive(UInt32 missionID)
 bool HasCompletedMission(UInt32 missionID)
@@ -3253,6 +3344,7 @@ bool AllowSleeperMounting(BaseMountable mountable)
 PlayerSecondaryData SaveSecondaryData()
 void LoadSecondaryData(PlayerSecondaryData data)
 void DisableTransferProtection()
+void KickAfterServerTransfer()
 void RequestParachuteDeploy(RPCMessage msg)
 void RequestParachuteDeploy()
 bool CheckParachuteClearance()
@@ -3407,6 +3499,7 @@ BasePlayer FindBotClosestMatch(string name)
 BasePlayer FindByID(ulong userID)
 bool TryFindByID(ulong userID, BasePlayer& basePlayer)
 BasePlayer FindSleeping(ulong userID)
+BasePlayer FindAwakeOrSleepingByID(ulong userID)
 void Command(string strCommand, Object[] arguments)
 void OnInvalidPosition()
 BasePlayer Find(string strNameOrIDOrIP, IEnumerable`1<BasePlayer> list)
@@ -3449,13 +3542,14 @@ void MonitorDemoRecording()
 void InvalidateCachedPeristantPlayer()
 PersistantPlayer get_PersistantPlayerInfo()
 void set_PersistantPlayerInfo(PersistantPlayer value)
-bool IsPlayerVisibleToUs(BasePlayer otherPlayer, int layerMask)
+bool IsPlayerVisibleToUs(BasePlayer otherPlayer, Vector3 fromOffset, int layerMask)
 void OnKilledByPlayer(BasePlayer p)
 int GetIdealSlot(BasePlayer player, ItemContainer container, Item item)
 ItemContainerId GetIdealContainer(BasePlayer looter, Item item, ItemMoveModifier modifier)
 BaseVehicle GetVehicleParent()
 void RemoveLoadingPlayerFlag()
 bool InNoRespawnZone()
+void SendCargoPatrolPath()
 bool get_hasPreviousLife()
 int get_currentTimeCategory()
 void set_currentTimeCategory(int value)
@@ -3488,6 +3582,9 @@ void OnChildAdded(BaseEntity child)
 void OnChildRemoved(BaseEntity child)
 void UpdateSpectatePositionFromDebugCamera(RPCMessage msg)
 void NotifyDebugCameraEnded(RPCMessage msg)
+void AddNeabyStash(StashContainer newStash)
+void RemoveNearbyStash(StashContainer stash)
+void CheckStashRevealInvoke()
 float GetThreatLevel()
 void EnsureUpdated()
 bool IsHostile()
@@ -3528,6 +3625,7 @@ void OnStartedTutorial()
 void SetTutorialAllowance(TutorialItemAllowance newAllowance)
 void StartTutorial(RPCMessage msg)
 void StartTutorial(bool triggerAnalytics)
+void PlayerRequestedTutorialStart(RPCMessage msg)
 UInt32 GetUnderwearSkin()
 void ServerRPC_UnderwearChange(RPCMessage msg)
 bool IsWounded()
@@ -3616,6 +3714,7 @@ void ChatMessage(string msg)
 void ConsoleMessage(string msg)
 float PenetrationResistance(HitInfo info)
 void ScaleDamage(HitInfo info)
+void ResetWeaponMoveSpeedScale()
 void UpdateMoveSpeedFromClothing()
 void UpdateProtectionFromClothing()
 string Categorize()
@@ -3635,15 +3734,15 @@ bool get_IsDesigningAI()
 void ClearDesigningAIEntity()
 void .ctor()
 void .cctor()
-bool <CountWaveTargets>g__CheckPlayer|99_0(BasePlayer player, <>c__DisplayClass99_0& )
-bool <FindUnusedPointOfInterestColour>g__HasColour|130_0(int index)
-ArraySegment`1<byte> <SaveSecondaryData>g__GetPoolableMugshotData|192_0(PlayerRelationshipInfo relationshipInfo)
-void <SendRespawnOptions>g__CollectExternalAndSend|379_0()
-void <SendRespawnOptions>g__SendToPlayer|379_1(List`1<SpawnOptions> spawnOptions, bool loading)
-float <CreateCorpse>g__GetFloatBasedOnUserID|409_0(ulong steamid, ulong seed)
-bool <UpdateSpectateTarget>b__537_1(BaseNetworkable x)
-bool <UpdateSpectateTarget>b__537_3(BasePlayer x)
-bool <UpdateSpectateTarget>b__537_4(BasePlayer x)
+bool <CountWaveTargets>g__CheckPlayer|108_0(BasePlayer player, <>c__DisplayClass108_0& )
+bool <FindUnusedPointOfInterestColour>g__HasColour|139_0(int index)
+ArraySegment`1<byte> <SaveSecondaryData>g__GetPoolableMugshotData|202_0(PlayerRelationshipInfo relationshipInfo)
+void <SendRespawnOptions>g__CollectExternalAndSend|390_0()
+void <SendRespawnOptions>g__SendToPlayer|390_1(List`1<SpawnOptions> spawnOptions, bool loading)
+float <CreateCorpse>g__GetFloatBasedOnUserID|420_0(ulong steamid, ulong seed)
+bool <UpdateSpectateTarget>b__551_1(BaseNetworkable x)
+bool <UpdateSpectateTarget>b__551_3(BasePlayer x)
+bool <UpdateSpectateTarget>b__551_4(BasePlayer x)
 ----------
 class: BasePortal
 inherits from: BaseCombatEntity
@@ -3750,6 +3849,7 @@ methods:
 bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 bool TryReload(IAmmoContainer ammoSource, int desiredAmount, bool canRefundAmmo)
 void SwitchAmmoTypesIfNeeded(IAmmoContainer ammoSource)
+void StripAmmoToType(List`1& ammos, ItemDefinition onlyAllowed)
 void SetAmmoCount(int newCount)
 void ModifyAmmoCount(int amount)
 RecoilProperties get_recoilProperties()
@@ -3757,6 +3857,7 @@ Vector3 GetInheritedVelocity(BasePlayer player, Vector3 direction)
 float GetDamageScale(bool getMax)
 float GetDistanceScale(bool getMax)
 float GetProjectileVelocityScale(bool getMax)
+float GetOverrideProjectileThickness(Projectile projectile)
 void StartReloadCooldown(float cooldown)
 void ResetReloadCooldown()
 bool HasReloadCooldown()
@@ -3858,7 +3959,11 @@ ItemDefinition purchaseToken
 GameObjectRef eatEffect
 GameObjectRef CorpsePrefab
 Transform animalFront
+Transform animalNeck
+Transform animalRear
+Transform animalHead
 float obstacleDetectionRadius
+float obstacleHeadDetectionRadius
 float maxWaterDepth
 float roadSpeedBonus
 float maxWallClimbSlope
@@ -3911,6 +4016,7 @@ float lastInputTime
 float forwardHeldSeconds
 float backwardHeldSeconds
 float sprintHeldSeconds
+float noHeldSeconds
 float lastSprintPressedTime
 float lastForwardPressedTime
 float lastBackwardPressedTime
@@ -4193,6 +4299,7 @@ inherits from: BaseMountable
 fields:
 bool mountChaining
 bool checkVehicleClipping
+LayerMask excludeCollisionLayers
 DismountStyle dismountStyle
 bool shouldShowHudHealth
 bool ignoreDamageFromOutside
@@ -4216,9 +4323,6 @@ CollisionDetectionMode savedCollisionDetectionMode
 BaseVehicle pendingLoad
 Queue`1<BasePlayer> recentDrivers
 Action clearRecentDriverAction
-bool latestSeatClipSeemsFarAway
-string latestSeatClipInfo
-string latestSeatClipInfoLong
 float safeAreaRadius
 Vector3 safeAreaOrigin
 float spawnTime
@@ -4405,7 +4509,6 @@ void Load(LoadInfo info)
 bool IsVehicleRoot()
 bool get_PropagateDamage()
 void set_PropagateDamage(bool value)
-void NonUserSpawn()
 void VehicleFixedUpdate()
 void Hurt(HitInfo info)
 void OnHealthChanged(float oldValue, float newValue)
@@ -4526,6 +4629,7 @@ Transform topTurretEyePos
 Transform topTurretYaw
 Transform topTurretPitch
 Transform topTurretMuzzle
+GameObjectRef SmokeGrenadePrefab
 Vector3 turretAimVector
 Vector3 desiredAimVector
 Vector3 topTurretAimVector
@@ -4556,6 +4660,39 @@ float currentSpeedZoneLimit
 List`1<Vector3> currentPath
 int currentPathIndex
 bool pathLooping
+GameObject AIRoot
+GameObjectRef MonumentScientistPrefab
+GameObjectRef RoadScientistPrefab
+int ScientistSpawnCount
+float ScientistSpawnRadius
+List`1<GameObject> ScientistSpawnPoints
+List`1<ScientistSpawnGroup> ScientistSpawns
+bool SetScientistChaseBasedOnWeapon
+float DeployHealthRangeMin
+float DeployHealthRangeMax
+float DeployAttackDistanceMax
+float DeployInterval
+float DeployOnDamageCheckInterval
+float ScientistRedeploymentMinInterval
+float MountAfterNotAttackedDuration
+float MountAfterNotTargetsDuration
+float MountAfterNotFiredDuration
+bool UseSmokeGrenades
+bool KillScientistsOnBradleyDeath
+bool RoadSpawned
+List`1<ScientistNPC> activeScientists
+List`1<GameObjectRef> mountedScientistPrefabs
+List`1<Vector3> scientistSpawnPositions
+int numberOfScientistsToSpawn
+TimeSince timeSinceScientistDeploy
+TimeSince timeSinceDeployCheck
+TimeSince timeSinceValidTarget
+TimeSince deployedTimeSinceBradleyAttackedTarget
+int walkableAreaMask
+bool mountingScientists
+bool inDeployedState
+bool deployingScientists
+Dictionary`2<UInt32, GameObjectRef> scientistPrefabLookUp
 float viewDistance
 float searchRange
 float searchFrequency
@@ -4579,6 +4716,7 @@ float PositionTickRate
 methods:
 bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 void Load(LoadInfo info)
+void BuildingCheck()
 void Save(SaveInfo info)
 BradleyAPC SpawnRoadDrivingBradley(Vector3 spawnPos, Quaternion spawnRot)
 string svspawnroadbradley(Vector3 pos, Vector3 dir)
@@ -4597,6 +4735,7 @@ void InstallPatrolPath(IAIPath path)
 void UpdateMovement_Patrol()
 void UpdateMovement_Hunt()
 void DoSimpleAI()
+void SetTarget()
 void FixedUpdate()
 void AvoidObstacles(Single& throttleScaleFromTurn)
 void DoPhysicsMove()
@@ -4608,6 +4747,7 @@ void ApplyBrakeTorque(float amount, bool rightSide)
 void CreateExplosionMarker(float durationMinutes)
 void OnKilled(HitInfo info)
 void OnAttacked(HitInfo info)
+void Hurt(HitInfo info)
 void OnHealthChanged(float oldvalue, float newvalue)
 void DoHealing()
 BasePlayer GetPlayerDamageInitiator()
@@ -4626,6 +4766,28 @@ Vector3 IdealPathPosition()
 void AdvancePathMovement(bool force)
 bool GetPathToClosestTurnableNode(IAIPathNode start, Vector3 forward, List`1& nodes)
 bool GetEngagementPath(List`1& nodes)
+void CacheSpawnPrefabIDS()
+void TrySpawnScientists(BasePlayer triggeringPlayer)
+List`1<ScientistSpawnGroup> GetTriggereringSpawnGroups()
+void AddMountedScientistsToSpawn(List`1<GameObjectRef> scientists)
+void ClearMountedScientists()
+void AddSpawnGroupSpawns(List`1<ScientistSpawnGroup> spawnGroups, List`1<GameObjectRef> scientists)
+void SetSpawnGroupsAsSpawned(List`1<ScientistSpawnGroup> spawnGroups)
+void UpdateDeployed()
+bool UnableToFireAtPlayers()
+void UpdateMountScientists()
+int ActiveScientistCount()
+int AliveScientistCount()
+bool CanDeployScientists(BaseEntity attacker, List`1<GameObjectRef> scientistPrefabs, List`1<Vector3> spawnPositions)
+IEnumerator DeployScientists(BasePlayer triggerPlayer, List`1<GameObjectRef> scientistPrefabs, List`1<Vector3> spawnPositions)
+void SetDeployingScientists(bool flag)
+void SetMountingScientists(bool flag)
+ScientistNPC SpawnScientist(GameObjectRef scientistPrefab, Vector3 spawnPos, bool roadSpawned)
+void InitScientist(ScientistNPC scientist, Vector3 spawnPos, BasePlayer triggerPlayer, bool roadSpawned, bool startChasing)
+void DropSmokeGrenade(Vector3 position, float duration)
+void KillSpawnedScientists()
+IEnumerator RecallSpawnedScientists()
+void OnScientistMounted(ScientistNPC scientist)
 void AddOrUpdateTarget(BaseEntity ent, Vector3 pos, float damageFrom)
 void UpdateTargetList()
 int SortTargets(TargetInfo t1, TargetInfo t2)
@@ -4660,16 +4822,20 @@ DeferredAction skinChange
 MeshRenderer placeholderRenderer
 MeshCollider placeholderCollider
 UpdateSkinWorkQueue updateSkinQueueServer
+Phrase RotateTitle
+Phrase RotateDesc
 bool globalNetworkCooldown
 bool CullBushes
 bool CheckForPipesOnModelChange
 OBBComponent AlternativePipeBounds
 properties:
+bool CanBeDemolished
 int modelState
 UInt32 customColour
 ConstructionGrade currentGrade
 methods:
 bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+bool get_CanBeDemolished()
 void ResetState()
 void InitShared()
 void PostInitShared()
@@ -4678,13 +4844,6 @@ string Categorize()
 float BoundsPadding()
 bool IsOutside()
 bool SupportsChildDeployables()
-bool CanDemolish(BasePlayer player)
-bool IsDemolishable()
-bool HasDemolishPrivilege(BasePlayer player)
-void DoDemolish(RPCMessage msg)
-void DoImmediateDemolish(RPCMessage msg)
-void StopBeingDemolishable()
-void StartBeingDemolishable()
 int get_modelState()
 void set_modelState(int value)
 UInt32 get_customColour()
@@ -4740,6 +4899,7 @@ void .cctor()
 class: BuildingPrivlidge
 inherits from: StorageContainer
 fields:
+GameObject assignDialog
 HashSet`1<PlayerNameID> authorizedPlayers
 Flags Flag_MaxAuths
 List`1<ItemDefinition> allowedConstructionItems
@@ -4751,12 +4911,11 @@ methods:
 bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 void ResetState()
 bool IsAuthed(BasePlayer player)
+bool IsAuthed(ulong userId)
 bool AnyAuthed()
-bool IsAuthed(ulong userID)
 bool ItemFilter(Item item, int targetSlot)
 void Save(SaveInfo info)
 bool CanUseNetworkCache(Connection connection)
-void PostSave(SaveInfo info)
 void Load(LoadInfo info)
 void BuildingDirty()
 bool AtMaxAuthCapacity()
@@ -4766,12 +4925,13 @@ void OnItemAddedOrRemoved(Item item, bool bAdded)
 void AddDelayedUpdate()
 void DelayedUpdate()
 bool CanAdministrate(BasePlayer player)
-void AddSelfAuthorize(RPCMessage rpc)
-void AddPlayer(BasePlayer player)
+void AddAuthorize(RPCMessage rpc)
+void AddPlayer(BasePlayer granter, ulong targetPlayerId)
 void RemoveSelfAuthorize(RPCMessage rpc)
 void ClearList(RPCMessage rpc)
 void RPC_Rotate(RPCMessage msg)
 int GetIdealSlot(BasePlayer player, ItemContainer container, Item item)
+void UnlinkDoorControllers()
 bool HasSlot(Slot slot)
 bool SupportsChildDeployables()
 float CalculateUpkeepPeriodMinutes()
@@ -4779,6 +4939,7 @@ float CalculateUpkeepCostFraction()
 void CalculateUpkeepCostAmounts(List`1<ItemAmount> itemAmounts)
 float GetProtectedMinutes(bool force)
 void OnKilled(HitInfo info)
+void HandleKilledByClanMember(BasePlayer player)
 void DecayTick()
 bool EnsurePrimary()
 void MarkProtectedMinutesDirty(float delay)
@@ -4788,6 +4949,7 @@ void QueueUpkeepPayment(List`1<ItemAmount> itemAmounts)
 bool CanAffordUpkeepPayment(List`1<ItemAmount> itemAmounts)
 float PurchaseUpkeepTime(DecayEntity entity, float deltaTime)
 void PurchaseUpkeepTime(float deltaTime)
+string FormatUpkeepMinutes(float minutes)
 void .ctor()
 void .cctor()
 ----------
@@ -4858,6 +5020,7 @@ NetworkableId NetworkID
 UGCType ContentType
 List`1<ulong> EditingHistory
 UInt32[] GetContentCRCs
+bool ShouldTransferAssociatedFiles
 BaseNetworkable UgcEntity
 Vector2i TextureSize
 int TextureCount
@@ -4883,6 +5046,7 @@ List`1<ulong> get_EditingHistory()
 void LogEdit(BasePlayer byPlayer)
 UInt32[] get_GetContentCRCs()
 void ClearContent()
+bool get_ShouldTransferAssociatedFiles()
 BaseNetworkable get_UgcEntity()
 string Categorize()
 Vector2i get_TextureSize()
@@ -5029,6 +5193,8 @@ float idleFadeOutTime
 Renderer chainRenderer
 MaterialPropertyBlock block
 Vector2 saveST
+Phrase UnloadAmmoTitle
+Phrase UnloadAmmoDesc
 float fuelPerSec
 int maxAmmo
 int ammo
@@ -5073,10 +5239,13 @@ void Load(LoadInfo info)
 bool HasAmmo()
 Item GetAmmo()
 void .ctor()
+void .cctor()
 ----------
 class: ClanManager
 inherits from: BaseEntity
 fields:
+RealTimeSince _sinceLastLeaderboardUpdate
+List`1<ClanLeaderboardEntry> _leaderboardCache
 TokenisedPhrase InvitationToast
 int LogoSize
 ClanManager <ServerInstance>k__BackingField
@@ -5095,7 +5264,9 @@ bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 void Server_CreateClan(RPCMessage msg)
 void Server_GetClan(RPCMessage msg)
 void Server_GetLogs(RPCMessage msg)
+void Server_GetScoreEvents(RPCMessage msg)
 void Server_GetInvitations(RPCMessage msg)
+void Server_GetLeaderboard(RPCMessage msg)
 void Server_SetLogo(RPCMessage msg)
 void Server_SetColor(RPCMessage msg)
 void Server_SetMotd(RPCMessage msg)
@@ -5126,6 +5297,7 @@ IClanBackend CreateBackendInstance(string type)
 void InitShared()
 void OnDestroy()
 void Server_GetClanMetadata(RPCMessage msg)
+void AddScore(IClan clan, ClanScoreEvent entry)
 void SendClanChanged(IClan clan)
 void SendClanInvitation(ulong steamId, long clanId)
 bool TryGetClanMemberConnections(long clanId, List`1& connections)
@@ -5133,8 +5305,8 @@ void ClanMemberConnectionsChanged(long clanId)
 void LoadClanInfoForSleepers()
 void .ctor()
 void .cctor()
-void <Initialize>b__33_0()
-void <Spawn>b__35_0()
+void <Initialize>b__37_0()
+void <Spawn>b__39_0()
 ----------
 class: CodeLock
 inherits from: BaseLock
@@ -5195,6 +5367,7 @@ void .ctor()
 class: CollectibleEntity
 inherits from: BaseEntity
 fields:
+Phrase EatTitle
 Phrase itemName
 ItemAmount[] itemList
 GameObjectRef pickupEffect
@@ -5208,6 +5381,7 @@ void PickupEat(RPCMessage msg)
 bool HasItem(ItemDefinition def)
 void PreProcess(IPrefabProcessor preProcess, GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
 void .ctor()
+void .cctor()
 ----------
 class: CommunityEntity
 inherits from: PointEntity
@@ -5397,18 +5571,29 @@ void .ctor()
 ----------
 class: CustomDoorManipulator
 inherits from: DoorManipulator
+fields:
+Phrase pairAttemptPhrase
+int queuedActionCount
+int inputOpenAmount
+int inputCloseAmount
 methods:
 bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
-bool PairWithLockedDoors()
-bool CanPlayerAdmin(BasePlayer player)
 bool IsPaired()
-void RefreshDoor()
-void OnPhysicsNeighbourChanged()
 void SetupInitialDoorConnection()
+void SetTargetDoor(Door newTargetDoor)
+void DoAction(DoorEffect action)
 void DoActionDoorMissing()
-void DoPair(RPCMessage msg)
-void ServerActionChange(RPCMessage msg)
+Door FindDoor(bool allowLocked)
+void RPC_DoPair(RPCMessage msg)
+void PairDoorAttempt(Door door, BasePlayer byPlayer)
+void OnDeployed(BaseEntity parent, BasePlayer deployedBy, Item fromItem)
+void UpdateHasPower(int inputAmount, int inputSlot)
+void IOStateChanged(int inputAmount, int inputSlot)
+void UpdateFromInput(int inputAmount, int inputSlot)
+int GetPowerAtInput(int slotIndex)
+void Load(LoadInfo info)
 void .ctor()
+void .cctor()
 ----------
 class: CustomTimerSwitch
 inherits from: TimerSwitch
@@ -5416,7 +5601,6 @@ fields:
 GameObjectRef timerPanelPrefab
 methods:
 bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
-void UpdateFromInput(int inputAmount, int inputSlot)
 void SERVER_SetTime(RPCMessage msg)
 bool CanPlayerAdmin(BasePlayer player)
 void .ctor()
@@ -5542,9 +5726,9 @@ float runningTimePerFuelUnit
 float cachedFuelTime
 float rumbleMaxDistSq
 string EXCAVATOR_ACTIVATED_STAT
+BasePlayer startedByPlayer
 methods:
 bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
-bool CanOpenLootPanel(BasePlayer player, string panelName)
 void FixedUpdate()
 void EngineSwitch(RPCMessage msg)
 void TimedShutdown()
@@ -5577,17 +5761,18 @@ TriggerNotify[] vehiclePhysBoxes
 bool checkPhysBoxesOnOpen
 SoundDefinition vehicleCollisionSfx
 GameObject[] ClosedColliderRoots
+bool allowOnCargoShip
 float openAnimLength
 float closeAnimLength
 Flags ReverseOpen
-float decayResetTimeLast
 NavMeshModifierVolume NavMeshVolumeAnimals
 NavMeshModifierVolume NavMeshVolumeHumanoids
-NavMeshLink NavMeshLink
 NPCDoorTriggerBox NpcTriggerBox
+NavMeshLink NavMeshLink
 int nonWalkableArea
 int animalAgentTypeId
 int humanoidAgentTypeId
+float decayResetTimeLast
 Dictionary`2<BasePlayer, TimeSince> woundedOpens
 Dictionary`2<BasePlayer, TimeSince> woundedCloses
 float nextKnockTime
@@ -5595,10 +5780,12 @@ int openHash
 int closeHash
 int reverseOpenHash
 properties:
+bool AllowOnCargoShip
 bool HasVehiclePushBoxes
 methods:
 bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 void ResetState()
+bool get_AllowOnCargoShip()
 void ServerInit()
 bool HasSlot(Slot slot)
 bool CanPickup(BasePlayer player)
@@ -5623,6 +5810,7 @@ void ToggleVehiclePushBoxes(bool state)
 void Server_NotifyWoundedOpen(RPCMessage msg)
 void CheckTimedOutPlayers(Dictionary`2<BasePlayer, TimeSince> dictionary)
 void Server_NotifyWoundedClose(RPCMessage msg)
+bool SupportsChildDeployables()
 void ReverseDoorAnimation(bool wasOpening)
 float BoundsPadding()
 void OnObjects(TriggerNotify trigger)
@@ -5631,8 +5819,8 @@ void ApplySubAnimationParameters(bool init, Animator toAnimator)
 void OnFlagsChanged(Flags old, Flags next)
 void .ctor()
 void .cctor()
-void <Server_NotifyWoundedOpen>b__51_0()
-void <Server_NotifyWoundedClose>b__53_0()
+void <Server_NotifyWoundedOpen>b__54_0()
+void <Server_NotifyWoundedClose>b__56_0()
 ----------
 class: DoorCloser
 inherits from: BaseEntity
@@ -5753,10 +5941,10 @@ GameObjectRef branchPanelPrefab
 float nextChangeTime
 methods:
 bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
-void SetBranchOffPower(RPCMessage msg)
+int ConsumptionAmount()
+void RPC_SetBranchOffPower(RPCMessage msg)
+void SetBranchOffPower(int power)
 bool AllowDrainFrom(int outputSlot)
-int DesiredPower()
-void SetBranchAmount(int newAmount)
 int GetPassthroughAmount(int outputSlot)
 void Save(SaveInfo info)
 void Load(LoadInfo info)
@@ -5768,16 +5956,17 @@ fields:
 bool isToggleSwitch
 methods:
 bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
-bool WantsPower()
+bool WantsPower(int inputIndex)
 int ConsumptionAmount()
 void ResetIOState()
 int GetPassthroughAmount(int outputSlot)
 int CalculateCurrentEnergy(int inputAmount, int inputSlot)
 void UpdateHasPower(int inputAmount, int inputSlot)
 void ServerInit()
-void SetSwitch(bool wantsOn)
-void SVSwitch(RPCMessage msg)
-void Unbusy()
+void SetSwitch(bool state)
+void Flip()
+void RPC_Switch(RPCMessage msg)
+void UnBusy()
 void .ctor()
 ----------
 class: ElevatorLift
@@ -5947,6 +6136,7 @@ ParticleSystem[] flameEffects
 FlameJet jet
 GameObjectRef fireballPrefab
 List`1<DamageTypeEntry> damagePerSec
+float playerDamageMultiplier
 SoundDefinition flameStart3P
 SoundDefinition flameLoop3P
 SoundDefinition flameStop3P
@@ -6158,6 +6348,7 @@ void UpdateFromInput(int inputAmount, int inputSlot)
 int CalculateCurrentEnergy(int inputAmount, int inputSlot)
 void UpdateCurrentEnergy()
 int GetPassthroughAmount(int outputSlot)
+bool AllowDrainFrom(int outputSlot)
 void RPC_EngineSwitch(RPCMessage msg)
 void SetGeneratorState(bool wantsOn)
 int GetFuelAmount()
@@ -6403,7 +6594,9 @@ GameObjectRef shockEffect
 GameObjectRef mapMarkerEntityPrefab
 GameObjectRef landEffect
 bool shouldDecay
-ulong OriginalHackerPlayer
+BasePlayer originalHackerPlayer
+ulong originalHackerPlayerId
+bool hasBeenOpened
 BaseEntity mapMarkerInstance
 bool hasLanded
 bool wasDropped
@@ -6424,6 +6617,7 @@ void PostServerLoad()
 void RPC_Hack(RPCMessage msg)
 void StartHacking()
 void HackProgress()
+bool OnStartBeingLooted(BasePlayer player)
 void .ctor()
 void .cctor()
 ----------
@@ -6496,6 +6690,7 @@ Item cachedItem
 properties:
 bool hostile
 Transform MuzzleTransform
+ItemModWearable WearableWhileEquipped
 bool IsUsableByTurret
 methods:
 bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
@@ -6505,6 +6700,7 @@ bool LightsOn()
 bool IsDeployed()
 BasePlayer GetOwnerPlayer()
 Connection GetOwnerConnection()
+ItemModWearable get_WearableWhileEquipped()
 void SetOwnerPlayer(BasePlayer player)
 void ClearOwnerPlayer()
 void SetVisibleWhileHolstered(bool visible)
@@ -6661,15 +6857,16 @@ HeadData TrophyData
 methods:
 bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 HeadData get_TrophyData()
+int GetIdealSlot(BasePlayer player, ItemContainer container, Item item)
 bool ItemFilter(Item item, int targetSlot)
 void ServerRequestSubmit()
-void ServerRequestClear()
+void ServerRequestClear(RPCMessage msg)
 void Save(SaveInfo info)
 bool CanSubmitHead(HeadEntity headEnt)
 void Load(LoadInfo info)
 void ResetState()
 void .ctor()
-GameObject <CanSubmitHead>g__GetCurrentTrophyDataSource|18_0()
+GameObject <CanSubmitHead>g__GetCurrentTrophyDataSource|19_0()
 ----------
 class: ImageStorageEntity
 inherits from: BaseEntity
@@ -6819,6 +7016,9 @@ void OnStorageItemTransferEnd()
 BaseEntity get_IndustrialEntity()
 void UpdateHasPower(int inputAmount, int inputSlot)
 void IOStateChanged(int inputAmount, int inputSlot)
+bool ShouldDrainBattery(IOEntity battery)
+bool WantsPassthroughPower()
+bool WantsPower(int inputIndex)
 void SetSwitch(bool wantsOn)
 void Unbusy()
 void SvSwitch(RPCMessage msg)
@@ -6903,6 +7103,8 @@ int cachedOutputsUsed
 int lastPassthroughEnergy
 int lastEnergy
 int currentEnergy
+int changedCount
+float lastChangeTime
 float lastUpdateTime
 int lastUpdateBlockedFrame
 bool ensureOutputsUpdated
@@ -6923,11 +7125,12 @@ bool IsRootEntity()
 bool get_IsGravitySource()
 IOEntity FindGravitySource(Vector3& worldHandlePosition, int depth, bool ignoreSelf)
 void SetFuelType(ItemDefinition def, IOEntity source)
-bool WantsPower()
+bool WantsPower(int inputIndex)
 bool AllowWireConnections()
 bool WantsPassthroughPower()
 int ConsumptionAmount()
 bool ShouldDrainBattery(IOEntity battery)
+bool ShouldBlockCircuit(IOEntity battery)
 int MaximalPowerOutput()
 bool AllowDrainFrom(int outputSlot)
 QueueType GetQueueType()
@@ -6941,6 +7144,7 @@ void Server_RequestData(RPCMessage msg)
 void SendAdditionalData(BasePlayer player, int slot, bool input)
 int GetPassthroughAmountForAnySlot(int slot, bool isInputSlot)
 void ProcessQueue()
+void DebugQueue()
 void ResetIOState()
 void Init()
 void DoServerDestroy()
@@ -6959,6 +7163,7 @@ bool get_PreventDuplicatesInQueue()
 void UpdateFromInput(int inputAmount, int inputSlot)
 void TouchIOState()
 void SendIONetworkUpdate()
+bool IsFlickering()
 void IOStateChanged(int inputAmount, int inputSlot)
 void OnCircuitChanged(bool forceUpdate)
 void SendChangedToRoot(bool forceUpdate)
@@ -6975,6 +7180,9 @@ void PostMapEntitySpawn()
 void Save(SaveInfo info)
 float IOInput(IOEntity from, IOType inputType, float inputAmount, int slot)
 bool get_BlockFluidDraining()
+bool Disconnect(int index, bool isInput)
+void ConnectTo(IOEntity entity, int outputIndex, int inputIndex)
+void ConnectTo(IOEntity entity, int outputIndex, int inputIndex, List`1<Vector3> points, List`1<float> slackLevels, LineAnchor[] lineAnchors, WireColour colour)
 void FindContainerSource(List`1<ContainerInputOutput> found, int depth, bool input, List`1<IOEntity> ignoreList, int parentId, int stackSize)
 float get_LiquidPassthroughGravityThreshold()
 bool get_DisregardGravityRestrictionsOnLiquid()
@@ -6988,7 +7196,7 @@ void RefreshIndustrialPreventBuilding()
 void ClearIndustrialPreventBuilding()
 void .ctor()
 void .cctor()
-int <FindContainerSource>g__GetExistingCount|98_0(IIndustrialStorage storage, <>c__DisplayClass98_0& )
+int <FindContainerSource>g__GetExistingCount|107_0(IIndustrialStorage storage, <>c__DisplayClass107_0& )
 ----------
 class: ItemBasedFlowRestrictor
 inherits from: IOEntity
@@ -7042,6 +7250,7 @@ SpawnGroup[] spawngroups
 NPCSpawner NPCSpawn
 float lifetimeMinutes
 bool isSinking
+float sunkAmount
 methods:
 bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 void ServerInit()
@@ -7052,6 +7261,7 @@ void CheckEmpty()
 float TimeoutPlayerCheckRadius()
 void TimeOut()
 void SinkAndDestroy()
+void SinkThink()
 void KillMe()
 void .ctor()
 ----------
@@ -7131,6 +7341,7 @@ GameObjectRef explosionEffect
 GameObjectRef triggeredEffect
 float minExplosionRadius
 float explosionRadius
+int vibrationLevel
 bool blocked
 ulong triggerPlayerID
 List`1<DamageTypeEntry> damageTypes
@@ -7188,6 +7399,7 @@ Action pushLiquidAction
 Action deductFuelAction
 TimeUntil waterTransferStartTime
 float lastOutputDrainUpdate
+HashSet`1<IOEntity> pushLiquidCheckEntityHash
 properties:
 bool IsGravitySource
 bool DisregardGravityRestrictionsOnLiquid
@@ -7219,10 +7431,11 @@ int GetLiquidCount()
 void SVDrink(RPCMessage rpc)
 void UpdatePushLiquidTargets()
 void PushLiquidThroughOutputs()
-void CheckPushLiquid(IOEntity connected, Item ourFuel, IOEntity fromSource, int depth)
+void CheckPushLiquid(IOEntity connected, Item ourFuel, IOEntity fromSource, int depth, HashSet`1<IOEntity> checkEntities)
 void SetConnectedTo(IOEntity entity)
 bool ConsiderConnectedTo(IOEntity entity)
 void .ctor()
+void .cctor()
 ----------
 class: LiquidVessel
 inherits from: HeldEntity
@@ -8186,7 +8399,6 @@ bool HasValidDismountPosition(BasePlayer player)
 bool GetDismountPosition(BasePlayer player, Vector3& res)
 void DisableTransferProtection()
 void Save(SaveInfo info)
-bool IsSeatClipping(BaseMountable mountable)
 bool CanPushNow(BasePlayer pusher)
 bool ShowPushMenu(BasePlayer player)
 void Load(LoadInfo info)
@@ -8350,6 +8562,7 @@ UInt32[] GetContentCRCs
 UGCType ContentType
 List`1<ulong> EditingHistory
 BaseNetworkable UgcEntity
+bool ShouldTransferAssociatedFiles
 methods:
 bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 void Load(LoadInfo info)
@@ -8361,6 +8574,7 @@ void ClearContent()
 UGCType get_ContentType()
 List`1<ulong> get_EditingHistory()
 BaseNetworkable get_UgcEntity()
+bool get_ShouldTransferAssociatedFiles()
 void DebugOnlyLog(string str)
 void .ctor()
 ----------
@@ -8482,6 +8696,7 @@ Type FileType
 UGCType ContentType
 List`1<ulong> EditingHistory
 UInt32[] GetContentCRCs
+bool ShouldTransferAssociatedFiles
 BaseNetworkable UgcEntity
 Vector2i TextureSize
 int TextureCount
@@ -8501,6 +8716,7 @@ List`1<ulong> get_EditingHistory()
 void LogEdit(BasePlayer byPlayer)
 UInt32[] get_GetContentCRCs()
 void ClearContent()
+bool get_ShouldTransferAssociatedFiles()
 BaseNetworkable get_UgcEntity()
 bool CanPickup(BasePlayer player)
 Vector2i get_TextureSize()
@@ -8520,14 +8736,23 @@ class: Planner
 inherits from: HeldEntity
 fields:
 BaseEntity[] buildableList
+Vector3 <serverStartDurationPlacementPosition>k__BackingField
+TimeSince <serverStartDurationPlacementTime>k__BackingField
 properties:
 bool isTypeDeployable
+Vector3 serverStartDurationPlacementPosition
+TimeSince serverStartDurationPlacementTime
 methods:
 bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 ItemModDeployable GetModDeployable()
 Deployable GetDeployable()
 bool get_isTypeDeployable()
 void DoPlace(RPCMessage msg)
+Vector3 get_serverStartDurationPlacementPosition()
+void set_serverStartDurationPlacementPosition(Vector3 value)
+TimeSince get_serverStartDurationPlacementTime()
+void set_serverStartDurationPlacementTime(TimeSince value)
+void StartDurationPlace(RPCMessage msg)
 Socket_Base FindSocket(string name, UInt32 prefabIDToFind)
 void DoBuild(CreateBuilding msg)
 void DoBuild(Target target, Construction component)
@@ -8646,6 +8871,7 @@ float <cachedPitch>k__BackingField
 float <cachedYaw>k__BackingField
 float <cachedRoll>k__BackingField
 bool isPushing
+TimeSince timeSinceInit
 float lastEngineOnTime
 properties:
 EngineState<PlayerHelicopter> CurEngineState
@@ -8679,7 +8905,7 @@ EntityFuelSystem GetFuelSystem()
 int StartingFuelUnits()
 bool IsValidSAMTarget(bool staticRespawn)
 void PilotInput(InputState inputState, BasePlayer player)
-bool Grounded()
+bool IsGrounded()
 void SetDefaultInputState()
 void ApplyForceAtWheels()
 void ApplyForceWithoutWheels()
@@ -8704,10 +8930,17 @@ void DoPushAction(BasePlayer player)
 void DisablePushing()
 bool IsValidHomingTarget()
 void RPC_OpenFuel(RPCMessage msg)
+bool ShouldDisableTransferProtectionOnLoad(BasePlayer player)
+void DisableTransferProtection()
+void SwapDriverIfInactive()
+void ApplyHandbrake()
+void SetWheelFrictionMultiplier(WheelCollider wheel, float multiplier)
 void .ctor()
 void .cctor()
 void IEngineControllerUser.Invoke(Action action, float time)
 void IEngineControllerUser.CancelInvoke(Action action)
+BasePlayer <SwapDriverIfInactive>g__FindActivePassenger|104_0()
+bool <SwapDriverIfInactive>g__IsPlayerActive|104_1(BasePlayer player)
 ----------
 class: PlayerInventory
 inherits from: EntityComponent`1<BasePlayer>
@@ -8757,6 +8990,7 @@ List`1<Item> FindItemsByItemID(int id)
 ItemContainer FindContainer(ItemContainerId id)
 ItemContainer GetContainer(Type id)
 Item GetAnyBackpack()
+bool HasBackpackItem()
 Item GetBackpackWithInventory()
 void DropBackpackOnDeath()
 bool GiveItem(Item item, ItemContainer container)
@@ -8772,6 +9006,7 @@ void Load(PlayerInventory msg)
 void TryDropBackpack()
 int Take(List`1<Item> collect, int itemid, int amount)
 bool HasEmptySlotInBeltOrMain()
+bool HasEmptySlots(int requiredSlots)
 int GetAmount(ItemDefinition definition)
 int GetAmount(int itemid)
 int GetOkConditionAmount(int itemid)
@@ -8781,7 +9016,7 @@ void FindAmmo(List`1<Item> list, AmmoTypes ammoType)
 bool HasAmmo(AmmoTypes ammoType)
 void .ctor()
 void .cctor()
-void <GiveDefaultItems>g__GiveDefaultItemWithSkin|56_0(string convarSkinName, string itemShortName)
+void <GiveDefaultItems>g__GiveDefaultItemWithSkin|57_0(string convarSkinName, string itemShortName)
 ----------
 class: PlayerLoot
 inherits from: EntityComponent`1<BasePlayer>
@@ -8881,9 +9116,11 @@ bool DisplayCounter()
 bool CanPlayerAdmin(BasePlayer player)
 int GetTarget()
 void ResetState()
+int ConsumptionAmount()
 void SERVER_SetTarget(RPCMessage msg)
 void ToggleDisplayMode(RPCMessage msg)
 int GetPassthroughAmount(int outputSlot)
+bool WantsPower(int inputIndex)
 void Save(SaveInfo info)
 void SetCounterNumber(int newNumber)
 void SendIONetworkUpdate()
@@ -8985,11 +9222,13 @@ Flags Flag_EmittingPower
 bool smallBurst
 methods:
 bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+int ConsumptionAmount()
 void ResetIOState()
 int GetPassthroughAmount(int outputSlot)
 void UnpowerTime()
 void PostServerLoad()
-void Press(RPCMessage msg)
+void RPC_Press(RPCMessage msg)
+void Press()
 void Unpress()
 void Save(SaveInfo info)
 void Load(LoadInfo info)
@@ -9089,14 +9328,19 @@ GameObjectRef knockdownEffect
 float activationPowerTime
 int activationPowerAmount
 float lastToggleTime
+Flags Flag_KnockedDown
 float knockdownHealth
+int inputAmountReset
+int inputAmountLower
 methods:
 bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 void OnHitShared(HitInfo info)
 bool IsKnockedDown()
+bool IsLowered()
 void OnAttacked(HitInfo info)
-bool CanPickup(BasePlayer player)
 bool CanToggle()
+bool CanLower()
+bool CanReset()
 void QueueReset()
 void ResetTarget()
 void LowerTarget()
@@ -9161,9 +9405,13 @@ inherits from: StorageContainer
 fields:
 Animator Animator
 float recycleEfficiency
+float safezoneRecycleEfficiency
+float radtownRecycleEfficiency
 SoundDefinition grindingLoopDef
+SoundDefinition grindingLoopDef_Slow
 GameObjectRef startSound
 GameObjectRef stopSound
+float scrapRemainder
 methods:
 bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 void ResetState()
@@ -9174,8 +9422,11 @@ void SVSwitch(RPCMessage msg)
 bool MoveItemToOutput(Item newItem)
 bool HasRecyclable()
 void RecycleThink()
+float GetRecycleThinkDuration()
 void StartRecycling()
 void StopRecycling()
+void UpdateInSafeZone()
+bool IsSafezoneRecycler()
 void PlayAnim()
 void StopAnim()
 void ToggleAnim(bool toggle)
@@ -9253,6 +9504,7 @@ PlayerTeam CreateTeam()
 PlayerTeam CreateTeam(ulong customId)
 void trycreateteam(Arg arg)
 void promote(Arg arg)
+void promote_id(Arg arg)
 void leaveteam(Arg arg)
 void acceptinvite(Arg arg)
 void rejectinvite(Arg arg)
@@ -9366,7 +9618,6 @@ int RarityMultiplier(Rarity rarity)
 int GetBlueprintStacksize(Item sourceItem)
 int ScrapForResearch(Item item)
 int ScrapForResearch(ItemDefinition info)
-int ScrapForResearch(ItemDefinition info, ResearchType type)
 bool IsItemResearchable(Item item)
 void ServerInit()
 bool ItemFilter(Item item, int targetSlot)
@@ -9409,7 +9660,7 @@ float nextStopTime
 methods:
 bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 int GetFrequency()
-bool WantsPower()
+bool WantsPower(int inputIndex)
 Vector3 GetPosition()
 float GetMaxRange()
 void RFSignalUpdate(bool on)
@@ -9431,7 +9682,7 @@ GameObjectRef frequencyPanelPrefab
 methods:
 bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 int GetFrequency()
-bool WantsPower()
+bool WantsPower(int inputIndex)
 void ResetIOState()
 int GetPassthroughAmount(int outputSlot)
 Vector3 GetPosition()
@@ -9521,7 +9772,6 @@ Flags Flag_HasDoubleSaddle
 float equipmentSpeedMod
 int prevBreed
 int prevSlots
-Material[] breedAssignmentArray
 float distanceRecordingSpacing
 HitchTrough currentHitch
 float totalDistance
@@ -9628,7 +9878,8 @@ SoundDefinition pitchMovementLoopDef
 float pitchGainLerp
 float pitchGainMovementSpeedMult
 int lowAmmoThreshold
-Flags Flag_DefenderMode
+Flags Flag_TargetMode
+Flags Flag_ManuallySetMode
 SamTargetType targetTypeUnknown
 SamTargetType targetTypeVehicle
 SamTargetType targetTypeMissile
@@ -9641,6 +9892,7 @@ int lastAmmoCount
 int currentTubeIndex
 int firedCount
 float nextBurstTime
+int input1Amount
 methods:
 bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 bool IsPowered()
@@ -9660,6 +9912,8 @@ void FixedUpdate()
 Vector3 GetAimDir()
 bool HasValidTarget()
 bool CanPickup(BasePlayer player)
+void AddTargetSet(List`1<ISamSiteTarget> allTargets, float scanRadius)
+void AddMLRSRockets(List`1<ISamSiteTarget> allTargets, float scanRadius)
 void TargetScan()
 bool HasAmmo()
 void Reload()
@@ -9669,9 +9923,11 @@ void WeaponTick()
 void FireProjectile(Vector3 origin, Vector3 direction, float speedMultiplier)
 int GetPassthroughAmount(int outputSlot)
 void ToggleDefenderMode(RPCMessage msg)
+bool WantsPower(int inputIndex)
+void UpdateHasPower(int inputAmount, int inputSlot)
+void UpdateFromInput(int inputAmount, int inputSlot)
 void .ctor()
 void .cctor()
-void <TargetScan>g__AddTargetSet|55_0(List`1<ISamSiteTarget> allTargets, int layerMask, float scanRadius)
 ----------
 class: SantaSleigh
 inherits from: BaseEntity
@@ -9685,17 +9941,17 @@ Light bigLight
 SoundPlayer hohoho
 float hohohospacing
 float hohoho_additional_spacing
+Vector3 swimScale
+Vector3 swimSpeed
+float appliedSwimScale
+float appliedSwimRotation
 Vector3 startPos
 Vector3 endPos
 float secondsToTake
 float secondsTaken
 bool dropped
 Vector3 dropPosition
-Vector3 swimScale
-Vector3 swimSpeed
 float swimRandom
-float appliedSwimScale
-float appliedSwimRotation
 string path
 methods:
 bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
@@ -9736,6 +9992,32 @@ void RPC_UseLight(RPCMessage msg)
 void OnKilled(HitInfo info)
 void Update()
 void .ctor()
+----------
+class: SeismicSensor
+inherits from: IOEntity
+fields:
+int MinRange
+int MaxRange
+int range
+GameObjectRef sensorPanelPrefab
+int vibrationLevel
+int holdTime
+float nextRangeChangeTime
+BaseEntity[] resultBuffer
+methods:
+bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+void SetVibrationLevel(int value)
+void SetOff()
+void SetRange(int value)
+void RPC_SetRange(RPCMessage msg)
+int GetPassthroughAmount(int outputSlot)
+void ResetIOState()
+void Save(SaveInfo info)
+void Load(LoadInfo info)
+void Notify(Vector3 position, int value)
+bool FilterOutSensors(BaseEntity entity)
+void .ctor()
+void .cctor()
 ----------
 class: ShopFront
 inherits from: StorageContainer
@@ -9793,6 +10075,7 @@ UGCType ContentType
 List`1<ulong> EditingHistory
 BaseNetworkable UgcEntity
 UInt32[] GetContentCRCs
+bool ShouldTransferAssociatedFiles
 Vector2i TextureSize
 int TextureCount
 methods:
@@ -9820,6 +10103,7 @@ void LogEdit(BasePlayer byPlayer)
 UInt32[] get_GetContentCRCs()
 void ClearContent()
 string Admin_Who()
+bool get_ShouldTransferAssociatedFiles()
 int ConsumptionAmount()
 string Categorize()
 Vector2i get_TextureSize()
@@ -10041,10 +10325,10 @@ AppEntityType Type
 bool Value
 methods:
 bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
-bool WantsPower()
+bool WantsPower(int inputIndex)
+int ConsumptionAmount()
 AppEntityType get_Type()
 void ServerInit()
-int ConsumptionAmount()
 void ResetIOState()
 int GetPassthroughAmount(int outputSlot)
 int CalculateCurrentEnergy(int inputAmount, int inputSlot)
@@ -10199,6 +10483,43 @@ void RPC_AnyoneSpin(RPCMessage rpc)
 bool AnyoneSpin()
 void .ctor()
 ----------
+class: SpinUpWeapon
+inherits from: BaseProjectile
+fields:
+float timeBetweenSpinToggle
+float spinUpTime
+GameObjectRef bulletEffect
+float projectileThicknessOverride
+bool showSpinProgress
+float spinningMoveSpeedScale
+float conditionLossPerSecondSpinning
+ItemModWearable BackpackWearable
+Flags FullySpunFlag
+Flags SpinningFlag
+Flags ShootingFlag
+float lastSpinToggleTime
+properties:
+ItemModWearable WearableWhileEquipped
+methods:
+bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+ItemModWearable get_WearableWhileEquipped()
+float GetOverrideProjectileThickness(Projectile projectile)
+bool IsSpinning()
+bool IsFullySpun()
+void ServerUse()
+void ServerReload()
+void ServerUse(float damageModifier, Transform originOverride)
+void ServerUseBase(float damageModifier, Transform originOverride)
+void SetGenericVisible(bool visible)
+void OnHeldChanged()
+void UpdateConditionLoss()
+void OnReceivedSignalServer(Signal signal, string arg)
+void StopMainTrigger()
+void DidAttackServerside()
+void Server_SetSpinButton(RPCMessage msg)
+void SetFullySpun()
+void .ctor()
+----------
 class: SpookySpeaker
 inherits from: IOEntity
 fields:
@@ -10209,6 +10530,7 @@ methods:
 bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 void PostServerLoad()
 void UpdateHasPower(int inputAmount, int inputSlot)
+int ConsumptionAmount()
 void SetTargetState(bool state)
 void SetWantsOn(RPCMessage msg)
 void UpdateInvokes()
@@ -10329,6 +10651,55 @@ void CopyPoints(List`1<LinePoint> from, List`1<LinePoint> to)
 void ResetState()
 void .ctor()
 ----------
+class: StabilityEntity
+inherits from: DecayEntity
+fields:
+Phrase CancelTitle
+Phrase CancelDesc
+bool grounded
+float cachedStability
+int cachedDistanceFromGround
+List`1<Support> supports
+int stabilityStrikes
+bool dirty
+Phrase DemolishTitle
+Phrase DemolishDesc
+int demolish_seconds
+Flags DemolishFlag
+bool canBeDemolished
+StabilityCheckWorkQueue stabilityCheckQueue
+UpdateSurroundingsQueue updateSurroundingsQueue
+properties:
+bool CanBeDemolished
+methods:
+bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+void ResetState()
+void InitializeSupports()
+int DistanceFromGround(StabilityEntity ignoreEntity)
+float SupportValue(StabilityEntity ignoreEntity)
+int CachedDistanceFromGround(StabilityEntity ignoreEntity)
+float CachedSupportValue(StabilityEntity ignoreEntity)
+void StabilityCheck()
+void UpdateStability()
+void UpdateSurroundingEntities()
+void UpdateConnectedEntities()
+void OnPhysicsNeighbourChanged()
+void DebugNudge()
+void ServerInit()
+void DoServerDestroy()
+bool get_CanBeDemolished()
+bool CanDemolish(BasePlayer player)
+bool IsDemolishable()
+bool HasDemolishPrivilege(BasePlayer player)
+void DoDemolish(RPCMessage msg)
+void DoImmediateDemolish(RPCMessage msg)
+void StopBeingDemolishable()
+void StartBeingDemolishable()
+void Save(SaveInfo info)
+void Load(LoadInfo info)
+void .ctor()
+void .cctor()
+----------
 class: StagedResourceEntity
 inherits from: ResourceEntity
 fields:
@@ -10355,6 +10726,8 @@ float burriedOffset
 float raisedOffset
 GameObjectRef buryEffect
 float uncoverRange
+float uncoverTime
+float PlayerDetectionTickRate
 float lastToggleTime
 methods:
 bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
@@ -10362,16 +10735,19 @@ bool PlayerInRange(BasePlayer ply)
 void InitShared()
 void DoOccludedCheck()
 void OnPhysicsNeighbourChanged()
+void RemoveFromNetworkRange()
+void ReturnToNetworkRange()
 void SetHidden(bool isHidden)
 void DisableNetworking()
 void Decay()
 void ServerInit()
+void PostServerLoad()
 void ToggleHidden()
 void RPC_HideStash(RPCMessage rpc)
-void RPC_WantsUnhide(RPCMessage rpc)
 void OnFlagsChanged(Flags old, Flags next)
 bool IsHidden()
 void .ctor()
+void .cctor()
 ----------
 class: StaticInstrument
 inherits from: BaseMountable
@@ -10414,6 +10790,7 @@ Phrase panelTitle
 ContentsType allowedContents
 ItemDefinition allowedItem
 ItemDefinition allowedItem2
+ItemDefinition[] blockedItems
 int maxStackSize
 bool needsBuildingPrivilegeToUse
 bool mustBeMountedToUse
@@ -10576,11 +10953,14 @@ fields:
 float timerLength
 Transform timerDrum
 float timePassed
+float input1Amount
 methods:
 bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+int ConsumptionAmount()
 void ResetIOState()
 bool WantsPassthroughPower()
 int GetPassthroughAmount(int outputSlot)
+bool WantsPower(int inputIndex)
 void UpdateHasPower(int inputAmount, int inputSlot)
 void UpdateFromInput(int inputAmount, int inputSlot)
 void SVSwitch(RPCMessage msg)
@@ -11016,7 +11396,6 @@ void StopBonusGame()
 bool BonusActive()
 void DoBirds()
 void CleanupMarker()
-Collider GetCollider()
 void OnKilled(HitInfo info)
 void DelayedKill()
 void PreProcess(IPrefabProcessor preProcess, GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
@@ -11114,6 +11493,7 @@ float TutorialBoundsSize
 bool SpawnTutorialIslandForNewPlayer
 ListHashSet`1<TutorialIsland> ActiveIslandsServer
 bool EnforceTrespassChecks
+Vector3 OverrideTutorialLocation
 string TutorialIslandAssetPath
 float _tutorialWorldStart
 Bounds WorldBoundsMinusTutorialIslands
@@ -11290,7 +11670,6 @@ void Load(LoadInfo info)
 void Spawn()
 void PostServerLoad()
 void OnItemAddedRemoved(Item item, bool add)
-void NonUserSpawn()
 void DoServerDestroy()
 void Save(SaveInfo info)
 void CreateStorageEntity()
@@ -11340,6 +11719,7 @@ string shopName
 int maxCurrencyVolume
 GameObjectRef mapMarkerPrefab
 ItemDefinition blueprintBaseDef
+bool IsLocalized
 Action fullUpdateCached
 BasePlayer vend_Player
 int vend_sellOrderID
@@ -11399,6 +11779,7 @@ bool PlayerBehind(BasePlayer player)
 bool PlayerInfront(BasePlayer player)
 bool CanPlayerAdmin(BasePlayer player)
 bool SupportsChildDeployables()
+string GetTranslationToken()
 void .ctor()
 void .cctor()
 ----------
@@ -11630,68 +12011,42 @@ void .ctor()
 class: WireTool
 inherits from: HeldEntity
 fields:
-Sprite InputSprite
-Sprite OutputSprite
-Sprite ClearSprite
 float maxWireLength
 int maxLineNodes
+float industrialWallOffset
+IOType wireType
+WireColour DefaultColor
+float radialMenuHoldTime
+float disconnectDelay
+float clearDelay
+bool justCleared
 GameObjectRef plugEffect
 SoundDefinition clearStartSoundDef
 SoundDefinition clearSoundDef
-GameObjectRef ioLine
-IOType wireType
-float RadialMenuHoldTime
-float disconnectDelay
-float clearDelay
-float IndustrialWallOffset
-Phrase Default
-Phrase DefaultDesc
-Phrase Red
-Phrase RedDesc
-Phrase Green
-Phrase GreenDesc
-Phrase Blue
-Phrase BlueDesc
-Phrase Yellow
-Phrase YellowDesc
-Phrase LightBlue
-Phrase LightBlueDesc
-Phrase Orange
-Phrase OrangeDesc
-Phrase Purple
-Phrase PurpleDesc
-Phrase White
-Phrase WhiteDesc
-Phrase Pink
-Phrase PinkDesc
-PendingPlug_t pending
+PendingPlug pendingPlug
 float IndustrialThickness
 properties:
 bool CanChangeColours
 methods:
 bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 bool get_CanChangeColours()
-void ClearPendingPlug()
-bool HasPendingPlug()
-bool PendingPlugIsInput()
-bool PendingPlugIsType(IOType type)
-bool PendingPlugIsOutput()
-Vector3 PendingPlugWorldPos()
-bool CanPlayerUseWires(BasePlayer player)
-bool CanModifyEntity(BasePlayer player, IOEntity ent)
-bool PendingPlugRoot()
-void TryClear(RPCMessage msg)
-void MakeConnection(RPCMessage msg)
-void SetPlugged(RPCMessage msg)
-void RequestClear(RPCMessage msg)
+void RPC_MakeConnection(RPCMessage rpc)
+void RPC_RequestClear(RPCMessage msg)
+void RPC_RequestChangeColor(RPCMessage msg)
 bool AttemptClearSlot(BaseNetworkable clearEnt, BasePlayer ply, int clearIndex, bool isInput)
-void RequestChangeColor(RPCMessage msg)
 WireColour IntToColour(int i)
 bool ValidateLine(List`1<Vector3> lineList, IOEntity inputEntity, IOEntity outputEntity, BasePlayer byPlayer, int outputIndex)
 bool VerifyLineOfSight(List`1<Vector3> positions, Matrix4x4 localToWorldSpace)
 bool VerifyLineOfSight(Vector3 worldSpaceA, Vector3 worldSpaceB)
+bool HasPendingPlug()
+bool PendingPlugIsInput()
+bool PendingPlugIsType(IOType type)
+bool PendingPlugIsOutput()
+bool PendingPlugIsRoot()
+void ResetPendingPlug()
+bool CanPlayerUseWires(BasePlayer player)
+bool CanModifyEntity(BasePlayer player, IOEntity ent)
 void .ctor()
-void .cctor()
 ----------
 class: Workbench
 inherits from: StorageContainer
@@ -11704,13 +12059,13 @@ LootSpawn experimentalItems
 GameObjectRef experimentStartEffect
 GameObjectRef experimentSuccessEffect
 ItemDefinition experimentResource
-TechTreeData techTree
-bool supportsIndustrialCrafter
+TechTreeData[] techTrees
 ItemDefinition blueprintBaseDef
 ItemDefinition pendingBlueprint
 bool creatingBlueprint
 methods:
 bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+TechTreeData GetTechTreeForLevel(int level)
 int GetScrapForExperiment()
 bool IsWorking()
 bool CanPickup(BasePlayer player)
@@ -11725,12 +12080,15 @@ void ExperimentComplete()
 void PostServerLoad()
 void ServerInit()
 bool ItemFilter(Item item, int targetSlot)
+int ScrapForResearch(ItemDefinition info, int workbenchLevel, Int32& tax)
 bool SupportsChildDeployables()
 void .ctor()
 ----------
 class: WorldItem
 inherits from: BaseEntity
 fields:
+Phrase OpenLootTitle
+Phrase PickUpTitle
 Phrase HoldToPickupPhrase
 bool allowPickup
 Item item
@@ -12073,10 +12431,8 @@ methods:
 void .ctor()
 ----------
 class: IdentifierConfig
-inherits from: UIDialog
+inherits from: IOConfig`1<IRemoteControllable>
 fields:
-IRemoteControllable rc
-InputField input
 string id
 methods:
 void .ctor()
@@ -12527,6 +12883,8 @@ Flags Flag_HalfFull
 Flags Flag_VeryFull
 bool wasLoaded
 HashSet`1<IOEntity> connectedList
+Queue`1<int> inputHistory
+int inputHistorySize
 methods:
 bool IsRootEntity()
 int ConsumptionAmount()
@@ -12546,7 +12904,8 @@ void OnCircuitChanged(bool forceUpdate)
 void CheckDischarge()
 void SetDischarging(bool wantsOn)
 int GetPassthroughAmount(int outputSlot)
-bool WantsPower()
+bool WantsPower(int inputIndex)
+int GetHighestInputFromHistory()
 void IOStateChanged(int inputAmount, int inputSlot)
 void TickUsage()
 void ChargeChanged(float oldCharge)
@@ -12555,6 +12914,7 @@ void SetPassthroughOn(bool wantsOn)
 void Unbusy()
 void Save(SaveInfo info)
 void Load(LoadInfo info)
+void batteryid(Arg arg)
 void .ctor()
 ----------
 class: BaseDetector
@@ -12632,8 +12992,9 @@ fields:
 int input1Amount
 int input2Amount
 methods:
+int ConsumptionAmount()
 int GetPassthroughAmount(int outputSlot)
-bool WantsPower()
+bool WantsPower(int inputIndex)
 void UpdateHasPower(int inputAmount, int inputSlot)
 void IOStateChanged(int inputAmount, int inputSlot)
 void UpdateBlocked()
@@ -12650,6 +13011,7 @@ properties:
 bool BlockFluidDraining
 methods:
 bool IsRootEntity()
+int ConsumptionAmount()
 bool get_BlockFluidDraining()
 int GetPassthroughAmount(int outputSlot)
 void UpdateHasPower(int inputAmount, int inputSlot)
@@ -12663,12 +13025,15 @@ int setAmount
 int resetAmount
 int toggleAmount
 methods:
+int ConsumptionAmount()
 void UpdateHasPower(int inputAmount, int inputSlot)
 bool GetDesiredState()
 void UpdateState()
 void UpdateFromInput(int inputAmount, int inputSlot)
 int GetPassthroughAmount(int outputSlot)
 void UpdateOutputs()
+bool AllowDrainFrom(int outputSlot)
+bool WantsPower(int inputIndex)
 void .ctor()
 ----------
 class: RANDSwitch
@@ -12677,6 +13042,7 @@ fields:
 bool rand
 methods:
 int GetPassthroughAmount(int outputSlot)
+bool WantsPower(int inputIndex)
 void UpdateBlocked()
 bool RandomRoll()
 void UpdateFromInput(int inputAmount, int inputSlot)
@@ -12717,8 +13083,11 @@ float SelfDamagePerIgnite
 int PowerConsumption
 methods:
 int ConsumptionAmount()
-void UpdateHasPower(int inputAmount, int inputSlot)
+bool CanIgnite()
+void UpdateFromInput(int inputAmount, int inputSlot)
 void IgniteInRange()
+int DesiredPower()
+void OnRepair()
 void .ctor()
 ----------
 class: FlasherLight
@@ -12737,6 +13106,7 @@ void .ctor()
 class: SirenLight
 inherits from: IOEntity
 fields:
+EmissionToggle toggler
 GameObject lightObj
 float speed
 methods:
@@ -12760,6 +13130,7 @@ bool BlockFluidDraining
 methods:
 bool get_BlockFluidDraining()
 int ConsumptionAmount()
+int DesiredPower()
 void UpdateHasPower(int inputAmount, int inputSlot)
 int CalculateCurrentEnergy(int inputAmount, int inputSlot)
 void DoSplash()
@@ -12786,9 +13157,11 @@ int powerForHeavyShorting
 float lastDischargeTime
 methods:
 int ConsumptionAmount()
+int DesiredPower()
 bool CanDischarge()
 void UpdateFromInput(int inputAmount, int inputSlot)
 void Discharge()
+void OnRepair()
 void .ctor()
 ----------
 class: CableTunnel
@@ -12797,9 +13170,46 @@ fields:
 int numChannels
 Int32[] inputAmounts
 methods:
-bool WantsPower()
+bool WantsPower(int inputIndex)
 void IOStateChanged(int inputAmount, int inputSlot)
 void UpdateOutputs()
+void .ctor()
+----------
+class: BranchConfig
+inherits from: IOConfig`1<ElectricalBranch>
+methods:
+void .ctor()
+----------
+class: CounterConfig
+inherits from: IOConfig`1<PowerCounter>
+methods:
+void .ctor()
+----------
+class: HBHFConfig
+inherits from: UIDialog
+fields:
+RustButton authButton
+RustButton nonAuthButton
+methods:
+void .ctor()
+----------
+class: IOConfig`1
+inherits from: UIDialog
+fields:
+RustInput input
+float minValue
+float maxValue
+methods:
+void .ctor()
+----------
+class: SeismicSensorConfig
+inherits from: IOConfig`1<SeismicSensor>
+methods:
+void .ctor()
+----------
+class: TimerConfig
+inherits from: IOConfig`1<CustomTimerSwitch>
+methods:
 void .ctor()
 ----------
 class: LootPanelToolCupboard
@@ -12854,6 +13264,7 @@ class: NPCVendingMachine
 inherits from: VendingMachine
 fields:
 NPCVendingOrder vendingOrders
+Phrase Phrase
 Single[] refillTimes
 methods:
 byte GetBPState(bool sellItemAsBP, bool currencyItemAsBP)
@@ -12868,6 +13279,7 @@ void ClearSellOrders()
 void AddItemForSale(int itemID, int amountToSell, int currencyID, int currencyPerTransaction, byte bpState)
 void RefreshStock()
 void RecordSaleAnalytics(Item itemSold)
+string GetTranslationToken()
 bool CanRotate()
 bool CanPlayerAdmin(BasePlayer player)
 void .ctor()
@@ -12894,32 +13306,6 @@ VirtualItemIcon MerchandiseIcon
 VirtualItemIcon CurrencyIcon
 VendingPanelAdmin adminPanel
 int index
-methods:
-void .ctor()
-----------
-class: BranchConfig
-inherits from: UIDialog
-fields:
-ElectricalBranch branch
-InputField input
-int target
-methods:
-void .ctor()
-----------
-class: CounterConfig
-inherits from: UIDialog
-fields:
-PowerCounter powerCounter
-InputField input
-int target
-methods:
-void .ctor()
-----------
-class: HBHFConfig
-inherits from: UIDialog
-fields:
-RustButton authButton
-RustButton nonAuthButton
 methods:
 void .ctor()
 ----------
@@ -12959,17 +13345,6 @@ IVendingMachineInterface vendingPanel
 UIIntegerEntry intEntry
 methods:
 void .ctor()
-----------
-class: TimerConfig
-inherits from: UIDialog
-fields:
-CustomTimerSwitch timerSwitch
-InputField input
-float minTime
-float seconds
-methods:
-void .ctor()
-void .cctor()
 ----------
 class: VendingPanelAdmin
 inherits from: UIDialog
@@ -13079,28 +13454,37 @@ void .ctor()
 class: BigWheelGame
 inherits from: SpinnerWheel
 fields:
+float baseSpeed
+float offset
+AnimationCurve decelerationCurve
+AnimationCurve speedCurve
 HitNumber[] hitNumbers
-GameObject indicator
-GameObjectRef winEffect
+float targetAngle
+float minimumSpinTime
+bool isSpinning
+bool decelerating
+float elapsedTime
+Random random
 float spinFrequencySeconds
 int spinNumber
+int targetNumber
 int lastPaidSpinNumber
 List`1<BigWheelBettingTerminal> terminals
 methods:
 bool AllowPlayerSpins()
 bool CanUpdateSign(BasePlayer player)
-float GetMaxSpinSpeed()
 void ServerInit()
 void DoSpin()
 void SetTerminalsLocked(bool isLocked)
 void RemoveTerminal(BigWheelBettingTerminal terminal)
 void InitBettingTerminals()
+float GetMaxSpinSpeed(float time)
 void Update_Server()
+float NormalizeAngle(float angle)
 float SpinSpacing()
 void QueueSpin()
 void Payout()
 HitNumber GetCurrentHitType()
-void LoadHitNumbers()
 void .ctor()
 void .cctor()
 ----------
@@ -13561,12 +13945,16 @@ EggHuntEvent serverEvent
 EggHuntEvent clientEvent
 float durationSeconds
 Dictionary`2<ulong, EggHunter> _eggHunters
-Dictionary`2<ulong, List`1<CollectableEasterEgg>> _spawnedEggs
 ItemAmount[] placementAwards
+Dictionary`2<ulong, List`1<CollectableEasterEgg>> _spawnedEggs
 float eggSpawningFrameBudget
 int maxEggPerPlayer
 int initialSpawnIndex
 Stopwatch stopwatch
+Phrase topBunnyPhrase
+Phrase noPlayersPhrase
+Phrase placePhrase
+Phrase rewardPhrase
 methods:
 bool IsEventActive()
 void Update()
@@ -13632,8 +14020,12 @@ void .ctor()
 ----------
 class: ItemModCrackOpen
 inherits from: ItemModUnwrap
+fields:
+Phrase CrackOpenTitle
+Phrase CrackOpenDesc
 methods:
 void .ctor()
+void .cctor()
 ----------
 class: RandomRendererEnable
 inherits from: MonoBehaviour
@@ -13696,17 +14088,25 @@ void .ctor()
 ----------
 class: HalloweenHunt
 inherits from: EggHuntEvent
+fields:
+Phrase topCreepPhrase
+Phrase placeCreepPhrase
 methods:
 Phrase GetTopBunnyPhrase()
 Phrase GetPlacePhrase()
 void ReportPlayerParticipated(int topCount)
 void ReportEggsCollected(int numEggs)
 void .ctor()
+void .cctor()
 ----------
 class: ItemModOpenLootBag
 inherits from: ItemModUnwrap
+fields:
+Phrase OpenLootBagTitle
+Phrase OpenLootBagDesc
 methods:
 void .ctor()
+void .cctor()
 ----------
 class: SpiderWeb
 inherits from: BaseCombatEntity
@@ -13726,7 +14126,7 @@ int AngleModifierMinArcAngle
 int AngleModifierMaxArcAngle
 float SunsetTime
 float SunriseTime
-MeshRenderer[] SkullRenderers
+RendererLOD SkullRenderer
 Material[] DaySkull
 Material[] NightSkull
 Material[] NoSkull
@@ -14331,6 +14731,8 @@ void .ctor()
 class: ItemModUnwrap
 inherits from: ItemMod
 fields:
+Phrase UnwrapGiftTitle
+Phrase UnwrapGiftDesc
 LootSpawn revealList
 GameObjectRef successEffect
 int minTries
@@ -14338,6 +14740,7 @@ int maxTries
 methods:
 void ServerCommand(Item item, string command, BasePlayer player)
 void .ctor()
+void .cctor()
 ----------
 class: NeonMeshPaintableSource
 inherits from: MeshPaintableSource
@@ -14364,6 +14767,8 @@ void .ctor()
 ----------
 class: Bulb
 inherits from: BaseBulb
+fields:
+MaterialSwap swap
 methods:
 void .ctor()
 ----------
@@ -14633,7 +15038,7 @@ bool entrance
 bool hasSpawn
 Transform exitPointHack
 SpawnGroup[] spawnGroups
-MeshRenderer[] mapRenderers
+RendererLOD[] mapRendererLods
 methods:
 void Awake()
 void .ctor()
@@ -14816,6 +15221,7 @@ inherits from: ScriptableObject
 fields:
 string shortname
 Phrase providerNameTranslated
+Sprite providerIcon
 bool canBeCancelled
 SpeechNode[] speeches
 properties:
@@ -14823,6 +15229,7 @@ string providerName
 methods:
 string get_providerName()
 int GetSpeechNodeIndex(string speechShortName)
+void FindAllMissionAssignments(List`1<BaseMission> results)
 void .ctor()
 ----------
 class: HorseSpawner
@@ -14853,10 +15260,13 @@ class: NPCMissionProvider
 inherits from: NPCTalking
 fields:
 MissionManifest manifest
+GameObjectRef MarkerPrefab
 methods:
 NetworkableId ProviderID()
 Vector3 ProviderPosition()
 BaseEntity Entity()
+void ServerInit()
+string GetProviderToken()
 void OnConversationEnded(BasePlayer player)
 void OnConversationStarted(BasePlayer speakingTo)
 bool ContainsSpeech(string speech)
@@ -14991,6 +15401,7 @@ fields:
 List`1<BasePathNode> nodes
 List`1<PathInterestNode> interestZones
 List`1<PathSpeedZone> speedZones
+Nullable`1<float> cachedLength
 properties:
 IEnumerable`1<IAIPathInterestNode> InterestNodes
 IEnumerable`1<IAIPathSpeedZone> SpeedZones
@@ -15005,6 +15416,9 @@ IAIPathNode GetClosestToPoint(Vector3 point)
 IAIPathInterestNode GetRandomInterestNodeAwayFrom(Vector3 from, float dist)
 void AddInterestNode(IAIPathInterestNode interestZone)
 void AddSpeedZone(IAIPathSpeedZone speedZone)
+float GetPathLength()
+float GetPathProgress(Vector3 position)
+void GetPointInPath(float normalisedTime, Vector3& pos, Vector3& rotation)
 void .ctor()
 ----------
 class: BasePathNode
@@ -15224,6 +15638,12 @@ float heightFudge
 bool useWheelYOrigin
 Vector2 treadTextureDirection
 bool isMetallic
+float angularTreadConstant
+float treadConstant
+float wheelSpinConstant
+float traceLineMin
+float traceLineMax
+float maxShockDist
 methods:
 void .ctor()
 ----------
@@ -15291,6 +15711,10 @@ void .cctor()
 class: ItemModSetFrequency
 inherits from: ItemMod
 fields:
+Phrase RfOffTitle
+Phrase RfOffDesc
+Phrase RfOnTitle
+Phrase RfOnDesc
 GameObjectRef frequencyPanelPrefab
 bool allowArmDisarm
 bool onlyFrequency
@@ -15345,25 +15769,28 @@ methods:
 void .ctor()
 ----------
 class: FishLookup
-inherits from: PrefabAttribute
+inherits from: BaseScriptableObject
 fields:
 ItemModFishable FallbackFish
+FishLookup _instance
 ItemModFishable[] AvailableFish
 ItemDefinition[] BaitItems
 TimeSince lastShuffle
 int ALL_FISH_COUNT
 string ALL_FISH_ACHIEVEMENT_NAME
+properties:
+FishLookup Instance
 methods:
+FishLookup get_Instance()
 void LoadFish()
-ItemDefinition GetFish(Vector3 worldPos, WaterBody bodyType, ItemDefinition lure, ItemModFishable& fishable, ItemModFishable ignoreFish)
+ItemDefinition GetFish(Vector3 worldPos, WaterBody bodyType, Item lure, ItemModFishable& fishable, ItemModFishable ignoreFish, Int32& usedLureAmount, float overrideDepth)
 void CheckCatchAllAchievement(BasePlayer player)
-Type GetIndexedType()
 void .ctor()
 ----------
 class: MapMarkerCH47
 inherits from: MapMarker
 fields:
-GameObject createdMarker
+bool IsCargoShip
 methods:
 float GetRotation()
 AppMarker GetAppMarkerData()
@@ -15481,17 +15908,28 @@ void .cctor()
 ----------
 class: ItemModPager
 inherits from: ItemModRFListener
+fields:
+Phrase SilentOffTitle
+Phrase SilentOffDesc
+Phrase SilentOnTitle
+Phrase SilentOnDesc
+Phrase StopTitle
+Phrase StopDesc
 methods:
 void ServerCommand(Item item, string command, BasePlayer player)
 void .ctor()
+void .cctor()
 ----------
 class: ItemModRFListener
 inherits from: ItemModAssociatedEntity`1<BaseEntity>
 fields:
+Phrase SetFreqTitle
+Phrase SetFreqDesc
 GameObjectRef frequencyPanelPrefab
 methods:
 void ServerCommand(Item item, string command, BasePlayer player)
 void .ctor()
+void .cctor()
 ----------
 class: ClientIOLine_Pipe
 inherits from: ClientIOLine
@@ -15588,10 +16026,22 @@ LineRenderer _line
 Material directionalMaterial
 Material defaultMaterial
 IOType lineType
-List`1<ClientIOLine> _allLines
 WireColour colour
+List`1<ClientIOLine> _allLines
 IOEntity ownerIOEnt
 methods:
+void .ctor()
+void .cctor()
+----------
+class: WireColorSettings
+inherits from: BaseScriptableObject
+fields:
+List`1<WireColorSettings> settings
+IOType ioType
+WireColor[] WireColors
+methods:
+WireColorSettings Get(IOType type)
+GameObjectRef GetPrefabRef(WireColour wireColor)
 void .ctor()
 void .cctor()
 ----------
@@ -15619,6 +16069,7 @@ class: EffectParent
 inherits from: EntityComponent`1<BaseEntity>
 fields:
 GameObject effect
+bool separatedEffect
 methods:
 void .ctor()
 ----------
@@ -15749,6 +16200,7 @@ Vector3[] currentSegments
 Color startColor
 Color endColor
 Color currentColor
+bool externalUpdate
 methods:
 void Initialize()
 void Awake()
@@ -15807,6 +16259,14 @@ class: ViewmodelIgniteToggle
 inherits from: MonoBehaviour
 methods:
 void Start()
+void .ctor()
+----------
+class: SksViewmodel
+inherits from: MonoBehaviour
+fields:
+GameObject ShellRoot
+Animator TargetAnimator
+methods:
 void .ctor()
 ----------
 class: ToolgunBeam
@@ -16173,6 +16633,7 @@ bool IsFriendly(BaseEntity entity)
 bool CanAttack(BaseEntity entity)
 bool IsTargetInRange(BaseEntity entity, Single& dist)
 bool CanSeeTarget(BaseEntity entity)
+bool CanSeeTarget(BaseEntity entity, Vector3 fromOffset)
 bool NeedsToReload()
 bool Reload()
 float CooldownDuration()
@@ -16256,6 +16717,7 @@ void .ctor()
 class: NPCPlayer
 inherits from: BasePlayer
 fields:
+float MovementTickStartDelay
 AIInformationZone VirtualInfoZone
 Vector3 finalDestination
 float randomOffset
@@ -16268,6 +16730,7 @@ float damageScale
 float shortRange
 float attackLengthMaxShortRangeScale
 bool _isDormant
+string loadoutname
 float lastGunShotTime
 float triggerEndTime
 float nextTriggerTime
@@ -16289,6 +16752,7 @@ void set_IsDormant(bool value)
 float get_PositionTickRate()
 bool IsLoadBalanced()
 void ServerInit()
+string GetLoadoutName()
 void EquipLoadout(PlayerInventoryProperties[] loads)
 void ApplyInheritedVelocity(Vector3 velocity)
 void RandomMove()
@@ -16568,7 +17032,9 @@ AIMovePoint[] movePointArray
 List`1<NavMeshLink> navMeshLinks
 List`1<AIMovePointPath> paths
 Bounds bounds
+bool SetMovePointTerrainYOnEnable
 AIInformationGrid grid
+bool UseSimpleLOSCheck
 bool <Sleeping>k__BackingField
 List`1<IAISleepable> sleepables
 OBB areaBox
@@ -16592,7 +17058,10 @@ bool get_Sleeping()
 void set_Sleeping(bool value)
 int get_SleepingCount()
 void Start()
+void OnEnable()
+void OnDisable()
 void Init()
+void SetMovePointsY(int layerMask, float yStartOffset, float yDistance, float localYDefault)
 void RegisterSleepableEntity(IAISleepable sleepable)
 void UnregisterSleepableEntity(IAISleepable sleepable)
 void SleepAI()
@@ -16615,7 +17084,7 @@ void RemoveDynamicAIPoints(AIMovePoint[] movePoints, AICoverPoint[] coverPoints)
 AIMovePointPath GetNearestPath(Vector3 position)
 AIInformationZone GetForPoint(Vector3 point, bool fallBackToNearest)
 bool PointInside(Vector3 point)
-AIMovePoint GetBestMovePointNear(Vector3 targetPosition, Vector3 fromPosition, float minRange, float maxRange, bool checkLOS, BaseEntity forObject, bool returnClosest)
+AIMovePoint GetBestMovePointNear(BaseEntity targetEntity, BaseEntity fromEntity, float minRange, float maxRange, bool checkLOS, BaseEntity forObject, bool returnClosest, bool returnRandom)
 AIPoint[] GetMovePointsInRange(Vector3 currentPos, float maxRange, Int32& pointCount)
 AIMovePoint GetClosestRaw(Vector3 pos, bool onlyIncludeWithCover)
 AICoverPoint GetBestCoverPoint(Vector3 currentPosition, Vector3 hideFromPosition, float minRange, float maxRange, BaseEntity forObject, bool allowObjectToReuse)
@@ -16721,6 +17190,9 @@ bool CanUseBaseNav
 bool CanUseCustomNav
 float StoppingDistance
 string DefaultArea
+bool CanPathFindToChaseTargetIfNoMovePoint
+int PathFindChaseLOSAttemptCount
+float PathFindChaseLOSDistanceMultiplier
 bool TriggerStuckEvent
 float StuckDistance
 float Speed
@@ -16739,6 +17211,8 @@ float BestMovementPointMaxDistance
 float BestCoverPointMaxDistance
 float BestRoamPointMaxDistance
 float MaxRoamDistanceFromHome
+float FaceTargetChaseDistance
+bool CanUseRandomMovePointIfNonFound
 float MaxWaterDepth
 bool SpeedBasedAvoidancePriority
 NavMeshPath path
@@ -16816,7 +17290,7 @@ bool CanEnableNavMeshNavigation()
 bool CanUpdateMovement()
 void ForceToGround()
 void DelayedForceToGround()
-bool PlaceOnNavMesh()
+bool PlaceOnNavMesh(float yOffset)
 void OnPlacedOnNavmesh()
 void OnFailedToPlaceOnNavmesh()
 bool Warp(Vector3 position)
@@ -16865,6 +17339,7 @@ bool IsPositionABiomePreference(Vector3 position)
 bool IsPositionABiomeRequirement(Vector3 position)
 bool IsAcceptableWaterDepth(Vector3 pos)
 void SetBrakingEnabled(bool flag)
+int GetNavMeshAgentID(string name)
 void .ctor()
 void .cctor()
 ----------
@@ -16873,7 +17348,6 @@ inherits from: MonoBehaviour
 fields:
 FishType[] fishTypes
 FishShoal[] fishShoals
-Nullable`1<Vector3> lastFishUpdatePosition
 methods:
 void Awake()
 IEnumerator SpawnFish()
@@ -17266,6 +17740,8 @@ AIState Cooldown
 AIState MoveToPoint
 AIState MoveToVector3
 AIState Blinded
+AIState KillSelf
+AIState MountAPC
 ----------
 class: AIThinkMode
 inherits from: Enum
@@ -17317,6 +17793,14 @@ fields:
 string TargetState
 float NormalizedTransitionDuration
 methods:
+void .ctor()
+----------
+class: TriggerResetter
+inherits from: StateMachineBehaviour
+fields:
+string triggerName
+methods:
+void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
 void .ctor()
 ----------
 class: WeightedAnimationRandomiser
@@ -17425,12 +17909,21 @@ methods:
 void .ctor()
 ----------
 class: AmbienceWaveSounds
-inherits from: MonoBehaviour
+inherits from: SingletonComponent`1<AmbienceWaveSounds>
 fields:
 int emitterCount
 float emitterDistance
 List`1<WaveLayer> waveLayers
 methods:
+void .ctor()
+----------
+class: AmbienceWaveSoundZone
+inherits from: TriggerBase
+fields:
+float priority
+float gain
+methods:
+void PreClientComponentCull(IPrefabProcessor p)
 void .ctor()
 ----------
 class: AmbienceZone
@@ -17804,6 +18297,7 @@ inherits from: MonoBehaviour
 fields:
 string Host
 AudioSource Source
+RadioPlaylist[] BuiltinRadios
 methods:
 void .ctor()
 ----------
@@ -17992,6 +18486,15 @@ float cullDistance
 methods:
 void .ctor()
 ----------
+class: SoundPlayerCullLODComponent
+inherits from: LODComponent
+fields:
+float Distance
+SoundPlayer TargetSoundPlayer
+methods:
+void OnValidate()
+void .ctor()
+----------
 class: SoundRandomizer
 inherits from: object
 methods:
@@ -18086,6 +18589,7 @@ inherits from: PrefabAttribute
 fields:
 Option info
 bool canBypassBuildingPermission
+bool showBuildingBlockedPreview
 bool canRotateBeforePlacement
 bool canRotateAfterPlacement
 bool checkVolumeOnRotate
@@ -18096,6 +18600,9 @@ Vector3 rotationAmount
 Vector3 applyStartingRotation
 Transform deployOffset
 bool enforceLineOfSightCheckAgainstParentEntity
+bool canSnap
+float holdToPlaceDuration
+bool canFloodFillSockets
 float healthMultiplier
 float costMultiplier
 float maxplaceDistance
@@ -18131,11 +18638,12 @@ fields:
 Construction construction
 BuildingGrade gradeBase
 GameObjectRef skinObject
-List`1<ItemAmount> _costToBuild
+Dictionary`2<Enum, List`1<ItemAmount>> _costs
 properties:
 float maxHealth
 methods:
 float get_maxHealth()
+void AttributeSetup(GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
 List`1<ItemAmount> CostToBuild(Enum fromGrade)
 Type GetIndexedType()
 void .ctor()
@@ -18588,6 +19096,15 @@ bool DoCheck(Placement place)
 void .ctor()
 void .cctor()
 ----------
+class: SocketMod_EnvironmentVolume
+inherits from: SocketMod
+fields:
+EnvironmentType environmentNone
+methods:
+bool DoCheck(Placement place)
+string GetErrorMessage(EnvironmentType blockedTypes)
+void .ctor()
+----------
 class: SocketMod_HotSpot
 inherits from: SocketMod
 fields:
@@ -18636,6 +19153,7 @@ fields:
 float sphereRadius
 LayerMask layerMask
 bool wantsCollide
+bool requireMonument
 Phrase Error_WantsCollideConstruction
 Phrase Error_DoesNotWantCollideConstruction
 methods:
@@ -18648,9 +19166,10 @@ class: SocketMod_TerrainCheck
 inherits from: SocketMod
 fields:
 bool wantsInTerrain
+bool preventWorldLayerInMonuments
 methods:
 void OnDrawGizmos()
-bool IsInTerrain(Vector3 vPoint)
+bool IsInTerrain(Vector3 vPoint, bool worldLayerInMonuments)
 bool DoCheck(Placement place)
 void .ctor()
 ----------
@@ -18726,10 +19245,13 @@ fields:
 int rotationDegrees
 int rotationOffset
 String[] allowedMaleSockets
+bool parentToBone
+string boneName
 methods:
 void OnDrawGizmos()
 void OnDrawGizmosSelected()
 bool CanAccept(Socket_Specific socket)
+Placement DoPlacement(Target target)
 void .ctor()
 ----------
 class: Socket_Terrain
@@ -19012,6 +19534,7 @@ class: HomingLauncherCamOverlay
 inherits from: MonoBehaviour
 fields:
 PostProcessVolume postProcessVolume
+NVGCamera nvgCameraOverlay
 methods:
 void .ctor()
 ----------
@@ -19337,6 +19860,7 @@ class: DecalRecycle
 inherits from: BasePrefab
 fields:
 float LifeTime
+int WarmedUpAmount
 methods:
 void .ctor()
 ----------
@@ -19377,6 +19901,8 @@ void .ctor()
 ----------
 class: DrawCameraFrustum
 inherits from: MonoBehaviour
+fields:
+Material lineMaterial
 methods:
 void .ctor()
 ----------
@@ -19852,6 +20378,8 @@ float integrity
 float maxDistance
 Modifier modifier
 bool invisible
+bool noheadshots
+float currentThickness
 UInt32 _fleshMaterialID
 UInt32 _waterMaterialID
 UInt32 cachedWaterString
@@ -19918,8 +20446,6 @@ bool onlyWhenSubmerged
 float submergedThickness
 Vector3 prevPosition
 methods:
-void Start()
-void Update()
 void .ctor()
 ----------
 class: ScreenshotCamera
@@ -20150,6 +20676,7 @@ bool CheckBounds(Bounds bounds, int layerMask, QueryTriggerInteraction triggerIn
 bool CheckInsideNonConvexMesh(Vector3 point, int layerMask)
 bool CheckInsideAnyCollider(Vector3 point, int layerMask)
 void OverlapSphere(Vector3 position, float radius, List`1<Collider> list, int layerMask, QueryTriggerInteraction triggerInteraction)
+bool OverlapSphere(Vector3 position, float radius, int layerMask, QueryTriggerInteraction triggerInteraction)
 void CapsuleSweep(Vector3 position0, Vector3 position1, float radius, Vector3 direction, float distance, List`1<RaycastHit> list, int layerMask, QueryTriggerInteraction triggerInteraction)
 void OverlapCapsule(Vector3 point0, Vector3 point1, float radius, List`1<Collider> list, int layerMask, QueryTriggerInteraction triggerInteraction)
 void OverlapOBB(OBB obb, List`1<Collider> list, int layerMask, QueryTriggerInteraction triggerInteraction)
@@ -20282,24 +20809,25 @@ void .ctor()
 class: DamageUtil
 inherits from: object
 methods:
-void RadiusDamage(BaseEntity attackingPlayer, BaseEntity weaponPrefab, Vector3 pos, float minradius, float radius, List`1<DamageTypeEntry> damage, int layers, bool useLineOfSight)
+void RadiusDamage(BaseEntity attackingPlayer, BaseEntity weaponPrefab, Vector3 pos, float minradius, float radius, List`1<DamageTypeEntry> damage, int layers, bool useLineOfSight, bool ignoreAI, bool ignoreAttackingPlayer)
+bool IsIgnoredAI(BaseEntity ent)
 ----------
 class: CinematicEntity
 inherits from: BaseEntity
 fields:
 Flags HideMesh
-GameObject[] DisableObjects
-bool _hideObjects
+Flags HideMesh2
+Flags HideMesh3
+Flags HideMesh4
+List`1<DisableGroup> DisableObjects
 List`1<CinematicEntity> serverList
-properties:
-bool HideObjects
 methods:
-bool get_HideObjects()
-void set_HideObjects(bool value)
 void ServerInit()
+void HideObjects(Arg args)
 void DestroyShared()
 void OnFlagsChanged(Flags old, Flags next)
 void ToggleObjects(bool state)
+void HideObjectShared(Arg args, List`1<CinematicEntity> entList)
 void .ctor()
 void .cctor()
 ----------
@@ -20813,14 +21341,6 @@ ParticleSystem waterFill
 float waterLevel
 float targetWaterLevel
 AudioSource waterSpill
-float PlayerEyePitch
-float turb_forward
-float turb_side
-Vector3 lastPosition
-Vector3 groundSpeedLast
-Vector3 lastAngle
-Vector3 vecAngleSpeedLast
-Vector3 initialPosition
 methods:
 void .ctor()
 ----------
@@ -20894,6 +21414,15 @@ float minScale
 float maxScale
 float scaleStartDistance
 float scaleEndDistance
+methods:
+void .ctor()
+----------
+class: EmissionBlink
+inherits from: FacepunchBehaviour
+fields:
+EmissionToggle emissionToggle
+float blinkDuration
+float blinkInterval
 methods:
 void .ctor()
 ----------
@@ -21181,6 +21710,7 @@ List`1<BaseScreenShake> list
 float punchFadeScale
 float bobScale
 float animPunchMagnitude
+AnimationCurve InverseCurve
 float length
 float timeTaken
 int currentFrame
@@ -21257,6 +21787,14 @@ float GlobalMultiplier
 methods:
 void .ctor()
 ----------
+class: TransformLineRenderer
+inherits from: MonoBehaviour
+fields:
+Transform[] TransformSequence
+LineRenderer TargetRenderer
+methods:
+void .ctor()
+----------
 class: EmissionOffsetStepped
 inherits from: MonoBehaviour
 fields:
@@ -21269,6 +21807,8 @@ void .ctor()
 ----------
 class: ConsoleNetwork
 inherits from: object
+fields:
+Stopwatch timer
 methods:
 void Init()
 void OnClientCommand(Message packet)
@@ -21277,6 +21817,7 @@ void SendClientCommand(Connection cn, string strCommand, Object[] args)
 void SendClientCommandImmediate(Connection cn, string strCommand, Object[] args)
 void SendClientCommand(List`1<Connection> cn, string strCommand, Object[] args)
 void BroadcastToAllClients(string strCommand, Object[] args)
+void .cctor()
 ----------
 class: FileSystem_Warmup
 inherits from: MonoBehaviour
@@ -21511,6 +22052,7 @@ int value__
 ReservedEntitySlots Self
 ReservedEntitySlots OwningPlayer
 ReservedEntitySlots GroupLeader
+ReservedEntitySlots SpecialEntity
 ----------
 class: ReservedPositionSlots
 inherits from: Enum
@@ -22375,6 +22917,7 @@ BaseEntity parentEnt
 ResourceDispenser resourceDispenser
 float CORPSE_SLEEP_THRESHOLD
 Rigidbody rigidBody
+bool blockDamageIfNotGather
 SpawnGroup spawnGroup
 float RAGDOLL_PUSH_DIST
 float RAGDOLL_PUSH_FORCE
@@ -22438,6 +22981,7 @@ SoundDefinition thirdPersonMeleeSound
 float recoilCompDelayOverride
 bool wantsRecoilComp
 bool showCrosshairOnTutorial
+bool noHeadshots
 float nextAttackTime
 properties:
 bool UsingInfiniteAmmoCheat
@@ -22537,6 +23081,31 @@ void .ctor()
 ----------
 class: LiquidWeaponEffects
 inherits from: MonoBehaviour
+fields:
+ParticleSystem RootPS
+ParticleSystem EmissionPS
+ParticleSystem InnerEmissionPS
+LiquidWobble Liquid
+float MinPressureSpeed
+float MaxPressureSpeed
+AnimationCurve PressureSpeedCurve
+Vector2 StreamSize
+AnimationCurve PressureSizeMultiplierCurve
+float MinPressureInnerSpeed
+float MaxPressureInnerSpeed
+AnimationCurve InnerPressureSpeedCurve
+Vector2 InnerStreamSize
+AnimationCurve InnerPressureSizeMultiplierCurve
+bool UseImpactSplashEffect
+GameObjectRef ImpactSplashEffect
+float ImpactSplashEffectInterval
+float FillSpeed
+bool firstPersonSounds
+SoundDefinition shootStartSoundDef
+SoundDefinition shootLoopSoundDef
+SoundDefinition shootLowPressureLoopSoundDef
+SoundDefinition impactStartSoundDef
+SoundDefinition impactLoopSoundDef
 methods:
 void .ctor()
 ----------
@@ -22591,6 +23160,40 @@ bool ForceSendMagazine(SaveInfo saveInfo)
 bool VerifyClientAttack(BasePlayer player)
 bool CanBeUsedInWater()
 void .ctor()
+----------
+class: SpinUpWeaponSounds
+inherits from: MonoBehaviour
+fields:
+SoundDefinition spinStartDef
+SoundDefinition spinReleaseDef
+SoundDefinition spinStopDef
+SoundDefinition spinLoopUnpitchedDef
+SoundDefinition spinLoopPitchedDef
+AnimationCurve spinUnpitchedGainCurve
+AnimationCurve spinPitchedGainCurve
+AnimationCurve spinPitchCurve
+AnimationCurve spinPitchedGainCurveDown
+AnimationCurve spinPitchCurveDown
+List`1<GunshotLayer> gunshotLayers
+methods:
+void .ctor()
+----------
+class: RpcTarget
+inherits from: ValueType
+fields:
+string Function
+SendInfo Connections
+bool ToNetworkGroup
+bool UsingPooledConnections
+methods:
+RpcTarget NetworkGroup(string funcName)
+RpcTarget NetworkGroup(string funcName, BaseNetworkable entity)
+RpcTarget NetworkGroup(string funcName, BaseNetworkable entity, SendMethod method, Priority priority)
+RpcTarget Player(string funcName, BasePlayer target)
+RpcTarget Player(string funcName, Connection connection)
+RpcTarget Players(string funcName, List`1<Connection> connections)
+RpcTarget SendInfo(string funcName, SendInfo sendInfo)
+RpcTarget PlayerAndSpectators(string funcName, BasePlayer player)
 ----------
 class: BaseEntityChild
 inherits from: MonoBehaviour
@@ -22668,6 +23271,7 @@ bool get_isClient()
 T ToServer()
 bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 List`1<Connection> GetConnectionsWithin(Vector3 position, float distance)
+void GetCloseConnections(Vector3 position, float distance, List`1<Connection> foundConnections)
 void GetCloseConnections(Vector3 position, float distance, List`1<BasePlayer> players)
 bool HasCloseConnections(Vector3 position, float distance)
 bool HasConnections(Vector3 position)
@@ -22715,7 +23319,7 @@ MemoryStream GetSaveCache()
 void UpdateNetworkGroup()
 void .ctor()
 void .cctor()
-bool <OnNetworkLimitStart>b__64_0(Connection x)
+bool <OnNetworkLimitStart>b__65_0(Connection x)
 ----------
 class: BaseNetworkableEx
 inherits from: object
@@ -22730,7 +23334,13 @@ bool animatorNeedsInitializing
 bool animatorIsOpen
 bool isAnimating
 int Open
+Action onAnimationStarted
+Action onAnimationFinished
 methods:
+void add_onAnimationStarted(Action value)
+void remove_onAnimationStarted(Action value)
+void add_onAnimationFinished(Action value)
+void remove_onAnimationFinished(Action value)
 void ServerInit()
 void PostServerLoad()
 void OnFlagsChanged(Flags old, Flags next)
@@ -22741,6 +23351,47 @@ void PutAnimatorToSleep()
 void OnAnimatorDisabled()
 void .ctor()
 void .cctor()
+----------
+class: BuildingPrivilegeRetro
+inherits from: BuildingPrivlidge
+fields:
+BuildingPrivilegeRetroScreen screens
+GameObjectRef[] boxPrefabs
+GameObjectRef[] doubleBoxPrefabs
+int boxesAmount
+Transform boxesParent
+Vector3 boxSpacing
+ToolSetting[] toolSettings
+ToolModel[] toolCustomModels
+Material hammerOriginalMaterial
+methods:
+void Save(SaveInfo info)
+float GetResourceProportion(int id)
+void Load(LoadInfo info)
+void .ctor()
+----------
+class: BuildingPrivilegeRetroScreen
+inherits from: FacepunchBehaviour
+fields:
+CanvasGroup screenCanvas
+RustText protectedTimeText
+int decayWarningThreshold
+GameObject decayWarningGroup
+GameObject decayingGroup
+VirtualItemIcon[] costIcons
+RustText[] paginationTexts
+GameObject[] blocksType
+RustText blockCountText
+RustText doorCountText
+Renderer screenRenderer
+Color fromScreenEmissionColor
+Color screenEmissionColor
+AnimationCurve tweenCurve
+float animDuration
+Animation screensAnim
+Screen[] screens
+methods:
+void .ctor()
 ----------
 class: DoorWithLock
 inherits from: Door
@@ -22944,6 +23595,7 @@ inherits from: MonoBehaviour
 fields:
 Vector3 offsetPosLocal
 float speed
+bool UseAsOffset
 methods:
 void SetAtOffset(bool should)
 void .ctor()
@@ -23030,16 +23682,17 @@ fields:
 GameObjectRef IoEntity
 Transform IoEntityAnchor
 EntityRef`1<IOEntity> spawnedIo
-bool resumeCookingWhenPowerResumes
 properties:
 bool CanRunWithNoFuel
 methods:
 void ServerInit()
 void SpawnIOEnt()
 bool get_CanRunWithNoFuel()
-void OnIOEntityFlagsChanged(Flags old, Flags next)
 void Save(SaveInfo info)
 void Load(LoadInfo info)
+void OvenFull()
+void PauseCooking()
+void OnItemAddedOrRemoved(Item item, bool bAdded)
 bool CanPickupOven()
 void .ctor()
 ----------
@@ -23077,7 +23730,7 @@ float ConvertInterval
 int PowerDrain
 Material PoweredMaterial
 Material UnpoweredMaterial
-MeshRenderer TargetRenderer
+RendererLOD TargetRenderer
 methods:
 void ResetState()
 bool CanPickup(BasePlayer player)
@@ -23216,6 +23869,7 @@ float pendingFreshWater
 methods:
 void ServerInit()
 void PostServerLoad()
+void DoServerDestroy()
 void SpawnStorageEnt(bool load)
 void OnParentRemoved()
 void OnKilled(HitInfo info)
@@ -23225,6 +23879,7 @@ bool HasDirtyWater()
 void Cook(float timeCooked)
 void ConvertWater(float timeCooked)
 void Load(LoadInfo info)
+bool CanPickup(BasePlayer player)
 bool IsBoiling()
 void .ctor()
 ----------
@@ -23275,6 +23930,9 @@ void RadialDecayTouch(Vector3 pos, float radius, int mask)
 bool ShouldDecay(BaseEntity entity)
 float GetDecayDelay(BaseEntity entity)
 float GetDecayDuration(BaseEntity entity)
+float GetDecayTickOverride()
+float GetHealScale(BaseEntity entity)
+float GetHealDelay(DecayEntity decayEntity)
 Type GetIndexedType()
 void .ctor()
 ----------
@@ -23283,6 +23941,7 @@ inherits from: BaseCombatEntity
 fields:
 GameObjectRef debrisPrefab
 Vector3 debrisRotationOffset
+DebrisPosition[] DebrisPositions
 UInt32 buildingID
 float decayTimer
 float upkeepTimer
@@ -23292,8 +23951,11 @@ DecayPoint[] decayPoints
 float lastDecayTick
 float decayVariance
 properties:
+Upkeep Upkeep
 bool BypassInsideDecayMultiplier
+bool AllowOnCargoShip
 methods:
+Upkeep get_Upkeep()
 void ResetState()
 void AttachToBuilding(UInt32 id)
 Building GetBuilding()
@@ -23308,11 +23970,14 @@ void DecayTouch()
 void AddUpkeepTime(float time)
 float GetProtectedSeconds()
 float GetEntityDecayDuration()
+float GetEntityHealScale()
 float GetEntityDecayDelay()
 void DecayTick()
 void OnRepairFinished()
 void OnKilled(HitInfo info)
+void SpawnDebris(Vector3 localPos, Quaternion rot, bool dropToTerrain)
 bool get_BypassInsideDecayMultiplier()
+bool get_AllowOnCargoShip()
 bool SupportsChildDeployables()
 bool ForceDeployableSetParent()
 void Save(SaveInfo info)
@@ -23324,9 +23989,15 @@ inherits from: Decay
 fields:
 float decayDelay
 float decayDuration
+bool overrideHealRate
+float decayTickOverride
+bool decayIndoors
+float healRate
 methods:
 float GetDecayDelay(BaseEntity entity)
 float GetDecayDuration(BaseEntity entity)
+float GetHealScale(BaseEntity entity)
+float GetDecayTickOverride()
 bool ShouldDecay(BaseEntity entity)
 void .ctor()
 ----------
@@ -24082,7 +24753,8 @@ int scrapAmount
 string deathStat
 LootSpawnSlot[] LootSpawnSlots
 spawnType SpawnType
-bool FirstLooted
+ClanScoreEventType clanScoreEventForFirstLooter
+ulong FirstLooterId
 ItemDefinition scrapDef
 properties:
 bool shouldRefreshContents
@@ -24103,6 +24775,15 @@ bool ShouldDropItemsIndividually()
 void OnKilled(HitInfo info)
 void OnAttacked(HitInfo info)
 void InitShared()
+void .ctor()
+----------
+class: LootContainerAchievement
+inherits from: LootContainer
+fields:
+string AchievementName
+bool AllowDuringTutorial
+methods:
+bool OnStartBeingLooted(BasePlayer baseEntity)
 void .ctor()
 ----------
 class: m2bradleyAnimator
@@ -24191,6 +24872,17 @@ AppMarker GetAppMarkerData()
 void .ctor()
 void .cctor()
 ----------
+class: MapMarkerMissionProvider
+inherits from: MapMarker
+fields:
+List`1<BaseMission> missionsProvided
+string providerToken
+methods:
+void Load(LoadInfo info)
+void AssignMissions(List`1<BaseMission> missions, string token)
+void Save(SaveInfo info)
+void .ctor()
+----------
 class: PaintableItem
 inherits from: MonoBehaviour
 fields:
@@ -24203,6 +24895,7 @@ inherits from: MonoBehaviour
 fields:
 PatrolHelicopterAI _ai
 float swayAmount
+float impactSwayAmount
 float lastStrafeScalar
 float lastForwardBackScalar
 float degreeMax
@@ -24210,11 +24903,16 @@ Vector3 lastPosition
 float oldMoveSpeed
 float smoothRateOfChange
 float flareAmount
+float swaySmoothingFactor
+float smoothedTime
 methods:
 void Awake()
-Vector3 GetMoveDirection()
-float GetMoveSpeed()
-void Update()
+void UpdateAnimation()
+void UpdateLastPosition()
+void UpdateForwardBackTilting()
+void UpdateStrafeTilting()
+void ModifyHelicopterAngles()
+Vector3 GetCurrentMoveDirection()
 void .ctor()
 ----------
 class: HelicopterDebris
@@ -24303,6 +25001,7 @@ PatrolHelicopterAI heliInstance
 PatrolHelicopter helicopterBase
 aiState _currentState
 float oceanDepthTargetCutoff
+AIHelicopterAnimation anim
 Vector3 _aimTarget
 bool movementLockingAiming
 bool hasAimTarget
@@ -24314,8 +25013,21 @@ bool isDead
 bool isRetiring
 float spawnTime
 float lastDamageTime
+float flee_damage_percentage
+bool use_danger_zones
+bool monument_crash
+bool shouldDebug
 List`1<targetinfo> _targetList
+List`1<DangerZone> dangerZones
+List`1<DangerZone> noGoZones
+int max_zones
+float no_go_zone_size
+float danger_zone_size
+DangerZone leastActiveZone
 float deathTimeout
+bool didImpact
+Collider[] collisions
+bool reachedSpinoutLocation
 float destination_min_dist
 float currentOrbitDistance
 float currentOrbitTime
@@ -24323,6 +25035,8 @@ bool hasEnteredOrbit
 float orbitStartTime
 float maxOrbitDuration
 bool breakingOrbit
+float timeBetweenRocketsOrbit
+bool didGetToDesination
 List`1<MonumentInfo> _visitedMonuments
 float arrivalTime
 GameObjectRef rocketProjectile
@@ -24333,14 +25047,23 @@ float timeBetweenRockets
 int numRocketsLeft
 int maxRockets
 Vector3 strafe_target_position
+BasePlayer strafe_target
 bool puttingDistance
 float strafe_approach_range
 float strafe_firing_range
+float get_out_of_strafe_distance
+bool passNapalm
+Vector3 cached_strafe_pos
+TimeSince timeSinceRefreshed
 bool useNapalm
 float lastNapalmTime
 float lastStrafeTime
 float _lastThinkTime
+properties:
+bool IsDead
 methods:
+bool get_IsDead()
+void dumpstate()
 void Awake()
 void SetInitialDestination(Vector3 dest, float mapScaleDistance)
 void Retire()
@@ -24348,12 +25071,17 @@ void SetIdealRotation(Quaternion newTargetRot, float rotationSpeedOverride)
 Quaternion GetYawRotationTo(Vector3 targetDest)
 void SetTargetDestination(Vector3 targetDest, float minDist, float minDistForFacingRotation)
 bool AtDestination()
+bool AtRotation()
+void NoGoZoneAdded(DangerZone zone)
 void MoveToDestination()
 void TerrainPushback()
 void UpdateRotation()
 void UpdateSpotlight()
 void Update()
+void FixedUpdate()
+void OtherDamaged(HitInfo info)
 void WeakspotDamaged(weakspot weak, HitInfo info)
+void TryStrafePlayer(HitInfo info, float timeSinceDamagedThreshold)
 void CriticalDamage()
 void DoMachineGuns()
 void FireGun(Vector3 targetPos, float aimCone, bool left)
@@ -24369,33 +25097,69 @@ void UpdateWind()
 void SetAimTarget(Vector3 aimTarg, bool isDoorSide)
 void ClearAimTarget()
 void UpdateTargetList()
+void UpdateTargetLineOfSightTime(targetinfo targ)
+void AddNewTargetsToList()
+Nullable`1<Vector3> FindTargetWithZones(bool withOffset)
+Vector3 FindDefaultTarget(bool withOffset)
+Vector3 GetTargetOffset()
 bool PlayerVisible(BasePlayer ply)
 void WasAttacked(HitInfo info)
+void UpdateDangerZones(Vector3 position, float damage, BasePlayer ply, weakspot weak)
+void MakeZone(Vector3 position, float damage, BaseEntity parent)
+void UpdateNoGoZones(DangerZone zone)
+void ClearStaleZones()
+void RemoveLeastSignificantZone()
+bool IsInNoGoZone(Vector3 position)
+bool IsInDangerZone(Vector3 position, DangerZone& dangerZone)
 void State_Death_Think(float timePassed)
 void State_Death_Enter()
 void State_Death_Leave()
+MonumentInfo GetCloseMonument(float maxDistance)
+void PhysicsDeathCheck()
+void KillOfNaturalCauses()
+void StartSpinout()
+void State_Flee_Think(float timePassed)
+void State_Flee_Enter(Vector3 newPos)
+void State_Flee_Leave()
 void State_Idle_Think(float timePassed)
 void State_Idle_Enter()
 void State_Idle_Leave()
 void State_Move_Think(float timePassed)
 void State_Move_Enter(Vector3 newPos)
 void State_Move_Leave()
+void TryMove(Vector3 newPos)
+void UpdateMove(float timePassed)
 void State_Orbit_Think(float timePassed)
 Vector3 GetOrbitPosition(float rate)
 void State_Orbit_Enter(float orbitDistance)
 void State_Orbit_Leave()
+void OrbitInit(float orbitDistance, float minDistForFacingRotation)
+void OrbitUpdate(float timePassed, float minDistForFacingRotation, bool canBreak)
+void StartBreakOrbit()
+void DebugOrbit()
+void State_OrbitStrafe_Enter()
+void State_OrbitStrafe_Think(float timePassed)
+void State_OrbitStrafe_Leave()
 Vector3 GetRandomPatrolDestination()
+Vector3 FindValidDestination(int maxAttempts)
+Vector3 GenerateRandomDestination(bool forceMonument)
 void State_Patrol_Think(float timePassed)
+void OrbitInterestZone()
 void State_Patrol_Enter()
 void State_Patrol_Leave()
+Vector3 GetRandomMapPosition()
 int ClipRocketsLeft()
 bool CanStrafe()
 bool CanUseNapalm()
-void State_Strafe_Enter(Vector3 strafePos, bool shouldUseNapalm)
+void State_Strafe_Enter(BasePlayer strafeTarget, bool shouldUseNapalm)
 void State_Strafe_Think(float timePassed)
-bool ValidStrafeTarget(BasePlayer ply)
+Vector3 GetPredictedPosition()
+bool CanSeeForStrafe(Vector3 targetPos)
+bool ValidRocketTarget(BasePlayer ply)
 void State_Strafe_Leave()
-void FireRocket()
+void StartStrafe(BasePlayer strafeTarget, bool shouldUseNapalm)
+void FireRocket(Vector3 targetPos)
+void RefreshTargetPosition()
 void InitializeAI()
 void OnCurrentStateExit()
 void ExitCurrentState()
@@ -24405,6 +25169,7 @@ Vector3 GetRandomOffset(Vector3 origin, float minRange, float maxRange, float mi
 Vector3 GetAppropriatePosition(Vector3 origin, float minHeight, float maxHeight)
 float GetThrottleForDistance(float distToTarget)
 void .ctor()
+void .cctor()
 ----------
 class: ServerGib
 inherits from: BaseCombatEntity
@@ -24762,6 +25527,7 @@ void InitFromProto(WeaponRackItem item)
 void SetItem(Item item, ItemDefinition updatedItemDef, int gridCellIndex, int rotation)
 void SetAmmoDetails(Item item)
 void ClearAmmoDetails()
+bool CanBeReloadedAtWeaponRack()
 void .ctor()
 ----------
 class: WhitelistLootContainer
@@ -25285,6 +26051,7 @@ Transform rightFootBone
 Transform leftHandPropBone
 Transform rightHandPropBone
 Vector3 rightHandTarget
+bool isPreview
 Vector3 leftHandTargetPosition
 Quaternion leftHandTargetRotation
 Vector3 rightHandTargetPosition
@@ -25650,6 +26417,7 @@ float scanRange
 Vector3 swimScale
 Vector3 swimSpeed
 float radius
+bool IgnoreAI
 bool impacted
 float swimRandom
 Vector3 <CurrentVelocity>k__BackingField
@@ -25667,39 +26435,9 @@ void FixedUpdate()
 bool ShouldSwim()
 bool DoMovement()
 bool IsAValidHit(BaseEntity hitEnt)
+bool IsAnIgnoredAI(BaseEntity hitEnt)
 void InitializeVelocity(Vector3 overrideVel)
 void .ctor()
-----------
-class: StabilityEntity
-inherits from: DecayEntity
-fields:
-bool grounded
-float cachedStability
-int cachedDistanceFromGround
-List`1<Support> supports
-int stabilityStrikes
-bool dirty
-StabilityCheckWorkQueue stabilityCheckQueue
-UpdateSurroundingsQueue updateSurroundingsQueue
-methods:
-void ResetState()
-void InitializeSupports()
-int DistanceFromGround(StabilityEntity ignoreEntity)
-float SupportValue(StabilityEntity ignoreEntity)
-int CachedDistanceFromGround(StabilityEntity ignoreEntity)
-float CachedSupportValue(StabilityEntity ignoreEntity)
-void StabilityCheck()
-void UpdateStability()
-void UpdateSurroundingEntities()
-void UpdateConnectedEntities()
-void OnPhysicsNeighbourChanged()
-void DebugNudge()
-void ServerInit()
-void DoServerDestroy()
-void Save(SaveInfo info)
-void Load(LoadInfo info)
-void .ctor()
-void .cctor()
 ----------
 class: TimedExplosive
 inherits from: BaseEntity
@@ -25711,6 +26449,7 @@ float explosionRadius
 bool explodeOnContact
 bool canStick
 bool onlyDamageParent
+bool IgnoreAI
 bool BlindAI
 float aiBlindDuration
 float aiBlindRange
@@ -25723,6 +26462,7 @@ GameObjectRef stickEffect
 GameObjectRef bounceEffect
 bool explosionUsesForward
 bool waterCausesExplosion
+int vibrationLevel
 List`1<DamageTypeEntry> damageTypes
 float lastBounceTime
 bool hadRB
@@ -25733,6 +26473,7 @@ CollisionDetectionMode rbCollisionMode
 int parentOnlySplashDamage
 int fullSplashDamage
 BaseEntity[] queryResults
+Vector3 lastPosition
 properties:
 bool PositionTickFixedTime
 bool AlwaysRunWaterCheck
@@ -25746,16 +26487,19 @@ void WaterCheck()
 void SetFuse(float fuseLength)
 float GetRandomTimerTime()
 void ProjectileImpact(RaycastHit info, Vector3 rayOrigin)
+void ForceExplode()
 void Explode()
 void Explode(Vector3 explosionFxPos)
 Vector3 ExplosionCenter()
 void BlindAnyAI()
+void FixedUpdate()
+void CheckClippingThroughWalls()
 void OnCollision(Collision collision, BaseEntity hitEntity)
 bool CanStickTo(BaseEntity entity)
 void DoBounceEffect()
 void DoCollisionStick(Collision collision, BaseEntity ent)
 void SetMotionEnabled(bool wantsMotion)
-bool IsStuck()
+bool IsStuck(bool bypassColliderCheck)
 void DoStick(Vector3 position, Vector3 normal, BaseEntity ent, Collider collider)
 void UnStick()
 void OnParentRemoved()
@@ -25791,7 +26535,15 @@ void .ctor()
 ----------
 class: SurvivalFishTrap
 inherits from: WildlifeTrap
+fields:
+WaterBody cachedWaterBody
+bool bypassItemFilter
 methods:
+void ServerInit()
+bool HasBait()
+void TrapThink()
+bool ItemFilter(Item item, int targetSlot)
+bool CanAcceptItem(Item item, int slot)
 void .ctor()
 ----------
 class: TrappableWildlife
@@ -25827,6 +26579,7 @@ void UseBaitCalories(int numToUse)
 int GetItemCalories(Item item)
 void TrapThink()
 void TrapWildlife(TrappableWildlife trapped)
+void OnTrappedWildlife(bool setFlag)
 void ClearTrap()
 bool HasBait()
 void PlayerStoppedLooting(BasePlayer player)
@@ -26467,6 +27220,7 @@ void LightToggle(BasePlayer player)
 bool IsEngineOn()
 bool get_ForceMovementHandling()
 void TryStartEngine(BasePlayer player)
+void ApplyHandbrake()
 void ClearDamageTorque()
 void SetDamageTorque(Vector3 newTorque)
 void AddDamageTorque(Vector3 torqueToAdd)
@@ -26519,6 +27273,7 @@ methods:
 void ServerInit()
 void CreateMapMarker()
 bool IsValidHomingTarget()
+void ApplyHandbrake()
 bool CanPushNow(BasePlayer pusher)
 void .ctor()
 ----------
@@ -26562,6 +27317,7 @@ void SpawnPassenger(Vector3 spawnPos, string prefabPath)
 void SpawnPassenger(Vector3 spawnPos)
 void SpawnScientist(Vector3 spawnPos)
 void OnSpawnedHuman(HumanNPC human)
+void CheckSpawnScientists()
 void SpawnScientists()
 void EnableFacingOverride(bool enabled)
 void SetMoveTarget(Vector3 position)
@@ -26593,7 +27349,10 @@ fields:
 float lastDropTime
 List`1<CH47LandingZone> landingZones
 float dropoffScale
+properties:
+bool HasAnyLandingZones
 methods:
+bool get_HasAnyLandingZones()
 void Awake()
 CH47LandingZone GetClosest(Vector3 pos)
 void OnDestroy()
@@ -26621,6 +27380,7 @@ float startDist
 methods:
 void OnEntityMessage(BaseEntity from, string msg)
 void Call()
+bool TryCall(string resourcePath, Vector3 ourPos, float startDist)
 void .ctor()
 ----------
 class: Minicopter
@@ -26887,17 +27647,20 @@ GameObjectRef launchBlastFXPrefab
 GameObjectRef explosionGroundFXPrefab
 ServerProjectile serverProjectile
 EntityRef mapMarkerInstanceRef
+List`1<MLRSRocket> serverList
 properties:
 SamTargetType SAMTargetType
 methods:
 SamTargetType get_SAMTargetType()
 void ServerInit()
+void DoServerDestroy()
 void ProjectileImpact(RaycastHit info, Vector3 rayOrigin)
 void CreateMapMarker()
 bool IsValidSAMTarget(bool staticRespawn)
 Vector3 GetLocalVelocityServer()
 void OnTriggerEnter(Collider other)
 void .ctor()
+void .cctor()
 ----------
 class: MLRSServerProjectile
 inherits from: ServerProjectile
@@ -27946,6 +28709,7 @@ Flags FLAG_STUCK
 int originalLayer
 DropReasonEnum DropReason
 ulong DroppedBy
+DateTime DroppedTime
 bool NeverCombine
 Rigidbody rB
 CollisionDetectionMode originalCollisionMode
@@ -28011,6 +28775,8 @@ fields:
 int input1Amount
 int input2Amount
 methods:
+int ConsumptionAmount()
+bool WantsPower(int inputIndex)
 int GetPassthroughAmount(int outputSlot)
 void UpdateHasPower(int inputAmount, int inputSlot)
 void UpdateFromInput(int inputAmount, int slot)
@@ -28025,7 +28791,9 @@ bool HasSubscription(ulong steamId)
 class: StorageMonitor
 inherits from: AppIOEntity
 fields:
-Action`2<Item, bool> _onContainerChangedHandler
+Action`2<Item, bool> _onItemAddedRemoved
+Action`2<Item, int> _onItemAddedToStack
+Action`2<Item, int> _onItemRemovedFromStack
 Action _resetSwitchHandler
 double _lastPowerOnUpdate
 properties:
@@ -28042,7 +28810,10 @@ void DestroyShared()
 StorageContainer GetStorageContainer()
 int GetPassthroughAmount(int outputSlot)
 void UpdateHasPower(int inputAmount, int inputSlot)
-void OnContainerChanged(Item item, bool added)
+void OnItemAddedRemoved(Item item, bool added)
+void OnItemAddedToStack(Item item, int amount)
+void OnItemRemovedFromStack(Item item, int amount)
+void OnContainerChanged()
 void ResetSwitch()
 ----------
 class: DoorManipulator
@@ -28053,13 +28824,13 @@ Door targetDoor
 DoorEffect powerAction
 bool toggle
 methods:
-bool PairWithLockedDoors()
-void SetTargetDoor(Door newTargetDoor)
-void SetupInitialDoorConnection()
+bool CanPairWithLockedDoors()
 void Init()
+void SetupInitialDoorConnection()
+void SetTargetDoor(Door newTargetDoor)
 Door FindDoor(bool allowLocked)
 void DoActionDoorMissing()
-void DoAction()
+void DoAction(DoorEffect action)
 void IOStateChanged(int inputAmount, int inputSlot)
 void Save(SaveInfo info)
 void Load(LoadInfo info)
@@ -28072,7 +28843,7 @@ string listenString
 string listenStringOff
 float duration
 methods:
-bool WantsPower()
+bool WantsPower(int inputIndex)
 void ResetIOState()
 int GetPassthroughAmount(int outputSlot)
 void SetOn(bool wantsOn)
@@ -28090,7 +28861,6 @@ BaseEntity IndustrialEntity
 methods:
 int ConsumptionAmount()
 int DesiredPower()
-void OnFlagsChanged(Flags old, Flags next)
 void UpdateHasPower(int inputAmount, int inputSlot)
 ElectricOven GetParentOven()
 ItemContainer get_Container()
@@ -28161,7 +28931,8 @@ fields:
 int input1Amount
 int input2Amount
 methods:
-bool WantsPassthroughPower()
+int ConsumptionAmount()
+bool WantsPower(int inputIndex)
 int GetPassthroughAmount(int outputSlot)
 void UpdateHasPower(int inputAmount, int inputSlot)
 void IOStateChanged(int inputAmount, int inputSlot)
@@ -28185,7 +28956,9 @@ inherits from: IOEntity
 properties:
 bool BlockFluidDraining
 methods:
+int ConsumptionAmount()
 bool get_BlockFluidDraining()
+int GetPassthroughAmount(int outputSlot)
 bool IsRootEntity()
 void OnCircuitChanged(bool forceUpdate)
 void .ctor()
@@ -28197,6 +28970,8 @@ int input1Amount
 int input2Amount
 bool firstRun
 methods:
+int ConsumptionAmount()
+bool WantsPower(int inputIndex)
 void ResetState()
 int GetPassthroughAmount(int outputSlot)
 void UpdateHasPower(int inputAmount, int inputSlot)
@@ -28244,10 +29019,6 @@ GameObjectRef ItemPrefab
 Transform ItemParent
 GameObject ItemSearchParent
 ItemSearchEntry ItemSearchEntryPrefab
-VirtualItemIcon TargetItemIcon
-GameObject TargetCategoryRoot
-RustText TargetCategoryText
-Image TargetCategoryImage
 GameObject NoItemsPrompt
 Dropdown FilterModeDropdown
 GameObject[] FilterModeExplanations
@@ -28259,6 +29030,8 @@ Transform BufferTransform
 RustButton PasteButton
 GameObject[] RegularCopyPasteButtons
 GameObject[] JsonCopyPasteButtons
+bool closeWhenClicked
+int count
 methods:
 void .ctor()
 ----------
@@ -28295,6 +29068,7 @@ Vector2i OutputSlotRange(int slotIndex)
 void OnStorageItemTransferBegin()
 void OnStorageItemTransferEnd()
 BaseEntity get_IndustrialEntity()
+void OnParentChanging(BaseEntity oldParent, BaseEntity newParent)
 int ConsumptionAmount()
 void ClientNotifyItemAddRemoved(bool add)
 void .ctor()
@@ -28399,13 +29173,7 @@ void ResetIOEntRecursive(IOEntity target, int resetIndex)
 void .ctor()
 ----------
 class: FrequencyConfig
-inherits from: UIDialog
-fields:
-IRFObject rfObject
-InputField input
-int target
-ItemContainer tempContainer
-ItemId tempItemID
+inherits from: IOConfig`1<IRFObject>
 methods:
 void .ctor()
 ----------
@@ -28567,6 +29335,18 @@ bool Failed(string Message)
 bool TestRustNative()
 bool RustNative_VersionCheck(int version)
 ----------
+class: BuildingBlockedGuide
+inherits from: MonoBehaviour
+fields:
+Mesh BoxMesh
+Mesh SphereMesh
+Mesh CapsuleMesh
+MeshRenderer Renderer
+MeshFilter Filter
+Collider LargestVolume
+methods:
+void .ctor()
+----------
 class: BuildingManager
 inherits from: object
 fields:
@@ -28666,10 +29446,17 @@ methods:
 ClanInvitations ToProto(List`1<ClanInvitation> invitations)
 Invitation ToProto(ClanInvitation invitation)
 ----------
+class: ClanLeaderboardExtensions
+inherits from: object
+methods:
+ClanLeaderboard ToProto(List`1<ClanLeaderboardEntry> leaderboard)
+Entry ToProto(ClanLeaderboardEntry entry)
+----------
 class: ClanLogExtensions
 inherits from: object
 methods:
 ClanLog ToProto(ClanLogs clanLogs)
+ClanScoreEvents ToProto(ClanScoreEvents clanScoreEvents)
 ----------
 class: ClanMetadata
 inherits from: ValueType
@@ -28683,6 +29470,16 @@ class: ClanPushNotifications
 inherits from: object
 methods:
 void SendClanAnnouncement(IClan clan, long previousTimestamp, ulong ignorePlayer)
+----------
+class: ClientIOLineParent
+inherits from: FacepunchBehaviour
+fields:
+Door parentEntity
+string boneName
+bool ignoreForPlugConnections
+HashSet`1<ClientIOLine> lines
+methods:
+void .ctor()
 ----------
 class: Climate
 inherits from: SingletonComponent`1<Climate>
@@ -28874,6 +29671,8 @@ inherits from: PrefabAttribute
 fields:
 Mesh guideMesh
 Vector3 guideMeshScale
+bool overrideRotation
+Vector3 guideMeshOrientation
 bool guideLights
 bool wantsInstanceData
 bool copyInventoryFromItem
@@ -28881,10 +29680,12 @@ bool setSocketParent
 bool toSlot
 Slot slot
 GameObjectRef placeEffect
+Transform[] guideTargets
 Bounds bounds
 methods:
 void AttributeSetup(GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
 Type GetIndexedType()
+bool IsGuideTarget(Transform t)
 void .ctor()
 ----------
 class: DeployShell
@@ -29035,6 +29836,7 @@ float detachTime
 float recycleTime
 PlayMode playMode
 ParentDestroyBehaviour onParentDestroyed
+int WarmedUpAmount
 methods:
 void .ctor()
 ----------
@@ -29056,10 +29858,10 @@ class: EnvironmentManager
 inherits from: SingletonComponent`1<EnvironmentManager>
 methods:
 EnvironmentType Get(OBB obb)
-EnvironmentType Get(Vector3 pos, List`1& list)
-EnvironmentType Get(Vector3 pos)
+EnvironmentType Get(Vector3 pos, List`1& list, float radius)
+EnvironmentType Get(Vector3 pos, float radius)
 bool Check(OBB obb, EnvironmentType type)
-bool Check(Vector3 pos, EnvironmentType type)
+bool Check(Vector3 pos, EnvironmentType type, float radius)
 void .ctor()
 ----------
 class: EnvironmentType
@@ -29425,6 +30227,7 @@ DamageProperties damageProperties
 GameObject gameObject
 Collider collider
 BaseEntity ignoreEntity
+Type ignoredType
 BaseEntity HitEntity
 Vector3 HitPoint
 Vector3 HitNormal
@@ -29697,6 +30500,7 @@ bool ApplyMeshTrimming
 MeshTrimSettings Settings
 RendererLOD DebugComponent
 bool ShowTrimSettings
+bool DebugMode
 methods:
 void .ctor()
 ----------
@@ -29829,8 +30633,11 @@ void .ctor()
 class: RendererLOD
 inherits from: LODComponent
 fields:
+float minDistanceMultiplier
 State[] States
 methods:
+Mesh GetFinalLodMesh(Matrix4x4& localToWorldMatrix)
+void PreProcess(IPrefabProcessor preProcess, GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
 void .ctor()
 ----------
 class: RendererToggleDynamicEx
@@ -29888,6 +30695,7 @@ DungeonGridInfo DungeonEntrance
 OBB obbBounds
 methods:
 void Awake()
+void Start()
 bool CheckPlacement(Vector3 pos, Quaternion rot, Vector3 scale)
 float Distance(Vector3 position)
 float SqrDistance(Vector3 position)
@@ -30196,6 +31004,7 @@ float rotateResetSpeed
 float dragSpeed
 bool autoSpin
 float timeoutSeconds
+Skeleton skinViewerSkeleton
 methods:
 void .ctor()
 ----------
@@ -30666,6 +31475,7 @@ inherits from: ScriptableObject
 fields:
 string shortname
 int nextID
+int techTreeLevel
 Dictionary`2<int, NodeInstance> _idToNode
 NodeInstance _entryNode
 List`1<NodeInstance> nodes
@@ -31087,6 +31897,16 @@ methods:
 GameObject InterestedInObject(GameObject obj)
 void .ctor()
 ----------
+class: TriggerStashPlayer
+inherits from: TriggerBase
+fields:
+StashContainer Stash
+methods:
+GameObject InterestedInObject(GameObject obj)
+void OnEntityEnter(BaseEntity ent)
+void OnEntityLeave(BaseEntity ent)
+void .ctor()
+----------
 class: TriggerSubmarineMoonpool
 inherits from: TriggerBase
 methods:
@@ -31172,6 +31992,7 @@ inherits from: object
 fields:
 int colCount
 Collider[] colBuffer
+HashSet`1<object> hashSet
 methods:
 void Buffer(Vector3 position, float radius, int layerMask, QueryTriggerInteraction triggerInteraction)
 bool AnyColliders(Vector3 position, float radius, int layerMask, QueryTriggerInteraction triggerInteraction)
@@ -31245,12 +32066,12 @@ DeformHair deformHair
 OccupationSlots occupationUnder
 OccupationSlots occupationOver
 bool IsBackpack
+bool HideInPlayerPreview
 bool showCensorshipCube
 bool showCensorshipCubeBreasts
 bool forceHideCensorshipBreasts
 string followBone
 bool disableRigStripping
-bool globalDisableRigStripping
 bool overrideDownLimit
 float downLimit
 PlayerModelHair playerModelHair
@@ -31523,6 +32344,7 @@ bool OverrideScale
 Vector3 Scale
 bool UseManualRenderBounds
 Bounds ManualRenderBounds
+bool CanReloadOnWeaponRack
 List`1<CustomPosition> CustomPositions
 methods:
 WorldModelRackMountConfig GetForItemDef(ItemDefinition itemDef)
@@ -31605,6 +32427,8 @@ void .ctor()
 ----------
 class: WorldModelOutline
 inherits from: OutlineObject
+fields:
+bool AlwaysRender
 methods:
 void .ctor()
 ----------
@@ -31865,6 +32689,7 @@ BaseEntity Drop(Vector3 vPos, Vector3 vVelocity, Quaternion rotation)
 BaseEntity DropAndTossUpwards(Vector3 vPos, float force)
 bool IsBusy()
 void BusyFor(float fTime)
+bool IsRemoved()
 void Remove(float fTime)
 void DoRemove()
 void SwitchOnOff(bool bNewState)
@@ -31875,6 +32700,7 @@ bool IsBackpack()
 int GetChildItemCount()
 int GetItemVolume()
 Item SplitItem(int split_Amount)
+void UnloadAmmo()
 bool CanBeHeld()
 bool CanStack(Item item)
 bool IsValid()
@@ -31916,6 +32742,7 @@ int BackpackSlotIndex
 Flag flags
 ContentsType allowedContents
 ItemDefinition[] onlyAllowedItems
+HashSet`1<ItemDefinition> blockedItems
 List`1<ItemSlot> availableSlots
 int capacity
 ItemContainerId uid
@@ -31933,6 +32760,7 @@ Func`3<Item, int, bool> canAcceptItem
 Func`3<Item, int, bool> slotIsReserved
 Action`2<Item, bool> onItemAddedRemoved
 Action`2<Item, int> onItemAddedToStack
+Action`2<Item, int> onItemRemovedFromStack
 Action`1<Item> onPreItemRemove
 properties:
 bool HasLimitedAllowedItems
@@ -31964,6 +32792,7 @@ bool CanAccept(Item item)
 int GetMaxTransferAmount(ItemDefinition def)
 void SetOnlyAllowedItem(ItemDefinition def)
 void SetOnlyAllowedItems(ItemDefinition[] defs)
+void SetBlacklist(ItemDefinition[] defs)
 bool Insert(Item item)
 bool SlotTaken(Item item, int i)
 Item GetSlot(int slot)
@@ -31992,6 +32821,7 @@ Vector3 get_dropVelocity()
 void OnCycle(float delta)
 void FindAmmo(List`1<Item> list, AmmoTypes ammoType)
 bool HasAmmo(AmmoTypes ammoType)
+int GetAmmoAmount(ItemDefinition specificAmmo)
 int GetAmmoAmount(AmmoTypes ammoType)
 int TotalItemAmount()
 bool HasAny(ItemDefinition itemDef)
@@ -32301,10 +33131,15 @@ void .ctor()
 class: ItemModBlueprintCraft
 inherits from: ItemMod
 fields:
+Phrase CraftItemTitle
+Phrase CraftItemDesc
+Phrase CraftAllTitle
+Phrase CraftAllDesc
 GameObjectRef successEffect
 methods:
 void ServerCommand(Item item, string command, BasePlayer player)
 void .ctor()
+void .cctor()
 ----------
 class: ItemModBurnable
 inherits from: ItemMod
@@ -32340,6 +33175,7 @@ inherits from: MonoBehaviour
 fields:
 float TotalFertilizerProduced
 float BaitValue
+int MaxBaitStack
 methods:
 void .ctor()
 ----------
@@ -32488,12 +33324,15 @@ void .ctor()
 class: ItemModConversation
 inherits from: ItemMod
 fields:
+Phrase SquakTitle
+Phrase SquakDesc
 ConversationData conversationData
 GameObjectRef conversationEntity
 GameObjectRef squakEffect
 methods:
 void ServerCommand(Item item, string command, BasePlayer player)
 void .ctor()
+void .cctor()
 ----------
 class: ItemModCookable
 inherits from: ItemMod
@@ -32654,6 +33493,8 @@ void .ctor()
 class: ItemModPaintable
 inherits from: ItemModAssociatedEntity`1<PaintedItemStorageEntity>
 fields:
+Phrase ItemPaintTitle
+Phrase ItemPaintDesc
 GameObjectRef ChangeSignTextDialog
 MeshPaintableSource[] PaintableSources
 properties:
@@ -32663,6 +33504,7 @@ methods:
 bool get_AllowNullParenting()
 bool get_OwnedByParentPlayer()
 void .ctor()
+void .cctor()
 ----------
 class: ItemModPetStats
 inherits from: ItemMod
@@ -32714,6 +33556,7 @@ float radius
 DamageTypeEntry damage
 GameObjectRef effect
 bool ignoreHitObject
+int vibrationLevel
 methods:
 void ServerProjectileHit(HitInfo info)
 void .ctor()
@@ -32739,6 +33582,8 @@ void .ctor()
 class: ItemModRecycleInto
 inherits from: ItemMod
 fields:
+Phrase RecycleIntoTitle
+Phrase RecycleIntoDesc
 ItemDefinition recycleIntoItem
 int numRecycledItemMin
 int numRecycledItemMax
@@ -32746,10 +33591,25 @@ GameObjectRef successEffect
 methods:
 void ServerCommand(Item item, string command, BasePlayer player)
 void .ctor()
+void .cctor()
+----------
+class: ItemModReload
+inherits from: ItemMod
+fields:
+float conditionLost
+GameObjectRef successEffect
+int workbenchLvlRequired
+Phrase reloadPhrase
+methods:
+bool HasCraftLevel(BasePlayer player)
+void ServerCommand(Item item, string command, BasePlayer player)
+void .ctor()
 ----------
 class: ItemModRepair
 inherits from: ItemMod
 fields:
+Phrase RefillItemTitle
+Phrase RefillItemDesc
 float conditionLost
 GameObjectRef successEffect
 int workbenchLvlRequired
@@ -32758,10 +33618,13 @@ methods:
 bool HasCraftLevel(BasePlayer player)
 void ServerCommand(Item item, string command, BasePlayer player)
 void .ctor()
+void .cctor()
 ----------
 class: ItemModReveal
 inherits from: ItemMod
 fields:
+Phrase RevealItemTitle
+Phrase RevealItemDesc
 int numForReveal
 ItemDefinition revealedItemOverride
 int revealedItemAmount
@@ -32770,6 +33633,7 @@ GameObjectRef successEffect
 methods:
 void ServerCommand(Item item, string command, BasePlayer player)
 void .ctor()
+void .cctor()
 ----------
 class: ItemModSound
 inherits from: ItemMod
@@ -32825,6 +33689,8 @@ void .ctor()
 class: ItemModUpgrade
 inherits from: ItemMod
 fields:
+Phrase UpgradeItemTitle
+Phrase UpgradeItemDesc
 int numForUpgrade
 float upgradeSuccessChance
 int numToLoseOnFail
@@ -32835,6 +33701,7 @@ GameObjectRef failEffect
 methods:
 void ServerCommand(Item item, string command, BasePlayer player)
 void .ctor()
+void .cctor()
 ----------
 class: ItemModUseContent
 inherits from: ItemMod
@@ -32907,6 +33774,7 @@ ItemDefinition itemDef
 float amount
 float startAmount
 bool ignoreInTutorial
+bool isBP
 properties:
 int itemid
 methods:
@@ -33023,6 +33891,7 @@ Phrase missionName
 Phrase missionDesc
 bool canBeAbandoned
 bool completeSilently
+bool blockMissionStat
 TutorialMissionHelpSet showHelpInfo
 MissionObjectiveEntry[] objectives
 List`1<Vector3> blockedPoints
@@ -33067,7 +33936,14 @@ bool AssignMission(BasePlayer assignee, IMissionProvider provider, BaseMission m
 bool IsEligableForMission(BasePlayer player, IMissionProvider provider)
 void .ctor()
 void .cctor()
-void <MissionComplete>g__GiveReward|46_0(BasePlayer player, ItemAmount reward)
+void <MissionComplete>g__GiveReward|47_0(BasePlayer player, ItemAmount reward)
+----------
+class: DebugWorldPosition
+inherits from: ListComponent`1<DebugWorldPosition>
+fields:
+WorldPositionGenerator GeneratorToFake
+methods:
+void .ctor()
 ----------
 class: MissionEntity
 inherits from: BaseMonoBehaviour
@@ -33129,8 +34005,8 @@ int BEACH
 int UNDERWATER_IDX
 int TUTORIAL_BEAR_IDX
 Dictionary`2<int, int> type2index
-List`1<MissionPoint> all
 MissionPointEnum Flags
+List`1<MissionPoint> all
 methods:
 int TypeToIndex(int id)
 int IndexToType(int idx)
@@ -33224,6 +34100,7 @@ ItemDefinition targetItem
 int targetItemAmount
 BaseEntityRef[] pingEntitiesOnTutorialIsland
 PingType pingType
+bool checkExistingInventory
 properties:
 bool HasPings
 methods:
@@ -33403,6 +34280,15 @@ void Think(int index, MissionInstance instance, BasePlayer assignee, float delta
 void .ctor()
 bool <Think>b__10_0(BaseCombatEntity e)
 ----------
+class: MissionObjective_MetalDetectorFind
+inherits from: MissionObjective
+fields:
+int RequiredFinds
+methods:
+void ObjectiveStarted(BasePlayer playerFor, int index, MissionInstance instance)
+void ProcessMissionEvent(BasePlayer playerFor, MissionInstance instance, int index, MissionEventType type, MissionEventPayload payload, float amount)
+void .ctor()
+----------
 class: MissionObjective_MountEntityType
 inherits from: MissionObjective
 fields:
@@ -33488,6 +34374,8 @@ fields:
 ItemAmount[] requiredReturnItems
 bool destroyReturnItems
 bool showPing
+bool checkSpaceForRewards
+Phrase NoSpaceInInventoryPhrase
 methods:
 void ObjectiveStarted(BasePlayer playerFor, int index, MissionInstance instance)
 void ProcessMissionEvent(BasePlayer playerFor, MissionInstance instance, int index, MissionEventType type, MissionEventPayload payload, float amount)
@@ -33495,6 +34383,7 @@ void ObjectiveCompleted(BasePlayer playerFor, int index, MissionInstance instanc
 void DeregisterPing(BasePlayer playerFor, MissionInstance instance)
 void ObjectiveFailed(BasePlayer playerFor, int index, MissionInstance instance)
 void .ctor()
+void .cctor()
 ----------
 class: MissionObjective_UpgradeBuildingBlock
 inherits from: MissionObjective
@@ -33543,6 +34432,160 @@ void PrecalculatePositions()
 void .ctor()
 void <TrySample>g__EvaluateCandidate|10_0(Element child, <>c__DisplayClass10_0& )
 Rect <TrySample>g__GetElementRect|10_1(Element element, <>c__DisplayClass10_0& )
+----------
+class: CargoShipContainer
+inherits from: BaseEntity
+fields:
+GameObject[] DressingVariants
+Flags Descending
+Flags Targeted
+int dressingVariant
+methods:
+float MaxVelocity()
+void PreInitShared()
+void ServerInit()
+void PostMapEntitySpawn()
+void Save(SaveInfo info)
+void AssignVariant()
+void ToggleHurtCollider(bool state)
+void SetTargeted(bool state)
+void Load(LoadInfo info)
+void UpdateDressingVariant()
+void .ctor()
+----------
+class: CargoShipContainerSounds
+inherits from: FacepunchBehaviour
+fields:
+SoundDefinition liftDef
+SoundDefinition dropDef
+methods:
+void .ctor()
+----------
+class: HarborBridgeSounds
+inherits from: MonoBehaviour
+fields:
+HarborProximityEntity bridge
+SoundDefinition rootRotationLoopDef
+SoundDefinition rootRotationStartDef
+SoundDefinition rootRotationStopDef
+methods:
+void .ctor()
+----------
+class: HarborCrane
+inherits from: HarborProximityEntity
+fields:
+Transform CraneGrab
+Transform ArmRoot
+TransformLineRenderer[] LineRenderers
+methods:
+void .ctor()
+----------
+class: HarborCraneContainerPickup
+inherits from: HarborCrane
+fields:
+Transform ServerTowerGrab
+float LockTime
+float MaxMoveDistance
+float PickedUpObjectRotationSpeed
+List`1<ContainerStack> Stacks
+GameObjectRef ContainerPrefab
+float ContainerSize
+int MaxContainerStackSize
+bool DebugContainerSpawns
+bool DebugContainerDestinations
+Vector3 grabOffset
+ListHashSet`1<HarborCraneContainerPickup> AllCranes
+Vector3 startForward
+List`1<QueuedMove> movesToMake
+Nullable`1<QueuedMove> moveInProcess
+EntityRef`1<CargoShip> toParent
+float moveDelay
+PickupState currentPickupState
+float lockOnTime
+float maxTargetHeight
+methods:
+void ServerInit()
+void PostMapEntitySpawn()
+void DoServerDestroy()
+void FindNearbyContainerSpawns(List`1<HarborCraneContainerSpawnPoint> foundPoints)
+void ReplenishContainers(int totalContainers)
+void Save(SaveInfo info)
+QueuedMove CreateMove(QueuedMove from)
+void CreateMove(QueuedMove move, QueuedMove target)
+void CountdownDelay()
+void CheckMoveQueue()
+void ProcessCraneMovement()
+void ReplenishContainers()
+void AssignDestination(List`1<Transform> destinations, CargoShip targetShip, float delay)
+bool IsDestinationValidForCrane(CargoShipContainerDestination destination)
+void Load(LoadInfo info)
+void UpdateArm()
+void .ctor()
+void .cctor()
+bool <ReplenishContainers>g__SpawnContainerOnStack|23_0(ContainerStack stack)
+----------
+class: HarborCraneContainerSpawnPoint
+inherits from: MonoBehaviour
+fields:
+int MaxStackSize
+methods:
+void .ctor()
+----------
+class: HarborCraneSounds
+inherits from: MonoBehaviour
+fields:
+HarborCrane crane
+SoundDefinition rootRotationLoopDef
+SoundDefinition rootRotationStartDef
+SoundDefinition rootRotationStopDef
+SoundDefinition armRotationLoopDef
+SoundDefinition armRotationStartDef
+SoundDefinition armRotationStopDef
+Transform grabSoundPosition
+SoundDefinition grabMoveLoopDef
+SoundDefinition grabMoveStartDef
+SoundDefinition grabMoveStopDef
+methods:
+void .ctor()
+----------
+class: HarborCraneStatic
+inherits from: HarborCrane
+fields:
+float StartingDepth
+float StartingHeight
+float StartingAngle
+Transform HangingLadder
+methods:
+void PostMapEntitySpawn()
+void Save(SaveInfo info)
+void SetArmPos(float angle, float height, float depth)
+void Load(LoadInfo info)
+void .ctor()
+----------
+class: HarborProximityEntity
+inherits from: BaseEntity
+fields:
+ListHashSet`1<HarborProximityEntity> harborEntities
+methods:
+void ServerInit()
+void DoServerDestroy()
+HarborProximityEntity GetEntity(Vector3 worldPos)
+void .ctor()
+void .cctor()
+----------
+class: HarborProximityManager
+inherits from: MonoBehaviour
+fields:
+MoveToMake[] Moves
+bool DebugCargo
+float DebugVisPoint
+float localNormalisedState
+methods:
+void StartMovement()
+void UpdateNormalisedState(float f)
+void EndMovement()
+void Apply(float f)
+void .ctor()
 ----------
 class: MovementSounds
 inherits from: MonoBehaviour
@@ -34662,7 +35705,7 @@ int MaxCountLocal
 int MaxCountGlobal
 int MaxCountIdentifier
 DungeonBaseInfo Dungeon
-MeshRenderer[] MapRenderers
+RendererLOD[] MapRendererLods
 List`1<DungeonBaseSocket> sockets
 List`1<DungeonVolume> volumes
 properties:
@@ -34721,7 +35764,7 @@ DungeonGridConnectionVariant SouthVariant
 DungeonGridConnectionVariant WestVariant
 DungeonGridConnectionVariant EastVariant
 GameObjectRef[] AvoidNeighbours
-MeshRenderer[] MapRenderers
+RendererLOD[] MapRendererLods
 bool Replaceable
 methods:
 bool ShouldAvoid(UInt32 id)
@@ -34812,6 +35855,7 @@ GameObject Tundra
 GameObject Arctic
 bool OverrideBiome
 Enum ToOverride
+EnvironmentVolumeOverride[] EnvironmentVolumeOverrides
 methods:
 void Start()
 void SetChoice(GameObject selection)
@@ -35604,6 +36648,7 @@ bool OutOfMargin(Vector3 worldPos)
 bool OutOfMarginPlusTutorialBounds(Vector3 worldPos)
 float InnerDistToEdge2D(Vector3 worldPos)
 bool IsPointWithinTutorialBounds(Vector3 worldPos)
+bool RandomWaterPointInAnnulus(Vector3 centre, float minRadius, float maxRadius, Vector3& randomPoint)
 Vector3 RandomPointOffshore()
 Vector3 Normalize(Vector3 worldPos)
 float NormalizeX(float x)
@@ -35755,6 +36800,7 @@ inherits from: PrefabAttribute
 fields:
 SpawnFilter Filter
 bool CheckPlacementMap
+bool CheckTerrainBounds
 methods:
 void OnDrawGizmosSelected()
 bool Check(Vector3 pos)
@@ -36495,6 +37541,7 @@ inherits from: SingletonComponent`1<WorldSetup>
 fields:
 bool AutomaticallySetup
 bool BypassProceduralSpawn
+bool ForceGenerateOceanPatrols
 GameObject terrain
 GameObject decorPrefab
 GameObject grassPrefab
@@ -37341,6 +38388,13 @@ void .ctor()
 ----------
 class: LiquidWobble
 inherits from: MonoBehaviour
+fields:
+float CurrentWaterLevelFraction
+float MinWaterLevel
+float MaxWaterLevel
+float MaxWobble
+float WobbleSpeed
+float Recovery
 methods:
 void .ctor()
 ----------
@@ -37610,6 +38664,8 @@ bool IsNoClipping(BasePlayer ply, TickInterpolator ticks, float deltaTime, Colli
 bool IsSpeeding(BasePlayer ply, TickInterpolator ticks, float deltaTime)
 bool IsFlying(BasePlayer ply, TickInterpolator ticks, float deltaTime)
 bool TestFlying(BasePlayer ply, Vector3 oldPos, Vector3 newPos, bool verifyGrounded)
+bool TestServerSideFallDamage(BasePlayer ply, Vector3 oldPos, Vector3 newPos, float deltaTime)
+void ResetServerFall(BasePlayer ply)
 bool TestIsBuildingInsideSomething(Target target, Vector3 deployPos)
 void NoteAdminHack(BasePlayer ply)
 void FadeViolations(BasePlayer ply, float deltaTime)
@@ -37676,11 +38732,15 @@ inherits from: object
 fields:
 List`1<Connection> queue
 List`1<Connection> joining
+List`1<ReservedServerSlot> reservedSlots
+float nextCleanupReservedSlots
 float nextMessageTime
 properties:
+int ReservedCount
 int Queued
 int Joining
 methods:
+int get_ReservedCount()
 int get_Queued()
 int get_Joining()
 void SkipQueue(ulong userid)
@@ -37691,6 +38751,10 @@ void SendMessage(Connection c, int position)
 void RemoveConnection(Connection connection)
 void JoinGame(Connection connection)
 void JoinedGame(Connection connection)
+void AddReservation(ulong userId)
+void CleanupExpiredReservedSlots()
+ReservedServerSlot FindQueueSpot(ulong userId)
+void RemoveReservedSlot(ulong userId)
 bool CanJumpQueue(Connection connection)
 bool IsQueued(ulong userid)
 bool IsJoining(ulong userid)
@@ -37743,6 +38807,32 @@ void SendPlayerBehaviorReport(BasePlayer reporter, PlayerReportsCategory reportC
 void SendPlayerBehaviorReport(PlayerReportsCategory reportCategory, string reportedID, string reportText)
 void .cctor()
 ----------
+class: MapUploader
+inherits from: object
+fields:
+bool <IsUploaded>k__BackingField
+string <OriginalName>k__BackingField
+string <OriginalMapFileName>k__BackingField
+string <OriginalSaveFileName>k__BackingField
+HttpClient Http
+properties:
+bool IsUploaded
+string OriginalName
+string OriginalMapFileName
+string OriginalSaveFileName
+methods:
+bool get_IsUploaded()
+void set_IsUploaded(bool value)
+string get_OriginalName()
+void set_OriginalName(string value)
+string get_OriginalMapFileName()
+void set_OriginalMapFileName(string value)
+string get_OriginalSaveFileName()
+void set_OriginalSaveFileName(string value)
+void UploadMap()
+Task`1<string> UploadMapImpl(Stream stream, string mapFileName)
+void .cctor()
+----------
 class: NexusClanBackend
 inherits from: object
 fields:
@@ -37760,12 +38850,13 @@ bool TryGet(long clanId, IClan& clan)
 ValueTask`1<ClanValueResult`1<IClan>> GetByMember(ulong steamId)
 ValueTask`1<ClanValueResult`1<IClan>> Create(ulong leaderSteamId, string name)
 ValueTask`1<ClanValueResult`1<List`1<ClanInvitation>>> ListInvitations(ulong steamId)
+ValueTask`1<ClanValueResult`1<List`1<ClanLeaderboardEntry>>> GetLeaderboard(int limit)
 void HandleClanChatBatch(ClanChatBatchRequest request)
 IEnumerator BroadcastClanChatBatches()
 void UpdateWrapper(long clanId)
 void RemoveWrapper(long clanId)
 NexusClanWrapper Wrap(NexusClan clan)
-void <BroadcastClanChatBatches>g__SendClanChatBatch|14_0(List`1<Message> messages)
+void <BroadcastClanChatBatches>g__SendClanChatBatch|15_0(List`1<Message> messages)
 ----------
 class: NexusClanChatCollector
 inherits from: object
@@ -37812,7 +38903,9 @@ List`1<VariableUpdate> DefaultLeaderVariables
 Memoized`2<string, ulong> SteamIdToPlayerId
 methods:
 string GetPlayerId(ulong steamId)
+string GetPlayerId(Nullable`1<ulong> steamId)
 ulong GetSteamId(string playerId)
+Nullable`1<ulong> TryGetSteamId(string playerId)
 void GetMotd(NexusClan clan, String& motd, Int64& motdTimestamp, UInt64& motdAuthor)
 void GetBanner(NexusClan clan, Byte[]& logo, Color32& color)
 ClanRole ToClanRole(NexusClanRole role)
@@ -37840,6 +38933,7 @@ List`1<ClanRole> _roles
 List`1<ClanMember> _members
 List`1<ClanInvite> _invites
 List`1<ClanChatEntry> _chatHistory
+RealTimeSince _sinceLastRefresh
 properties:
 long ClanId
 string Name
@@ -37850,6 +38944,7 @@ long MotdTimestamp
 ulong MotdAuthor
 Byte[] Logo
 Color32 Color
+long Score
 IReadOnlyList`1<ClanRole> Roles
 IReadOnlyList`1<ClanMember> Members
 int MaxMemberCount
@@ -37869,6 +38964,7 @@ Byte[] get_Logo()
 void set_Logo(Byte[] value)
 Color32 get_Color()
 void set_Color(Color32 value)
+long get_Score()
 IReadOnlyList`1<ClanRole> get_Roles()
 IReadOnlyList`1<ClanMember> get_Members()
 int get_MaxMemberCount()
@@ -37876,6 +38972,7 @@ void set_MaxMemberCount(int value)
 IReadOnlyList`1<ClanInvite> get_Invites()
 void .ctor(NexusClan clan, NexusClanChatCollector chatCollector)
 void UpdateValuesInternal()
+ValueTask RefreshIfStale()
 ValueTask`1<ClanValueResult`1<ClanLogs>> GetLogs(int limit, ulong bySteamId)
 ValueTask`1<ClanResult> UpdateLastSeen(ulong steamId)
 ValueTask`1<ClanResult> SetMotd(string newMotd, ulong bySteamId)
@@ -37892,6 +38989,8 @@ ValueTask`1<ClanResult> UpdateRole(ClanRole role, ulong bySteamId)
 ValueTask`1<ClanResult> SwapRoleRanks(int roleIdA, int roleIdB, ulong bySteamId)
 ValueTask`1<ClanResult> DeleteRole(int roleId, ulong bySteamId)
 ValueTask`1<ClanResult> Disband(ulong bySteamId)
+ValueTask`1<ClanValueResult`1<ClanScoreEvents>> GetScoreEvents(int limit, ulong bySteamId)
+ValueTask`1<ClanResult> AddScoreEvent(ClanScoreEvent scoreEvent)
 ValueTask`1<ClanValueResult`1<ClanChatScrollback>> GetChatScrollback()
 ValueTask`1<ClanResult> SendChatMessage(string name, string message, ulong bySteamId)
 void AddScrollback(ClanChatEntry& entry)
@@ -38060,12 +39159,12 @@ void RefreshZoneStatus()
 bool TryGetZoneStatus(string zone, ServerStatus& status)
 void OnZoneStatusesRefreshed()
 bool get_NeedTransferFlush()
-Task TransferEntity(BaseEntity entity, string toZoneKey, string method)
+Task TransferEntity(BaseEntity entity, string toZoneKey, string method, bool includeFerry)
 Task TransferEntityImpl(BaseEntity rootEntity, string toZoneKey, string method, string from, string to)
 void UnparentUnknown(BaseEntity entity, HashSet`1<NetworkableId> knownEntityIds)
 void BuildTransferRequest(BaseEntity rootEntity, string method, string from, string to, Request& request, List`1& networkables, List`1& players, List`1& playerIds)
 bool CanTransferEntity(BaseNetworkable networkable)
-BaseEntity FindRootEntity(BaseEntity startEntity)
+BaseEntity FindRootEntity(BaseEntity startEntity, bool includeFerry)
 string GetWorldConfigString()
 JObject GetWorldConfigImpl(string zoneKey, List`1<string> stack)
 bool TryGetWorldConfigObject(string zoneKey, bool required, JObject& cfg, String& error)
@@ -38166,6 +39265,7 @@ IEnumerator restartCoroutine
 ConnectionQueue connectionQueue
 TimeAverageValueLookup`1<Type> packetHistory
 TimeAverageValueLookup`1<UInt32> rpcHistory
+Stopwatch timer
 properties:
 bool runFrameUpdate
 int AvailableSlots
@@ -38324,6 +39424,14 @@ Byte[] GetPlayerState(ulong playerID)
 void SetPlayerState(ulong playerID, Byte[] state)
 string GetUserWipeId(ulong playerID)
 void ResetPlayerState(ulong playerID)
+----------
+class: IPAddressJsonConverter
+inherits from: JsonConverter
+methods:
+bool CanConvert(Type objectType)
+void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+void .ctor()
 ----------
 class: AssetNameCache
 inherits from: object
@@ -38570,7 +39678,7 @@ methods:
 void .ctor()
 ----------
 class: PlayerInventoryProperties
-inherits from: ScriptableObject
+inherits from: BaseScriptableObject
 fields:
 string niceName
 int order
@@ -38938,11 +40046,54 @@ void .ctor()
 ----------
 class: BaseEventUI
 inherits from: MonoBehaviour
+fields:
+RustText TextEventType
+RustText TextOutput
+RustButton ToggleInvert
+Dropdown DropdownInputMemorySlot
+Dropdown DropdownOutputMemorySlot
+RustInput InputFloatValue
+RustInput InputFloatValue2
+AIEventType EventType
+BaseStateUI Output
 methods:
 void .ctor()
 ----------
 class: BaseStateUI
 inherits from: MonoBehaviour
+fields:
+Dropdown DropdownInputMemorySlot
+Transform PrefabAddNewEvent
+Transform PrefabTimerEvent
+Transform PrefabPlayerDetectedEvent
+Transform PrefabStateErrorEvent
+Transform PrefabStateFinishedEvent
+Transform PrefabAttackedEvent
+Transform PrefabInAttackRangeEvent
+Transform PrefabHealthBelowEvent
+Transform PrefabInRangeEvent
+Transform PrefabPerformedAttackEvent
+Transform PrefabTirednessAboveEvent
+Transform PrefabHungerAboveEvent
+Transform PrefabThreatDetectevEvent
+Transform PrefabTargetDetectevEvent
+Transform PrefabAmmoBelowEvent
+Transform PrefabBestTargetDetectedEvent
+Transform PrefabIsVisibleEvent
+Transform PrefabAttackTickEvent
+Transform PrefabIsMountedEvent
+Transform PrefabAndEvent
+Transform PrefabChanceEvent
+Transform PrefabTargetLostEvent
+Transform PrefabTimeSinceThreatEvent
+Transform PrefabOnPositionMemorySetEvent
+Transform PrefabAggressionTimerEvent
+Transform PrefabReloadingEvent
+Transform PrefabInRangeOfHomeEvent
+Transform PrefabIsBlindedEvent
+RustText TextStateName
+Transform EventContainer
+ScrollRect Scroll
 methods:
 void .ctor()
 ----------
@@ -38954,6 +40105,12 @@ void .ctor()
 class: ChanceEventUI
 inherits from: BaseEventUI
 methods:
+void .ctor()
+----------
+class: DeleteEventButton
+inherits from: MonoBehaviour
+methods:
+void OnPointerDown(PointerEventData eventData)
 void .ctor()
 ----------
 class: EnumListItemUI
@@ -39362,6 +40519,25 @@ GameObjectRef InvitePrefab
 methods:
 void .ctor()
 ----------
+class: UIClanLeaderboard
+inherits from: BaseMonoBehaviour
+fields:
+UIClans UiClans
+GameObject LoadingIndicator
+GameObject Content
+RectTransform EntryList
+GameObjectRef EntryPrefab
+methods:
+void .ctor()
+----------
+class: UIClanLeaderboardEntry
+inherits from: MonoBehaviour
+fields:
+RustText ClanName
+RustText Score
+methods:
+void .ctor()
+----------
 class: UIClanLog
 inherits from: BaseMonoBehaviour
 fields:
@@ -39504,6 +40680,7 @@ RustButton Promote
 RustButton Demote
 RustButton SetPlayerNotes
 RustButton AccessLogs
+RustButton AccessScoreEvents
 RustButton CancelButton
 RustButton SubmitButton
 methods:
@@ -39543,13 +40720,16 @@ RustText ClanName
 Image ClanBanner
 RawImage ClanLogo
 RustText ClanMembers
+RustText ClanScore
 RustButton LeaveButton
 Texture2D DefaultLogo
 RustButton OverviewButton
+RustButton ScoreEventsButton
 RustButton LogsButton
 RustButton SettingsButton
 RustButton CreatePrompt
 CanvasGroup LoadingIndicator
+UIClanLeaderboard Leaderboard
 UIClanConfirmation Confirmation
 UIClanConfirmation Error
 UIClanInvitations Invitations
@@ -39557,8 +40737,42 @@ UIClanOverview Overview
 UIClanMembers Members
 UIClanInvites Invites
 UIClanRanks Ranks
+UIClanScoreEvents ScoreEvents
 UIClanLog Logs
 UIClanSettings Settings
+methods:
+void .ctor()
+void .cctor()
+----------
+class: UIClanScoreEvents
+inherits from: BaseMonoBehaviour
+fields:
+Phrase RefreshFailure
+UIClans UiClans
+RectTransform EntryList
+GameObjectRef EntryPrefab
+methods:
+void .ctor()
+void .cctor()
+----------
+class: UIClanScoreEventsEntry
+inherits from: BaseMonoBehaviour
+fields:
+Phrase ClanPlayerKilledEvent
+Phrase ClanPlayerDiedEvent
+Phrase KilledUnarmedEvent
+Phrase DestroyedToolCupboardEvent
+Phrase HackedCrateEvent
+Phrase OpenedHackedCrateEvent
+Phrase DestroyedBradleyEvent
+Phrase RanExcavatorEvent
+Phrase ReachedCargoShipEvent
+Phrase LootedEliteCrateEvent
+Phrase UnknownEvent
+RustText Event
+RustText Score
+RustText Multiplier
+RustText Time
 methods:
 void .ctor()
 void .cctor()
@@ -39646,6 +40860,9 @@ CanvasGroup hitNotifyAlpha
 Crosshair instance
 float lastHitTime
 float crosshairAlpha
+float aimconeMultiplier
+float aimconeLerpSpeed
+GameObjectRef pointsSplashEffect
 methods:
 void .ctor()
 void .cctor()
@@ -40161,6 +41378,10 @@ RectTransform brushesContainer
 RustSlider brushSizeSlider
 RustSlider brushSpacingSlider
 RustSlider brushOpacitySlider
+FlexElement rootElement
+FlexElement bodyElement
+FlexElement controlsElement
+FlexElement floatElement
 methods:
 void .ctor()
 ----------
@@ -40217,7 +41438,6 @@ class: KeyCodeEntry
 inherits from: UIDialog
 fields:
 Text textDisplay
-Action`1<string> onCodeEntered
 Action onClosed
 Text typeDisplay
 Phrase masterCodePhrase
@@ -40381,8 +41601,10 @@ void .ctor()
 class: TechTreeDialog
 inherits from: UIDialog
 fields:
-TechTreeData data
+string techTreeLevelPrefKey
+TechTreeData[] dataOptions
 float graphScale
+RustButton[] tierButtons
 TechTreeEntry entryPrefab
 TechTreeGroup groupPrefab
 TechTreeLine linePrefab
@@ -40394,11 +41616,14 @@ float gridSize
 GameObjectRef unlockEffect
 RustText scrapCount
 Vector2 startPos
-List`1<int> processed
-Dictionary`2<int, TechTreeWidget> widgets
-List`1<TechTreeLine> lines
 ScrollRectZoom zoom
+properties:
+TechTreeData data
+int selectedDataIndex
 methods:
+TechTreeData get_data()
+int get_selectedDataIndex()
+void set_selectedDataIndex(int value)
 void .ctor()
 ----------
 class: TechTreeEntry
@@ -40457,6 +41682,9 @@ Color ColorCantAfford
 GameObject totalRequiredRoot
 RustText totalRequiredText
 ItemInformationPanel[] informationPanels
+GameObject workbenchTaxRoot
+RustText workbenchTaxText
+Tooltip workbenchTaxTooltip
 methods:
 void .ctor()
 ----------
@@ -40655,6 +41883,11 @@ void .ctor()
 ----------
 class: InfoBar
 inherits from: MonoBehaviour
+fields:
+Text TextValue
+Image ImageFill
+Color GoodColor
+Color BadColor
 methods:
 void .ctor()
 ----------
@@ -40762,6 +41995,7 @@ Material renderMaterial
 Nullable`1<MapLayer> _currentlyRenderedLayer
 Nullable`1<NetworkableId> _currentlyRenderedDungeon
 Nullable`1<int> _underwaterLabFloorCount
+bool DebugLabs
 methods:
 void Render(MapLayer layer)
 void RenderImpl(CommandBuffer cb)
@@ -40803,11 +42037,15 @@ GameObject MarkerHeader
 Transform LocalPlayerMarkerListParent
 Transform TeamMarkerListParent
 GameObject TeamLeaderHeader
+GameObject MissionListHeader
+Transform MissionListContent
+GameObjectRef MissionListPrefab
 VendorList VendorList
 RustButton HideTeamLeaderMarkersToggle
 CanvasGroup TeamMarkersCanvas
 RustImageButton ShowSleepingBagsButton
 RustImageButton ShowVendingMachinesButton
+RustImageButton ShowMissionProvidersButton
 UIEscapeCapture EscapeCapture
 methods:
 void .ctor()
@@ -40869,6 +42107,9 @@ RustImageButton OverworldButton
 RustImageButton TrainButton
 RustImageButton[] UnderwaterButtons
 RustImageButton DungeonButton
+CanvasLineRenderer CargoPatrolPath
+CanvasLineRenderer[] HarborPaths
+CanvasLineRenderer FerryPath
 UnityEvent onClicked
 methods:
 void OnPointerDown(PointerEventData eventData)
@@ -40881,6 +42122,14 @@ Image Icon
 Tooltip TooltipComponent
 methods:
 void Populate(MissionInstance mission)
+void .ctor()
+----------
+class: MissionPointMapMarker
+inherits from: MonoBehaviour
+fields:
+RustText MissionName
+Image Icon
+methods:
 void .ctor()
 ----------
 class: MonumentMarker
@@ -40972,6 +42221,14 @@ RectTransform rect
 methods:
 void .ctor()
 ----------
+class: UIMapMissionProvider
+inherits from: MonoBehaviour
+fields:
+Tooltip TargetTooltip
+RustText CountText
+methods:
+void .ctor()
+----------
 class: UIMapVendingMachineMarker
 inherits from: MonoBehaviour
 fields:
@@ -40987,30 +42244,37 @@ void .ctor()
 class: UIMapVendingMachineMarkerCluster
 inherits from: MonoBehaviour
 fields:
-List`1<UIMapVendingMachineMarker> markers
 GameObject OpenRoot
 TextMeshProUGUI CountText
+GameObjectRef MarkerPrefab
+Transform MarkerParent
 methods:
 void .ctor()
 ----------
 class: UINexusMap
+inherits from: UINexusMapBase
+methods:
+void .ctor()
+----------
+class: UINexusMapBase
 inherits from: BaseMonoBehaviour
 fields:
 Memoized`2<string, int> IntMemoized
-RawImage BackdropImage
 RawImage BackgroundImage
+RawImage BackgroundFillImage
 RectTransform LoadingView
 RectTransform MissingView
 ScrollRectEx MapScrollRect
 ScrollRectZoom MapScrollZoom
-Image CameraPositon
+RectTransform CameraPositon
 CanvasGroup ZoneNameCanvasGroup
 RectTransform ZoneNameContainer
-GameObjectRef ZoneNamePrefab
+GameObjectRef ZoneNameMarkerPrefab
 CanvasGroup ZoneDetails
 RustText ZoneName
 RustText OnlineCount
 RustText MaxCount
+GameObjectRef ZoneNameLabelPrefab
 GameObject InboundFerriesSection
 RectTransform InboundFerriesList
 GameObject OutboundFerriesSection
@@ -41020,11 +42284,20 @@ RectTransform ConnectionsList
 bool ShowLocalPlayer
 float OutOfBoundsScaleFactor
 float ZoneNameAlphaPower
+UnityEvent OnMapLoaded
 UnityEvent OnClicked
 methods:
 void OnPointerDown(PointerEventData eventData)
 void .ctor()
 void .cctor()
+----------
+class: UINexusMapWidget
+inherits from: UINexusMapBase
+fields:
+RustButton FocusButton
+FlexTransition RevealTransition
+methods:
+void .ctor()
 ----------
 class: UIPaintBox
 inherits from: MonoBehaviour
@@ -41094,14 +42367,19 @@ CanvasGroup availableConditionGroup
 Image availableCondition
 Image availableMaxCondition
 GameObject brokenIcon
+GameObject slots
+Image[] slotImages
 FlexTransition transition
 Phrase inStockPhrase
 Phrase outOfStockPhrase
+Phrase attachmentsPhrase
+StringBuilder vendorBuilder
 methods:
-void SetupListing(ItemDefinition availableItem, ItemDefinition costItem, int stock, int amountOfItemsPerCurrency, int currencyAmountPerItem, bool sellIsBP, bool currencyIsBP, float condition, float conditionMax, float defaultConditionMax)
+void SetupListing(ItemDefinition availableItem, ItemDefinition costItem, int stock, int amountOfItemsPerCurrency, int currencyAmountPerItem, bool sellIsBP, bool currencyIsBP, float condition, float conditionMax, float defaultConditionMax, List`1<int> attachmentList, int totalAttachmentSlots)
 void OpenAnimate()
 void CloseAnimate()
 void ReenableText()
+void UpdateSlots(List`1<int> attachmentList, int totalAttachmentSlots)
 void UpdateCondition(float condition, float conditionMax, float defaultConditionMax)
 void DisableCondition()
 void .ctor()
@@ -41470,6 +42748,7 @@ Text LabelGenetics
 GameObject GeneticsGameObject
 ItemTextValue durationValue
 ItemTextValue baitValue
+ItemTextValue baitStackSize
 methods:
 void .ctor()
 ----------
@@ -41510,6 +42789,14 @@ ItemTextValue projectileDistanceDisplay
 ItemTextValue fuseLengthDisplay
 ItemTextValue blastRadiusDisplay
 Text unreliableText
+methods:
+void .ctor()
+----------
+class: FlameThrowerInformationPanel
+inherits from: ItemInformationPanel
+fields:
+ItemStatValue damageDisplay
+ItemStatValue rangeDisplay
 methods:
 void .ctor()
 ----------
@@ -41569,6 +42856,7 @@ ItemTextValue requiredFluidDisplay
 ItemTextValue generatedPowerDisplay
 ItemTextValue capacityDisplay
 ItemTextValue chargeDisplay
+ItemTextValue rangeDisplay
 methods:
 void .ctor()
 ----------
@@ -41809,6 +43097,7 @@ Button StartMixingButton
 InfoBar ProgressBar
 GameObject recipeItemPrefab
 RectTransform recipeContentRect
+ScrollRect ScrollView
 methods:
 void .ctor()
 ----------
@@ -41841,6 +43130,8 @@ inherits from: LootPanel
 fields:
 GameObject controlsOn
 GameObject controlsOff
+GameObject recycle_efficiency_safezone
+GameObject recycle_efficiency_radtown
 methods:
 void .ctor()
 ----------
@@ -42026,6 +43317,8 @@ ItemStatValue recoilDisplay
 ItemStatValue rofDisplay
 ItemStatValue accuracyDisplay
 ItemStatValue rangeDisplay
+ItemStatValue minigunMoveDisplay
+ItemIcon[] attachmentIcons
 methods:
 void .ctor()
 ----------
@@ -42067,9 +43360,11 @@ class: RepairBenchPanel
 inherits from: LootPanel
 fields:
 Text infoText
-Button repairButton
+GameObject repairButton
+GameObject skinLinkButton
 Color gotColor
 Color notGotColor
+Color skinColour
 Phrase phraseEmpty
 Phrase phraseNotRepairable
 Phrase phraseRepairNotNeeded
@@ -42117,6 +43412,8 @@ void .ctor()
 class: SelectedItem
 inherits from: SingletonComponent`1<SelectedItem>
 fields:
+Phrase DropTitle
+Phrase DropDesc
 Image icon
 Image iconSplitter
 RustText title
@@ -42128,6 +43425,7 @@ GameObject optionsParent
 GameObject innerPanelContainer
 methods:
 void .ctor()
+void .cctor()
 ----------
 class: SquareBorder
 inherits from: MonoBehaviour
@@ -42201,6 +43499,7 @@ Transform InventoryIconContainer
 ChangelogPanel ChangelogPanel
 ContactsPanel contactsPanel
 GameObject backpackSlot
+UnderwearSkinPicker underwearSkinPicker
 methods:
 void .ctor()
 ----------
@@ -42305,8 +43604,12 @@ CanvasGroup conditionObject
 Image conditionFill
 Image maxConditionFill
 Image cornerIcon
+GameObject slots
+Image[] slotImages
+Phrase attachmentsPhrase
 methods:
 void .ctor()
+void .cctor()
 ----------
 class: WearableFeedbackItemIcon
 inherits from: FacepunchBehaviour
@@ -42316,7 +43619,9 @@ void .ctor()
 class: WorkbenchPanel
 inherits from: LootPanel
 fields:
-Button experimentButton
+GameObject tier1Button
+GameObject tier2Button
+GameObject tier3Button
 Text timerText
 Text costText
 GameObject expermentCostParent
@@ -42448,6 +43753,7 @@ Text chargeLeftText
 Text capacityText
 Text maxOutputText
 Text activeOutputText
+Text turretInterferenceText
 IOEntityUISlotEntry[] inputEntries
 IOEntityUISlotEntry[] outputEntries
 Color NoPowerColor
@@ -42577,11 +43883,20 @@ void .ctor()
 ----------
 class: DemoItem
 inherits from: RustButton
+fields:
+Demos demos
+int itemId
+RustText nameText
+RustText dateText
+RustText lengthText
 methods:
 void .ctor()
 ----------
 class: Demos
 inherits from: SingletonComponent`1<Demos>
+fields:
+VirtualScroll virtualScroll
+GameObject deletePopup
 methods:
 void .ctor()
 ----------
@@ -43101,6 +44416,9 @@ class: ServerBrowserInfoNexus
 inherits from: SingletonComponent`1<ServerBrowserInfoNexus>
 fields:
 GameObject loadingIndicator
+GameObject errorIndicator
+GameObject errorGenericText
+GameObject errorSteamAuthNullText
 RustText serverName
 RustText serverDesc
 RustText playerCount
@@ -43108,6 +44426,8 @@ RustText zoneCount
 RustText lastWiped
 HttpImage coverImage
 HttpImage logoImage
+UINexusMapWidget mapWidget
+FlexTransition zoneListReveal
 RectTransform zoneListParent
 GameObjectRef zoneListItem
 RustButton joinServer
@@ -43211,11 +44531,15 @@ class: ServerBrowserTag
 inherits from: MonoBehaviour
 fields:
 string serverTag
+string _tag
 RustButton button
 properties:
+string CompactTag
 bool IsActive
 methods:
+string get_CompactTag()
 bool get_IsActive()
+bool ContainsTag(HashSet`1<string> tags)
 void .ctor()
 ----------
 class: ServerBrowserTagFilters
@@ -43811,12 +45135,12 @@ Color onlineColor
 Color offlineColor
 Color deadColor
 Color woundedColor
-GameObject hoverOverlay
 RawImage memberIcon
 RawImage leaderIcon
 RawImage deadIcon
 RawImage woundedIcon
 int teamIndex
+CanvasGroup EditButton
 methods:
 void .ctor()
 ----------
@@ -43835,6 +45159,8 @@ TextMeshProUGUI inviteText
 bool dirty
 ulong pendingTeamID
 string pendingTeamLeaderName
+GameObject teamMemberDetailsPanel
+RustText selectedTeamMemberNameText
 methods:
 void .ctor()
 void .cctor()
@@ -44002,11 +45328,14 @@ NeedsCursor needsCursor
 RectTransform conversationPanel
 RustText conversationSpeechBody
 RustText conversationProviderName
+Image conversationProviderImage
 RustButton[] responseButtons
 RectTransform letterBoxTop
 RectTransform letterBoxBottom
 GameObject cancelButton
 CanvasGroup canvasGroup
+UIMissionInfoConversation missionInfo
+UIEscapeCapture escapeCapture
 methods:
 void .ctor()
 ----------
@@ -44024,7 +45353,9 @@ RespawnColourScheme[] RespawnColourSchemes
 GameObject RespawnScrollGradient
 ScrollRect RespawnScrollRect
 ExpandedLifeStats ExpandedStats
+GameObject OpenStatsButton
 CanvasGroup StreamerModeContainer
+GameObject SafeZoneInfo
 methods:
 void .ctor()
 ----------
@@ -44079,6 +45410,17 @@ void .ctor()
 ----------
 class: UIIngame
 inherits from: SingletonComponent`1<UIIngame>
+methods:
+void .ctor()
+----------
+class: UIMissionInfoConversation
+inherits from: MonoBehaviour
+fields:
+RustText MissionName
+RustText[] MissionObjectives
+GameObject TimerRoot
+RustText TimerText
+VirtualItemIcon[] RewardIcons
 methods:
 void .ctor()
 ----------
@@ -44284,6 +45626,16 @@ fields:
 UnityEvent ClickReceiver
 methods:
 void OnPointerClick(PointerEventData eventData)
+void .ctor()
+----------
+class: AlphaSinPulse
+inherits from: MonoBehaviour
+fields:
+CanvasGroup target
+float speed
+float amplitude
+bool preview
+methods:
 void .ctor()
 ----------
 class: ShowIfConvarEnabled
@@ -44616,17 +45968,23 @@ fields:
 ShaderParametersFloat[] Floats
 ShaderParametersColor[] Colors
 ShaderParametersTexture[] Textures
+ShaderParametersToggle[] Toggles
 String[] ScaleUV
+EnvironmentVolumeOverride[] EnvironmentVolumeOverrides
 MaterialPropertyBlock properties
 methods:
 MaterialPropertyBlock GetMaterialPropertyBlock(Material mat, Vector3 pos, Vector3 scale)
 void .ctor()
 ----------
 class: MaterialSetup
-inherits from: MonoBehaviour
+inherits from: ProceduralObject
 fields:
 MaterialConfig config
+bool IncludeChildren
 methods:
+void OnEnable()
+void Process()
+void Setup()
 void .ctor()
 ----------
 class: MeshToggle
@@ -44857,9 +46215,18 @@ void .ctor()
 class: TutorialOptionsPrompt
 inherits from: MonoBehaviour
 fields:
-Button TargetRoot
 CanvasGroup Group
+GameObject NotConnectedToValidServerRoot
+GameObject ServerValidRoot
+GameObject TutorialInProcessRoot
 methods:
+void .ctor()
+----------
+class: UnityHookHandler
+inherits from: SingletonComponent`1<UnityHookHandler>
+methods:
+void EnsureCreated()
+void CreateInstance()
 void .ctor()
 ----------
 class: UpdateBehaviour
@@ -45651,9 +47018,9 @@ float ProjectileDistToGravity(float x, float y, float θ, float v)
 class: Bezier
 inherits from: object
 methods:
-void ApplyLineSlack(Vector3[]& positions, Single[] slackLevels, int tesselationLevel)
-void ApplyLineSlack(Vector3[] positions, Single[] slackLevels, Vector3[]& result, int tesselationLevel)
-void ApplyLineSlack(Vector3[] positions, Single[] slackLevels, List`1& result, int tesselationLevel)
+void ApplyLineSlack(Vector3[]& positions, Single[] slackLevels, int tesselationLevel, Transform referenceTransform)
+void ApplyLineSlack(Vector3[] positions, Single[] slackLevels, Vector3[]& result, int tesselationLevel, Transform referenceTransform)
+void ApplyLineSlack(Vector3[] positions, Single[] slackLevels, List`1& result, int tesselationLevel, Transform referenceTransform)
 ----------
 class: FixedShort3
 inherits from: ValueType
@@ -45896,6 +47263,8 @@ Transform MuzzlePoint
 SubsurfaceProfile subsurfaceProfile
 methods:
 void .ctor()
+----------
+class: IViewmodelComponent
 ----------
 class: FishingRodViewmodel
 inherits from: MonoBehaviour
@@ -46173,6 +47542,17 @@ Renderer viewModelRenderer
 methods:
 void .ctor()
 ----------
+class: ViewmodelCameraAnimation
+inherits from: MonoBehaviour
+fields:
+Transform CameraModifyBone
+bool ShouldSuppressLeftHandScreenShake
+float FadeInTime
+Vector3 PositionOffset
+Vector3 RotationOffset
+methods:
+void .ctor()
+----------
 class: ViewmodelEditor
 inherits from: SingletonComponent`1<ViewmodelEditor>
 methods:
@@ -46218,6 +47598,7 @@ float positionalSwaySpeed
 float positionalSwayAmount
 float rotationSwaySpeed
 float rotationSwayAmount
+float rotateAmountTest
 methods:
 void .ctor()
 ----------
@@ -47059,6 +48440,7 @@ void SafeDestroyViewTexelDensity()
 void SafeDestroyViewTexelDensityRT()
 void UpdateViewTexelDensity(bool screenResized)
 bool CheckScreenResized(int width, int height)
+void OnPreCull()
 void OnRenderImage(RenderTexture source, RenderTexture destination)
 void DrawGUIText(float x, float y, Vector2 size, string text, GUIStyle fontStyle)
 void OnGUI()
@@ -47077,6 +48459,12 @@ fields:
 int MinimumId
 int MaximumId
 methods:
+void .ctor()
+----------
+class: UnitySourceGeneratedAssemblyMonoScriptTypes_v1
+inherits from: object
+methods:
+MonoScriptData Get()
 void .ctor()
 ----------
 class: VLB.BeamGeometry
@@ -48829,11 +50217,9 @@ void Execute()
 void SortByDescending(NativeArray`1& colliders, NativeArray`1& counts, int leftIndex, int rightIndex)
 void SortAscending(NativeArray`1& array, int leftIndex, int rightIndex)
 ----------
-class: CompanionServer.Cameras.BurstUtil
+class: CompanionServer.Cameras.CameraBurstUtil
 inherits from: object
 methods:
-T& modreq(System.Runtime.InteropServices.InAttribute) GetReadonly(NativeArray`1& array, int index)
-T& Get(NativeArray`1& array, int index)
 int GetColliderId(RaycastHit hit)
 Collider GetCollider(int colliderInstanceId)
 ----------
@@ -49755,6 +51141,13 @@ inherits from: MonoBehaviour
 methods:
 void .ctor()
 ----------
+class: UnityEngine.MonumentColliderTag
+inherits from: MonoBehaviour
+fields:
+MonumentInfo Monument
+methods:
+void .ctor()
+----------
 class: UnityEngine.AniamtorEx
 inherits from: object
 methods:
@@ -49776,9 +51169,11 @@ class: UnityEngine.ColliderEx
 inherits from: object
 methods:
 PhysicMaterial GetMaterialAt(Collider obj, Vector3 pos)
+float EstimateVolume(Collider collider)
 bool IsOnLayer(Collider col, Layer rustLayer)
 bool IsOnLayer(Collider col, int layer)
 float GetRadius(Collider col, Vector3 transformScale)
+MonumentInfo GetMonument(Collider collider)
 ----------
 class: UnityEngine.CollisionEx
 inherits from: object
@@ -49816,6 +51211,7 @@ IEntity GetEntityFromComponent(Transform transform)
 void SetHierarchyGroup(GameObject obj, string strRoot, bool groupActive, bool persistant)
 bool HasComponent(GameObject obj)
 void SetChildComponentsEnabled(GameObject gameObject, bool enabled)
+GameObject FindInChildren(GameObject parent, string name)
 ----------
 class: UnityEngine.NetworkNetworkable
 inherits from: object
@@ -52356,6 +53752,7 @@ methods:
 void sleepwakestats(Arg args)
 void wakesleepingai(Arg args)
 void brainstats(Arg args)
+void aizonestats(Arg args)
 void killscientists(Arg args)
 void killanimals(Arg args)
 void addignoreplayer(Arg args)
@@ -52378,6 +53775,8 @@ bool objectplacement
 bool modelstate
 bool forceposition
 int rpcstallmode
+float rpcstallfade
+float rpcstallthreshold
 int userlevel
 int enforcementlevel
 float maxdesync
@@ -52416,6 +53815,7 @@ float flyhack_extrusion
 float flyhack_margin
 float flyhack_stepsize
 int flyhack_maxsteps
+bool serverside_fall_damage
 int projectile_protection
 float projectile_penalty
 float projectile_forgiveness
@@ -52432,6 +53832,8 @@ int projectile_impactspawndepth
 bool projectile_terraincheck
 bool projectile_vehiclecheck
 bool projectile_positionoffset
+float projectile_distance_forgiveness_minimum
+int projectile_update_limit
 int melee_protection
 float melee_penalty
 float melee_forgiveness
@@ -52444,6 +53846,7 @@ bool melee_vehiclecheck
 int eye_protection
 float eye_penalty
 float eye_forgiveness
+float eye_distance_parented_mounted_forgiveness
 float eye_serverframes
 float eye_clientframes
 bool eye_terraincheck
@@ -52575,16 +53978,29 @@ void .cctor()
 class: ConVar.Clan
 inherits from: ConsoleSystem
 fields:
+bool editsRequireClanTable
 bool enabled
 int maxMemberCount
+int scoreForKillingPlayerInOtherClan
+int scoreForKilledByPlayerInOtherClan
+int scoreForKillingUnarmedPlayer
+int scoreForDestroyingToolCupboards
+int scoreForHackingCrates
+int scoreForOpeningHackedCrates
+int scoreForDestroyingBradley
+int scoreForRunningExcavator
+int scoreForReachingCargoShip
+int scoreForLootingEliteCrate
 methods:
 void Info(Arg arg)
 ValueTask`1<IClan> GetPlayerClan(BasePlayer player)
 ValueTask`1<IClan> GetClanByID(long clanId, BasePlayer player)
+int GetScoreForEvent(ClanScoreEventType eventType)
 void .ctor()
 void .cctor()
-void <Info>g__SendClanInfoConsole|2_1(long id)
-string <Info>g__FormatClan|2_2(IClan clan)
+void <Info>g__SendClanInfoConsole|13_1(long id)
+string <Info>g__FormatClan|13_2(IClan clan)
+int <GetScoreForEvent>g__Unknown|16_0(ClanScoreEventType type)
 ----------
 class: ConVar.Client
 inherits from: ConsoleSystem
@@ -52658,6 +54074,7 @@ void deleteEntitiesByShortname(Arg arg)
 void printgroups(Arg arg)
 void flushgroup(Arg arg)
 void breakheld(Arg arg)
+void breakheld_almost(Arg arg)
 void puzzlereset(Arg arg)
 void puzzleprefabrespawn(Arg arg)
 void breakitem(Arg arg)
@@ -52687,7 +54104,7 @@ void quitTutorial(Arg arg)
 void tutorialStatus(Arg arg)
 void .ctor()
 void .cctor()
-void <bench_io>g__Connect|38_0(IOEntity InputIOEnt, IOEntity OutputIOEnt)
+void <bench_io>g__Connect|39_0(IOEntity InputIOEnt, IOEntity OutputIOEnt)
 ----------
 class: ConVar.Decay
 inherits from: ConsoleSystem
@@ -52744,12 +54161,12 @@ string UploadUrl
 bool ServerDemosEnabled
 int ServerDemoFlushInterval
 float UploadBandwidthLimitRatio
-float UploadBandwidthCatchupRatio
 string ServerDemoDirectory
 bool DeleteDemoAfterUpload
 bool ZipServerDemos
 int MaxDemoDiskSpaceGB
 int DemoDiskCleanupIntervalMinutes
+int DemoUploadConcurrency
 int recordlistmode
 methods:
 bool get_UploadDemos()
@@ -52762,8 +54179,6 @@ int get_ServerDemoFlushInterval()
 void set_ServerDemoFlushInterval(int value)
 float get_UploadBandwidthLimitRatio()
 void set_UploadBandwidthLimitRatio(float value)
-float get_UploadBandwidthCatchupRatio()
-void set_UploadBandwidthCatchupRatio(float value)
 string get_ServerDemoDirectory()
 void set_ServerDemoDirectory(string value)
 bool get_DeleteDemoAfterUpload()
@@ -52774,6 +54189,8 @@ int get_MaxDemoDiskSpaceGB()
 void set_MaxDemoDiskSpaceGB(int value)
 int get_DemoDiskCleanupIntervalMinutes()
 void set_DemoDiskCleanupIntervalMinutes(int value)
+int get_DemoUploadConcurrency()
+void set_DemoUploadConcurrency(int value)
 void BenchmarkDemoUpload(Arg arg)
 int get_recordlistmode()
 void set_recordlistmode(int value)
@@ -52820,6 +54237,7 @@ class: ConVar.Env
 inherits from: ConsoleSystem
 fields:
 bool nightlight_enabled
+bool nightlight_debugcamera_enabled
 float nightlight_distance_internal
 float nightlight_fadefraction_internal
 float nightlight_brightness_internal
@@ -53132,6 +54550,12 @@ void drop(Arg arg)
 void calltome(Arg arg)
 void call(Arg arg)
 void strafe(Arg arg)
+void orbit(Arg arg)
+void orbitstrafe(Arg arg)
+void move(Arg arg)
+void flee(Arg arg)
+void patrol(Arg arg)
+void death(Arg arg)
 void testpuzzle(Arg arg)
 void .ctor()
 void .cctor()
@@ -53174,6 +54598,7 @@ void giveall(Arg arg)
 void giveto(Arg arg)
 void giveid(Arg arg)
 void givearm(Arg arg)
+void pipetteid(Arg arg)
 void copyTo(Arg arg)
 void copyTo(BasePlayer from, BasePlayer toply)
 void deployLoadoutInRange(Arg arg)
@@ -53345,14 +54770,55 @@ void set_autosynctransforms(bool value)
 void .ctor()
 void .cctor()
 ----------
+class: ConVar.Ping
+inherits from: ConsoleSystem
+properties:
+int ping_samples
+bool ping_parallel
+int ping_refresh_interval
+bool auto_refresh_region
+bool ping_estimate_logging
+bool ping_estimation
+methods:
+int get_ping_samples()
+void set_ping_samples(int value)
+bool get_ping_parallel()
+void set_ping_parallel(bool value)
+int get_ping_refresh_interval()
+void set_ping_refresh_interval(int value)
+bool get_auto_refresh_region()
+void set_auto_refresh_region(bool value)
+bool get_ping_estimate_logging()
+void set_ping_estimate_logging(bool value)
+bool get_ping_estimation()
+void set_ping_estimation(bool value)
+void .ctor()
+----------
 class: ConVar.Player
 inherits from: ConsoleSystem
 fields:
-int tickrate_cl
-int tickrate_sv
+string serverTickRateDefaultString
+int serverTickRateDefault
+int serverTickRateMin
+int serverTickRateMax
+int serverTickRate
+float serverTickInterval
+string clientTickRateDefaultString
+int clientTickRateDefault
+int clientTickRateMin
+int clientTickRateMax
+int clientTickRate
+float clientTickInterval
 bool InfiniteAmmo
 bool woundforever
+properties:
+int tickrate_sv
+int tickrate_cl
 methods:
+int get_tickrate_sv()
+void set_tickrate_sv(int value)
+int get_tickrate_cl()
+void set_tickrate_cl(int value)
 void cinematic_play(Arg arg)
 void cinematic_stop(Arg arg)
 void cinematic_gesture(Arg arg)
@@ -53371,6 +54837,7 @@ void fillwater(Arg arg)
 void reloadweapons(Arg arg)
 void createskull(Arg arg)
 string createTrophy(Arg arg)
+void trigger_wildlife_trap(Arg arg)
 void gesture_radius(Arg arg)
 void stopgesture_radius(Arg arg)
 void markhostile(Arg arg)
@@ -53420,6 +54887,9 @@ class: ConVar.Render
 inherits from: ConsoleSystem
 fields:
 bool use_normal_rendering
+bool <show_building_blocked_client>k__BackingField
+float <building_blocked_preview_distance>k__BackingField
+bool <show_building_blocked_server>k__BackingField
 int instanced_rendering
 bool instanced_toggle_all
 bool instanced_toggle_cliffs
@@ -53434,10 +54904,19 @@ float instancing_render_distance
 properties:
 bool IsInstancingDisabled
 bool IsInstancingEnabled
+bool show_building_blocked_client
+float building_blocked_preview_distance
+bool show_building_blocked_server
 bool IsMultidrawEnabled
 methods:
 bool get_IsInstancingDisabled()
 bool get_IsInstancingEnabled()
+bool get_show_building_blocked_client()
+void set_show_building_blocked_client(bool value)
+float get_building_blocked_preview_distance()
+void set_building_blocked_preview_distance(float value)
+bool get_show_building_blocked_server()
+void set_show_building_blocked_server(bool value)
 bool get_IsMultidrawEnabled()
 void tree_entities(Arg arg)
 void print_global_entities(Arg arg)
@@ -53456,7 +54935,7 @@ fields:
 bool targetall
 float hostileduration
 float interferenceradius
-float maxinterference
+int maxinterference
 bool debugPreventDuplicates
 methods:
 void .ctor()
@@ -53507,6 +54986,9 @@ string branch
 int queriesPerSecond
 int ipQueriesPerMin
 bool statBackup
+int rejoin_delay
+string ping_region_code_override
+string _favoritesEndpoint
 string headerimage
 string logoimage
 int saveBackupCount
@@ -53588,6 +55070,7 @@ bool enforcePipeChecksOnBuildingBlockChanges
 int maxItemStacksMovedPerTickIndustrial
 float industrialFrameBudgetMs
 bool industrialTransferStrictTimeLimits
+bool industrialAllowQuickMove
 int maximumMapMarkers
 int maximumPings
 float pingDuration
@@ -53596,6 +55079,10 @@ float parachuteRepackTime
 bool emojiOwnershipCheck
 bool skipDeathScreenFade
 bool tutorialEnabled
+float workbench1TaxRate
+bool autoUploadMap
+float workbench2TaxRate
+float workbench3TaxRate
 bool showHolsteredItems
 int maxpacketspersecond_world
 int maxpacketspersecond_rpc
@@ -53610,6 +55097,7 @@ bool packetlog_enabled
 bool rpclog_enabled
 properties:
 string server_id
+string favoritesEndpoint
 int anticheatlog
 string tags
 int maxclientinfosize
@@ -53637,10 +55125,13 @@ bool netlog
 methods:
 string get_server_id()
 void set_server_id(string value)
+string get_favoritesEndpoint()
+void set_favoritesEndpoint(string value)
 int get_anticheatlog()
 void set_anticheatlog(int value)
 string get_tags()
 void set_tags(string value)
+float GetTaxRateForWorkbenchUnlock(int workbenchLevel)
 float TickDelta()
 float TickTime(UInt32 tick)
 void setshowholstereditems(Arg arg)
@@ -53716,7 +55207,7 @@ void ResetServerEmoji()
 string AutoCorrectTags(string value)
 void .ctor()
 void .cctor()
-void <AutoCorrectTags>g__Add|246_1(String[] options, <>c__DisplayClass246_0& )
+void <AutoCorrectTags>g__Add|258_1(String[] options, <>c__DisplayClass258_0& )
 ----------
 class: ConVar.Spawn
 inherits from: ConsoleSystem
@@ -53739,6 +55230,8 @@ void fill_individuals(Arg args)
 void report(Arg args)
 void scalars(Arg args)
 void cargoshipevent(Arg args)
+void ch47event(Arg args)
+void cargoshipdockingtest(Arg args)
 void .ctor()
 void .cctor()
 ----------
@@ -53836,6 +55329,7 @@ class: ConVar.Tree
 inherits from: ConsoleSystem
 fields:
 bool global_broadcast
+bool simplified_collider
 methods:
 void .ctor()
 ----------
@@ -54601,6 +56095,7 @@ bool ShouldEndCycle()
 void EndCycle()
 int GetAvailableInputsForPlayer(CardPlayerData playerData)
 void HandlePlayerLeavingTable(CardPlayerData pData)
+bool AnyoneElseCanBetMore(CardPlayerData excluding)
 ----------
 class: Facepunch.Utility.Compression
 inherits from: object
@@ -54653,6 +56148,7 @@ string <AnalyticsHeader>k__BackingField
 bool <UploadAnalytics>k__BackingField
 string <AnalyticsSecret>k__BackingField
 string <AnalyticsPublicKey>k__BackingField
+string <BulkUploadConnectionString>k__BackingField
 bool <HighFrequencyStats>k__BackingField
 properties:
 string stats_blacklist
@@ -54662,6 +56158,7 @@ string AnalyticsHeader
 bool UploadAnalytics
 string AnalyticsSecret
 string AnalyticsPublicKey
+string BulkUploadConnectionString
 bool HighFrequencyStats
 methods:
 string get_stats_blacklist()
@@ -54678,18 +56175,76 @@ string get_AnalyticsSecret()
 void set_AnalyticsSecret(string value)
 string get_AnalyticsPublicKey()
 void set_AnalyticsPublicKey(string value)
+string get_BulkUploadConnectionString()
+void set_BulkUploadConnectionString(string value)
 bool get_HighFrequencyStats()
 void set_HighFrequencyStats(bool value)
 void GetPendingAnalytics(Arg arg)
 void .cctor()
 ----------
+class: Facepunch.Rust.AzureAnalyticsUploaderEx
+inherits from: object
+methods:
+bool NeedsCreation(AzureAnalyticsUploader uploader)
+----------
+class: Facepunch.Rust.AnalyticsDocumentMode
+inherits from: Enum
+fields:
+int value__
+AnalyticsDocumentMode JSON
+AnalyticsDocumentMode CSV
+----------
+class: Facepunch.Rust.AzureAnalyticsUploader
+inherits from: object
+fields:
+TimeSpan <LoopDelay>k__BackingField
+DateTime <Expiry>k__BackingField
+bool <StrictMode>k__BackingField
+AnalyticsDocumentMode <DocumentMode>k__BackingField
+bool <UseJsonDataObject>k__BackingField
+ConcurrentQueue`1<EventRecord> queue
+BlobClient _blobClient
+Stream Stream
+GZipStream ZipStream
+StreamWriter Writer
+bool readyToFlush
+bool invalid
+properties:
+TimeSpan LoopDelay
+DateTime Expiry
+bool StrictMode
+AnalyticsDocumentMode DocumentMode
+bool UseJsonDataObject
+methods:
+TimeSpan get_LoopDelay()
+void set_LoopDelay(TimeSpan value)
+DateTime get_Expiry()
+void set_Expiry(DateTime value)
+bool get_StrictMode()
+void set_StrictMode(bool value)
+AnalyticsDocumentMode get_DocumentMode()
+void set_DocumentMode(AnalyticsDocumentMode value)
+bool get_UseJsonDataObject()
+void set_UseJsonDataObject(bool value)
+void EnterPool()
+void LeavePool()
+bool TryFlush()
+AzureAnalyticsUploader Create(string table, TimeSpan timeout, AnalyticsDocumentMode mode)
+void Append(EventRecord record)
+Task CreateBlobAsync()
+Task UploadThread()
+void .ctor()
+----------
 class: Facepunch.Rust.EventRecord
 inherits from: object
 fields:
+long TicksToNS
 DateTime Timestamp
 bool IsServer
 string <EventType>k__BackingField
 List`1<EventRecordField> Data
+int TimesCreated
+int TimesSubmitted
 properties:
 string EventType
 methods:
@@ -54698,9 +56253,11 @@ void set_EventType(string value)
 void .ctor()
 void EnterPool()
 void LeavePool()
+EventRecord CSV()
 EventRecord New(string type, bool isServer)
 EventRecord AddObject(string key, object data)
 EventRecord SetTimestamp(DateTime timestamp)
+EventRecord AddField(string key, DateTime time)
 EventRecord AddField(string key, bool value)
 EventRecord AddField(string key, string value)
 EventRecord AddField(string key, int value)
@@ -54710,11 +56267,16 @@ EventRecord AddField(string key, long value)
 EventRecord AddField(string key, float value)
 EventRecord AddField(string key, double value)
 EventRecord AddField(string key, TimeSpan value)
+EventRecord AddLegacyTimespan(string key, TimeSpan value)
 EventRecord AddField(string key, Guid value)
 EventRecord AddField(string key, Vector3 value)
 EventRecord AddField(string key, BaseEntity entity)
 EventRecord AddField(string key, Item item)
+void MarkSubmitted()
 void Submit()
+void SerializeAsCSV(StreamWriter writer)
+void SerializeAsJson(StreamWriter writer, bool useDataObject)
+void .cctor()
 ----------
 class: Facepunch.Rust.EventRecordField
 inherits from: ValueType
@@ -54726,10 +56288,12 @@ Nullable`1<long> Number
 Nullable`1<double> Float
 Nullable`1<Vector3> Vector
 Nullable`1<Guid> Guid
+DateTime DateTime
 bool IsObject
 methods:
 void .ctor(string key1)
 void .ctor(string key1, string key2)
+void Serialize(StreamWriter writer)
 ----------
 class: Facepunch.Rust.PerformanceLogging
 inherits from: object
@@ -54744,6 +56308,7 @@ List`1<TimeSpan> Frametimes
 List`1<int> PingHistory
 List`1<LagSpike> lagSpikes
 List`1<GarbageCollect> garbageCollections
+Dictionary`2<string, int> pendingTimings
 bool isClient
 Stopwatch frameWatch
 DateTime nextPingTime
@@ -54764,7 +56329,111 @@ void FlushMainThread()
 TimeSpan GetFlushInterval()
 void ResetMeasurements()
 Task ProcessPerformanceData(EventRecord record, List`1<TimeSpan> frametimes, List`1<int> ping)
+void SetTiming(string category, TimeSpan elapsed)
 void .cctor()
+----------
+class: Facepunch.Rust.Profiling.EntityProfiler
+inherits from: object
+fields:
+bool enabled
+Dictionary`2<string, EntityCounter> counts
+List`1<EntityCounter> list
+int spawned
+int killed
+methods:
+void OnSpawned(BaseNetworkable entity)
+void OnKilled(BaseNetworkable entity)
+void Reset()
+void .cctor()
+----------
+class: Facepunch.Rust.Profiling.LagSpikeProfiler
+inherits from: object
+fields:
+List`1<EventRecord> pendingEvents
+methods:
+void Serialize(AzureAnalyticsUploader uploader, int frameIndex, DateTime timestamp)
+void RPC(TimeSpan time, Message packet, BaseEntity entity, UInt32 rpcId)
+void ConsoleCommand(TimeSpan time, Message packet, string command)
+EventRecord CreateRecord(TimeSpan duration, string reason)
+void .cctor()
+----------
+class: Facepunch.Rust.Profiling.RuntimeProfiler
+inherits from: object
+fields:
+TimeSpan <RpcWarningThreshold>k__BackingField
+TimeSpan <ConsoleCommandWarningThreshold>k__BackingField
+int _profilingInterval
+bool _init
+Stopwatch serializationTimer
+AzureAnalyticsUploader frameProfilingUploader
+AzureAnalyticsUploader entityProfilingUploader
+AzureAnalyticsUploader invokeDetailsUploader
+AzureAnalyticsUploader methodUploader
+AzureAnalyticsUploader objectWorkQueueUploader
+AzureAnalyticsUploader packetUploader
+AzureAnalyticsUploader lagSpikeUploader
+List`1<RustProfilerRecorder> recorders
+Stopwatch invokeExecutionResetTimer
+properties:
+int rpc_lagspike_threshold
+int command_lagspike_threshold
+TimeSpan RpcWarningThreshold
+TimeSpan ConsoleCommandWarningThreshold
+int runtime_profiling_interval
+methods:
+void dump_profile_recorders(Arg arg)
+int get_rpc_lagspike_threshold()
+void set_rpc_lagspike_threshold(int value)
+int get_command_lagspike_threshold()
+void set_command_lagspike_threshold(int value)
+TimeSpan get_RpcWarningThreshold()
+void set_RpcWarningThreshold(TimeSpan value)
+TimeSpan get_ConsoleCommandWarningThreshold()
+void set_ConsoleCommandWarningThreshold(TimeSpan value)
+int get_runtime_profiling_interval()
+void set_runtime_profiling_interval(int value)
+void Start()
+void Update()
+void CollectLastFrameStats()
+void WriteFrameData(int frameIndex, List`1<RustProfilerRecorder> recorders)
+void SerializeCommon(EventRecord record)
+void SerializeNetworking(EventRecord frameRecord, int frameIndex, DateTime timestamp)
+void SerializeInvokes(EventRecord record)
+void SerializeInvokeExecutionTime(InvokeProfiler profiler, AzureAnalyticsUploader uploader, int frameIndex, DateTime timestamp)
+void SerializeProfilingSamples(EventRecord record)
+void SerializeEntities(EventRecord record, EventRecord entities)
+void .cctor()
+----------
+class: Facepunch.Rust.Profiling.RustProfilerRecorder
+inherits from: ValueType
+fields:
+string ColumnName
+ProfilerRecorder Recorder
+methods:
+void .ctor(string column, ProfilerCategory category, string sample)
+----------
+class: Facepunch.Rust.Profiling.UnityProfiler
+inherits from: object
+fields:
+List`1<RecorderInfo> ActiveRecorders
+bool _enabled
+properties:
+bool enabled
+methods:
+bool get_enabled()
+void set_enabled(bool value)
+void SetEnabled(bool state)
+void Unload()
+void Serialize(AzureAnalyticsUploader uploader, DateTime timestamp, int frameIndex)
+void .cctor()
+----------
+class: Facepunch.Rust.Profiling.WorkQueueProfiler
+inherits from: object
+fields:
+bool enabled
+methods:
+void Serialize(AzureAnalyticsUploader uploader, int frameIndex, DateTime timestamp)
+void Reset()
 ----------
 class: Rust.Numlock
 inherits from: object
@@ -55271,6 +56940,7 @@ class: Rust.Nexus.Handlers.TransferHandler
 inherits from: BaseNexusRequestHandler`1<TransferRequest>
 fields:
 Dictionary`2<ulong, ulong> UidMapping
+Dictionary`2<NetworkableId, Entity> UidToEntity
 Dictionary`2<BaseEntity, Entity> EntityToSpawn
 Dictionary`2<ulong, BasePlayer> SpawnedPlayers
 List`1<string> PlayerIds
@@ -55283,7 +56953,7 @@ void RepositionEntitiesFromTransfer()
 void SpawnEntities(Dictionary`2<ulong, BasePlayer> players)
 void .ctor()
 void .cctor()
-void <Handle>g__UpdateWithNewUid|6_0(UidType type, UInt64& prevUid)
+void <Handle>g__UpdateWithNewUid|7_0(UidType type, UInt64& prevUid)
 ----------
 class: Rust.Water5.OceanDisplacementShort3
 inherits from: ValueType
@@ -55502,7 +57172,6 @@ bool CanBeLooted(BasePlayer player)
 int GetIdealSlot(BasePlayer player, ItemContainer container, Item item)
 int GetValidSlot(Item item)
 void OnInventoryFirstCreated(ItemContainer container)
-void NonUserSpawn()
 void OnItemAddedOrRemoved(Item item, bool added)
 bool ItemFilter(Item item, int targetSlot)
 void RefreshLoadoutData()
@@ -55644,7 +57313,6 @@ inherits from: ItemMod
 fields:
 GameObjectRef entityPrefab
 int socketsTaken
-bool doNonUserSpawn
 properties:
 int SocketsTaken
 methods:
@@ -55929,34 +57597,6 @@ methods:
 void Start()
 void .ctor()
 ----------
-class: Rust.Ai.SensationType
-inherits from: Enum
-fields:
-int value__
-SensationType Gunshot
-SensationType ThrownWeapon
-SensationType Explosion
-----------
-class: Rust.Ai.Sensation
-inherits from: ValueType
-fields:
-SensationType Type
-Vector3 Position
-float Radius
-float DamagePotential
-BaseEntity Initiator
-BasePlayer InitiatorPlayer
-BaseEntity UsedEntity
-----------
-class: Rust.Ai.Sense
-inherits from: object
-fields:
-BaseEntity[] query
-methods:
-void Stimulate(Sensation sensation)
-bool IsAbleToBeStimulated(BaseEntity ent)
-void .cctor()
-----------
 class: Rust.Ai.ScientistSpawner
 inherits from: SpawnGroup
 fields:
@@ -56145,7 +57785,9 @@ __StaticArrayInitTypeSize=28 6A9AF405F91FC519F1BFE3EF240ACE5FD596F0B5F1E288869C2
 long 71B7C064263BFD112B8F81B89C1E4F0033B4195FE5F291343845AC656DF4B1F2
 __StaticArrayInitTypeSize=16 80BF86957C3A56EB67100257760C90558E80F9253A3596998F1F5B9289F7449E
 __StaticArrayInitTypeSize=12 85DD1779ED6EFC5644F3EF8B25784A4EA351D8F9C57F0FA383673B34974DFDC2
+__StaticArrayInitTypeSize=108458 B37A22394D6ACE366ECB2B80E63A21681BFB2A1EE8C1BD1B2FB4E3216270B8EA
 __StaticArrayInitTypeSize=20 BEE794DBCD4CBBBF1C7DAF41EF192F0C8543F2C04DCD5D88F445D71BB75FC08A
+__StaticArrayInitTypeSize=200902 CA5D0C977C1A191A714F9C2B75F007F53D412FA387499940B42103A819267049
 __StaticArrayInitTypeSize=288 EC28B0ED453324964CE8F1AE6F3819EE3274E6C7262F892293A5CC05A45880EB
 __StaticArrayInitTypeSize=12 F186F2262AE48F2AA4F90C9A6B35913B0F6B0B895423B6267252259BFD357D3B
 __StaticArrayInitTypeSize=24 FE78C65211DD0B56A97024FB61111E686EF1FE054AA132BA58E2891AC496F1EE
