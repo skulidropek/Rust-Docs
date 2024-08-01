@@ -39,6 +39,8 @@ public Vector3Int origin
 public Vector3Int size
 public Bounds localBounds
 public BoundsInt cellBounds
+public void .ctor(Tilemap tilemap)
+public ITilemap op_Implicit(Tilemap tilemap)
 internal void SetTilemapInstance(Tilemap tilemap)
 public Vector3Int get_origin()
 public Vector3Int get_size()
@@ -87,15 +89,26 @@ public UnityEngine.Tilemaps.TileAnimationData : ValueType {
 private Sprite[] m_AnimatedSprites
 private float m_AnimationSpeed
 private float m_AnimationStartTime
+private TileAnimationFlags m_Flags
 public Sprite[] animatedSprites
 public float animationSpeed
 public float animationStartTime
+public TileAnimationFlags flags
 public Sprite[] get_animatedSprites()
 public void set_animatedSprites(Sprite[] value)
 public float get_animationSpeed()
 public void set_animationSpeed(float value)
 public float get_animationStartTime()
 public void set_animationStartTime(float value)
+public TileAnimationFlags get_flags()
+public void set_flags(TileAnimationFlags value)
+}
+public UnityEngine.Tilemaps.TileAnimationFlags : Enum {
+public int value__
+public TileAnimationFlags None
+public TileAnimationFlags LoopOnce
+public TileAnimationFlags PauseAnimation
+public TileAnimationFlags UpdatePhysics
 }
 public UnityEngine.Tilemaps.TileBase : ScriptableObject {
 public void RefreshTile(Vector3Int position, ITilemap tilemap)
@@ -191,6 +204,10 @@ public TileFlags KeepGameObjectRuntimeOnly
 public TileFlags LockAll
 }
 public UnityEngine.Tilemaps.Tilemap : GridLayout {
+private Action`2<Tilemap, SyncTile[]> tilemapTileChanged
+private Action`2<Tilemap, NativeArray`1<Vector3Int>> tilemapPositionsChanged
+private bool m_BufferSyncTile
+internal bool bufferSyncTile
 public Grid layoutGrid
 public BoundsInt cellBounds
 public Bounds localBounds
@@ -202,6 +219,20 @@ public Vector3Int size
 public Vector3 tileAnchor
 public Orientation orientation
 public Matrix4x4 orientationMatrix
+public void add_tilemapTileChanged(Action`2<Tilemap, SyncTile[]> value)
+public void remove_tilemapTileChanged(Action`2<Tilemap, SyncTile[]> value)
+public void add_tilemapPositionsChanged(Action`2<Tilemap, NativeArray`1<Vector3Int>> value)
+public void remove_tilemapPositionsChanged(Action`2<Tilemap, NativeArray`1<Vector3Int>> value)
+internal bool get_bufferSyncTile()
+internal void set_bufferSyncTile(bool value)
+internal bool HasSyncTileCallback()
+internal bool HasPositionsChangedCallback()
+private void HandleSyncTileCallback(SyncTile[] syncTiles)
+private void HandlePositionsChangedCallback(int count, IntPtr positionsIntPtr)
+private void SendTilemapTileChangedCallback(SyncTile[] syncTiles)
+private void SendTilemapPositionsChangedCallback(NativeArray`1<Vector3Int> positions)
+internal void SetSyncTileCallback(Action`2<Tilemap, SyncTile[]> callback)
+internal void RemoveSyncTileCallback(Action`2<Tilemap, SyncTile[]> callback)
 public Grid get_layoutGrid()
 public Vector3 GetCellCenterLocal(Vector3Int position)
 public Vector3 GetCellCenterWorld(Vector3Int position)
@@ -272,6 +303,10 @@ public int GetAnimationFrame(Vector3Int position)
 public void SetAnimationFrame(Vector3Int position, int frame)
 public float GetAnimationTime(Vector3Int position)
 public void SetAnimationTime(Vector3Int position, float time)
+public TileAnimationFlags GetTileAnimationFlags(Vector3Int position)
+public void SetTileAnimationFlags(Vector3Int position, TileAnimationFlags flags)
+public void AddTileAnimationFlags(Vector3Int position, TileAnimationFlags flags)
+public void RemoveTileAnimationFlags(Vector3Int position, TileAnimationFlags flags)
 public void FloodFill(Vector3Int position, TileBase tile)
 private void FloodFillTileAsset(Vector3Int position, Object tile)
 public void BoxFill(Vector3Int position, TileBase tile, int startX, int startY, int endX, int endY)
@@ -283,6 +318,10 @@ public void DeleteCells(Vector3Int position, int numColumns, int numRows, int nu
 public void ClearAllTiles()
 public void ResizeBounds()
 public void CompressBounds()
+internal void GetSyncTileCallbackSettings(SyncTileCallbackSettings& settings)
+internal void SendAndClearSyncTileBuffer()
+private void DoSyncTileCallback(SyncTile[] syncTiles)
+private void DoPositionsChangedCallback(int count, IntPtr positionsIntPtr)
 private void get_localBounds_Injected(Bounds& ret)
 private void get_localFrameBounds_Injected(Bounds& ret)
 private void get_color_Injected(Color& ret)
@@ -322,15 +361,22 @@ private int GetAnimationFrame_Injected(Vector3Int& position)
 private void SetAnimationFrame_Injected(Vector3Int& position, int frame)
 private float GetAnimationTime_Injected(Vector3Int& position)
 private void SetAnimationTime_Injected(Vector3Int& position, float time)
+private TileAnimationFlags GetTileAnimationFlags_Injected(Vector3Int& position)
+private void SetTileAnimationFlags_Injected(Vector3Int& position, TileAnimationFlags flags)
+private void AddTileAnimationFlags_Injected(Vector3Int& position, TileAnimationFlags flags)
+private void RemoveTileAnimationFlags_Injected(Vector3Int& position, TileAnimationFlags flags)
 private void FloodFillTileAsset_Injected(Vector3Int& position, Object tile)
 private void BoxFillTileAsset_Injected(Vector3Int& position, Object tile, int startX, int startY, int endX, int endY)
 private void InsertCells_Injected(Vector3Int& position, int numColumns, int numRows, int numLayers)
 private void DeleteCells_Injected(Vector3Int& position, int numColumns, int numRows, int numLayers)
 }
 public UnityEngine.Tilemaps.TilemapCollider2D : Collider2D {
+public bool useDelaunayMesh
 public UInt32 maximumTileChangeCount
 public float extrusionFactor
 public bool hasTilemapChanges
+public bool get_useDelaunayMesh()
+public void set_useDelaunayMesh(bool value)
 public UInt32 get_maximumTileChangeCount()
 public void set_maximumTileChangeCount(UInt32 value)
 public float get_extrusionFactor()

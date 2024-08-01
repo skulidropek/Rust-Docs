@@ -117,6 +117,7 @@ public void String(string val, bool variableLength)
 }
 public ItemContainerId : ValueType {
 public ulong Value
+public ItemContainerId Invalid
 public bool IsValid
 public bool get_IsValid()
 public void .ctor(ulong value)
@@ -139,6 +140,14 @@ public int GetHashCode()
 public bool op_Equality(ItemId left, ItemId right)
 public bool op_Inequality(ItemId left, ItemId right)
 }
+public ItemMoveModifier : Enum {
+public int value__
+public ItemMoveModifier None
+public ItemMoveModifier Alt
+public ItemMoveModifier Shift
+public ItemMoveModifier Ctrl
+public ItemMoveModifier BackpackOpen
+}
 public ModelState : object {
 public float waterLevel
 public Vector3 lookDir
@@ -146,6 +155,11 @@ public int flags
 public int poseType
 public Vector3 inheritedVelocity
 public int ladderType
+public Vector3 guidePosition
+public Vector3 guideRotation
+public UInt32 guidePrefab
+public bool guideValid
+public int guideVersion
 public bool ShouldPool
 private bool _disposed
 public bool ducked
@@ -1156,6 +1170,7 @@ public AppMarkerType CargoShip
 public AppMarkerType Crate
 public AppMarkerType GenericRadius
 public AppMarkerType PatrolHelicopter
+public AppMarkerType TravellingVendor
 }
 public ProtoBuf.AppMessage : object {
 public AppResponse response
@@ -1899,6 +1914,7 @@ public void InspectUids(UidInspector`1<ulong> action)
 public ProtoBuf.AttackHeliRockets : object {
 public int totalAmmo
 public int rocketsSinceReload
+public bool hasFlares
 public int ammoItemID
 public bool ShouldPool
 private bool _disposed
@@ -2254,6 +2270,8 @@ public string respawnId
 public int bagCount
 public long clanId
 public ItemCrafter itemCrafter
+public int shelterCount
+public int tutorialAllowance
 public bool ShouldPool
 private bool _disposed
 public void ResetToPool(BasePlayer instance)
@@ -2416,6 +2434,45 @@ public Byte[] SerializeToBytes(BaseVehicle instance)
 public void SerializeLengthDelimited(Stream stream, BaseVehicle instance)
 public void InspectUids(UidInspector`1<ulong> action)
 }
+public ProtoBuf.Bike : object {
+public float steerInput
+public float driveWheelVel
+public float throttleInput
+public float brakeInput
+public NetworkableId storageID
+public NetworkableId fuelStorageID
+public float fuelFraction
+public float sidecarAngle
+public float time
+public bool ShouldPool
+private bool _disposed
+public void ResetToPool(Bike instance)
+public void ResetToPool()
+public void Dispose()
+public void EnterPool()
+public void LeavePool()
+public void CopyTo(Bike instance)
+public Bike Copy()
+public Bike Deserialize(Stream stream)
+public Bike DeserializeLengthDelimited(Stream stream)
+public Bike DeserializeLength(Stream stream, int length)
+public Bike Deserialize(Byte[] buffer)
+public void FromProto(Stream stream, bool isDelta)
+public void WriteToStream(Stream stream)
+public void WriteToStreamDelta(Stream stream, Bike previous)
+public void ReadFromStream(Stream stream, int size, bool isDelta)
+public Bike Deserialize(Byte[] buffer, Bike instance, bool isDelta)
+public Bike Deserialize(Stream stream, Bike instance, bool isDelta)
+public Bike DeserializeLengthDelimited(Stream stream, Bike instance, bool isDelta)
+public Bike DeserializeLength(Stream stream, int length, Bike instance, bool isDelta)
+public void SerializeDelta(Stream stream, Bike instance, Bike previous)
+public void Serialize(Stream stream, Bike instance)
+public Byte[] ToProtoBytes()
+public void ToProto(Stream stream)
+public Byte[] SerializeToBytes(Bike instance)
+public void SerializeLengthDelimited(Stream stream, Bike instance)
+public void InspectUids(UidInspector`1<ulong> action)
+}
 public ProtoBuf.BoomBox : object {
 public string radioIp
 public ulong assignedRadioBy
@@ -2557,6 +2614,8 @@ public List`1<PlayerNameID> users
 public float upkeepPeriodMinutes
 public float costFraction
 public float protectedMinutes
+public bool clientAuthed
+public bool clientAnyAuthed
 public bool ShouldPool
 private bool _disposed
 public void ResetToPool(BuildingPrivilege instance)
@@ -2584,6 +2643,70 @@ public Byte[] ToProtoBytes()
 public void ToProto(Stream stream)
 public Byte[] SerializeToBytes(BuildingPrivilege instance)
 public void SerializeLengthDelimited(Stream stream, BuildingPrivilege instance)
+public void InspectUids(UidInspector`1<ulong> action)
+}
+public ProtoBuf.BuildingPrivilegeRetro : object {
+public List`1<float> resources
+public List`1<BuildingPrivilegeRetroTool> tools
+public bool ShouldPool
+private bool _disposed
+public void ResetToPool(BuildingPrivilegeRetro instance)
+public void ResetToPool()
+public void Dispose()
+public void EnterPool()
+public void LeavePool()
+public void CopyTo(BuildingPrivilegeRetro instance)
+public BuildingPrivilegeRetro Copy()
+public BuildingPrivilegeRetro Deserialize(Stream stream)
+public BuildingPrivilegeRetro DeserializeLengthDelimited(Stream stream)
+public BuildingPrivilegeRetro DeserializeLength(Stream stream, int length)
+public BuildingPrivilegeRetro Deserialize(Byte[] buffer)
+public void FromProto(Stream stream, bool isDelta)
+public void WriteToStream(Stream stream)
+public void WriteToStreamDelta(Stream stream, BuildingPrivilegeRetro previous)
+public void ReadFromStream(Stream stream, int size, bool isDelta)
+public BuildingPrivilegeRetro Deserialize(Byte[] buffer, BuildingPrivilegeRetro instance, bool isDelta)
+public BuildingPrivilegeRetro Deserialize(Stream stream, BuildingPrivilegeRetro instance, bool isDelta)
+public BuildingPrivilegeRetro DeserializeLengthDelimited(Stream stream, BuildingPrivilegeRetro instance, bool isDelta)
+public BuildingPrivilegeRetro DeserializeLength(Stream stream, int length, BuildingPrivilegeRetro instance, bool isDelta)
+public void SerializeDelta(Stream stream, BuildingPrivilegeRetro instance, BuildingPrivilegeRetro previous)
+public void Serialize(Stream stream, BuildingPrivilegeRetro instance)
+public Byte[] ToProtoBytes()
+public void ToProto(Stream stream)
+public Byte[] SerializeToBytes(BuildingPrivilegeRetro instance)
+public void SerializeLengthDelimited(Stream stream, BuildingPrivilegeRetro instance)
+public void InspectUids(UidInspector`1<ulong> action)
+}
+public ProtoBuf.BuildingPrivilegeRetroTool : object {
+public int itemID
+public ulong skinid
+public bool ShouldPool
+private bool _disposed
+public void ResetToPool(BuildingPrivilegeRetroTool instance)
+public void ResetToPool()
+public void Dispose()
+public void EnterPool()
+public void LeavePool()
+public void CopyTo(BuildingPrivilegeRetroTool instance)
+public BuildingPrivilegeRetroTool Copy()
+public BuildingPrivilegeRetroTool Deserialize(Stream stream)
+public BuildingPrivilegeRetroTool DeserializeLengthDelimited(Stream stream)
+public BuildingPrivilegeRetroTool DeserializeLength(Stream stream, int length)
+public BuildingPrivilegeRetroTool Deserialize(Byte[] buffer)
+public void FromProto(Stream stream, bool isDelta)
+public void WriteToStream(Stream stream)
+public void WriteToStreamDelta(Stream stream, BuildingPrivilegeRetroTool previous)
+public void ReadFromStream(Stream stream, int size, bool isDelta)
+public BuildingPrivilegeRetroTool Deserialize(Byte[] buffer, BuildingPrivilegeRetroTool instance, bool isDelta)
+public BuildingPrivilegeRetroTool Deserialize(Stream stream, BuildingPrivilegeRetroTool instance, bool isDelta)
+public BuildingPrivilegeRetroTool DeserializeLengthDelimited(Stream stream, BuildingPrivilegeRetroTool instance, bool isDelta)
+public BuildingPrivilegeRetroTool DeserializeLength(Stream stream, int length, BuildingPrivilegeRetroTool instance, bool isDelta)
+public void SerializeDelta(Stream stream, BuildingPrivilegeRetroTool instance, BuildingPrivilegeRetroTool previous)
+public void Serialize(Stream stream, BuildingPrivilegeRetroTool instance)
+public Byte[] ToProtoBytes()
+public void ToProto(Stream stream)
+public Byte[] SerializeToBytes(BuildingPrivilegeRetroTool instance)
+public void SerializeLengthDelimited(Stream stream, BuildingPrivilegeRetroTool instance)
 public void InspectUids(UidInspector`1<ulong> action)
 }
 public ProtoBuf.CamperModule : object {
@@ -2695,6 +2818,76 @@ public Byte[] SerializeToBytes(CargoPlane instance)
 public void SerializeLengthDelimited(Stream stream, CargoPlane instance)
 public void InspectUids(UidInspector`1<ulong> action)
 }
+public ProtoBuf.CargoShip : object {
+public int currentHarborApproachNode
+public bool isDoingHarborApproach
+public bool shouldLookAhead
+public bool isEgressing
+public UInt32 layout
+public List`1<ulong> playerIds
+public int dockCount
+public float lifetime
+public int harborIndex
+public bool ShouldPool
+private bool _disposed
+public void ResetToPool(CargoShip instance)
+public void ResetToPool()
+public void Dispose()
+public void EnterPool()
+public void LeavePool()
+public void CopyTo(CargoShip instance)
+public CargoShip Copy()
+public CargoShip Deserialize(Stream stream)
+public CargoShip DeserializeLengthDelimited(Stream stream)
+public CargoShip DeserializeLength(Stream stream, int length)
+public CargoShip Deserialize(Byte[] buffer)
+public void FromProto(Stream stream, bool isDelta)
+public void WriteToStream(Stream stream)
+public void WriteToStreamDelta(Stream stream, CargoShip previous)
+public void ReadFromStream(Stream stream, int size, bool isDelta)
+public CargoShip Deserialize(Byte[] buffer, CargoShip instance, bool isDelta)
+public CargoShip Deserialize(Stream stream, CargoShip instance, bool isDelta)
+public CargoShip DeserializeLengthDelimited(Stream stream, CargoShip instance, bool isDelta)
+public CargoShip DeserializeLength(Stream stream, int length, CargoShip instance, bool isDelta)
+public void SerializeDelta(Stream stream, CargoShip instance, CargoShip previous)
+public void Serialize(Stream stream, CargoShip instance)
+public Byte[] ToProtoBytes()
+public void ToProto(Stream stream)
+public Byte[] SerializeToBytes(CargoShip instance)
+public void SerializeLengthDelimited(Stream stream, CargoShip instance)
+public void InspectUids(UidInspector`1<ulong> action)
+}
+public ProtoBuf.CargoShipContainer : object {
+public int dressingVariant
+public bool ShouldPool
+private bool _disposed
+public void ResetToPool(CargoShipContainer instance)
+public void ResetToPool()
+public void Dispose()
+public void EnterPool()
+public void LeavePool()
+public void CopyTo(CargoShipContainer instance)
+public CargoShipContainer Copy()
+public CargoShipContainer Deserialize(Stream stream)
+public CargoShipContainer DeserializeLengthDelimited(Stream stream)
+public CargoShipContainer DeserializeLength(Stream stream, int length)
+public CargoShipContainer Deserialize(Byte[] buffer)
+public void FromProto(Stream stream, bool isDelta)
+public void WriteToStream(Stream stream)
+public void WriteToStreamDelta(Stream stream, CargoShipContainer previous)
+public void ReadFromStream(Stream stream, int size, bool isDelta)
+public CargoShipContainer Deserialize(Byte[] buffer, CargoShipContainer instance, bool isDelta)
+public CargoShipContainer Deserialize(Stream stream, CargoShipContainer instance, bool isDelta)
+public CargoShipContainer DeserializeLengthDelimited(Stream stream, CargoShipContainer instance, bool isDelta)
+public CargoShipContainer DeserializeLength(Stream stream, int length, CargoShipContainer instance, bool isDelta)
+public void SerializeDelta(Stream stream, CargoShipContainer instance, CargoShipContainer previous)
+public void Serialize(Stream stream, CargoShipContainer instance)
+public Byte[] ToProtoBytes()
+public void ToProto(Stream stream)
+public Byte[] SerializeToBytes(CargoShipContainer instance)
+public void SerializeLengthDelimited(Stream stream, CargoShipContainer instance)
+public void InspectUids(UidInspector`1<ulong> action)
+}
 public ProtoBuf.Cassette : object {
 public UInt32 audioId
 public NetworkableId holder
@@ -2760,6 +2953,37 @@ public Byte[] SerializeToBytes(ChanceAIEventData instance)
 public void SerializeLengthDelimited(Stream stream, ChanceAIEventData instance)
 public void InspectUids(UidInspector`1<ulong> action)
 }
+public ProtoBuf.CinematicEntity : object {
+public NetworkableId targetPlayer
+public bool ShouldPool
+private bool _disposed
+public void ResetToPool(CinematicEntity instance)
+public void ResetToPool()
+public void Dispose()
+public void EnterPool()
+public void LeavePool()
+public void CopyTo(CinematicEntity instance)
+public CinematicEntity Copy()
+public CinematicEntity Deserialize(Stream stream)
+public CinematicEntity DeserializeLengthDelimited(Stream stream)
+public CinematicEntity DeserializeLength(Stream stream, int length)
+public CinematicEntity Deserialize(Byte[] buffer)
+public void FromProto(Stream stream, bool isDelta)
+public void WriteToStream(Stream stream)
+public void WriteToStreamDelta(Stream stream, CinematicEntity previous)
+public void ReadFromStream(Stream stream, int size, bool isDelta)
+public CinematicEntity Deserialize(Byte[] buffer, CinematicEntity instance, bool isDelta)
+public CinematicEntity Deserialize(Stream stream, CinematicEntity instance, bool isDelta)
+public CinematicEntity DeserializeLengthDelimited(Stream stream, CinematicEntity instance, bool isDelta)
+public CinematicEntity DeserializeLength(Stream stream, int length, CinematicEntity instance, bool isDelta)
+public void SerializeDelta(Stream stream, CinematicEntity instance, CinematicEntity previous)
+public void Serialize(Stream stream, CinematicEntity instance)
+public Byte[] ToProtoBytes()
+public void ToProto(Stream stream)
+public Byte[] SerializeToBytes(CinematicEntity instance)
+public void SerializeLengthDelimited(Stream stream, CinematicEntity instance)
+public void InspectUids(UidInspector`1<ulong> action)
+}
 public ProtoBuf.ClanActionResult : object {
 public int requestId
 public int result
@@ -2808,6 +3032,7 @@ public List`1<Role> roles
 public List`1<Member> members
 public List`1<Invite> invites
 public int maxMemberCount
+public long score
 public bool ShouldPool
 private bool _disposed
 public void ResetToPool(ClanInfo instance)
@@ -2866,6 +3091,37 @@ public Byte[] ToProtoBytes()
 public void ToProto(Stream stream)
 public Byte[] SerializeToBytes(ClanInvitations instance)
 public void SerializeLengthDelimited(Stream stream, ClanInvitations instance)
+public void InspectUids(UidInspector`1<ulong> action)
+}
+public ProtoBuf.ClanLeaderboard : object {
+public List`1<Entry> entries
+public bool ShouldPool
+private bool _disposed
+public void ResetToPool(ClanLeaderboard instance)
+public void ResetToPool()
+public void Dispose()
+public void EnterPool()
+public void LeavePool()
+public void CopyTo(ClanLeaderboard instance)
+public ClanLeaderboard Copy()
+public ClanLeaderboard Deserialize(Stream stream)
+public ClanLeaderboard DeserializeLengthDelimited(Stream stream)
+public ClanLeaderboard DeserializeLength(Stream stream, int length)
+public ClanLeaderboard Deserialize(Byte[] buffer)
+public void FromProto(Stream stream, bool isDelta)
+public void WriteToStream(Stream stream)
+public void WriteToStreamDelta(Stream stream, ClanLeaderboard previous)
+public void ReadFromStream(Stream stream, int size, bool isDelta)
+public ClanLeaderboard Deserialize(Byte[] buffer, ClanLeaderboard instance, bool isDelta)
+public ClanLeaderboard Deserialize(Stream stream, ClanLeaderboard instance, bool isDelta)
+public ClanLeaderboard DeserializeLengthDelimited(Stream stream, ClanLeaderboard instance, bool isDelta)
+public ClanLeaderboard DeserializeLength(Stream stream, int length, ClanLeaderboard instance, bool isDelta)
+public void SerializeDelta(Stream stream, ClanLeaderboard instance, ClanLeaderboard previous)
+public void Serialize(Stream stream, ClanLeaderboard instance)
+public Byte[] ToProtoBytes()
+public void ToProto(Stream stream)
+public Byte[] SerializeToBytes(ClanLeaderboard instance)
+public void SerializeLengthDelimited(Stream stream, ClanLeaderboard instance)
 public void InspectUids(UidInspector`1<ulong> action)
 }
 public ProtoBuf.ClanLog : object {
@@ -2929,6 +3185,38 @@ public Byte[] ToProtoBytes()
 public void ToProto(Stream stream)
 public Byte[] SerializeToBytes(ClanManager instance)
 public void SerializeLengthDelimited(Stream stream, ClanManager instance)
+public void InspectUids(UidInspector`1<ulong> action)
+}
+public ProtoBuf.ClanScoreEvents : object {
+public long clanId
+public List`1<Entry> scoreEvents
+public bool ShouldPool
+private bool _disposed
+public void ResetToPool(ClanScoreEvents instance)
+public void ResetToPool()
+public void Dispose()
+public void EnterPool()
+public void LeavePool()
+public void CopyTo(ClanScoreEvents instance)
+public ClanScoreEvents Copy()
+public ClanScoreEvents Deserialize(Stream stream)
+public ClanScoreEvents DeserializeLengthDelimited(Stream stream)
+public ClanScoreEvents DeserializeLength(Stream stream, int length)
+public ClanScoreEvents Deserialize(Byte[] buffer)
+public void FromProto(Stream stream, bool isDelta)
+public void WriteToStream(Stream stream)
+public void WriteToStreamDelta(Stream stream, ClanScoreEvents previous)
+public void ReadFromStream(Stream stream, int size, bool isDelta)
+public ClanScoreEvents Deserialize(Byte[] buffer, ClanScoreEvents instance, bool isDelta)
+public ClanScoreEvents Deserialize(Stream stream, ClanScoreEvents instance, bool isDelta)
+public ClanScoreEvents DeserializeLengthDelimited(Stream stream, ClanScoreEvents instance, bool isDelta)
+public ClanScoreEvents DeserializeLength(Stream stream, int length, ClanScoreEvents instance, bool isDelta)
+public void SerializeDelta(Stream stream, ClanScoreEvents instance, ClanScoreEvents previous)
+public void Serialize(Stream stream, ClanScoreEvents instance)
+public Byte[] ToProtoBytes()
+public void ToProto(Stream stream)
+public Byte[] SerializeToBytes(ClanScoreEvents instance)
+public void SerializeLengthDelimited(Stream stream, ClanScoreEvents instance)
 public void InspectUids(UidInspector`1<ulong> action)
 }
 public ProtoBuf.ClientReady : object {
@@ -3002,6 +3290,7 @@ public Private pv
 public bool hasCode
 public bool hasGuestCode
 public bool hasAuth
+public bool hasGuestAuth
 public bool ShouldPool
 private bool _disposed
 public void ResetToPool(CodeLock instance)
@@ -3200,6 +3489,8 @@ public Vector3 normal
 public Ray ray
 public UInt32 blockID
 public Vector3 rotation
+public bool isHoldingShift
+public int setToGrade
 public bool ShouldPool
 private bool _disposed
 public void ResetToPool(CreateBuilding instance)
@@ -3617,6 +3908,38 @@ public Byte[] SerializeToBytes(DemoShotVectorTrack instance)
 public void SerializeLengthDelimited(Stream stream, DemoShotVectorTrack instance)
 public void InspectUids(UidInspector`1<ulong> action)
 }
+public ProtoBuf.DieselEngine : object {
+public float fuelTime
+public ulong startedByPlayer
+public bool ShouldPool
+private bool _disposed
+public void ResetToPool(DieselEngine instance)
+public void ResetToPool()
+public void Dispose()
+public void EnterPool()
+public void LeavePool()
+public void CopyTo(DieselEngine instance)
+public DieselEngine Copy()
+public DieselEngine Deserialize(Stream stream)
+public DieselEngine DeserializeLengthDelimited(Stream stream)
+public DieselEngine DeserializeLength(Stream stream, int length)
+public DieselEngine Deserialize(Byte[] buffer)
+public void FromProto(Stream stream, bool isDelta)
+public void WriteToStream(Stream stream)
+public void WriteToStreamDelta(Stream stream, DieselEngine previous)
+public void ReadFromStream(Stream stream, int size, bool isDelta)
+public DieselEngine Deserialize(Byte[] buffer, DieselEngine instance, bool isDelta)
+public DieselEngine Deserialize(Stream stream, DieselEngine instance, bool isDelta)
+public DieselEngine DeserializeLengthDelimited(Stream stream, DieselEngine instance, bool isDelta)
+public DieselEngine DeserializeLength(Stream stream, int length, DieselEngine instance, bool isDelta)
+public void SerializeDelta(Stream stream, DieselEngine instance, DieselEngine previous)
+public void Serialize(Stream stream, DieselEngine instance)
+public Byte[] ToProtoBytes()
+public void ToProto(Stream stream)
+public Byte[] SerializeToBytes(DieselEngine instance)
+public void SerializeLengthDelimited(Stream stream, DieselEngine instance)
+public void InspectUids(UidInspector`1<ulong> action)
+}
 public ProtoBuf.Drone : object {
 public float pitch
 public bool ShouldPool
@@ -3900,6 +4223,8 @@ public AttackHeli attackHeli
 public AttackHeliTurret attackHeliTurret
 public AttackHeliRockets attackHeliRockets
 public BaseBoat baseBoat
+public Ragdoll ragdoll
+public DieselEngine dieselEngine
 public AssociatedFiles associatedFiles
 public NexusFerry nexusFerry
 public NexusIsland nexusIsland
@@ -3908,6 +4233,19 @@ public RockingChair rockingChair
 public HeadData headData
 public WantedPoster wantedPoster
 public RidableAnimal ridableAnimal
+public WaypointRace waypointRace
+public LegacyShelter legacyShelter
+public MetalDetectorSource metalDetectorSource
+public TutorialIsland tutorialIsland
+public CinematicEntity cinematicEntity
+public BuildingPrivilegeRetro buildingPrivilegeRetro
+public HarborCrane harborCrane
+public CargoShip cargoShip
+public CargoShipContainer cargoShipContainer
+public MissionMapMarker missionMapMarker
+public Bike bike
+public TravellingVendor travellingVendor
+public VendingDynamicPricing vendingDynamicPricing
 public bool ShouldPool
 private bool _disposed
 public void ResetToPool(Entity instance)
@@ -4343,6 +4681,47 @@ public Byte[] ToProtoBytes()
 public void ToProto(Stream stream)
 public Byte[] SerializeToBytes(Half3 instance)
 public void SerializeLengthDelimited(Stream stream, Half3 instance)
+public void InspectUids(UidInspector`1<ulong> action)
+}
+public ProtoBuf.HarborCrane : object {
+public float time
+public float yaw
+public float depth
+public float height
+public QueuedMove currentMove
+public int currentPickupState
+public Vector3 startForward
+public float maxMoveHeight
+public NetworkableId toParent
+public List`1<QueuedMove> queuedMoves
+public float moveDelay
+public bool ShouldPool
+private bool _disposed
+public void ResetToPool(HarborCrane instance)
+public void ResetToPool()
+public void Dispose()
+public void EnterPool()
+public void LeavePool()
+public void CopyTo(HarborCrane instance)
+public HarborCrane Copy()
+public HarborCrane Deserialize(Stream stream)
+public HarborCrane DeserializeLengthDelimited(Stream stream)
+public HarborCrane DeserializeLength(Stream stream, int length)
+public HarborCrane Deserialize(Byte[] buffer)
+public void FromProto(Stream stream, bool isDelta)
+public void WriteToStream(Stream stream)
+public void WriteToStreamDelta(Stream stream, HarborCrane previous)
+public void ReadFromStream(Stream stream, int size, bool isDelta)
+public HarborCrane Deserialize(Byte[] buffer, HarborCrane instance, bool isDelta)
+public HarborCrane Deserialize(Stream stream, HarborCrane instance, bool isDelta)
+public HarborCrane DeserializeLengthDelimited(Stream stream, HarborCrane instance, bool isDelta)
+public HarborCrane DeserializeLength(Stream stream, int length, HarborCrane instance, bool isDelta)
+public void SerializeDelta(Stream stream, HarborCrane instance, HarborCrane previous)
+public void Serialize(Stream stream, HarborCrane instance)
+public Byte[] ToProtoBytes()
+public void ToProto(Stream stream)
+public Byte[] SerializeToBytes(HarborCrane instance)
+public void SerializeLengthDelimited(Stream stream, HarborCrane instance)
 public void InspectUids(UidInspector`1<ulong> action)
 }
 public ProtoBuf.HeadData : object {
@@ -5001,6 +5380,7 @@ public int allowedContents
 public int maxStackSize
 public List`1<int> allowedItems
 public List`1<int> availableSlots
+public int volume
 public List`1<Item> contents
 public bool ShouldPool
 private bool _disposed
@@ -5122,6 +5502,39 @@ public Byte[] ToProtoBytes()
 public void ToProto(Stream stream)
 public Byte[] SerializeToBytes(Landmine instance)
 public void SerializeLengthDelimited(Stream stream, Landmine instance)
+public void InspectUids(UidInspector`1<ulong> action)
+}
+public ProtoBuf.LegacyShelter : object {
+public NetworkableId doorID
+public float timeSinceInteracted
+public ulong ownerId
+public bool ShouldPool
+private bool _disposed
+public void ResetToPool(LegacyShelter instance)
+public void ResetToPool()
+public void Dispose()
+public void EnterPool()
+public void LeavePool()
+public void CopyTo(LegacyShelter instance)
+public LegacyShelter Copy()
+public LegacyShelter Deserialize(Stream stream)
+public LegacyShelter DeserializeLengthDelimited(Stream stream)
+public LegacyShelter DeserializeLength(Stream stream, int length)
+public LegacyShelter Deserialize(Byte[] buffer)
+public void FromProto(Stream stream, bool isDelta)
+public void WriteToStream(Stream stream)
+public void WriteToStreamDelta(Stream stream, LegacyShelter previous)
+public void ReadFromStream(Stream stream, int size, bool isDelta)
+public LegacyShelter Deserialize(Byte[] buffer, LegacyShelter instance, bool isDelta)
+public LegacyShelter Deserialize(Stream stream, LegacyShelter instance, bool isDelta)
+public LegacyShelter DeserializeLengthDelimited(Stream stream, LegacyShelter instance, bool isDelta)
+public LegacyShelter DeserializeLength(Stream stream, int length, LegacyShelter instance, bool isDelta)
+public void SerializeDelta(Stream stream, LegacyShelter instance, LegacyShelter previous)
+public void Serialize(Stream stream, LegacyShelter instance)
+public Byte[] ToProtoBytes()
+public void ToProto(Stream stream)
+public Byte[] SerializeToBytes(LegacyShelter instance)
+public void SerializeLengthDelimited(Stream stream, LegacyShelter instance)
 public void InspectUids(UidInspector`1<ulong> action)
 }
 public ProtoBuf.Lift : object {
@@ -5423,6 +5836,7 @@ public string label
 public bool isPing
 public float timeRemaining
 public float totalDuration
+public NetworkableId associatedId
 public bool ShouldPool
 private bool _disposed
 public void ResetToPool(MapNote instance)
@@ -5551,6 +5965,38 @@ public Byte[] SerializeToBytes(MemoryBank instance)
 public void SerializeLengthDelimited(Stream stream, MemoryBank instance)
 public void InspectUids(UidInspector`1<ulong> action)
 }
+public ProtoBuf.MetalDetectorSource : object {
+public List`1<Vector3> spawnLocations
+public float spawnRadius
+public bool ShouldPool
+private bool _disposed
+public void ResetToPool(MetalDetectorSource instance)
+public void ResetToPool()
+public void Dispose()
+public void EnterPool()
+public void LeavePool()
+public void CopyTo(MetalDetectorSource instance)
+public MetalDetectorSource Copy()
+public MetalDetectorSource Deserialize(Stream stream)
+public MetalDetectorSource DeserializeLengthDelimited(Stream stream)
+public MetalDetectorSource DeserializeLength(Stream stream, int length)
+public MetalDetectorSource Deserialize(Byte[] buffer)
+public void FromProto(Stream stream, bool isDelta)
+public void WriteToStream(Stream stream)
+public void WriteToStreamDelta(Stream stream, MetalDetectorSource previous)
+public void ReadFromStream(Stream stream, int size, bool isDelta)
+public MetalDetectorSource Deserialize(Byte[] buffer, MetalDetectorSource instance, bool isDelta)
+public MetalDetectorSource Deserialize(Stream stream, MetalDetectorSource instance, bool isDelta)
+public MetalDetectorSource DeserializeLengthDelimited(Stream stream, MetalDetectorSource instance, bool isDelta)
+public MetalDetectorSource DeserializeLength(Stream stream, int length, MetalDetectorSource instance, bool isDelta)
+public void SerializeDelta(Stream stream, MetalDetectorSource instance, MetalDetectorSource previous)
+public void Serialize(Stream stream, MetalDetectorSource instance)
+public Byte[] ToProtoBytes()
+public void ToProto(Stream stream)
+public Byte[] SerializeToBytes(MetalDetectorSource instance)
+public void SerializeLengthDelimited(Stream stream, MetalDetectorSource instance)
+public void InspectUids(UidInspector`1<ulong> action)
+}
 public ProtoBuf.MicrophoneStand : object {
 public int microphoneMode
 public NetworkableId IORef
@@ -5650,18 +6096,42 @@ public Byte[] SerializeToBytes(MiningQuarry instance)
 public void SerializeLengthDelimited(Stream stream, MiningQuarry instance)
 public void InspectUids(UidInspector`1<ulong> action)
 }
+public ProtoBuf.MissionEntity : object {
+public string identifier
+public NetworkableId entityID
+public bool ShouldPool
+private bool _disposed
+public void ResetToPool(MissionEntity instance)
+public void ResetToPool()
+public void Dispose()
+public void EnterPool()
+public void LeavePool()
+public void CopyTo(MissionEntity instance)
+public MissionEntity Copy()
+public MissionEntity Deserialize(Stream stream)
+public MissionEntity DeserializeLengthDelimited(Stream stream)
+public MissionEntity DeserializeLength(Stream stream, int length)
+public MissionEntity Deserialize(Byte[] buffer)
+public void FromProto(Stream stream, bool isDelta)
+public void WriteToStream(Stream stream)
+public void WriteToStreamDelta(Stream stream, MissionEntity previous)
+public void ReadFromStream(Stream stream, int size, bool isDelta)
+public MissionEntity Deserialize(Byte[] buffer, MissionEntity instance, bool isDelta)
+public MissionEntity Deserialize(Stream stream, MissionEntity instance, bool isDelta)
+public MissionEntity DeserializeLengthDelimited(Stream stream, MissionEntity instance, bool isDelta)
+public MissionEntity DeserializeLength(Stream stream, int length, MissionEntity instance, bool isDelta)
+public void SerializeDelta(Stream stream, MissionEntity instance, MissionEntity previous)
+public void Serialize(Stream stream, MissionEntity instance)
+public Byte[] ToProtoBytes()
+public void ToProto(Stream stream)
+public Byte[] SerializeToBytes(MissionEntity instance)
+public void SerializeLengthDelimited(Stream stream, MissionEntity instance)
+public void InspectUids(UidInspector`1<ulong> action)
+}
 public ProtoBuf.MissionInstance : object {
-public NetworkableId providerID
 public UInt32 missionID
 public UInt32 missionStatus
-public float completionScale
-public float startTime
-public float endTime
-public Vector3 missionLocation
-public List`1<ObjectiveStatus> objectiveStatuses
-public List`1<MissionPoint> missionPoints
-public List`1<NetworkableId> createdEntities
-public List`1<MissionReward> rewards
+public MissionInstanceData instanceData
 public bool ShouldPool
 private bool _disposed
 public void ResetToPool(MissionInstance instance)
@@ -5689,6 +6159,76 @@ public Byte[] ToProtoBytes()
 public void ToProto(Stream stream)
 public Byte[] SerializeToBytes(MissionInstance instance)
 public void SerializeLengthDelimited(Stream stream, MissionInstance instance)
+public void InspectUids(UidInspector`1<ulong> action)
+}
+public ProtoBuf.MissionInstanceData : object {
+public NetworkableId providerID
+public float startTime
+public float endTime
+public Vector3 missionLocation
+public List`1<ObjectiveStatus> objectiveStatuses
+public List`1<MissionPoint> missionPoints
+public List`1<MissionEntity> missionEntities
+public int playerInputRequired
+public bool ShouldPool
+private bool _disposed
+public void ResetToPool(MissionInstanceData instance)
+public void ResetToPool()
+public void Dispose()
+public void EnterPool()
+public void LeavePool()
+public void CopyTo(MissionInstanceData instance)
+public MissionInstanceData Copy()
+public MissionInstanceData Deserialize(Stream stream)
+public MissionInstanceData DeserializeLengthDelimited(Stream stream)
+public MissionInstanceData DeserializeLength(Stream stream, int length)
+public MissionInstanceData Deserialize(Byte[] buffer)
+public void FromProto(Stream stream, bool isDelta)
+public void WriteToStream(Stream stream)
+public void WriteToStreamDelta(Stream stream, MissionInstanceData previous)
+public void ReadFromStream(Stream stream, int size, bool isDelta)
+public MissionInstanceData Deserialize(Byte[] buffer, MissionInstanceData instance, bool isDelta)
+public MissionInstanceData Deserialize(Stream stream, MissionInstanceData instance, bool isDelta)
+public MissionInstanceData DeserializeLengthDelimited(Stream stream, MissionInstanceData instance, bool isDelta)
+public MissionInstanceData DeserializeLength(Stream stream, int length, MissionInstanceData instance, bool isDelta)
+public void SerializeDelta(Stream stream, MissionInstanceData instance, MissionInstanceData previous)
+public void Serialize(Stream stream, MissionInstanceData instance)
+public Byte[] ToProtoBytes()
+public void ToProto(Stream stream)
+public Byte[] SerializeToBytes(MissionInstanceData instance)
+public void SerializeLengthDelimited(Stream stream, MissionInstanceData instance)
+public void InspectUids(UidInspector`1<ulong> action)
+}
+public ProtoBuf.MissionMapMarker : object {
+public List`1<UInt32> missionIds
+public string providerToken
+public bool ShouldPool
+private bool _disposed
+public void ResetToPool(MissionMapMarker instance)
+public void ResetToPool()
+public void Dispose()
+public void EnterPool()
+public void LeavePool()
+public void CopyTo(MissionMapMarker instance)
+public MissionMapMarker Copy()
+public MissionMapMarker Deserialize(Stream stream)
+public MissionMapMarker DeserializeLengthDelimited(Stream stream)
+public MissionMapMarker DeserializeLength(Stream stream, int length)
+public MissionMapMarker Deserialize(Byte[] buffer)
+public void FromProto(Stream stream, bool isDelta)
+public void WriteToStream(Stream stream)
+public void WriteToStreamDelta(Stream stream, MissionMapMarker previous)
+public void ReadFromStream(Stream stream, int size, bool isDelta)
+public MissionMapMarker Deserialize(Byte[] buffer, MissionMapMarker instance, bool isDelta)
+public MissionMapMarker Deserialize(Stream stream, MissionMapMarker instance, bool isDelta)
+public MissionMapMarker DeserializeLengthDelimited(Stream stream, MissionMapMarker instance, bool isDelta)
+public MissionMapMarker DeserializeLength(Stream stream, int length, MissionMapMarker instance, bool isDelta)
+public void SerializeDelta(Stream stream, MissionMapMarker instance, MissionMapMarker previous)
+public void Serialize(Stream stream, MissionMapMarker instance)
+public Byte[] ToProtoBytes()
+public void ToProto(Stream stream)
+public Byte[] SerializeToBytes(MissionMapMarker instance)
+public void SerializeLengthDelimited(Stream stream, MissionMapMarker instance)
 public void InspectUids(UidInspector`1<ulong> action)
 }
 public ProtoBuf.MissionPoint : object {
@@ -6792,8 +7332,8 @@ public ProtoBuf.ObjectiveStatus : object {
 public bool started
 public bool completed
 public bool failed
-public int genericInt1
-public float genericFloat1
+public float progressCurrent
+public float progressTarget
 public bool ShouldPool
 private bool _disposed
 public void ResetToPool(ObjectiveStatus instance)
@@ -6821,6 +7361,38 @@ public Byte[] ToProtoBytes()
 public void ToProto(Stream stream)
 public Byte[] SerializeToBytes(ObjectiveStatus instance)
 public void SerializeLengthDelimited(Stream stream, ObjectiveStatus instance)
+public void InspectUids(UidInspector`1<ulong> action)
+}
+public ProtoBuf.OceanPaths : object {
+public List`1<Vector3> cargoPatrolPath
+public List`1<VectorList> harborApproaches
+public bool ShouldPool
+private bool _disposed
+public void ResetToPool(OceanPaths instance)
+public void ResetToPool()
+public void Dispose()
+public void EnterPool()
+public void LeavePool()
+public void CopyTo(OceanPaths instance)
+public OceanPaths Copy()
+public OceanPaths Deserialize(Stream stream)
+public OceanPaths DeserializeLengthDelimited(Stream stream)
+public OceanPaths DeserializeLength(Stream stream, int length)
+public OceanPaths Deserialize(Byte[] buffer)
+public void FromProto(Stream stream, bool isDelta)
+public void WriteToStream(Stream stream)
+public void WriteToStreamDelta(Stream stream, OceanPaths previous)
+public void ReadFromStream(Stream stream, int size, bool isDelta)
+public OceanPaths Deserialize(Byte[] buffer, OceanPaths instance, bool isDelta)
+public OceanPaths Deserialize(Stream stream, OceanPaths instance, bool isDelta)
+public OceanPaths DeserializeLengthDelimited(Stream stream, OceanPaths instance, bool isDelta)
+public OceanPaths DeserializeLength(Stream stream, int length, OceanPaths instance, bool isDelta)
+public void SerializeDelta(Stream stream, OceanPaths instance, OceanPaths previous)
+public void Serialize(Stream stream, OceanPaths instance)
+public Byte[] ToProtoBytes()
+public void ToProto(Stream stream)
+public Byte[] SerializeToBytes(OceanPaths instance)
+public void SerializeLengthDelimited(Stream stream, OceanPaths instance)
 public void InspectUids(UidInspector`1<ulong> action)
 }
 public ProtoBuf.OwnerInfo : object {
@@ -7787,6 +8359,39 @@ public Byte[] SerializeToBytes(RadioList instance)
 public void SerializeLengthDelimited(Stream stream, RadioList instance)
 public void InspectUids(UidInspector`1<ulong> action)
 }
+public ProtoBuf.Ragdoll : object {
+public float time
+public List`1<int> positions
+public List`1<int> rotations
+public bool ShouldPool
+private bool _disposed
+public void ResetToPool(Ragdoll instance)
+public void ResetToPool()
+public void Dispose()
+public void EnterPool()
+public void LeavePool()
+public void CopyTo(Ragdoll instance)
+public Ragdoll Copy()
+public Ragdoll Deserialize(Stream stream)
+public Ragdoll DeserializeLengthDelimited(Stream stream)
+public Ragdoll DeserializeLength(Stream stream, int length)
+public Ragdoll Deserialize(Byte[] buffer)
+public void FromProto(Stream stream, bool isDelta)
+public void WriteToStream(Stream stream)
+public void WriteToStreamDelta(Stream stream, Ragdoll previous)
+public void ReadFromStream(Stream stream, int size, bool isDelta)
+public Ragdoll Deserialize(Byte[] buffer, Ragdoll instance, bool isDelta)
+public Ragdoll Deserialize(Stream stream, Ragdoll instance, bool isDelta)
+public Ragdoll DeserializeLengthDelimited(Stream stream, Ragdoll instance, bool isDelta)
+public Ragdoll DeserializeLength(Stream stream, int length, Ragdoll instance, bool isDelta)
+public void SerializeDelta(Stream stream, Ragdoll instance, Ragdoll previous)
+public void Serialize(Stream stream, Ragdoll instance)
+public Byte[] ToProtoBytes()
+public void ToProto(Stream stream)
+public Byte[] SerializeToBytes(Ragdoll instance)
+public void SerializeLengthDelimited(Stream stream, Ragdoll instance)
+public void InspectUids(UidInspector`1<ulong> action)
+}
 public ProtoBuf.RCEntity : object {
 public Vector3 aim
 public float zoom
@@ -7986,6 +8591,7 @@ public List`1<SpawnOptions> spawnOptions
 public PlayerLifeStory previousLife
 public bool fadeIn
 public bool loading
+public List`1<Vector3> shelterPositions
 public bool ShouldPool
 private bool _disposed
 public void ResetToPool(RespawnInformation instance)
@@ -8077,6 +8683,40 @@ public Byte[] ToProtoBytes()
 public void ToProto(Stream stream)
 public Byte[] SerializeToBytes(RockingChair instance)
 public void SerializeLengthDelimited(Stream stream, RockingChair instance)
+public void InspectUids(UidInspector`1<ulong> action)
+}
+public ProtoBuf.SalesData : object {
+public ulong totalSales
+public ulong totalIntervals
+public ulong soldThisInterval
+public float CurrentMultiplier
+public bool ShouldPool
+private bool _disposed
+public void ResetToPool(SalesData instance)
+public void ResetToPool()
+public void Dispose()
+public void EnterPool()
+public void LeavePool()
+public void CopyTo(SalesData instance)
+public SalesData Copy()
+public SalesData Deserialize(Stream stream)
+public SalesData DeserializeLengthDelimited(Stream stream)
+public SalesData DeserializeLength(Stream stream, int length)
+public SalesData Deserialize(Byte[] buffer)
+public void FromProto(Stream stream, bool isDelta)
+public void WriteToStream(Stream stream)
+public void WriteToStreamDelta(Stream stream, SalesData previous)
+public void ReadFromStream(Stream stream, int size, bool isDelta)
+public SalesData Deserialize(Byte[] buffer, SalesData instance, bool isDelta)
+public SalesData Deserialize(Stream stream, SalesData instance, bool isDelta)
+public SalesData DeserializeLengthDelimited(Stream stream, SalesData instance, bool isDelta)
+public SalesData DeserializeLength(Stream stream, int length, SalesData instance, bool isDelta)
+public void SerializeDelta(Stream stream, SalesData instance, SalesData previous)
+public void Serialize(Stream stream, SalesData instance)
+public Byte[] ToProtoBytes()
+public void ToProto(Stream stream)
+public Byte[] SerializeToBytes(SalesData instance)
+public void SerializeLengthDelimited(Stream stream, SalesData instance)
 public void InspectUids(UidInspector`1<ulong> action)
 }
 public ProtoBuf.SAMSite : object {
@@ -8333,6 +8973,8 @@ public void InspectUids(UidInspector`1<ulong> action)
 public ProtoBuf.SleepingBag : object {
 public string name
 public ulong deployerID
+public bool clientAssigned
+public bool isAssigned
 public bool ShouldPool
 private bool _disposed
 public void ResetToPool(SleepingBag instance)
@@ -8532,6 +9174,69 @@ public Byte[] ToProtoBytes()
 public void ToProto(Stream stream)
 public Byte[] SerializeToBytes(Spawnable instance)
 public void SerializeLengthDelimited(Stream stream, Spawnable instance)
+public void InspectUids(UidInspector`1<ulong> action)
+}
+public ProtoBuf.SpectateTeam : object {
+public ulong teamId
+public List`1<TeamMember> teamMembers
+public bool ShouldPool
+private bool _disposed
+public void ResetToPool(SpectateTeam instance)
+public void ResetToPool()
+public void Dispose()
+public void EnterPool()
+public void LeavePool()
+public void CopyTo(SpectateTeam instance)
+public SpectateTeam Copy()
+public SpectateTeam Deserialize(Stream stream)
+public SpectateTeam DeserializeLengthDelimited(Stream stream)
+public SpectateTeam DeserializeLength(Stream stream, int length)
+public SpectateTeam Deserialize(Byte[] buffer)
+public void FromProto(Stream stream, bool isDelta)
+public void WriteToStream(Stream stream)
+public void WriteToStreamDelta(Stream stream, SpectateTeam previous)
+public void ReadFromStream(Stream stream, int size, bool isDelta)
+public SpectateTeam Deserialize(Byte[] buffer, SpectateTeam instance, bool isDelta)
+public SpectateTeam Deserialize(Stream stream, SpectateTeam instance, bool isDelta)
+public SpectateTeam DeserializeLengthDelimited(Stream stream, SpectateTeam instance, bool isDelta)
+public SpectateTeam DeserializeLength(Stream stream, int length, SpectateTeam instance, bool isDelta)
+public void SerializeDelta(Stream stream, SpectateTeam instance, SpectateTeam previous)
+public void Serialize(Stream stream, SpectateTeam instance)
+public Byte[] ToProtoBytes()
+public void ToProto(Stream stream)
+public Byte[] SerializeToBytes(SpectateTeam instance)
+public void SerializeLengthDelimited(Stream stream, SpectateTeam instance)
+public void InspectUids(UidInspector`1<ulong> action)
+}
+public ProtoBuf.SpectateTeamInfo : object {
+public List`1<SpectateTeam> teams
+public bool ShouldPool
+private bool _disposed
+public void ResetToPool(SpectateTeamInfo instance)
+public void ResetToPool()
+public void Dispose()
+public void EnterPool()
+public void LeavePool()
+public void CopyTo(SpectateTeamInfo instance)
+public SpectateTeamInfo Copy()
+public SpectateTeamInfo Deserialize(Stream stream)
+public SpectateTeamInfo DeserializeLengthDelimited(Stream stream)
+public SpectateTeamInfo DeserializeLength(Stream stream, int length)
+public SpectateTeamInfo Deserialize(Byte[] buffer)
+public void FromProto(Stream stream, bool isDelta)
+public void WriteToStream(Stream stream)
+public void WriteToStreamDelta(Stream stream, SpectateTeamInfo previous)
+public void ReadFromStream(Stream stream, int size, bool isDelta)
+public SpectateTeamInfo Deserialize(Byte[] buffer, SpectateTeamInfo instance, bool isDelta)
+public SpectateTeamInfo Deserialize(Stream stream, SpectateTeamInfo instance, bool isDelta)
+public SpectateTeamInfo DeserializeLengthDelimited(Stream stream, SpectateTeamInfo instance, bool isDelta)
+public SpectateTeamInfo DeserializeLength(Stream stream, int length, SpectateTeamInfo instance, bool isDelta)
+public void SerializeDelta(Stream stream, SpectateTeamInfo instance, SpectateTeamInfo previous)
+public void Serialize(Stream stream, SpectateTeamInfo instance)
+public Byte[] ToProtoBytes()
+public void ToProto(Stream stream)
+public Byte[] SerializeToBytes(SpectateTeamInfo instance)
+public void SerializeLengthDelimited(Stream stream, SpectateTeamInfo instance)
 public void InspectUids(UidInspector`1<ulong> action)
 }
 public ProtoBuf.SphereEntity : object {
@@ -9121,6 +9826,40 @@ public Byte[] SerializeToBytes(TrainEngine instance)
 public void SerializeLengthDelimited(Stream stream, TrainEngine instance)
 public void InspectUids(UidInspector`1<ulong> action)
 }
+public ProtoBuf.TravellingVendor : object {
+public float steeringAngleLeft
+public float steeringAngleRight
+public Vector3 velocity
+public int wheelFlags
+public bool ShouldPool
+private bool _disposed
+public void ResetToPool(TravellingVendor instance)
+public void ResetToPool()
+public void Dispose()
+public void EnterPool()
+public void LeavePool()
+public void CopyTo(TravellingVendor instance)
+public TravellingVendor Copy()
+public TravellingVendor Deserialize(Stream stream)
+public TravellingVendor DeserializeLengthDelimited(Stream stream)
+public TravellingVendor DeserializeLength(Stream stream, int length)
+public TravellingVendor Deserialize(Byte[] buffer)
+public void FromProto(Stream stream, bool isDelta)
+public void WriteToStream(Stream stream)
+public void WriteToStreamDelta(Stream stream, TravellingVendor previous)
+public void ReadFromStream(Stream stream, int size, bool isDelta)
+public TravellingVendor Deserialize(Byte[] buffer, TravellingVendor instance, bool isDelta)
+public TravellingVendor Deserialize(Stream stream, TravellingVendor instance, bool isDelta)
+public TravellingVendor DeserializeLengthDelimited(Stream stream, TravellingVendor instance, bool isDelta)
+public TravellingVendor DeserializeLength(Stream stream, int length, TravellingVendor instance, bool isDelta)
+public void SerializeDelta(Stream stream, TravellingVendor instance, TravellingVendor previous)
+public void Serialize(Stream stream, TravellingVendor instance)
+public Byte[] ToProtoBytes()
+public void ToProto(Stream stream)
+public Byte[] SerializeToBytes(TravellingVendor instance)
+public void SerializeLengthDelimited(Stream stream, TravellingVendor instance)
+public void InspectUids(UidInspector`1<ulong> action)
+}
 public ProtoBuf.Tree : object {
 public NetworkableId netId
 public UInt32 prefabId
@@ -9184,6 +9923,40 @@ public Byte[] ToProtoBytes()
 public void ToProto(Stream stream)
 public Byte[] SerializeToBytes(TreeList instance)
 public void SerializeLengthDelimited(Stream stream, TreeList instance)
+public void InspectUids(UidInspector`1<ulong> action)
+}
+public ProtoBuf.TutorialIsland : object {
+public NetworkableId targetPlayer
+public float disconnectDuration
+public int spawnLocationIndex
+public float tutorialDuration
+public bool ShouldPool
+private bool _disposed
+public void ResetToPool(TutorialIsland instance)
+public void ResetToPool()
+public void Dispose()
+public void EnterPool()
+public void LeavePool()
+public void CopyTo(TutorialIsland instance)
+public TutorialIsland Copy()
+public TutorialIsland Deserialize(Stream stream)
+public TutorialIsland DeserializeLengthDelimited(Stream stream)
+public TutorialIsland DeserializeLength(Stream stream, int length)
+public TutorialIsland Deserialize(Byte[] buffer)
+public void FromProto(Stream stream, bool isDelta)
+public void WriteToStream(Stream stream)
+public void WriteToStreamDelta(Stream stream, TutorialIsland previous)
+public void ReadFromStream(Stream stream, int size, bool isDelta)
+public TutorialIsland Deserialize(Byte[] buffer, TutorialIsland instance, bool isDelta)
+public TutorialIsland Deserialize(Stream stream, TutorialIsland instance, bool isDelta)
+public TutorialIsland DeserializeLengthDelimited(Stream stream, TutorialIsland instance, bool isDelta)
+public TutorialIsland DeserializeLength(Stream stream, int length, TutorialIsland instance, bool isDelta)
+public void SerializeDelta(Stream stream, TutorialIsland instance, TutorialIsland previous)
+public void Serialize(Stream stream, TutorialIsland instance)
+public Byte[] ToProtoBytes()
+public void ToProto(Stream stream)
+public Byte[] SerializeToBytes(TutorialIsland instance)
+public void SerializeLengthDelimited(Stream stream, TutorialIsland instance)
 public void InspectUids(UidInspector`1<ulong> action)
 }
 public ProtoBuf.UpdateItem : object {
@@ -9280,6 +10053,37 @@ public VectorData op_Implicit(Vector3 v)
 public VectorData op_Implicit(Quaternion q)
 public Vector3 op_Implicit(VectorData v)
 public Quaternion op_Implicit(VectorData v)
+}
+public ProtoBuf.VectorList : object {
+public List`1<Vector3> vectorPoints
+public bool ShouldPool
+private bool _disposed
+public void ResetToPool(VectorList instance)
+public void ResetToPool()
+public void Dispose()
+public void EnterPool()
+public void LeavePool()
+public void CopyTo(VectorList instance)
+public VectorList Copy()
+public VectorList Deserialize(Stream stream)
+public VectorList DeserializeLengthDelimited(Stream stream)
+public VectorList DeserializeLength(Stream stream, int length)
+public VectorList Deserialize(Byte[] buffer)
+public void FromProto(Stream stream, bool isDelta)
+public void WriteToStream(Stream stream)
+public void WriteToStreamDelta(Stream stream, VectorList previous)
+public void ReadFromStream(Stream stream, int size, bool isDelta)
+public VectorList Deserialize(Byte[] buffer, VectorList instance, bool isDelta)
+public VectorList Deserialize(Stream stream, VectorList instance, bool isDelta)
+public VectorList DeserializeLengthDelimited(Stream stream, VectorList instance, bool isDelta)
+public VectorList DeserializeLength(Stream stream, int length, VectorList instance, bool isDelta)
+public void SerializeDelta(Stream stream, VectorList instance, VectorList previous)
+public void Serialize(Stream stream, VectorList instance)
+public Byte[] ToProtoBytes()
+public void ToProto(Stream stream)
+public Byte[] SerializeToBytes(VectorList instance)
+public void SerializeLengthDelimited(Stream stream, VectorList instance)
+public void InspectUids(UidInspector`1<ulong> action)
 }
 public ProtoBuf.VehicleLift : object {
 public bool platformIsOccupied
@@ -9378,11 +10182,44 @@ public Byte[] SerializeToBytes(VehicleVendor instance)
 public void SerializeLengthDelimited(Stream stream, VehicleVendor instance)
 public void InspectUids(UidInspector`1<ulong> action)
 }
+public ProtoBuf.VendingDynamicPricing : object {
+public List`1<SalesData> allSalesData
+public long lastHourUpdate
+public bool ShouldPool
+private bool _disposed
+public void ResetToPool(VendingDynamicPricing instance)
+public void ResetToPool()
+public void Dispose()
+public void EnterPool()
+public void LeavePool()
+public void CopyTo(VendingDynamicPricing instance)
+public VendingDynamicPricing Copy()
+public VendingDynamicPricing Deserialize(Stream stream)
+public VendingDynamicPricing DeserializeLengthDelimited(Stream stream)
+public VendingDynamicPricing DeserializeLength(Stream stream, int length)
+public VendingDynamicPricing Deserialize(Byte[] buffer)
+public void FromProto(Stream stream, bool isDelta)
+public void WriteToStream(Stream stream)
+public void WriteToStreamDelta(Stream stream, VendingDynamicPricing previous)
+public void ReadFromStream(Stream stream, int size, bool isDelta)
+public VendingDynamicPricing Deserialize(Byte[] buffer, VendingDynamicPricing instance, bool isDelta)
+public VendingDynamicPricing Deserialize(Stream stream, VendingDynamicPricing instance, bool isDelta)
+public VendingDynamicPricing DeserializeLengthDelimited(Stream stream, VendingDynamicPricing instance, bool isDelta)
+public VendingDynamicPricing DeserializeLength(Stream stream, int length, VendingDynamicPricing instance, bool isDelta)
+public void SerializeDelta(Stream stream, VendingDynamicPricing instance, VendingDynamicPricing previous)
+public void Serialize(Stream stream, VendingDynamicPricing instance)
+public Byte[] ToProtoBytes()
+public void ToProto(Stream stream)
+public Byte[] SerializeToBytes(VendingDynamicPricing instance)
+public void SerializeLengthDelimited(Stream stream, VendingDynamicPricing instance)
+public void InspectUids(UidInspector`1<ulong> action)
+}
 public ProtoBuf.VendingMachine : object {
 public SellOrderContainer sellOrderContainer
 public string shopName
 public int vmoIndex
 public NetworkableId networkID
+public string translationToken
 public bool ShouldPool
 private bool _disposed
 public void ResetToPool(VendingMachine instance)
@@ -9541,6 +10378,39 @@ public Byte[] SerializeToBytes(WaterWell instance)
 public void SerializeLengthDelimited(Stream stream, WaterWell instance)
 public void InspectUids(UidInspector`1<ulong> action)
 }
+public ProtoBuf.WaypointRace : object {
+public List`1<Vector3> positions
+public NetworkableId racingVehicle
+public int currentWaypoint
+public bool ShouldPool
+private bool _disposed
+public void ResetToPool(WaypointRace instance)
+public void ResetToPool()
+public void Dispose()
+public void EnterPool()
+public void LeavePool()
+public void CopyTo(WaypointRace instance)
+public WaypointRace Copy()
+public WaypointRace Deserialize(Stream stream)
+public WaypointRace DeserializeLengthDelimited(Stream stream)
+public WaypointRace DeserializeLength(Stream stream, int length)
+public WaypointRace Deserialize(Byte[] buffer)
+public void FromProto(Stream stream, bool isDelta)
+public void WriteToStream(Stream stream)
+public void WriteToStreamDelta(Stream stream, WaypointRace previous)
+public void ReadFromStream(Stream stream, int size, bool isDelta)
+public WaypointRace Deserialize(Byte[] buffer, WaypointRace instance, bool isDelta)
+public WaypointRace Deserialize(Stream stream, WaypointRace instance, bool isDelta)
+public WaypointRace DeserializeLengthDelimited(Stream stream, WaypointRace instance, bool isDelta)
+public WaypointRace DeserializeLength(Stream stream, int length, WaypointRace instance, bool isDelta)
+public void SerializeDelta(Stream stream, WaypointRace instance, WaypointRace previous)
+public void Serialize(Stream stream, WaypointRace instance)
+public Byte[] ToProtoBytes()
+public void ToProto(Stream stream)
+public Byte[] SerializeToBytes(WaypointRace instance)
+public void SerializeLengthDelimited(Stream stream, WaypointRace instance)
+public void InspectUids(UidInspector`1<ulong> action)
+}
 public ProtoBuf.WeaponRack : object {
 public List`1<WeaponRackItem> items
 public bool ShouldPool
@@ -9644,12 +10514,86 @@ public Byte[] SerializeToBytes(Whitelist instance)
 public void SerializeLengthDelimited(Stream stream, Whitelist instance)
 public void InspectUids(UidInspector`1<ulong> action)
 }
+public ProtoBuf.WireConnectionMessage : object {
+public List`1<Vector3> linePoints
+public List`1<WireLineAnchorInfo> lineAnchors
+public NetworkableId inputID
+public int inputIndex
+public NetworkableId outputID
+public int outputIndex
+public int wireColor
+public List`1<float> slackLevels
+public bool ShouldPool
+private bool _disposed
+public void ResetToPool(WireConnectionMessage instance)
+public void ResetToPool()
+public void Dispose()
+public void EnterPool()
+public void LeavePool()
+public void CopyTo(WireConnectionMessage instance)
+public WireConnectionMessage Copy()
+public WireConnectionMessage Deserialize(Stream stream)
+public WireConnectionMessage DeserializeLengthDelimited(Stream stream)
+public WireConnectionMessage DeserializeLength(Stream stream, int length)
+public WireConnectionMessage Deserialize(Byte[] buffer)
+public void FromProto(Stream stream, bool isDelta)
+public void WriteToStream(Stream stream)
+public void WriteToStreamDelta(Stream stream, WireConnectionMessage previous)
+public void ReadFromStream(Stream stream, int size, bool isDelta)
+public WireConnectionMessage Deserialize(Byte[] buffer, WireConnectionMessage instance, bool isDelta)
+public WireConnectionMessage Deserialize(Stream stream, WireConnectionMessage instance, bool isDelta)
+public WireConnectionMessage DeserializeLengthDelimited(Stream stream, WireConnectionMessage instance, bool isDelta)
+public WireConnectionMessage DeserializeLength(Stream stream, int length, WireConnectionMessage instance, bool isDelta)
+public void SerializeDelta(Stream stream, WireConnectionMessage instance, WireConnectionMessage previous)
+public void Serialize(Stream stream, WireConnectionMessage instance)
+public Byte[] ToProtoBytes()
+public void ToProto(Stream stream)
+public Byte[] SerializeToBytes(WireConnectionMessage instance)
+public void SerializeLengthDelimited(Stream stream, WireConnectionMessage instance)
+public void InspectUids(UidInspector`1<ulong> action)
+}
+public ProtoBuf.WireLineAnchorInfo : object {
+public NetworkableId parentID
+public string boneName
+public long index
+public Vector3 position
+public bool ShouldPool
+private bool _disposed
+public void ResetToPool(WireLineAnchorInfo instance)
+public void ResetToPool()
+public void Dispose()
+public void EnterPool()
+public void LeavePool()
+public void CopyTo(WireLineAnchorInfo instance)
+public WireLineAnchorInfo Copy()
+public WireLineAnchorInfo Deserialize(Stream stream)
+public WireLineAnchorInfo DeserializeLengthDelimited(Stream stream)
+public WireLineAnchorInfo DeserializeLength(Stream stream, int length)
+public WireLineAnchorInfo Deserialize(Byte[] buffer)
+public void FromProto(Stream stream, bool isDelta)
+public void WriteToStream(Stream stream)
+public void WriteToStreamDelta(Stream stream, WireLineAnchorInfo previous)
+public void ReadFromStream(Stream stream, int size, bool isDelta)
+public WireLineAnchorInfo Deserialize(Byte[] buffer, WireLineAnchorInfo instance, bool isDelta)
+public WireLineAnchorInfo Deserialize(Stream stream, WireLineAnchorInfo instance, bool isDelta)
+public WireLineAnchorInfo DeserializeLengthDelimited(Stream stream, WireLineAnchorInfo instance, bool isDelta)
+public WireLineAnchorInfo DeserializeLength(Stream stream, int length, WireLineAnchorInfo instance, bool isDelta)
+public void SerializeDelta(Stream stream, WireLineAnchorInfo instance, WireLineAnchorInfo previous)
+public void Serialize(Stream stream, WireLineAnchorInfo instance)
+public Byte[] ToProtoBytes()
+public void ToProto(Stream stream)
+public Byte[] SerializeToBytes(WireLineAnchorInfo instance)
+public void SerializeLengthDelimited(Stream stream, WireLineAnchorInfo instance)
+public void InspectUids(UidInspector`1<ulong> action)
+}
 public ProtoBuf.WireReconnectMessage : object {
 public NetworkableId entityId
 public int slotIndex
 public bool isInput
 public List`1<Vector3> linePoints
 public int wireColor
+public List`1<WireLineAnchorInfo> lineAnchors
+public List`1<float> slackLevels
 public bool ShouldPool
 private bool _disposed
 public void ResetToPool(WireReconnectMessage instance)
@@ -10030,4 +10974,7 @@ public void Serialize(Stream stream, Vector4 instance)
 public Byte[] SerializeToBytes(Vector4 instance)
 public void SerializeLengthDelimited(Stream stream, Vector4 instance)
 public void InspectUids(UidInspector`1<ulong> action)
+}
+internal UnitySourceGeneratedAssemblyMonoScriptTypes_v1 : object {
+private MonoScriptData Get()
 }

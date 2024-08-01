@@ -634,7 +634,9 @@ public NotificationFlags Retroactive
 public NotificationFlags TriggerOnce
 }
 internal UnityEngine.Timeline.NotificationUtilities : object {
-public ScriptPlayable`1<TimeNotificationBehaviour> CreateNotificationsPlayable(PlayableGraph graph, IEnumerable`1<IMarker> markers, double duration, DirectorWrapMode extrapolationMode)
+public ScriptPlayable`1<TimeNotificationBehaviour> CreateNotificationsPlayable(PlayableGraph graph, IEnumerable`1<IMarker> markers, PlayableDirector director)
+public ScriptPlayable`1<TimeNotificationBehaviour> CreateNotificationsPlayable(PlayableGraph graph, IEnumerable`1<IMarker> markers, TimelineAsset timelineAsset)
+private ScriptPlayable`1<TimeNotificationBehaviour> CreateNotificationsPlayable(PlayableGraph graph, IEnumerable`1<IMarker> markers, IPlayableAsset asset, PlayableDirector director)
 public bool TrackTypeSupportsNotifications(Type type)
 }
 public UnityEngine.Timeline.ParticleControlPlayable : PlayableBehaviour {
@@ -1087,11 +1089,13 @@ private void CacheTrack(TrackAsset track, Playable playable, int port, Playable 
 private void ForAOTCompilationOnly()
 }
 internal UnityEngine.Timeline.TimelineUndo : object {
+internal bool undoEnabled
+internal bool get_undoEnabled()
 public void PushDestroyUndo(TimelineAsset timeline, Object thingToDirty, Object objectToDestroy)
 public void PushUndo(Object[] thingsToDirty, string operation)
 public void PushUndo(Object thingToDirty, string operation)
 public void RegisterCreatedObjectUndo(Object thingCreated, string operation)
-private string UndoName(string name)
+internal string UndoName(string name)
 }
 public UnityEngine.Timeline.TimeNotificationBehaviour : PlayableBehaviour {
 private List`1<NotificationEntry> m_Notifications
@@ -1124,6 +1128,10 @@ public double FromFrames(int frames, double frameRate)
 public double FromFrames(double frames, double frameRate)
 public bool OnFrameBoundary(double time, double frameRate)
 public double GetEpsilon(double time, double frameRate)
+public int PreviousFrame(double time, double frameRate)
+public int NextFrame(double time, double frameRate)
+public double PreviousFrameTime(double time, double frameRate)
+public double NextFrameTime(double time, double frameRate)
 public bool OnFrameBoundary(double time, double frameRate, double epsilon)
 public double RoundToFrame(double time, double frameRate)
 public string TimeAsFrames(double timeValue, double frameRate, string format)
@@ -1326,4 +1334,7 @@ public TrackOffset Auto
 }
 internal UnityEngine.Timeline.WeightUtility : object {
 public float NormalizeMixer(Playable mixer)
+}
+internal UnitySourceGeneratedAssemblyMonoScriptTypes_v1 : object {
+private MonoScriptData Get()
 }

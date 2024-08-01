@@ -16,6 +16,7 @@ public ClanDataSource Logo
 public ClanDataSource Roles
 public ClanDataSource Members
 public ClanDataSource Invites
+public ClanDataSource Score
 public ClanDataSource All
 }
 public ClanInvitation : ValueType {
@@ -27,6 +28,11 @@ public ClanInvite : ValueType {
 public ulong SteamId
 public ulong Recruiter
 public long Timestamp
+}
+public ClanLeaderboardEntry : ValueType {
+public long ClanId
+public string Name
+public long Score
 }
 public ClanLogEntry : ValueType {
 public long Timestamp
@@ -81,6 +87,37 @@ public bool CanPromote
 public bool CanDemote
 public bool CanSetPlayerNotes
 public bool CanAccessLogs
+public bool CanAccessScoreEvents
+}
+public ClanScoreEvent : ValueType {
+public long Timestamp
+public ClanScoreEventType Type
+public int Score
+public int Multiplier
+public Nullable`1<ulong> SteamId
+public Nullable`1<ulong> OtherSteamId
+public Nullable`1<long> OtherClanId
+public string Arg1
+public string Arg2
+}
+public ClanScoreEvents : ValueType {
+public long ClanId
+public List`1<ClanScoreEvent> ScoreEvents
+}
+public ClanScoreEventType : Enum {
+public int value__
+public ClanScoreEventType Generic
+public ClanScoreEventType ClanPlayerKilled
+public ClanScoreEventType ClanPlayerDied
+public ClanScoreEventType UnarmedPlayerKilled
+public ClanScoreEventType DestroyedToolCupboard
+public ClanScoreEventType HackedCrate
+public ClanScoreEventType OpenedHackedCrate
+public ClanScoreEventType DestroyedBradley
+public ClanScoreEventType RanExcavator
+public ClanScoreEventType ReachedCargoShip
+public ClanScoreEventType LootedEliteCrate
+public ClanScoreEventType Invalid
 }
 public ClanUtility : object {
 public int LeaderRank
@@ -119,6 +156,7 @@ public long MotdTimestamp
 public ulong MotdAuthor
 public Byte[] Logo
 public Color32 Color
+public long Score
 public IReadOnlyList`1<ClanRole> Roles
 public IReadOnlyList`1<ClanMember> Members
 public int MaxMemberCount
@@ -132,10 +170,12 @@ public long get_MotdTimestamp()
 public ulong get_MotdAuthor()
 public Byte[] get_Logo()
 public Color32 get_Color()
+public long get_Score()
 public IReadOnlyList`1<ClanRole> get_Roles()
 public IReadOnlyList`1<ClanMember> get_Members()
 public int get_MaxMemberCount()
 public IReadOnlyList`1<ClanInvite> get_Invites()
+public ValueTask RefreshIfStale()
 public ValueTask`1<ClanValueResult`1<ClanLogs>> GetLogs(int limit, ulong bySteamId)
 public ValueTask`1<ClanResult> UpdateLastSeen(ulong steamId)
 public ValueTask`1<ClanResult> SetMotd(string newMotd, ulong bySteamId)
@@ -152,6 +192,8 @@ public ValueTask`1<ClanResult> UpdateRole(ClanRole role, ulong bySteamId)
 public ValueTask`1<ClanResult> SwapRoleRanks(int roleIdA, int roleIdB, ulong bySteamId)
 public ValueTask`1<ClanResult> DeleteRole(int roleId, ulong bySteamId)
 public ValueTask`1<ClanResult> Disband(ulong bySteamId)
+public ValueTask`1<ClanValueResult`1<ClanScoreEvents>> GetScoreEvents(int limit, ulong bySteamId)
+public ValueTask`1<ClanResult> AddScoreEvent(ClanScoreEvent scoreEvent)
 public ValueTask`1<ClanValueResult`1<ClanChatScrollback>> GetChatScrollback()
 public ValueTask`1<ClanResult> SendChatMessage(string name, string message, ulong bySteamId)
 }
@@ -162,6 +204,7 @@ public bool TryGet(long clanId, IClan& clan)
 public ValueTask`1<ClanValueResult`1<IClan>> GetByMember(ulong steamId)
 public ValueTask`1<ClanValueResult`1<IClan>> Create(ulong leaderSteamId, string name)
 public ValueTask`1<ClanValueResult`1<List`1<ClanInvitation>>> ListInvitations(ulong steamId)
+public ValueTask`1<ClanValueResult`1<List`1<ClanLeaderboardEntry>>> GetLeaderboard(int limit)
 }
 public IClanChangeSink {
 public void ClanChanged(long clanId, ClanDataSource dataSources)
@@ -169,4 +212,7 @@ public void ClanDisbanded(long clanId)
 public void InvitationCreated(ulong steamId, long clanId)
 public void MembershipChanged(ulong steamId, Nullable`1<long> clanId)
 public void ClanChatMessage(long clanId, ClanChatEntry entry)
+}
+internal UnitySourceGeneratedAssemblyMonoScriptTypes_v1 : object {
+private MonoScriptData Get()
 }

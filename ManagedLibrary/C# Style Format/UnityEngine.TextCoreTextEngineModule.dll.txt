@@ -9,6 +9,41 @@ public void .ctor(UInt32 unicode, Glyph glyph)
 public void .ctor(UInt32 unicode, FontAsset fontAsset, Glyph glyph)
 internal void .ctor(UInt32 unicode, UInt32 glyphIndex)
 }
+internal UnityEngine.TextCore.Text.CharacterElement : ValueType {
+private UInt32 m_Unicode
+private TextElement m_TextElement
+public UInt32 Unicode
+public UInt32 get_Unicode()
+public void set_Unicode(UInt32 value)
+public void .ctor(TextElement textElement)
+}
+internal UnityEngine.TextCore.Text.CharacterSubstitution : ValueType {
+public int index
+public UInt32 unicode
+public void .ctor(int index, UInt32 unicode)
+}
+internal UnityEngine.TextCore.Text.CodePoint : object {
+public UInt32 SPACE
+public UInt32 DOUBLE_QUOTE
+public UInt32 NUMBER_SIGN
+public UInt32 PERCENTAGE
+public UInt32 PLUS
+public UInt32 MINUS
+public UInt32 PERIOD
+public UInt32 HYPHEN_MINUS
+public UInt32 SOFT_HYPHEN
+public UInt32 HYPHEN
+public UInt32 NON_BREAKING_HYPHEN
+public UInt32 ZERO_WIDTH_SPACE
+public UInt32 RIGHT_SINGLE_QUOTATION
+public UInt32 APOSTROPHE
+public UInt32 WORD_JOINER
+public UInt32 HIGH_SURROGATE_START
+public UInt32 HIGH_SURROGATE_END
+public UInt32 LOW_SURROGATE_START
+public UInt32 LOW_SURROGATE_END
+public UInt32 UNICODE_PLANE01_START
+}
 public UnityEngine.TextCore.Text.ColorGradientMode : Enum {
 public int value__
 public ColorGradientMode Single
@@ -59,13 +94,14 @@ public void Call(A a, B b, C c)
 }
 public UnityEngine.TextCore.Text.FontAsset : TextAsset {
 internal string m_SourceFontFileGUID
+internal FontAssetCreationEditorSettings m_fontAssetCreationEditorSettings
 private Font m_SourceFontFile
+private string m_SourceFontFilePath
 private AtlasPopulationMode m_AtlasPopulationMode
 internal bool InternalDynamicOS
 internal FaceInfo m_FaceInfo
 private int m_FamilyNameHashCode
 private int m_StyleNameHashCode
-private FontWeightPair[] m_FontWeightTable
 internal List`1<Glyph> m_GlyphTable
 internal Dictionary`2<UInt32, Glyph> m_GlyphLookupDictionary
 internal List`1<Character> m_CharacterTable
@@ -83,7 +119,7 @@ private List`1<GlyphRect> m_UsedGlyphRects
 private List`1<GlyphRect> m_FreeGlyphRects
 internal FontFeatureTable m_FontFeatureTable
 internal List`1<FontAsset> m_FallbackFontAssetTable
-internal FontAssetCreationEditorSettings m_fontAssetCreationEditorSettings
+private FontWeightPair[] m_FontWeightTable
 internal float m_RegularStyleWeight
 internal float m_RegularStyleSpacing
 internal float m_BoldStyleWeight
@@ -96,8 +132,10 @@ private ProfilerMarker k_AddSynthesizedCharactersMarker
 private ProfilerMarker k_TryAddCharacterMarker
 private ProfilerMarker k_TryAddCharactersMarker
 private ProfilerMarker k_UpdateGlyphAdjustmentRecordsMarker
+private ProfilerMarker k_UpdateDiacriticalMarkAdjustmentRecordsMarker
 private ProfilerMarker k_ClearFontAssetDataMarker
 private ProfilerMarker k_UpdateFontAssetDataMarker
+private ProfilerMarker k_TryAddGlyphMarker
 private string s_DefaultMaterialSuffix
 private HashSet`1<int> k_SearchedFontAssetLookup
 private List`1<FontAsset> k_FontAssets_FontFeaturesUpdateQueue
@@ -115,12 +153,12 @@ internal HashSet`1<UInt32> m_CharactersToAddLookup
 internal List`1<UInt32> s_MissingCharacterList
 internal HashSet`1<UInt32> m_MissingUnicodesFromFontFile
 internal UInt32[] k_GlyphIndexArray
+public FontAssetCreationEditorSettings fontAssetCreationEditorSettings
 public Font sourceFontFile
 public AtlasPopulationMode atlasPopulationMode
 public FaceInfo faceInfo
 internal int familyNameHashCode
 internal int styleNameHashCode
-public FontWeightPair[] fontWeightTable
 public List`1<Glyph> glyphTable
 public Dictionary`2<UInt32, Glyph> glyphLookupTable
 public List`1<Character> characterTable
@@ -138,13 +176,15 @@ internal List`1<GlyphRect> usedGlyphRects
 internal List`1<GlyphRect> freeGlyphRects
 public FontFeatureTable fontFeatureTable
 public List`1<FontAsset> fallbackFontAssetTable
-public FontAssetCreationEditorSettings fontAssetCreationEditorSettings
+public FontWeightPair[] fontWeightTable
 public float regularStyleWeight
 public float regularStyleSpacing
 public float boldStyleWeight
 public float boldStyleSpacing
 public byte italicStyleSlant
 public byte tabMultiple
+public FontAssetCreationEditorSettings get_fontAssetCreationEditorSettings()
+public void set_fontAssetCreationEditorSettings(FontAssetCreationEditorSettings value)
 public Font get_sourceFontFile()
 internal void set_sourceFontFile(Font value)
 public AtlasPopulationMode get_atlasPopulationMode()
@@ -155,8 +195,6 @@ internal int get_familyNameHashCode()
 internal void set_familyNameHashCode(int value)
 internal int get_styleNameHashCode()
 internal void set_styleNameHashCode(int value)
-public FontWeightPair[] get_fontWeightTable()
-internal void set_fontWeightTable(FontWeightPair[] value)
 public List`1<Glyph> get_glyphTable()
 internal void set_glyphTable(List`1<Glyph> value)
 public Dictionary`2<UInt32, Glyph> get_glyphLookupTable()
@@ -187,8 +225,8 @@ public FontFeatureTable get_fontFeatureTable()
 internal void set_fontFeatureTable(FontFeatureTable value)
 public List`1<FontAsset> get_fallbackFontAssetTable()
 public void set_fallbackFontAssetTable(List`1<FontAsset> value)
-public FontAssetCreationEditorSettings get_fontAssetCreationEditorSettings()
-public void set_fontAssetCreationEditorSettings(FontAssetCreationEditorSettings value)
+public FontWeightPair[] get_fontWeightTable()
+internal void set_fontWeightTable(FontWeightPair[] value)
 public float get_regularStyleWeight()
 public void set_regularStyleWeight(float value)
 public float get_regularStyleSpacing()
@@ -202,6 +240,7 @@ public void set_italicStyleSlant(byte value)
 public byte get_tabMultiple()
 public void set_tabMultiple(byte value)
 public FontAsset CreateFontAsset(string familyName, string styleName, int pointSize)
+public FontAsset CreateFontAsset(string fontFilePath, int faceIndex, int samplingPointSize, int atlasPadding, GlyphRenderMode renderMode, int atlasWidth, int atlasHeight)
 private FontAsset CreateFontAsset(string fontFilePath, int faceIndex, int samplingPointSize, int atlasPadding, GlyphRenderMode renderMode, int atlasWidth, int atlasHeight, AtlasPopulationMode atlasPopulationMode, bool enableMultiAtlasSupport)
 public FontAsset CreateFontAsset(Font font)
 public FontAsset CreateFontAsset(Font font, int samplingPointSize, int atlasPadding, GlyphRenderMode renderMode, int atlasWidth, int atlasHeight, AtlasPopulationMode atlasPopulationMode, bool enableMultiAtlasSupport)
@@ -213,7 +252,10 @@ public void ReadFontAssetDefinition()
 internal void InitializeDictionaryLookupTables()
 internal void InitializeGlyphLookupDictionary()
 internal void InitializeCharacterLookupDictionary()
+internal void InitializeLigatureSubstitutionLookupDictionary()
 internal void InitializeGlyphPaidAdjustmentRecordsLookupDictionary()
+internal void InitializeMarkToBaseAdjustmentRecordsLookupDictionary()
+internal void InitializeMarkToMarkAdjustmentRecordsLookupDictionary()
 internal void AddSynthesizedCharactersAndFaceMetrics()
 private void AddSynthesizedCharacter(UInt32 unicode, bool isFontFaceLoaded, bool addImmediately)
 internal void AddCharacterToLookupCache(UInt32 unicode, Character character)
@@ -224,6 +266,7 @@ internal void SortFontFeatureTable()
 internal void SortAllTables()
 public bool HasCharacter(int character)
 public bool HasCharacter(char character, bool searchFallbacks, bool tryAddCharacter)
+public bool HasCharacter(UInt32 character, bool searchFallbacks, bool tryAddCharacter)
 private bool HasCharacter_Internal(UInt32 character, bool searchFallbacks, bool tryAddCharacter)
 public bool HasCharacters(string text, List`1& missingCharacters)
 public bool HasCharacters(string text, UInt32[]& missingCharacters, bool searchFallbacks, bool tryAddCharacter)
@@ -235,26 +278,27 @@ internal void RegisterFontAssetForFontFeatureUpdate(FontAsset fontAsset)
 internal void UpdateFontFeaturesForFontAssetsInQueue()
 internal void RegisterAtlasTextureForApply(Texture2D texture)
 internal void UpdateAtlasTexturesInQueue()
-internal void UpdateFontAssetInUpdateQueue()
+internal void UpdateFontAssetsInUpdateQueue()
 public bool TryAddCharacters(UInt32[] unicodes, bool includeFontFeatures)
 public bool TryAddCharacters(UInt32[] unicodes, UInt32[]& missingUnicodes, bool includeFontFeatures)
 public bool TryAddCharacters(string characters, bool includeFontFeatures)
 public bool TryAddCharacters(string characters, String& missingCharacters, bool includeFontFeatures)
+internal bool TryAddGlyphInternal(UInt32 glyphIndex, Glyph& glyph)
 internal bool TryAddCharacterInternal(UInt32 unicode, Character& character, bool shouldGetFontFeatures)
 internal bool TryGetCharacter_and_QueueRenderToTexture(UInt32 unicode, Character& character, bool shouldGetFontFeatures)
 internal void TryAddGlyphsToAtlasTextures()
 private bool TryAddGlyphsToNewAtlasTexture()
 private void SetupNewAtlasTexture()
-internal void UpdateAtlasTexture()
+private void UpdateAllFontFeatures()
 internal void UpdateGlyphAdjustmentRecords()
 internal void UpdateGlyphAdjustmentRecords(UInt32[] glyphIndexes)
 internal void UpdateGlyphAdjustmentRecords(List`1<UInt32> glyphIndexes)
 internal void UpdateGlyphAdjustmentRecords(List`1<UInt32> newGlyphIndexes, List`1<UInt32> allGlyphIndexes)
 private void CopyListDataToArray(List`1<T> srcList, T[]& dstArray)
 public void ClearFontAssetData(bool setAtlasSizeToZero)
-internal void ClearFontAssetDataInternal()
+internal void ClearFontAssetDataInternal(bool clearFontFeatures)
 internal void UpdateFontAssetData()
-internal void ClearFontAssetTables()
+internal void ClearFontAssetTables(bool clearFontFeatures)
 internal void ClearAtlasTextures(bool setAtlasSizeToZero)
 private void DestroyAtlasTextures()
 }
@@ -264,6 +308,7 @@ public int faceIndex
 public int pointSizeSamplingMode
 public int pointSize
 public int padding
+public int paddingMode
 public int packingMode
 public int atlasWidth
 public int atlasHeight
@@ -286,12 +331,33 @@ public SpriteCharacter GetSpriteCharacterFromSpriteAsset(UInt32 unicode, SpriteA
 private SpriteCharacter GetSpriteCharacterFromSpriteAsset_Internal(UInt32 unicode, SpriteAsset spriteAsset, bool includeFallbacks)
 }
 public UnityEngine.TextCore.Text.FontFeatureTable : object {
+internal List`1<MultipleSubstitutionRecord> m_MultipleSubstitutionRecords
+internal List`1<LigatureSubstitutionRecord> m_LigatureSubstitutionRecords
 internal List`1<GlyphPairAdjustmentRecord> m_GlyphPairAdjustmentRecords
+internal List`1<MarkToBaseAdjustmentRecord> m_MarkToBaseAdjustmentRecords
+internal List`1<MarkToMarkAdjustmentRecord> m_MarkToMarkAdjustmentRecords
+internal Dictionary`2<UInt32, List`1<LigatureSubstitutionRecord>> m_LigatureSubstitutionRecordLookup
 internal Dictionary`2<UInt32, GlyphPairAdjustmentRecord> m_GlyphPairAdjustmentRecordLookup
+internal Dictionary`2<UInt32, MarkToBaseAdjustmentRecord> m_MarkToBaseAdjustmentRecordLookup
+internal Dictionary`2<UInt32, MarkToMarkAdjustmentRecord> m_MarkToMarkAdjustmentRecordLookup
+internal List`1<MultipleSubstitutionRecord> multipleSubstitutionRecords
+internal List`1<LigatureSubstitutionRecord> ligatureRecords
 internal List`1<GlyphPairAdjustmentRecord> glyphPairAdjustmentRecords
+internal List`1<MarkToBaseAdjustmentRecord> MarkToBaseAdjustmentRecords
+internal List`1<MarkToMarkAdjustmentRecord> MarkToMarkAdjustmentRecords
+internal List`1<MultipleSubstitutionRecord> get_multipleSubstitutionRecords()
+internal void set_multipleSubstitutionRecords(List`1<MultipleSubstitutionRecord> value)
+internal List`1<LigatureSubstitutionRecord> get_ligatureRecords()
+internal void set_ligatureRecords(List`1<LigatureSubstitutionRecord> value)
 internal List`1<GlyphPairAdjustmentRecord> get_glyphPairAdjustmentRecords()
 internal void set_glyphPairAdjustmentRecords(List`1<GlyphPairAdjustmentRecord> value)
+internal List`1<MarkToBaseAdjustmentRecord> get_MarkToBaseAdjustmentRecords()
+internal void set_MarkToBaseAdjustmentRecords(List`1<MarkToBaseAdjustmentRecord> value)
+internal List`1<MarkToMarkAdjustmentRecord> get_MarkToMarkAdjustmentRecords()
+internal void set_MarkToMarkAdjustmentRecords(List`1<MarkToMarkAdjustmentRecord> value)
 public void SortGlyphPairAdjustmentRecords()
+public void SortMarkToBaseAdjustmentRecords()
+public void SortMarkToMarkAdjustmentRecords()
 }
 public UnityEngine.TextCore.Text.FontStyles : Enum {
 public int value__
@@ -325,6 +391,16 @@ public byte Remove(FontStyles style)
 public UnityEngine.TextCore.Text.FontWeightPair : ValueType {
 public FontAsset regularTypeface
 public FontAsset italicTypeface
+}
+internal UnityEngine.TextCore.Text.HighlightState : ValueType {
+public Color32 color
+public Offset padding
+public void .ctor(Color32 color, Offset padding)
+public bool op_Equality(HighlightState lhs, HighlightState rhs)
+public bool op_Inequality(HighlightState lhs, HighlightState rhs)
+public int GetHashCode()
+public bool Equals(object obj)
+public bool Equals(HighlightState other)
 }
 internal UnityEngine.TextCore.Text.HorizontalAlignment : Enum {
 public int value__
@@ -365,9 +441,48 @@ public int linkIdLength
 public int linkTextfirstCharacterIndex
 public int linkTextLength
 internal Char[] linkId
+private string m_LinkIdString
+private string m_LinkTextString
 internal void SetLinkId(Char[] text, int startIndex, int length)
 public string GetLinkText(TextInfo textInfo)
 public string GetLinkId()
+}
+internal UnityEngine.TextCore.Text.MarkupAttribute : ValueType {
+private int m_NameHashCode
+private int m_ValueHashCode
+private int m_ValueStartIndex
+private int m_ValueLength
+public int NameHashCode
+public int ValueHashCode
+public int ValueStartIndex
+public int ValueLength
+public int get_NameHashCode()
+public void set_NameHashCode(int value)
+public int get_ValueHashCode()
+public void set_ValueHashCode(int value)
+public int get_ValueStartIndex()
+public void set_ValueStartIndex(int value)
+public int get_ValueLength()
+public void set_ValueLength(int value)
+}
+internal UnityEngine.TextCore.Text.MarkupElement : ValueType {
+private MarkupAttribute[] m_Attributes
+public int NameHashCode
+public int ValueHashCode
+public int ValueStartIndex
+public int ValueLength
+public MarkupAttribute[] Attributes
+public int get_NameHashCode()
+public void set_NameHashCode(int value)
+public int get_ValueHashCode()
+public void set_ValueHashCode(int value)
+public int get_ValueStartIndex()
+public void set_ValueStartIndex(int value)
+public int get_ValueLength()
+public void set_ValueLength(int value)
+public MarkupAttribute[] get_Attributes()
+public void set_Attributes(MarkupAttribute[] value)
+public void .ctor(int nameHashCode, int startIndex, int length)
 }
 internal UnityEngine.TextCore.Text.MarkupTag : Enum {
 public int value__
@@ -441,6 +556,14 @@ public MarkupTag SCALE
 public MarkupTag SLASH_SCALE
 public MarkupTag ROTATE
 public MarkupTag SLASH_ROTATE
+public MarkupTag TABLE
+public MarkupTag SLASH_TABLE
+public MarkupTag TH
+public MarkupTag SLASH_TH
+public MarkupTag TR
+public MarkupTag SLASH_TR
+public MarkupTag TD
+public MarkupTag SLASH_TD
 public MarkupTag LOWERCASE
 public MarkupTag SLASH_LOWERCASE
 public MarkupTag ALLCAPS
@@ -460,6 +583,9 @@ public MarkupTag ANIM
 public MarkupTag MATERIAL
 public MarkupTag HREF
 public MarkupTag ANGLE
+public MarkupTag PADDING
+public MarkupTag FAMILYNAME
+public MarkupTag STYLENAME
 public MarkupTag RED
 public MarkupTag GREEN
 public MarkupTag BLUE
@@ -469,7 +595,9 @@ public MarkupTag BLACK
 public MarkupTag WHITE
 public MarkupTag PURPLE
 public MarkupTag BR
+public MarkupTag CR
 public MarkupTag ZWSP
+public MarkupTag ZWJ
 public MarkupTag NBSP
 public MarkupTag SHY
 public MarkupTag LEFT
@@ -495,13 +623,16 @@ public MarkupTag MINUS_PERCENTAGE
 public MarkupTag TRUE
 public MarkupTag FALSE
 public MarkupTag INVALID
+public MarkupTag NOTDEF
 public MarkupTag NORMAL
 public MarkupTag DEFAULT
+public MarkupTag REGULAR
 }
 internal UnityEngine.TextCore.Text.MaterialManager : object {
 private Dictionary`2<long, Material> s_FallbackMaterials
 public Material GetFallbackMaterial(Material sourceMaterial, Material targetMaterial)
 public Material GetFallbackMaterial(FontAsset fontAsset, Material sourceMaterial, int atlasIndex)
+private void CopyMaterialPresetProperties(Material source, Material destination)
 }
 internal UnityEngine.TextCore.Text.MaterialReference : ValueType {
 public int index
@@ -555,20 +686,61 @@ public string ToString()
 }
 internal UnityEngine.TextCore.Text.MeshInfo : ValueType {
 private Color32 k_DefaultColor
+private Vector3 k_DefaultNormal
+private Vector4 k_DefaultTangent
 public int vertexCount
 public Vector3[] vertices
-public Vector2[] uvs0
+public Vector3[] normals
+public Vector4[] tangents
+public Vector4[] uvs0
 public Vector2[] uvs2
 public Color32[] colors32
 public Int32[] triangles
 public Material material
+internal GlyphRenderMode glyphRenderMode
 public void .ctor(int size)
 internal void ResizeMeshInfo(int size)
 internal void Clear(bool uploadChanges)
 internal void ClearUnusedVertices()
+public void ClearUnusedVertices(int startIndex, bool updateMesh)
 internal void ClearUnusedVertices(int startIndex)
 internal void SortGeometry(VertexSortingOrder order)
 internal void SwapVertexData(int src, int dst)
+}
+internal UnityEngine.TextCore.Text.Offset : ValueType {
+private float m_Left
+private float m_Right
+private float m_Top
+private float m_Bottom
+private Offset k_ZeroOffset
+public float left
+public float right
+public float top
+public float bottom
+public float horizontal
+public float vertical
+public Offset zero
+public float get_left()
+public void set_left(float value)
+public float get_right()
+public void set_right(float value)
+public float get_top()
+public void set_top(float value)
+public float get_bottom()
+public void set_bottom(float value)
+public float get_horizontal()
+public void set_horizontal(float value)
+public float get_vertical()
+public void set_vertical(float value)
+public Offset get_zero()
+public void .ctor(float left, float right, float top, float bottom)
+public void .ctor(float horizontal, float vertical)
+public bool op_Equality(Offset lhs, Offset rhs)
+public bool op_Inequality(Offset lhs, Offset rhs)
+public Offset op_Multiply(Offset a, float b)
+public int GetHashCode()
+public bool Equals(object obj)
+public bool Equals(Offset other)
 }
 internal UnityEngine.TextCore.Text.PageInfo : ValueType {
 public int firstCharacterIndex
@@ -583,6 +755,7 @@ public int valueHashCode
 public TagValueType valueType
 public int valueStartIndex
 public int valueLength
+public TagUnitType unitType
 }
 public UnityEngine.TextCore.Text.SpriteAsset : TextAsset {
 internal Dictionary`2<int, int> m_NameLookup
@@ -628,12 +801,9 @@ internal void SortGlyphAndCharacterTables()
 }
 public UnityEngine.TextCore.Text.SpriteCharacter : TextElement {
 private string m_Name
-private int m_HashCode
 public string name
-public int hashCode
 public string get_name()
 public void set_name(string value)
-public int get_hashCode()
 public void .ctor(UInt32 unicode, SpriteGlyph glyph)
 public void .ctor(UInt32 unicode, SpriteAsset spriteAsset, SpriteGlyph glyph)
 }
@@ -715,6 +885,22 @@ public void set_material(Material value)
 public int get_materialHashCode()
 public void set_materialHashCode(int value)
 }
+internal UnityEngine.TextCore.Text.TextBackingContainer : ValueType {
+private UInt32[] m_Array
+private int m_Count
+public UInt32[] Text
+public int Capacity
+public int Count
+public UInt32 Item
+public UInt32[] get_Text()
+public int get_Capacity()
+public int get_Count()
+public void set_Count(int value)
+public UInt32 get_Item(int index)
+public void set_Item(int index, UInt32 value)
+public void .ctor(int size)
+public void Resize(int size)
+}
 public UnityEngine.TextCore.Text.TextColorGradient : ScriptableObject {
 public ColorGradientMode colorMode
 public Color topLeft
@@ -755,7 +941,9 @@ internal UnityEngine.TextCore.Text.TextElementInfo : ValueType {
 public char character
 public int index
 public TextElementType elementType
+public int stringLength
 public TextElement textElement
+public Glyph alternativeGlyph
 public FontAsset fontAsset
 public SpriteAsset spriteAsset
 public int spriteIndex
@@ -778,15 +966,23 @@ public float origin
 public float ascender
 public float baseLine
 public float descender
+internal float adjustedAscender
+internal float adjustedDescender
+internal float adjustedHorizontalAdvance
 public float xAdvance
 public float aspectRatio
 public float scale
 public Color32 color
 public Color32 underlineColor
+public int underlineVertexIndex
 public Color32 strikethroughColor
+public int strikethroughVertexIndex
 public Color32 highlightColor
+public HighlightState highlightState
 public FontStyles style
 public bool isVisible
+public string ToString()
+internal string ToStringTest()
 }
 public UnityEngine.TextCore.Text.TextElementType : Enum {
 public byte value__
@@ -848,8 +1044,10 @@ public bool wordWrap
 public float wordWrappingRatio
 public Color color
 public TextColorGradient fontColorGradient
+public TextColorGradient fontColorGradientPreset
 public bool tintSprites
 public bool overrideRichTextColors
+public bool shouldConvertToLinearSpace
 public float fontSize
 public bool autoSize
 public float fontSizeMin
@@ -857,13 +1055,16 @@ public float fontSizeMax
 public bool enableKerning
 public bool richText
 public bool isRightToLeft
-public bool extraPadding
+public float extraPadding
 public bool parseControlCharacters
+public bool isOrthographic
+public bool tagNoParsing
 public float characterSpacing
 public float wordSpacing
 public float lineSpacing
 public float paragraphSpacing
 public float lineSpacingMax
+public TextWrappingMode textWrappingMode
 public int maxVisibleCharacters
 public int maxVisibleWords
 public int maxVisibleLines
@@ -877,6 +1078,7 @@ public float uvLineOffset
 public VertexSortingOrder geometrySortingOrder
 public bool inverseYAxis
 public float charWidthMaxAdj
+internal TextInputSource inputSource
 public bool Equals(TextGenerationSettings other)
 public bool Equals(object obj)
 public int GetHashCode()
@@ -926,15 +1128,22 @@ private int k_CjkFormsStart
 private int k_CjkFormsEnd
 private int k_CjkHalfwidthStart
 private int k_CjkHalfwidthEnd
-private int k_VerticesMax
-private int k_SpritesStart
+private int k_EndOfText
 private float k_FloatUnset
 private int k_MaxCharacters
 private TextGenerator s_TextGenerator
+private TextBackingContainer m_TextBackingArray
+internal TextProcessingElement[] m_TextProcessingArray
+internal int m_InternalTextProcessingArraySize
+protected bool m_VertexBufferAutoSizeReduction
+private Char[] m_HtmlTag
+internal HighlightState m_HighlightState
+protected bool m_IsIgnoringAlignment
+protected bool m_IsTextTruncated
+private MissingCharacterEventCallback OnMissingCharacter
 private Vector3[] m_RectTransformCorners
 private float m_MarginWidth
 private float m_MarginHeight
-private Int32[] m_CharBuffer
 private float m_PreferredWidth
 private float m_PreferredHeight
 private FontAsset m_CurrentFontAsset
@@ -944,11 +1153,12 @@ private TextProcessingStack`1<MaterialReference> m_MaterialReferenceStack
 private float m_Padding
 private SpriteAsset m_CurrentSpriteAsset
 private int m_TotalCharacterCount
-private float m_FontScale
 private float m_FontSize
 private float m_FontScaleMultiplier
 private float m_CurrentFontSize
 private TextProcessingStack`1<float> m_SizeStack
+protected TextProcessingStack`1[] m_TextStyleStacks
+protected int m_TextStyleStackDepth
 private FontStyles m_FontStyleInternal
 private FontStyleStack m_FontStyleStack
 private TextFontWeight m_FontWeightInternal
@@ -965,12 +1175,15 @@ private TextProcessingStack`1<Color32> m_ColorStack
 private TextProcessingStack`1<Color32> m_UnderlineColorStack
 private TextProcessingStack`1<Color32> m_StrikethroughColorStack
 private TextProcessingStack`1<Color32> m_HighlightColorStack
+private TextProcessingStack`1<HighlightState> m_HighlightStateStack
+private TextProcessingStack`1<int> m_ItalicAngleStack
 private TextColorGradient m_ColorGradientPreset
 private TextProcessingStack`1<TextColorGradient> m_ColorGradientStack
+private bool m_ColorGradientPresetIsTinted
 private TextProcessingStack`1<int> m_ActionStack
-private bool m_IsFxMatrixSet
 private float m_LineOffset
 private float m_LineHeight
+private bool m_IsDrivenLineSpacing
 private float m_CSpacing
 private float m_MonoSpacing
 private float m_XAdvance
@@ -987,6 +1200,7 @@ private float m_MaxLineAscender
 private float m_MaxLineDescender
 private int m_LineNumber
 private int m_LineVisibleCharacterCount
+private int m_LineVisibleSpaceCount
 private int m_FirstOverflowCharacterIndex
 private int m_PageNumber
 private float m_MarginLeft
@@ -1000,39 +1214,44 @@ private bool m_IsNewPage
 private bool m_IsNonBreakingSpace
 private WordWrapState m_SavedWordWrapState
 private WordWrapState m_SavedLineState
-private int m_LoopCountA
+private WordWrapState m_SavedEllipsisState
+private WordWrapState m_SavedLastValidState
+private WordWrapState m_SavedSoftLineBreakState
 private TextElementType m_TextElementType
-private bool m_IsParsingText
+private bool m_isTextLayoutPhase
 private int m_SpriteIndex
 private Color32 m_SpriteColor
 private TextElement m_CachedTextElement
 private Color32 m_HighlightColor
 private float m_CharWidthAdjDelta
-private Matrix4x4 m_FxMatrix
 private float m_MaxFontSize
 private float m_MinFontSize
-private bool m_IsCharacterWrappingEnabled
+private int m_AutoSizeIterationCount
+private int m_AutoSizeMaxIterationCount
+private bool m_IsAutoSizePointSizeSet
 private float m_StartOfLineAscender
 private float m_LineSpacingDelta
-private bool m_IsMaskingEnabled
 private MaterialReference[] m_MaterialReferences
 private int m_SpriteCount
 private TextProcessingStack`1<int> m_StyleStack
+private TextProcessingStack`1<WordWrapState> m_EllipsisInsertionCandidateStack
 private int m_SpriteAnimationId
-private UInt32[] m_InternalTextParsingBuffer
-private RichTextTagAttribute[] m_Attributes
-private XmlTagAttribute[] m_XmlAttribute
-private Char[] m_RichTextTag
+private int m_ItalicAngle
+private Vector3 m_FXScale
+private Quaternion m_FXRotation
+private int m_LastBaseGlyphIndex
+private float m_PageAscender
+private RichTextTagAttribute[] m_XmlAttribute
+private Single[] m_AttributeParameterValues
 private Dictionary`2<int, int> m_MaterialReferenceIndexLookup
 private bool m_IsCalculatingPreferredValues
 private SpriteAsset m_DefaultSpriteAsset
 private bool m_TintSprite
 protected SpecialCharacter m_Ellipsis
 protected SpecialCharacter m_Underline
-private bool m_IsUsingBold
-private bool m_IsSdfShader
 private TextElementInfo[] m_InternalTextElementInfo
-private int m_RecursiveCount
+private bool vertexBufferAutoSizeReduction
+public bool isTextTruncated
 private TextGenerator GetTextGenerator()
 public void GenerateText(TextGenerationSettings settings, TextInfo textInfo)
 public Vector2 GetCursorPosition(TextGenerationSettings settings, int index)
@@ -1040,62 +1259,141 @@ public Vector2 GetCursorPosition(TextInfo textInfo, Rect screenRect, int index, 
 public float GetPreferredWidth(TextGenerationSettings settings, TextInfo textInfo)
 public float GetPreferredHeight(TextGenerationSettings settings, TextInfo textInfo)
 public Vector2 GetPreferredValues(TextGenerationSettings settings, TextInfo textInfo)
+private bool get_vertexBufferAutoSizeReduction()
+private void set_vertexBufferAutoSizeReduction(bool value)
+public bool get_isTextTruncated()
+public void add_OnMissingCharacter(MissingCharacterEventCallback value)
+public void remove_OnMissingCharacter(MissingCharacterEventCallback value)
 private void Prepare(TextGenerationSettings generationSettings, TextInfo textInfo)
 private void GenerateTextMesh(TextGenerationSettings generationSettings, TextInfo textInfo)
 private void SaveWordWrappingState(WordWrapState& state, int index, int count, TextInfo textInfo)
 protected int RestoreWordWrappingState(WordWrapState& state, TextInfo textInfo)
-private bool ValidateRichTextTag(string sourceText, Int32& readIndex, Int32& writeIndex, TextGenerationSettings generationSettings, TextInfo textInfo)
-protected bool ValidateHtmlTag(Int32[] chars, int startIndex, Int32& endIndex, TextGenerationSettings generationSettings, TextInfo textInfo)
+protected bool ValidateHtmlTag(TextProcessingElement[] chars, int startIndex, Int32& endIndex, TextGenerationSettings generationSettings, TextInfo textInfo)
 private void SaveGlyphVertexInfo(float padding, float stylePadding, Color32 vertexColor, TextGenerationSettings generationSettings, TextInfo textInfo)
 private void SaveSpriteVertexInfo(Color32 vertexColor, TextGenerationSettings generationSettings, TextInfo textInfo)
-private void DrawUnderlineMesh(Vector3 start, Vector3 end, Int32& index, float startScale, float endScale, float maxScale, float sdfScale, Color32 underlineColor, TextGenerationSettings generationSettings, TextInfo textInfo)
-private void DrawTextHighlight(Vector3 start, Vector3 end, Int32& index, Color32 highlightColor, TextGenerationSettings generationSettings, TextInfo textInfo)
+private void DrawUnderlineMesh(Vector3 start, Vector3 end, float startScale, float endScale, float maxScale, float sdfScale, Color32 underlineColor, TextGenerationSettings generationSettings, TextInfo textInfo)
+private void DrawTextHighlight(Vector3 start, Vector3 end, Color32 highlightColor, TextGenerationSettings generationSettings, TextInfo textInfo)
 private void ClearMesh(bool updateMesh, TextInfo textInfo)
-private void EnableMasking()
-private void DisableMasking()
-private void SetArraySizes(Int32[] chars, TextGenerationSettings generationSettings, TextInfo textInfo)
+internal int SetArraySizes(TextProcessingElement[] textProcessingArray, TextGenerationSettings generationSettings, TextInfo textInfo)
 internal TextElement GetTextElement(TextGenerationSettings generationSettings, UInt32 unicode, FontAsset fontAsset, FontStyles fontStyle, TextFontWeight fontWeight, Boolean& isUsingAlternativeTypeface)
 private void ComputeMarginSize(Rect rect, Vector4 margins)
 protected void GetSpecialCharacters(TextGenerationSettings generationSettings)
 protected void GetEllipsisSpecialCharacter(TextGenerationSettings generationSettings)
 protected void GetUnderlineSpecialCharacter(TextGenerationSettings generationSettings)
-private float GetPaddingForMaterial(Material material, bool extraPadding)
 private float GetPreferredWidthInternal(TextGenerationSettings generationSettings, TextInfo textInfo)
 private float GetPreferredHeightInternal(TextGenerationSettings generationSettings, TextInfo textInfo)
 private Vector2 GetPreferredValuesInternal(TextGenerationSettings generationSettings, TextInfo textInfo)
-protected Vector2 CalculatePreferredValues(float defaultFontSize, Vector2 marginSize, bool ignoreTextAutoSizing, TextGenerationSettings generationSettings, TextInfo textInfo)
+protected Vector2 CalculatePreferredValues(Single& fontSize, Vector2 marginSize, bool isTextAutoSizingEnabled, TextWrappingMode textWrapMode, TextGenerationSettings generationSettings, TextInfo textInfo)
+private void PopulateTextBackingArray(string sourceText)
+private void PopulateTextBackingArray(string sourceText, int start, int length)
+private void PopulateTextBackingArray(StringBuilder sourceText, int start, int length)
+private void PopulateTextBackingArray(Char[] sourceText, int start, int length)
+private void PopulateTextProcessingArray(TextGenerationSettings generationSettings)
+private void InsertNewLine(int i, float baseScale, float currentElementScale, float currentEmScale, float boldSpacingAdjustment, float characterSpacingAdjustment, float width, float lineGap, Boolean& isMaxVisibleDescenderSet, Single& maxVisibleDescender, TextGenerationSettings generationSettings, TextInfo textInfo)
+protected void DoMissingGlyphCallback(UInt32 unicode, int stringIndex, FontAsset fontAsset, TextInfo textInfo)
+private void ClearMarkupTagAttributes()
 }
 internal UnityEngine.TextCore.Text.TextGeneratorUtilities : object {
 public Vector2 largePositiveVector2
 public Vector2 largeNegativeVector2
 public float largePositiveFloat
 public float largeNegativeFloat
+private int k_DoubleQuotes
+private int k_GreaterThan
+private int k_ZeroWidthSpace
+private string k_LookupStringU
 public bool Approximately(float a, float b)
 public Color32 HexCharsToColor(Char[] hexChars, int tagCount)
 public Color32 HexCharsToColor(Char[] hexChars, int startIndex, int length)
-public int HexToInt(char hex)
+public UInt32 HexToInt(char hex)
 public float ConvertToFloat(Char[] chars, int startIndex, int length)
 public float ConvertToFloat(Char[] chars, int startIndex, int length, Int32& lastIndex)
 public Vector2 PackUV(float x, float y, float scale)
-public void StringToCharArray(string sourceText, Int32[]& charBuffer, TextProcessingStack`1& styleStack, TextGenerationSettings generationSettings)
-private void ResizeInternalArray(T[]& array)
-internal void ResizeArray(T[] array)
+public void ResizeInternalArray(T[]& array)
+public void ResizeInternalArray(T[]& array, int size)
 private bool IsTagName(String& text, string tag, int index)
 private bool IsTagName(Int32[]& text, string tag, int index)
-private bool ReplaceOpeningStyleTag(Int32[]& sourceText, int srcIndex, Int32& srcOffset, Int32[]& charBuffer, Int32& writeIndex, TextProcessingStack`1& styleStack, TextGenerationSettings& generationSettings)
-private bool ReplaceOpeningStyleTag(String& sourceText, int srcIndex, Int32& srcOffset, Int32[]& charBuffer, Int32& writeIndex, TextProcessingStack`1& styleStack, TextGenerationSettings& generationSettings)
-private void ReplaceClosingStyleTag(Int32[]& charBuffer, Int32& writeIndex, TextProcessingStack`1& styleStack, TextGenerationSettings& generationSettings)
-private TextStyle GetStyle(TextGenerationSettings generationSetting, int hashCode)
-private int GetUtf32(string text, int i)
-private int GetUtf16(string text, int i)
+internal void InsertOpeningTextStyle(TextStyle style, TextProcessingElement[]& charBuffer, Int32& writeIndex, Int32& textStyleStackDepth, TextProcessingStack`1[]& textStyleStacks, TextGenerationSettings& generationSettings)
+internal void InsertClosingTextStyle(TextStyle style, TextProcessingElement[]& charBuffer, Int32& writeIndex, Int32& textStyleStackDepth, TextProcessingStack`1[]& textStyleStacks, TextGenerationSettings& generationSettings)
+public bool ReplaceOpeningStyleTag(TextBackingContainer& sourceText, int srcIndex, Int32& srcOffset, TextProcessingElement[]& charBuffer, Int32& writeIndex, Int32& textStyleStackDepth, TextProcessingStack`1[]& textStyleStacks, TextGenerationSettings& generationSettings)
+public void ReplaceOpeningStyleTag(TextProcessingElement[]& charBuffer, Int32& writeIndex, Int32& textStyleStackDepth, TextProcessingStack`1[]& textStyleStacks, TextGenerationSettings& generationSettings)
+private bool ReplaceOpeningStyleTag(UInt32[]& sourceText, int srcIndex, Int32& srcOffset, TextProcessingElement[]& charBuffer, Int32& writeIndex, Int32& textStyleStackDepth, TextProcessingStack`1[]& textStyleStacks, TextGenerationSettings& generationSettings)
+public void ReplaceClosingStyleTag(TextProcessingElement[]& charBuffer, Int32& writeIndex, Int32& textStyleStackDepth, TextProcessingStack`1[]& textStyleStacks, TextGenerationSettings& generationSettings)
+internal void InsertOpeningStyleTag(TextStyle style, TextProcessingElement[]& charBuffer, Int32& writeIndex, Int32& textStyleStackDepth, TextProcessingStack`1[]& textStyleStacks, TextGenerationSettings& generationSettings)
+internal void InsertClosingStyleTag(TextProcessingElement[]& charBuffer, Int32& writeIndex, Int32& textStyleStackDepth, TextProcessingStack`1[]& textStyleStacks, TextGenerationSettings& generationSettings)
+private void InsertTextStyleInTextProcessingArray(TextProcessingElement[]& charBuffer, Int32& writeIndex, UInt32[] styleDefinition, Int32& textStyleStackDepth, TextProcessingStack`1[]& textStyleStacks, TextGenerationSettings& generationSettings)
+public TextStyle GetStyle(TextGenerationSettings generationSetting, int hashCode)
+public int GetStyleHashCode(UInt32[]& text, int index, Int32& closeIndex)
+public int GetStyleHashCode(TextBackingContainer& text, int index, Int32& closeIndex)
+public UInt32 GetUTF16(UInt32[] text, int i)
+public UInt32 GetUTF16(TextBackingContainer text, int i)
+public UInt32 GetUTF32(UInt32[] text, int i)
+public UInt32 GetUTF32(TextBackingContainer text, int i)
 private int GetTagHashCode(Int32[]& text, int index, Int32& closeIndex)
 private int GetTagHashCode(String& text, int index, Int32& closeIndex)
-public void FillCharacterVertexBuffers(int i, TextGenerationSettings generationSettings, TextInfo textInfo)
-public void FillSpriteVertexBuffers(int i, TextGenerationSettings generationSettings, TextInfo textInfo)
+public void FillCharacterVertexBuffers(int i, bool convertToLinearSpace, TextGenerationSettings generationSettings, TextInfo textInfo)
+public void FillSpriteVertexBuffers(int i, bool convertToLinearSpace, TextGenerationSettings generationSettings, TextInfo textInfo)
 public void AdjustLineOffset(int startIndex, int endIndex, float offset, TextInfo textInfo)
 public void ResizeLineExtents(int size, TextInfo textInfo)
 public FontStyles LegacyStyleToNewStyle(FontStyle fontStyle)
 public TextAlignment LegacyAlignmentToNewAlignment(TextAnchor anchor)
+public UInt32 ConvertToUTF32(UInt32 highSurrogate, UInt32 lowSurrogate)
+public int GetMarkupTagHashCode(TextBackingContainer styleDefinition, int readIndex)
+public int GetMarkupTagHashCode(UInt32[] styleDefinition, int readIndex)
+public char ToUpperASCIIFast(char c)
+public UInt32 ToUpperASCIIFast(UInt32 c)
+public char ToUpperFast(char c)
+public int GetAttributeParameters(Char[] chars, int startIndex, int length, Single[]& parameters)
+public bool IsBitmapRendering(GlyphRenderMode glyphRenderMode)
+public bool IsBaseGlyph(UInt32 c)
+public Color MinAlpha(Color c1, Color c2)
+internal Color32 GammaToLinear(Color32 c)
+private byte GammaToLinear(byte value)
+public bool IsValidUTF16(TextBackingContainer text, int index)
+public bool IsValidUTF32(TextBackingContainer text, int index)
+internal bool IsEmoji(UInt32 c)
+internal bool IsHangul(UInt32 c)
+internal bool IsCJK(UInt32 c)
+}
+internal UnityEngine.TextCore.Text.TextHandle : object {
+private Vector2 m_PreferredSize
+private TextInfo m_TextInfo
+private TextInfo m_LayoutTextInfo
+private int m_PreviousGenerationSettingsHash
+protected TextGenerationSettings textGenerationSettings
+protected TextGenerationSettings s_LayoutSettings
+private bool isDirty
+internal TextInfo textInfo
+internal TextInfo layoutTextInfo
+internal TextInfo get_textInfo()
+internal bool IsTextInfoAllocated()
+internal TextInfo get_layoutTextInfo()
+public void SetDirty()
+public bool IsDirty()
+public Vector2 GetCursorPositionFromStringIndexUsingCharacterHeight(int index, bool inverseYAxis)
+public Vector2 GetCursorPositionFromStringIndexUsingLineHeight(int index, bool useXAdvance, bool inverseYAxis)
+public int GetCursorIndexFromPosition(Vector2 position, bool inverseYAxis)
+public int LineDownCharacterPosition(int originalPos)
+public int LineUpCharacterPosition(int originalPos)
+public int FindWordIndex(int cursorIndex)
+public int FindNearestLine(Vector2 position)
+public int FindNearestCharacterOnLine(Vector2 position, int line, bool visibleOnly)
+public int FindIntersectingLink(Vector3 position, bool inverseYAxis)
+private bool PointIntersectRectangle(Vector3 m, Vector3 a, Vector3 b, Vector3 c, Vector3 d)
+private float DistanceToLine(Vector3 a, Vector3 b, Vector3 point)
+public int GetLineNumber(int index)
+public float GetLineHeight(int lineNumber)
+public float GetLineHeightFromCharacterIndex(int index)
+public float GetCharacterHeightFromIndex(int index)
+public bool IsElided()
+public string Substring(int startIndex, int length)
+public int IndexOf(char value, int startIndex)
+public int LastIndexOf(char value, int startIndex)
+protected float ComputeTextWidth(TextGenerationSettings tgs)
+protected float ComputeTextHeight(TextGenerationSettings tgs)
+protected void UpdatePreferredValues(TextGenerationSettings tgs)
+internal TextInfo Update(string newText)
+protected TextInfo Update(TextGenerationSettings tgs)
 }
 internal UnityEngine.TextCore.Text.TextInfo : object {
 private Vector2 s_InfinityVectorPositive
@@ -1115,11 +1413,20 @@ public LineInfo[] lineInfo
 public PageInfo[] pageInfo
 public MeshInfo[] meshInfo
 public bool isDirty
+public bool hasMultipleColors
 internal void Clear()
 internal void ClearMeshInfo(bool updateMesh)
 internal void ClearLineInfo()
+internal void ClearPageInfo()
 internal void Resize(T[]& array, int size)
 internal void Resize(T[]& array, int size, bool isBlockAllocated)
+}
+internal UnityEngine.TextCore.Text.TextInputSource : Enum {
+public int value__
+public TextInputSource TextInputBox
+public TextInputSource SetText
+public TextInputSource SetTextArray
+public TextInputSource TextString
 }
 internal UnityEngine.TextCore.Text.TextOverflowMode : Enum {
 public int value__
@@ -1130,6 +1437,18 @@ public TextOverflowMode Truncate
 public TextOverflowMode ScrollRect
 public TextOverflowMode Page
 public TextOverflowMode Linked
+}
+internal UnityEngine.TextCore.Text.TextProcessingElement : ValueType {
+public TextProcessingElementType elementType
+public UInt32 unicode
+public int stringIndex
+public int length
+}
+internal UnityEngine.TextCore.Text.TextProcessingElementType : Enum {
+public int value__
+public TextProcessingElementType Undefined
+public TextProcessingElementType TextCharacterElement
+public TextProcessingElementType TextMarkupElement
 }
 internal UnityEngine.TextCore.Text.TextProcessingStack`1 : ValueType {
 public T[] itemStack
@@ -1167,7 +1486,7 @@ private Dictionary`2<long, FontAsset> s_FontAssetFamilyNameAndStyleReferenceLook
 private List`1<int> s_FontAssetRemovalList
 private int k_RegularStyleHashCode
 internal void AddFontAsset(FontAsset fontAsset)
-internal void RemoveFontAsset(FontAsset fontAsset)
+public void RemoveFontAsset(FontAsset fontAsset)
 internal bool TryGetFontAssetByName(int nameHashcode, FontAsset& fontAsset)
 internal bool TryGetFontAssetByFamilyName(int familyNameHashCode, int styleNameHashCode, FontAsset& fontAsset)
 internal void RebuildFontAssetCache()
@@ -1188,6 +1507,7 @@ protected TextStyleSheet m_DefaultStyleSheet
 protected string m_StyleSheetsResourcePath
 protected string m_DefaultColorGradientPresetsPath
 protected UnicodeLineBreakingRules m_UnicodeLineBreakingRules
+private bool m_UseModernHangulLineBreakingRules
 protected bool m_DisplayWarnings
 internal Dictionary`2<int, FontAsset> m_FontLookup
 private List`1<FontReferenceMap> m_FontReferences
@@ -1206,6 +1526,7 @@ public TextStyleSheet defaultStyleSheet
 public string styleSheetsResourcePath
 public string defaultColorGradientPresetsPath
 public UnicodeLineBreakingRules lineBreakingRules
+public bool useModernHangulLineBreakingRules
 public bool displayWarnings
 public string get_version()
 internal void set_version(string value)
@@ -1237,8 +1558,11 @@ public string get_defaultColorGradientPresetsPath()
 public void set_defaultColorGradientPresetsPath(string value)
 public UnicodeLineBreakingRules get_lineBreakingRules()
 public void set_lineBreakingRules(UnicodeLineBreakingRules value)
+public bool get_useModernHangulLineBreakingRules()
+public void set_useModernHangulLineBreakingRules(bool value)
 public bool get_displayWarnings()
 public void set_displayWarnings(bool value)
+private void OnEnable()
 protected void InitializeFontReferenceLookup()
 protected FontAsset GetCachedFontAssetInternal(Font font)
 }
@@ -1248,11 +1572,19 @@ public int ID_FaceTex
 public int ID_FaceColor
 public int ID_FaceDilate
 public int ID_Shininess
+public int ID_OutlineOffset1
+public int ID_OutlineOffset2
+public int ID_OutlineOffset3
+public int ID_OutlineMode
+public int ID_IsoPerimeter
+public int ID_Softness
 public int ID_UnderlayColor
 public int ID_UnderlayOffsetX
 public int ID_UnderlayOffsetY
 public int ID_UnderlayDilate
 public int ID_UnderlaySoftness
+public int ID_UnderlayOffset
+public int ID_UnderlayIsoPerimeter
 public int ID_WeightNormal
 public int ID_WeightBold
 public int ID_OutlineTex
@@ -1321,6 +1653,7 @@ private void UpdateShaderRatios(Material mat)
 internal Vector4 GetFontExtent(Material material)
 internal bool IsMaskingEnabled(Material material)
 internal float GetPadding(Material material, bool enableExtraPadding, bool isBold)
+private float ComputePaddingForProperties(Material mat)
 internal float GetPadding(Material[] materials, bool enableExtraPadding, bool isBold)
 }
 public UnityEngine.TextCore.Text.TextStyle : object {
@@ -1329,8 +1662,8 @@ private string m_Name
 private int m_HashCode
 private string m_OpeningDefinition
 private string m_ClosingDefinition
-private Int32[] m_OpeningTagArray
-private Int32[] m_ClosingTagArray
+private UInt32[] m_OpeningTagArray
+private UInt32[] m_ClosingTagArray
 internal UInt32[] m_OpeningTagUnicodeArray
 internal UInt32[] m_ClosingTagUnicodeArray
 public TextStyle NormalStyle
@@ -1338,8 +1671,8 @@ public string name
 public int hashCode
 public string styleOpeningDefinition
 public string styleClosingDefinition
-public Int32[] styleOpeningTagArray
-public Int32[] styleClosingTagArray
+public UInt32[] styleOpeningTagArray
+public UInt32[] styleClosingTagArray
 public TextStyle get_NormalStyle()
 public string get_name()
 public void set_name(string value)
@@ -1347,8 +1680,8 @@ public int get_hashCode()
 public void set_hashCode(int value)
 public string get_styleOpeningDefinition()
 public string get_styleClosingDefinition()
-public Int32[] get_styleOpeningTagArray()
-public Int32[] get_styleClosingTagArray()
+public UInt32[] get_styleOpeningTagArray()
+public UInt32[] get_styleClosingTagArray()
 internal void .ctor(string styleName, string styleOpeningDefinition, string styleClosingDefinition)
 public void RefreshStyle()
 }
@@ -1357,6 +1690,7 @@ private List`1<TextStyle> m_StyleList
 private Dictionary`2<int, TextStyle> m_StyleLookupDictionary
 internal List`1<TextStyle> styles
 internal List`1<TextStyle> get_styles()
+private void Reset()
 public TextStyle GetStyle(int hashCode)
 public TextStyle GetStyle(string name)
 public void RefreshStyles()
@@ -1391,41 +1725,24 @@ internal string UintToString(List`1<UInt32> unicodes)
 }
 internal UnityEngine.TextCore.Text.TextVertex : ValueType {
 public Vector3 position
-public Vector2 uv
+public Vector4 uv
 public Vector2 uv2
-public Vector2 uv4
 public Color32 color
 }
-internal UnityEngine.TextCore.Text.UnicodeCodePoint : object {
-public UInt32 SPACE
-public UInt32 DOUBLE_QUOTE
-public UInt32 NUMBER_SIGN
-public UInt32 PERCENTAGE
-public UInt32 PLUS
-public UInt32 MINUS
-public UInt32 PERIOD
-public UInt32 HYPHEN_MINUS
-public UInt32 SOFT_HYPHEN
-public UInt32 HYPHEN
-public UInt32 NON_BREAKING_HYPHEN
-public UInt32 ZERO_WIDTH_SPACE
-public UInt32 RIGHT_SINGLE_QUOTATION
-public UInt32 APOSTROPHE
-public UInt32 WORD_JOINER
-public UInt32 HIGH_SURROGATE_START
-public UInt32 HIGH_SURROGATE_END
-public UInt32 LOW_SURROGATE_START
-public UInt32 LOW_SURROGATE_END
-public int UNICODE_PLANE01_START
+internal UnityEngine.TextCore.Text.TextWrappingMode : Enum {
+public int value__
+public TextWrappingMode NoWrap
+public TextWrappingMode Normal
+public TextWrappingMode PreserveWhitespace
+public TextWrappingMode PreserveWhitespaceNoWrap
 }
 public UnityEngine.TextCore.Text.UnicodeLineBreakingRules : object {
-private UnicodeLineBreakingRules s_Instance
 private TextAsset m_UnicodeLineBreakingRules
 private TextAsset m_LeadingCharacters
 private TextAsset m_FollowingCharacters
 private bool m_UseModernHangulLineBreakingRules
-private HashSet`1<UInt32> s_LeadingCharactersLookup
-private HashSet`1<UInt32> s_FollowingCharactersLookup
+private HashSet`1<UInt32> m_LeadingCharactersLookup
+private HashSet`1<UInt32> m_FollowingCharactersLookup
 public TextAsset lineBreakingRules
 public TextAsset leadingCharacters
 public TextAsset followingCharacters
@@ -1468,6 +1785,7 @@ internal UnityEngine.TextCore.Text.WordWrapState : ValueType {
 public int previousWordBreak
 public int totalCharacterCount
 public int visibleCharacterCount
+public int visibleSpaceCount
 public int visibleSpriteCount
 public int visibleLinkCount
 public int firstCharacterIndex
@@ -1480,15 +1798,17 @@ public float maxAscender
 public float maxDescender
 public float maxLineAscender
 public float maxLineDescender
-public float previousLineAscender
+public float startOfLineAscender
 public float xAdvance
 public float preferredWidth
 public float preferredHeight
 public float previousLineScale
+public float pageAscender
 public int wordCount
 public FontStyles fontStyle
 public float fontScale
 public float fontScaleMultiplier
+public int italicAngle
 public float currentFontSize
 public float baselineOffset
 public float lineOffset
@@ -1498,11 +1818,14 @@ public Color32 vertexColor
 public Color32 underlineColor
 public Color32 strikethroughColor
 public Color32 highlightColor
+public HighlightState highlightState
 public FontStyleStack basicStyleStack
+public TextProcessingStack`1<int> italicAngleStack
 public TextProcessingStack`1<Color32> colorStack
 public TextProcessingStack`1<Color32> underlineColorStack
 public TextProcessingStack`1<Color32> strikethroughColorStack
 public TextProcessingStack`1<Color32> highlightColorStack
+public TextProcessingStack`1<HighlightState> highlightStateStack
 public TextProcessingStack`1<TextColorGradient> colorGradientStack
 public TextProcessingStack`1<float> sizeStack
 public TextProcessingStack`1<float> indentStack
@@ -1512,6 +1835,7 @@ public TextProcessingStack`1<float> baselineStack
 public TextProcessingStack`1<int> actionStack
 public TextProcessingStack`1<MaterialReference> materialReferenceStack
 public TextProcessingStack`1<TextAlignment> lineJustificationStack
+public int lastBaseGlyphIndex
 public int spriteAnimationId
 public FontAsset currentFontAsset
 public SpriteAsset currentSpriteAsset
@@ -1520,6 +1844,9 @@ public int currentMaterialIndex
 public Extents meshExtents
 public bool tagNoParsing
 public bool isNonBreakingSpace
+public bool isDrivenLineSpacing
+public Vector3 fxScale
+public Quaternion fxRotation
 }
 internal UnityEngine.TextCore.Text.XmlTagAttribute : ValueType {
 public int nameHashCode

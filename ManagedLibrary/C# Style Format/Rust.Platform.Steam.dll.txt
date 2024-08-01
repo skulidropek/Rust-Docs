@@ -1,3 +1,20 @@
+internal Rust.Platform.Steam.IpListQuery : object {
+private List`1<string> _ips
+private CancellationTokenSource _cts
+private List`1<ValueTuple`2<string, string>> _filters
+private Action`1<ServerInfo> _serverFoundHandler
+private Action`1<ServerInfo> OnServerFound
+private IReadOnlyList`1<ServerInfo> <Servers>k__BackingField
+public IReadOnlyList`1<ServerInfo> Servers
+public void add_OnServerFound(Action`1<ServerInfo> value)
+public void remove_OnServerFound(Action`1<ServerInfo> value)
+public IReadOnlyList`1<ServerInfo> get_Servers()
+public void .ctor(IEnumerable`1<string> list)
+public void Dispose()
+public void AddFilter(string key, string value)
+public Task RunQueryAsync(double timeoutSeconds)
+private Task QueryServers(List`1<string> servers, List`1<ValueTuple`2<string, string>> filters, double timeoutSeconds)
+}
 public Rust.Platform.Steam.SteamAchievement : object {
 private Achievement _achievement
 public string Key
@@ -17,6 +34,9 @@ public string get_Token()
 public Byte[] get_Data()
 internal void .ctor(AuthTicket ticket)
 public void Dispose()
+}
+public Rust.Platform.Steam.SteamAuthTicketNullException : Exception {
+public void .ctor(string message)
 }
 public Rust.Platform.Steam.SteamDownloadableContent : object {
 private int <AppId>k__BackingField
@@ -51,6 +71,7 @@ public int get_Quantity()
 public DateTimeOffset get_Acquired()
 public ulong get_WorkshopId()
 public string get_ItemShortName()
+public Task Consume()
 }
 public Rust.Platform.Steam.SteamItemDefinition : object {
 private InventoryDef <Value>k__BackingField
@@ -64,8 +85,11 @@ public int LocalPrice
 public string LocalPriceFormatted
 public string PriceCategory
 public bool IsGenerator
+public bool IsTradable
 public bool IsMarketable
 public string StoreTags
+public DateTime Created
+public DateTime Modified
 public string ItemShortName
 public ulong WorkshopId
 public ulong WorkshopDownload
@@ -80,8 +104,11 @@ public int get_LocalPrice()
 public string get_LocalPriceFormatted()
 public string get_PriceCategory()
 public bool get_IsGenerator()
+public bool get_IsTradable()
 public bool get_IsMarketable()
 public string get_StoreTags()
+public DateTime get_Created()
+public DateTime get_Modified()
 public string get_ItemShortName()
 public ulong get_WorkshopId()
 public ulong get_WorkshopDownload()
@@ -194,4 +221,7 @@ public bool get_IsDownloading()
 public string get_Directory()
 public void .ctor(Item item)
 public bool Download()
+}
+internal UnitySourceGeneratedAssemblyMonoScriptTypes_v1 : object {
+private MonoScriptData Get()
 }

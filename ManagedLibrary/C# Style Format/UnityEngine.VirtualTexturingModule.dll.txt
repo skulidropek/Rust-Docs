@@ -2,6 +2,7 @@ public UnityEngine.Rendering.VirtualTexturing.Debugging : object {
 public bool debugTilesEnabled
 public bool resolvingEnabled
 public bool flushEveryTickEnabled
+public int mipPreloadedTextureCount
 public int GetNumHandles()
 public void GrabHandleInfo(Handle& debugHandle, int index)
 public string GetInfoDump()
@@ -11,6 +12,7 @@ public bool get_resolvingEnabled()
 public void set_resolvingEnabled(bool value)
 public bool get_flushEveryTickEnabled()
 public void set_flushEveryTickEnabled(bool value)
+public int get_mipPreloadedTextureCount()
 }
 public UnityEngine.Rendering.VirtualTexturing.EditorHelpers : object {
 internal int tileSize
@@ -29,10 +31,14 @@ public GraphicsFormat format
 public UInt32 sizeInMegaBytes
 }
 public UnityEngine.Rendering.VirtualTexturing.Procedural : object {
+public void SetDebugFlagInteger(Guid guid, long value)
+public void SetDebugFlagDouble(Guid guid, double value)
 public void SetCPUCacheSize(int sizeInMegabytes)
 public int GetCPUCacheSize()
 public void SetGPUCacheSettings(GPUCacheSetting[] cacheSettings)
 public GPUCacheSetting[] GetGPUCacheSettings()
+public void SetGPUCacheStagingAreaCapacity(UInt32 tilesPerFrame)
+public UInt32 GetGPUCacheStagingAreaCapacity()
 }
 public UnityEngine.Rendering.VirtualTexturing.Resolver : object {
 internal IntPtr m_Ptr
@@ -62,6 +68,7 @@ public void SetCPUCacheSize(int sizeInMegabytes)
 public int GetCPUCacheSize()
 public void SetGPUCacheSettings(GPUCacheSetting[] cacheSettings)
 public GPUCacheSetting[] GetGPUCacheSettings()
+public void EnableMipPreloading(int texturesPerFrame, int mipCount)
 private void RequestRegion_Injected(Material mat, int stackNameId, Rect& r, int mipMap, int numMips)
 }
 public UnityEngine.Rendering.VirtualTexturing.System : object {
@@ -70,5 +77,8 @@ internal bool enabled
 internal bool get_enabled()
 public void Update()
 internal void SetDebugFlag(Guid guid, bool enabled)
-private void SetDebugFlag(Byte[] guid, bool enabled)
+internal void SetDebugFlagInteger(Guid guid, long value)
+internal void SetDebugFlagDouble(Guid guid, double value)
+private void SetDebugFlagInteger(Byte[] guid, long value)
+private void SetDebugFlagDouble(Byte[] guid, double value)
 }

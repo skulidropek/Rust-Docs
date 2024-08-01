@@ -10,10 +10,58 @@ public bool HasValue
 public FlexAlign Value
 internal FlexAlign GetValueOrDefault(FlexAlign defaultValue)
 }
+public Facepunch.Flexbox.FlexAspectRatio : MonoBehaviour {
+public FlexLength Basis
+public int Grow
+public int Shrink
+public FlexAlignSelf AlignSelf
+public FlexLength MinWidth
+public FlexLength MaxWidth
+public FlexLength MinHeight
+public FlexLength MaxHeight
+public Vector2 AspectRatio
+private float _preferredWidth
+private float _preferredHeight
+private RectTransform Facepunch.Flexbox.IFlexNode.Transform
+private bool Facepunch.Flexbox.IFlexNode.IsActive
+private bool Facepunch.Flexbox.IFlexNode.IsAbsolute
+private bool Facepunch.Flexbox.IFlexNode.IsDirty
+private FlexLength Facepunch.Flexbox.IFlexNode.MinWidth
+private FlexLength Facepunch.Flexbox.IFlexNode.MaxWidth
+private FlexLength Facepunch.Flexbox.IFlexNode.MinHeight
+private FlexLength Facepunch.Flexbox.IFlexNode.MaxHeight
+private FlexLength Facepunch.Flexbox.IFlexNode.Basis
+private int Facepunch.Flexbox.IFlexNode.Grow
+private int Facepunch.Flexbox.IFlexNode.Shrink
+private FlexAlignSelf Facepunch.Flexbox.IFlexNode.AlignSelf
+protected void OnEnable()
+protected void OnDisable()
+public void SetLayoutDirty()
+private RectTransform Facepunch.Flexbox.IFlexNode.get_Transform()
+private bool Facepunch.Flexbox.IFlexNode.get_IsActive()
+private bool Facepunch.Flexbox.IFlexNode.get_IsAbsolute()
+private bool Facepunch.Flexbox.IFlexNode.get_IsDirty()
+private FlexLength Facepunch.Flexbox.IFlexNode.get_MinWidth()
+private FlexLength Facepunch.Flexbox.IFlexNode.get_MaxWidth()
+private FlexLength Facepunch.Flexbox.IFlexNode.get_MinHeight()
+private FlexLength Facepunch.Flexbox.IFlexNode.get_MaxHeight()
+private FlexLength Facepunch.Flexbox.IFlexNode.get_Basis()
+private int Facepunch.Flexbox.IFlexNode.get_Grow()
+private int Facepunch.Flexbox.IFlexNode.get_Shrink()
+private FlexAlignSelf Facepunch.Flexbox.IFlexNode.get_AlignSelf()
+private void Facepunch.Flexbox.IFlexNode.SetupTransform()
+private void Facepunch.Flexbox.IFlexNode.SetLayoutDirty(bool force)
+private void Facepunch.Flexbox.IFlexNode.MeasureHorizontal()
+private void Facepunch.Flexbox.IFlexNode.LayoutHorizontal(float maxWidth, float maxHeight)
+private void Facepunch.Flexbox.IFlexNode.MeasureVertical()
+private void Facepunch.Flexbox.IFlexNode.LayoutVertical(float maxWidth, float maxHeight)
+private void Facepunch.Flexbox.IFlexNode.GetScale(Single& scaleX, Single& scaleY)
+private void Facepunch.Flexbox.IFlexNode.GetPreferredSize(Single& preferredWidth, Single& preferredHeight)
+}
 internal Facepunch.Flexbox.FlexChildEnumerable : ValueType {
-private FlexElement _parent
+private FlexElementBase _parent
 private bool _reversed
-public void .ctor(FlexElement parent, bool reversed)
+public void .ctor(FlexElementBase parent, bool reversed)
 public FlexChildEnumerator GetEnumerator()
 private IEnumerator`1<IFlexNode> System.Collections.Generic.IEnumerable<Facepunch.Flexbox.IFlexNode>.GetEnumerator()
 private IEnumerator System.Collections.IEnumerable.GetEnumerator()
@@ -28,11 +76,25 @@ public IFlexNode Current
 private object System.Collections.IEnumerator.Current
 public IFlexNode get_Current()
 private void set_Current(IFlexNode value)
-public void .ctor(FlexElement parent, bool reversed)
+public void .ctor(FlexElementBase parent, bool reversed)
 public bool MoveNext()
 private object System.Collections.IEnumerator.get_Current()
 public void Reset()
 public void Dispose()
+}
+public Facepunch.Flexbox.FlexColumnsElement : FlexElementBase {
+public FlexPadding Padding
+public float Gap
+public bool FixedColumnCount
+public int ColumnCount
+public int ColumnMinWidth
+private int _calculatedColumnCount
+private ColumnParameters[] _columnParams
+protected void MeasureHorizontalImpl()
+protected void LayoutHorizontalImpl(float maxWidth, float maxHeight)
+protected void MeasureVerticalImpl()
+protected void LayoutVerticalImpl(float maxWidth, float maxHeight)
+private void EnsureColumnParamsSize()
 }
 public Facepunch.Flexbox.FlexDirection : Enum {
 public int value__
@@ -41,34 +103,51 @@ public FlexDirection RowReverse
 public FlexDirection Column
 public FlexDirection ColumnReverse
 }
-public Facepunch.Flexbox.FlexElement : UIBehaviour {
+public Facepunch.Flexbox.FlexElement : FlexElementBase {
 private List`1<IFlexNode> SizingChildren
 public FlexDirection FlexDirection
 public FlexJustify JustifyContent
 public FlexAlign AlignItems
 public FlexPadding Padding
 public float Gap
+private ChildSizingParameters[] _childSizes
+private bool IsHorizontal
+protected bool IsReversed
+private bool get_IsHorizontal()
+protected bool get_IsReversed()
+protected void MeasureHorizontalImpl()
+protected void LayoutHorizontalImpl(float maxWidth, float maxHeight)
+protected void MeasureVerticalImpl()
+protected void LayoutVerticalImpl(float maxWidth, float maxHeight)
+private void MeasureMainAxis()
+private void LayoutMainAxis(float maxWidth, float maxHeight)
+private void MeasureCrossAxis()
+private void LayoutCrossAxis(float maxWidth, float maxHeight)
+private bool <LayoutMainAxis>g__TakeGrowth|17_2(Single& value, float maxValue, float scale, <>c__DisplayClass17_0& , <>c__DisplayClass17_1& , <>c__DisplayClass17_2& )
+private bool <LayoutMainAxis>g__TakeShrink|17_3(Single& value, float minValue, float scale, <>c__DisplayClass17_0& , <>c__DisplayClass17_1& , <>c__DisplayClass17_2& )
+private float <LayoutMainAxis>g__GetMainAxisStart|17_1(bool isHorizontal, bool isReversed, <>c__DisplayClass17_0& )
+private float <LayoutCrossAxis>g__GetCrossAxis|19_0(FlexAlign align, bool isHorizontal, float childWidth, float childHeight, <>c__DisplayClass19_0& )
+}
+public Facepunch.Flexbox.FlexElementBase : UIBehaviour {
 public FlexLength Basis
 public int Grow
-public FlexAlignSelf AlignSelf
 public int Shrink
-public bool IsAbsolute
-public bool AutoSizeX
-public bool AutoSizeY
+public FlexAlignSelf AlignSelf
 public FlexLength MinWidth
 public FlexLength MaxWidth
 public FlexLength MinHeight
 public FlexLength MaxHeight
-private bool _isDirty
-private bool _isDoingLayout
-private float _prefWidth
-private float _prefHeight
-private int _growSum
-private int _shrinkSum
-private List`1<IFlexNode> _children
-private ChildSizingParameters[] _childSizes
-private bool IsHorizontal
-private bool IsReversed
+public FlexValue OverridePreferredWidth
+public FlexValue OverridePreferredHeight
+public bool IsAbsolute
+public bool AutoSizeX
+public bool AutoSizeY
+protected bool IsDirty
+protected bool IsDoingLayout
+protected float PrefWidth
+protected float PrefHeight
+protected List`1<IFlexNode> Children
+protected bool IsReversed
 private RectTransform Facepunch.Flexbox.IFlexNode.Transform
 private bool Facepunch.Flexbox.IFlexNode.IsActive
 private bool Facepunch.Flexbox.IFlexNode.IsAbsolute
@@ -81,17 +160,13 @@ private FlexLength Facepunch.Flexbox.IFlexNode.Basis
 private int Facepunch.Flexbox.IFlexNode.Grow
 private int Facepunch.Flexbox.IFlexNode.Shrink
 private FlexAlignSelf Facepunch.Flexbox.IFlexNode.AlignSelf
-private bool get_IsHorizontal()
-private bool get_IsReversed()
-public void SetLayoutDirty(bool force)
+protected bool get_IsReversed()
 internal void PerformLayout()
-private void MeasureMainAxis()
-private void LayoutMainAxis(float maxWidth, float maxHeight)
-private void MeasureCrossAxis()
-private void LayoutCrossAxis(float maxWidth, float maxHeight)
-private T& Pick(bool value, T& ifTrue, T& ifFalse)
-private float CalculateLengthValue(FlexLength& length, float fillValue, float defaultValue)
-private void SetupTransform()
+public void SetLayoutDirty(bool force)
+protected void MeasureHorizontalImpl()
+protected void LayoutHorizontalImpl(float maxWidth, float maxHeight)
+protected void MeasureVerticalImpl()
+protected void LayoutVerticalImpl(float maxWidth, float maxHeight)
 private RectTransform Facepunch.Flexbox.IFlexNode.get_Transform()
 private bool Facepunch.Flexbox.IFlexNode.get_IsActive()
 private bool Facepunch.Flexbox.IFlexNode.get_IsAbsolute()
@@ -104,6 +179,7 @@ private FlexLength Facepunch.Flexbox.IFlexNode.get_Basis()
 private int Facepunch.Flexbox.IFlexNode.get_Grow()
 private int Facepunch.Flexbox.IFlexNode.get_Shrink()
 private FlexAlignSelf Facepunch.Flexbox.IFlexNode.get_AlignSelf()
+private void Facepunch.Flexbox.IFlexNode.SetupTransform()
 private void Facepunch.Flexbox.IFlexNode.MeasureHorizontal()
 private void Facepunch.Flexbox.IFlexNode.LayoutHorizontal(float maxWidth, float maxHeight)
 private void Facepunch.Flexbox.IFlexNode.MeasureVertical()
@@ -116,34 +192,74 @@ protected void OnRectTransformDimensionsChange()
 protected void OnBeforeTransformParentChanged()
 protected void OnTransformParentChanged()
 protected void OnTransformChildrenChanged()
-private bool <LayoutMainAxis>g__TakeGrowth|33_2(Single& value, float maxValue, float scale, <>c__DisplayClass33_0& , <>c__DisplayClass33_1& , <>c__DisplayClass33_2& )
-private bool <LayoutMainAxis>g__TakeShrink|33_3(Single& value, float minValue, float scale, <>c__DisplayClass33_0& , <>c__DisplayClass33_1& , <>c__DisplayClass33_2& )
-private float <LayoutMainAxis>g__GetMainAxisStart|33_1(bool isHorizontal, bool isReversed, <>c__DisplayClass33_0& )
-private float <LayoutCrossAxis>g__GetCrossAxis|35_0(FlexAlign align, bool isHorizontal, float childWidth, float childHeight, <>c__DisplayClass35_0& )
+protected T& Pick(bool value, T& ifTrue, T& ifFalse)
+protected float CalculateLengthValue(FlexLength& length, float fillValue, float defaultValue)
+}
+public Facepunch.Flexbox.FlexGraphicTransform : UIBehaviour {
+public float OriginX
+public float OriginY
+public float TranslateX
+public float TranslateY
+public float ScaleX
+public float ScaleY
+public float Rotate
+private Dictionary`2<TextMeshProUGUI, FlexGraphicTransform> TextMeshProTransformers
+private List`1<TMP_SubMeshUI> SubMeshUIs
+private List`1<Mesh> Meshes
+private VertexHelper VertexHelper
+private List`1<Vector3> Vertices
+private List`1<int> Indices
+private List`1<Color32> Colors
+private List`1<Vector2> Uv0
+private List`1<Vector2> Uv1
+private List`1<Vector3> Normals
+private List`1<Vector4> Tangents
+private FlexGraphicTransform _parent
+private RectTransform _rt
+private Graphic _graphic
+private TextMeshProUGUI _textMeshPro
+private CanvasRenderer _canvasRenderer
+private Matrix4x4 transformationMatrix
+protected void Awake()
+private void UpdateParent()
+protected void OnEnable()
+protected void OnDisable()
+protected void OnDidApplyAnimationProperties()
+protected void OnTransformParentChanged()
+public void SetVerticesDirty()
+public void ModifyMesh(Mesh mesh)
+private Matrix4x4 get_transformationMatrix()
+public void ModifyMesh(VertexHelper vh)
+private void ModifyTextMeshPro()
+private void CopyIntoVertexHelper(Mesh mesh)
 }
 public Facepunch.Flexbox.FlexJustify : Enum {
 public int value__
 public FlexJustify Start
 public FlexJustify End
 public FlexJustify Center
+public FlexJustify SpaceBetween
+public FlexJustify SpaceAround
+public FlexJustify SpaceEvenly
 }
 public Facepunch.Flexbox.FlexLayoutManager : MonoBehaviour {
 private FlexLayoutManager <Instance>k__BackingField
-private List`1<FlexElement> DirtyElements
-private List`1<FlexElement> UpdatingElements
+private List`1<FlexElementBase> DirtyElements
+private List`1<FlexElementBase> UpdatingElements
 public FlexLayoutManager Instance
 public FlexLayoutManager get_Instance()
 private void set_Instance(FlexLayoutManager value)
 public void OnEnable()
 public void OnDisable()
 public void LateUpdate()
-public void EnqueueLayout(FlexElement element)
+public void EnqueueLayout(FlexElementBase element)
 private void FlushQueue()
 }
 public Facepunch.Flexbox.FlexLength : ValueType {
 public bool HasValue
 public float Value
 public FlexUnit Unit
+public float GetValueOrDefault(float defaultValue)
 }
 public Facepunch.Flexbox.FlexPadding : ValueType {
 public float left
@@ -180,7 +296,6 @@ private FlexAlignSelf Facepunch.Flexbox.IFlexNode.AlignSelf
 protected void OnEnable()
 protected void OnDisable()
 public void SetLayoutDirty()
-private void SetupTransform()
 private RectTransform Facepunch.Flexbox.IFlexNode.get_Transform()
 private bool Facepunch.Flexbox.IFlexNode.get_IsActive()
 private bool Facepunch.Flexbox.IFlexNode.get_IsAbsolute()
@@ -193,6 +308,7 @@ private FlexLength Facepunch.Flexbox.IFlexNode.get_Basis()
 private int Facepunch.Flexbox.IFlexNode.get_Grow()
 private int Facepunch.Flexbox.IFlexNode.get_Shrink()
 private FlexAlignSelf Facepunch.Flexbox.IFlexNode.get_AlignSelf()
+private void Facepunch.Flexbox.IFlexNode.SetupTransform()
 private void Facepunch.Flexbox.IFlexNode.SetLayoutDirty(bool force)
 private void Facepunch.Flexbox.IFlexNode.MeasureHorizontal()
 private void Facepunch.Flexbox.IFlexNode.LayoutHorizontal(float maxWidth, float maxHeight)
@@ -205,7 +321,7 @@ public Facepunch.Flexbox.FlexTransition : MonoBehaviour {
 public Definition[] Transitions
 private List`1<int> _pendingIds
 private bool _currentState
-public void Start()
+public void Awake()
 public void SwitchState(bool enabled, bool animate)
 public void SwitchState(bool enabled)
 public void ToggleState()
@@ -216,6 +332,11 @@ public Facepunch.Flexbox.FlexUnit : Enum {
 public int value__
 public FlexUnit Pixels
 public FlexUnit Percent
+}
+public Facepunch.Flexbox.FlexValue : ValueType {
+public bool HasValue
+public float Value
+public float GetOrDefault(float defaultValue)
 }
 public Facepunch.Flexbox.IFlexNode {
 public RectTransform Transform
@@ -242,6 +363,7 @@ public int get_Grow()
 public int get_Shrink()
 public FlexLength get_Basis()
 public FlexAlignSelf get_AlignSelf()
+public void SetupTransform()
 public void SetLayoutDirty(bool force)
 public void MeasureHorizontal()
 public void LayoutHorizontal(float maxWidth, float maxHeight)
@@ -252,4 +374,7 @@ public void GetPreferredSize(Single& preferredWidth, Single& preferredHeight)
 }
 public Facepunch.Flexbox.Utility.FlexUtility : object {
 public bool IsPrefabRoot(GameObject gameObject)
+}
+internal UnitySourceGeneratedAssemblyMonoScriptTypes_v1 : object {
+private MonoScriptData Get()
 }

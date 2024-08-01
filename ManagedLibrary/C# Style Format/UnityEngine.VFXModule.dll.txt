@@ -1,3 +1,18 @@
+public UnityEngine.VFX.VFXBatchedEffectInfo : ValueType {
+public VisualEffectAsset vfxAsset
+public UInt32 activeBatchCount
+public UInt32 inactiveBatchCount
+public UInt32 activeInstanceCount
+public UInt32 unbatchedInstanceCount
+public UInt32 totalInstanceCapacity
+public UInt32 maxInstancePerBatchCapacity
+public ulong totalGPUSizeInBytes
+public ulong totalCPUSizeInBytes
+}
+internal UnityEngine.VFX.VFXBatchInfo : ValueType {
+public UInt32 capacity
+public UInt32 activeInstanceCount
+}
 public UnityEngine.VFX.VFXCameraBufferTypes : Enum {
 public int value__
 public VFXCameraBufferTypes None
@@ -172,6 +187,7 @@ public VFXExpressionOperation VertexBufferFromMesh
 public VFXExpressionOperation VertexBufferFromSkinnedMeshRenderer
 public VFXExpressionOperation IndexBufferFromMesh
 public VFXExpressionOperation MeshFromSkinnedMeshRenderer
+public VFXExpressionOperation RootBoneTransformFromSkinnedMeshRenderer
 public VFXExpressionOperation BakeCurve
 public VFXExpressionOperation BakeGradient
 public VFXExpressionOperation BitwiseLeftShift
@@ -186,6 +202,12 @@ public VFXExpressionOperation CastFloatToUint
 public VFXExpressionOperation CastIntToUint
 public VFXExpressionOperation CastFloatToInt
 public VFXExpressionOperation CastUintToInt
+public VFXExpressionOperation CastIntToBool
+public VFXExpressionOperation CastUintToBool
+public VFXExpressionOperation CastFloatToBool
+public VFXExpressionOperation CastBoolToInt
+public VFXExpressionOperation CastBoolToUint
+public VFXExpressionOperation CastBoolToFloat
 public VFXExpressionOperation RGBtoHSV
 public VFXExpressionOperation HSVtoRGB
 public VFXExpressionOperation Condition
@@ -198,6 +220,7 @@ public VFXExpressionOperation ExtractNearPlaneFromMainCamera
 public VFXExpressionOperation ExtractFarPlaneFromMainCamera
 public VFXExpressionOperation ExtractAspectRatioFromMainCamera
 public VFXExpressionOperation ExtractPixelDimensionsFromMainCamera
+public VFXExpressionOperation ExtractScaledPixelDimensionsFromMainCamera
 public VFXExpressionOperation ExtractLensShiftFromMainCamera
 public VFXExpressionOperation GetBufferFromMainCamera
 public VFXExpressionOperation IsMainCameraOrthographic
@@ -278,6 +301,23 @@ private void GetVector3_Injected(int nameID, Vector3& ret)
 private void GetVector4_Injected(int nameID, Vector4& ret)
 private void GetMatrix4x4_Injected(int nameID, Matrix4x4& ret)
 }
+internal UnityEngine.VFX.VFXInstancingDisabledReason : Enum {
+public int value__
+public VFXInstancingDisabledReason None
+public VFXInstancingDisabledReason IndirectDraw
+public VFXInstancingDisabledReason OutputEvent
+public VFXInstancingDisabledReason GPUEvent
+public VFXInstancingDisabledReason AutomaticBounds
+public VFXInstancingDisabledReason MeshOutput
+public VFXInstancingDisabledReason ExposedObject
+public VFXInstancingDisabledReason Unknown
+}
+internal UnityEngine.VFX.VFXInstancingMode : Enum {
+public int value__
+public VFXInstancingMode Disabled
+public VFXInstancingMode Auto
+public VFXInstancingMode Custom
+}
 internal UnityEngine.VFX.VFXMainCameraBufferFallback : Enum {
 public int value__
 public VFXMainCameraBufferFallback NoFallback
@@ -289,23 +329,38 @@ private VFXCameraXRSettings kDefaultCameraXRSettings
 internal ScriptableObject runtimeResources
 public float fixedTimeStep
 public float maxDeltaTime
+internal float maxScrubTime
 internal string renderPipeSettingsPath
+internal UInt32 batchEmptyLifetime
 public VisualEffect[] GetComponents()
 internal ScriptableObject get_runtimeResources()
 public float get_fixedTimeStep()
 public void set_fixedTimeStep(float value)
 public float get_maxDeltaTime()
 public void set_maxDeltaTime(float value)
+internal float get_maxScrubTime()
+internal void set_maxScrubTime(float value)
 internal string get_renderPipeSettingsPath()
+internal UInt32 get_batchEmptyLifetime()
+internal void set_batchEmptyLifetime(UInt32 value)
+internal void CleanupEmptyBatches(bool force)
+public void FlushEmptyBatches()
+public VFXBatchedEffectInfo GetBatchedEffectInfo(VisualEffectAsset vfx)
+public void GetBatchedEffectInfos(List`1<VFXBatchedEffectInfo> infos)
+internal VFXBatchInfo GetBatchInfo(VisualEffectAsset vfx, UInt32 batchIndex)
 public void ProcessCamera(Camera cam)
 public void PrepareCamera(Camera cam)
 public void PrepareCamera(Camera cam, VFXCameraXRSettings camXRSettings)
 public void ProcessCameraCommand(Camera cam, CommandBuffer cmd)
 public void ProcessCameraCommand(Camera cam, CommandBuffer cmd, VFXCameraXRSettings camXRSettings)
+public void ProcessCameraCommand(Camera cam, CommandBuffer cmd, VFXCameraXRSettings camXRSettings, CullingResults results)
+private void Internal_ProcessCameraCommand(Camera cam, CommandBuffer cmd, VFXCameraXRSettings camXRSettings, IntPtr cullResults)
 public VFXCameraBufferTypes IsCameraBufferNeeded(Camera cam)
 public void SetCameraBuffer(Camera cam, VFXCameraBufferTypes type, Texture buffer, int x, int y, int width, int height)
+private void GetBatchedEffectInfo_Injected(VisualEffectAsset vfx, VFXBatchedEffectInfo& ret)
+private void GetBatchInfo_Injected(VisualEffectAsset vfx, UInt32 batchIndex, VFXBatchInfo& ret)
 private void PrepareCamera_Injected(Camera cam, VFXCameraXRSettings& camXRSettings)
-private void ProcessCameraCommand_Injected(Camera cam, CommandBuffer cmd, VFXCameraXRSettings& camXRSettings)
+private void Internal_ProcessCameraCommand_Injected(Camera cam, CommandBuffer cmd, VFXCameraXRSettings& camXRSettings, IntPtr cullResults)
 }
 public UnityEngine.VFX.VFXOutputEventArgs : ValueType {
 private int <nameId>k__BackingField
@@ -322,6 +377,16 @@ public UInt32 capacity
 public bool sleeping
 public Bounds bounds
 public void .ctor(UInt32 aliveCount, UInt32 capacity, bool sleeping, Bounds bounds)
+}
+internal UnityEngine.VFX.VFXSkinnedMeshFrame : Enum {
+public int value__
+public VFXSkinnedMeshFrame Current
+public VFXSkinnedMeshFrame Previous
+}
+internal UnityEngine.VFX.VFXSkinnedTransform : Enum {
+public int value__
+public VFXSkinnedTransform LocalRootBoneTransform
+public VFXSkinnedTransform WorldRootBoneTransform
 }
 public UnityEngine.VFX.VFXSpawnerCallbacks : ScriptableObject {
 public void OnPlay(VFXSpawnerState state, VFXExpressionValues vfxValues, VisualEffect vfxComponent)
@@ -396,6 +461,8 @@ public VFXSystemFlag SystemNeedsComputeBounds
 public VFXSystemFlag SystemAutomaticBounds
 public VFXSystemFlag SystemInWorldSpace
 public VFXSystemFlag SystemHasDirectLink
+public VFXSystemFlag SystemHasAttributeBuffer
+public VFXSystemFlag SystemUsesInstancedRendering
 }
 internal UnityEngine.VFX.VFXSystemType : Enum {
 public int value__
@@ -414,6 +481,8 @@ public VFXTaskType Output
 public VFXTaskType CameraSort
 public VFXTaskType PerCameraUpdate
 public VFXTaskType PerCameraSort
+public VFXTaskType PerOutputSort
+public VFXTaskType GlobalSort
 public VFXTaskType ParticlePointOutput
 public VFXTaskType ParticleLineOutput
 public VFXTaskType ParticleQuadOutput
@@ -475,6 +544,7 @@ public string initialEventName
 public bool culled
 public VisualEffectAsset visualEffectAsset
 public int aliveParticleCount
+internal float time
 public bool get_pause()
 public void set_pause(bool value)
 public float get_playRate()
@@ -502,7 +572,9 @@ public void Play()
 public void Stop(VFXEventAttribute eventAttribute)
 public void Stop()
 public void Reinit()
+internal void Reinit(bool sendInitialEventAndPrewarm)
 public void AdvanceOneFrame()
+internal void RecreateData()
 public void ResetOverride(int nameID)
 public TextureDimension GetTextureDimension(int nameID)
 public bool HasBool(int nameID)
@@ -549,14 +621,14 @@ public Gradient GetGradient(int nameID)
 private void Internal_GetGradient(int nameID, Gradient gradient)
 public AnimationCurve GetAnimationCurve(int nameID)
 private void Internal_GetAnimationCurve(int nameID, AnimationCurve curve)
-public bool HasSystem(int nameID)
 public VFXParticleSystemInfo GetParticleSystemInfo(int nameID)
 private void GetSpawnSystemInfo(int nameID, IntPtr spawnerState)
 public bool HasAnySystemAwake()
 internal Bounds GetComputedBounds(int nameID)
-internal Vector3 GetCurrentPadding(int nameID)
+internal Vector3 GetCurrentBoundsPadding(int nameID)
 public void GetSpawnSystemInfo(int nameID, VFXSpawnerState spawnState)
 public VFXSpawnerState GetSpawnSystemInfo(int nameID)
+public bool HasSystem(int nameID)
 public void GetSystemNames(List`1<string> names)
 public void GetParticleSystemNames(List`1<string> names)
 public void GetOutputEventNames(List`1<string> names)
@@ -609,8 +681,9 @@ public bool HasSystem(string name)
 public VFXParticleSystemInfo GetParticleSystemInfo(string name)
 public VFXSpawnerState GetSpawnSystemInfo(string name)
 internal Bounds GetComputedBounds(string name)
-internal Vector3 GetCurrentPadding(string name)
+internal Vector3 GetCurrentBoundsPadding(string name)
 public int get_aliveParticleCount()
+internal float get_time()
 public void Simulate(float stepDeltaTime, UInt32 stepCount)
 private VFXEventAttribute InvokeGetCachedEventAttributeForOutputEvent_Internal(VisualEffect source)
 private void InvokeOutputEventReceived_Internal(VisualEffect source, int eventNameId)
@@ -624,7 +697,7 @@ private void GetVector4_Injected(int nameID, Vector4& ret)
 private void GetMatrix4x4_Injected(int nameID, Matrix4x4& ret)
 private void GetParticleSystemInfo_Injected(int nameID, VFXParticleSystemInfo& ret)
 private void GetComputedBounds_Injected(int nameID, Bounds& ret)
-private void GetCurrentPadding_Injected(int nameID, Vector3& ret)
+private void GetCurrentBoundsPadding_Injected(int nameID, Vector3& ret)
 }
 public UnityEngine.VFX.VisualEffectAsset : VisualEffectObject {
 public string PlayEventName
@@ -634,5 +707,10 @@ public int StopEventID
 public TextureDimension GetTextureDimension(int nameID)
 public void GetExposedProperties(List`1<VFXExposedProperty> exposedProperties)
 public void GetEvents(List`1<string> names)
+internal bool HasSystem(int nameID)
+internal void GetSystemNames(List`1<string> names)
+internal void GetParticleSystemNames(List`1<string> names)
+internal void GetOutputEventNames(List`1<string> names)
+internal void GetSpawnSystemNames(List`1<string> names)
 public TextureDimension GetTextureDimension(string name)
 }

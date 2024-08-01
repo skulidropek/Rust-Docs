@@ -8,6 +8,7 @@ public ulong MotdAuthor
 public Byte[] Logo
 public long LogoTimestamp
 public Color32 Color
+public long Score
 }
 internal DBError : object {
 public int UniqueConstraintViolation
@@ -25,11 +26,13 @@ private long <MotdTimestamp>k__BackingField
 private ulong <MotdAuthor>k__BackingField
 private Byte[] <Logo>k__BackingField
 private Color32 <Color>k__BackingField
+private long <Score>k__BackingField
 private LocalClanBackend _backend
 private List`1<ClanRole> _roles
 private List`1<ClanMember> _members
 private List`1<ClanInvite> _invites
 private List`1<ClanChatEntry> _chatHistory
+private RealTimeSince _sinceLastRefresh
 public long ClanId
 public string Name
 public long Created
@@ -39,6 +42,7 @@ public long MotdTimestamp
 public ulong MotdAuthor
 public Byte[] Logo
 public Color32 Color
+public long Score
 public IReadOnlyList`1<ClanRole> Roles
 public IReadOnlyList`1<ClanMember> Members
 public int MaxMemberCount
@@ -60,12 +64,15 @@ public Byte[] get_Logo()
 private void set_Logo(Byte[] value)
 public Color32 get_Color()
 private void set_Color(Color32 value)
+public long get_Score()
+private void set_Score(long value)
 public IReadOnlyList`1<ClanRole> get_Roles()
 public IReadOnlyList`1<ClanMember> get_Members()
 public int get_MaxMemberCount()
 public IReadOnlyList`1<ClanInvite> get_Invites()
 public void .ctor(LocalClanBackend backend, long clanId)
 public bool Refresh(ClanDataSource sources)
+public ValueTask RefreshIfStale()
 public ValueTask`1<ClanValueResult`1<ClanLogs>> GetLogs(int limit, ulong bySteamId)
 public ValueTask`1<ClanResult> UpdateLastSeen(ulong steamId)
 public ValueTask`1<ClanResult> SetMotd(string newMotd, ulong bySteamId)
@@ -82,6 +89,8 @@ public ValueTask`1<ClanResult> UpdateRole(ClanRole role, ulong bySteamId)
 public ValueTask`1<ClanResult> SwapRoleRanks(int roleIdA, int roleIdB, ulong bySteamId)
 public ValueTask`1<ClanResult> DeleteRole(int roleId, ulong bySteamId)
 public ValueTask`1<ClanResult> Disband(ulong bySteamId)
+public ValueTask`1<ClanValueResult`1<ClanScoreEvents>> GetScoreEvents(int limit, ulong bySteamId)
+public ValueTask`1<ClanResult> AddScoreEvent(ClanScoreEvent scoreEvent)
 public ValueTask`1<ClanValueResult`1<ClanChatScrollback>> GetChatScrollback()
 public ValueTask`1<ClanResult> SendChatMessage(string name, string message, ulong bySteamId)
 private int OtherLeaderCount(ulong excludeSteamId)
@@ -103,6 +112,7 @@ public bool TryGet(long clanId, IClan& clan)
 public ValueTask`1<ClanValueResult`1<IClan>> GetByMember(ulong steamId)
 public ValueTask`1<ClanValueResult`1<IClan>> Create(ulong leaderSteamId, string name)
 public ValueTask`1<ClanValueResult`1<List`1<ClanInvitation>>> ListInvitations(ulong steamId)
+public ValueTask`1<ClanValueResult`1<List`1<ClanLeaderboardEntry>>> GetLeaderboard(int limit)
 private bool TryGetClan(long clanId, LocalClan& clan)
 public void ClanChanged(long clanId, ClanDataSource dataSources)
 public void ClanDisbanded(long clanId)
@@ -120,6 +130,7 @@ public bool UpdateClanLogo(long clanId, Byte[] newLogo)
 public bool UpdateClanColor(long clanId, Color32 newColor)
 public bool DeleteClan(long clanId)
 public Nullable`1<long> FindClanByMember(ulong memberSteamId)
+public List`1<ClanLeaderboardEntry> ListTopClans(int limit)
 public void Open(string rootFolder)
 private void CreateInvitesTable()
 public bool CreateInvite(long clanId, ulong steamId, ulong recruiterSteamId)
@@ -150,4 +161,10 @@ public bool UpdateRole(long clanId, ClanRole role)
 public bool UpdateRoleName(long clanId, int roleId, string newRoleName)
 public bool SwapRoleRanks(long clanId, int roleIdA, int roleIdB)
 public bool DeleteRole(long clanId, int roleId)
+private void CreateScoreEventsTable()
+public void AppendScoreEvent(long clanId, ClanScoreEvent e)
+public List`1<ClanScoreEvent> ReadScoreEvents(long clanId, int limit)
+}
+internal UnitySourceGeneratedAssemblyMonoScriptTypes_v1 : object {
+private MonoScriptData Get()
 }

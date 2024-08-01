@@ -225,34 +225,52 @@ public NavMeshBuildDebugFlags get_flags()
 public void set_flags(NavMeshBuildDebugFlags value)
 }
 public UnityEngine.AI.NavMeshBuilder : object {
+public void CollectSources(Bounds includedWorldBounds, int includedLayerMask, NavMeshCollectGeometry geometry, int defaultArea, bool generateLinksByDefault, List`1<NavMeshBuildMarkup> markups, bool includeOnlyMarkedObjects, List`1<NavMeshBuildSource> results)
 public void CollectSources(Bounds includedWorldBounds, int includedLayerMask, NavMeshCollectGeometry geometry, int defaultArea, List`1<NavMeshBuildMarkup> markups, List`1<NavMeshBuildSource> results)
+public void CollectSources(Transform root, int includedLayerMask, NavMeshCollectGeometry geometry, int defaultArea, bool generateLinksByDefault, List`1<NavMeshBuildMarkup> markups, bool includeOnlyMarkedObjects, List`1<NavMeshBuildSource> results)
 public void CollectSources(Transform root, int includedLayerMask, NavMeshCollectGeometry geometry, int defaultArea, List`1<NavMeshBuildMarkup> markups, List`1<NavMeshBuildSource> results)
-private NavMeshBuildSource[] CollectSourcesInternal(int includedLayerMask, Bounds includedWorldBounds, Transform root, bool useBounds, NavMeshCollectGeometry geometry, int defaultArea, NavMeshBuildMarkup[] markups)
+private NavMeshBuildSource[] CollectSourcesInternal(int includedLayerMask, Bounds includedWorldBounds, Transform root, bool useBounds, NavMeshCollectGeometry geometry, int defaultArea, bool generateLinksByDefault, NavMeshBuildMarkup[] markups, bool includeOnlyMarkedObjects)
 public NavMeshData BuildNavMeshData(NavMeshBuildSettings buildSettings, List`1<NavMeshBuildSource> sources, Bounds localBounds, Vector3 position, Quaternion rotation)
 public bool UpdateNavMeshData(NavMeshData data, NavMeshBuildSettings buildSettings, List`1<NavMeshBuildSource> sources, Bounds localBounds)
 private bool UpdateNavMeshDataListInternal(NavMeshData data, NavMeshBuildSettings buildSettings, object sources, Bounds localBounds)
 public AsyncOperation UpdateNavMeshDataAsync(NavMeshData data, NavMeshBuildSettings buildSettings, List`1<NavMeshBuildSource> sources, Bounds localBounds)
 public void Cancel(NavMeshData data)
 private AsyncOperation UpdateNavMeshDataAsyncListInternal(NavMeshData data, NavMeshBuildSettings buildSettings, object sources, Bounds localBounds)
-private NavMeshBuildSource[] CollectSourcesInternal_Injected(int includedLayerMask, Bounds& includedWorldBounds, Transform root, bool useBounds, NavMeshCollectGeometry geometry, int defaultArea, NavMeshBuildMarkup[] markups)
+private NavMeshBuildSource[] CollectSourcesInternal_Injected(int includedLayerMask, Bounds& includedWorldBounds, Transform root, bool useBounds, NavMeshCollectGeometry geometry, int defaultArea, bool generateLinksByDefault, NavMeshBuildMarkup[] markups, bool includeOnlyMarkedObjects)
 private bool UpdateNavMeshDataListInternal_Injected(NavMeshData data, NavMeshBuildSettings& buildSettings, object sources, Bounds& localBounds)
 private AsyncOperation UpdateNavMeshDataAsyncListInternal_Injected(NavMeshData data, NavMeshBuildSettings& buildSettings, object sources, Bounds& localBounds)
 }
 public UnityEngine.AI.NavMeshBuildMarkup : ValueType {
 private int m_OverrideArea
 private int m_Area
+private int m_InheritIgnoreFromBuild
 private int m_IgnoreFromBuild
+private int m_OverrideGenerateLinks
+private int m_GenerateLinks
 private int m_InstanceID
+private int m_IgnoreChildren
 public bool overrideArea
 public int area
+public bool overrideIgnore
 public bool ignoreFromBuild
+public bool overrideGenerateLinks
+public bool generateLinks
+public bool applyToChildren
 public Transform root
 public bool get_overrideArea()
 public void set_overrideArea(bool value)
 public int get_area()
 public void set_area(int value)
+public bool get_overrideIgnore()
+public void set_overrideIgnore(bool value)
 public bool get_ignoreFromBuild()
 public void set_ignoreFromBuild(bool value)
+public bool get_overrideGenerateLinks()
+public void set_overrideGenerateLinks(bool value)
+public bool get_generateLinks()
+public void set_generateLinks(bool value)
+public bool get_applyToChildren()
+public void set_applyToChildren(bool value)
 public Transform get_root()
 public void set_root(Transform value)
 private Transform InternalGetRootGO(int instanceID)
@@ -270,7 +288,7 @@ private int m_OverrideVoxelSize
 private float m_VoxelSize
 private int m_OverrideTileSize
 private int m_TileSize
-private int m_AccuratePlacement
+private int m_BuildHeightMesh
 private UInt32 m_MaxJobWorkers
 private int m_PreserveTilesOutsideBounds
 private NavMeshBuildDebugSettings m_Debug
@@ -279,6 +297,8 @@ public float agentRadius
 public float agentHeight
 public float agentSlope
 public float agentClimb
+public float ledgeDropHeight
+public float maxJumpAcrossDistance
 public float minRegionArea
 public bool overrideVoxelSize
 public float voxelSize
@@ -286,6 +306,7 @@ public bool overrideTileSize
 public int tileSize
 public UInt32 maxJobWorkers
 public bool preserveTilesOutsideBounds
+public bool buildHeightMesh
 public NavMeshBuildDebugSettings debug
 public int get_agentTypeID()
 public void set_agentTypeID(int value)
@@ -297,6 +318,10 @@ public float get_agentSlope()
 public void set_agentSlope(float value)
 public float get_agentClimb()
 public void set_agentClimb(float value)
+public float get_ledgeDropHeight()
+public void set_ledgeDropHeight(float value)
+public float get_maxJumpAcrossDistance()
+public void set_maxJumpAcrossDistance(float value)
 public float get_minRegionArea()
 public void set_minRegionArea(float value)
 public bool get_overrideVoxelSize()
@@ -311,6 +336,8 @@ public UInt32 get_maxJobWorkers()
 public void set_maxJobWorkers(UInt32 value)
 public bool get_preserveTilesOutsideBounds()
 public void set_preserveTilesOutsideBounds(bool value)
+public bool get_buildHeightMesh()
+public void set_buildHeightMesh(bool value)
 public NavMeshBuildDebugSettings get_debug()
 public void set_debug(NavMeshBuildDebugSettings value)
 public String[] ValidationReport(Bounds buildBounds)
@@ -324,10 +351,12 @@ private NavMeshBuildSourceShape m_Shape
 private int m_Area
 private int m_InstanceID
 private int m_ComponentID
+private int m_GenerateLinks
 public Matrix4x4 transform
 public Vector3 size
 public NavMeshBuildSourceShape shape
 public int area
+public bool generateLinks
 public Object sourceObject
 public Component component
 public Matrix4x4 get_transform()
@@ -338,6 +367,8 @@ public NavMeshBuildSourceShape get_shape()
 public void set_shape(NavMeshBuildSourceShape value)
 public int get_area()
 public void set_area(int value)
+public bool get_generateLinks()
+public void set_generateLinks(bool value)
 public Object get_sourceObject()
 public void set_sourceObject(Object value)
 public Component get_component()
@@ -363,6 +394,8 @@ public UnityEngine.AI.NavMeshData : Object {
 public Bounds sourceBounds
 public Vector3 position
 public Quaternion rotation
+internal bool hasHeightMeshData
+internal NavMeshBuildSettings buildSettings
 public void .ctor(int agentTypeID)
 private void Internal_Create(NavMeshData mono, int agentTypeID)
 public Bounds get_sourceBounds()
@@ -370,11 +403,14 @@ public Vector3 get_position()
 public void set_position(Vector3 value)
 public Quaternion get_rotation()
 public void set_rotation(Quaternion value)
+internal bool get_hasHeightMeshData()
+internal NavMeshBuildSettings get_buildSettings()
 private void get_sourceBounds_Injected(Bounds& ret)
 private void get_position_Injected(Vector3& ret)
 private void set_position_Injected(Vector3& value)
 private void get_rotation_Injected(Quaternion& ret)
 private void set_rotation_Injected(Quaternion& value)
+private void get_buildSettings_Injected(NavMeshBuildSettings& ret)
 }
 public UnityEngine.AI.NavMeshDataInstance : ValueType {
 private int <id>k__BackingField

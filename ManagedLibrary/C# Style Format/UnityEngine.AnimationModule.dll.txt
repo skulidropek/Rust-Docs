@@ -789,7 +789,6 @@ private int GetAnimatorClipInfoCountInternal(PlayableHandle& handle, int layerIn
 private AnimatorClipInfo[] GetNextAnimatorClipInfoInternal(PlayableHandle& handle, int layerIndex)
 private string ResolveHashInternal(PlayableHandle& handle, int hash)
 private bool IsInTransitionInternal(PlayableHandle& handle, int layerIndex)
-private AnimatorControllerParameter[] GetParametersArrayInternal(PlayableHandle& handle)
 private AnimatorControllerParameter GetParameterInternal(PlayableHandle& handle, int index)
 private int GetParameterCountInternal(PlayableHandle& handle)
 private int StringToHash(string name)
@@ -884,6 +883,10 @@ public CustomStreamPropertyType Float
 public CustomStreamPropertyType Bool
 public CustomStreamPropertyType Int
 }
+internal UnityEngine.Animations.DiscreteEvaluationAttributeUtilities : object {
+public int ConvertFloatToDiscreteInt(float f)
+public float ConvertDiscreteIntToFloat(int f)
+}
 public UnityEngine.Animations.IAnimationJob {
 public void ProcessAnimation(AnimationStream stream)
 public void ProcessRootMotion(AnimationStream stream)
@@ -891,6 +894,9 @@ public void ProcessRootMotion(AnimationStream stream)
 public UnityEngine.Animations.IAnimationJobPlayable {
 public T GetJobData()
 public void SetJobData(T jobData)
+}
+internal UnityEngine.Animations.IAnimationPreviewable {
+public void OnPreviewUpdate()
 }
 public UnityEngine.Animations.IAnimationWindowPreview {
 public void StartPreview()
@@ -1285,7 +1291,9 @@ public Quaternion GetLocalRotation(AnimationStream stream)
 public void SetLocalRotation(AnimationStream stream, Quaternion rotation)
 public Vector3 GetLocalScale(AnimationStream stream)
 public void GetLocalTRS(AnimationStream stream, Vector3& position, Quaternion& rotation, Vector3& scale)
+public Matrix4x4 GetLocalToParentMatrix(AnimationStream stream)
 public void GetGlobalTR(AnimationStream stream, Vector3& position, Quaternion& rotation)
+public Matrix4x4 GetLocalToWorldMatrix(AnimationStream stream)
 public void SetLocalScale(AnimationStream stream, Vector3 scale)
 private bool HasValidTransform(AnimationStream& stream)
 private Vector3 GetPositionInternal(AnimationStream& stream)
@@ -1294,7 +1302,9 @@ private Quaternion GetRotationInternal(AnimationStream& stream)
 private Quaternion GetLocalRotationInternal(AnimationStream& stream)
 private Vector3 GetLocalScaleInternal(AnimationStream& stream)
 private void GetLocalTRSInternal(AnimationStream& stream, Vector3& position, Quaternion& rotation, Vector3& scale)
+private Matrix4x4 GetLocalToParentMatrixInternal(AnimationStream& stream)
 private void GetGlobalTRInternal(AnimationStream& stream, Vector3& position, Quaternion& rotation)
+private Matrix4x4 GetLocalToWorldMatrixInternal(AnimationStream& stream)
 private bool HasValidTransform_Injected(TransformSceneHandle& _unity_self, AnimationStream& stream)
 private void GetPositionInternal_Injected(TransformSceneHandle& _unity_self, AnimationStream& stream, Vector3& ret)
 private void GetLocalPositionInternal_Injected(TransformSceneHandle& _unity_self, AnimationStream& stream, Vector3& ret)
@@ -1302,7 +1312,9 @@ private void GetRotationInternal_Injected(TransformSceneHandle& _unity_self, Ani
 private void GetLocalRotationInternal_Injected(TransformSceneHandle& _unity_self, AnimationStream& stream, Quaternion& ret)
 private void GetLocalScaleInternal_Injected(TransformSceneHandle& _unity_self, AnimationStream& stream, Vector3& ret)
 private void GetLocalTRSInternal_Injected(TransformSceneHandle& _unity_self, AnimationStream& stream, Vector3& position, Quaternion& rotation, Vector3& scale)
+private void GetLocalToParentMatrixInternal_Injected(TransformSceneHandle& _unity_self, AnimationStream& stream, Matrix4x4& ret)
 private void GetGlobalTRInternal_Injected(TransformSceneHandle& _unity_self, AnimationStream& stream, Vector3& position, Quaternion& rotation)
+private void GetLocalToWorldMatrixInternal_Injected(TransformSceneHandle& _unity_self, AnimationStream& stream, Matrix4x4& ret)
 }
 public UnityEngine.Animations.TransformStreamHandle : ValueType {
 private UInt32 m_AnimatorBindingsVersion
@@ -1334,12 +1346,14 @@ public Quaternion GetLocalRotation(AnimationStream stream)
 public void SetLocalRotation(AnimationStream stream, Quaternion rotation)
 public Vector3 GetLocalScale(AnimationStream stream)
 public void SetLocalScale(AnimationStream stream, Vector3 scale)
+public Matrix4x4 GetLocalToParentMatrix(AnimationStream stream)
 public bool GetPositionReadMask(AnimationStream stream)
 public bool GetRotationReadMask(AnimationStream stream)
 public bool GetScaleReadMask(AnimationStream stream)
 public void GetLocalTRS(AnimationStream stream, Vector3& position, Quaternion& rotation, Vector3& scale)
 public void SetLocalTRS(AnimationStream stream, Vector3 position, Quaternion rotation, Vector3 scale, bool useMask)
 public void GetGlobalTR(AnimationStream stream, Vector3& position, Quaternion& rotation)
+public Matrix4x4 GetLocalToWorldMatrix(AnimationStream stream)
 public void SetGlobalTR(AnimationStream stream, Vector3 position, Quaternion rotation, bool useMask)
 private void ResolveInternal(AnimationStream& stream)
 private Vector3 GetPositionInternal(AnimationStream& stream)
@@ -1352,12 +1366,14 @@ private Quaternion GetLocalRotationInternal(AnimationStream& stream)
 private void SetLocalRotationInternal(AnimationStream& stream, Quaternion rotation)
 private Vector3 GetLocalScaleInternal(AnimationStream& stream)
 private void SetLocalScaleInternal(AnimationStream& stream, Vector3 scale)
+private Matrix4x4 GetLocalToParentMatrixInternal(AnimationStream& stream)
 private bool GetPositionReadMaskInternal(AnimationStream& stream)
 private bool GetRotationReadMaskInternal(AnimationStream& stream)
 private bool GetScaleReadMaskInternal(AnimationStream& stream)
 private void GetLocalTRSInternal(AnimationStream& stream, Vector3& position, Quaternion& rotation, Vector3& scale)
 private void SetLocalTRSInternal(AnimationStream& stream, Vector3 position, Quaternion rotation, Vector3 scale, bool useMask)
 private void GetGlobalTRInternal(AnimationStream& stream, Vector3& position, Quaternion& rotation)
+private Matrix4x4 GetLocalToWorldMatrixInternal(AnimationStream& stream)
 private void SetGlobalTRInternal(AnimationStream& stream, Vector3 position, Quaternion rotation, bool useMask)
 private void ResolveInternal_Injected(TransformStreamHandle& _unity_self, AnimationStream& stream)
 private void GetPositionInternal_Injected(TransformStreamHandle& _unity_self, AnimationStream& stream, Vector3& ret)
@@ -1370,12 +1386,14 @@ private void GetLocalRotationInternal_Injected(TransformStreamHandle& _unity_sel
 private void SetLocalRotationInternal_Injected(TransformStreamHandle& _unity_self, AnimationStream& stream, Quaternion& rotation)
 private void GetLocalScaleInternal_Injected(TransformStreamHandle& _unity_self, AnimationStream& stream, Vector3& ret)
 private void SetLocalScaleInternal_Injected(TransformStreamHandle& _unity_self, AnimationStream& stream, Vector3& scale)
+private void GetLocalToParentMatrixInternal_Injected(TransformStreamHandle& _unity_self, AnimationStream& stream, Matrix4x4& ret)
 private bool GetPositionReadMaskInternal_Injected(TransformStreamHandle& _unity_self, AnimationStream& stream)
 private bool GetRotationReadMaskInternal_Injected(TransformStreamHandle& _unity_self, AnimationStream& stream)
 private bool GetScaleReadMaskInternal_Injected(TransformStreamHandle& _unity_self, AnimationStream& stream)
 private void GetLocalTRSInternal_Injected(TransformStreamHandle& _unity_self, AnimationStream& stream, Vector3& position, Quaternion& rotation, Vector3& scale)
 private void SetLocalTRSInternal_Injected(TransformStreamHandle& _unity_self, AnimationStream& stream, Vector3& position, Quaternion& rotation, Vector3& scale, bool useMask)
 private void GetGlobalTRInternal_Injected(TransformStreamHandle& _unity_self, AnimationStream& stream, Vector3& position, Quaternion& rotation)
+private void GetLocalToWorldMatrixInternal_Injected(TransformStreamHandle& _unity_self, AnimationStream& stream, Matrix4x4& ret)
 private void SetGlobalTRInternal_Injected(TransformStreamHandle& _unity_self, AnimationStream& stream, Vector3& position, Quaternion& rotation, bool useMask)
 }
 public UnityEngine.AnimationState : TrackedReference {
@@ -1452,7 +1470,7 @@ public bool isMatchingTarget
 public float speed
 public Vector3 targetPosition
 public Quaternion targetRotation
-internal Transform avatarRoot
+public Transform avatarRoot
 public AnimatorCullingMode cullingMode
 public float playbackTime
 public float recorderStartTime
@@ -1639,7 +1657,7 @@ public Vector3 get_targetPosition()
 public Quaternion get_targetRotation()
 public bool IsControlled(Transform transform)
 internal bool IsBoneTransform(Transform transform)
-internal Transform get_avatarRoot()
+public Transform get_avatarRoot()
 public Transform GetBoneTransform(HumanBodyBones humanBoneId)
 internal Transform GetBoneTransformInternal(int humanBoneId)
 public AnimatorCullingMode get_cullingMode()

@@ -95,6 +95,7 @@ public bool imeIsSelected
 public Vector2 compositionCursorPos
 public bool eatKeyPressOnTextFieldFocus
 public bool mousePresent
+public int penEventCount
 public int touchCount
 public bool touchPressureSupported
 public bool stylusTouchSupported
@@ -111,23 +112,24 @@ public Compass compass
 public Gyroscope gyro
 public Touch[] touches
 public AccelerationEvent[] accelerationEvents
-private bool GetKeyInt(KeyCode key)
-private bool GetKeyString(string name)
-private bool GetKeyUpInt(KeyCode key)
-private bool GetKeyUpString(string name)
-private bool GetKeyDownInt(KeyCode key)
-private bool GetKeyDownString(string name)
 public float GetAxis(string axisName)
 public float GetAxisRaw(string axisName)
 public bool GetButton(string buttonName)
 public bool GetButtonDown(string buttonName)
 public bool GetButtonUp(string buttonName)
+private bool GetKeyInt(KeyCode key)
+private bool GetKeyUpInt(KeyCode key)
+private bool GetKeyDownInt(KeyCode key)
 public bool GetMouseButton(int button)
 public bool GetMouseButtonDown(int button)
 public bool GetMouseButtonUp(int button)
 public void ResetInputAxes()
 public String[] GetJoystickNames()
 public Touch GetTouch(int index)
+public PenData GetPenEvent(int index)
+public PenData GetLastPenContactEvent()
+public void ResetPenEvents()
+public void ClearLastPenContactEvent()
 public AccelerationEvent GetAccelerationEvent(int index)
 public bool GetKey(KeyCode key)
 public bool GetKey(string name)
@@ -153,6 +155,7 @@ public void set_compositionCursorPos(Vector2 value)
 public bool get_eatKeyPressOnTextFieldFocus()
 public void set_eatKeyPressOnTextFieldFocus(bool value)
 public bool get_mousePresent()
+public int get_penEventCount()
 public int get_touchCount()
 public bool get_touchPressureSupported()
 public bool get_stylusTouchSupported()
@@ -175,6 +178,8 @@ public Touch[] get_touches()
 public AccelerationEvent[] get_accelerationEvents()
 internal bool CheckDisabled()
 private void GetTouch_Injected(int index, Touch& ret)
+private void GetPenEvent_Injected(int index, PenData& ret)
+private void GetLastPenContactEvent_Injected(PenData& ret)
 private void GetAccelerationEvent_Injected(int index, AccelerationEvent& ret)
 private void SimulateTouchInternal_Injected(Touch& touch, long timestamp)
 private void get_mousePosition_Injected(Vector3& ret)
@@ -182,6 +187,24 @@ private void get_mouseScrollDelta_Injected(Vector2& ret)
 private void get_compositionCursorPos_Injected(Vector2& ret)
 private void set_compositionCursorPos_Injected(Vector2& value)
 private void get_acceleration_Injected(Vector3& ret)
+}
+internal UnityEngine.Internal.InputUnsafeUtility : object {
+internal bool GetKeyString(string name)
+internal bool GetKeyString__Unmanaged(Byte* name, int nameLen)
+internal bool GetKeyUpString(string name)
+internal bool GetKeyUpString__Unmanaged(Byte* name, int nameLen)
+internal bool GetKeyDownString(string name)
+internal bool GetKeyDownString__Unmanaged(Byte* name, int nameLen)
+internal float GetAxis(string axisName)
+internal float GetAxis__Unmanaged(Byte* axisName, int axisNameLen)
+internal float GetAxisRaw(string axisName)
+internal float GetAxisRaw__Unmanaged(Byte* axisName, int axisNameLen)
+internal bool GetButton(string buttonName)
+internal bool GetButton__Unmanaged(Byte* buttonName, int buttonNameLen)
+internal bool GetButtonDown(string buttonName)
+internal byte GetButtonDown__Unmanaged(Byte* buttonName, int buttonNameLen)
+internal bool GetButtonUp(string buttonName)
+internal bool GetButtonUp__Unmanaged(Byte* buttonName, int buttonNameLen)
 }
 public UnityEngine.LocationInfo : ValueType {
 internal double m_Timestamp
@@ -233,6 +256,29 @@ public LocationServiceStatus Stopped
 public LocationServiceStatus Initializing
 public LocationServiceStatus Running
 public LocationServiceStatus Failed
+}
+public UnityEngine.PenData : ValueType {
+public Vector2 position
+public Vector2 tilt
+public PenStatus penStatus
+public float twist
+public float pressure
+public PenEventType contactType
+public Vector2 deltaPos
+}
+public UnityEngine.PenEventType : Enum {
+public int value__
+public PenEventType NoContact
+public PenEventType PenDown
+public PenEventType PenUp
+}
+public UnityEngine.PenStatus : Enum {
+public int value__
+public PenStatus None
+public PenStatus Contact
+public PenStatus Barrel
+public PenStatus Inverted
+public PenStatus Eraser
 }
 internal UnityEngine.SendMouseEvents : object {
 private int m_HitIndexGUI

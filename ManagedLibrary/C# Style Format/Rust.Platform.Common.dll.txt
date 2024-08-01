@@ -7,12 +7,28 @@ public AuthResponse VACBanned
 public AuthResponse PublisherBanned
 public AuthResponse InvalidAuthSession
 public AuthResponse NetworkIdentityFailure
+public AuthResponse AuthTicketAlreadyUsed
+public AuthResponse AuthTicketCanceled
 }
 public AvatarCache : object {
 private Dictionary`2<ulong, Entry> _entries
 private Action`2<ulong, Texture2D> _loadAvatar
 public void .ctor(Action`2<ulong, Texture2D> loadAvatar)
 public Texture2D Get(ulong userId)
+}
+public CompositeServerQuery : object {
+private IServerQuery _queryA
+private IServerQuery _queryB
+private Action`1<ServerInfo> OnServerFound
+private IReadOnlyList`1<ServerInfo> <Servers>k__BackingField
+public IReadOnlyList`1<ServerInfo> Servers
+public void add_OnServerFound(Action`1<ServerInfo> value)
+public void remove_OnServerFound(Action`1<ServerInfo> value)
+public IReadOnlyList`1<ServerInfo> get_Servers()
+public void .ctor(IServerQuery queryA, IServerQuery queryB)
+public void Dispose()
+public void AddFilter(string key, string value)
+public Task RunQueryAsync(double timeoutInSeconds)
 }
 public IAchievement {
 public string Key
@@ -95,6 +111,7 @@ public int get_Quantity()
 public DateTimeOffset get_Acquired()
 public ulong get_WorkshopId()
 public string get_ItemShortName()
+public Task Consume()
 }
 public IPlayerItemDefinition {
 public int DefinitionId
@@ -106,8 +123,11 @@ public int LocalPrice
 public string LocalPriceFormatted
 public string PriceCategory
 public bool IsGenerator
+public bool IsTradable
 public bool IsMarketable
 public string StoreTags
+public DateTime Created
+public DateTime Modified
 public string ItemShortName
 public ulong WorkshopId
 public ulong WorkshopDownload
@@ -120,17 +140,18 @@ public int get_LocalPrice()
 public string get_LocalPriceFormatted()
 public string get_PriceCategory()
 public bool get_IsGenerator()
+public bool get_IsTradable()
 public bool get_IsMarketable()
 public string get_StoreTags()
+public DateTime get_Created()
+public DateTime get_Modified()
 public string get_ItemShortName()
 public ulong get_WorkshopId()
 public ulong get_WorkshopDownload()
 public IEnumerable`1<PlayerItemRecipe> GetRecipesContainingThis()
 }
 public IServerQuery {
-public ServerQuerySet QuerySet
 public IReadOnlyList`1<ServerInfo> Servers
-public ServerQuerySet get_QuerySet()
 public IReadOnlyList`1<ServerInfo> get_Servers()
 public void add_OnServerFound(Action`1<ServerInfo> value)
 public void remove_OnServerFound(Action`1<ServerInfo> value)
@@ -222,6 +243,7 @@ private UInt32 <LastTimePlayed>k__BackingField
 private int <Ping>k__BackingField
 private ulong <SteamId>k__BackingField
 private string <Changeset>k__BackingField
+private string <RegionCode>k__BackingField
 private UInt32 <Born>k__BackingField
 private HashSet`1<string> <Tags>k__BackingField
 private string <ConnectionProtocol>k__BackingField
@@ -241,6 +263,7 @@ public UInt32 LastTimePlayed
 public int Ping
 public ulong SteamId
 public string Changeset
+public string RegionCode
 public UInt32 Born
 public HashSet`1<string> Tags
 public string ConnectionProtocol
@@ -260,6 +283,7 @@ public UInt32 get_LastTimePlayed()
 public int get_Ping()
 public ulong get_SteamId()
 public string get_Changeset()
+public string get_RegionCode()
 public UInt32 get_Born()
 public HashSet`1<string> get_Tags()
 public string get_ConnectionProtocol()
@@ -276,4 +300,17 @@ public ServerQuerySet LocalNetwork
 public ServerQuerySet Friends
 public ServerQuerySet Favorites
 public ServerQuerySet History
+}
+public ServerTagCompressor : object {
+private IReadOnlyDictionary`2<char, string> charToTag
+private IReadOnlyDictionary`2<string, char> tagToChar
+public char TagPrefixCharacter
+private StringBuilder compactTags
+private StringBuilder normalTags
+public string ShortenTag(string tag)
+public string CompressTags(string input)
+public void DecompressTags(HashSet`1<string> tags, string compactTag)
+}
+internal UnitySourceGeneratedAssemblyMonoScriptTypes_v1 : object {
+private MonoScriptData Get()
 }

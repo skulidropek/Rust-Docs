@@ -215,19 +215,28 @@ public float SqrDistance(OBB other)
 public float SqrDistance(Vector3 position)
 public void DebugDraw(Color colour, float duration)
 }
-public ObjectWorkQueue`1 : object {
+public ObjectWorkQueue : object {
+public List`1<ObjectWorkQueue> All
+public string Name
+public TimeSpan WarningThreshold
+public long TotalProcessedCount
+public TimeSpan TotalExecutionTime
+public int LastProcessedCount
+public TimeSpan LastExecutionTime
+public int HashSetMaxLength
+private int <LastQueueLength>k__BackingField
+public int LastQueueLength
+public int QueueLength
+public int get_LastQueueLength()
+protected void set_LastQueueLength(int value)
+public int get_QueueLength()
+}
+public ObjectWorkQueue`1 : ObjectWorkQueue {
 protected Queue`1<T> queue
 protected HashSet`1<T> containerTest
-public string queueName
-public long warnTime
-public long totalProcessed
-public double totalTime
-public int queueProcessedLast
-public double lastMS
-public int hashsetMaxLength
 private Stopwatch stopwatch
-public int queueLength
-public int get_queueLength()
+public int QueueLength
+public int get_QueueLength()
 public void Clear()
 public void RunQueue(double maximumMilliseconds)
 public void Add(T entity)
@@ -274,6 +283,7 @@ public AmmoTypes MLRS_ROCKET
 public AmmoTypes MISSILE_SEEKING
 }
 public Rust.Application : object {
+public bool isPlaying
 public bool isQuitting
 public bool isLoading
 public bool isReceiving
@@ -281,6 +291,7 @@ public bool isLoadingSave
 public bool isLoadingPrefabs
 public string installPath
 public string dataPath
+private void Startup()
 public void Quit()
 public string get_installPath()
 public string get_dataPath()
@@ -337,6 +348,10 @@ internal Color old_ambientEquatorColor
 internal float old_ambientIntensity
 internal AmbientMode old_ambientMode
 public float aspect
+public bool overrideSkyReflection
+public ReflectionProbe reflectionProbe
+private int global_SkyReflection
+private int global_SkyReflection_HDR
 private void OnPreRender()
 private void OnPostRender()
 }
@@ -371,6 +386,13 @@ public Material Material
 private void OnEnable()
 private void OnDisable()
 private void OnRenderImage(RenderTexture source, RenderTexture destination)
+}
+public Rust.IndirectLighting : object {
+private SphericalHarmonicsL2[] lightProbe
+public SphericalHarmonicsL2[] LightProbe
+public SphericalHarmonicsL2[] get_LightProbe()
+public void UpdateLightProbe()
+public void UpdateAmbientProbe()
 }
 public Rust.Layer : Enum {
 public int value__
@@ -443,6 +465,8 @@ public int AIPlacement
 public int WheelRay
 public int Water
 public int Sprays
+public int InactivePhysicsStuff
+public int InactivePhysicsStuffLayer
 }
 public Rust.PropRenderer : MonoBehaviour {
 public bool HideLowLods
@@ -452,12 +476,15 @@ public Vector3 Rotation
 public Vector3 PostRotation
 public Vector3 PositionalTweak
 public float FieldOfView
+public float farClipPlane
 public Vector3 LookDirection
 public Vector3 UpDirection
 public GameObject[] HideDuringRender
+public SkinViewerSettings skinViewerSettings
 public void DebugAlign()
-public void PositionCamera(Camera cam)
+public void PositionCamera(Camera cam, bool isSkinViewer)
 public void PreRender()
+public void PreRender(GameObject gameObject, bool hideLowLODs, bool hideUnskinnable, GameObject[] hideDuringRender)
 public void PostRender()
 public void CreateIcon()
 public void CreateRender()
@@ -519,8 +546,10 @@ public Vector2 Value2D()
 public Vector2 Value2D(UInt32 seed)
 public Vector2 Value2D(UInt32& seed)
 public UInt32 Wanghash(UInt32& x)
+public ulong Wanghash(UInt64& x)
 public float Wanghash01(UInt32& x)
 public UInt32 Xorshift(UInt32& x)
+public ulong Xorshift(UInt64& x)
 public float Xorshift01(UInt32& x)
 }
 public Sphere : ValueType {
@@ -623,6 +652,8 @@ public UnityEngine.Vector3Ex : object {
 public Vector3 WithX(Vector3 v, float x)
 public Vector3 WithY(Vector3 v, float y)
 public Vector3 WithZ(Vector3 v, float z)
+public Vector3 WithXY(Vector3 v, float x, float y)
+public Vector3 WithXZ(Vector3 v, float x, float z)
 public Vector3 XZ(Vector3 v)
 public float Distance2D(Vector3 a, Vector3 b)
 public float HeightDelta(Vector3 a, Vector3 b)
@@ -665,6 +696,9 @@ public Vector3 Abs(Vector3 v)
 public Vector2 Abs(Vector2 v)
 public Vector3 Parse(string p)
 public Vector3 GetWithInaccuracy(Vector3 o, float maxAngle)
+}
+internal UnitySourceGeneratedAssemblyMonoScriptTypes_v1 : object {
+private MonoScriptData Get()
 }
 public WorldSpaceGrid : object {
 public Vector3 ClosestGridCell(Vector3 worldPos, float gridSize, float cellSize)

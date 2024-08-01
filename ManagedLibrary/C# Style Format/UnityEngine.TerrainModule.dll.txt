@@ -19,10 +19,15 @@ internal float m_MinHeight
 internal float m_MaxHeight
 internal int m_NoiseSeed
 internal float m_NoiseSpread
+internal float m_Density
 internal float m_HoleEdgePadding
 internal int m_RenderMode
 internal int m_UsePrototypeMesh
 internal int m_UseInstancing
+internal int m_UseDensityScaling
+internal float m_AlignToGround
+internal float m_PositionJitter
+internal float m_TargetCoverage
 public GameObject prototype
 public Texture2D prototypeTexture
 public float minWidth
@@ -31,6 +36,7 @@ public float minHeight
 public float maxHeight
 public int noiseSeed
 public float noiseSpread
+public float density
 public float bendFactor
 public float holeEdgePadding
 public Color healthyColor
@@ -38,6 +44,10 @@ public Color dryColor
 public DetailRenderMode renderMode
 public bool usePrototypeMesh
 public bool useInstancing
+public float targetCoverage
+public bool useDensityScaling
+public float alignToGround
+public float positionJitter
 public GameObject get_prototype()
 public void set_prototype(GameObject value)
 public Texture2D get_prototypeTexture()
@@ -54,6 +64,8 @@ public int get_noiseSeed()
 public void set_noiseSeed(int value)
 public float get_noiseSpread()
 public void set_noiseSpread(float value)
+public float get_density()
+public void set_density(float value)
 public float get_bendFactor()
 public void set_bendFactor(float value)
 public float get_holeEdgePadding()
@@ -68,6 +80,14 @@ public bool get_usePrototypeMesh()
 public void set_usePrototypeMesh(bool value)
 public bool get_useInstancing()
 public void set_useInstancing(bool value)
+public float get_targetCoverage()
+public void set_targetCoverage(float value)
+public bool get_useDensityScaling()
+public void set_useDensityScaling(bool value)
+public float get_alignToGround()
+public void set_alignToGround(float value)
+public float get_positionJitter()
+public void set_positionJitter(float value)
 public void .ctor(DetailPrototype other)
 public bool Equals(object obj)
 public int GetHashCode()
@@ -82,6 +102,11 @@ public int value__
 public DetailRenderMode GrassBillboard
 public DetailRenderMode VertexLit
 public DetailRenderMode Grass
+}
+public UnityEngine.DetailScatterMode : Enum {
+public int value__
+public DetailScatterMode CoverageMode
+public DetailScatterMode InstanceCountMode
 }
 public UnityEngine.PatchExtents : ValueType {
 internal float m_min
@@ -146,12 +171,15 @@ public bool drawHeightmap
 public bool allowAutoConnect
 public int groupingID
 public bool drawInstanced
+public bool enableHeightmapRayTracing
 public RenderTexture normalmapTexture
 public bool drawTreesAndFoliage
 public Vector3 patchBoundsMultiplier
 public float treeLODBiasMultiplier
 public bool collectDetailPatches
+public bool ignoreQualitySettings
 public TerrainRenderFlags editorRenderFlags
+public TreeMotionVectorModeOverride treeMotionVectorModeOverride
 public bool preserveTreePrototypeLayers
 public GraphicsFormat heightmapFormat
 public TextureFormat heightmapTextureFormat
@@ -224,6 +252,8 @@ public int get_groupingID()
 public void set_groupingID(int value)
 public bool get_drawInstanced()
 public void set_drawInstanced(bool value)
+public bool get_enableHeightmapRayTracing()
+public void set_enableHeightmapRayTracing(bool value)
 public RenderTexture get_normalmapTexture()
 public bool get_drawTreesAndFoliage()
 public void set_drawTreesAndFoliage(bool value)
@@ -236,6 +266,8 @@ public float get_treeLODBiasMultiplier()
 public void set_treeLODBiasMultiplier(float value)
 public bool get_collectDetailPatches()
 public void set_collectDetailPatches(bool value)
+public bool get_ignoreQualitySettings()
+public void set_ignoreQualitySettings(bool value)
 public TerrainRenderFlags get_editorRenderFlags()
 public void set_editorRenderFlags(TerrainRenderFlags value)
 public Vector3 GetPosition()
@@ -244,6 +276,8 @@ internal void RemoveTrees(Vector2 position, float radius, int prototypeIndex)
 public void SetSplatMaterialPropertyBlock(MaterialPropertyBlock properties)
 public void GetSplatMaterialPropertyBlock(MaterialPropertyBlock dest)
 private void Internal_GetSplatMaterialPropertyBlock(MaterialPropertyBlock dest)
+public TreeMotionVectorModeOverride get_treeMotionVectorModeOverride()
+public void set_treeMotionVectorModeOverride(TreeMotionVectorModeOverride value)
 public bool get_preserveTreePrototypeLayers()
 public void set_preserveTreePrototypeLayers(bool value)
 public GraphicsFormat get_heightmapFormat()
@@ -323,7 +357,6 @@ internal int k_MaximumResolution
 internal int k_MinimumDetailResolutionPerPatch
 internal int k_MaximumDetailResolutionPerPatch
 internal int k_MaximumDetailPatchCount
-internal int k_MaximumDetailsPerRes
 internal int k_MinimumAlphamapResolution
 internal int k_MaximumAlphamapResolution
 internal int k_MinimumBaseMapResolution
@@ -347,10 +380,11 @@ public float wavingGrassSpeed
 public Color wavingGrassTint
 public int detailWidth
 public int detailHeight
-internal int maxDetailsPerRes
+public int maxDetailScatterPerRes
 public int detailPatchCount
 public int detailResolution
 public int detailResolutionPerPatch
+public DetailScatterMode detailScatterMode
 public DetailPrototype[] detailPrototypes
 public TreeInstance[] treeInstances
 public int treeInstanceCount
@@ -431,20 +465,27 @@ public Color get_wavingGrassTint()
 public void set_wavingGrassTint(Color value)
 public int get_detailWidth()
 public int get_detailHeight()
-internal int get_maxDetailsPerRes()
+public int get_maxDetailScatterPerRes()
 public void SetDetailResolution(int detailResolution, int resolutionPerPatch)
 private void Internal_SetDetailResolution(int patchCount, int resolutionPerPatch)
+public void SetDetailScatterMode(DetailScatterMode scatterMode)
+private void Internal_SetDetailScatterMode(DetailScatterMode scatterMode)
 public int get_detailPatchCount()
 public int get_detailResolution()
 public int get_detailResolutionPerPatch()
+public DetailScatterMode get_detailScatterMode()
 internal void ResetDirtyDetails()
 public void RefreshPrototypes()
 public DetailPrototype[] get_detailPrototypes()
 public void set_detailPrototypes(DetailPrototype[] value)
 public Int32[] GetSupportedLayers(int xBase, int yBase, int totalWidth, int totalHeight)
+public Int32[] GetSupportedLayers(Vector2Int positionBase, Vector2Int size)
 public Int32[0...,0...] GetDetailLayer(int xBase, int yBase, int width, int height, int layer)
+public Int32[0...,0...] GetDetailLayer(Vector2Int positionBase, Vector2Int size, int layer)
 public DetailInstanceTransform[] ComputeDetailInstanceTransforms(int patchX, int patchY, int layer, float density, Bounds& bounds)
+public float ComputeDetailCoverage(int detailPrototypeIndex)
 public void SetDetailLayer(int xBase, int yBase, int layer, Int32[0...,0...] details)
+public void SetDetailLayer(Vector2Int basePosition, int layer, Int32[0...,0...] details)
 private void Internal_SetDetailLayer(int xBase, int yBase, int totalWidth, int totalHeight, int detailIndex, Int32[0...,0...] data)
 public TreeInstance[] get_treeInstances()
 public void set_treeInstances(TreeInstance[] value)
@@ -457,7 +498,7 @@ public int get_treeInstanceCount()
 public TreePrototype[] get_treePrototypes()
 public void set_treePrototypes(TreePrototype[] value)
 internal void RemoveTreePrototype(int index)
-internal void RemoveDetailPrototype(int index)
+public void RemoveDetailPrototype(int index)
 internal bool NeedUpgradeScaledTreePrototypes()
 internal void UpgradeScaledTreePrototype()
 public int get_alphamapLayers()
@@ -781,6 +822,13 @@ public Color32 color
 public Color32 lightmapColor
 public int prototypeIndex
 internal float temporaryDistance
+}
+public UnityEngine.TreeMotionVectorModeOverride : Enum {
+public int value__
+public TreeMotionVectorModeOverride CameraMotionOnly
+public TreeMotionVectorModeOverride PerObjectMotion
+public TreeMotionVectorModeOverride ForceNoMotion
+public TreeMotionVectorModeOverride InheritFromPrototype
 }
 public UnityEngine.TreePrototype : object {
 internal GameObject m_Prefab

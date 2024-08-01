@@ -9,6 +9,9 @@ public PointerType pointerType
 public int button
 public EventModifiers modifiers
 public float pressure
+public float twist
+public Vector2 tilt
+public PenStatus penStatus
 public int clickCount
 public char character
 public KeyCode keyCode
@@ -41,6 +44,12 @@ public EventModifiers get_modifiers()
 public void set_modifiers(EventModifiers value)
 public float get_pressure()
 public void set_pressure(float value)
+public float get_twist()
+public void set_twist(float value)
+public Vector2 get_tilt()
+public void set_tilt(Vector2 value)
+public PenStatus get_penStatus()
+public void set_penStatus(PenStatus value)
 public int get_clickCount()
 public void set_clickCount(int value)
 public char get_character()
@@ -60,7 +69,9 @@ private IntPtr Internal_Copy(IntPtr otherPtr)
 public EventType GetTypeForControl(int controlID)
 internal void CopyFromPtr(IntPtr ptr)
 public bool PopEvent(Event outEvent)
+internal void QueueEvent(Event outEvent)
 public int GetEventCount()
+internal void ClearEvents()
 private void Internal_SetNativeEvent(IntPtr ptr)
 internal void Internal_MakeMasterEventCurrent(int displayIndex)
 internal int GetDoubleClickTime()
@@ -99,6 +110,8 @@ private void get_mousePosition_Injected(Vector2& ret)
 private void set_mousePosition_Injected(Vector2& value)
 private void get_delta_Injected(Vector2& ret)
 private void set_delta_Injected(Vector2& value)
+private void get_tilt_Injected(Vector2& ret)
+private void set_tilt_Injected(Vector2& value)
 }
 internal UnityEngine.EventCommandNames : object {
 public string Cut
@@ -514,6 +527,7 @@ public UnityEngine.GUIContent : object {
 private string m_Text
 private Texture m_Image
 private string m_Tooltip
+private Action OnTextChanged
 private GUIContent s_Text
 private GUIContent s_Image
 private GUIContent s_TextImage
@@ -522,6 +536,8 @@ public string text
 public Texture image
 public string tooltip
 internal int hash
+internal void add_OnTextChanged(Action value)
+internal void remove_OnTextChanged(Action value)
 public string get_text()
 public void set_text(string value)
 public Texture get_image()
@@ -822,6 +838,7 @@ private GUILayoutGroup CreateGUILayoutGroupInstanceOfType(Type LayoutType)
 internal GUILayoutGroup BeginLayoutGroup(GUIStyle style, GUILayoutOption[] options, Type layoutType)
 internal void EndLayoutGroup()
 internal GUILayoutGroup BeginLayoutArea(GUIStyle style, Type layoutType)
+internal void EndLayoutArea()
 internal GUILayoutGroup DoBeginLayoutArea(GUIStyle style, Type layoutType)
 internal GUILayoutGroup get_topLevel()
 public Rect GetRect(GUIContent content, GUIStyle style)
@@ -1243,6 +1260,8 @@ internal Func`3<int, IntPtr, bool> processEvent
 internal Action cleanupRoots
 internal Func`2<Exception, bool> endContainerGUIFromException
 internal Action guiChanged
+internal Action`2<EventType, KeyCode> beforeEventProcessed
+private Event m_Event
 private bool <guiIsExiting>k__BackingField
 internal Func`1<bool> s_HasCurrentWindowKeyFocusFunc
 public bool hasModalWindow
@@ -1335,6 +1354,7 @@ internal bool IsExitGUIException(Exception exception)
 internal bool ShouldRethrowException(Exception exception)
 internal void CheckOnGUI()
 internal float RoundToPixelGrid(float v)
+internal float RoundToPixelGrid(float v, float scale)
 public Vector2 GUIToScreenPoint(Vector2 guiPoint)
 public Rect GUIToScreenRect(Rect guiRect)
 public Vector2 ScreenToGUIPoint(Vector2 screenPoint)
@@ -1460,6 +1480,92 @@ public UnityEngine.TextClipping : Enum {
 public int value__
 public TextClipping Overflow
 public TextClipping Clip
+}
+internal UnityEngine.TextEditingUtilities : object {
+private TextSelectingUtilities m_TextSelectingUtility
+private TextHandle m_TextHandle
+private int m_CursorIndexSavedState
+internal bool isCompositionActive
+private bool m_UpdateImeWindowPosition
+public bool multiline
+private string m_Text
+private Dictionary`2<Event, TextEditOp> s_KeyEditOps
+private bool hasSelection
+private string SelectedText
+private int m_iAltCursorPos
+internal bool revealCursor
+private int cursorIndex
+private int selectIndex
+public string text
+private bool get_hasSelection()
+private string get_SelectedText()
+private int get_m_iAltCursorPos()
+internal bool get_revealCursor()
+internal void set_revealCursor(bool value)
+private int get_cursorIndex()
+private void set_cursorIndex(int value)
+private int get_selectIndex()
+private void set_selectIndex(int value)
+public string get_text()
+public void set_text(string value)
+public void .ctor(TextSelectingUtilities selectingUtilities, TextHandle textHandle, string text)
+public bool UpdateImeState()
+public bool ShouldUpdateImeWindowPosition()
+public void SetImeWindowPosition(Vector2 worldPosition)
+public string GeneratePreviewString(bool richText)
+public void EnableCursorPreviewState()
+public void RestoreCursorState()
+internal bool HandleKeyEvent(Event e)
+private void PerformOperation(TextEditOp operation)
+private void MapKey(string key, TextEditOp action)
+private void InitKeyActions()
+public bool DeleteLineBack()
+public bool DeleteWordBack()
+public bool DeleteWordForward()
+public bool Delete()
+public bool Backspace()
+public bool DeleteSelection()
+public void ReplaceSelection(string replace)
+public void Insert(char c)
+public void MoveSelectionToAltCursor()
+public bool CanPaste()
+public bool Cut()
+public bool Paste()
+private string ReplaceNewlinesWithSpaces(string value)
+internal void OnBlur()
+internal bool TouchScreenKeyboardShouldBeUsed()
+}
+internal UnityEngine.TextEditOp : Enum {
+public int value__
+public TextEditOp MoveLeft
+public TextEditOp MoveRight
+public TextEditOp MoveUp
+public TextEditOp MoveDown
+public TextEditOp MoveLineStart
+public TextEditOp MoveLineEnd
+public TextEditOp MoveTextStart
+public TextEditOp MoveTextEnd
+public TextEditOp MovePageUp
+public TextEditOp MovePageDown
+public TextEditOp MoveGraphicalLineStart
+public TextEditOp MoveGraphicalLineEnd
+public TextEditOp MoveWordLeft
+public TextEditOp MoveWordRight
+public TextEditOp MoveParagraphForward
+public TextEditOp MoveParagraphBackward
+public TextEditOp MoveToStartOfNextWord
+public TextEditOp MoveToEndOfPreviousWord
+public TextEditOp Delete
+public TextEditOp Backspace
+public TextEditOp DeleteWordBack
+public TextEditOp DeleteWordForward
+public TextEditOp DeleteLineBack
+public TextEditOp Cut
+public TextEditOp Paste
+public TextEditOp ScrollStart
+public TextEditOp ScrollEnd
+public TextEditOp ScrollPageUp
+public TextEditOp ScrollPageDown
 }
 public UnityEngine.TextEditor : object {
 public TouchScreenKeyboard keyboardOnScreen
@@ -1603,4 +1709,129 @@ private void EnsureValidCodePointIndex(Int32& index)
 private bool IsValidCodePointIndex(int index)
 private int PreviousCodePointIndex(int index)
 private int NextCodePointIndex(int index)
+}
+internal UnityEngine.TextSelectingUtilities : object {
+public DblClickSnapping dblClickSnap
+public int iAltCursorPos
+public bool hasHorizontalCursorPos
+private bool m_bJustSelected
+private bool m_MouseDragSelectsWholeWords
+private int m_DblClickInitPos
+private TextHandle m_TextHandle
+private int kMoveDownHeight
+private char kNewLineChar
+private bool m_RevealCursor
+private int m_CursorIndex
+internal int m_SelectIndex
+private Dictionary`2<Event, TextSelectOp> s_KeySelectOps
+internal Action OnCursorIndexChange
+internal Action OnSelectIndexChange
+internal Action OnRevealCursorChange
+public bool hasSelection
+public bool revealCursor
+private int m_CharacterCount
+private int characterCount
+private TextElementInfo[] m_TextElementInfos
+public int cursorIndex
+public int selectIndex
+public string selectedText
+public bool get_hasSelection()
+public bool get_revealCursor()
+public void set_revealCursor(bool value)
+private int get_m_CharacterCount()
+private int get_characterCount()
+private TextElementInfo[] get_m_TextElementInfos()
+public int get_cursorIndex()
+public void set_cursorIndex(int value)
+internal void SetCursorIndexWithoutNotify(int index)
+public int get_selectIndex()
+public void set_selectIndex(int value)
+internal void SetSelectIndexWithoutNotify(int index)
+public string get_selectedText()
+public void .ctor(TextHandle textHandle)
+internal bool HandleKeyEvent(Event e)
+private bool PerformOperation(TextSelectOp operation)
+private void MapKey(string key, TextSelectOp action)
+private void InitKeyActions()
+public void ClearCursorPos()
+public void OnFocus(bool selectAll)
+public void SelectAll()
+public void SelectNone()
+public void SelectLeft()
+public void SelectRight()
+public void SelectUp()
+public void SelectDown()
+public void SelectTextEnd()
+public void SelectTextStart()
+public void SelectToStartOfNextWord()
+public void SelectToEndOfPreviousWord()
+public void SelectWordRight()
+public void SelectWordLeft()
+public void SelectGraphicalLineStart()
+public void SelectGraphicalLineEnd()
+public void SelectParagraphForward()
+public void SelectParagraphBackward()
+public void SelectCurrentWord()
+public void SelectCurrentParagraph()
+public void MoveRight()
+public void MoveLeft()
+public void MoveUp()
+public void MoveDown()
+public void MoveLineStart()
+public void MoveLineEnd()
+public void MoveGraphicalLineStart()
+public void MoveGraphicalLineEnd()
+public void MoveTextStart()
+public void MoveTextEnd()
+public void MoveParagraphForward()
+public void MoveParagraphBackward()
+public void MoveWordRight()
+public void MoveToStartOfNextWord()
+public void MoveToEndOfPreviousWord()
+public void MoveWordLeft()
+public void MouseDragSelectsWholeWords(bool on)
+public void ExpandSelectGraphicalLineStart()
+public void ExpandSelectGraphicalLineEnd()
+public void DblClickSnap(DblClickSnapping snapping)
+protected internal void MoveCursorToPosition_Internal(Vector2 cursorPosition, bool shift)
+public void SelectToPosition(Vector2 cursorPosition)
+private int FindNextSeperator(int startPos)
+private int FindPrevSeperator(int startPos)
+public int FindStartOfNextWord(int p)
+public int FindEndOfPreviousWord(int p)
+private int FindEndOfClassification(int p, Direction dir)
+private int ClampTextIndex(int index)
+internal int EnsureValidCodePointIndex(int index)
+private bool IsValidCodePointIndex(int index)
+private int IndexOfEndOfLine(int startIndex)
+public int PreviousCodePointIndex(int index)
+public int NextCodePointIndex(int index)
+private int GetGraphicalLineStart(int p)
+private int GetGraphicalLineEnd(int p)
+public void Copy()
+private CharacterType ClassifyChar(int index)
+}
+internal UnityEngine.TextSelectOp : Enum {
+public int value__
+public TextSelectOp SelectLeft
+public TextSelectOp SelectRight
+public TextSelectOp SelectUp
+public TextSelectOp SelectDown
+public TextSelectOp SelectTextStart
+public TextSelectOp SelectTextEnd
+public TextSelectOp SelectPageUp
+public TextSelectOp SelectPageDown
+public TextSelectOp ExpandSelectGraphicalLineStart
+public TextSelectOp ExpandSelectGraphicalLineEnd
+public TextSelectOp SelectGraphicalLineStart
+public TextSelectOp SelectGraphicalLineEnd
+public TextSelectOp SelectWordLeft
+public TextSelectOp SelectWordRight
+public TextSelectOp SelectToEndOfPreviousWord
+public TextSelectOp SelectToStartOfNextWord
+public TextSelectOp SelectParagraphBackward
+public TextSelectOp SelectParagraphForward
+public TextSelectOp Copy
+public TextSelectOp SelectAll
+public TextSelectOp SelectNone
 }

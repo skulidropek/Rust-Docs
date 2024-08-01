@@ -48,9 +48,12 @@ public bool isStopped
 public bool isPaused
 public int particleCount
 public float time
+public float totalTime
 public UInt32 randomSeed
 public bool useAutoRandomSeed
 public bool proceduralSimulationSupported
+public bool has3DParticleRotations
+public bool hasNonUniformParticleSizes
 public MainModule main
 public EmissionModule emission
 public ShapeModule shape
@@ -117,6 +120,7 @@ public bool get_isPaused()
 public int get_particleCount()
 public float get_time()
 public void set_time(float value)
+public float get_totalTime()
 public UInt32 get_randomSeed()
 public void set_randomSeed(UInt32 value)
 public bool get_useAutoRandomSeed()
@@ -176,6 +180,8 @@ public void SetMaximumPreMappedBufferCounts(int vertexBuffersCount, int indexBuf
 public void AllocateAxisOfRotationAttribute()
 public void AllocateMeshIndexAttribute()
 public void AllocateCustomDataAttribute(ParticleSystemCustomData stream)
+public bool get_has3DParticleRotations()
+public bool get_hasNonUniformParticleSizes()
 internal Void* GetManagedJobData()
 internal JobHandle GetManagedJobHandle()
 internal void SetManagedJobHandle(JobHandle handle)
@@ -236,6 +242,21 @@ public UnityEngine.ParticleSystemAnimationType : Enum {
 public int value__
 public ParticleSystemAnimationType WholeSheet
 public ParticleSystemAnimationType SingleRow
+}
+public UnityEngine.ParticleSystemBakeMeshOptions : Enum {
+public int value__
+public ParticleSystemBakeMeshOptions BakeRotationAndScale
+public ParticleSystemBakeMeshOptions BakePosition
+public ParticleSystemBakeMeshOptions Default
+}
+public UnityEngine.ParticleSystemBakeTextureOptions : Enum {
+public int value__
+public ParticleSystemBakeTextureOptions BakeRotationAndScale
+public ParticleSystemBakeTextureOptions BakePosition
+public ParticleSystemBakeTextureOptions PerVertex
+public ParticleSystemBakeTextureOptions PerParticle
+public ParticleSystemBakeTextureOptions IncludeParticleIndices
+public ParticleSystemBakeTextureOptions Default
 }
 public UnityEngine.ParticleSystemColliderQueryMode : Enum {
 public int value__
@@ -401,6 +422,11 @@ public ParticleSystemGradientMode TwoColors
 public ParticleSystemGradientMode TwoGradients
 public ParticleSystemGradientMode RandomColor
 }
+public UnityEngine.ParticleSystemGravitySource : Enum {
+public int value__
+public ParticleSystemGravitySource Physics3D
+public ParticleSystemGravitySource Physics2D
+}
 public UnityEngine.ParticleSystemInheritVelocityMode : Enum {
 public int value__
 public ParticleSystemInheritVelocityMode Initial
@@ -409,17 +435,28 @@ public ParticleSystemInheritVelocityMode Current
 public UnityEngine.ParticleSystemJobs.IJobParticleSystem {
 public void Execute(ParticleSystemJobData jobData)
 }
+public UnityEngine.ParticleSystemJobs.IJobParticleSystemExtensions : object {
+public void EarlyJobInit()
+internal IntPtr GetReflectionData()
+}
 public UnityEngine.ParticleSystemJobs.IJobParticleSystemParallelFor {
 public void Execute(ParticleSystemJobData jobData, int index)
 }
 public UnityEngine.ParticleSystemJobs.IJobParticleSystemParallelForBatch {
 public void Execute(ParticleSystemJobData jobData, int startIndex, int count)
 }
+public UnityEngine.ParticleSystemJobs.IJobParticleSystemParallelForBatchExtensions : object {
+public void EarlyJobInit()
+internal IntPtr GetReflectionData()
+}
+public UnityEngine.ParticleSystemJobs.IJobParticleSystemParallelForExtensions : object {
+public void EarlyJobInit()
+internal IntPtr GetReflectionData()
+}
 public UnityEngine.ParticleSystemJobs.IParticleSystemJobExtensions : object {
 public JobHandle Schedule(T jobData, ParticleSystem ps, JobHandle dependsOn)
 public JobHandle Schedule(T jobData, ParticleSystem ps, int minIndicesPerJobCount, JobHandle dependsOn)
 public JobHandle ScheduleBatch(T jobData, ParticleSystem ps, int innerLoopBatchCount, JobHandle dependsOn)
-private JobScheduleParameters CreateScheduleParams(T& jobData, ParticleSystem ps, JobHandle dependsOn, IntPtr jobReflectionData)
 }
 internal UnityEngine.ParticleSystemJobs.NativeListData : ValueType {
 public Void* system
@@ -491,9 +528,12 @@ internal ParticleSystemNativeArray3 CreateNativeArray3(Array3& ptrs, int count)
 internal ParticleSystemNativeArray4 CreateNativeArray4(Array4& ptrs, int count)
 }
 internal UnityEngine.ParticleSystemJobs.ParticleSystemJobStruct`1 : ValueType {
-public IntPtr jobReflectionData
-public IntPtr Initialize()
+public SharedStatic`1<IntPtr> jobReflectionData
+public void Initialize()
 public void Execute(T& data, IntPtr listDataPtr, IntPtr unusedPtr, JobRanges& ranges, int jobIndex)
+}
+internal UnityEngine.ParticleSystemJobs.ParticleSystemJobUtility : object {
+internal JobScheduleParameters CreateScheduleParams(T& jobData, ParticleSystem ps, JobHandle dependsOn, IntPtr jobReflectionData)
 }
 public UnityEngine.ParticleSystemJobs.ParticleSystemNativeArray3 : ValueType {
 public NativeArray`1<float> x
@@ -513,13 +553,13 @@ public Vector4 get_Item(int index)
 public void set_Item(int index, Vector4 value)
 }
 internal UnityEngine.ParticleSystemJobs.ParticleSystemParallelForBatchJobStruct`1 : ValueType {
-public IntPtr jobReflectionData
-public IntPtr Initialize()
+public SharedStatic`1<IntPtr> jobReflectionData
+public void Initialize()
 public void Execute(T& data, IntPtr listDataPtr, IntPtr bufferRangePatchData, JobRanges& ranges, int jobIndex)
 }
 internal UnityEngine.ParticleSystemJobs.ParticleSystemParallelForJobStruct`1 : ValueType {
-public IntPtr jobReflectionData
-public IntPtr Initialize()
+public SharedStatic`1<IntPtr> jobReflectionData
+public void Initialize()
 public void Execute(T& data, IntPtr listDataPtr, IntPtr bufferRangePatchData, JobRanges& ranges, int jobIndex)
 }
 public UnityEngine.ParticleSystemMeshDistribution : Enum {
@@ -570,12 +610,17 @@ public bool rotateWithStretchDirection
 public Mesh mesh
 public int meshCount
 public int activeVertexStreamsCount
+public int activeTrailVertexStreamsCount
 public void EnableVertexStreams(ParticleSystemVertexStreams streams)
 public void DisableVertexStreams(ParticleSystemVertexStreams streams)
 public bool AreVertexStreamsEnabled(ParticleSystemVertexStreams streams)
 public ParticleSystemVertexStreams GetEnabledVertexStreams(ParticleSystemVertexStreams streams)
 internal void Internal_SetVertexStreams(ParticleSystemVertexStreams streams, bool enabled)
 internal ParticleSystemVertexStreams Internal_GetEnabledVertexStreams(ParticleSystemVertexStreams streams)
+public void BakeMesh(Mesh mesh, bool useTransform)
+public void BakeMesh(Mesh mesh, Camera camera, bool useTransform)
+public void BakeTrailsMesh(Mesh mesh, bool useTransform)
+public void BakeTrailsMesh(Mesh mesh, Camera camera, bool useTransform)
 public ParticleSystemRenderSpace get_alignment()
 public void set_alignment(ParticleSystemRenderSpace value)
 public ParticleSystemRenderMode get_renderMode()
@@ -626,17 +671,31 @@ public int GetMeshWeightings(Single[] weightings)
 public void SetMeshWeightings(Single[] weightings, int size)
 public void SetMeshWeightings(Single[] weightings)
 public int get_meshCount()
-public void BakeMesh(Mesh mesh, bool useTransform)
-public void BakeMesh(Mesh mesh, Camera camera, bool useTransform)
-public void BakeTrailsMesh(Mesh mesh, bool useTransform)
-public void BakeTrailsMesh(Mesh mesh, Camera camera, bool useTransform)
+public void BakeMesh(Mesh mesh, ParticleSystemBakeMeshOptions options)
+public void BakeMesh(Mesh mesh, Camera camera, ParticleSystemBakeMeshOptions options)
+public void BakeTrailsMesh(Mesh mesh, ParticleSystemBakeMeshOptions options)
+public void BakeTrailsMesh(Mesh mesh, Camera camera, ParticleSystemBakeMeshOptions options)
+public int BakeTexture(Texture2D& verticesTexture, ParticleSystemBakeTextureOptions options)
+public int BakeTexture(Texture2D& verticesTexture, Camera camera, ParticleSystemBakeTextureOptions options)
+private Texture2D BakeTextureNoIndicesInternal(Texture2D verticesTexture, Camera camera, ParticleSystemBakeTextureOptions options, Int32& indexCount)
+public int BakeTexture(Texture2D& verticesTexture, Texture2D& indicesTexture, ParticleSystemBakeTextureOptions options)
+public int BakeTexture(Texture2D& verticesTexture, Texture2D& indicesTexture, Camera camera, ParticleSystemBakeTextureOptions options)
+private BakeTextureOutput BakeTextureInternal(Texture2D verticesTexture, Texture2D indicesTexture, Camera camera, ParticleSystemBakeTextureOptions options, Int32& indexCount)
+public int BakeTrailsTexture(Texture2D& verticesTexture, Texture2D& indicesTexture, ParticleSystemBakeTextureOptions options)
+public int BakeTrailsTexture(Texture2D& verticesTexture, Texture2D& indicesTexture, Camera camera, ParticleSystemBakeTextureOptions options)
+private BakeTextureOutput BakeTrailsTextureInternal(Texture2D verticesTexture, Texture2D indicesTexture, Camera camera, ParticleSystemBakeTextureOptions options, Int32& indexCount)
 public int get_activeVertexStreamsCount()
 public void SetActiveVertexStreams(List`1<ParticleSystemVertexStream> streams)
 public void GetActiveVertexStreams(List`1<ParticleSystemVertexStream> streams)
+public int get_activeTrailVertexStreamsCount()
+public void SetActiveTrailVertexStreams(List`1<ParticleSystemVertexStream> streams)
+public void GetActiveTrailVertexStreams(List`1<ParticleSystemVertexStream> streams)
 private void get_pivot_Injected(Vector3& ret)
 private void set_pivot_Injected(Vector3& value)
 private void get_flip_Injected(Vector3& ret)
 private void set_flip_Injected(Vector3& value)
+private void BakeTextureInternal_Injected(Texture2D verticesTexture, Texture2D indicesTexture, Camera camera, ParticleSystemBakeTextureOptions options, Int32& indexCount, BakeTextureOutput& ret)
+private void BakeTrailsTextureInternal_Injected(Texture2D verticesTexture, Texture2D indicesTexture, Camera camera, ParticleSystemBakeTextureOptions options, Int32& indexCount, BakeTextureOutput& ret)
 }
 public UnityEngine.ParticleSystemRenderMode : Enum {
 public int value__
@@ -760,6 +819,7 @@ public ParticleSystemTrailTextureMode Stretch
 public ParticleSystemTrailTextureMode Tile
 public ParticleSystemTrailTextureMode DistributePerSegment
 public ParticleSystemTrailTextureMode RepeatPerSegment
+public ParticleSystemTrailTextureMode Static
 }
 public UnityEngine.ParticleSystemTriggerEventType : Enum {
 public int value__
@@ -816,6 +876,13 @@ public ParticleSystemVertexStream NoiseImpulseX
 public ParticleSystemVertexStream NoiseImpulseXY
 public ParticleSystemVertexStream NoiseImpulseXYZ
 public ParticleSystemVertexStream MeshIndex
+public ParticleSystemVertexStream ParticleIndex
+public ParticleSystemVertexStream ColorPackedAsTwoFloats
+public ParticleSystemVertexStream MeshAxisOfRotation
+public ParticleSystemVertexStream NextTrailCenter
+public ParticleSystemVertexStream PreviousTrailCenter
+public ParticleSystemVertexStream PercentageAlongTrail
+public ParticleSystemVertexStream TrailWidth
 }
 public UnityEngine.ParticleSystemVertexStreams : Enum {
 public int value__

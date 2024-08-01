@@ -35,12 +35,14 @@ public void .ctor(FloatPrecision floatPrecision, FloatMode floatMode)
 internal void .ctor(String[] options)
 }
 public Unity.Burst.BurstCompiler : object {
+private CommandBuilder _cmdBuilder
 internal bool _IsEnabled
 public BurstCompilerOptions Options
-internal Action OnCompileILPPMethod
+internal Action OnCompileILPPMethod2
 private MethodInfo DummyMethodInfo
 public bool IsEnabled
 public bool IsLoadAdditionalLibrarySupported()
+private CommandBuilder BeginCompilerCommand(string cmd)
 public bool get_IsEnabled()
 public void SetExecutionMode(BurstExecutionEnvironment mode)
 public BurstExecutionEnvironment GetExecutionMode()
@@ -48,28 +50,33 @@ internal T CompileDelegate(T delegateMethod)
 private void VerifyDelegateIsNotMulticast(T delegateMethod)
 private void VerifyDelegateHasCorrectUnmanagedFunctionPointerAttribute(T delegateMethod)
 public IntPtr CompileILPPMethod(RuntimeMethodHandle burstMethodHandle, RuntimeMethodHandle managedMethodHandle, RuntimeTypeHandle delegateTypeHandle)
+public IntPtr CompileILPPMethod2(RuntimeMethodHandle burstMethodHandle)
 public Void* GetILPPMethodFunctionPointer(IntPtr ilppMethod)
+public Void* GetILPPMethodFunctionPointer2(IntPtr ilppMethod, RuntimeMethodHandle managedMethodHandle, RuntimeTypeHandle delegateTypeHandle)
 public Void* CompileUnsafeStaticMethod(RuntimeMethodHandle handle)
 public FunctionPointer`1<T> CompileFunctionPointer(T delegateMethod)
 private Void* Compile(object delegateObj, bool isFunctionPointer)
-private Void* Compile(object delegateObj, MethodInfo methodInfo, bool isFunctionPointer, object managedFallbackDelegateObj)
+private Void* Compile(object delegateObj, MethodInfo methodInfo, bool isFunctionPointer, bool isILPostProcessing)
 internal void Shutdown()
 internal void Cancel()
+internal bool IsCurrentCompilationDone()
 internal void Enable()
 internal void Disable()
 internal bool IsHostEditorArm()
 internal void TriggerUnsafeStaticMethodRecompilation()
 internal void TriggerRecompilation()
 internal void UnloadAdditionalLibraries()
+internal void InitialiseDebuggerHooks()
 internal bool IsApiAvailable(string apiName)
-internal void EagerCompileMethods(List`1<EagerCompilationRequest> requests)
-internal void WaitUntilCompilationFinished()
-internal void ClearEagerCompilationQueues()
-internal void CancelEagerCompilation()
-internal void SetProgressCallback()
-internal void RequestClearJitCache()
+internal int RequestSetProtocolVersion(int version)
+internal void Initialize(String[] assemblyFolders, String[] ignoreAssemblies)
+internal void NotifyCompilationStarted(String[] assemblyFolders, String[] ignoreAssemblies)
+internal void NotifyAssemblyCompilationNotRequired(string assemblyName)
+internal void NotifyAssemblyCompilationFinished(string assemblyName, String[] defines)
+internal void NotifyCompilationFinished()
+internal string AotCompilation(String[] assemblyFolders, String[] assemblyRoots, string options)
 internal void SetProfilerCallbacks()
-internal void Reset()
+private string SendRawCommandToCompiler(string command)
 private string SendCommandToCompiler(string commandName, string commandArgs)
 private void DummyMethod()
 }
@@ -80,8 +87,7 @@ internal string DefaultLibraryName
 internal string BurstInitializeName
 internal string BurstInitializeExternalsName
 internal string BurstInitializeStaticsName
-internal string OptionDoNotEagerCompile
-internal string DoNotEagerCompile
+internal string OptionBurstcSwitch
 internal string OptionGroup
 internal string OptionPlatform
 internal string OptionBackend
@@ -91,11 +97,13 @@ internal string OptionDisableOpt
 internal string OptionFastMath
 internal string OptionTarget
 internal string OptionOptLevel
+internal string OptionLogTimings
 internal string OptionOptForSize
 internal string OptionFloatPrecision
 internal string OptionFloatMode
+internal string OptionBranchProtection
 internal string OptionDisableWarnings
-internal string OptionCompilationDefines
+internal string OptionAssemblyDefines
 internal string OptionDump
 internal string OptionFormat
 internal string OptionDebugTrap
@@ -109,18 +117,18 @@ internal string OptionEnableDirectExternalLinking
 internal string OptionLinkerOptions
 internal string OptionEnableAutoLayoutFallbackCheck
 internal string OptionGenerateLinkXml
+internal string OptionMetaDataGeneration
+internal string OptionDisableStringInterpolationInExceptionMessages
+internal string OptionPlatformConfiguration
 internal string OptionCacheDirectory
 internal string OptionJitDisableFunctionCaching
 internal string OptionJitDisableAssemblyCaching
 internal string OptionJitEnableAssemblyCachingLogs
 internal string OptionJitEnableSynchronousCompilation
 internal string OptionJitCompilationPriority
-internal string OptionJitLogTimings
 internal string OptionJitIsForFunctionPointer
 internal string OptionJitManagedFunctionPointer
-internal string OptionJitProvider
-internal string OptionJitSkipCheckDiskCache
-internal string OptionJitSkipBurstInitialize
+internal string OptionJitManagedDelegateHandle
 internal string OptionEnableInterpreter
 internal string OptionAotAssemblyFolder
 internal string OptionRootAssembly
@@ -131,10 +139,6 @@ internal string OptionAotAssembly
 internal string OptionAotOutputPath
 internal string OptionAotKeepIntermediateFiles
 internal string OptionAotNoLink
-internal string OptionAotPatchedAssembliesOutputFolder
-internal string OptionAotPinvokeNameToPatch
-internal string OptionAotExecuteMethodNameToFind
-internal string OptionAotUsePlatformSDKLinkers
 internal string OptionAotOnlyStaticMethods
 internal string OptionMethodPrefix
 internal string OptionAotNoNativeToolchain
@@ -150,26 +154,37 @@ internal string OptionOutputMode
 internal string OptionAlwaysCreateOutput
 internal string OptionAotPdbSearchPaths
 internal string OptionSafetyChecks
+internal string OptionLibraryOutputMode
+internal string OptionCompilationId
+internal string OptionTargetFramework
+internal string OptionDiscardAssemblies
+internal string OptionSaveExtraContext
 internal string CompilerCommandShutdown
 internal string CompilerCommandCancel
 internal string CompilerCommandEnableCompiler
 internal string CompilerCommandDisableCompiler
+internal string CompilerCommandSetDefaultOptions
+internal string CompilerCommandTriggerSetupRecompilation
+internal string CompilerCommandIsCurrentCompilationDone
 internal string CompilerCommandTriggerRecompilation
-internal string CompilerCommandEagerCompileMethods
-internal string CompilerCommandWaitUntilCompilationFinished
-internal string CompilerCommandClearEagerCompilationQueues
-internal string CompilerCommandCancelEagerCompilation
-internal string CompilerCommandReset
+internal string CompilerCommandInitialize
 internal string CompilerCommandDomainReload
-internal string CompilerCommandUpdateAssemblyFolders
 internal string CompilerCommandVersionNotification
-internal string CompilerCommandSetProgressCallback
-internal string CompilerCommandRequestClearJitCache
+internal string CompilerCommandGetTargetCpuFromHost
 internal string CompilerCommandSetProfileCallbacks
 internal string CompilerCommandUnloadBurstNatives
 internal string CompilerCommandIsNativeApiAvailable
 internal string CompilerCommandILPPCompilation
 internal string CompilerCommandIsArmTestEnv
+internal string CompilerCommandNotifyAssemblyCompilationNotRequired
+internal string CompilerCommandNotifyAssemblyCompilationFinished
+internal string CompilerCommandNotifyCompilationStarted
+internal string CompilerCommandNotifyCompilationFinished
+internal string CompilerCommandAotCompilation
+internal string CompilerCommandRequestInitialiseDebuggerCommmand
+internal string CompilerCommandInitialiseDebuggerCommmand
+internal string CompilerCommandRequestSetProtocolVersionEditor
+internal string CompilerCommandSetProtocolVersionBurst
 internal bool ForceDisableBurstCompilation
 private bool ForceBurstCompilationSynchronously
 internal bool IsSecondaryUnityProcess
@@ -193,6 +208,8 @@ public bool EnableFastMath
 internal bool EnableBurstTimings
 internal bool RequiresSynchronousCompilation
 internal Action OptionsChanged
+internal string SerialiseCompilationOptionsSafe(String[] roots, String[] folders, string options)
+internal ValueTuple`3<String[], String[], string> DeserialiseCompilationOptionsSafe(string from)
 internal void .ctor(bool isGlobal)
 private bool get_IsGlobal()
 public bool get_IsEnabled()
@@ -216,18 +233,17 @@ internal bool get_RequiresSynchronousCompilation()
 internal Action get_OptionsChanged()
 internal void set_OptionsChanged(Action value)
 internal BurstCompilerOptions Clone()
-private bool TryGetAttribute(MemberInfo member, BurstCompileAttribute& attribute, bool isForEagerCompilation)
+private bool TryGetAttribute(MemberInfo member, BurstCompileAttribute& attribute)
 private bool TryGetAttribute(Assembly assembly, BurstCompileAttribute& attribute)
 private BurstCompileAttribute GetBurstCompileAttribute(MemberInfo memberInfo)
 internal bool HasBurstCompileAttribute(MemberInfo member)
 internal void MergeAttributes(BurstCompileAttribute& memberAttribute, BurstCompileAttribute& assemblyAttribute)
-internal bool TryGetOptions(MemberInfo member, bool isJit, String& flagsOut, bool isForEagerCompilation, bool isForILPostProcessing)
-internal string GetOptions(bool isJit, BurstCompileAttribute attr, bool isForEagerCompilation, bool isForILPostProcessing)
+internal bool TryGetOptions(MemberInfo member, String& flagsOut, bool isForILPostProcessing, bool isForCompilerClient)
+internal string GetOptions(BurstCompileAttribute attr, bool isForILPostProcessing, bool isForCompilerClient)
 private void AddOption(StringBuilder builder, string option)
 internal string GetOption(string optionName, object value)
 private void OnOptionsChanged()
 private void MaybeTriggerRecompilation()
-private void MaybePreventChangingOption()
 private bool CheckIsSecondaryUnityProcess()
 }
 public Unity.Burst.BurstExecutionEnvironment : Enum {
@@ -245,7 +261,9 @@ internal int HashStringWithFNV1A32(string text)
 internal long HashStringWithFNV1A64(string text)
 public bool LoadAdditionalLibrary(string pathToLibBurstGenerated)
 internal bool LoadAdditionalLibraryInternal(string pathToLibBurstGenerated)
+internal void RuntimeLog(Byte* message, int logType, Byte* fileName, int lineNumber)
 internal void Initialize()
+internal void PreventRequiredAttributeStrip()
 internal void Log(Byte* message, int logType, Byte* fileName, int lineNumber)
 public Byte* GetUTF8LiteralPointer(string str, Int32& byteCount)
 }
@@ -326,6 +344,7 @@ public BurstTargetCpu ARMV7A_NEON32
 public BurstTargetCpu ARMV8A_AARCH64
 public BurstTargetCpu THUMB2_NEON32
 public BurstTargetCpu ARMV8A_AARCH64_HALFFP
+public BurstTargetCpu ARMV9A
 }
 internal Unity.Burst.CompilationPriority : Enum {
 public int value__
@@ -445,6 +464,9 @@ public DiagnosticId ERR_BinaryOperationNotSupported
 public DiagnosticId ERR_CalliWithThisNotSupported
 public DiagnosticId ERR_CalliNonCCallingConventionNotSupported
 public DiagnosticId ERR_StringLiteralTooBig
+public DiagnosticId ERR_LdftnNonCCallingConventionNotSupported
+public DiagnosticId ERR_UnableToCallMethodOnInterfaceObject
+public DiagnosticId ERR_UnsupportedCpuDependentBranch
 public DiagnosticId ERR_InstructionTargetCpuFeatureNotAllowedInThisBlock
 public DiagnosticId ERR_AssumeRangeTypeMustBeInteger
 public DiagnosticId ERR_AssumeRangeTypeMustBeSameSign
@@ -485,11 +507,6 @@ public DiagnosticId ERR_StringLiteralRequired
 public DiagnosticId ERR_MultiDimensionalArrayUnsupported
 public DiagnosticId ERR_NonBlittableAndNonManagedSequentialStructNotSupported
 public DiagnosticId ERR_VarArgFunctionNotSupported
-}
-internal Unity.Burst.EagerCompilationRequest : ValueType {
-public string EncodedMethod
-public string Options
-public void .ctor(string encodedMethod, string options)
 }
 public Unity.Burst.FloatMode : Enum {
 public int value__
@@ -929,7 +946,7 @@ internal Unity.Burst.NativeDumpFlags : Enum {
 public int value__
 public NativeDumpFlags None
 public NativeDumpFlags IL
-public NativeDumpFlags Backend
+public NativeDumpFlags Unused
 public NativeDumpFlags IR
 public NativeDumpFlags IROptimized
 public NativeDumpFlags Asm
@@ -937,6 +954,7 @@ public NativeDumpFlags Function
 public NativeDumpFlags Analysis
 public NativeDumpFlags IRPassAnalysis
 public NativeDumpFlags ILPre
+public NativeDumpFlags IRPerEntryPoint
 public NativeDumpFlags All
 }
 public Unity.Burst.OptimizeFor : Enum {
@@ -947,16 +965,18 @@ public OptimizeFor Size
 public OptimizeFor FastCompilation
 public OptimizeFor Balanced
 }
+internal Unity.Burst.SafeStringArrayHelper : object {
+public string SerialiseStringArraySafe(String[] array)
+public String[] DeserialiseStringArraySafe(string input)
+}
 internal Unity.Burst.SharedStatic : object {
-private Dictionary`2<long, Type> HashToType
-public Void* GetOrCreateSharedStaticInternal(Type typeContext, Type subTypeContext, UInt32 sizeOf, UInt32 alignment)
-private long GetSafeHashCode64(Type type)
 private void CheckSizeOf(UInt32 sizeOf)
 private void CheckResult(Void* result)
 public Void* GetOrCreateSharedStaticInternal(long getHashCode64, long getSubHashCode64, UInt32 sizeOf, UInt32 alignment)
 }
 public Unity.Burst.SharedStatic`1 : ValueType {
 private Void* _buffer
+private UInt32 DefaultAlignment
 public T& Data
 public Void* UnsafeDataPointer
 private void .ctor(Void* buffer)
@@ -964,7 +984,13 @@ public T& get_Data()
 public Void* get_UnsafeDataPointer()
 public SharedStatic`1<T> GetOrCreate(UInt32 alignment)
 public SharedStatic`1<T> GetOrCreate(UInt32 alignment)
+public SharedStatic`1<T> GetOrCreateUnsafe(UInt32 alignment, long hashCode, long subHashCode)
+public SharedStatic`1<T> GetOrCreatePartiallyUnsafeWithHashCode(UInt32 alignment, long hashCode)
+public SharedStatic`1<T> GetOrCreatePartiallyUnsafeWithSubHashCode(UInt32 alignment, long subHashCode)
 public SharedStatic`1<T> GetOrCreate(Type contextType, UInt32 alignment)
 public SharedStatic`1<T> GetOrCreate(Type contextType, Type subContextType, UInt32 alignment)
 private void CheckIf_T_IsUnmanagedOrThrow()
+}
+internal UnitySourceGeneratedAssemblyMonoScriptTypes_v1 : object {
+private MonoScriptData Get()
 }

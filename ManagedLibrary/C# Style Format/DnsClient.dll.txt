@@ -1,0 +1,1858 @@
+internal DnsClient.ArraySegmentExtensions : object {
+public ArraySegment`1<T> SubArray(ArraySegment`1<T> array, int startIndex, int length)
+public ArraySegment`1<T> SubArrayFromOriginal(ArraySegment`1<T> array, int startIndex)
+}
+internal DnsClient.DisposableIntPtr : object {
+private bool <IsValid>k__BackingField
+private IntPtr _ptr
+public IntPtr Ptr
+public bool IsValid
+public IntPtr get_Ptr()
+public bool get_IsValid()
+private void set_IsValid(bool value)
+public DisposableIntPtr Alloc(int size)
+public void Dispose()
+}
+public DnsClient.DnsDatagramReader : object {
+public int IPv6Length
+public int IPv4Length
+private byte ReferenceByte
+private string ACEPrefix
+private int MaxRecursion
+private Byte[] _ipV4Buffer
+private Byte[] _ipV6Buffer
+private ArraySegment`1<byte> _data
+private int _count
+private int <Index>k__BackingField
+public int Index
+public bool DataAvailable
+public int get_Index()
+private void set_Index(int value)
+public bool get_DataAvailable()
+public void .ctor(ArraySegment`1<byte> data, int startIndex)
+public string ReadStringWithLengthPrefix()
+public string ReadString(int length)
+public string ParseString(ArraySegment`1<byte> data)
+public string ParseString(DnsDatagramReader reader, int length)
+public string ReadUTF8String(ArraySegment`1<byte> data)
+public byte ReadByte()
+public ArraySegment`1<byte> ReadBytes(int length)
+public ArraySegment`1<byte> ReadBytesToEnd(int startIndex, int lengthOfRawData)
+public IPAddress ReadIPAddress()
+public IPAddress ReadIPv6Address()
+public void Advance(int length)
+public DnsString ReadDnsName()
+public DnsString ReadQuestionQueryString()
+public IReadOnlyList`1<ArraySegment`1<byte>> ReadLabels(int recursion)
+public ushort ReadUInt16()
+public ushort ReadUInt16NetworkOrder()
+public UInt32 ReadUInt32NetworkOrder()
+internal void SanitizeResult(int expectedIndex, int dataLength)
+}
+internal DnsClient.DnsDatagramWriter : object {
+public int BufferSize
+private byte DotByte
+private PooledBytes _pooledBytes
+private ArraySegment`1<byte> _buffer
+private int <Index>k__BackingField
+public ArraySegment`1<byte> Data
+public int Index
+public ArraySegment`1<byte> get_Data()
+public int get_Index()
+public void set_Index(int value)
+public void .ctor(ArraySegment`1<byte> useBuffer)
+public void WriteHostName(string queryName)
+public void WriteStringWithLengthPrefix(string value)
+public void WriteByte(byte b)
+public void WriteBytes(Byte[] data, int length)
+public void WriteBytes(Byte[] data, int dataOffset, int length)
+public void WriteInt16NetworkOrder(short value)
+public void WriteInt32NetworkOrder(int value)
+public void WriteUInt16NetworkOrder(ushort value)
+public void WriteUInt32NetworkOrder(UInt32 value)
+protected void Dispose(bool disposing)
+public void Dispose()
+}
+public DnsClient.DnsHeaderResponseCode : Enum {
+public short value__
+public DnsHeaderResponseCode NoError
+public DnsHeaderResponseCode FormatError
+public DnsHeaderResponseCode ServerFailure
+public DnsHeaderResponseCode NotExistentDomain
+public DnsHeaderResponseCode NotImplemented
+public DnsHeaderResponseCode Refused
+public DnsHeaderResponseCode ExistingDomain
+public DnsHeaderResponseCode ExistingResourceRecordSet
+public DnsHeaderResponseCode MissingResourceRecordSet
+public DnsHeaderResponseCode NotAuthorized
+public DnsHeaderResponseCode NotZone
+public DnsHeaderResponseCode Unassinged11
+public DnsHeaderResponseCode Unassinged12
+public DnsHeaderResponseCode Unassinged13
+public DnsHeaderResponseCode Unassinged14
+public DnsHeaderResponseCode Unassinged15
+}
+internal DnsClient.DnsMessageHandler : object {
+public DnsMessageHandleType Type
+public DnsMessageHandleType get_Type()
+public DnsResponseMessage Query(IPEndPoint endpoint, DnsRequestMessage request, TimeSpan timeout)
+public Task`1<DnsResponseMessage> QueryAsync(IPEndPoint endpoint, DnsRequestMessage request, CancellationToken cancellationToken)
+public bool IsTransientException(Exception exception)
+protected void ValidateResponse(DnsRequestMessage request, DnsResponseMessage response)
+public void GetRequestData(DnsRequestMessage request, DnsDatagramWriter writer)
+public DnsResponseMessage GetResponseMessage(ArraySegment`1<byte> responseData)
+}
+internal DnsClient.DnsMessageHandleType : Enum {
+public int value__
+public DnsMessageHandleType None
+public DnsMessageHandleType UDP
+public DnsMessageHandleType TCP
+}
+public DnsClient.DnsOpCode : Enum {
+public short value__
+public DnsOpCode Query
+public DnsOpCode IQuery
+public DnsOpCode Status
+public DnsOpCode Unassinged3
+public DnsOpCode Notify
+public DnsOpCode Update
+public DnsOpCode Unassinged6
+public DnsOpCode Unassinged7
+public DnsOpCode Unassinged8
+public DnsOpCode Unassinged9
+public DnsOpCode Unassinged10
+public DnsOpCode Unassinged11
+public DnsOpCode Unassinged12
+public DnsOpCode Unassinged13
+public DnsOpCode Unassinged14
+public DnsOpCode Unassinged15
+}
+public DnsClient.DnsQueryAndServerOptions : DnsQueryOptions {
+private IReadOnlyList`1<NameServer> <NameServers>k__BackingField
+public IReadOnlyList`1<NameServer> NameServers
+public void .ctor(NameServer[] nameServers)
+public void .ctor(IPEndPoint[] nameServers)
+public void .ctor(IPAddress[] nameServers)
+public IReadOnlyList`1<NameServer> get_NameServers()
+public DnsQueryAndServerSettings op_Implicit(DnsQueryAndServerOptions fromOptions)
+}
+public DnsClient.DnsQueryAndServerSettings : DnsQuerySettings {
+private NameServer[] _endpoints
+private Random _rnd
+public IReadOnlyList`1<NameServer> NameServers
+public IReadOnlyList`1<NameServer> get_NameServers()
+public void .ctor(DnsQueryAndServerOptions options)
+public void .ctor(DnsQueryAndServerOptions options, IReadOnlyCollection`1<NameServer> overrideServers)
+public bool Equals(object obj)
+public bool Equals(DnsQueryAndServerSettings other)
+internal IReadOnlyList`1<NameServer> ShuffleNameServers()
+}
+public DnsClient.DnsQueryExtensions : object {
+public IPHostEntry GetHostEntry(IDnsQuery query, string hostNameOrAddress)
+public Task`1<IPHostEntry> GetHostEntryAsync(IDnsQuery query, string hostNameOrAddress)
+public IPHostEntry GetHostEntry(IDnsQuery query, IPAddress address)
+public Task`1<IPHostEntry> GetHostEntryAsync(IDnsQuery query, IPAddress address)
+private IPHostEntry GetHostEntryFromName(IDnsQuery query, string hostName)
+private Task`1<IPHostEntry> GetHostEntryFromNameAsync(IDnsQuery query, string hostName)
+private IPHostEntry GetHostEntryProcessResult(DnsString hostString, DnsResourceRecord[] allRecords)
+public string GetHostName(IDnsQuery query, IPAddress address)
+public Task`1<string> GetHostNameAsync(IDnsQuery query, IPAddress address)
+private string GetHostNameAsyncProcessResult(IDnsQueryResponse result)
+public ServiceHostEntry[] ResolveService(IDnsQuery query, string baseDomain, string serviceName, ProtocolType protocol)
+public Task`1<ServiceHostEntry[]> ResolveServiceAsync(IDnsQuery query, string baseDomain, string serviceName, ProtocolType protocol)
+public ServiceHostEntry[] ResolveService(IDnsQuery query, string baseDomain, string serviceName, string tag)
+public ServiceHostEntry[] ResolveService(IDnsQuery query, string service)
+public Task`1<ServiceHostEntry[]> ResolveServiceAsync(IDnsQuery query, string baseDomain, string serviceName, string tag)
+public Task`1<ServiceHostEntry[]> ResolveServiceAsync(IDnsQuery query, string service)
+public string ConcatServiceName(string baseDomain, string serviceName, string tag)
+public ServiceHostEntry[] ResolveServiceProcessResult(IDnsQueryResponse result)
+}
+public DnsClient.DnsQueryOptions : object {
+public int MinimumBufferSize
+public int MaximumBufferSize
+private TimeSpan s_defaultTimeout
+private TimeSpan s_infiniteTimeout
+private TimeSpan s_maxTimeout
+private TimeSpan _timeout
+private int _ednsBufferSize
+private TimeSpan _failedResultsCacheDuration
+private bool <EnableAuditTrail>k__BackingField
+private bool <UseCache>k__BackingField
+private bool <Recursion>k__BackingField
+private int <Retries>k__BackingField
+private bool <ThrowDnsErrors>k__BackingField
+private bool <UseRandomNameServer>k__BackingField
+private bool <ContinueOnDnsError>k__BackingField
+private bool <ContinueOnEmptyResponse>k__BackingField
+private bool <UseTcpFallback>k__BackingField
+private bool <UseTcpOnly>k__BackingField
+private bool <RequestDnsSecRecords>k__BackingField
+private bool <CacheFailedResults>k__BackingField
+public bool EnableAuditTrail
+public bool UseCache
+public bool Recursion
+public int Retries
+public bool ThrowDnsErrors
+public bool UseRandomNameServer
+public bool ContinueOnDnsError
+public bool ContinueOnEmptyResponse
+public TimeSpan Timeout
+public bool UseTcpFallback
+public bool UseTcpOnly
+public int ExtendedDnsBufferSize
+public bool RequestDnsSecRecords
+public bool CacheFailedResults
+public TimeSpan FailedResultsCacheDuration
+public bool get_EnableAuditTrail()
+public void set_EnableAuditTrail(bool value)
+public bool get_UseCache()
+public void set_UseCache(bool value)
+public bool get_Recursion()
+public void set_Recursion(bool value)
+public int get_Retries()
+public void set_Retries(int value)
+public bool get_ThrowDnsErrors()
+public void set_ThrowDnsErrors(bool value)
+public bool get_UseRandomNameServer()
+public void set_UseRandomNameServer(bool value)
+public bool get_ContinueOnDnsError()
+public void set_ContinueOnDnsError(bool value)
+public bool get_ContinueOnEmptyResponse()
+public void set_ContinueOnEmptyResponse(bool value)
+public TimeSpan get_Timeout()
+public void set_Timeout(TimeSpan value)
+public bool get_UseTcpFallback()
+public void set_UseTcpFallback(bool value)
+public bool get_UseTcpOnly()
+public void set_UseTcpOnly(bool value)
+public int get_ExtendedDnsBufferSize()
+public void set_ExtendedDnsBufferSize(int value)
+public bool get_RequestDnsSecRecords()
+public void set_RequestDnsSecRecords(bool value)
+public bool get_CacheFailedResults()
+public void set_CacheFailedResults(bool value)
+public TimeSpan get_FailedResultsCacheDuration()
+public void set_FailedResultsCacheDuration(TimeSpan value)
+public DnsQuerySettings op_Implicit(DnsQueryOptions fromOptions)
+}
+public DnsClient.DnsQueryResponse : object {
+private Nullable`1<int> _hashCode
+private NameServer <NameServer>k__BackingField
+private IReadOnlyList`1<DnsResourceRecord> <Additionals>k__BackingField
+private string <AuditTrail>k__BackingField
+private IReadOnlyList`1<DnsResourceRecord> <Answers>k__BackingField
+private IReadOnlyList`1<DnsResourceRecord> <Authorities>k__BackingField
+private DnsResponseHeader <Header>k__BackingField
+private IReadOnlyList`1<DnsQuestion> <Questions>k__BackingField
+private int <MessageSize>k__BackingField
+private DnsQuerySettings <Settings>k__BackingField
+public NameServer NameServer
+public IReadOnlyList`1<DnsResourceRecord> Additionals
+public IEnumerable`1<DnsResourceRecord> AllRecords
+public string AuditTrail
+public IReadOnlyList`1<DnsResourceRecord> Answers
+public IReadOnlyList`1<DnsResourceRecord> Authorities
+public string ErrorMessage
+public bool HasError
+public DnsResponseHeader Header
+public IReadOnlyList`1<DnsQuestion> Questions
+public int MessageSize
+public DnsQuerySettings Settings
+public NameServer get_NameServer()
+public IReadOnlyList`1<DnsResourceRecord> get_Additionals()
+public IEnumerable`1<DnsResourceRecord> get_AllRecords()
+public string get_AuditTrail()
+private void set_AuditTrail(string value)
+public IReadOnlyList`1<DnsResourceRecord> get_Answers()
+public IReadOnlyList`1<DnsResourceRecord> get_Authorities()
+public string get_ErrorMessage()
+public bool get_HasError()
+public DnsResponseHeader get_Header()
+public IReadOnlyList`1<DnsQuestion> get_Questions()
+public int get_MessageSize()
+public DnsQuerySettings get_Settings()
+internal void .ctor(DnsResponseMessage dnsResponseMessage, NameServer nameServer, DnsQuerySettings settings)
+public bool Equals(object obj)
+public int GetHashCode()
+internal void SetAuditTrail(IDnsQueryResponse response, string value)
+}
+public DnsClient.DnsQuerySettings : object {
+private bool <EnableAuditTrail>k__BackingField
+private bool <UseCache>k__BackingField
+private bool <Recursion>k__BackingField
+private int <Retries>k__BackingField
+private bool <ThrowDnsErrors>k__BackingField
+private bool <UseRandomNameServer>k__BackingField
+private bool <ContinueOnDnsError>k__BackingField
+private bool <ContinueOnEmptyResponse>k__BackingField
+private TimeSpan <Timeout>k__BackingField
+private bool <UseTcpFallback>k__BackingField
+private bool <UseTcpOnly>k__BackingField
+private int <ExtendedDnsBufferSize>k__BackingField
+private bool <RequestDnsSecRecords>k__BackingField
+private bool <CacheFailedResults>k__BackingField
+private TimeSpan <FailedResultsCacheDuration>k__BackingField
+public bool EnableAuditTrail
+public bool UseCache
+public bool Recursion
+public int Retries
+public bool ThrowDnsErrors
+public bool UseRandomNameServer
+public bool ContinueOnDnsError
+public bool ContinueOnEmptyResponse
+public TimeSpan Timeout
+public bool UseTcpFallback
+public bool UseTcpOnly
+public bool UseExtendedDns
+public int ExtendedDnsBufferSize
+public bool RequestDnsSecRecords
+public bool CacheFailedResults
+public TimeSpan FailedResultsCacheDuration
+public bool get_EnableAuditTrail()
+public bool get_UseCache()
+public bool get_Recursion()
+public int get_Retries()
+public bool get_ThrowDnsErrors()
+public bool get_UseRandomNameServer()
+public bool get_ContinueOnDnsError()
+public bool get_ContinueOnEmptyResponse()
+public TimeSpan get_Timeout()
+public bool get_UseTcpFallback()
+public bool get_UseTcpOnly()
+public bool get_UseExtendedDns()
+public int get_ExtendedDnsBufferSize()
+public bool get_RequestDnsSecRecords()
+public bool get_CacheFailedResults()
+public TimeSpan get_FailedResultsCacheDuration()
+public void .ctor(DnsQueryOptions options)
+public bool Equals(object obj)
+public bool Equals(DnsQuerySettings other)
+}
+public DnsClient.DnsQuestion : object {
+private DnsString <QueryName>k__BackingField
+private QueryClass <QuestionClass>k__BackingField
+private QueryType <QuestionType>k__BackingField
+public DnsString QueryName
+public QueryClass QuestionClass
+public QueryType QuestionType
+public DnsString get_QueryName()
+public QueryClass get_QuestionClass()
+public QueryType get_QuestionType()
+public void .ctor(string query, QueryType questionType, QueryClass questionClass)
+public void .ctor(DnsString query, QueryType questionType, QueryClass questionClass)
+public string ToString()
+public string ToString(int offset)
+}
+internal DnsClient.DnsRecordFactory : object {
+private DnsDatagramReader _reader
+public void .ctor(DnsDatagramReader reader)
+public ResourceRecordInfo ReadRecordInfo()
+public DnsResourceRecord GetRecord(ResourceRecordInfo info)
+private DnsResourceRecord ResolveSoaRecord(ResourceRecordInfo info)
+private DnsResourceRecord ResolveWksRecord(ResourceRecordInfo info)
+private DnsResourceRecord ResolveMXRecord(ResourceRecordInfo info)
+private DnsResourceRecord ResolveTxtRecord(ResourceRecordInfo info)
+private DnsResourceRecord ResolveSrvRecord(ResourceRecordInfo info)
+private DnsResourceRecord ResolveNaptrRecord(ResourceRecordInfo info)
+private DnsResourceRecord ResolveOptRecord(ResourceRecordInfo info)
+private DnsResourceRecord ResolveDsRecord(ResourceRecordInfo info)
+private DnsResourceRecord ResolveSshfpRecord(ResourceRecordInfo info)
+private DnsResourceRecord ResolveRRSigRecord(ResourceRecordInfo info)
+private DnsResourceRecord ResolveNSecRecord(ResourceRecordInfo info)
+private DnsResourceRecord ResolveNSec3Record(ResourceRecordInfo info)
+private DnsResourceRecord ResolveNSec3ParamRecord(ResourceRecordInfo info)
+private DnsResourceRecord ResolveDnsKeyRecord(ResourceRecordInfo info)
+private DnsResourceRecord ResolveTlsaRecord(ResourceRecordInfo info)
+private DnsResourceRecord ResolveUriRecord(ResourceRecordInfo info)
+private DnsResourceRecord ResolveCaaRecord(ResourceRecordInfo info)
+}
+internal DnsClient.DnsRequestHeader : object {
+private Random s_random
+public int HeaderLength
+private ushort _flags
+private int <Id>k__BackingField
+public ushort RawFlags
+internal DnsHeaderFlag HeaderFlags
+public int Id
+public DnsOpCode OpCode
+public ushort RCode
+public bool UseRecursion
+public ushort get_RawFlags()
+internal DnsHeaderFlag get_HeaderFlags()
+internal void set_HeaderFlags(DnsHeaderFlag value)
+public int get_Id()
+private void set_Id(int value)
+public DnsOpCode get_OpCode()
+public void set_OpCode(DnsOpCode value)
+public ushort get_RCode()
+public void set_RCode(ushort value)
+public bool get_UseRecursion()
+public void set_UseRecursion(bool value)
+public void .ctor(DnsOpCode queryKind)
+public void .ctor(bool useRecursion, DnsOpCode queryKind)
+public string ToString()
+public void RefreshId()
+private ushort GetNextUniqueId()
+}
+internal DnsClient.DnsRequestMessage : object {
+private DnsRequestHeader <Header>k__BackingField
+private DnsQuestion <Question>k__BackingField
+private DnsQuerySettings <QuerySettings>k__BackingField
+public DnsRequestHeader Header
+public DnsQuestion Question
+public DnsQuerySettings QuerySettings
+public DnsRequestHeader get_Header()
+public DnsQuestion get_Question()
+public DnsQuerySettings get_QuerySettings()
+public void .ctor(DnsRequestHeader header, DnsQuestion question, DnsQuerySettings dnsQuerySettings)
+public string ToString()
+}
+public DnsClient.DnsResponseCode : Enum {
+public int value__
+public DnsResponseCode NoError
+public DnsResponseCode FormatError
+public DnsResponseCode ServerFailure
+public DnsResponseCode NotExistentDomain
+public DnsResponseCode NotImplemented
+public DnsResponseCode Refused
+public DnsResponseCode ExistingDomain
+public DnsResponseCode ExistingResourceRecordSet
+public DnsResponseCode MissingResourceRecordSet
+public DnsResponseCode NotAuthorized
+public DnsResponseCode NotZone
+public DnsResponseCode Unassinged11
+public DnsResponseCode Unassinged12
+public DnsResponseCode Unassinged13
+public DnsResponseCode Unassinged14
+public DnsResponseCode Unassinged15
+public DnsResponseCode BadVersionOrBadSignature
+public DnsResponseCode BadKey
+public DnsResponseCode BadTime
+public DnsResponseCode BadMode
+public DnsResponseCode BadName
+public DnsResponseCode BadAlgorithm
+public DnsResponseCode BadTruncation
+public DnsResponseCode BadCookie
+public DnsResponseCode Unassigned
+public DnsResponseCode ConnectionTimeout
+}
+internal DnsClient.DnsResponseCodeText : object {
+internal string BADALG
+internal string BADCOOKIE
+internal string BADKEY
+internal string BADMODE
+internal string BADNAME
+internal string BADSIG
+internal string BADTIME
+internal string BADTRUNC
+internal string BADVERS
+internal string FormErr
+internal string NoError
+internal string NotAuth
+internal string NotImp
+internal string NotZone
+internal string NXDomain
+internal string NXRRSet
+internal string Refused
+internal string ServFail
+internal string Unassigned
+internal string YXDomain
+internal string YXRRSet
+private Dictionary`2<DnsResponseCode, string> s_errors
+public string GetErrorText(DnsResponseCode code)
+}
+public DnsClient.DnsResponseException : Exception {
+private DnsResponseCode <Code>k__BackingField
+private string <AuditTrail>k__BackingField
+private string <DnsError>k__BackingField
+public DnsResponseCode Code
+public string AuditTrail
+public string DnsError
+public DnsResponseCode get_Code()
+public string get_AuditTrail()
+internal void set_AuditTrail(string value)
+public string get_DnsError()
+public void .ctor(string message)
+public void .ctor(DnsResponseCode code)
+public void .ctor(string message, Exception innerException)
+public void .ctor(DnsResponseCode code, string message)
+public void .ctor(DnsResponseCode code, string message, Exception innerException)
+}
+public DnsClient.DnsResponseHeader : object {
+private ushort _flags
+private int <AdditionalCount>k__BackingField
+private int <AnswerCount>k__BackingField
+private int <Id>k__BackingField
+private int <NameServerCount>k__BackingField
+private int <QuestionCount>k__BackingField
+public int AdditionalCount
+public int AnswerCount
+public bool FutureUse
+public bool HasAuthorityAnswer
+internal DnsHeaderFlag HeaderFlags
+public int Id
+public bool IsAuthenticData
+public bool IsCheckingDisabled
+public bool HasQuery
+public int NameServerCount
+public DnsOpCode OPCode
+public int QuestionCount
+public bool RecursionAvailable
+public DnsHeaderResponseCode ResponseCode
+public bool ResultTruncated
+public bool RecursionDesired
+public int get_AdditionalCount()
+public int get_AnswerCount()
+public bool get_FutureUse()
+public bool get_HasAuthorityAnswer()
+internal DnsHeaderFlag get_HeaderFlags()
+public int get_Id()
+public bool get_IsAuthenticData()
+public bool get_IsCheckingDisabled()
+public bool get_HasQuery()
+public int get_NameServerCount()
+public DnsOpCode get_OPCode()
+public int get_QuestionCount()
+public bool get_RecursionAvailable()
+public DnsHeaderResponseCode get_ResponseCode()
+public bool get_ResultTruncated()
+public bool get_RecursionDesired()
+public void .ctor(int id, ushort flags, int questionCount, int answerCount, int additionalCount, int serverCount)
+private bool HasFlag(DnsHeaderFlag flag)
+public string ToString()
+}
+internal DnsClient.DnsResponseMessage : object {
+private List`1<DnsResourceRecord> <Additionals>k__BackingField
+private List`1<DnsResourceRecord> <Answers>k__BackingField
+private List`1<DnsResourceRecord> <Authorities>k__BackingField
+private DnsResponseHeader <Header>k__BackingField
+private int <MessageSize>k__BackingField
+private List`1<DnsQuestion> <Questions>k__BackingField
+public List`1<DnsResourceRecord> Additionals
+public List`1<DnsResourceRecord> Answers
+public List`1<DnsResourceRecord> Authorities
+public DnsResponseHeader Header
+public int MessageSize
+public List`1<DnsQuestion> Questions
+public void .ctor(DnsResponseHeader header, int messageSize)
+public List`1<DnsResourceRecord> get_Additionals()
+public List`1<DnsResourceRecord> get_Answers()
+public List`1<DnsResourceRecord> get_Authorities()
+public DnsResponseHeader get_Header()
+public int get_MessageSize()
+public List`1<DnsQuestion> get_Questions()
+public void AddAdditional(DnsResourceRecord record)
+public void AddAnswer(DnsResourceRecord record)
+public void AddAuthority(DnsResourceRecord record)
+public void AddQuestion(DnsQuestion question)
+public DnsQueryResponse AsQueryResponse(NameServer nameServer, DnsQuerySettings settings)
+public DnsResponseMessage Combine(List`1<DnsResponseMessage> messages)
+}
+public DnsClient.DnsResponseParseException : Exception {
+private Byte[] <ResponseData>k__BackingField
+private int <Index>k__BackingField
+private int <ReadLength>k__BackingField
+private Func`6<int, int, int, string, string, string> s_defaultMessage
+public Byte[] ResponseData
+public int Index
+public int ReadLength
+public Byte[] get_ResponseData()
+public int get_Index()
+public int get_ReadLength()
+public void .ctor(string message)
+public void .ctor(string message, Exception innerException)
+public void .ctor(string message, Byte[] data, int index, int length, Exception innerException)
+private string FormatData(Byte[] data, int index, int length)
+}
+public DnsClient.DnsString : object {
+public string ACEPrefix
+public int LabelMaxLength
+public int QueryMaxLength
+public DnsString RootLabel
+internal IdnMapping s_idn
+internal char Dot
+internal string DotStr
+private string <Original>k__BackingField
+private string <Value>k__BackingField
+private Nullable`1<int> <NumberOfLabels>k__BackingField
+public string Original
+public string Value
+public Nullable`1<int> NumberOfLabels
+public string get_Original()
+public string get_Value()
+public Nullable`1<int> get_NumberOfLabels()
+internal void .ctor(string original, string value, Nullable`1<int> numLabels)
+public string op_Implicit(DnsString name)
+public DnsString op_Addition(DnsString a, DnsString b)
+public DnsString op_Addition(DnsString a, string b)
+public string ToString()
+public int GetHashCode()
+public bool Equals(object obj)
+public DnsString Parse(string query)
+public DnsString FromResponseQueryString(string query)
+}
+internal DnsClient.DnsTcpMessageHandler : DnsMessageHandler {
+private ConcurrentDictionary`2<IPEndPoint, ClientPool> _pools
+private DnsMessageHandleType <Type>k__BackingField
+public DnsMessageHandleType Type
+public DnsMessageHandleType get_Type()
+public DnsResponseMessage Query(IPEndPoint endpoint, DnsRequestMessage request, TimeSpan timeout)
+public Task`1<DnsResponseMessage> QueryAsync(IPEndPoint server, DnsRequestMessage request, CancellationToken cancellationToken)
+private Task`1<DnsResponseMessage> QueryAsyncInternal(TcpClient client, DnsRequestMessage request, CancellationToken cancellationToken)
+}
+internal DnsClient.DnsUdpMessageHandler : DnsMessageHandler {
+private int MaxSize
+private DnsMessageHandleType <Type>k__BackingField
+public DnsMessageHandleType Type
+public DnsMessageHandleType get_Type()
+public DnsResponseMessage Query(IPEndPoint server, DnsRequestMessage request, TimeSpan timeout)
+public Task`1<DnsResponseMessage> QueryAsync(IPEndPoint endpoint, DnsRequestMessage request, CancellationToken cancellationToken)
+}
+public DnsClient.DnsXidMismatchException : Exception {
+private int <RequestXid>k__BackingField
+private int <ResponseXid>k__BackingField
+public int RequestXid
+public int ResponseXid
+public int get_RequestXid()
+public int get_ResponseXid()
+public void .ctor(int requestXid, int responseXid)
+}
+public DnsClient.IDnsQuery {
+public IDnsQueryResponse Query(string query, QueryType queryType, QueryClass queryClass)
+public IDnsQueryResponse Query(DnsQuestion question)
+public IDnsQueryResponse Query(DnsQuestion question, DnsQueryAndServerOptions queryOptions)
+public IDnsQueryResponse QueryCache(DnsQuestion question)
+public IDnsQueryResponse QueryCache(string query, QueryType queryType, QueryClass queryClass)
+public Task`1<IDnsQueryResponse> QueryAsync(string query, QueryType queryType, QueryClass queryClass, CancellationToken cancellationToken)
+public Task`1<IDnsQueryResponse> QueryAsync(DnsQuestion question, CancellationToken cancellationToken)
+public Task`1<IDnsQueryResponse> QueryAsync(DnsQuestion question, DnsQueryAndServerOptions queryOptions, CancellationToken cancellationToken)
+public IDnsQueryResponse QueryReverse(IPAddress ipAddress)
+public IDnsQueryResponse QueryReverse(IPAddress ipAddress, DnsQueryAndServerOptions queryOptions)
+public Task`1<IDnsQueryResponse> QueryReverseAsync(IPAddress ipAddress, CancellationToken cancellationToken)
+public Task`1<IDnsQueryResponse> QueryReverseAsync(IPAddress ipAddress, DnsQueryAndServerOptions queryOptions, CancellationToken cancellationToken)
+public IDnsQueryResponse QueryServer(IReadOnlyCollection`1<NameServer> servers, string query, QueryType queryType, QueryClass queryClass)
+public IDnsQueryResponse QueryServer(IReadOnlyCollection`1<NameServer> servers, DnsQuestion question)
+public IDnsQueryResponse QueryServer(IReadOnlyCollection`1<NameServer> servers, DnsQuestion question, DnsQueryOptions queryOptions)
+public IDnsQueryResponse QueryServer(IReadOnlyCollection`1<IPEndPoint> servers, string query, QueryType queryType, QueryClass queryClass)
+public IDnsQueryResponse QueryServer(IReadOnlyCollection`1<IPAddress> servers, string query, QueryType queryType, QueryClass queryClass)
+public Task`1<IDnsQueryResponse> QueryServerAsync(IReadOnlyCollection`1<NameServer> servers, string query, QueryType queryType, QueryClass queryClass, CancellationToken cancellationToken)
+public Task`1<IDnsQueryResponse> QueryServerAsync(IReadOnlyCollection`1<NameServer> servers, DnsQuestion question, CancellationToken cancellationToken)
+public Task`1<IDnsQueryResponse> QueryServerAsync(IReadOnlyCollection`1<NameServer> servers, DnsQuestion question, DnsQueryOptions queryOptions, CancellationToken cancellationToken)
+public Task`1<IDnsQueryResponse> QueryServerAsync(IReadOnlyCollection`1<IPAddress> servers, string query, QueryType queryType, QueryClass queryClass, CancellationToken cancellationToken)
+public Task`1<IDnsQueryResponse> QueryServerAsync(IReadOnlyCollection`1<IPEndPoint> servers, string query, QueryType queryType, QueryClass queryClass, CancellationToken cancellationToken)
+public IDnsQueryResponse QueryServerReverse(IReadOnlyCollection`1<IPAddress> servers, IPAddress ipAddress)
+public IDnsQueryResponse QueryServerReverse(IReadOnlyCollection`1<IPEndPoint> servers, IPAddress ipAddress)
+public IDnsQueryResponse QueryServerReverse(IReadOnlyCollection`1<NameServer> servers, IPAddress ipAddress)
+public IDnsQueryResponse QueryServerReverse(IReadOnlyCollection`1<NameServer> servers, IPAddress ipAddress, DnsQueryOptions queryOptions)
+public Task`1<IDnsQueryResponse> QueryServerReverseAsync(IReadOnlyCollection`1<IPAddress> servers, IPAddress ipAddress, CancellationToken cancellationToken)
+public Task`1<IDnsQueryResponse> QueryServerReverseAsync(IReadOnlyCollection`1<IPEndPoint> servers, IPAddress ipAddress, CancellationToken cancellationToken)
+public Task`1<IDnsQueryResponse> QueryServerReverseAsync(IReadOnlyCollection`1<NameServer> servers, IPAddress ipAddress, CancellationToken cancellationToken)
+public Task`1<IDnsQueryResponse> QueryServerReverseAsync(IReadOnlyCollection`1<NameServer> servers, IPAddress ipAddress, DnsQueryOptions queryOptions, CancellationToken cancellationToken)
+}
+public DnsClient.IDnsQueryResponse {
+public IReadOnlyList`1<DnsQuestion> Questions
+public IReadOnlyList`1<DnsResourceRecord> Additionals
+public IEnumerable`1<DnsResourceRecord> AllRecords
+public IReadOnlyList`1<DnsResourceRecord> Answers
+public IReadOnlyList`1<DnsResourceRecord> Authorities
+public string AuditTrail
+public string ErrorMessage
+public bool HasError
+public DnsResponseHeader Header
+public int MessageSize
+public NameServer NameServer
+public DnsQuerySettings Settings
+public IReadOnlyList`1<DnsQuestion> get_Questions()
+public IReadOnlyList`1<DnsResourceRecord> get_Additionals()
+public IEnumerable`1<DnsResourceRecord> get_AllRecords()
+public IReadOnlyList`1<DnsResourceRecord> get_Answers()
+public IReadOnlyList`1<DnsResourceRecord> get_Authorities()
+public string get_AuditTrail()
+public string get_ErrorMessage()
+public bool get_HasError()
+public DnsResponseHeader get_Header()
+public int get_MessageSize()
+public NameServer get_NameServer()
+public DnsQuerySettings get_Settings()
+}
+public DnsClient.ILookupClient {
+public IReadOnlyCollection`1<NameServer> NameServers
+public LookupClientSettings Settings
+public Nullable`1<TimeSpan> MinimumCacheTimeout
+public bool EnableAuditTrail
+public bool UseCache
+public bool Recursion
+public int Retries
+public bool ThrowDnsErrors
+public bool UseRandomNameServer
+public bool ContinueOnDnsError
+public TimeSpan Timeout
+public bool UseTcpFallback
+public bool UseTcpOnly
+public IReadOnlyCollection`1<NameServer> get_NameServers()
+public LookupClientSettings get_Settings()
+public Nullable`1<TimeSpan> get_MinimumCacheTimeout()
+public void set_MinimumCacheTimeout(Nullable`1<TimeSpan> value)
+public bool get_EnableAuditTrail()
+public void set_EnableAuditTrail(bool value)
+public bool get_UseCache()
+public void set_UseCache(bool value)
+public bool get_Recursion()
+public void set_Recursion(bool value)
+public int get_Retries()
+public void set_Retries(int value)
+public bool get_ThrowDnsErrors()
+public void set_ThrowDnsErrors(bool value)
+public bool get_UseRandomNameServer()
+public void set_UseRandomNameServer(bool value)
+public bool get_ContinueOnDnsError()
+public void set_ContinueOnDnsError(bool value)
+public TimeSpan get_Timeout()
+public void set_Timeout(TimeSpan value)
+public bool get_UseTcpFallback()
+public void set_UseTcpFallback(bool value)
+public bool get_UseTcpOnly()
+public void set_UseTcpOnly(bool value)
+}
+public DnsClient.Internal.Base32Hex : object {
+public Byte[] FromBase32HexString(string input)
+public string ToBase32HexString(Byte[] input)
+private int CharToValue(char c)
+private char ValueToChar(byte b)
+}
+internal DnsClient.Internal.DefaultObjectPool`1 : ObjectPool`1<T> {
+private protected ObjectWrapper[] _items
+private protected IPooledObjectPolicy`1<T> _policy
+private protected bool _isDefaultPolicy
+private protected T _firstItem
+private protected PooledObjectPolicy`1<T> _fastPolicy
+public void .ctor(IPooledObjectPolicy`1<T> policy)
+public void .ctor(IPooledObjectPolicy`1<T> policy, int maximumRetained)
+public T Get()
+private T Create()
+public void Return(T obj)
+internal bool <.ctor>g__IsDefaultPolicy|6_0(<>c__DisplayClass6_0& )
+}
+internal DnsClient.Internal.DefaultObjectPoolProvider : ObjectPoolProvider {
+private int <MaximumRetained>k__BackingField
+public int MaximumRetained
+public int get_MaximumRetained()
+public void set_MaximumRetained(int value)
+public ObjectPool`1<T> Create(IPooledObjectPolicy`1<T> policy)
+}
+internal DnsClient.Internal.DefaultPooledObjectPolicy`1 : PooledObjectPolicy`1<T> {
+public T Create()
+public bool Return(T obj)
+}
+public DnsClient.Internal.ILogger {
+public void Log(LogLevel logLevel, int eventId, Exception exception, string message, Object[] args)
+public bool IsEnabled(LogLevel logLevel)
+}
+public DnsClient.Internal.ILoggerFactory {
+public ILogger CreateLogger(string categoryName)
+}
+internal DnsClient.Internal.IPooledObjectPolicy`1 {
+public T Create()
+public bool Return(T obj)
+}
+public DnsClient.Internal.LoggerExtensions : object {
+public void LogDebug(ILogger logger, int eventId, Exception exception, string message, Object[] args)
+public void LogDebug(ILogger logger, int eventId, string message, Object[] args)
+public void LogDebug(ILogger logger, Exception exception, string message, Object[] args)
+public void LogDebug(ILogger logger, string message, Object[] args)
+public void LogTrace(ILogger logger, int eventId, Exception exception, string message, Object[] args)
+public void LogTrace(ILogger logger, int eventId, string message, Object[] args)
+public void LogTrace(ILogger logger, Exception exception, string message, Object[] args)
+public void LogTrace(ILogger logger, string message, Object[] args)
+public void LogInformation(ILogger logger, int eventId, Exception exception, string message, Object[] args)
+public void LogInformation(ILogger logger, int eventId, string message, Object[] args)
+public void LogInformation(ILogger logger, Exception exception, string message, Object[] args)
+public void LogInformation(ILogger logger, string message, Object[] args)
+public void LogWarning(ILogger logger, int eventId, Exception exception, string message, Object[] args)
+public void LogWarning(ILogger logger, int eventId, string message, Object[] args)
+public void LogWarning(ILogger logger, Exception exception, string message, Object[] args)
+public void LogWarning(ILogger logger, string message, Object[] args)
+public void LogError(ILogger logger, int eventId, Exception exception, string message, Object[] args)
+public void LogError(ILogger logger, int eventId, string message, Object[] args)
+public void LogError(ILogger logger, Exception exception, string message, Object[] args)
+public void LogError(ILogger logger, string message, Object[] args)
+public void LogCritical(ILogger logger, int eventId, Exception exception, string message, Object[] args)
+public void LogCritical(ILogger logger, int eventId, string message, Object[] args)
+public void LogCritical(ILogger logger, Exception exception, string message, Object[] args)
+public void LogCritical(ILogger logger, string message, Object[] args)
+public void Log(ILogger logger, LogLevel logLevel, string message, Object[] args)
+public void Log(ILogger logger, LogLevel logLevel, int eventId, string message, Object[] args)
+public void Log(ILogger logger, LogLevel logLevel, Exception exception, string message, Object[] args)
+}
+public DnsClient.Internal.LogLevel : Enum {
+public int value__
+public LogLevel Trace
+public LogLevel Debug
+public LogLevel Information
+public LogLevel Warning
+public LogLevel Error
+public LogLevel Critical
+public LogLevel None
+}
+internal DnsClient.Internal.NullLoggerFactory : object {
+public ILogger CreateLogger(string categoryName)
+}
+internal DnsClient.Internal.ObjectPool : object {
+public ObjectPool`1<T> Create(IPooledObjectPolicy`1<T> policy)
+}
+internal DnsClient.Internal.ObjectPool`1 : object {
+public T Get()
+public void Return(T obj)
+}
+internal DnsClient.Internal.ObjectPoolProvider : object {
+public ObjectPool`1<T> Create()
+public ObjectPool`1<T> Create(IPooledObjectPolicy`1<T> policy)
+}
+internal DnsClient.Internal.ObjectPoolProviderExtensions : object {
+public ObjectPool`1<StringBuilder> CreateStringBuilderPool(ObjectPoolProvider provider)
+public ObjectPool`1<StringBuilder> CreateStringBuilderPool(ObjectPoolProvider provider, int initialCapacity, int maximumRetainedCapacity)
+}
+public DnsClient.Internal.PooledBytes : object {
+private ArrayPool`1<byte> s_pool
+private int _length
+private ArraySegment`1<byte> _buffer
+private bool _disposed
+public Byte[] Buffer
+public ArraySegment`1<byte> BufferSegment
+public void .ctor(int length)
+public void Extend(int length)
+public Byte[] get_Buffer()
+public ArraySegment`1<byte> get_BufferSegment()
+public void Dispose()
+private void Dispose(bool disposing)
+}
+internal DnsClient.Internal.PooledObjectPolicy`1 : object {
+public T Create()
+public bool Return(T obj)
+}
+public DnsClient.Internal.StringBuilderObjectPool : object {
+private ObjectPool`1<StringBuilder> _pool
+private StringBuilderObjectPool <Default>k__BackingField
+public StringBuilderObjectPool Default
+public StringBuilderObjectPool get_Default()
+public void .ctor(int initialCapacity, int maxPooledCapacity)
+public StringBuilder Get()
+public void Return(StringBuilder value)
+}
+internal DnsClient.Internal.StringBuilderPooledObjectPolicy : PooledObjectPolicy`1<StringBuilder> {
+private int <InitialCapacity>k__BackingField
+private int <MaximumRetainedCapacity>k__BackingField
+public int InitialCapacity
+public int MaximumRetainedCapacity
+public int get_InitialCapacity()
+public void set_InitialCapacity(int value)
+public int get_MaximumRetainedCapacity()
+public void set_MaximumRetainedCapacity(int value)
+public StringBuilder Create()
+public bool Return(StringBuilder obj)
+}
+internal DnsClient.Linux.StringParsingHelpers : object {
+internal string ParseDnsSuffixFromResolvConfFile(string filePath)
+internal List`1<NameServer> ParseDnsAddressesFromResolvConfFile(string filePath)
+}
+public DnsClient.Logging : object {
+private ILoggerFactory <LoggerFactory>k__BackingField
+public ILoggerFactory LoggerFactory
+public ILoggerFactory get_LoggerFactory()
+public void set_LoggerFactory(ILoggerFactory value)
+}
+public DnsClient.LookupClient : object {
+private int LogEventStartQuery
+private int LogEventQuery
+private int LogEventQueryCachedResult
+private int LogEventQueryTruncated
+private int LogEventQuerySuccess
+private int LogEventQueryReturnResponseError
+private int LogEventQuerySuccessEmpty
+private int LogEventQueryRetryErrorNextServer
+private int LogEventQueryRetryErrorSameServer
+private int LogEventQueryFail
+private int LogEventQueryBadTruncation
+private int LogEventResponseOpt
+private int LogEventResponseMissingOpt
+private LookupClientOptions _originalOptions
+private DnsMessageHandler _messageHandler
+private DnsMessageHandler _tcpFallbackHandler
+private ILogger _logger
+private SkipWorker _skipper
+private IReadOnlyCollection`1<NameServer> _resolvedNameServers
+private LookupClientSettings <Settings>k__BackingField
+private ResponseCache <Cache>k__BackingField
+public IReadOnlyCollection`1<NameServer> NameServers
+public LookupClientSettings Settings
+public Nullable`1<TimeSpan> MinimumCacheTimeout
+public bool UseTcpFallback
+public bool UseTcpOnly
+public bool EnableAuditTrail
+public bool Recursion
+public int Retries
+public bool ThrowDnsErrors
+public TimeSpan Timeout
+public bool UseCache
+public bool UseRandomNameServer
+public bool ContinueOnDnsError
+internal ResponseCache Cache
+public IReadOnlyCollection`1<NameServer> get_NameServers()
+public LookupClientSettings get_Settings()
+private void set_Settings(LookupClientSettings value)
+public Nullable`1<TimeSpan> get_MinimumCacheTimeout()
+public void set_MinimumCacheTimeout(Nullable`1<TimeSpan> value)
+public bool get_UseTcpFallback()
+public void set_UseTcpFallback(bool value)
+public bool get_UseTcpOnly()
+public void set_UseTcpOnly(bool value)
+public bool get_EnableAuditTrail()
+public void set_EnableAuditTrail(bool value)
+public bool get_Recursion()
+public void set_Recursion(bool value)
+public int get_Retries()
+public void set_Retries(int value)
+public bool get_ThrowDnsErrors()
+public void set_ThrowDnsErrors(bool value)
+public TimeSpan get_Timeout()
+public void set_Timeout(TimeSpan value)
+public bool get_UseCache()
+public void set_UseCache(bool value)
+public bool get_UseRandomNameServer()
+public void set_UseRandomNameServer(bool value)
+public bool get_ContinueOnDnsError()
+public void set_ContinueOnDnsError(bool value)
+internal ResponseCache get_Cache()
+public void .ctor(IPAddress[] nameServers)
+public void .ctor(IPAddress address, int port)
+public void .ctor(IPEndPoint[] nameServers)
+public void .ctor(NameServer[] nameServers)
+public void .ctor(LookupClientOptions options)
+internal void .ctor(LookupClientOptions options, DnsMessageHandler udpHandler, DnsMessageHandler tcpHandler)
+private void CheckResolvedNameservers()
+public IDnsQueryResponse QueryReverse(IPAddress ipAddress)
+public IDnsQueryResponse QueryReverse(IPAddress ipAddress, DnsQueryAndServerOptions queryOptions)
+public Task`1<IDnsQueryResponse> QueryReverseAsync(IPAddress ipAddress, CancellationToken cancellationToken)
+public Task`1<IDnsQueryResponse> QueryReverseAsync(IPAddress ipAddress, DnsQueryAndServerOptions queryOptions, CancellationToken cancellationToken)
+public IDnsQueryResponse Query(string query, QueryType queryType, QueryClass queryClass)
+public IDnsQueryResponse Query(DnsQuestion question)
+public IDnsQueryResponse Query(DnsQuestion question, DnsQueryAndServerOptions queryOptions)
+public IDnsQueryResponse QueryCache(string query, QueryType queryType, QueryClass queryClass)
+public IDnsQueryResponse QueryCache(DnsQuestion question)
+public Task`1<IDnsQueryResponse> QueryAsync(string query, QueryType queryType, QueryClass queryClass, CancellationToken cancellationToken)
+public Task`1<IDnsQueryResponse> QueryAsync(DnsQuestion question, CancellationToken cancellationToken)
+public Task`1<IDnsQueryResponse> QueryAsync(DnsQuestion question, DnsQueryAndServerOptions queryOptions, CancellationToken cancellationToken)
+public IDnsQueryResponse QueryServer(IReadOnlyCollection`1<IPAddress> servers, string query, QueryType queryType, QueryClass queryClass)
+public IDnsQueryResponse QueryServer(IReadOnlyCollection`1<IPEndPoint> servers, string query, QueryType queryType, QueryClass queryClass)
+public IDnsQueryResponse QueryServer(IReadOnlyCollection`1<NameServer> servers, string query, QueryType queryType, QueryClass queryClass)
+public IDnsQueryResponse QueryServer(IReadOnlyCollection`1<NameServer> servers, DnsQuestion question)
+public IDnsQueryResponse QueryServer(IReadOnlyCollection`1<NameServer> servers, DnsQuestion question, DnsQueryOptions queryOptions)
+public Task`1<IDnsQueryResponse> QueryServerAsync(IReadOnlyCollection`1<IPAddress> servers, string query, QueryType queryType, QueryClass queryClass, CancellationToken cancellationToken)
+public Task`1<IDnsQueryResponse> QueryServerAsync(IReadOnlyCollection`1<IPEndPoint> servers, string query, QueryType queryType, QueryClass queryClass, CancellationToken cancellationToken)
+public Task`1<IDnsQueryResponse> QueryServerAsync(IReadOnlyCollection`1<NameServer> servers, string query, QueryType queryType, QueryClass queryClass, CancellationToken cancellationToken)
+public Task`1<IDnsQueryResponse> QueryServerAsync(IReadOnlyCollection`1<NameServer> servers, DnsQuestion question, CancellationToken cancellationToken)
+public Task`1<IDnsQueryResponse> QueryServerAsync(IReadOnlyCollection`1<NameServer> servers, DnsQuestion question, DnsQueryOptions queryOptions, CancellationToken cancellationToken)
+public IDnsQueryResponse QueryServerReverse(IReadOnlyCollection`1<IPAddress> servers, IPAddress ipAddress)
+public IDnsQueryResponse QueryServerReverse(IReadOnlyCollection`1<IPEndPoint> servers, IPAddress ipAddress)
+public IDnsQueryResponse QueryServerReverse(IReadOnlyCollection`1<NameServer> servers, IPAddress ipAddress)
+public IDnsQueryResponse QueryServerReverse(IReadOnlyCollection`1<NameServer> servers, IPAddress ipAddress, DnsQueryOptions queryOptions)
+public Task`1<IDnsQueryResponse> QueryServerReverseAsync(IReadOnlyCollection`1<IPAddress> servers, IPAddress ipAddress, CancellationToken cancellationToken)
+public Task`1<IDnsQueryResponse> QueryServerReverseAsync(IReadOnlyCollection`1<IPEndPoint> servers, IPAddress ipAddress, CancellationToken cancellationToken)
+public Task`1<IDnsQueryResponse> QueryServerReverseAsync(IReadOnlyCollection`1<NameServer> servers, IPAddress ipAddress, CancellationToken cancellationToken)
+public Task`1<IDnsQueryResponse> QueryServerReverseAsync(IReadOnlyCollection`1<NameServer> servers, IPAddress ipAddress, DnsQueryOptions queryOptions, CancellationToken cancellationToken)
+internal DnsQueryAndServerSettings GetSettings(DnsQueryAndServerOptions queryOptions)
+private IDnsQueryResponse QueryInternal(DnsQuestion question, DnsQuerySettings queryOptions, IReadOnlyCollection`1<NameServer> servers)
+private Task`1<IDnsQueryResponse> QueryInternalAsync(DnsQuestion question, DnsQuerySettings queryOptions, IReadOnlyCollection`1<NameServer> servers, CancellationToken cancellationToken)
+private IDnsQueryResponse ResolveQuery(IReadOnlyList`1<NameServer> servers, DnsQuerySettings settings, DnsMessageHandler handler, DnsRequestMessage request, LookupClientAudit audit)
+private Task`1<IDnsQueryResponse> ResolveQueryAsync(IReadOnlyList`1<NameServer> servers, DnsQuerySettings settings, DnsMessageHandler handler, DnsRequestMessage request, LookupClientAudit audit, CancellationToken cancellationToken)
+private IDnsQueryResponse QueryCache(DnsQuestion question, DnsQuerySettings settings)
+private HandleError HandleDnsResponseException(DnsResponseException ex, DnsRequestMessage request, DnsQuerySettings settings, NameServer nameServer, DnsMessageHandleType handleType, bool isLastServer, bool isLastTry, int currentTry)
+private HandleError HandleDnsXidMismatchException(DnsXidMismatchException ex, DnsRequestMessage request, DnsQuerySettings settings, DnsMessageHandleType handleType, bool isLastServer, bool isLastTry, int currentTry)
+private HandleError HandleDnsResponeParseException(DnsResponseParseException ex, DnsRequestMessage request, DnsMessageHandleType handleType, bool isLastServer)
+private HandleError HandleTimeoutException(Exception ex, DnsRequestMessage request, DnsQuerySettings settings, NameServer nameServer, DnsMessageHandleType handleType, bool isLastServer, bool isLastTry, int currentTry)
+private HandleError HandleUnhandledException(Exception ex, DnsRequestMessage request, NameServer nameServer, DnsMessageHandleType handleType, bool isLastServer)
+private IDnsQueryResponse ProcessResponseMessage(LookupClientAudit audit, DnsRequestMessage request, DnsResponseMessage response, DnsQuerySettings settings, NameServer nameServer, DnsMessageHandleType handleType, int serverCount, bool isLastServer, HandleError& handleError)
+private bool TryGetCachedResult(string cacheKey, DnsRequestMessage request, DnsQuerySettings settings, IDnsQueryResponse& response)
+private void HandleOptRecords(DnsQuerySettings settings, LookupClientAudit audit, NameServer serverInfo, DnsResponseMessage response)
+public DnsQuestion GetReverseQuestion(IPAddress ipAddress)
+private void <.ctor>b__67_0()
+}
+internal DnsClient.LookupClientAudit : object {
+private int s_printOffset
+private StringBuilder _auditWriter
+private Stopwatch _swatch
+private DnsQuerySettings <Settings>k__BackingField
+public DnsQuerySettings Settings
+public DnsQuerySettings get_Settings()
+public void .ctor(DnsQuerySettings settings)
+public void AuditCachedItem(IDnsQueryResponse response)
+public void StartTimer()
+public void AuditResolveServers(int count)
+public string Build(IDnsQueryResponse response)
+public void AuditTruncatedRetryTcp()
+public void AuditResponseError(DnsHeaderResponseCode responseCode)
+public void AuditOptPseudo()
+public void AuditResponseHeader(DnsResponseHeader header)
+public void AuditEdnsOpt(short udpSize, byte version, bool doFlag, DnsResponseCode responseCode)
+public void AuditEnd(IDnsQueryResponse queryResponse, NameServer nameServer)
+public void AuditException(Exception ex)
+public void AuditRetryNextServer()
+}
+public DnsClient.LookupClientOptions : DnsQueryAndServerOptions {
+private TimeSpan s_infiniteTimeout
+private TimeSpan s_maxTimeout
+private Nullable`1<TimeSpan> _minimumCacheTimeout
+private Nullable`1<TimeSpan> _maximumCacheTimeout
+private bool <AutoResolveNameServers>k__BackingField
+public bool AutoResolveNameServers
+public Nullable`1<TimeSpan> MinimumCacheTimeout
+public Nullable`1<TimeSpan> MaximumCacheTimeout
+public void .ctor(NameServer[] nameServers)
+public void .ctor(IPEndPoint[] nameServers)
+public void .ctor(IPAddress[] nameServers)
+public bool get_AutoResolveNameServers()
+public void set_AutoResolveNameServers(bool value)
+public Nullable`1<TimeSpan> get_MinimumCacheTimeout()
+public void set_MinimumCacheTimeout(Nullable`1<TimeSpan> value)
+public Nullable`1<TimeSpan> get_MaximumCacheTimeout()
+public void set_MaximumCacheTimeout(Nullable`1<TimeSpan> value)
+}
+public DnsClient.LookupClientSettings : DnsQueryAndServerSettings {
+private Nullable`1<TimeSpan> <MinimumCacheTimeout>k__BackingField
+private Nullable`1<TimeSpan> <MaximumCacheTimeout>k__BackingField
+public Nullable`1<TimeSpan> MinimumCacheTimeout
+public Nullable`1<TimeSpan> MaximumCacheTimeout
+public void .ctor(LookupClientOptions options)
+internal void .ctor(LookupClientOptions options, IReadOnlyCollection`1<NameServer> overrideServers)
+public Nullable`1<TimeSpan> get_MinimumCacheTimeout()
+public Nullable`1<TimeSpan> get_MaximumCacheTimeout()
+public bool Equals(object obj)
+public bool Equals(LookupClientSettings other)
+}
+public DnsClient.NameServer : object {
+public int DefaultPort
+public IPEndPoint GooglePublicDns
+public IPEndPoint GooglePublicDns2
+public IPEndPoint GooglePublicDnsIPv6
+public IPEndPoint GooglePublicDns2IPv6
+public IPEndPoint Cloudflare
+public IPEndPoint Cloudflare2
+public IPEndPoint CloudflareIPv6
+public IPEndPoint Cloudflare2IPv6
+internal string EtcResolvConfFile
+private Nullable`1<int> <SupportedUdpPayloadSize>k__BackingField
+private IPEndPoint <IPEndPoint>k__BackingField
+private string <DnsSuffix>k__BackingField
+public string Address
+public int Port
+public AddressFamily AddressFamily
+public Nullable`1<int> SupportedUdpPayloadSize
+internal IPEndPoint IPEndPoint
+public string DnsSuffix
+public void .ctor(IPAddress endPoint)
+public void .ctor(IPAddress endPoint, int port)
+public void .ctor(IPEndPoint endPoint)
+public void .ctor(IPAddress endPoint, string dnsSuffix)
+public void .ctor(IPAddress endPoint, int port, string dnsSuffix)
+public void .ctor(IPEndPoint endPoint, string dnsSuffix)
+public NameServer op_Implicit(IPEndPoint endPoint)
+public NameServer op_Implicit(IPAddress address)
+public string get_Address()
+public int get_Port()
+public AddressFamily get_AddressFamily()
+public Nullable`1<int> get_SupportedUdpPayloadSize()
+internal void set_SupportedUdpPayloadSize(Nullable`1<int> value)
+internal IPEndPoint get_IPEndPoint()
+public string get_DnsSuffix()
+internal NameServer[] Convert(IReadOnlyCollection`1<IPAddress> addresses)
+internal NameServer[] Convert(IReadOnlyCollection`1<IPEndPoint> addresses)
+public string ToString()
+public bool Equals(object obj)
+public bool Equals(NameServer other)
+public int GetHashCode()
+public IReadOnlyCollection`1<NameServer> ResolveNameServers(bool skipIPv6SiteLocal, bool fallbackToGooglePublicDns)
+public IReadOnlyCollection`1<NameServer> ResolveNameServersNative()
+public IReadOnlyCollection`1<NameServer> ResolveNameResolutionPolicyServers()
+internal IReadOnlyCollection`1<NameServer> ValidateNameServers(IReadOnlyCollection`1<NameServer> servers, ILogger logger)
+private IReadOnlyCollection`1<NameServer> QueryNetworkInterfaces()
+}
+public DnsClient.Protocol.AaaaRecord : AddressRecord {
+public void .ctor(ResourceRecordInfo info, IPAddress address)
+}
+public DnsClient.Protocol.AddressRecord : DnsResourceRecord {
+private IPAddress <Address>k__BackingField
+public IPAddress Address
+public IPAddress get_Address()
+public void .ctor(ResourceRecordInfo info, IPAddress address)
+private protected string RecordToString()
+}
+public DnsClient.Protocol.AfsDbRecord : DnsResourceRecord {
+private AfsType <SubType>k__BackingField
+private DnsString <Hostname>k__BackingField
+public AfsType SubType
+public DnsString Hostname
+public AfsType get_SubType()
+public DnsString get_Hostname()
+public void .ctor(ResourceRecordInfo info, AfsType type, DnsString name)
+private protected string RecordToString()
+}
+public DnsClient.Protocol.AfsType : Enum {
+public int value__
+public AfsType Afs
+public AfsType Dce
+}
+public DnsClient.Protocol.ARecord : AddressRecord {
+public void .ctor(ResourceRecordInfo info, IPAddress address)
+}
+public DnsClient.Protocol.CaaRecord : DnsResourceRecord {
+private byte <Flags>k__BackingField
+private string <Tag>k__BackingField
+private string <Value>k__BackingField
+public byte Flags
+public string Tag
+public string Value
+public byte get_Flags()
+public string get_Tag()
+public string get_Value()
+public void .ctor(ResourceRecordInfo info, byte flags, string tag, string value)
+private protected string RecordToString()
+}
+public DnsClient.Protocol.CNameRecord : DnsResourceRecord {
+private DnsString <CanonicalName>k__BackingField
+public DnsString CanonicalName
+public DnsString get_CanonicalName()
+public void .ctor(ResourceRecordInfo info, DnsString canonicalName)
+private protected string RecordToString()
+}
+internal DnsClient.Protocol.DnsHeader : object {
+public ushort OPCodeMask
+public ushort OPCodeShift
+public ushort RCodeMask
+}
+internal DnsClient.Protocol.DnsHeaderFlag : Enum {
+public ushort value__
+public DnsHeaderFlag IsCheckingDisabled
+public DnsHeaderFlag IsAuthenticData
+public DnsHeaderFlag FutureUse
+public DnsHeaderFlag RecursionAvailable
+public DnsHeaderFlag RecursionDesired
+public DnsHeaderFlag ResultTruncated
+public DnsHeaderFlag HasAuthorityAnswer
+public DnsHeaderFlag HasQuery
+}
+public DnsClient.Protocol.DnsKeyRecord : DnsResourceRecord {
+private int <Flags>k__BackingField
+private byte <Protocol>k__BackingField
+private DnsSecurityAlgorithm <Algorithm>k__BackingField
+private IReadOnlyList`1<byte> <PublicKey>k__BackingField
+private string <PublicKeyAsString>k__BackingField
+public int Flags
+public byte Protocol
+public DnsSecurityAlgorithm Algorithm
+public IReadOnlyList`1<byte> PublicKey
+public string PublicKeyAsString
+public int get_Flags()
+public byte get_Protocol()
+public DnsSecurityAlgorithm get_Algorithm()
+public IReadOnlyList`1<byte> get_PublicKey()
+public string get_PublicKeyAsString()
+public void .ctor(ResourceRecordInfo info, int flags, byte protocol, byte algorithm, Byte[] publicKey)
+private protected string RecordToString()
+}
+public DnsClient.Protocol.DnsResourceRecord : ResourceRecordInfo {
+public void .ctor(ResourceRecordInfo info)
+public string ToString()
+public string ToString(int offset)
+private protected string RecordToString()
+}
+public DnsClient.Protocol.DnsSecurityAlgorithm : Enum {
+public int value__
+public DnsSecurityAlgorithm None
+public DnsSecurityAlgorithm RSAMD5
+public DnsSecurityAlgorithm DH
+public DnsSecurityAlgorithm DSA
+public DnsSecurityAlgorithm RSASHA1
+public DnsSecurityAlgorithm DSA_NSEC3_SHA1
+public DnsSecurityAlgorithm RSASHA1_NSEC3_SHA1
+public DnsSecurityAlgorithm RSASHA256
+public DnsSecurityAlgorithm RSASHA512
+public DnsSecurityAlgorithm ECCGOST
+public DnsSecurityAlgorithm ECDSAP256SHA256
+public DnsSecurityAlgorithm ECDSAP384SHA384
+public DnsSecurityAlgorithm ED25519
+public DnsSecurityAlgorithm ED448
+public DnsSecurityAlgorithm INDIRECT
+public DnsSecurityAlgorithm PRIVATEDNS
+public DnsSecurityAlgorithm PRIVATEOID
+}
+public DnsClient.Protocol.DsRecord : DnsResourceRecord {
+private int <KeyTag>k__BackingField
+private DnsSecurityAlgorithm <Algorithm>k__BackingField
+private byte <DigestType>k__BackingField
+private IReadOnlyList`1<byte> <Digest>k__BackingField
+private string <DigestAsString>k__BackingField
+public int KeyTag
+public DnsSecurityAlgorithm Algorithm
+public byte DigestType
+public IReadOnlyList`1<byte> Digest
+public string DigestAsString
+public int get_KeyTag()
+public DnsSecurityAlgorithm get_Algorithm()
+public byte get_DigestType()
+public IReadOnlyList`1<byte> get_Digest()
+public string get_DigestAsString()
+public void .ctor(ResourceRecordInfo info, int keyTag, byte algorithm, byte digestType, Byte[] digest)
+private protected string RecordToString()
+}
+public DnsClient.Protocol.EmptyRecord : DnsResourceRecord {
+public void .ctor(ResourceRecordInfo info)
+private protected string RecordToString()
+}
+public DnsClient.Protocol.HInfoRecord : DnsResourceRecord {
+private string <Cpu>k__BackingField
+private string <OS>k__BackingField
+public string Cpu
+public string OS
+public string get_Cpu()
+public string get_OS()
+public void .ctor(ResourceRecordInfo info, string cpu, string os)
+private protected string RecordToString()
+}
+public DnsClient.Protocol.MbRecord : DnsResourceRecord {
+private DnsString <MadName>k__BackingField
+public DnsString MadName
+public DnsString get_MadName()
+public void .ctor(ResourceRecordInfo info, DnsString domainName)
+private protected string RecordToString()
+}
+public DnsClient.Protocol.MgRecord : DnsResourceRecord {
+private DnsString <MgName>k__BackingField
+public DnsString MgName
+public DnsString get_MgName()
+public void .ctor(ResourceRecordInfo info, DnsString domainName)
+private protected string RecordToString()
+}
+public DnsClient.Protocol.MInfoRecord : DnsResourceRecord {
+private DnsString <RMailBox>k__BackingField
+private DnsString <EmailBox>k__BackingField
+public DnsString RMailBox
+public DnsString EmailBox
+public DnsString get_RMailBox()
+public DnsString get_EmailBox()
+public void .ctor(ResourceRecordInfo info, DnsString rmailBox, DnsString emailBox)
+private protected string RecordToString()
+}
+public DnsClient.Protocol.MrRecord : DnsResourceRecord {
+private DnsString <NewName>k__BackingField
+public DnsString NewName
+public DnsString get_NewName()
+public void .ctor(ResourceRecordInfo info, DnsString name)
+private protected string RecordToString()
+}
+public DnsClient.Protocol.MxRecord : DnsResourceRecord {
+private ushort <Preference>k__BackingField
+private DnsString <Exchange>k__BackingField
+public ushort Preference
+public DnsString Exchange
+public ushort get_Preference()
+public DnsString get_Exchange()
+public void .ctor(ResourceRecordInfo info, ushort preference, DnsString domainName)
+private protected string RecordToString()
+}
+public DnsClient.Protocol.NAPtrRecord : DnsResourceRecord {
+public string ServiceKeySip
+public string ServiceKeyEmail
+public string ServiceKeyWeb
+public string ServiceKeySipUdp
+public string ServiceKeySipTcp
+public string ServiceKeySipsTcp
+public string ServiceKeySipWebsocket
+public string ServiceKeySipsWebsocket
+public char AFlag
+public char PFlag
+public char SFlag
+public char UFlag
+private int <Order>k__BackingField
+private int <Preference>k__BackingField
+private string <Flags>k__BackingField
+private string <Services>k__BackingField
+private string <RegularExpression>k__BackingField
+private DnsString <Replacement>k__BackingField
+public int Order
+public int Preference
+public string Flags
+public string Services
+public string RegularExpression
+public DnsString Replacement
+public int get_Order()
+public int get_Preference()
+public string get_Flags()
+public string get_Services()
+public string get_RegularExpression()
+public DnsString get_Replacement()
+public void .ctor(ResourceRecordInfo info, int order, int preference, string flags, string services, string regexp, DnsString replacement)
+private protected string RecordToString()
+}
+public DnsClient.Protocol.NSec3ParamRecord : DnsResourceRecord {
+private byte <HashAlgorithm>k__BackingField
+private byte <Flags>k__BackingField
+private int <Iterations>k__BackingField
+private Byte[] <Salt>k__BackingField
+private string <SaltAsString>k__BackingField
+public byte HashAlgorithm
+public byte Flags
+public int Iterations
+public Byte[] Salt
+public string SaltAsString
+public byte get_HashAlgorithm()
+public byte get_Flags()
+public int get_Iterations()
+public Byte[] get_Salt()
+public string get_SaltAsString()
+public void .ctor(ResourceRecordInfo info, byte hashAlgorithm, byte flags, int iterations, Byte[] salt)
+private protected string RecordToString()
+}
+public DnsClient.Protocol.NSec3Record : DnsResourceRecord {
+private byte <HashAlgorithm>k__BackingField
+private byte <Flags>k__BackingField
+private int <Iterations>k__BackingField
+private Byte[] <Salt>k__BackingField
+private string <SaltAsString>k__BackingField
+private Byte[] <NextOwnersName>k__BackingField
+private string <NextOwnersNameAsString>k__BackingField
+private IReadOnlyList`1<byte> <TypeBitMapsRaw>k__BackingField
+private IReadOnlyList`1<ResourceRecordType> <TypeBitMaps>k__BackingField
+public byte HashAlgorithm
+public byte Flags
+public int Iterations
+public Byte[] Salt
+public string SaltAsString
+public Byte[] NextOwnersName
+public string NextOwnersNameAsString
+public IReadOnlyList`1<byte> TypeBitMapsRaw
+public IReadOnlyList`1<ResourceRecordType> TypeBitMaps
+public byte get_HashAlgorithm()
+public byte get_Flags()
+public int get_Iterations()
+public Byte[] get_Salt()
+public string get_SaltAsString()
+public Byte[] get_NextOwnersName()
+public string get_NextOwnersNameAsString()
+public IReadOnlyList`1<byte> get_TypeBitMapsRaw()
+public IReadOnlyList`1<ResourceRecordType> get_TypeBitMaps()
+public void .ctor(ResourceRecordInfo info, byte hashAlgorithm, byte flags, int iterations, Byte[] salt, Byte[] nextOwnersName, Byte[] bitmap)
+private protected string RecordToString()
+}
+public DnsClient.Protocol.NSecRecord : DnsResourceRecord {
+private DnsString <NextDomainName>k__BackingField
+private IReadOnlyList`1<byte> <TypeBitMapsRaw>k__BackingField
+private IReadOnlyList`1<ResourceRecordType> <TypeBitMaps>k__BackingField
+public DnsString NextDomainName
+public IReadOnlyList`1<byte> TypeBitMapsRaw
+public IReadOnlyList`1<ResourceRecordType> TypeBitMaps
+public DnsString get_NextDomainName()
+public IReadOnlyList`1<byte> get_TypeBitMapsRaw()
+public IReadOnlyList`1<ResourceRecordType> get_TypeBitMaps()
+public void .ctor(ResourceRecordInfo info, DnsString nextDomainName, Byte[] typeBitMaps)
+private protected string RecordToString()
+internal IEnumerable`1<int> ReadBitmap(Byte[] data)
+internal IEnumerable`1<byte> WriteBitmap(UInt16[] values)
+}
+public DnsClient.Protocol.NsRecord : DnsResourceRecord {
+private DnsString <NSDName>k__BackingField
+public DnsString NSDName
+public DnsString get_NSDName()
+public void .ctor(ResourceRecordInfo info, DnsString name)
+private protected string RecordToString()
+}
+public DnsClient.Protocol.NullRecord : DnsResourceRecord {
+private Byte[] <Anything>k__BackingField
+private string <AsString>k__BackingField
+public Byte[] Anything
+public string AsString
+public Byte[] get_Anything()
+public string get_AsString()
+public void .ctor(ResourceRecordInfo info, Byte[] anything)
+private protected string RecordToString()
+}
+public DnsClient.Protocol.Options.OptRecord : DnsResourceRecord {
+private UInt32 ResponseCodeMask
+private int ResponseCodeShift
+private UInt32 VersionMask
+private int VersionShift
+private Byte[] <Data>k__BackingField
+public DnsResponseCode ResponseCodeEx
+public short UdpSize
+public byte Version
+public bool IsDnsSecOk
+public Byte[] Data
+public DnsResponseCode get_ResponseCodeEx()
+public void set_ResponseCodeEx(DnsResponseCode value)
+public short get_UdpSize()
+public byte get_Version()
+public void set_Version(byte value)
+public bool get_IsDnsSecOk()
+public void set_IsDnsSecOk(bool value)
+public Byte[] get_Data()
+public void .ctor(int size, int version, bool doFlag, int length, Byte[] data)
+public void .ctor(int size, int ttlFlag, int length, Byte[] data)
+private protected string RecordToString()
+}
+public DnsClient.Protocol.PtrRecord : DnsResourceRecord {
+private DnsString <PtrDomainName>k__BackingField
+public DnsString PtrDomainName
+public DnsString get_PtrDomainName()
+public void .ctor(ResourceRecordInfo info, DnsString ptrDomainName)
+private protected string RecordToString()
+}
+public DnsClient.Protocol.ResourceRecordInfo : object {
+private int _ticks
+private DnsString <DomainName>k__BackingField
+private ResourceRecordType <RecordType>k__BackingField
+private QueryClass <RecordClass>k__BackingField
+private int <InitialTimeToLive>k__BackingField
+private int <RawDataLength>k__BackingField
+public DnsString DomainName
+public ResourceRecordType RecordType
+public QueryClass RecordClass
+public int TimeToLive
+public int InitialTimeToLive
+public int RawDataLength
+public DnsString get_DomainName()
+public ResourceRecordType get_RecordType()
+public QueryClass get_RecordClass()
+public int get_TimeToLive()
+public int get_InitialTimeToLive()
+internal void set_InitialTimeToLive(int value)
+public int get_RawDataLength()
+public void .ctor(string domainName, ResourceRecordType recordType, QueryClass recordClass, int timeToLive, int rawDataLength)
+public void .ctor(DnsString domainName, ResourceRecordType recordType, QueryClass recordClass, int timeToLive, int rawDataLength)
+}
+public DnsClient.Protocol.ResourceRecordType : Enum {
+public int value__
+public ResourceRecordType A
+public ResourceRecordType NS
+public ResourceRecordType MD
+public ResourceRecordType MF
+public ResourceRecordType CNAME
+public ResourceRecordType SOA
+public ResourceRecordType MB
+public ResourceRecordType MG
+public ResourceRecordType MR
+public ResourceRecordType NULL
+public ResourceRecordType WKS
+public ResourceRecordType PTR
+public ResourceRecordType HINFO
+public ResourceRecordType MINFO
+public ResourceRecordType MX
+public ResourceRecordType TXT
+public ResourceRecordType RP
+public ResourceRecordType AFSDB
+public ResourceRecordType AAAA
+public ResourceRecordType SRV
+public ResourceRecordType NAPTR
+public ResourceRecordType OPT
+public ResourceRecordType DS
+public ResourceRecordType SSHFP
+public ResourceRecordType RRSIG
+public ResourceRecordType NSEC
+public ResourceRecordType DNSKEY
+public ResourceRecordType NSEC3
+public ResourceRecordType NSEC3PARAM
+public ResourceRecordType TLSA
+public ResourceRecordType SPF
+public ResourceRecordType URI
+public ResourceRecordType CAA
+}
+public DnsClient.Protocol.RpRecord : DnsResourceRecord {
+private DnsString <MailboxDomainName>k__BackingField
+private DnsString <TextDomainName>k__BackingField
+public DnsString MailboxDomainName
+public DnsString TextDomainName
+public DnsString get_MailboxDomainName()
+public DnsString get_TextDomainName()
+public void .ctor(ResourceRecordInfo info, DnsString mailbox, DnsString textName)
+private protected string RecordToString()
+}
+public DnsClient.Protocol.RRSigRecord : DnsResourceRecord {
+private ResourceRecordType <CoveredType>k__BackingField
+private DnsSecurityAlgorithm <Algorithm>k__BackingField
+private byte <Labels>k__BackingField
+private long <OriginalTtl>k__BackingField
+private DateTimeOffset <SignatureExpiration>k__BackingField
+private DateTimeOffset <SignatureInception>k__BackingField
+private int <KeyTag>k__BackingField
+private DnsString <SignersName>k__BackingField
+private IReadOnlyList`1<byte> <Signature>k__BackingField
+private string <SignatureAsString>k__BackingField
+public ResourceRecordType CoveredType
+public DnsSecurityAlgorithm Algorithm
+public byte Labels
+public long OriginalTtl
+public DateTimeOffset SignatureExpiration
+public DateTimeOffset SignatureInception
+public int KeyTag
+public DnsString SignersName
+public IReadOnlyList`1<byte> Signature
+public string SignatureAsString
+public ResourceRecordType get_CoveredType()
+public DnsSecurityAlgorithm get_Algorithm()
+public byte get_Labels()
+public long get_OriginalTtl()
+public DateTimeOffset get_SignatureExpiration()
+public DateTimeOffset get_SignatureInception()
+public int get_KeyTag()
+public DnsString get_SignersName()
+public IReadOnlyList`1<byte> get_Signature()
+public string get_SignatureAsString()
+public void .ctor(ResourceRecordInfo info, int coveredType, byte algorithm, byte labels, long originalTtl, long signatureExpiration, long signatureInception, int keyTag, DnsString signersName, Byte[] signature)
+private protected string RecordToString()
+private DateTimeOffset FromUnixTimeSeconds(long seconds)
+}
+public DnsClient.Protocol.SoaRecord : DnsResourceRecord {
+private UInt32 <Expire>k__BackingField
+private UInt32 <Minimum>k__BackingField
+private DnsString <MName>k__BackingField
+private UInt32 <Refresh>k__BackingField
+private UInt32 <Retry>k__BackingField
+private DnsString <RName>k__BackingField
+private UInt32 <Serial>k__BackingField
+public UInt32 Expire
+public UInt32 Minimum
+public DnsString MName
+public UInt32 Refresh
+public UInt32 Retry
+public DnsString RName
+public UInt32 Serial
+public UInt32 get_Expire()
+public UInt32 get_Minimum()
+public DnsString get_MName()
+public UInt32 get_Refresh()
+public UInt32 get_Retry()
+public DnsString get_RName()
+public UInt32 get_Serial()
+public void .ctor(ResourceRecordInfo info, DnsString mName, DnsString rName, UInt32 serial, UInt32 refresh, UInt32 retry, UInt32 expire, UInt32 minimum)
+private protected string RecordToString()
+}
+public DnsClient.Protocol.SrvRecord : DnsResourceRecord {
+private ushort <Port>k__BackingField
+private ushort <Priority>k__BackingField
+private DnsString <Target>k__BackingField
+private ushort <Weight>k__BackingField
+public ushort Port
+public ushort Priority
+public DnsString Target
+public ushort Weight
+public ushort get_Port()
+public ushort get_Priority()
+public DnsString get_Target()
+public ushort get_Weight()
+public void .ctor(ResourceRecordInfo info, ushort priority, ushort weight, ushort port, DnsString target)
+private protected string RecordToString()
+}
+public DnsClient.Protocol.SshfpAlgorithm : Enum {
+public int value__
+public SshfpAlgorithm Reserved
+public SshfpAlgorithm RSA
+public SshfpAlgorithm DSS
+public SshfpAlgorithm ECDSA
+public SshfpAlgorithm Ed25519
+}
+public DnsClient.Protocol.SshfpFingerprintType : Enum {
+public int value__
+public SshfpFingerprintType Reserved
+public SshfpFingerprintType SHA1
+public SshfpFingerprintType SHA256
+}
+public DnsClient.Protocol.SshfpRecord : DnsResourceRecord {
+private SshfpAlgorithm <Algorithm>k__BackingField
+private SshfpFingerprintType <FingerprintType>k__BackingField
+private string <Fingerprint>k__BackingField
+public SshfpAlgorithm Algorithm
+public SshfpFingerprintType FingerprintType
+public string Fingerprint
+public void .ctor(ResourceRecordInfo info, SshfpAlgorithm algorithm, SshfpFingerprintType fingerprintType, string fingerprint)
+public SshfpAlgorithm get_Algorithm()
+public SshfpFingerprintType get_FingerprintType()
+public string get_Fingerprint()
+private protected string RecordToString()
+}
+public DnsClient.Protocol.TlsaCertificateUsage : Enum {
+public byte value__
+public TlsaCertificateUsage PKIXTA
+public TlsaCertificateUsage PKIXEE
+public TlsaCertificateUsage DANETA
+public TlsaCertificateUsage DANEEE
+}
+public DnsClient.Protocol.TlsaMatchingType : Enum {
+public byte value__
+public TlsaMatchingType ExactMatch
+public TlsaMatchingType SHA256
+public TlsaMatchingType SHA512
+}
+public DnsClient.Protocol.TlsaRecord : DnsResourceRecord {
+private TlsaCertificateUsage <CertificateUsage>k__BackingField
+private TlsaSelector <Selector>k__BackingField
+private TlsaMatchingType <MatchingType>k__BackingField
+private IReadOnlyList`1<byte> <CertificateAssociationData>k__BackingField
+private string <CertificateAssociationDataAsString>k__BackingField
+public TlsaCertificateUsage CertificateUsage
+public TlsaSelector Selector
+public TlsaMatchingType MatchingType
+public IReadOnlyList`1<byte> CertificateAssociationData
+public string CertificateAssociationDataAsString
+public TlsaCertificateUsage get_CertificateUsage()
+public TlsaSelector get_Selector()
+public TlsaMatchingType get_MatchingType()
+public IReadOnlyList`1<byte> get_CertificateAssociationData()
+public string get_CertificateAssociationDataAsString()
+public void .ctor(ResourceRecordInfo info, byte certificateUsage, byte selector, byte matchingType, Byte[] certificateAssociationData)
+private protected string RecordToString()
+}
+public DnsClient.Protocol.TlsaSelector : Enum {
+public byte value__
+public TlsaSelector FullCertificate
+public TlsaSelector PublicKey
+}
+public DnsClient.Protocol.TxtRecord : DnsResourceRecord {
+private ICollection`1<string> <EscapedText>k__BackingField
+private ICollection`1<string> <Text>k__BackingField
+public ICollection`1<string> EscapedText
+public ICollection`1<string> Text
+public ICollection`1<string> get_EscapedText()
+public ICollection`1<string> get_Text()
+public void .ctor(ResourceRecordInfo info, String[] values, String[] utf8Values)
+private protected string RecordToString()
+}
+public DnsClient.Protocol.UnknownRecord : DnsResourceRecord {
+private IReadOnlyList`1<byte> <Data>k__BackingField
+private string <DataAsString>k__BackingField
+public IReadOnlyList`1<byte> Data
+public string DataAsString
+public IReadOnlyList`1<byte> get_Data()
+public string get_DataAsString()
+public void .ctor(ResourceRecordInfo info, Byte[] data)
+private protected string RecordToString()
+}
+public DnsClient.Protocol.UriRecord : DnsResourceRecord {
+private string <Target>k__BackingField
+private int <Priority>k__BackingField
+private int <Weight>k__BackingField
+public string Target
+public int Priority
+public int Weight
+public string get_Target()
+public void set_Target(string value)
+public int get_Priority()
+public void set_Priority(int value)
+public int get_Weight()
+public void set_Weight(int value)
+public void .ctor(ResourceRecordInfo info, int priority, int weight, string target)
+private protected string RecordToString()
+}
+public DnsClient.Protocol.WksRecord : DnsResourceRecord {
+private IPAddress <Address>k__BackingField
+private ProtocolType <Protocol>k__BackingField
+private Byte[] <Bitmap>k__BackingField
+private Int32[] <Ports>k__BackingField
+public IPAddress Address
+public ProtocolType Protocol
+public Byte[] Bitmap
+public Int32[] Ports
+public IPAddress get_Address()
+public ProtocolType get_Protocol()
+public Byte[] get_Bitmap()
+public Int32[] get_Ports()
+public void .ctor(ResourceRecordInfo info, IPAddress address, int protocol, Byte[] bitmap)
+private protected string RecordToString()
+private Int32[] GetPorts(Byte[] data)
+}
+public DnsClient.QueryClass : Enum {
+public short value__
+public QueryClass IN
+public QueryClass CS
+public QueryClass CH
+public QueryClass HS
+}
+public DnsClient.QueryType : Enum {
+public int value__
+public QueryType A
+public QueryType NS
+public QueryType MD
+public QueryType MF
+public QueryType CNAME
+public QueryType SOA
+public QueryType MB
+public QueryType MG
+public QueryType MR
+public QueryType NULL
+public QueryType WKS
+public QueryType PTR
+public QueryType HINFO
+public QueryType MINFO
+public QueryType MX
+public QueryType TXT
+public QueryType RP
+public QueryType AFSDB
+public QueryType AAAA
+public QueryType SRV
+public QueryType NAPTR
+public QueryType DS
+public QueryType RRSIG
+public QueryType NSEC
+public QueryType DNSKEY
+public QueryType NSEC3
+public QueryType NSEC3PARAM
+public QueryType TLSA
+public QueryType SPF
+public QueryType AXFR
+public QueryType ANY
+public QueryType URI
+public QueryType CAA
+public QueryType SSHFP
+}
+internal DnsClient.ResponseCache : object {
+private TimeSpan s_infiniteTimeout
+private TimeSpan s_maxTimeout
+private TimeSpan s_defaultFailureTimeout
+private int s_cleanupInterval
+private ConcurrentDictionary`2<string, ResponseEntry> _cache
+private object _cleanupLock
+private bool _cleanupRunning
+private int _lastCleanup
+private Nullable`1<TimeSpan> _minimumTimeout
+private Nullable`1<TimeSpan> _maximumTimeout
+private TimeSpan _failureEntryTimeout
+private bool <Enabled>k__BackingField
+public int Count
+public bool Enabled
+public Nullable`1<TimeSpan> MinimumTimout
+public Nullable`1<TimeSpan> MaximumTimeout
+public TimeSpan FailureEntryTimeout
+public int get_Count()
+public bool get_Enabled()
+public void set_Enabled(bool value)
+public Nullable`1<TimeSpan> get_MinimumTimout()
+public void set_MinimumTimout(Nullable`1<TimeSpan> value)
+public Nullable`1<TimeSpan> get_MaximumTimeout()
+public void set_MaximumTimeout(Nullable`1<TimeSpan> value)
+public TimeSpan get_FailureEntryTimeout()
+public void set_FailureEntryTimeout(TimeSpan value)
+public void .ctor(bool enabled, Nullable`1<TimeSpan> minimumTimout, Nullable`1<TimeSpan> maximumTimeout, Nullable`1<TimeSpan> failureEntryTimeout)
+public string GetCacheKey(DnsQuestion question)
+public IDnsQueryResponse Get(string key)
+public IDnsQueryResponse Get(string key, Nullable`1& effectiveTtl)
+public bool Add(string key, IDnsQueryResponse response, bool cacheFailures)
+private void DoCleanup(ResponseCache cache)
+private void StartCleanup()
+}
+public DnsClient.ServiceHostEntry : IPHostEntry {
+private int <Port>k__BackingField
+private int <Priority>k__BackingField
+private int <Weight>k__BackingField
+public int Port
+public int Priority
+public int Weight
+public int get_Port()
+public void set_Port(int value)
+public int get_Priority()
+public void set_Priority(int value)
+public int get_Weight()
+public void set_Weight(int value)
+}
+public DnsClient.Tracing : object {
+private TraceSource <Source>k__BackingField
+public TraceSource Source
+public TraceSource get_Source()
+}
+internal DnsClient.TruncatedQueryResponse : object {
+public IReadOnlyList`1<DnsQuestion> Questions
+public IReadOnlyList`1<DnsResourceRecord> Additionals
+public IEnumerable`1<DnsResourceRecord> AllRecords
+public IReadOnlyList`1<DnsResourceRecord> Answers
+public IReadOnlyList`1<DnsResourceRecord> Authorities
+public string AuditTrail
+public string ErrorMessage
+public bool HasError
+public DnsResponseHeader Header
+public int MessageSize
+public NameServer NameServer
+public DnsQuerySettings Settings
+public IReadOnlyList`1<DnsQuestion> get_Questions()
+public IReadOnlyList`1<DnsResourceRecord> get_Additionals()
+public IEnumerable`1<DnsResourceRecord> get_AllRecords()
+public IReadOnlyList`1<DnsResourceRecord> get_Answers()
+public IReadOnlyList`1<DnsResourceRecord> get_Authorities()
+public string get_AuditTrail()
+public string get_ErrorMessage()
+public bool get_HasError()
+public DnsResponseHeader get_Header()
+public int get_MessageSize()
+public NameServer get_NameServer()
+public DnsQuerySettings get_Settings()
+}
+internal DnsClient.Windows.IpHlpApi.FixedNetworkInformation : object {
+private ICollection`1<IPAddress> <DnsAddresses>k__BackingField
+private string <DomainName>k__BackingField
+private string <HostName>k__BackingField
+public ICollection`1<IPAddress> DnsAddresses
+public string DomainName
+public string HostName
+public ICollection`1<IPAddress> get_DnsAddresses()
+private void set_DnsAddresses(ICollection`1<IPAddress> value)
+public string get_DomainName()
+private void set_DomainName(string value)
+public string get_HostName()
+private void set_HostName(string value)
+public FixedNetworkInformation GetFixedInformation()
+}
+internal DnsClient.Windows.NameResolutionPolicy : object {
+private Char[] s_splitOn
+internal IReadOnlyCollection`1<NameServer> Resolve(bool includeGenericServers, bool includeDirectAccessServers)
+private void AddServers(HashSet`1<NameServer> nameServers, String[] names, string dnsServers)
+}
+internal System.IO.RowConfigReader : ValueType {
+private string _buffer
+private StringComparison _comparisonKind
+private int _currentIndex
+public void .ctor(string buffer)
+public void .ctor(string buffer, StringComparison comparisonKind)
+public string GetNextValue(string key)
+public bool TryGetNextValue(string key, String& value)
+private bool TryFindNextKeyOccurrence(string key, int startIndex, Int32& keyIndex)
+private bool HasFollowingWhitespace(int keyIndex, int length)
+public int GetNextValueAsInt32(string key)
+public string ReadFirstValueFromString(string data, string key)
+}
+public System.Linq.RecordCollectionExtension : object {
+public IEnumerable`1<AddressRecord> AddressRecords(IEnumerable`1<DnsResourceRecord> records)
+public IEnumerable`1<ARecord> ARecords(IEnumerable`1<DnsResourceRecord> records)
+public IEnumerable`1<NsRecord> NsRecords(IEnumerable`1<DnsResourceRecord> records)
+public IEnumerable`1<CNameRecord> CnameRecords(IEnumerable`1<DnsResourceRecord> records)
+public IEnumerable`1<SoaRecord> SoaRecords(IEnumerable`1<DnsResourceRecord> records)
+public IEnumerable`1<MbRecord> MbRecords(IEnumerable`1<DnsResourceRecord> records)
+public IEnumerable`1<MgRecord> MgRecords(IEnumerable`1<DnsResourceRecord> records)
+public IEnumerable`1<MrRecord> MrRecords(IEnumerable`1<DnsResourceRecord> records)
+public IEnumerable`1<NullRecord> NullRecords(IEnumerable`1<DnsResourceRecord> records)
+public IEnumerable`1<WksRecord> WksRecords(IEnumerable`1<DnsResourceRecord> records)
+public IEnumerable`1<PtrRecord> PtrRecords(IEnumerable`1<DnsResourceRecord> records)
+public IEnumerable`1<HInfoRecord> HInfoRecords(IEnumerable`1<DnsResourceRecord> records)
+public IEnumerable`1<MxRecord> MxRecords(IEnumerable`1<DnsResourceRecord> records)
+public IEnumerable`1<TxtRecord> TxtRecords(IEnumerable`1<DnsResourceRecord> records)
+public IEnumerable`1<RpRecord> RpRecords(IEnumerable`1<DnsResourceRecord> records)
+public IEnumerable`1<AfsDbRecord> AfsDbRecords(IEnumerable`1<DnsResourceRecord> records)
+public IEnumerable`1<AaaaRecord> AaaaRecords(IEnumerable`1<DnsResourceRecord> records)
+public IEnumerable`1<SrvRecord> SrvRecords(IEnumerable`1<DnsResourceRecord> records)
+public IEnumerable`1<NAPtrRecord> NAPtrRecords(IEnumerable`1<DnsResourceRecord> records)
+public IEnumerable`1<UriRecord> UriRecords(IEnumerable`1<DnsResourceRecord> records)
+public IEnumerable`1<CaaRecord> CaaRecords(IEnumerable`1<DnsResourceRecord> records)
+public IEnumerable`1<TlsaRecord> TlsaRecords(IEnumerable`1<DnsResourceRecord> records)
+public IEnumerable`1<RRSigRecord> RRSigRecords(IEnumerable`1<DnsResourceRecord> records)
+public IEnumerable`1<DnsResourceRecord> OfRecordType(IEnumerable`1<DnsResourceRecord> records, ResourceRecordType type)
+}
+public System.Net.IpAddressExtensions : object {
+public string GetArpaName(IPAddress ip)
+}
+internal System.Threading.Tasks.TaskExtensions : object {
+public Task`1<T> WithCancellation(Task`1<T> task, CancellationToken cancellationToken)
+}

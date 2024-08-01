@@ -1,3 +1,37 @@
+public CanvasLineRenderer : Graphic {
+public List`1<Vector2> Points
+public float Thickness
+public float CurveOffset
+public int CornerTesselation
+public float DistanceUvMultiplier
+public Texture RepeatTexture
+public Texture mainTexture
+public Texture get_mainTexture()
+}
+public CoverImage : MaskableGraphic {
+private Texture _texture
+public Texture texture
+public Texture mainTexture
+public Texture get_texture()
+public void set_texture(Texture value)
+public Texture get_mainTexture()
+protected void OnPopulateMesh(VertexHelper vh)
+private Rect GetCoverRect(Rect& dst, Texture texture)
+protected void OnDidApplyAnimationProperties()
+protected void OnRectTransformDimensionsChange()
+}
+public CoverVideo : MonoBehaviour {
+public string Url
+public float FadeIn
+public Graphic Fallback
+private CoverImage _cover
+private VideoPlayer _player
+private CanvasRenderer _fallbackGraphic
+public void OnEnable()
+public void OnDisable()
+private void Play(string url)
+private void PlayerPrepareCompleted(VideoPlayer source)
+}
 public HoverListener : MonoBehaviour {
 public UnityEvent OnEnter
 public UnityEvent OnExit
@@ -119,20 +153,22 @@ public Dictionary`2<string, UnityWebRequest> RequestCache
 public Dictionary`2<string, ValueTuple`2<Texture2D, Sprite>> TextureCache
 public Texture2D LoadingImage
 public Texture2D MissingImage
-private RawImage rawImage
-private Image image
-private Sprite loadingSprite
-private Sprite missingSprite
 public string Url
 public bool AutosizeHeight
 public bool UseCoverFill
 public bool GenerateMipmaps
 public float MaxWidth
 public float MaxHeight
+private RawImage rawImage
+private Image image
+private Sprite loadingSprite
+private Sprite missingSprite
+private bool didLoad
 private void Init()
 private void Start()
 private void OnDestroy()
 public bool Load(string url)
+public void Load(Sprite sprite)
 private IEnumerator WaitForLoad(string url)
 private void UpdateImageTexture(ValueTuple`2<Texture2D, Sprite> tex)
 public void SetMissingImage()
@@ -2107,7 +2143,6 @@ private FlexAlignSelf Facepunch.Flexbox.IFlexNode.AlignSelf
 protected void OnEnable()
 protected void OnDisable()
 public void SetLayoutDirty()
-private void SetupTransform()
 public void DoAutoSize()
 private RectTransform Facepunch.Flexbox.IFlexNode.get_Transform()
 private bool Facepunch.Flexbox.IFlexNode.get_IsActive()
@@ -2121,6 +2156,7 @@ private FlexLength Facepunch.Flexbox.IFlexNode.get_Basis()
 private int Facepunch.Flexbox.IFlexNode.get_Grow()
 private int Facepunch.Flexbox.IFlexNode.get_Shrink()
 private FlexAlignSelf Facepunch.Flexbox.IFlexNode.get_AlignSelf()
+private void Facepunch.Flexbox.IFlexNode.SetupTransform()
 private void Facepunch.Flexbox.IFlexNode.SetLayoutDirty(bool force)
 private void Facepunch.Flexbox.IFlexNode.MeasureHorizontal()
 private void Facepunch.Flexbox.IFlexNode.LayoutHorizontal(float maxWidth, float maxHeight)
@@ -2479,4 +2515,7 @@ public void SetParent(UIBehaviour self, Transform parent)
 public void SetParent(UIBehaviour self, Canvas parent)
 public void SetParent(UIBehaviour self, UIBehaviour parent)
 public void SetParentRootCanvas(UIBehaviour self, Transform tx)
+}
+internal UnitySourceGeneratedAssemblyMonoScriptTypes_v1 : object {
+private MonoScriptData Get()
 }

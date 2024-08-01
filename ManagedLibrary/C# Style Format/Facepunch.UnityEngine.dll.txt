@@ -25,6 +25,7 @@ public Transform FindChildRecursive(Transform transform, string name)
 public T GetOrAddComponent(Transform transform)
 public void DestroyAllChildren(Transform transform, bool immediate)
 public float AngleToPos(Transform transform, Vector3 targetPos)
+public int GetDepth(Transform transform)
 }
 public Facepunch.Utility.Mesh : object {
 public void Export(Mesh mesh, string filename)
@@ -55,12 +56,14 @@ public void CancelInvokeFixedTime(Action action)
 public bool IsInvokingFixedTime(Action action)
 }
 public InvokeAction : ValueType {
+public InvokeTrackingKey Key
+public InvokeTrackingData TrackingData
 public Behaviour sender
 public Action action
 public float initial
 public float repeat
 public float random
-public void .ctor(Behaviour sender, Action action, float initial, float repeat, float random)
+public void .ctor(Behaviour sender, Action action, InvokeTrackingData tracking, float initial, float repeat, float random)
 public bool Equals(InvokeAction other)
 public bool Equals(object obj)
 public int GetHashCode()
@@ -79,16 +82,14 @@ public void CancelInvoke(Behaviour sender, Action action)
 private void CreateInstance()
 }
 public InvokeHandlerBase`1 : SingletonComponent`1<T> {
-public bool performanceTracking
-public float maxTickTimeWarning
-private List`1<InvokeTiming<T>> performanceTimes
 protected ListDictionary`2<InvokeAction, float> curList
 protected ListHashSet`1<InvokeAction> addList
 protected ListHashSet`1<InvokeAction> delList
+public InvokeProfiler profiler
 protected int nullIndex
 protected int nullChecks
-private Stopwatch tickStopWatch
-private Stopwatch invokeStopWatch
+private Stopwatch doTickTimer
+private Stopwatch invokeTimer
 protected void LateUpdate()
 protected float GetTime()
 protected void DoTick()
@@ -109,6 +110,44 @@ public void InvokeRepeating(Behaviour sender, Action action, float time, float r
 public void InvokeRandomized(Behaviour sender, Action action, float time, float repeat, float random)
 public void CancelInvoke(Behaviour sender, Action action)
 private void CreateInstance()
+}
+public InvokeProfiler : object {
+public InvokeProfiler update
+public InvokeProfiler fixedUpdate
+private string <Name>k__BackingField
+public int mode
+public TimeSpan elapsedTime
+public int executedCount
+public int tickCount
+public int addCount
+public int deletedCount
+public List`1<InvokeTrackingData> trackingDataList
+private Dictionary`2<InvokeTrackingKey, InvokeTrackingData> trackingDataLookup
+public string Name
+public string get_Name()
+private void set_Name(string value)
+public void .ctor(string name)
+public void Reset()
+public InvokeTrackingData GetTrackingData(InvokeTrackingKey key)
+}
+public InvokeTrackingData : object {
+public InvokeTrackingKey Key
+public string TypeName
+public int InvokeCount
+public int Calls
+public TimeSpan ExecutionTime
+public void .ctor(InvokeTrackingKey key)
+public void Reset()
+}
+public InvokeTrackingKey : ValueType {
+public InvokeTrackingKey Unknown
+public Type Type
+public string MethodName
+public void .ctor(Action action)
+public void .ctor(Type type, string methodName)
+public int GetHashCode()
+public bool Equals(InvokeTrackingKey other)
+public bool Equals(object obj)
 }
 public LeanTest : object {
 public int expected
@@ -1152,4 +1191,7 @@ private Color32[] buffer
 public void Clear(Texture2D tex, Color32 color)
 public int GetSizeInBytes(Texture texture)
 public int GetBitsPerPixel(TextureFormat format)
+}
+internal UnitySourceGeneratedAssemblyMonoScriptTypes_v1 : object {
+private MonoScriptData Get()
 }

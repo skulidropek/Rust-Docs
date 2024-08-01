@@ -5,7 +5,6 @@ public Vector3 parentAnchorPosition
 public Quaternion anchorRotation
 public Quaternion parentAnchorRotation
 public bool isRoot
-public bool computeParentAnchor
 public bool matchAnchors
 public ArticulationDofLock linearLockX
 public ArticulationDofLock linearLockY
@@ -21,11 +20,15 @@ public bool useGravity
 public float linearDamping
 public float angularDamping
 public float jointFriction
+public LayerMask excludeLayers
+public LayerMask includeLayers
 public Vector3 velocity
 public Vector3 angularVelocity
 public float mass
+public bool automaticCenterOfMass
 public Vector3 centerOfMass
 public Vector3 worldCenterOfMass
+public bool automaticInertiaTensor
 public Vector3 inertiaTensor
 public Quaternion inertiaTensorRotation
 public float sleepThreshold
@@ -39,9 +42,11 @@ public ArticulationReducedSpace jointPosition
 public ArticulationReducedSpace jointVelocity
 public ArticulationReducedSpace jointAcceleration
 public ArticulationReducedSpace jointForce
+public ArticulationReducedSpace driveForce
 public int dofCount
 public int index
 public CollisionDetectionMode collisionDetectionMode
+public bool computeParentAnchor
 public ArticulationJointType get_jointType()
 public void set_jointType(ArticulationJointType value)
 public Vector3 get_anchorPosition()
@@ -53,8 +58,6 @@ public void set_anchorRotation(Quaternion value)
 public Quaternion get_parentAnchorRotation()
 public void set_parentAnchorRotation(Quaternion value)
 public bool get_isRoot()
-public bool get_computeParentAnchor()
-public void set_computeParentAnchor(bool value)
 public bool get_matchAnchors()
 public void set_matchAnchors(bool value)
 public ArticulationDofLock get_linearLockX()
@@ -85,6 +88,14 @@ public float get_angularDamping()
 public void set_angularDamping(float value)
 public float get_jointFriction()
 public void set_jointFriction(float value)
+public LayerMask get_excludeLayers()
+public void set_excludeLayers(LayerMask value)
+public LayerMask get_includeLayers()
+public void set_includeLayers(LayerMask value)
+public Vector3 GetAccumulatedForce(float step)
+public Vector3 GetAccumulatedForce()
+public Vector3 GetAccumulatedTorque(float step)
+public Vector3 GetAccumulatedTorque()
 public void AddForce(Vector3 force, ForceMode mode)
 public void AddForce(Vector3 force)
 public void AddRelativeForce(Vector3 force, ForceMode mode)
@@ -101,9 +112,13 @@ public Vector3 get_angularVelocity()
 public void set_angularVelocity(Vector3 value)
 public float get_mass()
 public void set_mass(float value)
+public bool get_automaticCenterOfMass()
+public void set_automaticCenterOfMass(bool value)
 public Vector3 get_centerOfMass()
 public void set_centerOfMass(Vector3 value)
 public Vector3 get_worldCenterOfMass()
+public bool get_automaticInertiaTensor()
+public void set_automaticInertiaTensor(bool value)
 public Vector3 get_inertiaTensor()
 public void set_inertiaTensor(Vector3 value)
 public Quaternion get_inertiaTensorRotation()
@@ -135,29 +150,44 @@ public ArticulationReducedSpace get_jointAcceleration()
 public void set_jointAcceleration(ArticulationReducedSpace value)
 public ArticulationReducedSpace get_jointForce()
 public void set_jointForce(ArticulationReducedSpace value)
+public ArticulationReducedSpace get_driveForce()
 public int get_dofCount()
 public int get_index()
 public void TeleportRoot(Vector3 position, Quaternion rotation)
 public Vector3 GetClosestPoint(Vector3 point)
 public Vector3 GetRelativePointVelocity(Vector3 relativePoint)
 public Vector3 GetPointVelocity(Vector3 worldPoint)
+private int GetDenseJacobian_Internal(ArticulationJacobian& jacobian)
 public int GetDenseJacobian(ArticulationJacobian& jacobian)
 public int GetJointPositions(List`1<float> positions)
 public void SetJointPositions(List`1<float> positions)
 public int GetJointVelocities(List`1<float> velocities)
 public void SetJointVelocities(List`1<float> velocities)
 public int GetJointAccelerations(List`1<float> accelerations)
-public void SetJointAccelerations(List`1<float> accelerations)
 public int GetJointForces(List`1<float> forces)
 public void SetJointForces(List`1<float> forces)
+public ArticulationReducedSpace GetJointForcesForAcceleration(ArticulationReducedSpace acceleration)
+public int GetDriveForces(List`1<float> forces)
+public int GetJointGravityForces(List`1<float> forces)
+public int GetJointCoriolisCentrifugalForces(List`1<float> forces)
+public int GetJointExternalForces(List`1<float> forces, float step)
 public int GetDriveTargets(List`1<float> targets)
 public void SetDriveTargets(List`1<float> targets)
 public int GetDriveTargetVelocities(List`1<float> targetVelocities)
 public void SetDriveTargetVelocities(List`1<float> targetVelocities)
 public int GetDofStartIndices(List`1<int> dofStartIndices)
+public void SetDriveTarget(ArticulationDriveAxis axis, float value)
+public void SetDriveTargetVelocity(ArticulationDriveAxis axis, float value)
+public void SetDriveLimits(ArticulationDriveAxis axis, float lower, float upper)
+public void SetDriveStiffness(ArticulationDriveAxis axis, float value)
+public void SetDriveDamping(ArticulationDriveAxis axis, float value)
+public void SetDriveForceLimit(ArticulationDriveAxis axis, float value)
 public CollisionDetectionMode get_collisionDetectionMode()
 public void set_collisionDetectionMode(CollisionDetectionMode value)
 public void SnapAnchorToClosestContact()
+public bool get_computeParentAnchor()
+public void set_computeParentAnchor(bool value)
+public void SetJointAccelerations(List`1<float> accelerations)
 private void get_anchorPosition_Injected(Vector3& ret)
 private void set_anchorPosition_Injected(Vector3& value)
 private void get_parentAnchorPosition_Injected(Vector3& ret)
@@ -172,6 +202,12 @@ private void get_yDrive_Injected(ArticulationDrive& ret)
 private void set_yDrive_Injected(ArticulationDrive& value)
 private void get_zDrive_Injected(ArticulationDrive& ret)
 private void set_zDrive_Injected(ArticulationDrive& value)
+private void get_excludeLayers_Injected(LayerMask& ret)
+private void set_excludeLayers_Injected(LayerMask& value)
+private void get_includeLayers_Injected(LayerMask& ret)
+private void set_includeLayers_Injected(LayerMask& value)
+private void GetAccumulatedForce_Injected(float step, Vector3& ret)
+private void GetAccumulatedTorque_Injected(float step, Vector3& ret)
 private void AddForce_Injected(Vector3& force, ForceMode mode)
 private void AddRelativeForce_Injected(Vector3& force, ForceMode mode)
 private void AddTorque_Injected(Vector3& torque, ForceMode mode)
@@ -196,10 +232,12 @@ private void get_jointAcceleration_Injected(ArticulationReducedSpace& ret)
 private void set_jointAcceleration_Injected(ArticulationReducedSpace& value)
 private void get_jointForce_Injected(ArticulationReducedSpace& ret)
 private void set_jointForce_Injected(ArticulationReducedSpace& value)
+private void get_driveForce_Injected(ArticulationReducedSpace& ret)
 private void TeleportRoot_Injected(Vector3& position, Quaternion& rotation)
 private void GetClosestPoint_Injected(Vector3& point, Vector3& ret)
 private void GetRelativePointVelocity_Injected(Vector3& relativePoint, Vector3& ret)
 private void GetPointVelocity_Injected(Vector3& worldPoint, Vector3& ret)
+private void GetJointForcesForAcceleration_Injected(ArticulationReducedSpace& acceleration, ArticulationReducedSpace& ret)
 }
 public UnityEngine.ArticulationDofLock : Enum {
 public int value__
@@ -215,6 +253,20 @@ public float damping
 public float forceLimit
 public float target
 public float targetVelocity
+public ArticulationDriveType driveType
+}
+public UnityEngine.ArticulationDriveAxis : Enum {
+public int value__
+public ArticulationDriveAxis X
+public ArticulationDriveAxis Y
+public ArticulationDriveAxis Z
+}
+public UnityEngine.ArticulationDriveType : Enum {
+public int value__
+public ArticulationDriveType Force
+public ArticulationDriveType Acceleration
+public ArticulationDriveType Target
+public ArticulationDriveType Velocity
 }
 public UnityEngine.ArticulationJacobian : ValueType {
 private int rowsCount
@@ -257,19 +309,17 @@ private Vector3 <halfExtents>k__BackingField
 private Quaternion <orientation>k__BackingField
 private Vector3 <direction>k__BackingField
 private float <distance>k__BackingField
-private int <layerMask>k__BackingField
-private int <maxHits>k__BackingField
 private PhysicsScene <physicsScene>k__BackingField
+public QueryParameters queryParameters
 public Vector3 center
 public Vector3 halfExtents
 public Quaternion orientation
 public Vector3 direction
 public float distance
-public int layerMask
-internal int maxHits
 public PhysicsScene physicsScene
-public void .ctor(Vector3 center, Vector3 halfExtents, Quaternion orientation, Vector3 direction, float distance, int layerMask)
-public void .ctor(PhysicsScene physicsScene, Vector3 center, Vector3 halfExtents, Quaternion orientation, Vector3 direction, float distance, int layerMask)
+public int layerMask
+public void .ctor(Vector3 center, Vector3 halfExtents, Quaternion orientation, Vector3 direction, QueryParameters queryParameters, float distance)
+public void .ctor(PhysicsScene physicsScene, Vector3 center, Vector3 halfExtents, Quaternion orientation, Vector3 direction, QueryParameters queryParameters, float distance)
 public Vector3 get_center()
 public void set_center(Vector3 value)
 public Vector3 get_halfExtents()
@@ -280,15 +330,16 @@ public Vector3 get_direction()
 public void set_direction(Vector3 value)
 public float get_distance()
 public void set_distance(float value)
-public int get_layerMask()
-public void set_layerMask(int value)
-internal int get_maxHits()
-internal void set_maxHits(int value)
 public PhysicsScene get_physicsScene()
 public void set_physicsScene(PhysicsScene value)
+public JobHandle ScheduleBatch(NativeArray`1<BoxcastCommand> commands, NativeArray`1<RaycastHit> results, int minCommandsPerJob, int maxHits, JobHandle dependsOn)
 public JobHandle ScheduleBatch(NativeArray`1<BoxcastCommand> commands, NativeArray`1<RaycastHit> results, int minCommandsPerJob, JobHandle dependsOn)
-private JobHandle ScheduleBoxcastBatch(JobScheduleParameters& parameters, Void* commands, int commandLen, Void* result, int resultLen, int minCommandsPerJob)
-private void ScheduleBoxcastBatch_Injected(JobScheduleParameters& parameters, Void* commands, int commandLen, Void* result, int resultLen, int minCommandsPerJob, JobHandle& ret)
+private JobHandle ScheduleBoxcastBatch(JobScheduleParameters& parameters, Void* commands, int commandLen, Void* result, int resultLen, int minCommandsPerJob, int maxHits)
+public void .ctor(Vector3 center, Vector3 halfExtents, Quaternion orientation, Vector3 direction, float distance, int layerMask)
+public void .ctor(PhysicsScene physicsScene, Vector3 center, Vector3 halfExtents, Quaternion orientation, Vector3 direction, float distance, int layerMask)
+public int get_layerMask()
+public void set_layerMask(int value)
+private void ScheduleBoxcastBatch_Injected(JobScheduleParameters& parameters, Void* commands, int commandLen, Void* result, int resultLen, int minCommandsPerJob, int maxHits, JobHandle& ret)
 }
 public UnityEngine.BoxCollider : Collider {
 public Vector3 center
@@ -311,19 +362,17 @@ private Vector3 <point2>k__BackingField
 private float <radius>k__BackingField
 private Vector3 <direction>k__BackingField
 private float <distance>k__BackingField
-private int <layerMask>k__BackingField
-private int <maxHits>k__BackingField
 private PhysicsScene <physicsScene>k__BackingField
+public QueryParameters queryParameters
 public Vector3 point1
 public Vector3 point2
 public float radius
 public Vector3 direction
 public float distance
-public int layerMask
-internal int maxHits
 public PhysicsScene physicsScene
-public void .ctor(Vector3 p1, Vector3 p2, float radius, Vector3 direction, float distance, int layerMask)
-public void .ctor(PhysicsScene physicsScene, Vector3 p1, Vector3 p2, float radius, Vector3 direction, float distance, int layerMask)
+public int layerMask
+public void .ctor(Vector3 p1, Vector3 p2, float radius, Vector3 direction, QueryParameters queryParameters, float distance)
+public void .ctor(PhysicsScene physicsScene, Vector3 p1, Vector3 p2, float radius, Vector3 direction, QueryParameters queryParameters, float distance)
 public Vector3 get_point1()
 public void set_point1(Vector3 value)
 public Vector3 get_point2()
@@ -334,15 +383,16 @@ public Vector3 get_direction()
 public void set_direction(Vector3 value)
 public float get_distance()
 public void set_distance(float value)
-public int get_layerMask()
-public void set_layerMask(int value)
-internal int get_maxHits()
-internal void set_maxHits(int value)
 public PhysicsScene get_physicsScene()
 public void set_physicsScene(PhysicsScene value)
+public JobHandle ScheduleBatch(NativeArray`1<CapsulecastCommand> commands, NativeArray`1<RaycastHit> results, int minCommandsPerJob, int maxHits, JobHandle dependsOn)
 public JobHandle ScheduleBatch(NativeArray`1<CapsulecastCommand> commands, NativeArray`1<RaycastHit> results, int minCommandsPerJob, JobHandle dependsOn)
-private JobHandle ScheduleCapsulecastBatch(JobScheduleParameters& parameters, Void* commands, int commandLen, Void* result, int resultLen, int minCommandsPerJob)
-private void ScheduleCapsulecastBatch_Injected(JobScheduleParameters& parameters, Void* commands, int commandLen, Void* result, int resultLen, int minCommandsPerJob, JobHandle& ret)
+private JobHandle ScheduleCapsulecastBatch(JobScheduleParameters& parameters, Void* commands, int commandLen, Void* result, int resultLen, int minCommandsPerJob, int maxHits)
+public void .ctor(Vector3 p1, Vector3 p2, float radius, Vector3 direction, float distance, int layerMask)
+public void .ctor(PhysicsScene physicsScene, Vector3 p1, Vector3 p2, float radius, Vector3 direction, float distance, int layerMask)
+public int get_layerMask()
+public void set_layerMask(int value)
+private void ScheduleCapsulecastBatch_Injected(JobScheduleParameters& parameters, Void* commands, int commandLen, Void* result, int resultLen, int minCommandsPerJob, int maxHits, JobHandle& ret)
 }
 public UnityEngine.CapsuleCollider : Collider {
 public Vector3 center
@@ -455,6 +505,33 @@ private void set_swing1Limit_Injected(SoftJointLimit& value)
 private void get_swing2Limit_Injected(SoftJointLimit& ret)
 private void set_swing2Limit_Injected(SoftJointLimit& value)
 }
+public UnityEngine.ClosestPointCommand : ValueType {
+private Vector3 <point>k__BackingField
+private int <colliderInstanceID>k__BackingField
+private Vector3 <position>k__BackingField
+private Quaternion <rotation>k__BackingField
+private Vector3 <scale>k__BackingField
+public Vector3 point
+public int colliderInstanceID
+public Vector3 position
+public Quaternion rotation
+public Vector3 scale
+public void .ctor(Vector3 point, int colliderInstanceID, Vector3 position, Quaternion rotation, Vector3 scale)
+public void .ctor(Vector3 point, Collider collider, Vector3 position, Quaternion rotation, Vector3 scale)
+public Vector3 get_point()
+public void set_point(Vector3 value)
+public int get_colliderInstanceID()
+public void set_colliderInstanceID(int value)
+public Vector3 get_position()
+public void set_position(Vector3 value)
+public Quaternion get_rotation()
+public void set_rotation(Quaternion value)
+public Vector3 get_scale()
+public void set_scale(Vector3 value)
+public JobHandle ScheduleBatch(NativeArray`1<ClosestPointCommand> commands, NativeArray`1<Vector3> results, int minCommandsPerJob, JobHandle dependsOn)
+private JobHandle ScheduleClosestPointCommandBatch(JobScheduleParameters& parameters, Void* commands, int commandLen, Void* result, int resultLen, int minCommandsPerJob)
+private void ScheduleClosestPointCommandBatch_Injected(JobScheduleParameters& parameters, Void* commands, int commandLen, Void* result, int resultLen, int minCommandsPerJob, JobHandle& ret)
+}
 public UnityEngine.Collider : Component {
 public bool enabled
 public Rigidbody attachedRigidbody
@@ -463,6 +540,10 @@ public bool isTrigger
 public float contactOffset
 public Bounds bounds
 public bool hasModifiableContacts
+public bool providesContacts
+public int layerOverridePriority
+public LayerMask excludeLayers
+public LayerMask includeLayers
 public PhysicMaterial sharedMaterial
 public PhysicMaterial material
 public bool get_enabled()
@@ -477,6 +558,14 @@ public Vector3 ClosestPoint(Vector3 position)
 public Bounds get_bounds()
 public bool get_hasModifiableContacts()
 public void set_hasModifiableContacts(bool value)
+public bool get_providesContacts()
+public void set_providesContacts(bool value)
+public int get_layerOverridePriority()
+public void set_layerOverridePriority(int value)
+public LayerMask get_excludeLayers()
+public void set_excludeLayers(LayerMask value)
+public LayerMask get_includeLayers()
+public void set_includeLayers(LayerMask value)
 public PhysicMaterial get_sharedMaterial()
 public void set_sharedMaterial(PhysicMaterial value)
 public PhysicMaterial get_material()
@@ -487,17 +576,26 @@ private void Internal_ClosestPointOnBounds(Vector3 point, Vector3& outPos, Singl
 public Vector3 ClosestPointOnBounds(Vector3 position)
 private void ClosestPoint_Injected(Vector3& position, Vector3& ret)
 private void get_bounds_Injected(Bounds& ret)
+private void get_excludeLayers_Injected(LayerMask& ret)
+private void set_excludeLayers_Injected(LayerMask& value)
+private void get_includeLayers_Injected(LayerMask& ret)
+private void set_includeLayers_Injected(LayerMask& value)
 private void Raycast_Injected(Ray& ray, float maxDistance, Boolean& hasHit, RaycastHit& ret)
 private void Internal_ClosestPointOnBounds_Injected(Vector3& point, Vector3& outPos, Single& distance)
 }
+public UnityEngine.ColliderHit : ValueType {
+private int m_ColliderInstanceID
+public int instanceID
+public Collider collider
+public int get_instanceID()
+public Collider get_collider()
+}
 public UnityEngine.Collision : object {
-internal Vector3 m_Impulse
-internal Vector3 m_RelativeVelocity
-internal Component m_Body
-internal Collider m_Collider
-internal int m_ContactCount
-internal ContactPoint[] m_ReusedContacts
-internal ContactPoint[] m_LegacyContacts
+private ContactPairHeader m_Header
+private ContactPair m_Pair
+private bool m_Flipped
+private ContactPoint[] m_LegacyContacts
+public Vector3 impulse
 public Vector3 relativeVelocity
 public Rigidbody rigidbody
 public ArticulationBody articulationBody
@@ -505,13 +603,13 @@ public Component body
 public Collider collider
 public Transform transform
 public GameObject gameObject
+internal bool Flipped
 public int contactCount
 public ContactPoint[] contacts
-public Vector3 impulse
 public Vector3 impactForceSum
 public Vector3 frictionForceSum
 public Component other
-private ContactPoint[] GetContacts_Internal()
+public Vector3 get_impulse()
 public Vector3 get_relativeVelocity()
 public Rigidbody get_rigidbody()
 public ArticulationBody get_articulationBody()
@@ -519,12 +617,15 @@ public Component get_body()
 public Collider get_collider()
 public Transform get_transform()
 public GameObject get_gameObject()
+internal bool get_Flipped()
+internal void set_Flipped(bool value)
 public int get_contactCount()
 public ContactPoint[] get_contacts()
+internal void .ctor(ContactPairHeader& header, ContactPair& pair, bool flipped)
+internal void Reuse(ContactPairHeader& header, ContactPair& pair)
 public ContactPoint GetContact(int index)
 public int GetContacts(ContactPoint[] contacts)
 public int GetContacts(List`1<ContactPoint> contacts)
-public Vector3 get_impulse()
 public IEnumerator GetEnumerator()
 public Vector3 get_impactForceSum()
 public Vector3 get_frictionForceSum()
@@ -546,6 +647,41 @@ public CollisionFlags Below
 public CollisionFlags CollidedSides
 public CollisionFlags CollidedAbove
 public CollisionFlags CollidedBelow
+}
+internal UnityEngine.CollisionPairEventFlags : Enum {
+public ushort value__
+public CollisionPairEventFlags SolveContacts
+public CollisionPairEventFlags ModifyContacts
+public CollisionPairEventFlags NotifyTouchFound
+public CollisionPairEventFlags NotifyTouchPersists
+public CollisionPairEventFlags NotifyTouchLost
+public CollisionPairEventFlags NotifyTouchCCD
+public CollisionPairEventFlags NotifyThresholdForceFound
+public CollisionPairEventFlags NotifyThresholdForcePersists
+public CollisionPairEventFlags NotifyThresholdForceLost
+public CollisionPairEventFlags NotifyContactPoint
+public CollisionPairEventFlags DetectDiscreteContact
+public CollisionPairEventFlags DetectCCDContact
+public CollisionPairEventFlags PreSolverVelocity
+public CollisionPairEventFlags PostSolverVelocity
+public CollisionPairEventFlags ContactEventPose
+public CollisionPairEventFlags NextFree
+public CollisionPairEventFlags ContactDefault
+public CollisionPairEventFlags TriggerDefault
+}
+internal UnityEngine.CollisionPairFlags : Enum {
+public ushort value__
+public CollisionPairFlags RemovedShape
+public CollisionPairFlags RemovedOtherShape
+public CollisionPairFlags ActorPairHasFirstTouch
+public CollisionPairFlags ActorPairLostTouch
+public CollisionPairFlags InternalHasImpulses
+public CollisionPairFlags InternalContactsAreFlipped
+}
+internal UnityEngine.CollisionPairHeaderFlags : Enum {
+public ushort value__
+public CollisionPairHeaderFlags RemovedActor
+public CollisionPairHeaderFlags RemovedOtherActor
 }
 public UnityEngine.ConfigurableJoint : Joint {
 public Vector3 secondaryAxis
@@ -708,23 +844,102 @@ private void set_torque_Injected(Vector3& value)
 private void get_relativeTorque_Injected(Vector3& ret)
 private void set_relativeTorque_Injected(Vector3& value)
 }
+public UnityEngine.ContactPair : ValueType {
+private UInt32 c_InvalidFaceIndex
+internal int m_ColliderID
+internal int m_OtherColliderID
+internal IntPtr m_StartPtr
+internal UInt32 m_NbPoints
+internal CollisionPairFlags m_Flags
+internal CollisionPairEventFlags m_Events
+internal Vector3 m_ImpulseSum
+public int ColliderInstanceID
+public int OtherColliderInstanceID
+public Collider Collider
+public Collider OtherCollider
+public int ContactCount
+public Vector3 ImpulseSum
+public bool IsCollisionEnter
+public bool IsCollisionExit
+public bool IsCollisionStay
+internal bool HasRemovedCollider
+public int get_ColliderInstanceID()
+public int get_OtherColliderInstanceID()
+public Collider get_Collider()
+public Collider get_OtherCollider()
+public int get_ContactCount()
+public Vector3 get_ImpulseSum()
+public bool get_IsCollisionEnter()
+public bool get_IsCollisionExit()
+public bool get_IsCollisionStay()
+internal bool get_HasRemovedCollider()
+internal int ExtractContacts(List`1<ContactPoint> managedContainer, bool flipped)
+internal int ExtractContactsArray(ContactPoint[] managedContainer, bool flipped)
+public void CopyToNativeArray(NativeArray`1<ContactPairPoint> buffer)
+public ContactPairPoint& modreq(System.Runtime.InteropServices.InAttribute) GetContactPoint(int index)
+public UInt32 GetContactPointFaceIndex(int contactIndex)
+internal ContactPairPoint* GetContactPoint_Internal(int index)
+private int ExtractContacts_Injected(ContactPair& _unity_self, List`1<ContactPoint> managedContainer, bool flipped)
+private int ExtractContactsArray_Injected(ContactPair& _unity_self, ContactPoint[] managedContainer, bool flipped)
+}
+public UnityEngine.ContactPairHeader : ValueType {
+internal int m_BodyID
+internal int m_OtherBodyID
+internal IntPtr m_StartPtr
+internal UInt32 m_NbPairs
+internal CollisionPairHeaderFlags m_Flags
+internal Vector3 m_RelativeVelocity
+public int BodyInstanceID
+public int OtherBodyInstanceID
+public Component Body
+public Component OtherBody
+public int PairCount
+internal bool HasRemovedBody
+public int get_BodyInstanceID()
+public int get_OtherBodyInstanceID()
+public Component get_Body()
+public Component get_OtherBody()
+public int get_PairCount()
+internal bool get_HasRemovedBody()
+public ContactPair& modreq(System.Runtime.InteropServices.InAttribute) GetContactPair(int index)
+internal ContactPair* GetContactPair_Internal(int index)
+}
+public UnityEngine.ContactPairPoint : ValueType {
+internal Vector3 m_Position
+internal float m_Separation
+internal Vector3 m_Normal
+internal UInt32 m_InternalFaceIndex0
+internal Vector3 m_Impulse
+internal UInt32 m_InternalFaceIndex1
+public Vector3 Position
+public float Separation
+public Vector3 Normal
+public Vector3 Impulse
+public Vector3 get_Position()
+public float get_Separation()
+public Vector3 get_Normal()
+public Vector3 get_Impulse()
+}
 public UnityEngine.ContactPoint : ValueType {
 internal Vector3 m_Point
 internal Vector3 m_Normal
+internal Vector3 m_Impulse
 internal int m_ThisColliderInstanceID
 internal int m_OtherColliderInstanceID
 internal float m_Separation
 public Vector3 point
 public Vector3 normal
+public Vector3 impulse
 public Collider thisCollider
 public Collider otherCollider
 public float separation
 public Vector3 get_point()
 public Vector3 get_normal()
+public Vector3 get_impulse()
 public Collider get_thisCollider()
 public Collider get_otherCollider()
 public float get_separation()
-private Collider GetColliderByInstanceID(int instanceID)
+internal void .ctor(Vector3 point, Vector3 normal, Vector3 impulse, float separation, int thisInstanceID, int otherInstenceID)
 }
 public UnityEngine.ControllerColliderHit : object {
 internal CharacterController m_Controller
@@ -769,9 +984,11 @@ public JointLimits limits
 public JointSpring spring
 public bool useMotor
 public bool useLimits
+public bool extendedLimits
 public bool useSpring
 public float velocity
 public float angle
+public bool useAcceleration
 public JointMotor get_motor()
 public void set_motor(JointMotor value)
 public JointLimits get_limits()
@@ -782,10 +999,14 @@ public bool get_useMotor()
 public void set_useMotor(bool value)
 public bool get_useLimits()
 public void set_useLimits(bool value)
+public bool get_extendedLimits()
+public void set_extendedLimits(bool value)
 public bool get_useSpring()
 public void set_useSpring(bool value)
 public float get_velocity()
 public float get_angle()
+public bool get_useAcceleration()
+public void set_useAcceleration(bool value)
 private void get_motor_Injected(JointMotor& ret)
 private void set_motor_Injected(JointMotor& value)
 private void get_limits_Injected(JointLimits& ret)
@@ -846,9 +1067,11 @@ public UnityEngine.JointDrive : ValueType {
 private float m_PositionSpring
 private float m_PositionDamper
 private float m_MaximumForce
+private int m_UseAcceleration
 public float positionSpring
 public float positionDamper
 public float maximumForce
+public bool useAcceleration
 public JointDriveMode mode
 public float get_positionSpring()
 public void set_positionSpring(float value)
@@ -856,6 +1079,8 @@ public float get_positionDamper()
 public void set_positionDamper(float value)
 public float get_maximumForce()
 public void set_maximumForce(float value)
+public bool get_useAcceleration()
+public void set_useAcceleration(bool value)
 public JointDriveMode get_mode()
 public void set_mode(JointDriveMode value)
 }
@@ -972,12 +1197,20 @@ public int colliderInstanceID
 public int otherColliderInstanceID
 public int bodyInstanceID
 public int otherBodyInstanceID
+public Vector3 bodyVelocity
+public Vector3 bodyAngularVelocity
+public Vector3 otherBodyVelocity
+public Vector3 otherBodyAngularVelocity
 public int contactCount
 public ModifiableMassProperties massProperties
 public int get_colliderInstanceID()
 public int get_otherColliderInstanceID()
 public int get_bodyInstanceID()
 public int get_otherBodyInstanceID()
+public Vector3 get_bodyVelocity()
+public Vector3 get_bodyAngularVelocity()
+public Vector3 get_otherBodyVelocity()
+public Vector3 get_otherBodyAngularVelocity()
 public int get_contactCount()
 public ModifiableMassProperties get_massProperties()
 public void set_massProperties(ModifiableMassProperties value)
@@ -1001,9 +1234,6 @@ public void IgnoreContact(int i)
 public UInt32 GetFaceIndex(int i)
 private ModifiableContact* GetContact(int index)
 private ModifiableContactPatch* GetContactPatch()
-private int ResolveColliderInstanceID(IntPtr shapePtr)
-private int ResolveBodyInstanceID(IntPtr actorPtr)
-private UInt32 TranslateTriangleIndex(IntPtr shapePtr, UInt32 rawIndex)
 }
 internal UnityEngine.ModifiableContactPatch : ValueType {
 public ModifiableMassProperties massProperties
@@ -1023,6 +1253,74 @@ public float inverseMassScale
 public float inverseInertiaScale
 public float otherInverseMassScale
 public float otherInverseInertiaScale
+}
+public UnityEngine.OverlapBoxCommand : ValueType {
+private Vector3 <center>k__BackingField
+private Vector3 <halfExtents>k__BackingField
+private Quaternion <orientation>k__BackingField
+private PhysicsScene <physicsScene>k__BackingField
+public QueryParameters queryParameters
+public Vector3 center
+public Vector3 halfExtents
+public Quaternion orientation
+public PhysicsScene physicsScene
+public void .ctor(Vector3 center, Vector3 halfExtents, Quaternion orientation, QueryParameters queryParameters)
+public void .ctor(PhysicsScene physicsScene, Vector3 center, Vector3 halfExtents, Quaternion orientation, QueryParameters queryParameters)
+public Vector3 get_center()
+public void set_center(Vector3 value)
+public Vector3 get_halfExtents()
+public void set_halfExtents(Vector3 value)
+public Quaternion get_orientation()
+public void set_orientation(Quaternion value)
+public PhysicsScene get_physicsScene()
+public void set_physicsScene(PhysicsScene value)
+public JobHandle ScheduleBatch(NativeArray`1<OverlapBoxCommand> commands, NativeArray`1<ColliderHit> results, int minCommandsPerJob, int maxHits, JobHandle dependsOn)
+private JobHandle ScheduleOverlapBoxBatch(JobScheduleParameters& parameters, Void* commands, int commandLen, Void* result, int resultLen, int minCommandsPerJob, int maxHits)
+private void ScheduleOverlapBoxBatch_Injected(JobScheduleParameters& parameters, Void* commands, int commandLen, Void* result, int resultLen, int minCommandsPerJob, int maxHits, JobHandle& ret)
+}
+public UnityEngine.OverlapCapsuleCommand : ValueType {
+private Vector3 <point0>k__BackingField
+private Vector3 <point1>k__BackingField
+private float <radius>k__BackingField
+private PhysicsScene <physicsScene>k__BackingField
+public QueryParameters queryParameters
+public Vector3 point0
+public Vector3 point1
+public float radius
+public PhysicsScene physicsScene
+public void .ctor(Vector3 point0, Vector3 point1, float radius, QueryParameters queryParameters)
+public void .ctor(PhysicsScene physicsScene, Vector3 point0, Vector3 point1, float radius, QueryParameters queryParameters)
+public Vector3 get_point0()
+public void set_point0(Vector3 value)
+public Vector3 get_point1()
+public void set_point1(Vector3 value)
+public float get_radius()
+public void set_radius(float value)
+public PhysicsScene get_physicsScene()
+public void set_physicsScene(PhysicsScene value)
+public JobHandle ScheduleBatch(NativeArray`1<OverlapCapsuleCommand> commands, NativeArray`1<ColliderHit> results, int minCommandsPerJob, int maxHits, JobHandle dependsOn)
+private JobHandle ScheduleOverlapCapsuleBatch(JobScheduleParameters& parameters, Void* commands, int commandLen, Void* result, int resultLen, int minCommandsPerJob, int maxHits)
+private void ScheduleOverlapCapsuleBatch_Injected(JobScheduleParameters& parameters, Void* commands, int commandLen, Void* result, int resultLen, int minCommandsPerJob, int maxHits, JobHandle& ret)
+}
+public UnityEngine.OverlapSphereCommand : ValueType {
+private Vector3 <point>k__BackingField
+private float <radius>k__BackingField
+private PhysicsScene <physicsScene>k__BackingField
+public QueryParameters queryParameters
+public Vector3 point
+public float radius
+public PhysicsScene physicsScene
+public void .ctor(Vector3 point, float radius, QueryParameters queryParameters)
+public void .ctor(PhysicsScene physicsScene, Vector3 point, float radius, QueryParameters queryParameters)
+public Vector3 get_point()
+public void set_point(Vector3 value)
+public float get_radius()
+public void set_radius(float value)
+public PhysicsScene get_physicsScene()
+public void set_physicsScene(PhysicsScene value)
+public JobHandle ScheduleBatch(NativeArray`1<OverlapSphereCommand> commands, NativeArray`1<ColliderHit> results, int minCommandsPerJob, int maxHits, JobHandle dependsOn)
+private JobHandle ScheduleOverlapSphereBatch(JobScheduleParameters& parameters, Void* commands, int commandLen, Void* result, int resultLen, int minCommandsPerJob, int maxHits)
+private void ScheduleOverlapSphereBatch_Injected(JobScheduleParameters& parameters, Void* commands, int commandLen, Void* result, int resultLen, int minCommandsPerJob, int maxHits, JobHandle& ret)
 }
 public UnityEngine.PhysicMaterial : Object {
 public float bounciness
@@ -1075,6 +1373,8 @@ public int AllLayers
 public int kIgnoreRaycastLayer
 public int kDefaultRaycastLayers
 public int kAllLayers
+private ContactEventDelegate ContactEvent
+private Collision s_ReusableCollision
 public Vector3 gravity
 public float defaultContactOffset
 public float sleepThreshold
@@ -1084,10 +1384,11 @@ public float bounceThreshold
 public float defaultMaxDepenetrationVelocity
 public int defaultSolverIterations
 public int defaultSolverVelocityIterations
+public SimulationMode simulationMode
 public float defaultMaxAngularSpeed
 public bool improvedPatchFriction
+public bool invokeCollisionCallbacks
 public PhysicsScene defaultPhysicsScene
-public bool autoSimulation
 public bool autoSyncTransforms
 public bool reuseCollisionCallbacks
 public float interCollisionDistance
@@ -1102,6 +1403,7 @@ public float maxAngularVelocity
 public int solverIterationCount
 public int solverVelocityIterationCount
 public float penetrationPenaltyForce
+public bool autoSimulation
 public void add_ContactModifyEvent(Action`2<PhysicsScene, NativeArray`1<ModifiableContactPair>> value)
 public void remove_ContactModifyEvent(Action`2<PhysicsScene, NativeArray`1<ModifiableContactPair>> value)
 public void add_ContactModifyEventCCD(Action`2<PhysicsScene, NativeArray`1<ModifiableContactPair>> value)
@@ -1125,10 +1427,14 @@ public int get_defaultSolverIterations()
 public void set_defaultSolverIterations(int value)
 public int get_defaultSolverVelocityIterations()
 public void set_defaultSolverVelocityIterations(int value)
+public SimulationMode get_simulationMode()
+public void set_simulationMode(SimulationMode value)
 public float get_defaultMaxAngularSpeed()
 public void set_defaultMaxAngularSpeed(float value)
 public bool get_improvedPatchFriction()
 public void set_improvedPatchFriction(bool value)
+public bool get_invokeCollisionCallbacks()
+public void set_invokeCollisionCallbacks(bool value)
 public PhysicsScene get_defaultPhysicsScene()
 public void IgnoreCollision(Collider collider1, Collider collider2, bool ignore)
 public void IgnoreCollision(Collider collider1, Collider collider2)
@@ -1229,8 +1535,8 @@ public Collider[] OverlapSphere(Vector3 position, float radius, int layerMask)
 public Collider[] OverlapSphere(Vector3 position, float radius)
 internal void Simulate_Internal(PhysicsScene physicsScene, float step)
 public void Simulate(float step)
-public bool get_autoSimulation()
-public void set_autoSimulation(bool value)
+internal void InterpolateBodies_Internal(PhysicsScene physicsScene)
+internal void ResetInterpolationPoses_Internal(PhysicsScene physicsScene)
 public void SyncTransforms()
 public bool get_autoSyncTransforms()
 public void set_autoSyncTransforms(bool value)
@@ -1301,7 +1607,22 @@ public int OverlapCapsuleNonAlloc(Vector3 point0, Vector3 point1, float radius, 
 public int OverlapCapsuleNonAlloc(Vector3 point0, Vector3 point1, float radius, Collider[] results)
 private void Internal_RebuildBroadphaseRegions(Bounds bounds, int subdivisions)
 public void RebuildBroadphaseRegions(Bounds worldBounds, int subdivisions)
+public void BakeMesh(int meshID, bool convex, MeshColliderCookingOptions cookingOptions)
 public void BakeMesh(int meshID, bool convex)
+internal Collider ResolveShapeToCollider(IntPtr shapePtr)
+internal Component ResolveActorToComponent(IntPtr actorPtr)
+internal int ResolveShapeToInstanceID(IntPtr shapePtr)
+internal int ResolveActorToInstanceID(IntPtr actorPtr)
+internal Collider GetColliderByInstanceID(int instanceID)
+internal Component GetBodyByInstanceID(int instanceID)
+internal UInt32 TranslateTriangleIndex(IntPtr shapePtr, UInt32 rawIndex)
+internal UInt32 TranslateTriangleIndexFromID(int instanceID, UInt32 faceIndex)
+internal bool IsShapeTrigger(IntPtr shapePtr)
+private void SendOnCollisionEnter(Component component, Collision collision)
+private void SendOnCollisionStay(Component component, Collision collision)
+private void SendOnCollisionExit(Component component, Collision collision)
+internal Vector3 GetActorLinearVelocity(IntPtr actorPtr)
+internal Vector3 GetActorAngularVelocity(IntPtr actorPtr)
 public float get_minPenetrationForPenalty()
 public void set_minPenetrationForPenalty(float value)
 public float get_bounceTreshold()
@@ -1318,6 +1639,13 @@ public int get_solverVelocityIterationCount()
 public void set_solverVelocityIterationCount(int value)
 public float get_penetrationPenaltyForce()
 public void set_penetrationPenaltyForce(float value)
+public bool get_autoSimulation()
+public void set_autoSimulation(bool value)
+public void add_ContactEvent(ContactEventDelegate value)
+public void remove_ContactEvent(ContactEventDelegate value)
+private void OnSceneContact(PhysicsScene scene, IntPtr buffer, int count)
+private void ReportContacts(ReadOnly<ContactPairHeader> array)
+private Collision GetCollisionToReport(ContactPairHeader& header, ContactPair& pair, bool flipped)
 private void get_gravity_Injected(Vector3& ret)
 private void set_gravity_Injected(Vector3& value)
 private void get_defaultPhysicsScene_Injected(PhysicsScene& ret)
@@ -1327,6 +1655,8 @@ private RaycastHit[] Query_SphereCastAll_Injected(PhysicsScene& physicsScene, Ve
 private Collider[] OverlapCapsule_Internal_Injected(PhysicsScene& physicsScene, Vector3& point0, Vector3& point1, float radius, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
 private Collider[] OverlapSphere_Internal_Injected(PhysicsScene& physicsScene, Vector3& position, float radius, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
 private void Simulate_Internal_Injected(PhysicsScene& physicsScene, float step)
+private void InterpolateBodies_Internal_Injected(PhysicsScene& physicsScene)
+private void ResetInterpolationPoses_Internal_Injected(PhysicsScene& physicsScene)
 private bool Query_ComputePenetration_Injected(Collider colliderA, Vector3& positionA, Quaternion& rotationA, Collider colliderB, Vector3& positionB, Quaternion& rotationB, Vector3& direction, Single& distance)
 private void Query_ClosestPoint_Injected(Collider collider, Vector3& position, Quaternion& rotation, Vector3& point, Vector3& ret)
 private void get_clothGravity_Injected(Vector3& ret)
@@ -1337,6 +1667,8 @@ private bool CheckBox_Internal_Injected(PhysicsScene& physicsScene, Vector3& cen
 private Collider[] OverlapBox_Internal_Injected(PhysicsScene& physicsScene, Vector3& center, Vector3& halfExtents, Quaternion& orientation, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
 private RaycastHit[] Internal_BoxCastAll_Injected(PhysicsScene& physicsScene, Vector3& center, Vector3& halfExtents, Vector3& direction, Quaternion& orientation, float maxDistance, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
 private void Internal_RebuildBroadphaseRegions_Injected(Bounds& bounds, int subdivisions)
+private void GetActorLinearVelocity_Injected(IntPtr actorPtr, Vector3& ret)
+private void GetActorAngularVelocity_Injected(IntPtr actorPtr, Vector3& ret)
 }
 public UnityEngine.PhysicsScene : ValueType {
 private int m_Handle
@@ -1351,6 +1683,8 @@ private bool IsValid_Internal(PhysicsScene physicsScene)
 public bool IsEmpty()
 private bool IsEmpty_Internal(PhysicsScene physicsScene)
 public void Simulate(float step)
+public void InterpolateBodies()
+public void ResetInterpolationPoses()
 public bool Raycast(Vector3 origin, Vector3 direction, float maxDistance, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
 private bool Internal_RaycastTest(PhysicsScene physicsScene, Ray ray, float maxDistance, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
 public bool Raycast(Vector3 origin, Vector3 direction, RaycastHit& hitInfo, float maxDistance, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
@@ -1401,6 +1735,15 @@ public PhysicsScene GetPhysicsScene(Scene scene)
 private PhysicsScene GetPhysicsScene_Internal(Scene scene)
 private void GetPhysicsScene_Internal_Injected(Scene& scene, PhysicsScene& ret)
 }
+public UnityEngine.QueryParameters : ValueType {
+public int layerMask
+public bool hitMultipleFaces
+public QueryTriggerInteraction hitTriggers
+public bool hitBackfaces
+public QueryParameters Default
+public void .ctor(int layerMask, bool hitMultipleFaces, QueryTriggerInteraction hitTriggers, bool hitBackfaces)
+public QueryParameters get_Default()
+}
 public UnityEngine.QueryTriggerInteraction : Enum {
 public int value__
 public QueryTriggerInteraction UseGlobal
@@ -1410,33 +1753,35 @@ public QueryTriggerInteraction Collide
 public UnityEngine.RaycastCommand : ValueType {
 private Vector3 <from>k__BackingField
 private Vector3 <direction>k__BackingField
-private float <distance>k__BackingField
-private int <layerMask>k__BackingField
-private int <maxHits>k__BackingField
 private PhysicsScene <physicsScene>k__BackingField
+private float <distance>k__BackingField
+public QueryParameters queryParameters
 public Vector3 from
 public Vector3 direction
-public float distance
-public int layerMask
-public int maxHits
 public PhysicsScene physicsScene
-public void .ctor(Vector3 from, Vector3 direction, float distance, int layerMask, int maxHits)
-public void .ctor(PhysicsScene physicsScene, Vector3 from, Vector3 direction, float distance, int layerMask, int maxHits)
+public float distance
+public int maxHits
+public int layerMask
+public void .ctor(Vector3 from, Vector3 direction, QueryParameters queryParameters, float distance)
+public void .ctor(PhysicsScene physicsScene, Vector3 from, Vector3 direction, QueryParameters queryParameters, float distance)
 public Vector3 get_from()
 public void set_from(Vector3 value)
 public Vector3 get_direction()
 public void set_direction(Vector3 value)
-public float get_distance()
-public void set_distance(float value)
-public int get_layerMask()
-public void set_layerMask(int value)
-public int get_maxHits()
-public void set_maxHits(int value)
 public PhysicsScene get_physicsScene()
 public void set_physicsScene(PhysicsScene value)
+public float get_distance()
+public void set_distance(float value)
+public JobHandle ScheduleBatch(NativeArray`1<RaycastCommand> commands, NativeArray`1<RaycastHit> results, int minCommandsPerJob, int maxHits, JobHandle dependsOn)
 public JobHandle ScheduleBatch(NativeArray`1<RaycastCommand> commands, NativeArray`1<RaycastHit> results, int minCommandsPerJob, JobHandle dependsOn)
-private JobHandle ScheduleRaycastBatch(JobScheduleParameters& parameters, Void* commands, int commandLen, Void* result, int resultLen, int minCommandsPerJob)
-private void ScheduleRaycastBatch_Injected(JobScheduleParameters& parameters, Void* commands, int commandLen, Void* result, int resultLen, int minCommandsPerJob, JobHandle& ret)
+private JobHandle ScheduleRaycastBatch(JobScheduleParameters& parameters, Void* commands, int commandLen, Void* result, int resultLen, int minCommandsPerJob, int maxHits)
+public void .ctor(Vector3 from, Vector3 direction, float distance, int layerMask, int maxHits)
+public void .ctor(PhysicsScene physicsScene, Vector3 from, Vector3 direction, float distance, int layerMask, int maxHits)
+public int get_maxHits()
+public void set_maxHits(int value)
+public int get_layerMask()
+public void set_layerMask(int value)
+private void ScheduleRaycastBatch_Injected(JobScheduleParameters& parameters, Void* commands, int commandLen, Void* result, int resultLen, int minCommandsPerJob, int maxHits, JobHandle& ret)
 }
 public UnityEngine.RaycastHit : ValueType {
 internal Vector3 m_Point
@@ -1470,7 +1815,7 @@ public void set_barycentricCoordinate(Vector3 value)
 public float get_distance()
 public void set_distance(float value)
 public int get_triangleIndex()
-private Vector2 CalculateRaycastTexCoord(Collider collider, Vector2 uv, Vector3 pos, UInt32 face, int textcoord)
+private Vector2 CalculateRaycastTexCoord(int colliderInstanceID, Vector2 uv, Vector3 pos, UInt32 face, int textcoord)
 public Vector2 get_textureCoord()
 public Vector2 get_textureCoord2()
 public Transform get_transform()
@@ -1478,7 +1823,7 @@ public Rigidbody get_rigidbody()
 public ArticulationBody get_articulationBody()
 public Vector2 get_lightmapCoord()
 public Vector2 get_textureCoord1()
-private void CalculateRaycastTexCoord_Injected(Collider collider, Vector2& uv, Vector3& pos, UInt32 face, int textcoord, Vector2& ret)
+private void CalculateRaycastTexCoord_Injected(int colliderInstanceID, Vector2& uv, Vector3& pos, UInt32 face, int textcoord, Vector2& ret)
 }
 public UnityEngine.Rigidbody : Component {
 public Vector3 velocity
@@ -1492,8 +1837,10 @@ public bool isKinematic
 public bool freezeRotation
 public RigidbodyConstraints constraints
 public CollisionDetectionMode collisionDetectionMode
+public bool automaticCenterOfMass
 public Vector3 centerOfMass
 public Vector3 worldCenterOfMass
+public bool automaticInertiaTensor
 public Quaternion inertiaTensorRotation
 public Vector3 inertiaTensor
 public bool detectCollisions
@@ -1503,7 +1850,10 @@ public RigidbodyInterpolation interpolation
 public int solverIterations
 public float sleepThreshold
 public float maxAngularVelocity
+public float maxLinearVelocity
 public int solverVelocityIterations
+public LayerMask excludeLayers
+public LayerMask includeLayers
 public float sleepVelocity
 public float sleepAngularVelocity
 public bool useConeFriction
@@ -1532,9 +1882,13 @@ public RigidbodyConstraints get_constraints()
 public void set_constraints(RigidbodyConstraints value)
 public CollisionDetectionMode get_collisionDetectionMode()
 public void set_collisionDetectionMode(CollisionDetectionMode value)
+public bool get_automaticCenterOfMass()
+public void set_automaticCenterOfMass(bool value)
 public Vector3 get_centerOfMass()
 public void set_centerOfMass(Vector3 value)
 public Vector3 get_worldCenterOfMass()
+public bool get_automaticInertiaTensor()
+public void set_automaticInertiaTensor(bool value)
 public Quaternion get_inertiaTensorRotation()
 public void set_inertiaTensorRotation(Quaternion value)
 public Vector3 get_inertiaTensor()
@@ -1553,8 +1907,11 @@ public float get_sleepThreshold()
 public void set_sleepThreshold(float value)
 public float get_maxAngularVelocity()
 public void set_maxAngularVelocity(float value)
+public float get_maxLinearVelocity()
+public void set_maxLinearVelocity(float value)
 public void MovePosition(Vector3 position)
 public void MoveRotation(Quaternion rot)
+public void Move(Vector3 position, Quaternion rotation)
 public void Sleep()
 public bool IsSleeping()
 public void WakeUp()
@@ -1564,6 +1921,14 @@ public Vector3 GetRelativePointVelocity(Vector3 relativePoint)
 public Vector3 GetPointVelocity(Vector3 worldPoint)
 public int get_solverVelocityIterations()
 public void set_solverVelocityIterations(int value)
+public LayerMask get_excludeLayers()
+public void set_excludeLayers(LayerMask value)
+public LayerMask get_includeLayers()
+public void set_includeLayers(LayerMask value)
+public Vector3 GetAccumulatedForce(float step)
+public Vector3 GetAccumulatedForce()
+public Vector3 GetAccumulatedTorque(float step)
+public Vector3 GetAccumulatedTorque()
 public void AddForce(Vector3 force, ForceMode mode)
 public void AddForce(Vector3 force)
 public void AddForce(float x, float y, float z, ForceMode mode)
@@ -1623,8 +1988,15 @@ private void get_rotation_Injected(Quaternion& ret)
 private void set_rotation_Injected(Quaternion& value)
 private void MovePosition_Injected(Vector3& position)
 private void MoveRotation_Injected(Quaternion& rot)
+private void Move_Injected(Vector3& position, Quaternion& rotation)
 private void GetRelativePointVelocity_Injected(Vector3& relativePoint, Vector3& ret)
 private void GetPointVelocity_Injected(Vector3& worldPoint, Vector3& ret)
+private void get_excludeLayers_Injected(LayerMask& ret)
+private void set_excludeLayers_Injected(LayerMask& value)
+private void get_includeLayers_Injected(LayerMask& ret)
+private void set_includeLayers_Injected(LayerMask& value)
+private void GetAccumulatedForce_Injected(float step, Vector3& ret)
+private void GetAccumulatedTorque_Injected(float step, Vector3& ret)
 private void AddForce_Injected(Vector3& force, ForceMode mode)
 private void AddRelativeForce_Injected(Vector3& force, ForceMode mode)
 private void AddTorque_Injected(Vector3& torque, ForceMode mode)
@@ -1658,6 +2030,12 @@ public UnityEngine.RotationDriveMode : Enum {
 public int value__
 public RotationDriveMode XYAndZ
 public RotationDriveMode Slerp
+}
+public UnityEngine.SimulationMode : Enum {
+public int value__
+public SimulationMode FixedUpdate
+public SimulationMode Update
+public SimulationMode Script
 }
 public UnityEngine.SoftJointLimit : ValueType {
 private float m_Limit
@@ -1697,18 +2075,16 @@ private Vector3 <origin>k__BackingField
 private float <radius>k__BackingField
 private Vector3 <direction>k__BackingField
 private float <distance>k__BackingField
-private int <layerMask>k__BackingField
-private int <maxHits>k__BackingField
 private PhysicsScene <physicsScene>k__BackingField
+public QueryParameters queryParameters
 public Vector3 origin
 public float radius
 public Vector3 direction
 public float distance
-public int layerMask
-internal int maxHits
 public PhysicsScene physicsScene
-public void .ctor(Vector3 origin, float radius, Vector3 direction, float distance, int layerMask)
-public void .ctor(PhysicsScene physicsScene, Vector3 origin, float radius, Vector3 direction, float distance, int layerMask)
+public int layerMask
+public void .ctor(Vector3 origin, float radius, Vector3 direction, QueryParameters queryParameters, float distance)
+public void .ctor(PhysicsScene physicsScene, Vector3 origin, float radius, Vector3 direction, QueryParameters queryParameters, float distance)
 public Vector3 get_origin()
 public void set_origin(Vector3 value)
 public float get_radius()
@@ -1717,15 +2093,16 @@ public Vector3 get_direction()
 public void set_direction(Vector3 value)
 public float get_distance()
 public void set_distance(float value)
-public int get_layerMask()
-public void set_layerMask(int value)
-internal int get_maxHits()
-internal void set_maxHits(int value)
 public PhysicsScene get_physicsScene()
 public void set_physicsScene(PhysicsScene value)
+public JobHandle ScheduleBatch(NativeArray`1<SpherecastCommand> commands, NativeArray`1<RaycastHit> results, int minCommandsPerJob, int maxHits, JobHandle dependsOn)
 public JobHandle ScheduleBatch(NativeArray`1<SpherecastCommand> commands, NativeArray`1<RaycastHit> results, int minCommandsPerJob, JobHandle dependsOn)
-private JobHandle ScheduleSpherecastBatch(JobScheduleParameters& parameters, Void* commands, int commandLen, Void* result, int resultLen, int minCommandsPerJob)
-private void ScheduleSpherecastBatch_Injected(JobScheduleParameters& parameters, Void* commands, int commandLen, Void* result, int resultLen, int minCommandsPerJob, JobHandle& ret)
+private JobHandle ScheduleSpherecastBatch(JobScheduleParameters& parameters, Void* commands, int commandLen, Void* result, int resultLen, int minCommandsPerJob, int maxHits)
+public void .ctor(Vector3 origin, float radius, Vector3 direction, float distance, int layerMask)
+public void .ctor(PhysicsScene physicsScene, Vector3 origin, float radius, Vector3 direction, float distance, int layerMask)
+public int get_layerMask()
+public void set_layerMask(int value)
+private void ScheduleSpherecastBatch_Injected(JobScheduleParameters& parameters, Void* commands, int commandLen, Void* result, int resultLen, int minCommandsPerJob, int maxHits, JobHandle& ret)
 }
 public UnityEngine.SphereCollider : Collider {
 public Vector3 center

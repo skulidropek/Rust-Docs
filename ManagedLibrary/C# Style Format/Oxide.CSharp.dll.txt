@@ -39,6 +39,7 @@ private CompilerTarget <Target>k__BackingField
 private CompilerLanguageVersion <Version>k__BackingField
 private string <Encoding>k__BackingField
 private bool <Debug>k__BackingField
+private String[] <Preprocessor>k__BackingField
 public bool LoadDefaultReferences
 public string OutputFile
 public CompilerPlatform Platform
@@ -50,6 +51,7 @@ public CompilerTarget Target
 public CompilerLanguageVersion Version
 public string Encoding
 public bool Debug
+public String[] Preprocessor
 public bool get_LoadDefaultReferences()
 public void set_LoadDefaultReferences(bool value)
 public string get_OutputFile()
@@ -72,6 +74,8 @@ public string get_Encoding()
 public void set_Encoding(string value)
 public bool get_Debug()
 public void set_Debug(bool value)
+public String[] get_Preprocessor()
+public void set_Preprocessor(String[] value)
 }
 public ObjectStream.Data.CompilerFile : object {
 internal Dictionary`2<string, CompilerFile> FileCache
@@ -286,6 +290,7 @@ internal AssemblyDefinition mscorlib
 public AssemblyDefinition Resolve(AssemblyNameReference name, ReaderParameters parameters)
 }
 internal Oxide.CSharp.CompilerService : object {
+private Regex SymbolEscapeRegex
 private string baseUrl
 private Hash`2<int, Compilation> compilations
 private Queue`1<CompilerMessage> messageQueue
@@ -299,6 +304,7 @@ private string remoteName
 private string compilerBasicArguments
 private Regex fileErrorRegex
 private float startTime
+private String[] preprocessor
 public bool Installed
 public bool get_Installed()
 public void .ctor(Extension extension)
@@ -320,9 +326,10 @@ private bool TryDownload(string url, int retries, Int32& current, Nullable`1<Dat
 private void Log(LogType type, string message, Exception exception)
 private string GetCompilerVersion()
 private string GenerateFileHash(string file)
-private void <OnMessage>b__20_0()
-private void <OnProcessExited>b__22_0()
-private void <ResetIdleTimer>b__23_0()
+private string EscapeSymbolName(string name)
+private void <OnMessage>b__22_0()
+private void <OnProcessExited>b__24_0()
+private void <ResetIdleTimer>b__25_0()
 }
 public Oxide.CSharp.Patching.IPatch {
 public void Patch(PatchContext context)
@@ -558,7 +565,6 @@ protected void InitFailed(string message)
 }
 internal Oxide.Plugins.Compilation : object {
 public Compilation Current
-private Regex SymbolEscapeRegex
 internal int id
 internal string name
 internal Action`1<Compilation> callback
@@ -571,9 +577,6 @@ internal HashSet`1<string> referencedPlugins
 internal CompiledAssembly compiledAssembly
 private string includePath
 private String[] extensionNames
-private string gameExtensionNamespace
-private string gameExtensionName
-private string gameExtensionBranch
 internal float duration
 internal float get_duration()
 internal void .ctor(int id, Action`1<Compilation> callback, CompilablePlugin[] plugins)
@@ -590,8 +593,7 @@ private void AddReference(CompilablePlugin plugin, AssemblyName reference)
 private bool CacheScriptLines(CompilablePlugin plugin)
 private void CacheModifiedScripts()
 private void RemovePlugin(CompilablePlugin plugin)
-private string EscapeSymbolName(string name)
-private void <Completed>b__21_0()
+private void <Completed>b__17_0()
 }
 public Oxide.Plugins.CompiledAssembly : object {
 public CompilablePlugin[] CompilablePlugins

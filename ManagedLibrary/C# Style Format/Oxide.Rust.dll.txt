@@ -299,17 +299,15 @@ public void set_Png(string value)
 public float get_FadeIn()
 public void set_FadeIn(float value)
 }
-public Oxide.Game.Rust.Cui.CuiRectTransformComponent : object {
+public Oxide.Game.Rust.Cui.CuiRectTransform : object {
 private string <AnchorMin>k__BackingField
 private string <AnchorMax>k__BackingField
 private string <OffsetMin>k__BackingField
 private string <OffsetMax>k__BackingField
-public string Type
 public string AnchorMin
 public string AnchorMax
 public string OffsetMin
 public string OffsetMax
-public string get_Type()
 public string get_AnchorMin()
 public void set_AnchorMin(string value)
 public string get_AnchorMax()
@@ -318,6 +316,92 @@ public string get_OffsetMin()
 public void set_OffsetMin(string value)
 public string get_OffsetMax()
 public void set_OffsetMax(string value)
+}
+public Oxide.Game.Rust.Cui.CuiRectTransformComponent : CuiRectTransform {
+public string Type
+public string get_Type()
+}
+public Oxide.Game.Rust.Cui.CuiScrollbar : object {
+private bool <Invert>k__BackingField
+private bool <AutoHide>k__BackingField
+private string <HandleSprite>k__BackingField
+private float <Size>k__BackingField
+private string <HandleColor>k__BackingField
+private string <HighlightColor>k__BackingField
+private string <PressedColor>k__BackingField
+private string <TrackSprite>k__BackingField
+private string <TrackColor>k__BackingField
+public bool Invert
+public bool AutoHide
+public string HandleSprite
+public float Size
+public string HandleColor
+public string HighlightColor
+public string PressedColor
+public string TrackSprite
+public string TrackColor
+public bool get_Invert()
+public void set_Invert(bool value)
+public bool get_AutoHide()
+public void set_AutoHide(bool value)
+public string get_HandleSprite()
+public void set_HandleSprite(string value)
+public float get_Size()
+public void set_Size(float value)
+public string get_HandleColor()
+public void set_HandleColor(string value)
+public string get_HighlightColor()
+public void set_HighlightColor(string value)
+public string get_PressedColor()
+public void set_PressedColor(string value)
+public string get_TrackSprite()
+public void set_TrackSprite(string value)
+public string get_TrackColor()
+public void set_TrackColor(string value)
+}
+public Oxide.Game.Rust.Cui.CuiScrollViewComponent : object {
+private CuiRectTransform <ContentTransform>k__BackingField
+private bool <Horizontal>k__BackingField
+private bool <Vertical>k__BackingField
+private MovementType <MovementType>k__BackingField
+private float <Elasticity>k__BackingField
+private bool <Inertia>k__BackingField
+private float <DecelerationRate>k__BackingField
+private float <ScrollSensitivity>k__BackingField
+private CuiScrollbar <HorizontalScrollbar>k__BackingField
+private CuiScrollbar <VerticalScrollbar>k__BackingField
+public string Type
+public CuiRectTransform ContentTransform
+public bool Horizontal
+public bool Vertical
+public MovementType MovementType
+public float Elasticity
+public bool Inertia
+public float DecelerationRate
+public float ScrollSensitivity
+public CuiScrollbar HorizontalScrollbar
+public CuiScrollbar VerticalScrollbar
+public string get_Type()
+public CuiRectTransform get_ContentTransform()
+public void set_ContentTransform(CuiRectTransform value)
+public bool get_Horizontal()
+public void set_Horizontal(bool value)
+public bool get_Vertical()
+public void set_Vertical(bool value)
+public MovementType get_MovementType()
+public void set_MovementType(MovementType value)
+public float get_Elasticity()
+public void set_Elasticity(float value)
+public bool get_Inertia()
+public void set_Inertia(bool value)
+public float get_DecelerationRate()
+public void set_DecelerationRate(float value)
+public float get_ScrollSensitivity()
+public void set_ScrollSensitivity(float value)
+public CuiScrollbar get_HorizontalScrollbar()
+public void set_HorizontalScrollbar(CuiScrollbar value)
+public CuiScrollbar get_VerticalScrollbar()
+public void set_VerticalScrollbar(CuiScrollbar value)
 }
 public Oxide.Game.Rust.Cui.CuiTextComponent : object {
 private string <Text>k__BackingField
@@ -703,6 +787,7 @@ private void GroupCommand(IPlayer player, string command, String[] args)
 private void LangCommand(IPlayer player, string command, String[] args)
 private void LoadCommand(IPlayer player, string command, String[] args)
 private void PluginsCommand(IPlayer player)
+private string FormatBytes(long bytes)
 private void ReloadCommand(IPlayer player, string command, String[] args)
 private void RevokeCommand(IPlayer player, string command, String[] args)
 private void ShowCommand(IPlayer player, string command, String[] args)
@@ -734,7 +819,7 @@ private void OnServerUserRemove(ulong steamId)
 private object IOnUserApprove(Connection connection)
 private void IOnPlayerBanned(Connection connection, AuthResponse status)
 private object IOnPlayerChat(ulong playerId, string playerName, string message, ChatChannel channel, BasePlayer basePlayer)
-private void IOnPlayerCommand(BasePlayer basePlayer, string message)
+private void TryRunPlayerCommand(BasePlayer basePlayer, string message, string commandPrefix)
 private void OnClientAuth(Connection connection)
 private void IOnPlayerConnected(BasePlayer basePlayer)
 private void OnPlayerDisconnected(BasePlayer basePlayer, string reason)
@@ -747,7 +832,7 @@ private object IOnRconInitialize()
 private object IOnRunCommandLine()
 private object IOnServerCommand(Arg arg)
 private void OnServerInformationUpdated()
-private object OnMapMarkerRemove(BasePlayer player, List`1<MapNote> mapMarker, int index)
+private object IOnCupboardAuthorize(ulong userID, BasePlayer player, BuildingPrivlidge privlidge)
 }
 public Oxide.Game.Rust.RustExtension : Extension {
 private string OxideRustReleaseListUrl
@@ -783,6 +868,9 @@ private VersionNumber ParseVersionNumber(string versionString)
 public Oxide.Game.Rust.RustPluginLoader : PluginLoader {
 public Type[] CorePlugins
 public Type[] get_CorePlugins()
+}
+public Oxide.Plugins.RustExtensionMethods : object {
+public bool IsSteamId(EncryptedValue`1<ulong> userID)
 }
 public Oxide.Plugins.RustPlugin : CSharpPlugin {
 protected Command cmd

@@ -1,3 +1,68 @@
+public DemoDiskManager : object {
+private DateTime nextDemoDiskQuotaEnforcement
+internal void EnforceDemoDiskSpaceQuota()
+}
+public DemoUploadManager : object {
+private string UploadUrl
+private List`1<UploadResult> history
+private ConcurrentQueue`1<DemoUploadRequest> queue
+private long bytesInQueue
+private Func`1<bool> IsConnected
+internal void .ctor(Func`1<bool> isConnected)
+public void EnqueueUpload(DemoUploadRequest request)
+private int CalculateConcurrency(long requestBytes)
+private int ConcurrencyForBytes(long bytes, long bytesPerSecond, TimeSpan interval)
+internal Task UploadThread()
+private Task UploadDemoToAzure(DemoUploadRequest request, int concurrency)
+private void DeleteLocalDemo(DemoUploadRequest request)
+}
+public DemoUploadRequest : object {
+public DemoChunkHeader Header
+public string DemoDiskPath
+public string HeaderDiskPath
+public string UploadEndpoint
+private long <BytesToUpload>k__BackingField
+public DemoUploadState State
+public long BytesToUpload
+public long get_BytesToUpload()
+public void .ctor(DemoChunkHeader header, string demoLocalPath, string headerDiskPath, string containerUrl)
+}
+public DemoUploadState : object {
+public bool DemoUploaded
+public TimeSpan DemoUploadDuration
+public int Failures
+}
+public FullServerDemos : object {
+private DemoUploadManager upload
+private DemoDiskManager disk
+private string sessionId
+private DateTime sessionStartTime
+private int chunkIndex
+private DateTime nextFlushTime
+private DateTime timeStart
+private FileStream fileStream
+private GZipStream zipStream
+private BinaryWriter writer
+private long packetCount
+private int playerIndex
+private Dictionary`2<ulong, int> playerIndexes
+private string localChunkFileId
+private long uncompressedBytes
+private bool isZipped
+internal void .ctor(Func`1<bool> isConnected)
+internal void OnDemoThreadStart()
+internal void OnDemoThreadStop()
+internal void CycleDiskQuota()
+private void InitializeFullServerDemo()
+private void CleanupFullServerDemo()
+internal void RecordServerDemoPacket(ICollection`1<Connection> connections, Byte[] data, int dataLength, bool isOutgoing)
+private void FlushServerDemo(DateTime endOfChunk)
+private void SetupNextDemoChunk(DateTime startTime)
+private DemoChunkHeader CreateDemoHeader(DateTime startTime, DateTime endTime)
+private void SaveChunkHeader(DemoChunkHeader header)
+public Task BenchmarkDemoUpload(int concurrencyCount, string pathOverride, int transferSizeOverride)
+private Task CreateDemoUploadTask(int concurrencyCount, string pathOverride, int transferSizeOverride)
+}
 public Network.BaseNetwork : object {
 public ArrayPool`1<byte> ArrayPool
 public bool Multithreading
@@ -7,18 +72,24 @@ protected object decryptLock
 private Stopwatch stopwatch
 private ConcurrentQueue`1<NetRead> readQueue
 private ConcurrentQueue`1<NetWrite> writeQueue
+private ConcurrentQueue`1<DemoQueueItem> demoQueue
 private ConcurrentQueue`1<NetRead> decryptQueue
 private int readQueueSizeInBytes
 private int writeQueueSizeInBytes
+private int demoQueueSizeInBytes
 private int decryptQueueSizeInBytes
 private AutoResetEvent mainThreadReset
 private AutoResetEvent readThreadReset
 private AutoResetEvent writeThreadReset
 private AutoResetEvent decryptThreadReset
+private AutoResetEvent demoThreadReset
 private Thread readThread
 private Thread writeThread
 private Thread decryptThread
+private Thread demoThread
 public INetworkCryptography cryptography
+private List`1<Connection> tempBufferReadConnections
+public FullServerDemos serverDemos
 protected int MaxReceiveTimeValue
 protected int MaxReadQueueLengthValue
 protected int MaxWriteQueueLengthValue
@@ -36,6 +107,10 @@ public int DecryptQueueLength
 public int ReadQueueBytes
 public int WriteQueueBytes
 public int DecryptQueueBytes
+protected int MaxDemoQueueLengthValue
+protected int MaxDemoQueueBytesValue
+protected int MaxDemoThreadWaitValue
+public bool SupportsServerDemos
 protected int get_MaxReceiveTimeValue()
 protected int get_MaxReadQueueLengthValue()
 protected int get_MaxWriteQueueLengthValue()
@@ -73,9 +148,17 @@ public NetWrite StartWrite()
 protected Message StartMessage(Type type, NetRead read)
 public void Decrypt(Connection connection, NetRead read)
 public ArraySegment`1<byte> Encrypt(Connection connection, NetWrite write)
-public void Record(Connection connection, Stream stream)
+public void RecordReadForConnection(Connection connection, Stream stream)
 public string GetDebug(Connection connection)
 public ulong GetStat(Connection connection, StatTypeLong type)
+protected int get_MaxDemoQueueLengthValue()
+protected int get_MaxDemoQueueBytesValue()
+protected int get_MaxDemoThreadWaitValue()
+public bool get_SupportsServerDemos()
+private void DemoThread()
+private void DemoThreadCycle()
+public void RecordDisconnection(Connection connection)
+public void EnqueueToDemoThread(DemoQueueItem item)
 }
 public Network.Client : BaseNetwork {
 public int MaxReceiveTime
@@ -99,6 +182,7 @@ private string <ServerName>k__BackingField
 private bool <IsOfficialServer>k__BackingField
 public Stats IncomingStats
 public IClientCallback callbackHandler
+public bool SupportsServerDemos
 protected int MaxReceiveTimeValue
 protected int MaxReadQueueLengthValue
 protected int MaxWriteQueueLengthValue
@@ -119,6 +203,7 @@ public bool IsOfficialServer
 public bool IsRecording
 public string RecordFilename
 public TimeSpan RecordTimeElapsed
+public bool get_SupportsServerDemos()
 protected int get_MaxReceiveTimeValue()
 protected int get_MaxReadQueueLengthValue()
 protected int get_MaxWriteQueueLengthValue()
@@ -171,18 +256,23 @@ public UInt32 authLevel
 public UInt32 encryptionLevel
 public bool trusted
 public bool rejected
-public string authStatus
 public Byte[] token
 public string anticheatId
 public string anticheatToken
 public bool hasRequestedWorld
 public bool globalNetworking
+public string authStatusSteam
+public string authStatusEAC
+public string authStatusNexus
+public string authStatusCentralizedBans
 public ulong guid
 public ulong userid
 public ulong ownerid
 public string username
 public string os
 public UInt32 protocol
+public int clientChangeset
+public long clientBuildTime
 private TimeAverageValueData[] packetsPerSecond
 public double connectionTime
 public string ipaddress
@@ -218,6 +308,88 @@ public Network.Defines : object {
 public byte lowestUserPacket
 public int packetHeaderSize
 }
+public Network.DemoChunkHeader : object {
+private string <ServerId>k__BackingField
+private string <SessionId>k__BackingField
+private string <LocalChunkId>k__BackingField
+private int <ChunkIndex>k__BackingField
+private DateTime <SessionStartTime>k__BackingField
+private DateTime <TimeStart>k__BackingField
+private DateTime <TimeEnd>k__BackingField
+private long <BytesDecompressed>k__BackingField
+private long <BytesCompressed>k__BackingField
+private long <PacketCount>k__BackingField
+private bool <IsZipped>k__BackingField
+private int <NetworkVersion>k__BackingField
+private string <Changeset>k__BackingField
+private string <Hostname>k__BackingField
+private string <Seed>k__BackingField
+private string <WorldSize>k__BackingField
+private string <Level>k__BackingField
+private string <LevelUrl>k__BackingField
+private string <Checksum>k__BackingField
+private List`1<DemoPlayerInfo> <Players>k__BackingField
+public string ServerId
+public string SessionId
+public string LocalChunkId
+public int ChunkIndex
+public DateTime SessionStartTime
+public DateTime TimeStart
+public DateTime TimeEnd
+public long BytesDecompressed
+public long BytesCompressed
+public long PacketCount
+public bool IsZipped
+public int NetworkVersion
+public string Changeset
+public string Hostname
+public string Seed
+public string WorldSize
+public string Level
+public string LevelUrl
+public string Checksum
+public List`1<DemoPlayerInfo> Players
+public string get_ServerId()
+public void set_ServerId(string value)
+public string get_SessionId()
+public void set_SessionId(string value)
+public string get_LocalChunkId()
+public void set_LocalChunkId(string value)
+public int get_ChunkIndex()
+public void set_ChunkIndex(int value)
+public DateTime get_SessionStartTime()
+public void set_SessionStartTime(DateTime value)
+public DateTime get_TimeStart()
+public void set_TimeStart(DateTime value)
+public DateTime get_TimeEnd()
+public void set_TimeEnd(DateTime value)
+public long get_BytesDecompressed()
+public void set_BytesDecompressed(long value)
+public long get_BytesCompressed()
+public void set_BytesCompressed(long value)
+public long get_PacketCount()
+public void set_PacketCount(long value)
+public bool get_IsZipped()
+public void set_IsZipped(bool value)
+public int get_NetworkVersion()
+public void set_NetworkVersion(int value)
+public string get_Changeset()
+public void set_Changeset(string value)
+public string get_Hostname()
+public void set_Hostname(string value)
+public string get_Seed()
+public void set_Seed(string value)
+public string get_WorldSize()
+public void set_WorldSize(string value)
+public string get_Level()
+public void set_Level(string value)
+public string get_LevelUrl()
+public void set_LevelUrl(string value)
+public string get_Checksum()
+public void set_Checksum(string value)
+public List`1<DemoPlayerInfo> get_Players()
+public void set_Players(List`1<DemoPlayerInfo> value)
+}
 public Network.DemoClient : Client {
 protected Reader demoFile
 public bool IsPlaying
@@ -230,6 +402,54 @@ public bool get_PlayingFinished()
 public void UpdatePlayback(long frameTime)
 private bool PlaybackPacket()
 private void HandleMessage(IntPtr data, int size)
+}
+public Network.DemoConVars : object {
+public bool UploadDemos
+public string UploadEndpoint
+public bool ServerDemosEnabled
+public string ServerId
+public string ServerDemoDirectory
+public int ServerDemoFlushIntervalSeconds
+public float BandwidthLimitRatio
+public bool DeleteDemoAfterUpload
+public bool ZipServerDemos
+public int MaxDemoDiskSpaceGB
+public int DiskCleanupIntervalMinutes
+public int MaxUploadConcurrency
+public int MinimumConcurrency
+public int MaxUploadAttempts
+public int NetworkVersion
+public string Changeset
+public string Hostname
+public string Seed
+public string WorldSize
+public string Level
+public string LevelUrl
+public string Checksum
+public void EnableServerDemos(bool state)
+}
+public Network.DemoPaths : object {
+public string GetBlobDemoPath(DemoChunkHeader header)
+public string GetBlobHeaderPath(DemoChunkHeader header)
+public string GetLocalDemoPath(string chunkId)
+public string GetLocalHeaderPath(string chunkId)
+}
+public Network.DemoPlayerInfo : object {
+private ulong <Guid>k__BackingField
+private int <ChunkPlayerIndex>k__BackingField
+public ulong Guid
+public int ChunkPlayerIndex
+public ulong get_Guid()
+public void set_Guid(ulong value)
+public int get_ChunkPlayerIndex()
+public void set_ChunkPlayerIndex(int value)
+}
+public Network.DemoQueueItem : ValueType {
+public NetWrite write
+public NetRead read
+public bool IgnoreNoConnections
+public void .ctor(NetWrite write)
+public void .ctor(NetRead read)
 }
 public Network.IClientCallback {
 public void OnNetworkMessage(Message message)
@@ -264,6 +484,7 @@ public Network.NetRead : Stream {
 public Byte[] Data
 private int _length
 private int _position
+public int refCount
 public ulong guid
 public string ipaddress
 public Connection connection
@@ -276,6 +497,8 @@ public bool CanWrite
 public long Length
 public long Position
 public bool CanSeek
+public void AddReference()
+public void RemoveReference()
 private bool Init(IntPtr data, int length)
 public void EnterPool()
 public void LeavePool()
@@ -317,6 +540,7 @@ public float Float()
 public double Double()
 public UInt32 VarUInt32()
 public Vector3 Vector3()
+public Vector4 Vector4()
 public Quaternion Quaternion()
 public Ray Ray()
 public Color Color()
@@ -375,6 +599,7 @@ private BaseNetwork peer
 public Byte[] Data
 private int _position
 private int _length
+public int refCount
 public SendMethod method
 public sbyte channel
 public Priority priority
@@ -384,6 +609,8 @@ public bool CanRead
 public bool CanWrite
 public long Length
 public long Position
+public void AddReference()
+public void RemoveReference()
 public void EnterPool()
 public void LeavePool()
 public bool Start(BaseNetwork peer)
@@ -407,6 +634,7 @@ public void VarUInt32(UInt32 val)
 public void WriteUInt32(UInt32 value, bool variableLength)
 public void String(string val, bool variableLength)
 public void Vector3(Vector3& obj)
+public void Vector4(Vector4& obj)
 public void Quaternion(Quaternion& obj)
 public void Ray(Ray& obj)
 public void Color(Color& obj)
@@ -433,6 +661,17 @@ public void Write(Byte[] buffer, int offset, int count)
 public void WriteByte(byte value)
 public long Seek(long offset, SeekOrigin origin)
 public void SetLength(long value)
+}
+public Network.PacketProfiler : object {
+public bool enabled
+public Int32[] inboundCount
+public Int32[] inboundBytes
+public Int32[] outboundCount
+public Int32[] outboundSum
+public Int32[] outboundBytes
+public void LogInbound(Type type, int length)
+public void LogOutbound(int type, int connectionCount, int length)
+public void Reset()
 }
 public Network.Priority : Enum {
 public int value__
@@ -479,6 +718,7 @@ internal ulong lastValueGiven
 public List`1<Connection> connections
 private Dictionary`2<ulong, Connection> connectionByGUID
 private Dictionary`2<string, List`1<Connection>> connectionsByIP
+public bool SupportsServerDemos
 protected int MaxReceiveTimeValue
 protected int MaxReadQueueLengthValue
 protected int MaxWriteQueueLengthValue
@@ -491,6 +731,7 @@ protected int MaxReadThreadWaitValue
 protected int MaxWriteThreadWaitValue
 protected int MaxDecryptThreadWaitValue
 public string ProtocolId
+public bool get_SupportsServerDemos()
 protected int get_MaxReceiveTimeValue()
 protected int get_MaxReadQueueLengthValue()
 protected int get_MaxWriteQueueLengthValue()
@@ -565,6 +806,7 @@ public Network.Visibility.Group : object {
 protected Manager manager
 public UInt32 ID
 public Bounds bounds
+public bool restricted
 public ListHashSet`1<Networkable> networkables
 public List`1<Connection> subscribers
 public bool isGlobal
@@ -611,4 +853,7 @@ public void Unsubscribe(Group group)
 public void Destroy()
 public void EnterPool()
 public void LeavePool()
+}
+internal UnitySourceGeneratedAssemblyMonoScriptTypes_v1 : object {
+private MonoScriptData Get()
 }

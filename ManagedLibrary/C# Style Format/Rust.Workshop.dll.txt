@@ -347,6 +347,16 @@ private void Add_January_13_2022()
 private void Add_January_06_2022_STREAMERSKINS()
 private void Add_January_06_2022()
 private void Add_2023()
+private void Add_December_28_2023()
+private void Add_December_21_2023()
+private void Add_December_14_2023()
+private void Add_December_07_2023()
+private void Add_November_30_2023_TWITCHDROPS()
+private void Add_November_30_2023()
+private void Add_November_23_2023()
+private void Add_November_15_2023()
+private void Add_November_09_2023()
+private void Add_November_02_2023()
 private void Add_October_26_2023()
 private void Add_October_19_2023()
 private void Add_October_12_2023()
@@ -397,6 +407,39 @@ private void Add_January_12_2023()
 private void Add_January_12_2023_TRUST_IN_RUST_TWITCH_DROPS()
 private void Add_January_12_2023_TRUST_IN_RUST_STORE()
 private void Add_January_05_2023()
+private void Add_2024()
+private void Add_July_04_2024()
+private void Add_June_27_2024()
+private void Add_June_20_2024()
+private void Add_June_13_2024()
+private void Add_June_06_2024_TWITCHDROPS()
+private void Add_June_06_2024()
+private void Add_May_30_2023()
+private void Add_May_23_2024_STREAMERSKINS()
+private void Add_May_23_2024()
+private void Add_May_16_2024()
+private void Add_May_09_2024()
+private void Add_May_02_2024()
+private void Add_April_25_2024()
+private void Add_April_18_2024()
+private void Add_April_11_2024()
+private void Add_April_04_2024()
+private void Add_March_28_2024()
+private void Add_March_21_2024_EASTER_1()
+private void Add_March_14_2024()
+private void Add_March_07_2024()
+private void Add_February_29_2024()
+private void Add_February_22_2024()
+private void Add_February_15_2023()
+private void Add_February_14_2024()
+private void Add_February_08_2024()
+private void Add_February_01_2024()
+private void Add_January_25_2024()
+private void Add_January_18_2024()
+private void Add_Janury_11_2024_TIR_DROPS()
+private void Add_January_11_2024()
+private void Add_January_11_2024_TIR_SALE()
+private void Add_January_04_2024()
 public IReadOnlyDictionary`2<ulong, ApprovedSkinInfo> get_All()
 private void Initialize()
 private void Add(ApprovedSkinInfo skin)
@@ -416,6 +459,7 @@ private bool <Marketable>k__BackingField
 private Skinnable <Skinnable>k__BackingField
 private bool <AllowInCrates>k__BackingField
 private bool <IsLimitedTimeOffer>k__BackingField
+private bool <IsTwitchDrop>k__BackingField
 public ulong InventoryId
 public string Desc
 public string Name
@@ -427,6 +471,7 @@ public bool Marketable
 public Skinnable Skinnable
 public bool AllowInCrates
 public bool IsLimitedTimeOffer
+public bool IsTwitchDrop
 public ulong get_InventoryId()
 private void set_InventoryId(ulong value)
 public string get_Desc()
@@ -449,6 +494,8 @@ public bool get_AllowInCrates()
 private void set_AllowInCrates(bool value)
 public bool get_IsLimitedTimeOffer()
 private void set_IsLimitedTimeOffer(bool value)
+public bool get_IsTwitchDrop()
+private void set_IsTwitchDrop(bool value)
 public void .ctor(ulong WorkshopdId, string Name, string Desc, string ItemName)
 public ApprovedSkinInfo Store(Price Price, bool CanBeTraded, bool CanBeSold)
 public ApprovedSkinInfo TimeLimited()
@@ -456,6 +503,7 @@ public ApprovedSkinInfo Unlimited()
 public ApprovedSkinInfo NoCrate()
 public ApprovedSkinInfo Drops(DropChance DropChance)
 public ApprovedSkinInfo ItemId(ulong InventoryId)
+public ApprovedSkinInfo TwitchDrop()
 public Item op_Implicit(ApprovedSkinInfo o)
 }
 public Rust.Workshop.Category : Enum {
@@ -834,6 +882,7 @@ private ListDictionary`2<ulong, Skin> SkinCache
 private ulong RequestedWorkshopID
 private ulong AppliedWorkshopID
 private Action`1<Skin> OnRefresh
+private Action OnRefreshFail
 private Skin AppliedSkin
 public int QueuedCount
 public int LoadedCount
@@ -842,21 +891,23 @@ public int get_QueuedCount()
 public int get_LoadedCount()
 public Skin GetSkin(ulong workshopId)
 public IWorkshopContent GetItem(ulong workshopId)
-public void Apply(GameObject gameobj, ulong workshopId, Action`1<Skin> callback)
+public void Apply(GameObject gameobj, ulong workshopId, Action`1<Skin> callback, Action failureCallback)
 public void Reset(GameObject gameobj)
 public void Prepare(GameObject gameobj)
 protected void OnDestroy()
-private void Apply(ulong workshopId, Action`1<Skin> callback)
+private void Apply(ulong workshopId, Action`1<Skin> callback, Action failureCallback)
 private void EnqueueSkinRefresh(ulong workshopId)
-private void LoadFromWorkshop(ulong workshopId)
+private void LoadFromWorkshop(ulong workshopId, Action failureCallback)
 private void DequeueSkinRefresh(ulong workshopId)
-private void LoadOrUnloadSkinAssets(ulong workshopId)
-private IEnumerator ItemQueueCoroutine()
+private void LoadOrUnloadSkinAssets(ulong workshopId, Action failureCallback)
+private IEnumerator ItemQueueCoroutine(Action failureCallback)
 private IEnumerator SkinQueueCoroutine()
-private IEnumerator LoadItem(ulong workshopId)
+private IEnumerator LoadItem(ulong workshopId, Action failureCallback)
 private IEnumerator LoadSkin(ulong workshopId)
 private int GetBundleIndex(ulong workshopId)
 private void ApplySkin(Skin skin, ulong workshopId)
+private void DoRefreshSuccessCallback(Skin skin)
+private void DoRefreshFailureCallback()
 private void UpdateSkinReference(Skin skin, ulong workshopId)
 }
 public Rust.Workshop.WorkshopViewmodelControls : MonoBehaviour {
@@ -884,6 +935,9 @@ public Material[] SourceMaterials
 public Skinnable FindForItem(string itemType)
 public Skinnable FindForEntity(string entityName)
 public Material[] get_SourceMaterials()
+}
+internal UnitySourceGeneratedAssemblyMonoScriptTypes_v1 : object {
+private MonoScriptData Get()
 }
 public WorkshopBase : ScriptableObject {
 public ulong itemID

@@ -145,6 +145,7 @@ public Task`1<ApiResult`1<ClanDetails>> GetClan(long clanId)
 public Task`1<ApiResult`1<ClanDetails>> GetClanByMember(string playerId)
 public Task`1<ApiResult> DisbandClan(long clanId, string byPlayerId)
 public Task`1<ApiResult`1<ClanDetails>> UpdateClanVariables(long clanId, ClanVariablesUpdate update)
+public Task`1<ApiResult`1<List`1<ClanLeaderboardEntry>>> GetClanLeaderboard(int limit)
 public Task`1<ApiResult`1<ClanDetails>> CreateRole(long clanId, ClanRoleParameters parameters, string byPlayerId)
 public Task`1<ApiResult`1<ClanDetails>> UpdateRole(long clanId, int roleId, ClanRoleParameters parameters, string byPlayerId)
 public Task`1<ApiResult`1<ClanDetails>> DeleteRole(long clanId, int roleId, string byPlayerId)
@@ -159,6 +160,9 @@ public Task`1<ApiResult`1<ClanDetails>> UpdatePlayerClanVariables(long clanId, s
 public Task`1<ApiResult`1<ClanDetails>> SetPlayerRole(long clanId, string playerId, int roleId, string byPlayerId)
 public Task`1<ApiResult`1<List`1<ClanLogEntry>>> GetClanLogs(long clanId, string byPlayerId, int limit)
 public Task`1<ApiResult> AddClanLog(long clanId, string eventKey, string arg1, string arg2, string arg3, string arg4)
+public Task`1<ApiResult`1<List`1<ClanScoreEventEntry>>> GetClanScoreEvents(long clanId, string byPlayerId, int limit)
+public Task`1<ApiResult> AddClanScoreEvent(long clanId, NewClanScoreEventEntry entry)
+public Task`1<ApiResult> AddClanScoreEventBatch(List`1<NewClanScoreEventBatchEntry> entries)
 }
 internal Facepunch.Nexus.Connector.NexusConnector : object {
 private int MaxRetryCount
@@ -253,6 +257,7 @@ public Task`1<ApiResult`1<ClanDetails>> GetClan(long clanId)
 public Task`1<ApiResult`1<ClanDetails>> GetClanByMember(string playerId)
 public Task`1<ApiResult> DisbandClan(long clanId, string byPlayerId)
 public Task`1<ApiResult`1<ClanDetails>> UpdateClanVariables(long clanId, ClanVariablesUpdate update)
+public Task`1<ApiResult`1<List`1<ClanLeaderboardEntry>>> GetClanLeaderboard(int limit)
 public Task`1<ApiResult`1<ClanDetails>> CreateRole(long clanId, ClanRoleParameters parameters, string byPlayerId)
 public Task`1<ApiResult`1<ClanDetails>> UpdateRole(long clanId, int roleId, ClanRoleParameters parameters, string byPlayerId)
 public Task`1<ApiResult`1<ClanDetails>> DeleteRole(long clanId, int roleId, string byPlayerId)
@@ -267,6 +272,9 @@ public Task`1<ApiResult`1<ClanDetails>> UpdatePlayerClanVariables(long clanId, s
 public Task`1<ApiResult`1<ClanDetails>> SetPlayerRole(long clanId, string playerId, int roleId, string byPlayerId)
 public Task`1<ApiResult`1<List`1<ClanLogEntry>>> GetClanLogs(long clanId, string byPlayerId, int limit)
 public Task`1<ApiResult> AddClanLog(long clanId, string eventKey, string arg1, string arg2, string arg3, string arg4)
+public Task`1<ApiResult`1<List`1<ClanScoreEventEntry>>> GetClanScoreEvents(long clanId, string byPlayerId, int limit)
+public Task`1<ApiResult> AddClanScoreEvent(long clanId, NewClanScoreEventEntry entry)
+public Task`1<ApiResult> AddClanScoreEventBatch(List`1<NewClanScoreEventBatchEntry> entries)
 }
 public Facepunch.Nexus.INexusClanEventListener {
 public void OnDisbanded(ClanDisbandedEvent& modreq(System.Runtime.InteropServices.InAttribute) args)
@@ -347,6 +355,7 @@ private long <ClanId>k__BackingField
 private string <Name>k__BackingField
 private long <Created>k__BackingField
 private string <Creator>k__BackingField
+private long <Score>k__BackingField
 private List`1<ClanRole> <Roles>k__BackingField
 private List`1<ClanMember> <Members>k__BackingField
 private int <MaxMemberCount>k__BackingField
@@ -356,6 +365,7 @@ public long ClanId
 public string Name
 public long Created
 public string Creator
+public long Score
 public List`1<ClanRole> Roles
 public List`1<ClanMember> Members
 public int MaxMemberCount
@@ -369,6 +379,8 @@ public long get_Created()
 public void set_Created(long value)
 public string get_Creator()
 public void set_Creator(string value)
+public long get_Score()
+public void set_Score(long value)
 public List`1<ClanRole> get_Roles()
 public void set_Roles(List`1<ClanRole> value)
 public List`1<ClanMember> get_Members()
@@ -448,6 +460,20 @@ public void set_ClanId(long value)
 public string get_PlayerId()
 public void set_PlayerId(string value)
 }
+public Facepunch.Nexus.Models.ClanLeaderboardEntry : ValueType {
+private long <ClanId>k__BackingField
+private string <Name>k__BackingField
+private long <Score>k__BackingField
+public long ClanId
+public string Name
+public long Score
+public long get_ClanId()
+public void set_ClanId(long value)
+public string get_Name()
+public void set_Name(string value)
+public long get_Score()
+public void set_Score(long value)
+}
 public Facepunch.Nexus.Models.ClanLogEntry : ValueType {
 private long <Timestamp>k__BackingField
 private string <EventKey>k__BackingField
@@ -505,6 +531,7 @@ private bool <CanKick>k__BackingField
 private bool <CanPromote>k__BackingField
 private bool <CanDemote>k__BackingField
 private bool <CanAccessLogs>k__BackingField
+private bool <CanAccessScoreEvents>k__BackingField
 private VariableDictionary <Variables>k__BackingField
 public int RoleId
 public int Rank
@@ -514,6 +541,7 @@ public bool CanKick
 public bool CanPromote
 public bool CanDemote
 public bool CanAccessLogs
+public bool CanAccessScoreEvents
 public VariableDictionary Variables
 public int get_RoleId()
 public void set_RoleId(int value)
@@ -531,6 +559,8 @@ public bool get_CanDemote()
 public void set_CanDemote(bool value)
 public bool get_CanAccessLogs()
 public void set_CanAccessLogs(bool value)
+public bool get_CanAccessScoreEvents()
+public void set_CanAccessScoreEvents(bool value)
 public VariableDictionary get_Variables()
 public void set_Variables(VariableDictionary value)
 }
@@ -541,6 +571,7 @@ private bool <CanKick>k__BackingField
 private bool <CanPromote>k__BackingField
 private bool <CanDemote>k__BackingField
 private bool <CanAccessLogs>k__BackingField
+private bool <CanAccessScoreEvents>k__BackingField
 private List`1<VariableUpdate> <Variables>k__BackingField
 public string Name
 public bool CanInvite
@@ -548,6 +579,7 @@ public bool CanKick
 public bool CanPromote
 public bool CanDemote
 public bool CanAccessLogs
+public bool CanAccessScoreEvents
 public List`1<VariableUpdate> Variables
 public string get_Name()
 public void set_Name(string value)
@@ -561,8 +593,48 @@ public bool get_CanDemote()
 public void set_CanDemote(bool value)
 public bool get_CanAccessLogs()
 public void set_CanAccessLogs(bool value)
+public bool get_CanAccessScoreEvents()
+public void set_CanAccessScoreEvents(bool value)
 public List`1<VariableUpdate> get_Variables()
 public void set_Variables(List`1<VariableUpdate> value)
+}
+public Facepunch.Nexus.Models.ClanScoreEventEntry : ValueType {
+private long <Timestamp>k__BackingField
+private int <Type>k__BackingField
+private int <Score>k__BackingField
+private int <Multiplier>k__BackingField
+private string <PlayerId>k__BackingField
+private string <OtherPlayerId>k__BackingField
+private Nullable`1<long> <OtherClanId>k__BackingField
+private string <Arg1>k__BackingField
+private string <Arg2>k__BackingField
+public long Timestamp
+public int Type
+public int Score
+public int Multiplier
+public string PlayerId
+public string OtherPlayerId
+public Nullable`1<long> OtherClanId
+public string Arg1
+public string Arg2
+public long get_Timestamp()
+public void set_Timestamp(long value)
+public int get_Type()
+public void set_Type(int value)
+public int get_Score()
+public void set_Score(int value)
+public int get_Multiplier()
+public void set_Multiplier(int value)
+public string get_PlayerId()
+public void set_PlayerId(string value)
+public string get_OtherPlayerId()
+public void set_OtherPlayerId(string value)
+public Nullable`1<long> get_OtherClanId()
+public void set_OtherClanId(Nullable`1<long> value)
+public string get_Arg1()
+public void set_Arg1(string value)
+public string get_Arg2()
+public void set_Arg2(string value)
 }
 public Facepunch.Nexus.Models.ClanVariablesUpdate : ValueType {
 private List`1<VariableUpdate> <Variables>k__BackingField
@@ -611,6 +683,78 @@ public string get_ContentType()
 public void set_ContentType(string value)
 public Byte[] get_Data()
 public void set_Data(Byte[] value)
+}
+public Facepunch.Nexus.Models.NewClanScoreEventBatchEntry : ValueType {
+private long <ClanId>k__BackingField
+private int <Type>k__BackingField
+private int <Score>k__BackingField
+private int <Multiplier>k__BackingField
+private string <PlayerId>k__BackingField
+private string <OtherPlayerId>k__BackingField
+private Nullable`1<long> <OtherClanId>k__BackingField
+private string <Arg1>k__BackingField
+private string <Arg2>k__BackingField
+public long ClanId
+public int Type
+public int Score
+public int Multiplier
+public string PlayerId
+public string OtherPlayerId
+public Nullable`1<long> OtherClanId
+public string Arg1
+public string Arg2
+public long get_ClanId()
+public void set_ClanId(long value)
+public int get_Type()
+public void set_Type(int value)
+public int get_Score()
+public void set_Score(int value)
+public int get_Multiplier()
+public void set_Multiplier(int value)
+public string get_PlayerId()
+public void set_PlayerId(string value)
+public string get_OtherPlayerId()
+public void set_OtherPlayerId(string value)
+public Nullable`1<long> get_OtherClanId()
+public void set_OtherClanId(Nullable`1<long> value)
+public string get_Arg1()
+public void set_Arg1(string value)
+public string get_Arg2()
+public void set_Arg2(string value)
+}
+public Facepunch.Nexus.Models.NewClanScoreEventEntry : ValueType {
+private int <Type>k__BackingField
+private int <Score>k__BackingField
+private int <Multiplier>k__BackingField
+private string <PlayerId>k__BackingField
+private string <OtherPlayerId>k__BackingField
+private Nullable`1<long> <OtherClanId>k__BackingField
+private string <Arg1>k__BackingField
+private string <Arg2>k__BackingField
+public int Type
+public int Score
+public int Multiplier
+public string PlayerId
+public string OtherPlayerId
+public Nullable`1<long> OtherClanId
+public string Arg1
+public string Arg2
+public int get_Type()
+public void set_Type(int value)
+public int get_Score()
+public void set_Score(int value)
+public int get_Multiplier()
+public void set_Multiplier(int value)
+public string get_PlayerId()
+public void set_PlayerId(string value)
+public string get_OtherPlayerId()
+public void set_OtherPlayerId(string value)
+public Nullable`1<long> get_OtherClanId()
+public void set_OtherClanId(Nullable`1<long> value)
+public string get_Arg1()
+public void set_Arg1(string value)
+public string get_Arg2()
+public void set_Arg2(string value)
 }
 public Facepunch.Nexus.Models.Nexus : object {
 private int <NexusId>k__BackingField
@@ -942,6 +1086,7 @@ private long <ClanId>k__BackingField
 private string <Name>k__BackingField
 private long <Created>k__BackingField
 private string <Creator>k__BackingField
+private long <Score>k__BackingField
 private List`1<NexusClanRole> <Roles>k__BackingField
 private List`1<NexusClanMember> <Members>k__BackingField
 private int <MaxMemberCount>k__BackingField
@@ -956,6 +1101,7 @@ public long ClanId
 public string Name
 public long Created
 public string Creator
+public long Score
 public List`1<NexusClanRole> Roles
 public List`1<NexusClanMember> Members
 public int MaxMemberCount
@@ -968,6 +1114,8 @@ public long get_Created()
 private void set_Created(long value)
 public string get_Creator()
 private void set_Creator(string value)
+public long get_Score()
+private void set_Score(long value)
 public List`1<NexusClanRole> get_Roles()
 public List`1<NexusClanMember> get_Members()
 public int get_MaxMemberCount()
@@ -976,13 +1124,16 @@ public List`1<ClanInvite> get_Invites()
 internal void .ctor(NexusZoneClient client, INexusZoneConnector zoneConnector, IClockProvider clockProvider, INexusLogger logger, long clanId)
 internal bool UpdateFromModel(ClanDetails& details)
 internal void RefreshIfNeeded()
-internal void Refresh()
+internal void RefreshInBackground()
+public Task Refresh()
 public IEnumerable`1<KeyValuePair`2<string, Variable>> get_Variables()
 public bool TryGetVariable(string key, Variable& variable)
 public Task`1<NexusClanResultCode> UpdateVariables(ClanVariablesUpdate update)
 public Task`1<NexusClanResultCode> UpdatePlayerVariables(string playerId, ClanVariablesUpdate update)
 public Task`1<NexusClanResult`1<List`1<ClanLogEntry>>> GetLogs(string byPlayerId, int limit)
 public Task`1<NexusClanResultCode> AddLog(string eventKey, string arg1, string arg2, string arg3, string arg4)
+public Task`1<NexusClanResult`1<List`1<ClanScoreEventEntry>>> GetScoreEvents(string byPlayerId, int limit)
+public void AddScoreEvent(NewClanScoreEventEntry entry)
 public Task`1<NexusClanResultCode> UpdateLastSeen(string playerId)
 public Task`1<NexusClanResultCode> Invite(string playerId, string byPlayerId)
 public Task`1<NexusClanResultCode> CancelInvite(string playerId, string byPlayerId)
@@ -1056,6 +1207,7 @@ private bool <CanKick>k__BackingField
 private bool <CanPromote>k__BackingField
 private bool <CanDemote>k__BackingField
 private bool <CanAccessLogs>k__BackingField
+private bool <CanAccessScoreEvents>k__BackingField
 private VariableContainer _variables
 public int RoleId
 public int Rank
@@ -1065,6 +1217,7 @@ public bool CanKick
 public bool CanPromote
 public bool CanDemote
 public bool CanAccessLogs
+public bool CanAccessScoreEvents
 public IEnumerable`1<KeyValuePair`2<string, Variable>> Variables
 public int get_RoleId()
 public void set_RoleId(int value)
@@ -1082,6 +1235,8 @@ public bool get_CanDemote()
 public void set_CanDemote(bool value)
 public bool get_CanAccessLogs()
 public void set_CanAccessLogs(bool value)
+public bool get_CanAccessScoreEvents()
+public void set_CanAccessScoreEvents(bool value)
 public void .ctor(ClanRole details)
 public IEnumerable`1<KeyValuePair`2<string, Variable>> get_Variables()
 public bool TryGetVariable(string key, Variable& variable)
@@ -1195,6 +1350,9 @@ private CachedValue`1<ZoneDetails> _cachedZoneInfo
 private CachedValue`1<NexusDetails> _cachedNexusInfo
 private Dictionary`2<string, NexusPlayer> _players
 private Dictionary`2<long, NexusClan> _clans
+private Queue`1<NewClanScoreEventBatchEntry> _scoreEventQueue
+private List`1<NewClanScoreEventBatchEntry> _scoreEventBatch
+private bool _submittingScoreEventsBatch
 private ZoneDetails <Zone>k__BackingField
 private NexusDetails <Nexus>k__BackingField
 public INexusClanEventListener ClanEventListener
@@ -1207,6 +1365,10 @@ public ValueTask`1<NexusClanResult`1<NexusClan>> GetClanByMember(string playerId
 public bool TryGetClan(long clanId, NexusClan& clan)
 public ValueTask`1<NexusClanResult`1<NexusClan>> CreateClan(ClanCreateParameters parameters)
 public ValueTask`1<NexusClanResult`1<List`1<ClanInvitation>>> ListClanInvitations(string playerId)
+public ValueTask`1<NexusClanResult`1<List`1<ClanLeaderboardEntry>>> GetClanLeaderboard(int limit)
+internal void EnqueueClanScoreEvent(NewClanScoreEventBatchEntry& entry)
+private void UpdateClanScoreEvents()
+private void SubmitClanScoreEventBatch()
 private void HandleClanEvent(NexusMessage& message)
 private void RefreshClan(long clanId)
 internal NexusClan UpsertClan(ClanDetails& details)

@@ -21,6 +21,7 @@ public float forceVariation
 public float drag
 public float angularDrag
 public EffectorSelection2D forceTarget
+public float forceDirection
 public float get_forceAngle()
 public void set_forceAngle(float value)
 public bool get_useGlobalAngle()
@@ -35,17 +36,22 @@ public float get_angularDrag()
 public void set_angularDrag(float value)
 public EffectorSelection2D get_forceTarget()
 public void set_forceTarget(EffectorSelection2D value)
+public float get_forceDirection()
+public void set_forceDirection(float value)
 }
 public UnityEngine.BoxCollider2D : Collider2D {
 public Vector2 size
 public float edgeRadius
 public bool autoTiling
+public Vector2 center
 public Vector2 get_size()
 public void set_size(Vector2 value)
 public float get_edgeRadius()
 public void set_edgeRadius(float value)
 public bool get_autoTiling()
 public void set_autoTiling(bool value)
+public Vector2 get_center()
+public void set_center(Vector2 value)
 private void get_size_Injected(Vector2& ret)
 private void set_size_Injected(Vector2& value)
 }
@@ -89,8 +95,11 @@ public CapsuleDirection2D Horizontal
 }
 public UnityEngine.CircleCollider2D : Collider2D {
 public float radius
+public Vector2 center
 public float get_radius()
 public void set_radius(float value)
+public Vector2 get_center()
+public void set_center(Vector2 value)
 }
 public UnityEngine.Collider2D : Behaviour {
 public float density
@@ -105,6 +114,13 @@ public Bounds bounds
 public ColliderErrorState2D errorState
 internal bool compositeCapable
 public PhysicsMaterial2D sharedMaterial
+public int layerOverridePriority
+public LayerMask excludeLayers
+public LayerMask includeLayers
+public LayerMask forceSendLayers
+public LayerMask forceReceiveLayers
+public LayerMask contactCaptureLayers
+public LayerMask callbackLayers
 public float friction
 public float bounciness
 public float get_density()
@@ -130,6 +146,20 @@ public ColliderErrorState2D get_errorState()
 internal bool get_compositeCapable()
 public PhysicsMaterial2D get_sharedMaterial()
 public void set_sharedMaterial(PhysicsMaterial2D value)
+public int get_layerOverridePriority()
+public void set_layerOverridePriority(int value)
+public LayerMask get_excludeLayers()
+public void set_excludeLayers(LayerMask value)
+public LayerMask get_includeLayers()
+public void set_includeLayers(LayerMask value)
+public LayerMask get_forceSendLayers()
+public void set_forceSendLayers(LayerMask value)
+public LayerMask get_forceReceiveLayers()
+public void set_forceReceiveLayers(LayerMask value)
+public LayerMask get_contactCaptureLayers()
+public void set_contactCaptureLayers(LayerMask value)
+public LayerMask get_callbackLayers()
+public void set_callbackLayers(LayerMask value)
 public float get_friction()
 public float get_bounciness()
 public bool IsTouching(Collider2D collider)
@@ -174,6 +204,18 @@ public Vector2 ClosestPoint(Vector2 position)
 private void get_offset_Injected(Vector2& ret)
 private void set_offset_Injected(Vector2& value)
 private void get_bounds_Injected(Bounds& ret)
+private void get_excludeLayers_Injected(LayerMask& ret)
+private void set_excludeLayers_Injected(LayerMask& value)
+private void get_includeLayers_Injected(LayerMask& ret)
+private void set_includeLayers_Injected(LayerMask& value)
+private void get_forceSendLayers_Injected(LayerMask& ret)
+private void set_forceSendLayers_Injected(LayerMask& value)
+private void get_forceReceiveLayers_Injected(LayerMask& ret)
+private void set_forceReceiveLayers_Injected(LayerMask& value)
+private void get_contactCaptureLayers_Injected(LayerMask& ret)
+private void set_contactCaptureLayers_Injected(LayerMask& value)
+private void get_callbackLayers_Injected(LayerMask& ret)
+private void set_callbackLayers_Injected(LayerMask& value)
 private bool IsTouching_OtherColliderWithFilter_Injected(Collider2D collider, ContactFilter2D& contactFilter)
 private bool IsTouching_AnyColliderWithFilter_Injected(ContactFilter2D& contactFilter)
 private bool OverlapPoint_Injected(Vector2& point)
@@ -255,6 +297,7 @@ public CollisionDetectionMode2D Continuous
 public UnityEngine.CompositeCollider2D : Collider2D {
 public GeometryType geometryType
 public GenerationType generationType
+public bool useDelaunayMesh
 public float vertexDistance
 public float edgeRadius
 public float offsetDistance
@@ -264,6 +307,8 @@ public GeometryType get_geometryType()
 public void set_geometryType(GeometryType value)
 public GenerationType get_generationType()
 public void set_generationType(GenerationType value)
+public bool get_useDelaunayMesh()
+public void set_useDelaunayMesh(bool value)
 public float get_vertexDistance()
 public void set_vertexDistance(float value)
 public float get_edgeRadius()
@@ -509,8 +554,10 @@ public Rigidbody2D connectedBody
 public bool enableCollision
 public float breakForce
 public float breakTorque
+public JointBreakAction2D breakAction
 public Vector2 reactionForce
 public float reactionTorque
+public bool collideConnected
 public Rigidbody2D get_attachedRigidbody()
 public Rigidbody2D get_connectedBody()
 public void set_connectedBody(Rigidbody2D value)
@@ -520,10 +567,14 @@ public float get_breakForce()
 public void set_breakForce(float value)
 public float get_breakTorque()
 public void set_breakTorque(float value)
+public JointBreakAction2D get_breakAction()
+public void set_breakAction(JointBreakAction2D value)
 public Vector2 get_reactionForce()
 public float get_reactionTorque()
 public Vector2 GetReactionForce(float timeStep)
 public float GetReactionTorque(float timeStep)
+public bool get_collideConnected()
+public void set_collideConnected(bool value)
 private void get_reactionForce_Injected(Vector2& ret)
 private void GetReactionForce_Injected(float timeStep, Vector2& ret)
 }
@@ -536,6 +587,13 @@ public float get_min()
 public void set_min(float value)
 public float get_max()
 public void set_max(float value)
+}
+public UnityEngine.JointBreakAction2D : Enum {
+public int value__
+public JointBreakAction2D Ignore
+public JointBreakAction2D CallbackOnly
+public JointBreakAction2D Disable
+public JointBreakAction2D Destroy
 }
 public UnityEngine.JointLimitState2D : Enum {
 public int value__
@@ -584,6 +642,10 @@ public int DefaultRaycastLayers
 public int AllLayers
 public int MaxPolygonShapeVertices
 private List`1<Rigidbody2D> m_LastDisabledRigidbody2D
+private bool <alwaysShowColliders>k__BackingField
+private bool <showCollidersFilled>k__BackingField
+private bool <showColliderSleep>k__BackingField
+private bool <showColliderContacts>k__BackingField
 public PhysicsScene2D defaultPhysicsScene
 public int velocityIterations
 public int positionIterations
@@ -606,15 +668,22 @@ public float baumgarteTOIScale
 public float timeToSleep
 public float linearSleepTolerance
 public float angularSleepTolerance
-public bool alwaysShowColliders
-public bool showColliderSleep
-public bool showColliderContacts
-public bool showColliderAABB
-public float contactArrowScale
+public bool raycastsHitTriggers
+public bool raycastsStartInColliders
+public bool deleteStopsCallbacks
+public bool changeStopsCallbacks
+public float minPenetrationForPenalty
+public bool autoSimulation
 public Color colliderAwakeColor
 public Color colliderAsleepColor
 public Color colliderContactColor
 public Color colliderAABBColor
+public float contactArrowScale
+public bool alwaysShowColliders
+public bool showCollidersFilled
+public bool showColliderSleep
+public bool showColliderContacts
+public bool showColliderAABB
 public PhysicsScene2D get_defaultPhysicsScene()
 public int get_velocityIterations()
 public void set_velocityIterations(int value)
@@ -658,24 +727,6 @@ public float get_linearSleepTolerance()
 public void set_linearSleepTolerance(float value)
 public float get_angularSleepTolerance()
 public void set_angularSleepTolerance(float value)
-public bool get_alwaysShowColliders()
-public void set_alwaysShowColliders(bool value)
-public bool get_showColliderSleep()
-public void set_showColliderSleep(bool value)
-public bool get_showColliderContacts()
-public void set_showColliderContacts(bool value)
-public bool get_showColliderAABB()
-public void set_showColliderAABB(bool value)
-public float get_contactArrowScale()
-public void set_contactArrowScale(float value)
-public Color get_colliderAwakeColor()
-public void set_colliderAwakeColor(Color value)
-public Color get_colliderAsleepColor()
-public void set_colliderAsleepColor(Color value)
-public Color get_colliderContactColor()
-public void set_colliderContactColor(Color value)
-public Color get_colliderAABBColor()
-public void set_colliderAABBColor(Color value)
 public bool Simulate(float step)
 internal bool Simulate_Internal(PhysicsScene2D physicsScene, float step)
 public void SyncTransforms()
@@ -911,18 +962,42 @@ private int GetRigidbodyContactsList(Rigidbody2D rigidbody, ContactFilter2D cont
 private int GetColliderContactsCollidersOnlyList(Collider2D collider, ContactFilter2D contactFilter, List`1<Collider2D> results)
 private int GetRigidbodyContactsCollidersOnlyList(Rigidbody2D rigidbody, ContactFilter2D contactFilter, List`1<Collider2D> results)
 internal void SetEditorDragMovement(bool dragging, GameObject[] objs)
+public bool get_raycastsHitTriggers()
+public void set_raycastsHitTriggers(bool value)
+public bool get_raycastsStartInColliders()
+public void set_raycastsStartInColliders(bool value)
+public bool get_deleteStopsCallbacks()
+public void set_deleteStopsCallbacks(bool value)
+public bool get_changeStopsCallbacks()
+public void set_changeStopsCallbacks(bool value)
+public float get_minPenetrationForPenalty()
+public void set_minPenetrationForPenalty(float value)
+public bool get_autoSimulation()
+public void set_autoSimulation(bool value)
+public Color get_colliderAwakeColor()
+public void set_colliderAwakeColor(Color value)
+public Color get_colliderAsleepColor()
+public void set_colliderAsleepColor(Color value)
+public Color get_colliderContactColor()
+public void set_colliderContactColor(Color value)
+public Color get_colliderAABBColor()
+public void set_colliderAABBColor(Color value)
+public float get_contactArrowScale()
+public void set_contactArrowScale(float value)
+public bool get_alwaysShowColliders()
+public void set_alwaysShowColliders(bool value)
+public bool get_showCollidersFilled()
+public void set_showCollidersFilled(bool value)
+public bool get_showColliderSleep()
+public void set_showColliderSleep(bool value)
+public bool get_showColliderContacts()
+public void set_showColliderContacts(bool value)
+public bool get_showColliderAABB()
+public void set_showColliderAABB(bool value)
 private void get_gravity_Injected(Vector2& ret)
 private void set_gravity_Injected(Vector2& value)
 private void get_jobOptions_Injected(PhysicsJobOptions2D& ret)
 private void set_jobOptions_Injected(PhysicsJobOptions2D& value)
-private void get_colliderAwakeColor_Injected(Color& ret)
-private void set_colliderAwakeColor_Injected(Color& value)
-private void get_colliderAsleepColor_Injected(Color& ret)
-private void set_colliderAsleepColor_Injected(Color& value)
-private void get_colliderContactColor_Injected(Color& ret)
-private void set_colliderContactColor_Injected(Color& value)
-private void get_colliderAABBColor_Injected(Color& ret)
-private void set_colliderAABBColor_Injected(Color& value)
 private bool Simulate_Internal_Injected(PhysicsScene2D& physicsScene, float step)
 private bool IsTouching_TwoCollidersWithFilter_Injected(Collider2D collider1, Collider2D collider2, ContactFilter2D& contactFilter)
 private bool IsTouching_SingleColliderWithFilter_Injected(Collider2D collider, ContactFilter2D& contactFilter)
@@ -1256,6 +1331,10 @@ public bool useSideBounce
 public float surfaceArc
 public float sideArc
 public float rotationalOffset
+public bool oneWay
+public bool sideFriction
+public bool sideBounce
+public float sideAngleVariance
 public bool get_useOneWay()
 public void set_useOneWay(bool value)
 public bool get_useOneWayGrouping()
@@ -1270,6 +1349,14 @@ public float get_sideArc()
 public void set_sideArc(float value)
 public float get_rotationalOffset()
 public void set_rotationalOffset(float value)
+public bool get_oneWay()
+public void set_oneWay(bool value)
+public bool get_sideFriction()
+public void set_sideFriction(bool value)
+public bool get_sideBounce()
+public void set_sideBounce(bool value)
+public float get_sideAngleVariance()
+public void set_sideAngleVariance(float value)
 }
 public UnityEngine.PointEffector2D : Effector2D {
 public float forceMagnitude
@@ -1298,9 +1385,12 @@ public EffectorForceMode2D get_forceMode()
 public void set_forceMode(EffectorForceMode2D value)
 }
 public UnityEngine.PolygonCollider2D : Collider2D {
+public bool useDelaunayMesh
 public bool autoTiling
 public Vector2[] points
 public int pathCount
+public bool get_useDelaunayMesh()
+public void set_useDelaunayMesh(bool value)
 public bool get_autoTiling()
 public void set_autoTiling(bool value)
 public int GetTotalPointCount()
@@ -1403,6 +1493,10 @@ public RigidbodyInterpolation2D interpolation
 public RigidbodySleepMode2D sleepMode
 public CollisionDetectionMode2D collisionDetectionMode
 public int attachedColliderCount
+public Vector2 totalForce
+public float totalTorque
+public LayerMask excludeLayers
+public LayerMask includeLayers
 public Vector2 get_position()
 public void set_position(Vector2 value)
 public float get_rotation()
@@ -1463,6 +1557,14 @@ public void set_sleepMode(RigidbodySleepMode2D value)
 public CollisionDetectionMode2D get_collisionDetectionMode()
 public void set_collisionDetectionMode(CollisionDetectionMode2D value)
 public int get_attachedColliderCount()
+public Vector2 get_totalForce()
+public void set_totalForce(Vector2 value)
+public float get_totalTorque()
+public void set_totalTorque(float value)
+public LayerMask get_excludeLayers()
+public void set_excludeLayers(LayerMask value)
+public LayerMask get_includeLayers()
+public void set_includeLayers(LayerMask value)
 public bool IsTouching(Collider2D collider)
 public bool IsTouching(Collider2D collider, ContactFilter2D contactFilter)
 private bool IsTouching_OtherColliderWithFilter_Internal(Collider2D collider, ContactFilter2D contactFilter)
@@ -1526,6 +1628,12 @@ private void set_velocity_Injected(Vector2& value)
 private void get_centerOfMass_Injected(Vector2& ret)
 private void set_centerOfMass_Injected(Vector2& value)
 private void get_worldCenterOfMass_Injected(Vector2& ret)
+private void get_totalForce_Injected(Vector2& ret)
+private void set_totalForce_Injected(Vector2& value)
+private void get_excludeLayers_Injected(LayerMask& ret)
+private void set_excludeLayers_Injected(LayerMask& value)
+private void get_includeLayers_Injected(LayerMask& ret)
+private void set_includeLayers_Injected(LayerMask& value)
 private bool IsTouching_OtherColliderWithFilter_Internal_Injected(Collider2D collider, ContactFilter2D& contactFilter)
 private bool IsTouching_AnyColliderWithFilter_Internal_Injected(ContactFilter2D& contactFilter)
 private bool OverlapPoint_Injected(Vector2& point)

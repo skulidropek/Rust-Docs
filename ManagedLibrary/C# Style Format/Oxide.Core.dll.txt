@@ -11,13 +11,9 @@ public void Event(string category, string action)
 public void SendPayload(string payload)
 }
 public Oxide.Core.ArrayPool : object {
-private int MaxArrayLength
-private int InitialPoolAmount
-private int MaxPoolAmount
-private List`1<Queue`1<Object[]>> _pooledArrays
+private IArrayPoolProvider`1<object> pool
 public Object[] Get(int length)
 public void Free(Object[] array)
-private void SetupArrays(int length)
 }
 public Oxide.Core.Cleanup : object {
 internal HashSet`1<string> files
@@ -53,6 +49,7 @@ private IEnumerator System.Collections.IEnumerable.GetEnumerator()
 private void System.Collections.Generic.ICollection<T>.Add(T value)
 }
 public Oxide.Core.Configuration.ConfigFile : object {
+private JsonSerializerSettings SerializerSettings
 private string <Filename>k__BackingField
 public string Filename
 public string get_Filename()
@@ -107,18 +104,28 @@ public void WriteJson(JsonWriter writer, object value, JsonSerializer serializer
 }
 public Oxide.Core.Configuration.OxideConfig : ConfigFile {
 private OxideOptions <Options>k__BackingField
+private CommandOptions <Commands>k__BackingField
+private CompilerOptions <Compiler>k__BackingField
 private OxideConsole <Console>k__BackingField
 private OxideRcon <Rcon>k__BackingField
 public OxideOptions Options
+public CommandOptions Commands
+public CompilerOptions Compiler
 public OxideConsole Console
 public OxideRcon Rcon
 public OxideOptions get_Options()
 public void set_Options(OxideOptions value)
+public CommandOptions get_Commands()
+public void set_Commands(CommandOptions value)
+public CompilerOptions get_Compiler()
+public void set_Compiler(CompilerOptions value)
 public OxideConsole get_Console()
 public void set_Console(OxideConsole value)
 public OxideRcon get_Rcon()
 public void set_Rcon(OxideRcon value)
 public void .ctor(string filename)
+public void Load(string filename)
+private bool InitializeDefaultValues()
 }
 public Oxide.Core.Database.Connection : object {
 private string <ConnectionString>k__BackingField
@@ -304,6 +311,7 @@ public string TitleCase(string text)
 public string Titleize(string text)
 public string ToSentence(IEnumerable`1<T> items)
 public string Truncate(string text, int max)
+public HashSet`1<T> ToHashSet(IEnumerable`1<T> collection)
 }
 public Oxide.Core.Extensions.Extension : object {
 private string <Filename>k__BackingField
@@ -381,13 +389,16 @@ public T GetExtension()
 public Oxide.Core.Interface : object {
 private OxideMod <Oxide>k__BackingField
 private NativeDebugCallback <DebugCallback>k__BackingField
+private IArrayPoolProvider`1<object> <HookArrays>k__BackingField
 public OxideMod Oxide
 public NativeDebugCallback DebugCallback
+private IArrayPoolProvider`1<object> HookArrays
 public OxideMod uMod
 public OxideMod get_Oxide()
 private void set_Oxide(OxideMod value)
 public NativeDebugCallback get_DebugCallback()
 public void set_DebugCallback(NativeDebugCallback value)
+private IArrayPoolProvider`1<object> get_HookArrays()
 public void Initialize()
 public object CallDeprecatedHook(string oldHook, string newHook, DateTime expireDate, Object[] args)
 public object CallDeprecated(string oldHook, string newHook, DateTime expireDate, Object[] args)
@@ -434,6 +445,7 @@ public Oxide.Core.Libraries.Covalence.CommandHandler : object {
 private CommandCallback callback
 private Func`2<string, bool> commandFilter
 public void .ctor(CommandCallback callback, Func`2<string, bool> commandFilter)
+public string GetChatCommandPrefix(string message)
 public bool HandleChatMessage(IPlayer player, string message)
 public bool HandleConsoleMessage(IPlayer player, string message)
 private bool HandleCommand(IPlayer player, string command, String[] args)
@@ -958,6 +970,7 @@ public Oxide.Core.OxideMod : object {
 internal Version AssemblyVersion
 public VersionNumber Version
 public string Branch
+private IPoolFactory <PoolFactory>k__BackingField
 private CompoundLogger <RootLogger>k__BackingField
 private PluginManager <RootPluginManager>k__BackingField
 private DataFileSystem <DataFileSystem>k__BackingField
@@ -981,12 +994,14 @@ private List`1<Action> nextTickQueue
 private List`1<Action> lastTickQueue
 private object nextTickLock
 private Action`1<float> onFrame
+internal bool init_called
 private bool isInitialized
 private bool <HasLoadedCorePlugins>k__BackingField
 public RemoteConsole RemoteConsole
 public ServerConsole ServerConsole
 private Stopwatch timer
 private NativeDebugCallback debugCallback
+public IPoolFactory PoolFactory
 public CompoundLogger RootLogger
 public PluginManager RootPluginManager
 public DataFileSystem DataFileSystem
@@ -1002,6 +1017,7 @@ public float Now
 public bool IsShuttingDown
 public OxideConfig Config
 public bool HasLoadedCorePlugins
+public IPoolFactory get_PoolFactory()
 public CompoundLogger get_RootLogger()
 private void set_RootLogger(CompoundLogger value)
 public PluginManager get_RootPluginManager()
@@ -1031,7 +1047,6 @@ public OxideConfig get_Config()
 private void set_Config(OxideConfig value)
 public bool get_HasLoadedCorePlugins()
 private void set_HasLoadedCorePlugins(bool value)
-public void .ctor(NativeDebugCallback debugCallback)
 public void Load()
 public T GetLibrary(string name)
 public IEnumerable`1<Extension> GetAllExtensions()
@@ -1069,13 +1084,22 @@ private void watcher_OnPluginAdded(string name)
 private void watcher_OnPluginRemoved(string name)
 private void RegisterLibrarySearchPath(string path)
 private bool SetDllDirectory(string lpPathName)
-private float <Load>b__77_1()
+private float <Load>b__81_1()
 }
 public Oxide.Core.Plugins.CSPlugin : Plugin {
 protected Dictionary`2<string, List`1<HookMethod>> Hooks
+private Harmony _harmonyInstance
 protected HookCache HooksCache
+private IArrayPoolProvider`1<object> <ObjectArrayPool>k__BackingField
+protected string HarmonyId
+protected Harmony HarmonyInstance
+protected IArrayPoolProvider`1<object> ObjectArrayPool
 public T GetLibrary(string name)
+protected string get_HarmonyId()
+protected Harmony get_HarmonyInstance()
+protected IArrayPoolProvider`1<object> get_ObjectArrayPool()
 public void HandleAddedToManager(PluginManager manager)
+public void HandleRemovedFromManager(PluginManager manager)
 protected void AddHookMethod(string name, MethodInfo method)
 protected object OnCallHook(string name, Object[] args)
 protected List`1<HookMethod> FindHooks(string name, Object[] args)
@@ -1132,6 +1156,8 @@ public PluginManagerEvent OnAddedToManager
 public PluginManagerEvent OnRemovedFromManager
 private bool <IsLoaded>k__BackingField
 private double <TotalHookTime>k__BackingField
+private long <TotalHookMemory>k__BackingField
+private long <_currentMemoryUsed>k__BackingField
 private Stopwatch trackStopwatch
 private Stopwatch stopwatch
 private float averageAt
@@ -1156,6 +1182,8 @@ public object Object
 public DynamicConfigFile Config
 public bool IsLoaded
 public double TotalHookTime
+public long TotalHookMemory
+private long _currentMemoryUsed
 public bool op_Implicit(Plugin plugin)
 public bool op_LogicalNot(Plugin plugin)
 public string get_Filename()
@@ -1191,6 +1219,10 @@ public bool get_IsLoaded()
 internal void set_IsLoaded(bool value)
 public double get_TotalHookTime()
 internal void set_TotalHookTime(double value)
+public long get_TotalHookMemory()
+internal void set_TotalHookMemory(long value)
+private long get__currentMemoryUsed()
+private void set__currentMemoryUsed(long value)
 protected void Subscribe(string hook)
 protected void Unsubscribe(string hook)
 public void HandleAddedToManager(PluginManager manager)
@@ -1203,6 +1235,7 @@ protected object OnCallHook(string hook, Object[] args)
 public void RaiseError(string message)
 public void TrackStart()
 public void TrackEnd()
+private long GetMemory()
 protected void LoadConfig()
 protected void LoadDefaultConfig()
 protected void SaveConfig()
@@ -1258,11 +1291,13 @@ private string <ConfigPath>k__BackingField
 private PluginEvent OnPluginAdded
 private PluginEvent OnPluginRemoved
 private IDictionary`2<string, Plugin> loadedPlugins
-private IDictionary`2<string, IList`1<Plugin>> hookSubscriptions
+private IDictionary`2<string, HookSubscriptions> hookSubscriptions
 private Dictionary`2<string, float> lastDeprecatedWarningAt
 private List`1<string> hookConflicts
+private IArrayPoolProvider`1<object> <ObjectPool>k__BackingField
 public Logger Logger
 public string ConfigPath
+private IArrayPoolProvider`1<object> ObjectPool
 public Logger get_Logger()
 private void set_Logger(Logger value)
 public string get_ConfigPath()
@@ -1271,6 +1306,7 @@ public void add_OnPluginAdded(PluginEvent value)
 public void remove_OnPluginAdded(PluginEvent value)
 public void add_OnPluginRemoved(PluginEvent value)
 public void remove_OnPluginRemoved(PluginEvent value)
+private IArrayPoolProvider`1<object> get_ObjectPool()
 public void .ctor(Logger logger)
 public bool AddPlugin(Plugin plugin)
 public bool RemovePlugin(Plugin plugin)
@@ -1279,6 +1315,7 @@ public IEnumerable`1<Plugin> GetPlugins()
 internal void SubscribeToHook(string hook, Plugin plugin)
 internal void UnsubscribeToHook(string hook, Plugin plugin)
 public object CallHook(string hook, Object[] args)
+private void ProcessHookChanges(HookSubscriptions subscriptions)
 public object CallDeprecatedHook(string oldHook, string newHook, DateTime expireDate, Object[] args)
 }
 public Oxide.Core.Plugins.Watchers.FileChange : object {
@@ -1298,6 +1335,9 @@ private ICollection`1<string> watchedPlugins
 private Dictionary`2<string, QueuedChange> changeQueue
 private Timer timers
 private Dictionary`2<string, FileSystemWatcher> m_symlinkWatchers
+private IPoolProvider`1<StringBuilder> <StringPool>k__BackingField
+private IPoolProvider`1<StringBuilder> StringPool
+private IPoolProvider`1<StringBuilder> get_StringPool()
 public void .ctor(string directory, string filter)
 private bool IsFileSymlink(string path)
 private void LoadWatcherSymlink(string path)
@@ -1306,7 +1346,7 @@ public void AddMapping(string name)
 public void RemoveMapping(string name)
 private void watcher_Changed(object sender, FileSystemEventArgs e)
 private void watcher_Error(object sender, ErrorEventArgs e)
-private void <LoadWatcherSymlink>g__symlinkTarget_Changed|8_0(object sender, FileSystemEventArgs e)
+private void <LoadWatcherSymlink>g__symlinkTarget_Changed|11_0(object sender, FileSystemEventArgs e)
 }
 public Oxide.Core.Plugins.Watchers.PluginAddEvent : MulticastDelegate {
 public void .ctor(object object, IntPtr method)
@@ -1564,4 +1604,43 @@ public string TitleCase(string text)
 public string Titleize(string text)
 public string ToSentence(IEnumerable`1<T> items)
 public string Truncate(string text, int max)
+public HashSet`1<T> ToHashSet(IEnumerable`1<T> collection)
+}
+internal Oxide.Pooling.BaseArrayPoolProvider`1 : object {
+private int maxSetCapacity
+private int maxArrayLength
+private T[] empty
+private Stack`1[] pooledArrays
+public void .ctor(int poolCapacity, int arrayMaxLength)
+public T[] Take()
+public T[] Take(int length)
+public void Return(object item)
+protected void OnTake(T[] array)
+protected bool OnReturn(T[] array)
+protected T[] InstantiateArray(int length)
+}
+internal Oxide.Pooling.BasePoolProvider`1 : object {
+private int <MaxPoolSize>k__BackingField
+private Stack`1<T> pooledData
+private int MaxPoolSize
+private int get_MaxPoolSize()
+public T Take()
+public void Return(object item)
+protected T InstantiateItem()
+protected void OnTake(T item)
+protected bool OnReturn(T item)
+}
+internal Oxide.Pooling.CorePoolFactory : object {
+private Type arrayType
+private Type itemType
+private Dictionary`2<Type, IPoolProvider> registeredProviders
+internal void Internal_RegisterProvider(Type type, IPoolProvider provider)
+public IPoolProvider`1<T> GetProvider()
+public bool IsHandledType()
+public IDisposable RegisterProvider(T& provider, Object[] args)
+}
+internal Oxide.Pooling.StringPoolProvider : BasePoolProvider`1<StringBuilder> {
+protected void OnTake(StringBuilder item)
+protected bool OnReturn(StringBuilder item)
+protected StringBuilder InstantiateItem()
 }
