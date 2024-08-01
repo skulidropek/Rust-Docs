@@ -1,0 +1,326 @@
+public Network.Client : NetworkPeer {
+private Connection <Connection>k__BackingField
+public Manager visibility
+public string disconnectReason
+public string connectedAddress
+public int connectedPort
+public string ServerName
+public bool IsOfficialServer
+public Stats IncomingStats
+private bool <ConnectionAccepted>k__BackingField
+public Action`1<string> onDisconnected
+public PlaybackStatsData PlaybackStats
+public Connection Connection
+public bool ConnectionAccepted
+public bool IsRecording
+public bool IsPlaying
+public bool PlayingFinished
+public Connection get_Connection()
+protected void set_Connection(Connection value)
+public bool Connect(string strURL, int port)
+public void Cycle()
+public void Disconnect(string reason, bool sendReasonToServer)
+public bool IsConnected()
+public bool get_ConnectionAccepted()
+protected void set_ConnectionAccepted(bool value)
+protected void OnDisconnected(string str)
+public Networkable CreateNetworkable(UInt32 networkID, UInt32 networkGroup)
+public void DestroyNetworkable(Networkable& networkable)
+public void SetupNetworkable(Networkable net)
+public int GetAveragePing()
+public int GetLastPing()
+public int GetLowestPing()
+public bool StartRecording(string targetFilename, Byte[] header)
+public void StopRecording()
+public bool get_IsRecording()
+public void ManualRecordPacket(byte packetId, Byte[] data, int length)
+public Byte[] StartPlayback(string filename)
+public void StopPlayback()
+public bool get_IsPlaying()
+public bool get_PlayingFinished()
+public void UpdatePlayback(long frameTime, long maxTime)
+}
+public Network.Connection : object {
+public State state
+public bool active
+public bool connected
+public int authLevel
+public bool rejected
+public string authStatus
+public Byte[] token
+public ulong guid
+public ulong userid
+public ulong ownerid
+public string username
+public string os
+public UInt32 protocol
+private TimeAverageValue[] packetsPerSecond
+public DateTime connectionTime
+public string ipaddress
+public MonoBehaviour player
+public Validation validate
+public ClientInfo info
+public bool isAuthenticated
+public void OnDisconnected()
+public bool get_isAuthenticated()
+public void ResetPacketsPerSecond()
+public void AddPacketsPerSecond(Type message)
+public void AddPacketsPerSecond(int index)
+public ulong GetPacketsPerSecond(Type message)
+public ulong GetPacketsPerSecond(int index)
+public float GetSecondsConnected()
+public string ToString()
+}
+public Network.Message : object {
+public Type type
+public NetworkPeer peer
+public Connection connection
+public Read read
+public Write write
+public Read get_read()
+public Write get_write()
+public void Clear()
+}
+public Network.Networkable : object {
+public UInt32 ID
+private Connection <connection>k__BackingField
+public Group group
+public Subscriber subscriber
+public NetworkHandler handler
+internal Server sv
+internal Client cl
+public Connection connection
+public Connection get_connection()
+private void set_connection(Connection value)
+public void Destroy()
+public void EnterPool()
+public void LeavePool()
+public void StartSubscriber()
+public void OnConnected(Connection c)
+public void OnDisconnected()
+public void CloseSubscriber()
+public bool UpdateGroups(Vector3 position)
+public bool SwitchGroup(Group newGroup)
+internal void OnGroupTransition(Group oldGroup)
+internal void UpdateSubscriptions()
+}
+public Network.NetworkHandler {
+public void OnNetworkSubscribersEnter(List`1<Connection> connections)
+public void OnNetworkSubscribersLeave(List`1<Connection> connections)
+public void OnNetworkGroupChange()
+public void OnNetworkGroupLeave(Group group)
+public void OnNetworkGroupEnter(Group group)
+}
+public Network.NetworkPeer : object {
+public Write write
+public Read read
+public Action`1<Message> onMessage
+public Func`5<int, Read, UInt32, int, bool> onUnconnectedMessage
+protected Message StartMessage(Type type, Connection connection)
+public string GetDebug(Connection connection)
+public ulong GetStat(Connection connection, StatTypeLong type)
+}
+public Network.Priority : Enum {
+public int value__
+public Priority Immediate
+public Priority High
+public Priority Medium
+public Priority Low
+}
+public Network.Read : Stream {
+private MemoryStream buffer
+public int length
+public int position
+public int unread
+public bool CanRead
+public bool CanSeek
+public bool CanWrite
+public long Length
+public long Position
+public int get_length()
+public int get_position()
+public int get_unread()
+public bool Bit()
+public byte UInt8()
+public ushort UInt16()
+public UInt32 UInt32()
+public ulong UInt64()
+public sbyte Int8()
+public short Int16()
+public int Int32()
+public long Int64()
+public float Float()
+public double Double()
+public Vector3 Vector3()
+public Quaternion Quaternion()
+public Ray Ray()
+public string String()
+public UInt32 EntityID()
+public UInt32 GroupID()
+public MemoryStream MemoryStreamWithSize()
+public Byte[] BytesWithSize()
+public bool get_CanRead()
+public bool get_CanSeek()
+public bool get_CanWrite()
+public long get_Length()
+public long get_Position()
+public void set_Position(long value)
+public void Write(Byte[] buffer, int offset, int count)
+public void Flush()
+public int ReadByte()
+public long Seek(long offset, SeekOrigin origin)
+public void SetLength(long value)
+}
+public Network.SendInfo : ValueType {
+public SendMethod method
+public sbyte channel
+public Priority priority
+public bool broadcast
+public List`1<Connection> connections
+public Connection connection
+public ulong connectionGUID
+public void .ctor(bool broadcast)
+public void .ctor(List`1<Connection> connections)
+public void .ctor(Connection connection)
+public void .ctor(ulong connection)
+public void .ctor(Group group)
+}
+public Network.SendMethod : Enum {
+public int value__
+public SendMethod Reliable
+public SendMethod ReliableUnordered
+public SendMethod ReliableSequenced
+public SendMethod Unreliable
+public SendMethod UnreliableSequenced
+}
+public Network.Server : NetworkPeer {
+public string ip
+public int port
+public bool compressionEnabled
+public bool logging
+public Manager visibility
+public Action`2<string, Connection> onDisconnected
+public bool debug
+internal UInt32 lastValueGiven
+public List`1<Connection> connections
+private Dictionary`2<ulong, Connection> connectionByGUID
+public bool IsConnected()
+public void Reset()
+public bool Start()
+public void Stop(string shutdownMsg)
+public void Cycle()
+public void Kick(Connection cn, string message)
+public UInt32 TakeUID()
+public void ReturnUID(UInt32 uid)
+internal void ResetUIDs()
+public Networkable CreateNetworkable()
+public Networkable CreateNetworkable(UInt32 uid)
+public void DestroyNetworkable(Networkable& networkable)
+protected void OnDisconnected(string strReason, Connection cn)
+protected Connection FindConnection(ulong guid)
+protected void OnNewConnection()
+protected void OnNewConnection(Connection connection)
+protected void RemoveConnection(Connection connection)
+public int GetAveragePing(Connection connection)
+public void SendUnconnected(UInt32 netAddr, ushort netPort, Byte[] steamResponseBuffer, int packetSize)
+}
+public Network.Stats : object {
+public bool Enabled
+public Node Building
+public Node Previous
+public void Add(string Category, string Object, long Bytes)
+public void Add(string Category, long Bytes)
+public void Flip()
+}
+public Network.Visibility.Group : object {
+protected Manager manager
+public UInt32 ID
+public Bounds bounds
+public HashSet`1<Networkable> networkables
+public List`1<Connection> subscribers
+public bool isGlobal
+public bool get_isGlobal()
+public void .ctor(Manager m, UInt32 id)
+public void Dispose()
+public void Join(Networkable nw)
+public void Leave(Networkable nw)
+public void AddSubscriber(Connection cn)
+public void RemoveSubscriber(Connection cn)
+public bool HasSubscribers()
+public string ToString()
+}
+public Network.Visibility.Manager : object {
+private Dictionary`2<UInt32, Group> groups
+internal Provider provider
+public void Dispose()
+public void .ctor(Provider p)
+public Group TryGet(UInt32 ID)
+public Group Get(UInt32 ID)
+public Subscriber CreateSubscriber(Connection connection)
+public void DestroySubscriber(Subscriber& subscriber)
+public bool IsInside(Group group, Vector3 vPos)
+public Group GetGroup(Vector3 vPos)
+public void GetVisibleFrom(Group center, List`1<Group> groups)
+}
+public Network.Visibility.Provider {
+public void OnGroupAdded(Group group)
+public bool IsInside(Group group, Vector3 vPos)
+public Group GetGroup(Vector3 vPos)
+public void GetVisibleFrom(Group group, List`1<Group> groups)
+}
+public Network.Visibility.Subscriber : object {
+internal Manager manager
+internal Connection connection
+public List`1<Group> subscribed
+public Group Subscribe(Group group)
+public Group Subscribe(UInt32 group)
+public bool IsSubscribed(Group group)
+public void UnsubscribeAll()
+public void Unsubscribe(Group group)
+public void Destroy()
+public void EnterPool()
+public void LeavePool()
+}
+public Network.Write : Stream {
+private MemoryStream buffer
+public bool CanRead
+public bool CanSeek
+public bool CanWrite
+public long Length
+public long Position
+public bool Start()
+public void Send(SendInfo info)
+public void PacketID(Type val)
+public void UInt8(byte val)
+public void UInt16(ushort val)
+public void UInt32(UInt32 val)
+public void UInt64(ulong val)
+public void Int8(sbyte val)
+public void Int16(short val)
+public void Int32(int val)
+public void Int64(long val)
+public void Bool(bool val)
+public void Float(float val)
+public void Double(double val)
+public void Bytes(Byte[] val)
+public void String(string val)
+public void WriteObject(object obj)
+public void Vector3(Vector3 obj)
+public void Quaternion(Quaternion obj)
+public void Ray(Ray obj)
+public void EntityID(UInt32 id)
+public void GroupID(UInt32 id)
+public void BytesWithSize(MemoryStream val)
+public void BytesWithSize(Byte[] b)
+public bool get_CanRead()
+public bool get_CanSeek()
+public bool get_CanWrite()
+public long get_Length()
+public long get_Position()
+public void set_Position(long value)
+public void Flush()
+public int Read(Byte[] buffer, int offset, int count)
+public int ReadByte()
+public long Seek(long offset, SeekOrigin origin)
+public void SetLength(long value)
+}

@@ -1,0 +1,1162 @@
+public Facepunch.Extend.CameraEx : object {
+public void FocusOnRenderer(Camera cam, GameObject obj, Vector3 lookDirection, Vector3 Up, int layerMask)
+public void SaveScreenshot(Camera cam, string name, int width, int height, bool transparent, int SuperSampleSize)
+}
+public Facepunch.Extend.RenderTextureEx : object {
+private Material _alphaBlending
+public Material AlphaBlending
+public Material get_AlphaBlending()
+public void Blit(RenderTexture t, Texture tex)
+public void BlitWithAlphaBlending(RenderTexture t, Texture tex)
+public void ToTexture(RenderTexture t, Texture texture)
+}
+public Facepunch.Extend.TextureSampler : object {
+private Color[] _data
+private int _height
+private int _width
+public Color GetPixelBilinear(float u, float v)
+public Color GetPixel(float x, float y)
+private float Mod(float x, float y)
+private float WrapBetween(float value, float min, float max)
+public void .ctor(Texture2D source)
+}
+public Facepunch.Extend.TransformEx : object {
+public Transform FindChildRecursive(Transform transform, string name)
+public T GetOrAddComponent(Transform transform)
+}
+public Facepunch.SystemInformation : object {
+public Hardware hardware
+public Environment environment
+}
+public Facepunch.Utility.Mesh : object {
+public void Export(Mesh mesh, string filename)
+}
+public Facepunch.Utility.Os : object {
+public void OpenFolder(string folder)
+}
+public Facepunch.Utility.Texture : object {
+public void CompressNormals(Texture2D tex)
+public void DecompressNormals(Texture2D tex)
+public bool SaveAsPng(Texture texture, string fileName)
+public Texture2D CreateReadableCopy(Texture2D texture, int width, int height)
+public Texture2D LimitSize(Texture2D tex, int w, int h)
+public Texture2D LimitSize(Texture2D tex, object maxTextureSize1, object maxTextureSize2)
+}
+public FacepunchBehaviour : MonoBehaviour {
+public void Invoke(Action action, float time)
+public void InvokeRepeating(Action action, float time, float repeat)
+public void InvokeRandomized(Action action, float time, float repeat, float random)
+public void CancelInvoke(Action action)
+public bool IsInvoking(Action action)
+}
+public InvokeAction : ValueType {
+public Behaviour sender
+public Action action
+public float initial
+public float repeat
+public float random
+public void .ctor(Behaviour sender, Action action, float initial, float repeat, float random)
+public bool Equals(InvokeAction other)
+public bool Equals(object obj)
+public int GetHashCode()
+public bool op_Equality(InvokeAction x, InvokeAction y)
+public bool op_Inequality(InvokeAction x, InvokeAction y)
+}
+public InvokeHandler : SingletonComponent`1<InvokeHandler> {
+private ListDictionary`2<InvokeAction, float> curList
+private ListHashSet`1<InvokeAction> addList
+private ListHashSet`1<InvokeAction> delList
+private int nullIndex
+private int nullChecks
+protected void LateUpdate()
+private void DoTick()
+private void RemoveExpired()
+private void QueueAdd(InvokeAction invoke)
+private void QueueRemove(InvokeAction invoke)
+private bool Contains(InvokeAction invoke)
+private void ApplyAdds()
+private void ApplyRemoves()
+public void FindInvokes(Behaviour sender, List`1<InvokeAction> list)
+public int Count()
+public bool IsInvoking(Behaviour sender, Action action)
+public void Invoke(Behaviour sender, Action action, float time)
+public void InvokeRepeating(Behaviour sender, Action action, float time, float repeat)
+public void InvokeRandomized(Behaviour sender, Action action, float time, float repeat, float random)
+public void CancelInvoke(Behaviour sender, Action action)
+private void CreateInstance()
+}
+public LeanAudio : object {
+public float MIN_FREQEUNCY_PERIOD
+public int PROCESSING_ITERATIONS_MAX
+public Single[] generatedWaveDistances
+public int generatedWaveDistancesCount
+private Single[] longList
+public LeanAudioOptions options()
+public LeanAudioStream createAudioStream(AnimationCurve volume, AnimationCurve frequency, LeanAudioOptions options)
+public AudioClip createAudio(AnimationCurve volume, AnimationCurve frequency, LeanAudioOptions options)
+private int createAudioWave(AnimationCurve volume, AnimationCurve frequency, LeanAudioOptions options)
+private AudioClip createAudioFromWave(int waveLength, LeanAudioOptions options)
+private void OnAudioSetPosition(int newPosition)
+public AudioClip generateAudioFromCurve(AnimationCurve curve, int frequencyRate)
+public AudioSource play(AudioClip audio, float volume)
+public AudioSource play(AudioClip audio)
+public AudioSource play(AudioClip audio, Vector3 pos)
+public AudioSource play(AudioClip audio, Vector3 pos, float volume)
+public AudioSource playClipAt(AudioClip clip, Vector3 pos)
+public void printOutAudioClip(AudioClip audioClip, AnimationCurve& curve, float scaleX)
+}
+public LeanAudioOptions : object {
+public LeanAudioWaveStyle waveStyle
+public Vector3[] vibrato
+public Vector3[] modulation
+public int frequencyRate
+public float waveNoiseScale
+public float waveNoiseInfluence
+public bool useSetData
+public LeanAudioStream stream
+public LeanAudioOptions setFrequency(int frequencyRate)
+public LeanAudioOptions setVibrato(Vector3[] vibrato)
+public LeanAudioOptions setWaveSine()
+public LeanAudioOptions setWaveSquare()
+public LeanAudioOptions setWaveSawtooth()
+public LeanAudioOptions setWaveNoise()
+public LeanAudioOptions setWaveStyle(LeanAudioWaveStyle style)
+public LeanAudioOptions setWaveNoiseScale(float waveScale)
+public LeanAudioOptions setWaveNoiseInfluence(float influence)
+}
+public LeanAudioStream : object {
+public int position
+public AudioClip audioClip
+public Single[] audioArr
+public void .ctor(Single[] audioArr)
+public void OnAudioRead(Single[] data)
+public void OnAudioSetPosition(int newPosition)
+}
+public LeanTest : object {
+public int expected
+private int tests
+private int passes
+public float timeout
+public bool timeoutStarted
+public bool testsFinished
+public void debug(string name, bool didPass, string failExplaination)
+public void expect(bool didPass, string definition, string failExplaination)
+public string padRight(int len)
+public float printOutLength(string str)
+public string formatBC(string str, string color)
+public string formatB(string str)
+public string formatC(string str, string color)
+public void overview()
+}
+public LeanTester : MonoBehaviour {
+public float timeout
+public void Start()
+private IEnumerator timeoutCheck()
+}
+public LeanTween : MonoBehaviour {
+public bool throwErrors
+public float tau
+public float PI_DIV2
+private LTSeq[] sequences
+private LTDescr[] tweens
+private Int32[] tweensFinished
+private Int32[] tweensFinishedIds
+private LTDescr tween
+private int tweenMaxSearch
+private int maxTweens
+private int maxSequences
+private int frameRendered
+private GameObject _tweenEmpty
+public float dtEstimated
+public float dtManual
+public float dtActual
+private UInt32 global_counter
+private int i
+private int j
+private int finishedCnt
+public AnimationCurve punch
+public AnimationCurve shake
+private int maxTweenReached
+public int startSearch
+public LTDescr d
+private Action`1[] eventListeners
+private GameObject[] goListeners
+private int eventsMaxSearch
+public int EVENTS_MAX
+public int LISTENERS_MAX
+private int INIT_LISTENERS_MAX
+public int maxSearch
+public int maxSimulataneousTweens
+public int tweensRunning
+public GameObject tweenEmpty
+public void init()
+public int get_maxSearch()
+public int get_maxSimulataneousTweens()
+public int get_tweensRunning()
+public void init(int maxSimultaneousTweens)
+public void init(int maxSimultaneousTweens, int maxSimultaneousSequences)
+public void reset()
+public void Update()
+private void onLevelWasLoaded54(Scene scene, LoadSceneMode mode)
+private void internalOnLevelWasLoaded(int lvl)
+public void update()
+public void removeTween(int i, int uniqueId)
+public void removeTween(int i)
+public Vector3[] add(Vector3[] a, Vector3 b)
+public float closestRot(float from, float to)
+public void cancelAll()
+public void cancelAll(bool callComplete)
+public void cancel(GameObject gameObject)
+public void cancel(GameObject gameObject, bool callOnComplete)
+public void cancel(RectTransform rect)
+public void cancel(GameObject gameObject, int uniqueId, bool callOnComplete)
+public void cancel(LTRect ltRect, int uniqueId)
+public void cancel(int uniqueId)
+public void cancel(int uniqueId, bool callOnComplete)
+public LTDescr descr(int uniqueId)
+public LTDescr description(int uniqueId)
+public LTDescr[] descriptions(GameObject gameObject)
+public void pause(GameObject gameObject, int uniqueId)
+public void pause(int uniqueId)
+public void pause(GameObject gameObject)
+public void pauseAll()
+public void resumeAll()
+public void resume(GameObject gameObject, int uniqueId)
+public void resume(int uniqueId)
+public void resume(GameObject gameObject)
+public bool isTweening(GameObject gameObject)
+public bool isTweening(RectTransform rect)
+public bool isTweening(int uniqueId)
+public bool isTweening(LTRect ltRect)
+public void drawBezierPath(Vector3 a, Vector3 b, Vector3 c, Vector3 d, float arrowSize, Transform arrowTransform)
+public object logError(string error)
+public LTDescr options(LTDescr seed)
+public LTDescr options()
+public GameObject get_tweenEmpty()
+private LTDescr pushNewTween(GameObject gameObject, Vector3 to, float time, LTDescr tween)
+public LTDescr play(RectTransform rectTransform, Sprite[] sprites)
+public LTDescr alpha(GameObject gameObject, float to, float time)
+public LTSeq sequence(bool initSequence)
+public LTDescr alpha(LTRect ltRect, float to, float time)
+public LTDescr textAlpha(RectTransform rectTransform, float to, float time)
+public LTDescr alphaText(RectTransform rectTransform, float to, float time)
+public LTDescr alphaCanvas(CanvasGroup canvasGroup, float to, float time)
+public LTDescr alphaVertex(GameObject gameObject, float to, float time)
+public LTDescr color(GameObject gameObject, Color to, float time)
+public LTDescr textColor(RectTransform rectTransform, Color to, float time)
+public LTDescr colorText(RectTransform rectTransform, Color to, float time)
+public LTDescr delayedCall(float delayTime, Action callback)
+public LTDescr delayedCall(float delayTime, Action`1<object> callback)
+public LTDescr delayedCall(GameObject gameObject, float delayTime, Action callback)
+public LTDescr delayedCall(GameObject gameObject, float delayTime, Action`1<object> callback)
+public LTDescr destroyAfter(LTRect rect, float delayTime)
+public LTDescr move(GameObject gameObject, Vector3 to, float time)
+public LTDescr move(GameObject gameObject, Vector2 to, float time)
+public LTDescr move(GameObject gameObject, Vector3[] to, float time)
+public LTDescr move(GameObject gameObject, LTBezierPath to, float time)
+public LTDescr move(GameObject gameObject, LTSpline to, float time)
+public LTDescr moveSpline(GameObject gameObject, Vector3[] to, float time)
+public LTDescr moveSpline(GameObject gameObject, LTSpline to, float time)
+public LTDescr moveSplineLocal(GameObject gameObject, Vector3[] to, float time)
+public LTDescr move(LTRect ltRect, Vector2 to, float time)
+public LTDescr moveMargin(LTRect ltRect, Vector2 to, float time)
+public LTDescr moveX(GameObject gameObject, float to, float time)
+public LTDescr moveY(GameObject gameObject, float to, float time)
+public LTDescr moveZ(GameObject gameObject, float to, float time)
+public LTDescr moveLocal(GameObject gameObject, Vector3 to, float time)
+public LTDescr moveLocal(GameObject gameObject, Vector3[] to, float time)
+public LTDescr moveLocalX(GameObject gameObject, float to, float time)
+public LTDescr moveLocalY(GameObject gameObject, float to, float time)
+public LTDescr moveLocalZ(GameObject gameObject, float to, float time)
+public LTDescr moveLocal(GameObject gameObject, LTBezierPath to, float time)
+public LTDescr moveLocal(GameObject gameObject, LTSpline to, float time)
+public LTDescr move(GameObject gameObject, Transform to, float time)
+public LTDescr rotate(GameObject gameObject, Vector3 to, float time)
+public LTDescr rotate(LTRect ltRect, float to, float time)
+public LTDescr rotateLocal(GameObject gameObject, Vector3 to, float time)
+public LTDescr rotateX(GameObject gameObject, float to, float time)
+public LTDescr rotateY(GameObject gameObject, float to, float time)
+public LTDescr rotateZ(GameObject gameObject, float to, float time)
+public LTDescr rotateAround(GameObject gameObject, Vector3 axis, float add, float time)
+public LTDescr rotateAroundLocal(GameObject gameObject, Vector3 axis, float add, float time)
+public LTDescr scale(GameObject gameObject, Vector3 to, float time)
+public LTDescr scale(LTRect ltRect, Vector2 to, float time)
+public LTDescr scaleX(GameObject gameObject, float to, float time)
+public LTDescr scaleY(GameObject gameObject, float to, float time)
+public LTDescr scaleZ(GameObject gameObject, float to, float time)
+public LTDescr value(GameObject gameObject, float from, float to, float time)
+public LTDescr value(float from, float to, float time)
+public LTDescr value(GameObject gameObject, Vector2 from, Vector2 to, float time)
+public LTDescr value(GameObject gameObject, Vector3 from, Vector3 to, float time)
+public LTDescr value(GameObject gameObject, Color from, Color to, float time)
+public LTDescr value(GameObject gameObject, Action`1<float> callOnUpdate, float from, float to, float time)
+public LTDescr value(GameObject gameObject, Action`2<float, float> callOnUpdateRatio, float from, float to, float time)
+public LTDescr value(GameObject gameObject, Action`1<Color> callOnUpdate, Color from, Color to, float time)
+public LTDescr value(GameObject gameObject, Action`2<Color, object> callOnUpdate, Color from, Color to, float time)
+public LTDescr value(GameObject gameObject, Action`1<Vector2> callOnUpdate, Vector2 from, Vector2 to, float time)
+public LTDescr value(GameObject gameObject, Action`1<Vector3> callOnUpdate, Vector3 from, Vector3 to, float time)
+public LTDescr value(GameObject gameObject, Action`2<float, object> callOnUpdate, float from, float to, float time)
+public LTDescr delayedSound(AudioClip audio, Vector3 pos, float volume)
+public LTDescr delayedSound(GameObject gameObject, AudioClip audio, Vector3 pos, float volume)
+public LTDescr move(RectTransform rectTrans, Vector3 to, float time)
+public LTDescr moveX(RectTransform rectTrans, float to, float time)
+public LTDescr moveY(RectTransform rectTrans, float to, float time)
+public LTDescr moveZ(RectTransform rectTrans, float to, float time)
+public LTDescr rotate(RectTransform rectTrans, float to, float time)
+public LTDescr rotate(RectTransform rectTrans, Vector3 to, float time)
+public LTDescr rotateAround(RectTransform rectTrans, Vector3 axis, float to, float time)
+public LTDescr rotateAroundLocal(RectTransform rectTrans, Vector3 axis, float to, float time)
+public LTDescr scale(RectTransform rectTrans, Vector3 to, float time)
+public LTDescr size(RectTransform rectTrans, Vector2 to, float time)
+public LTDescr alpha(RectTransform rectTrans, float to, float time)
+public LTDescr color(RectTransform rectTrans, Color to, float time)
+public float tweenOnCurve(LTDescr tweenDescr, float ratioPassed)
+public Vector3 tweenOnCurveVector(LTDescr tweenDescr, float ratioPassed)
+public float easeOutQuadOpt(float start, float diff, float ratioPassed)
+public float easeInQuadOpt(float start, float diff, float ratioPassed)
+public float easeInOutQuadOpt(float start, float diff, float ratioPassed)
+public Vector3 easeInOutQuadOpt(Vector3 start, Vector3 diff, float ratioPassed)
+public float linear(float start, float end, float val)
+public float clerp(float start, float end, float val)
+public float spring(float start, float end, float val)
+public float easeInQuad(float start, float end, float val)
+public float easeOutQuad(float start, float end, float val)
+public float easeInOutQuad(float start, float end, float val)
+public float easeInOutQuadOpt2(float start, float diffBy2, float val, float val2)
+public float easeInCubic(float start, float end, float val)
+public float easeOutCubic(float start, float end, float val)
+public float easeInOutCubic(float start, float end, float val)
+public float easeInQuart(float start, float end, float val)
+public float easeOutQuart(float start, float end, float val)
+public float easeInOutQuart(float start, float end, float val)
+public float easeInQuint(float start, float end, float val)
+public float easeOutQuint(float start, float end, float val)
+public float easeInOutQuint(float start, float end, float val)
+public float easeInSine(float start, float end, float val)
+public float easeOutSine(float start, float end, float val)
+public float easeInOutSine(float start, float end, float val)
+public float easeInExpo(float start, float end, float val)
+public float easeOutExpo(float start, float end, float val)
+public float easeInOutExpo(float start, float end, float val)
+public float easeInCirc(float start, float end, float val)
+public float easeOutCirc(float start, float end, float val)
+public float easeInOutCirc(float start, float end, float val)
+public float easeInBounce(float start, float end, float val)
+public float easeOutBounce(float start, float end, float val)
+public float easeInOutBounce(float start, float end, float val)
+public float easeInBack(float start, float end, float val, float overshoot)
+public float easeOutBack(float start, float end, float val, float overshoot)
+public float easeInOutBack(float start, float end, float val, float overshoot)
+public float easeInElastic(float start, float end, float val, float overshoot, float period)
+public float easeOutElastic(float start, float end, float val, float overshoot, float period)
+public float easeInOutElastic(float start, float end, float val, float overshoot, float period)
+public void addListener(int eventId, Action`1<LTEvent> callback)
+public void addListener(GameObject caller, int eventId, Action`1<LTEvent> callback)
+public bool removeListener(int eventId, Action`1<LTEvent> callback)
+public bool removeListener(int eventId)
+public bool removeListener(GameObject caller, int eventId, Action`1<LTEvent> callback)
+public void dispatchEvent(int eventId)
+public void dispatchEvent(int eventId, object data)
+}
+public LeanTweenType : Enum {
+public int value__
+public LeanTweenType notUsed
+public LeanTweenType linear
+public LeanTweenType easeOutQuad
+public LeanTweenType easeInQuad
+public LeanTweenType easeInOutQuad
+public LeanTweenType easeInCubic
+public LeanTweenType easeOutCubic
+public LeanTweenType easeInOutCubic
+public LeanTweenType easeInQuart
+public LeanTweenType easeOutQuart
+public LeanTweenType easeInOutQuart
+public LeanTweenType easeInQuint
+public LeanTweenType easeOutQuint
+public LeanTweenType easeInOutQuint
+public LeanTweenType easeInSine
+public LeanTweenType easeOutSine
+public LeanTweenType easeInOutSine
+public LeanTweenType easeInExpo
+public LeanTweenType easeOutExpo
+public LeanTweenType easeInOutExpo
+public LeanTweenType easeInCirc
+public LeanTweenType easeOutCirc
+public LeanTweenType easeInOutCirc
+public LeanTweenType easeInBounce
+public LeanTweenType easeOutBounce
+public LeanTweenType easeInOutBounce
+public LeanTweenType easeInBack
+public LeanTweenType easeOutBack
+public LeanTweenType easeInOutBack
+public LeanTweenType easeInElastic
+public LeanTweenType easeOutElastic
+public LeanTweenType easeInOutElastic
+public LeanTweenType easeSpring
+public LeanTweenType easeShake
+public LeanTweenType punch
+public LeanTweenType once
+public LeanTweenType clamp
+public LeanTweenType pingPong
+public LeanTweenType animationCurve
+}
+public ListComponent : FacepunchBehaviour {
+public void Setup()
+public void Clear()
+protected void Awake()
+protected void OnDestroy()
+protected void OnEnable()
+protected void OnDisable()
+}
+public ListComponent`1 : ListComponent {
+public ListHashSet`1<T> InstanceList
+public void Setup()
+public void Clear()
+}
+public LTBezier : object {
+public float length
+private Vector3 a
+private Vector3 aa
+private Vector3 bb
+private Vector3 cc
+private float len
+private Single[] arcLengths
+public void .ctor(Vector3 a, Vector3 b, Vector3 c, Vector3 d, float precision)
+private float map(float u)
+private Vector3 bezierPoint(float t)
+public Vector3 point(float t)
+}
+public LTBezierPath : object {
+public Vector3[] pts
+public float length
+public bool orientToPath
+public bool orientToPath2d
+private LTBezier[] beziers
+private Single[] lengthRatio
+private int currentBezier
+private int previousBezier
+public float distance
+public void .ctor(Vector3[] pts_)
+public void setPoints(Vector3[] pts_)
+public float get_distance()
+public Vector3 point(float ratio)
+public void place2d(Transform transform, float ratio)
+public void placeLocal2d(Transform transform, float ratio)
+public void place(Transform transform, float ratio)
+public void place(Transform transform, float ratio, Vector3 worldUp)
+public void placeLocal(Transform transform, float ratio)
+public void placeLocal(Transform transform, float ratio, Vector3 worldUp)
+public void gizmoDraw(float t)
+}
+public LTDescr : object {
+public bool toggle
+public bool useEstimatedTime
+public bool useFrames
+public bool useManualTime
+public bool usesNormalDt
+public bool hasInitiliazed
+public bool hasExtraOnCompletes
+public bool hasPhysics
+public bool onCompleteOnRepeat
+public bool onCompleteOnStart
+public bool useRecursion
+public float ratioPassed
+public float passed
+public float delay
+public float time
+public float speed
+public float lastVal
+private UInt32 _id
+public int loopCount
+public UInt32 counter
+public float direction
+public float directionLast
+public float overshoot
+public float period
+public float scale
+public bool destroyOnComplete
+public Transform trans
+public LTRect ltRect
+internal Vector3 fromInternal
+internal Vector3 toInternal
+internal Vector3 diff
+internal Vector3 diffDiv2
+public TweenAction type
+private LeanTweenType easeType
+public LeanTweenType loopType
+public bool hasUpdateCallback
+public EaseTypeDelegate easeMethod
+private ActionMethodDelegate <easeInternal>k__BackingField
+private ActionMethodDelegate <initInternal>k__BackingField
+public SpriteRenderer spriteRen
+public RectTransform rectTransform
+public Text uiText
+public Image uiImage
+public RawImage rawImage
+public Sprite[] sprites
+public LTDescrOptional _optional
+public float val
+public float dt
+public Vector3 newVect
+public Vector3 from
+public Vector3 to
+public ActionMethodDelegate easeInternal
+public ActionMethodDelegate initInternal
+public int uniqueId
+public int id
+public LTDescrOptional optional
+public Vector3 get_from()
+public void set_from(Vector3 value)
+public Vector3 get_to()
+public void set_to(Vector3 value)
+public ActionMethodDelegate get_easeInternal()
+public void set_easeInternal(ActionMethodDelegate value)
+public ActionMethodDelegate get_initInternal()
+public void set_initInternal(ActionMethodDelegate value)
+public string ToString()
+public LTDescr cancel(GameObject gameObject)
+public int get_uniqueId()
+public int get_id()
+public LTDescrOptional get_optional()
+public void set_optional(LTDescrOptional value)
+public void reset()
+public LTDescr setMoveX()
+public LTDescr setMoveY()
+public LTDescr setMoveZ()
+public LTDescr setMoveLocalX()
+public LTDescr setMoveLocalY()
+public LTDescr setMoveLocalZ()
+private void initFromInternal()
+public LTDescr setMoveCurved()
+public LTDescr setMoveCurvedLocal()
+public LTDescr setMoveSpline()
+public LTDescr setMoveSplineLocal()
+public LTDescr setScaleX()
+public LTDescr setScaleY()
+public LTDescr setScaleZ()
+public LTDescr setRotateX()
+public LTDescr setRotateY()
+public LTDescr setRotateZ()
+public LTDescr setRotateAround()
+public LTDescr setRotateAroundLocal()
+public LTDescr setAlpha()
+public LTDescr setTextAlpha()
+public LTDescr setAlphaVertex()
+public LTDescr setColor()
+public LTDescr setCallbackColor()
+public LTDescr setTextColor()
+public LTDescr setCanvasAlpha()
+public LTDescr setCanvasGroupAlpha()
+public LTDescr setCanvasColor()
+public LTDescr setCanvasMoveX()
+public LTDescr setCanvasMoveY()
+public LTDescr setCanvasMoveZ()
+private void initCanvasRotateAround()
+public LTDescr setCanvasRotateAround()
+public LTDescr setCanvasRotateAroundLocal()
+public LTDescr setCanvasPlaySprite()
+public LTDescr setCanvasMove()
+public LTDescr setCanvasScale()
+public LTDescr setCanvasSizeDelta()
+private void callback()
+public LTDescr setCallback()
+public LTDescr setValue3()
+public LTDescr setMove()
+public LTDescr setMoveLocal()
+public LTDescr setMoveToTransform()
+public LTDescr setRotate()
+public LTDescr setRotateLocal()
+public LTDescr setScale()
+public LTDescr setGUIMove()
+public LTDescr setGUIMoveMargin()
+public LTDescr setGUIScale()
+public LTDescr setGUIAlpha()
+public LTDescr setGUIRotate()
+public LTDescr setDelayedSound()
+private void init()
+private void initSpeed()
+public LTDescr updateNow()
+public bool updateInternal()
+public void callOnCompletes()
+public LTDescr setFromColor(Color col)
+private void alphaRecursive(Transform transform, float val, bool useRecursion)
+private void colorRecursive(Transform transform, Color toColor, bool useRecursion)
+private void alphaRecursive(RectTransform rectTransform, float val, int recursiveLevel)
+private void alphaRecursiveSprite(Transform transform, float val)
+private void colorRecursiveSprite(Transform transform, Color toColor)
+private void colorRecursive(RectTransform rectTransform, Color toColor)
+private void textAlphaChildrenRecursive(Transform trans, float val, bool useRecursion)
+private void textAlphaRecursive(Transform trans, float val, bool useRecursion)
+private void textColorRecursive(Transform trans, Color toColor)
+private Color tweenColor(LTDescr tween, float val)
+public LTDescr pause()
+public LTDescr resume()
+public LTDescr setAxis(Vector3 axis)
+public LTDescr setDelay(float delay)
+public LTDescr setEase(LeanTweenType easeType)
+public LTDescr setEaseLinear()
+public LTDescr setEaseSpring()
+public LTDescr setEaseInQuad()
+public LTDescr setEaseOutQuad()
+public LTDescr setEaseInOutQuad()
+public LTDescr setEaseInCubic()
+public LTDescr setEaseOutCubic()
+public LTDescr setEaseInOutCubic()
+public LTDescr setEaseInQuart()
+public LTDescr setEaseOutQuart()
+public LTDescr setEaseInOutQuart()
+public LTDescr setEaseInQuint()
+public LTDescr setEaseOutQuint()
+public LTDescr setEaseInOutQuint()
+public LTDescr setEaseInSine()
+public LTDescr setEaseOutSine()
+public LTDescr setEaseInOutSine()
+public LTDescr setEaseInExpo()
+public LTDescr setEaseOutExpo()
+public LTDescr setEaseInOutExpo()
+public LTDescr setEaseInCirc()
+public LTDescr setEaseOutCirc()
+public LTDescr setEaseInOutCirc()
+public LTDescr setEaseInBounce()
+public LTDescr setEaseOutBounce()
+public LTDescr setEaseInOutBounce()
+public LTDescr setEaseInBack()
+public LTDescr setEaseOutBack()
+public LTDescr setEaseInOutBack()
+public LTDescr setEaseInElastic()
+public LTDescr setEaseOutElastic()
+public LTDescr setEaseInOutElastic()
+public LTDescr setEasePunch()
+public LTDescr setEaseShake()
+private Vector3 tweenOnCurve()
+private Vector3 easeInOutQuad()
+private Vector3 easeInQuad()
+private Vector3 easeOutQuad()
+private Vector3 easeLinear()
+private Vector3 easeSpring()
+private Vector3 easeInCubic()
+private Vector3 easeOutCubic()
+private Vector3 easeInOutCubic()
+private Vector3 easeInQuart()
+private Vector3 easeOutQuart()
+private Vector3 easeInOutQuart()
+private Vector3 easeInQuint()
+private Vector3 easeOutQuint()
+private Vector3 easeInOutQuint()
+private Vector3 easeInSine()
+private Vector3 easeOutSine()
+private Vector3 easeInOutSine()
+private Vector3 easeInExpo()
+private Vector3 easeOutExpo()
+private Vector3 easeInOutExpo()
+private Vector3 easeInCirc()
+private Vector3 easeOutCirc()
+private Vector3 easeInOutCirc()
+private Vector3 easeInBounce()
+private Vector3 easeOutBounce()
+private Vector3 easeInOutBounce()
+private Vector3 easeInBack()
+private Vector3 easeOutBack()
+private Vector3 easeInOutBack()
+private Vector3 easeInElastic()
+private Vector3 easeOutElastic()
+private Vector3 easeInOutElastic()
+public LTDescr setOvershoot(float overshoot)
+public LTDescr setPeriod(float period)
+public LTDescr setScale(float scale)
+public LTDescr setEase(AnimationCurve easeCurve)
+public LTDescr setTo(Vector3 to)
+public LTDescr setTo(Transform to)
+public LTDescr setFrom(Vector3 from)
+public LTDescr setFrom(float from)
+public LTDescr setDiff(Vector3 diff)
+public LTDescr setHasInitialized(bool has)
+public LTDescr setId(UInt32 id, UInt32 global_counter)
+public LTDescr setPassed(float passed)
+public LTDescr setTime(float time)
+public LTDescr setSpeed(float speed)
+public LTDescr setRepeat(int repeat)
+public LTDescr setLoopType(LeanTweenType loopType)
+public LTDescr setUseEstimatedTime(bool useEstimatedTime)
+public LTDescr setIgnoreTimeScale(bool useUnScaledTime)
+public LTDescr setUseFrames(bool useFrames)
+public LTDescr setUseManualTime(bool useManualTime)
+public LTDescr setLoopCount(int loopCount)
+public LTDescr setLoopOnce()
+public LTDescr setLoopClamp()
+public LTDescr setLoopClamp(int loops)
+public LTDescr setLoopPingPong()
+public LTDescr setLoopPingPong(int loops)
+public LTDescr setOnComplete(Action onComplete)
+public LTDescr setOnComplete(Action`1<object> onComplete)
+public LTDescr setOnComplete(Action`1<object> onComplete, object onCompleteParam)
+public LTDescr setOnCompleteParam(object onCompleteParam)
+public LTDescr setOnUpdate(Action`1<float> onUpdate)
+public LTDescr setOnUpdateRatio(Action`2<float, float> onUpdate)
+public LTDescr setOnUpdateObject(Action`2<float, object> onUpdate)
+public LTDescr setOnUpdateVector2(Action`1<Vector2> onUpdate)
+public LTDescr setOnUpdateVector3(Action`1<Vector3> onUpdate)
+public LTDescr setOnUpdateColor(Action`1<Color> onUpdate)
+public LTDescr setOnUpdateColor(Action`2<Color, object> onUpdate)
+public LTDescr setOnUpdate(Action`1<Color> onUpdate)
+public LTDescr setOnUpdate(Action`2<Color, object> onUpdate)
+public LTDescr setOnUpdate(Action`2<float, object> onUpdate, object onUpdateParam)
+public LTDescr setOnUpdate(Action`2<Vector3, object> onUpdate, object onUpdateParam)
+public LTDescr setOnUpdate(Action`1<Vector2> onUpdate, object onUpdateParam)
+public LTDescr setOnUpdate(Action`1<Vector3> onUpdate, object onUpdateParam)
+public LTDescr setOnUpdateParam(object onUpdateParam)
+public LTDescr setOrientToPath(bool doesOrient)
+public LTDescr setOrientToPath2d(bool doesOrient2d)
+public LTDescr setRect(LTRect rect)
+public LTDescr setRect(Rect rect)
+public LTDescr setPath(LTBezierPath path)
+public LTDescr setPoint(Vector3 point)
+public LTDescr setDestroyOnComplete(bool doesDestroy)
+public LTDescr setAudio(object audio)
+public LTDescr setOnCompleteOnRepeat(bool isOn)
+public LTDescr setOnCompleteOnStart(bool isOn)
+public LTDescr setRect(RectTransform rect)
+public LTDescr setSprites(Sprite[] sprites)
+public LTDescr setFrameRate(float frameRate)
+public LTDescr setOnStart(Action onStart)
+public LTDescr setDirection(float direction)
+public LTDescr setRecursive(bool useRecursion)
+private void <setMoveX>b__71_0()
+private void <setMoveX>b__71_1()
+private void <setMoveY>b__72_0()
+private void <setMoveY>b__72_1()
+private void <setMoveZ>b__73_0()
+private void <setMoveZ>b__73_1()
+private void <setMoveLocalX>b__74_0()
+private void <setMoveLocalX>b__74_1()
+private void <setMoveLocalY>b__75_0()
+private void <setMoveLocalY>b__75_1()
+private void <setMoveLocalZ>b__76_0()
+private void <setMoveLocalZ>b__76_1()
+private void <setMoveCurved>b__78_0()
+private void <setMoveCurvedLocal>b__79_0()
+private void <setMoveSpline>b__80_0()
+private void <setMoveSplineLocal>b__81_0()
+private void <setScaleX>b__82_0()
+private void <setScaleX>b__82_1()
+private void <setScaleY>b__83_0()
+private void <setScaleY>b__83_1()
+private void <setScaleZ>b__84_0()
+private void <setScaleZ>b__84_1()
+private void <setRotateX>b__85_0()
+private void <setRotateX>b__85_1()
+private void <setRotateY>b__86_0()
+private void <setRotateY>b__86_1()
+private void <setRotateZ>b__87_0()
+private void <setRotateZ>b__87_1()
+private void <setRotateAround>b__88_0()
+private void <setRotateAround>b__88_1()
+private void <setRotateAroundLocal>b__89_0()
+private void <setRotateAroundLocal>b__89_1()
+private void <setAlpha>b__90_0()
+private void <setAlpha>b__90_1()
+private void <setAlpha>b__90_2()
+private void <setTextAlpha>b__91_0()
+private void <setTextAlpha>b__91_1()
+private void <setAlphaVertex>b__92_0()
+private void <setAlphaVertex>b__92_1()
+private void <setColor>b__93_0()
+private void <setColor>b__93_1()
+private void <setCallbackColor>b__94_0()
+private void <setCallbackColor>b__94_1()
+private void <setTextColor>b__95_0()
+private void <setTextColor>b__95_1()
+private void <setCanvasAlpha>b__96_0()
+private void <setCanvasAlpha>b__96_1()
+private void <setCanvasGroupAlpha>b__97_0()
+private void <setCanvasGroupAlpha>b__97_1()
+private void <setCanvasColor>b__98_0()
+private void <setCanvasColor>b__98_1()
+private void <setCanvasMoveX>b__99_0()
+private void <setCanvasMoveX>b__99_1()
+private void <setCanvasMoveY>b__100_0()
+private void <setCanvasMoveY>b__100_1()
+private void <setCanvasMoveZ>b__101_0()
+private void <setCanvasMoveZ>b__101_1()
+private void <setCanvasRotateAround>b__103_0()
+private void <setCanvasRotateAroundLocal>b__104_0()
+private void <setCanvasPlaySprite>b__105_0()
+private void <setCanvasPlaySprite>b__105_1()
+private void <setCanvasMove>b__106_0()
+private void <setCanvasMove>b__106_1()
+private void <setCanvasScale>b__107_0()
+private void <setCanvasScale>b__107_1()
+private void <setCanvasSizeDelta>b__108_0()
+private void <setCanvasSizeDelta>b__108_1()
+private void <setMove>b__112_0()
+private void <setMove>b__112_1()
+private void <setMoveLocal>b__113_0()
+private void <setMoveLocal>b__113_1()
+private void <setMoveToTransform>b__114_0()
+private void <setMoveToTransform>b__114_1()
+private void <setRotate>b__115_0()
+private void <setRotate>b__115_1()
+private void <setRotateLocal>b__116_0()
+private void <setRotateLocal>b__116_1()
+private void <setScale>b__117_0()
+private void <setScale>b__117_1()
+private void <setGUIMove>b__118_0()
+private void <setGUIMove>b__118_1()
+private void <setGUIMoveMargin>b__119_0()
+private void <setGUIMoveMargin>b__119_1()
+private void <setGUIScale>b__120_0()
+private void <setGUIScale>b__120_1()
+private void <setGUIAlpha>b__121_0()
+private void <setGUIAlpha>b__121_1()
+private void <setGUIRotate>b__122_0()
+private void <setGUIRotate>b__122_1()
+private void <setDelayedSound>b__123_0()
+}
+public LTDescrOptional : object {
+private Transform <toTrans>k__BackingField
+private Vector3 <point>k__BackingField
+private Vector3 <axis>k__BackingField
+private float <lastVal>k__BackingField
+private Quaternion <origRotation>k__BackingField
+private LTBezierPath <path>k__BackingField
+private LTSpline <spline>k__BackingField
+public AnimationCurve animationCurve
+public int initFrameCount
+private LTRect <ltRect>k__BackingField
+private Action`1<float> <onUpdateFloat>k__BackingField
+private Action`2<float, float> <onUpdateFloatRatio>k__BackingField
+private Action`2<float, object> <onUpdateFloatObject>k__BackingField
+private Action`1<Vector2> <onUpdateVector2>k__BackingField
+private Action`1<Vector3> <onUpdateVector3>k__BackingField
+private Action`2<Vector3, object> <onUpdateVector3Object>k__BackingField
+private Action`1<Color> <onUpdateColor>k__BackingField
+private Action`2<Color, object> <onUpdateColorObject>k__BackingField
+private Action <onComplete>k__BackingField
+private Action`1<object> <onCompleteObject>k__BackingField
+private object <onCompleteParam>k__BackingField
+private object <onUpdateParam>k__BackingField
+private Action <onStart>k__BackingField
+public Transform toTrans
+public Vector3 point
+public Vector3 axis
+public float lastVal
+public Quaternion origRotation
+public LTBezierPath path
+public LTSpline spline
+public LTRect ltRect
+public Action`1<float> onUpdateFloat
+public Action`2<float, float> onUpdateFloatRatio
+public Action`2<float, object> onUpdateFloatObject
+public Action`1<Vector2> onUpdateVector2
+public Action`1<Vector3> onUpdateVector3
+public Action`2<Vector3, object> onUpdateVector3Object
+public Action`1<Color> onUpdateColor
+public Action`2<Color, object> onUpdateColorObject
+public Action onComplete
+public Action`1<object> onCompleteObject
+public object onCompleteParam
+public object onUpdateParam
+public Action onStart
+public Transform get_toTrans()
+public void set_toTrans(Transform value)
+public Vector3 get_point()
+public void set_point(Vector3 value)
+public Vector3 get_axis()
+public void set_axis(Vector3 value)
+public float get_lastVal()
+public void set_lastVal(float value)
+public Quaternion get_origRotation()
+public void set_origRotation(Quaternion value)
+public LTBezierPath get_path()
+public void set_path(LTBezierPath value)
+public LTSpline get_spline()
+public void set_spline(LTSpline value)
+public LTRect get_ltRect()
+public void set_ltRect(LTRect value)
+public Action`1<float> get_onUpdateFloat()
+public void set_onUpdateFloat(Action`1<float> value)
+public Action`2<float, float> get_onUpdateFloatRatio()
+public void set_onUpdateFloatRatio(Action`2<float, float> value)
+public Action`2<float, object> get_onUpdateFloatObject()
+public void set_onUpdateFloatObject(Action`2<float, object> value)
+public Action`1<Vector2> get_onUpdateVector2()
+public void set_onUpdateVector2(Action`1<Vector2> value)
+public Action`1<Vector3> get_onUpdateVector3()
+public void set_onUpdateVector3(Action`1<Vector3> value)
+public Action`2<Vector3, object> get_onUpdateVector3Object()
+public void set_onUpdateVector3Object(Action`2<Vector3, object> value)
+public Action`1<Color> get_onUpdateColor()
+public void set_onUpdateColor(Action`1<Color> value)
+public Action`2<Color, object> get_onUpdateColorObject()
+public void set_onUpdateColorObject(Action`2<Color, object> value)
+public Action get_onComplete()
+public void set_onComplete(Action value)
+public Action`1<object> get_onCompleteObject()
+public void set_onCompleteObject(Action`1<object> value)
+public object get_onCompleteParam()
+public void set_onCompleteParam(object value)
+public object get_onUpdateParam()
+public void set_onUpdateParam(object value)
+public Action get_onStart()
+public void set_onStart(Action value)
+public void reset()
+public void callOnUpdate(float val, float ratioPassed)
+}
+public LTEvent : object {
+public int id
+public object data
+public void .ctor(int id, object data)
+}
+public LTGUI : object {
+public int RECT_LEVELS
+public int RECTS_PER_LEVEL
+public int BUTTONS_MAX
+private LTRect[] levels
+private Int32[] levelDepths
+private Rect[] buttons
+private Int32[] buttonLevels
+private Int32[] buttonLastFrame
+private LTRect r
+private Color color
+private bool isGUIEnabled
+private int global_counter
+public void init()
+public void initRectCheck()
+public void reset()
+public void update(int updateLevel)
+public bool checkOnScreen(Rect rect)
+public void destroy(int id)
+public void destroyAll(int depth)
+public LTRect label(Rect rect, string label, int depth)
+public LTRect label(LTRect rect, string label, int depth)
+public LTRect texture(Rect rect, Texture texture, int depth)
+public LTRect texture(LTRect rect, Texture texture, int depth)
+public LTRect element(LTRect rect, int depth)
+public bool hasNoOverlap(Rect rect, int depth)
+public bool pressedWithinRect(Rect rect)
+public bool checkWithinRect(Vector2 vec2, Rect rect)
+public Vector2 firstTouch()
+}
+public LTRect : object {
+public Rect _rect
+public float alpha
+public float rotation
+public Vector2 pivot
+public Vector2 margin
+public Rect relativeRect
+public bool rotateEnabled
+public bool rotateFinished
+public bool alphaEnabled
+public string labelStr
+public Element_Type type
+public GUIStyle style
+public bool useColor
+public Color color
+public bool fontScaleToFit
+public bool useSimpleScale
+public bool sizeByHeight
+public Texture texture
+private int _id
+public int counter
+public bool colorTouched
+public bool hasInitiliazed
+public int id
+public float x
+public float y
+public float width
+public float height
+public Rect rect
+public void .ctor(Rect rect)
+public void .ctor(float x, float y, float width, float height)
+public void .ctor(float x, float y, float width, float height, float alpha)
+public void .ctor(float x, float y, float width, float height, float alpha, float rotation)
+public bool get_hasInitiliazed()
+public int get_id()
+public void setId(int id, int counter)
+public void reset()
+public void resetForRotation()
+public float get_x()
+public void set_x(float value)
+public float get_y()
+public void set_y(float value)
+public float get_width()
+public void set_width(float value)
+public float get_height()
+public void set_height(float value)
+public Rect get_rect()
+public void set_rect(Rect value)
+public LTRect setStyle(GUIStyle style)
+public LTRect setFontScaleToFit(bool fontScaleToFit)
+public LTRect setColor(Color color)
+public LTRect setAlpha(float alpha)
+public LTRect setLabel(string str)
+public LTRect setUseSimpleScale(bool useSimpleScale, Rect relativeRect)
+public LTRect setUseSimpleScale(bool useSimpleScale)
+public LTRect setSizeByHeight(bool sizeByHeight)
+public string ToString()
+}
+public LTSeq : object {
+public LTSeq previous
+public LTSeq current
+public LTDescr tween
+public float totalDelay
+public float timeScale
+private int debugIter
+public UInt32 counter
+public bool toggle
+private UInt32 _id
+public int id
+public int get_id()
+public void reset()
+public void init(UInt32 id, UInt32 global_counter)
+private LTSeq addOn()
+private float addPreviousDelays()
+public LTSeq append(float delay)
+public LTSeq append(Action callback)
+public LTSeq append(Action`1<object> callback, object obj)
+public LTSeq append(GameObject gameObject, Action callback)
+public LTSeq append(GameObject gameObject, Action`1<object> callback, object obj)
+public LTSeq append(LTDescr tween)
+public LTSeq insert(LTDescr tween)
+public LTSeq setScale(float timeScale)
+private void setScaleRecursive(LTSeq seq, float timeScale, int count)
+public LTSeq reverse()
+}
+public LTSpline : object {
+public int DISTANCE_COUNT
+public int SUBLINE_COUNT
+public float distance
+public bool constantSpeed
+public Vector3[] pts
+public Vector3[] ptsAdj
+public int ptsAdjLength
+public bool orientToPath
+public bool orientToPath2d
+private int numSections
+private int currPt
+public void .ctor(Vector3[] pts)
+public void .ctor(Vector3[] pts, bool constantSpeed)
+private void init(Vector3[] pts, bool constantSpeed)
+public Vector3 map(float u)
+public Vector3 interp(float t)
+public float ratioAtPoint(Vector3 pt)
+public Vector3 point(float ratio)
+public void place2d(Transform transform, float ratio)
+public void placeLocal2d(Transform transform, float ratio)
+public void place(Transform transform, float ratio)
+public void place(Transform transform, float ratio, Vector3 worldUp)
+public void placeLocal(Transform transform, float ratio)
+public void placeLocal(Transform transform, float ratio, Vector3 worldUp)
+public void gizmoDraw(float t)
+public void drawGizmo(Color color)
+public void drawGizmo(Transform[] arr, Color color)
+public void drawLine(Transform[] arr, float width, Color color)
+public void drawLinesGLLines(Material outlineMaterial, Color color, float width)
+public Vector3[] generateVectors()
+}
+public LTUtility : object {
+public Vector3[] reverse(Vector3[] arr)
+}
+public SingletonComponent : FacepunchBehaviour {
+public void Setup()
+public void Clear()
+protected void Awake()
+protected void OnDestroy()
+}
+public SingletonComponent`1 : SingletonComponent {
+public T Instance
+public void Setup()
+public void Clear()
+}
+public TimeWarning : object {
+public bool Enabled
+public bool EnableScopeCalls
+public Action`1<string> OnBegin
+public Action OnEnd
+private Stopwatch stopwatch
+private string warningName
+private double warningMS
+private int gcCount
+private bool disposed
+public void BeginSample(string name)
+public void EndSample()
+public TimeWarning New(string name, float maxSeconds)
+public TimeWarning New(string name, long maxMilliseconds)
+private void Start(string name, float maxSeconds)
+private void Start(string name, long maxMilliseconds)
+private void System.IDisposable.Dispose()
+}
+public TweenAction : Enum {
+public int value__
+public TweenAction MOVE_X
+public TweenAction MOVE_Y
+public TweenAction MOVE_Z
+public TweenAction MOVE_LOCAL_X
+public TweenAction MOVE_LOCAL_Y
+public TweenAction MOVE_LOCAL_Z
+public TweenAction MOVE_CURVED
+public TweenAction MOVE_CURVED_LOCAL
+public TweenAction MOVE_SPLINE
+public TweenAction MOVE_SPLINE_LOCAL
+public TweenAction SCALE_X
+public TweenAction SCALE_Y
+public TweenAction SCALE_Z
+public TweenAction ROTATE_X
+public TweenAction ROTATE_Y
+public TweenAction ROTATE_Z
+public TweenAction ROTATE_AROUND
+public TweenAction ROTATE_AROUND_LOCAL
+public TweenAction CANVAS_ROTATEAROUND
+public TweenAction CANVAS_ROTATEAROUND_LOCAL
+public TweenAction CANVAS_PLAYSPRITE
+public TweenAction ALPHA
+public TweenAction TEXT_ALPHA
+public TweenAction CANVAS_ALPHA
+public TweenAction CANVASGROUP_ALPHA
+public TweenAction ALPHA_VERTEX
+public TweenAction COLOR
+public TweenAction CALLBACK_COLOR
+public TweenAction TEXT_COLOR
+public TweenAction CANVAS_COLOR
+public TweenAction CANVAS_MOVE_X
+public TweenAction CANVAS_MOVE_Y
+public TweenAction CANVAS_MOVE_Z
+public TweenAction CALLBACK
+public TweenAction MOVE
+public TweenAction MOVE_LOCAL
+public TweenAction MOVE_TO_TRANSFORM
+public TweenAction ROTATE
+public TweenAction ROTATE_LOCAL
+public TweenAction SCALE
+public TweenAction VALUE3
+public TweenAction GUI_MOVE
+public TweenAction GUI_MOVE_MARGIN
+public TweenAction GUI_SCALE
+public TweenAction GUI_ALPHA
+public TweenAction GUI_ROTATE
+public TweenAction DELAYED_SOUND
+public TweenAction CANVAS_MOVE
+public TweenAction CANVAS_SCALE
+public TweenAction CANVAS_SIZEDELTA
+}
+public TweenMode : object {
+public AnimationCurve Punch
+}
+public UnityEngine.DebugEx : object {
+public void Log(object message, StackTraceLogType stacktrace)
+public void Log(object message, Object context, StackTraceLogType stacktrace)
+}
+public UnityEngine.Parallel : object {
+public int MaxThreads
+public void ForEach(IList`1<T> data, Action`1<T> action)
+public void ForEach(IList`1<T> data, int threads, Action`1<T> action)
+public void For(int fromInclusive, int toExclusive, Action`1<int> action)
+public void For(int fromInclusive, int toExclusive, int threads, Action`1<int> action)
+public void Call(Action`2<int, int> action)
+public void Call(int threads, Action`2<int, int> action)
+public IEnumerator Coroutine(Action action)
+}
+public UnityEngine.StringExtensions : object {
+public Vector3 ToVector3(string str)
+public Color ToColor(string str)
+}

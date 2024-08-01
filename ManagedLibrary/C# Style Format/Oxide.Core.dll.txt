@@ -1,0 +1,1384 @@
+public Oxide.Core.Analytics : object {
+private WebRequests Webrequests
+private PluginManager PluginManager
+private Covalence Covalence
+private Lang Lang
+private string trackingId
+private string url
+private string Identifier
+public void Collect()
+public void Event(string category, string action)
+public void SendPayload(string payload)
+}
+internal Oxide.Core.Cleanup : object {
+internal HashSet`1<string> files
+internal void Add(string file)
+internal void Run()
+}
+public Oxide.Core.CommandLine : object {
+private Dictionary`2<string, string> variables
+public void .ctor(String[] commandline)
+public String[] Split(string input)
+public bool HasVariable(string name)
+public string GetVariable(string name)
+public void GetArgument(string var, String& varname, String& format)
+}
+public Oxide.Core.ConcurrentHashSet`1 : object {
+private HashSet`1<T> collection
+private object syncRoot
+public bool IsReadOnly
+public int Count
+public void .ctor(ICollection`1<T> values)
+public bool get_IsReadOnly()
+public int get_Count()
+public bool Contains(T value)
+public bool Add(T value)
+public bool Remove(T value)
+public void Clear()
+public void CopyTo(T[] array, int index)
+public IEnumerator`1<T> GetEnumerator()
+public bool Any(Func`2<T, bool> callback)
+public T[] ToArray()
+public bool TryDequeue(T& value)
+private IEnumerator System.Collections.IEnumerable.GetEnumerator()
+private void System.Collections.Generic.ICollection<T>.Add(T value)
+}
+public Oxide.Core.Configuration.ConfigFile : object {
+private string <Filename>k__BackingField
+public string Filename
+public string get_Filename()
+private void set_Filename(string value)
+protected void .ctor(string filename)
+public T Load(string filename)
+public void Load(string filename)
+public void Save(string filename)
+}
+public Oxide.Core.Configuration.DynamicConfigFile : ConfigFile {
+private JsonSerializerSettings <Settings>k__BackingField
+private Dictionary`2<string, object> _keyvalues
+private JsonSerializerSettings _settings
+private string _chroot
+public JsonSerializerSettings Settings
+public object Item
+public object Item
+public object Item
+public JsonSerializerSettings get_Settings()
+public void set_Settings(JsonSerializerSettings value)
+public void .ctor(string filename)
+public void Load(string filename)
+public T ReadObject(string filename)
+public void Save(string filename)
+public void WriteObject(T config, bool sync, string filename)
+public bool Exists(string filename)
+private string CheckPath(string filename)
+public string SanitiseName(string name)
+public void Clear()
+public void Remove(string key)
+public object get_Item(string key)
+public void set_Item(string key, object value)
+public object get_Item(string keyLevel1, string keyLevel2)
+public void set_Item(string keyLevel1, string keyLevel2, object value)
+public object get_Item(string keyLevel1, string keyLevel2, string keyLevel3)
+public void set_Item(string keyLevel1, string keyLevel2, string keyLevel3, object value)
+public object ConvertValue(object value, Type destinationType)
+public T ConvertValue(object value)
+public object Get(String[] path)
+public T Get(String[] path)
+public void Set(Object[] pathAndTrailingValue)
+public IEnumerator`1<KeyValuePair`2<string, object>> GetEnumerator()
+private IEnumerator System.Collections.IEnumerable.GetEnumerator()
+}
+public Oxide.Core.Configuration.KeyValuesConverter : JsonConverter {
+public bool CanConvert(Type objectType)
+private void Throw(string message)
+public object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+public void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+}
+public Oxide.Core.Configuration.OxideConfig : ConfigFile {
+private OxideOptions <Options>k__BackingField
+private OxideConsole <Console>k__BackingField
+private OxideRcon <Rcon>k__BackingField
+public OxideOptions Options
+public OxideConsole Console
+public OxideRcon Rcon
+public OxideOptions get_Options()
+public void set_Options(OxideOptions value)
+public OxideConsole get_Console()
+public void set_Console(OxideConsole value)
+public OxideRcon get_Rcon()
+public void set_Rcon(OxideRcon value)
+public void .ctor(string filename)
+}
+public Oxide.Core.Database.Connection : object {
+private string <ConnectionString>k__BackingField
+private bool <ConnectionPersistent>k__BackingField
+private DbConnection <Con>k__BackingField
+private Plugin <Plugin>k__BackingField
+private long <LastInsertRowId>k__BackingField
+public string ConnectionString
+public bool ConnectionPersistent
+public DbConnection Con
+public Plugin Plugin
+public long LastInsertRowId
+public string get_ConnectionString()
+public void set_ConnectionString(string value)
+public bool get_ConnectionPersistent()
+public void set_ConnectionPersistent(bool value)
+public DbConnection get_Con()
+public void set_Con(DbConnection value)
+public Plugin get_Plugin()
+public void set_Plugin(Plugin value)
+public long get_LastInsertRowId()
+public void set_LastInsertRowId(long value)
+public void .ctor(string connection, bool persistent)
+}
+public Oxide.Core.Database.IDatabaseProvider {
+public Connection OpenDb(string file, Plugin plugin, bool persistent)
+public void CloseDb(Connection db)
+public Sql NewSql()
+public void Query(Sql sql, Connection db, Action`1<List`1<Dictionary`2<string, object>>> callback)
+public void ExecuteNonQuery(Sql sql, Connection db, Action`1<int> callback)
+public void Insert(Sql sql, Connection db, Action`1<int> callback)
+public void Update(Sql sql, Connection db, Action`1<int> callback)
+public void Delete(Sql sql, Connection db, Action`1<int> callback)
+}
+public Oxide.Core.Database.Sql : object {
+private Regex Filter
+private Regex RxParams
+private Object[] _args
+private string _sql
+private Object[] _argsFinal
+private Sql _rhs
+private string _sqlFinal
+public Sql Builder
+public string SQL
+public Object[] Arguments
+public void .ctor(string sql, Object[] args)
+public Sql get_Builder()
+public string get_SQL()
+public Object[] get_Arguments()
+private void Build()
+public Sql Append(Sql sql)
+public Sql Append(string sql, Object[] args)
+private bool Is(Sql sql, string sqltype)
+private void Build(StringBuilder sb, List`1<object> args, Sql lhs)
+public Sql Where(string sql, Object[] args)
+public Sql OrderBy(Object[] columns)
+public Sql Select(Object[] columns)
+public Sql From(Object[] tables)
+public Sql GroupBy(Object[] columns)
+private SqlJoinClause Join(string joinType, string table)
+public SqlJoinClause InnerJoin(string table)
+public SqlJoinClause LeftJoin(string table)
+public string ProcessParams(string sql, Object[] argsSrc, List`1<object> argsDest)
+public void AddParams(IDbCommand cmd, Object[] items, string parameterPrefix)
+public void AddParam(IDbCommand cmd, object item, string parameterPrefix)
+}
+public Oxide.Core.DataFileSystem : object {
+private string <Directory>k__BackingField
+private Dictionary`2<string, DynamicConfigFile> _datafiles
+private JsonSerializerSettings _settings
+public string Directory
+public string get_Directory()
+private void set_Directory(string value)
+public void .ctor(string directory)
+public DynamicConfigFile GetFile(string name)
+public bool ExistsDatafile(string name)
+public DynamicConfigFile GetDatafile(string name)
+public void SaveDatafile(string name)
+public T ReadObject(string name)
+public void WriteObject(string name, T Object, bool sync)
+}
+public Oxide.Core.Event : object {
+public Callback First
+public Callback Last
+internal object Lock
+internal bool Invoking
+internal Queue`1<Callback> RemovedQueue
+public void Remove(Callback& callback)
+public void Remove(Callback`1& callback)
+public void Remove(Callback`2& callback)
+public void Remove(Callback`3& callback)
+public void Remove(Callback`4& callback)
+public void Remove(Callback`5& callback)
+public void Add(Callback callback)
+public Callback Add(Action callback)
+public void Invoke()
+}
+public Oxide.Core.Event`1 : object {
+public Callback`1<T> First
+public Callback`1<T> Last
+internal object Lock
+internal bool Invoking
+internal Queue`1<Callback`1<T>> RemovedQueue
+public void Add(Callback`1<T> callback)
+public Callback`1<T> Add(Action`1<T> callback)
+public void Invoke(T arg0)
+}
+public Oxide.Core.Event`2 : object {
+public Callback`2<T1, T2> First
+public Callback`2<T1, T2> Last
+internal object Lock
+internal bool Invoking
+internal Queue`1<Callback`2<T1, T2>> RemovedQueue
+public void Add(Callback`2<T1, T2> callback)
+public Callback`2<T1, T2> Add(Action`2<T1, T2> callback)
+public void Invoke()
+public void Invoke(T1 arg0)
+public void Invoke(T1 arg0, T2 arg1)
+}
+public Oxide.Core.Event`3 : object {
+public Callback`3<T1, T2, T3> First
+public Callback`3<T1, T2, T3> Last
+internal object Lock
+internal bool Invoking
+internal Queue`1<Callback`3<T1, T2, T3>> RemovedQueue
+public void Add(Callback`3<T1, T2, T3> callback)
+public Callback`3<T1, T2, T3> Add(Action`3<T1, T2, T3> callback)
+public void Invoke()
+public void Invoke(T1 arg0)
+public void Invoke(T1 arg0, T2 arg1)
+public void Invoke(T1 arg0, T2 arg1, T3 arg2)
+}
+public Oxide.Core.Event`4 : object {
+public Callback`4<T1, T2, T3, T4> First
+public Callback`4<T1, T2, T3, T4> Last
+internal object Lock
+internal bool Invoking
+internal Queue`1<Callback`4<T1, T2, T3, T4>> RemovedQueue
+public void Add(Callback`4<T1, T2, T3, T4> callback)
+public Callback`4<T1, T2, T3, T4> Add(Action`4<T1, T2, T3, T4> callback)
+public void Invoke()
+public void Invoke(T1 arg0)
+public void Invoke(T1 arg0, T2 arg1)
+public void Invoke(T1 arg0, T2 arg1, T3 arg2)
+public void Invoke(T1 arg0, T2 arg1, T3 arg2, T4 arg3)
+}
+public Oxide.Core.Event`5 : object {
+public Callback`5<T1, T2, T3, T4, T5> First
+public Callback`5<T1, T2, T3, T4, T5> Last
+internal object Lock
+internal bool Invoking
+internal Queue`1<Callback`5<T1, T2, T3, T4, T5>> RemovedQueue
+public void Add(Callback`5<T1, T2, T3, T4, T5> callback)
+public Callback`5<T1, T2, T3, T4, T5> Add(Action`5<T1, T2, T3, T4, T5> callback)
+public void Invoke()
+public void Invoke(T1 arg0)
+public void Invoke(T1 arg0, T2 arg1)
+public void Invoke(T1 arg0, T2 arg1, T3 arg2)
+public void Invoke(T1 arg0, T2 arg1, T3 arg2, T4 arg3)
+public void Invoke(T1 arg0, T2 arg1, T3 arg2, T4 arg3, T5 arg4)
+}
+public Oxide.Core.ExceptionHandler : object {
+private Dictionary`2<Type, Func`2<Exception, string>> Handlers
+public void RegisterType(Type ex, Func`2<Exception, string> handler)
+public string FormatException(Exception ex)
+}
+public Oxide.Core.ExtensionMethods : object {
+public string Basename(string text, string extension)
+public bool Contains(T[] array, T value)
+public string Dirname(string text)
+public string Humanize(string name)
+public bool IsSteamId(string id)
+public bool IsSteamId(ulong id)
+public string QuoteSafe(string text)
+public string Quote(string text)
+public T Sample(T[] array)
+public string Sanitize(string text)
+public string SentenceCase(string text)
+public string TitleCase(string text)
+public string Titleize(string text)
+public string ToSentence(IEnumerable`1<T> items)
+public string Truncate(string text, int max)
+}
+public Oxide.Core.Extensions.Extension : object {
+private bool <IsGameExtension>k__BackingField
+private ExtensionManager <Manager>k__BackingField
+private String[] <WhitelistAssemblies>k__BackingField
+private String[] <WhitelistNamespaces>k__BackingField
+public string Name
+public string Author
+public VersionNumber Version
+public bool IsGameExtension
+public ExtensionManager Manager
+public String[] WhitelistAssemblies
+public String[] WhitelistNamespaces
+public string get_Name()
+public string get_Author()
+public VersionNumber get_Version()
+public bool get_IsGameExtension()
+protected void set_IsGameExtension(bool value)
+public ExtensionManager get_Manager()
+private void set_Manager(ExtensionManager value)
+public String[] get_WhitelistAssemblies()
+protected void set_WhitelistAssemblies(String[] value)
+public String[] get_WhitelistNamespaces()
+protected void set_WhitelistNamespaces(String[] value)
+public void .ctor(ExtensionManager manager)
+public void Load()
+public void LoadPluginWatchers(string pluginDirectory)
+public void OnModLoad()
+public void OnShutdown()
+}
+public Oxide.Core.Extensions.ExtensionManager : object {
+private IList`1<Extension> extensions
+private string coreExtSearchPattern
+private string gameExtSearchPattern
+private string communitySearchPattern
+private CompoundLogger <Logger>k__BackingField
+private IList`1<PluginLoader> pluginloaders
+private IDictionary`2<string, Library> libraries
+private IList`1<PluginChangeWatcher> changewatchers
+public CompoundLogger Logger
+public CompoundLogger get_Logger()
+private void set_Logger(CompoundLogger value)
+public void .ctor(CompoundLogger logger)
+public void RegisterPluginLoader(PluginLoader loader)
+public IEnumerable`1<PluginLoader> GetPluginLoaders()
+public void RegisterLibrary(string name, Library library)
+public IEnumerable`1<string> GetLibraries()
+public Library GetLibrary(string name)
+public void RegisterPluginChangeWatcher(PluginChangeWatcher watcher)
+public IEnumerable`1<PluginChangeWatcher> GetPluginChangeWatchers()
+public void LoadExtension(string filename)
+public void LoadAllExtensions(string directory)
+public IEnumerable`1<Extension> GetAllExtensions()
+public bool IsExtensionPresent(string name)
+public Extension GetExtension(string name)
+}
+public Oxide.Core.Interface : object {
+private OxideMod <Oxide>k__BackingField
+private NativeDebugCallback <DebugCallback>k__BackingField
+public OxideMod Oxide
+public NativeDebugCallback DebugCallback
+public OxideMod get_Oxide()
+private void set_Oxide(OxideMod value)
+public NativeDebugCallback get_DebugCallback()
+public void set_DebugCallback(NativeDebugCallback value)
+public void Initialize()
+public object CallDeprecatedHook(string oldHook, string newHook, DateTime expireDate, Object[] args)
+public object CallDeprecated(string oldHook, string newHook, DateTime expireDate, Object[] args)
+public object CallHook(string hook, Object[] args)
+public object Call(string hook, Object[] args)
+public T Call(string hook, Object[] args)
+public OxideMod GetMod()
+}
+public Oxide.Core.Libraries.Covalence.CommandAlreadyExistsException : Exception {
+public void .ctor(string cmd)
+public void .ctor(string message, Exception inner)
+protected void .ctor(SerializationInfo info, StreamingContext context)
+}
+public Oxide.Core.Libraries.Covalence.CommandCallback : MulticastDelegate {
+public void .ctor(object object, IntPtr method)
+public bool Invoke(IPlayer caller, string command, String[] args)
+public IAsyncResult BeginInvoke(IPlayer caller, string command, String[] args, AsyncCallback callback, object object)
+public bool EndInvoke(IAsyncResult result)
+}
+public Oxide.Core.Libraries.Covalence.CommandHandler : object {
+private CommandCallback callback
+private Func`2<string, bool> commandFilter
+public void .ctor(CommandCallback callback, Func`2<string, bool> commandFilter)
+public bool HandleChatMessage(IPlayer player, string message)
+public bool HandleConsoleMessage(IPlayer player, string message)
+private bool HandleCommand(IPlayer player, string command, String[] args)
+private void ParseCommand(string argstr, String& cmd, String[]& args)
+}
+public Oxide.Core.Libraries.Covalence.CommandType : Enum {
+public int value__
+public CommandType Chat
+public CommandType Console
+}
+public Oxide.Core.Libraries.Covalence.Covalence : Library {
+private ICommandSystem cmdSystem
+private ICovalenceProvider provider
+private Logger logger
+private IServer <Server>k__BackingField
+private IPlayerManager <Players>k__BackingField
+public bool IsGlobal
+public IServer Server
+public IPlayerManager Players
+public string Game
+public UInt32 ClientAppId
+public UInt32 ServerAppId
+public bool get_IsGlobal()
+public IServer get_Server()
+private void set_Server(IServer value)
+public IPlayerManager get_Players()
+private void set_Players(IPlayerManager value)
+public string get_Game()
+public UInt32 get_ClientAppId()
+public UInt32 get_ServerAppId()
+public string FormatText(string text)
+internal void Initialize()
+public void RegisterCommand(string command, Plugin plugin, CommandCallback callback)
+public void UnregisterCommand(string command, Plugin plugin)
+}
+public Oxide.Core.Libraries.Covalence.Element : object {
+public ElementType Type
+public object Val
+public List`1<Element> Body
+private void .ctor(ElementType type, object val)
+public Element String(object s)
+public Element Tag(ElementType type)
+public Element ParamTag(ElementType type, object val)
+}
+public Oxide.Core.Libraries.Covalence.ElementType : Enum {
+public int value__
+public ElementType String
+public ElementType Bold
+public ElementType Italic
+public ElementType Color
+public ElementType Size
+}
+public Oxide.Core.Libraries.Covalence.Formatter : object {
+private Dictionary`2<string, string> colorNames
+private Dictionary`2<ElementType, Nullable`1<TokenType>> closeTags
+private List`1<Element> Parse(List`1<Token> tokens)
+public List`1<Element> Parse(string text)
+private Tag Translation(Element e, Dictionary`2<ElementType, Func`2<object, Tag>> translations)
+private string ToTreeFormat(List`1<Element> tree, Dictionary`2<ElementType, Func`2<object, Tag>> translations)
+private string ToTreeFormat(string text, Dictionary`2<ElementType, Func`2<object, Tag>> translations)
+private string RGBAtoRGB(object rgba)
+public string ToPlaintext(string text)
+public string ToUnity(string text)
+public string ToRustLegacy(string text)
+public string ToRoKAnd7DTD(string text)
+public string ToTerraria(string text)
+}
+public Oxide.Core.Libraries.Covalence.GenericPosition : object {
+public float X
+public float Y
+public float Z
+public void .ctor(float x, float y, float z)
+public bool Equals(object obj)
+public int GetHashCode()
+public string ToString()
+}
+public Oxide.Core.Libraries.Covalence.ICommandSystem {
+public void RegisterCommand(string command, Plugin plugin, CommandCallback callback)
+public void UnregisterCommand(string command, Plugin plugin)
+}
+public Oxide.Core.Libraries.Covalence.ICovalenceProvider {
+public string GameName
+public UInt32 ClientAppId
+public UInt32 ServerAppId
+public string get_GameName()
+public UInt32 get_ClientAppId()
+public UInt32 get_ServerAppId()
+public IServer CreateServer()
+public IPlayerManager CreatePlayerManager()
+public ICommandSystem CreateCommandSystemProvider()
+public string FormatText(string text)
+}
+public Oxide.Core.Libraries.Covalence.IPlayer {
+public object Object
+public CommandType LastCommand
+public string Name
+public string Id
+public string Address
+public int Ping
+public CultureInfo Language
+public bool IsConnected
+public bool IsSleeping
+public bool IsAdmin
+public bool IsBanned
+public TimeSpan BanTimeRemaining
+public float Health
+public float MaxHealth
+public object get_Object()
+public CommandType get_LastCommand()
+public void set_LastCommand(CommandType value)
+public string get_Name()
+public string get_Id()
+public string get_Address()
+public int get_Ping()
+public CultureInfo get_Language()
+public bool get_IsConnected()
+public bool get_IsSleeping()
+public bool get_IsAdmin()
+public bool get_IsBanned()
+public void Ban(string reason, TimeSpan duration)
+public TimeSpan get_BanTimeRemaining()
+public void Heal(float amount)
+public float get_Health()
+public void set_Health(float value)
+public void Hurt(float amount)
+public void Kick(string reason)
+public void Kill()
+public float get_MaxHealth()
+public void set_MaxHealth(float value)
+public void Rename(string name)
+public void Teleport(float x, float y, float z)
+public void Unban()
+public void Position(Single& x, Single& y, Single& z)
+public GenericPosition Position()
+public void Message(string message)
+public void Message(string message, Object[] args)
+public void Reply(string message)
+public void Reply(string message, Object[] args)
+public void Command(string command, Object[] args)
+public bool HasPermission(string perm)
+public void GrantPermission(string perm)
+public void RevokePermission(string perm)
+public bool BelongsToGroup(string group)
+public void AddToGroup(string group)
+public void RemoveFromGroup(string group)
+}
+public Oxide.Core.Libraries.Covalence.IPlayerManager {
+public IEnumerable`1<IPlayer> All
+public IEnumerable`1<IPlayer> Connected
+public IEnumerable`1<IPlayer> get_All()
+public IEnumerable`1<IPlayer> get_Connected()
+public IPlayer FindPlayerById(string id)
+public IPlayer FindPlayerByObj(object obj)
+public IPlayer FindPlayer(string partialNameOrId)
+public IEnumerable`1<IPlayer> FindPlayers(string partialNameOrId)
+}
+public Oxide.Core.Libraries.Covalence.IServer {
+public string Name
+public IPAddress Address
+public ushort Port
+public string Version
+public string Protocol
+public CultureInfo Language
+public int Players
+public int MaxPlayers
+public DateTime Time
+public string get_Name()
+public void set_Name(string value)
+public IPAddress get_Address()
+public ushort get_Port()
+public string get_Version()
+public string get_Protocol()
+public CultureInfo get_Language()
+public int get_Players()
+public int get_MaxPlayers()
+public void set_MaxPlayers(int value)
+public DateTime get_Time()
+public void set_Time(DateTime value)
+public void Ban(string id, string reason, TimeSpan duration)
+public TimeSpan BanTimeRemaining(string id)
+public bool IsBanned(string id)
+public void Save()
+public void Unban(string id)
+public void Broadcast(string message)
+public void Command(string command, Object[] args)
+}
+public Oxide.Core.Libraries.Global : Library {
+public bool IsGlobal
+public bool get_IsGlobal()
+public VersionNumber MakeVersion(ushort major, ushort minor, ushort patch)
+public object New(Type type, Object[] args)
+}
+public Oxide.Core.Libraries.GroupData : object {
+private string <Title>k__BackingField
+private int <Rank>k__BackingField
+private HashSet`1<string> <Perms>k__BackingField
+private string <ParentGroup>k__BackingField
+public string Title
+public int Rank
+public HashSet`1<string> Perms
+public string ParentGroup
+public string get_Title()
+public void set_Title(string value)
+public int get_Rank()
+public void set_Rank(int value)
+public HashSet`1<string> get_Perms()
+public void set_Perms(HashSet`1<string> value)
+public string get_ParentGroup()
+public void set_ParentGroup(string value)
+}
+public Oxide.Core.Libraries.HttpWebRequestExtensions : object {
+private String[] RestrictedHeaders
+private Dictionary`2<string, PropertyInfo> HeaderProperties
+public void SetRawHeaders(WebRequest request, Dictionary`2<string, string> headers)
+public void SetRawHeader(WebRequest request, string name, string value)
+}
+public Oxide.Core.Libraries.Lang : Library {
+private string defaultLang
+private LangData langData
+private Dictionary`2<string, Dictionary`2<string, string>> langFiles
+private Dictionary`2<Plugin, Callback`2<Plugin, PluginManager>> pluginRemovedFromManager
+public bool IsGlobal
+public bool get_IsGlobal()
+public void RegisterMessages(Dictionary`2<string, string> messages, Plugin plugin, string lang)
+public string GetLanguage(string userId)
+public String[] GetLanguages(Plugin plugin)
+public string GetMessage(string key, Plugin plugin, string userId)
+public Dictionary`2<string, string> GetMessages(string lang, Plugin plugin)
+public string GetServerLanguage()
+public void SetLanguage(string lang, string userId)
+public void SetServerLanguage(string lang)
+private void AddLangFile(string file, Dictionary`2<string, string> langFile, Plugin plugin)
+private Dictionary`2<string, string> GetMessageFile(string plugin, string lang)
+private string GetMessageKey(string key, Plugin plugin, string lang)
+private bool MergeMessages(Dictionary`2<string, string> existingMessages, Dictionary`2<string, string> messages)
+private void SaveData()
+private void plugin_OnRemovedFromManager(Plugin sender, PluginManager manager)
+}
+public Oxide.Core.Libraries.Library : object {
+private IDictionary`2<string, MethodInfo> functions
+private IDictionary`2<string, PropertyInfo> properties
+private bool <IsGlobal>k__BackingField
+private Exception <LastException>k__BackingField
+public bool IsGlobal
+public Exception LastException
+public bool op_Implicit(Library library)
+public bool op_LogicalNot(Library library)
+public bool get_IsGlobal()
+public Exception get_LastException()
+protected void set_LastException(Exception value)
+public void Shutdown()
+public IEnumerable`1<string> GetFunctionNames()
+public IEnumerable`1<string> GetPropertyNames()
+public MethodInfo GetFunction(string name)
+public PropertyInfo GetProperty(string name)
+}
+public Oxide.Core.Libraries.LibraryFunction : Attribute {
+private string <Name>k__BackingField
+public string Name
+public string get_Name()
+public void .ctor(string name)
+}
+public Oxide.Core.Libraries.LibraryProperty : Attribute {
+private string <Name>k__BackingField
+public string Name
+public string get_Name()
+private void set_Name(string value)
+public void .ctor(string name)
+}
+public Oxide.Core.Libraries.Permission : Library {
+private Dictionary`2<Plugin, HashSet`1<string>> permset
+private Dictionary`2<string, UserData> userdata
+private Dictionary`2<string, GroupData> groupdata
+private Func`2<string, bool> validate
+private bool <IsLoaded>k__BackingField
+public bool IsGlobal
+public bool IsLoaded
+public bool get_IsGlobal()
+public bool get_IsLoaded()
+private void set_IsLoaded(bool value)
+private void LoadFromDatafile()
+public void Export(string prefix)
+private void SaveUsers()
+private void SaveGroups()
+public void RegisterValidate(Func`2<string, bool> val)
+public void CleanUp()
+public void MigrateGroup(string oldGroup, string newGroup)
+public void RegisterPermission(string name, Plugin owner)
+public bool PermissionExists(string name, Plugin owner)
+private void owner_OnRemovedFromManager(Plugin sender, PluginManager manager)
+public bool UserIdValid(string id)
+public bool UserExists(string id)
+private UserData GetUserData(string id)
+public void UpdateNickname(string id, string nickname)
+public bool UserHasAnyGroup(string id)
+public bool GroupsHavePermission(HashSet`1<string> groups, string perm)
+public bool GroupHasPermission(string name, string perm)
+public bool UserHasPermission(string id, string perm)
+public String[] GetUserGroups(string id)
+public String[] GetUserPermissions(string id)
+public String[] GetGroupPermissions(string name, bool parents)
+public String[] GetPermissions()
+public String[] GetPermissionUsers(string perm)
+public String[] GetPermissionGroups(string perm)
+public void AddUserGroup(string id, string name)
+public void RemoveUserGroup(string id, string name)
+public bool UserHasGroup(string id, string name)
+public bool GroupExists(string group)
+public String[] GetGroups()
+public String[] GetUsersInGroup(string group)
+public string GetGroupTitle(string group)
+public int GetGroupRank(string group)
+public void GrantUserPermission(string id, string perm, Plugin owner)
+public void RevokeUserPermission(string id, string perm)
+public void GrantGroupPermission(string name, string perm, Plugin owner)
+public void RevokeGroupPermission(string name, string perm)
+public bool CreateGroup(string group, string title, int rank)
+public bool RemoveGroup(string group)
+public bool SetGroupTitle(string group, string title)
+public bool SetGroupRank(string group, int rank)
+public string GetGroupParent(string group)
+public bool SetGroupParent(string group, string parent)
+private bool HasCircularParent(string group, string parent)
+private bool <CleanUp>b__16_0(string k)
+}
+public Oxide.Core.Libraries.Plugins : Library {
+private PluginManager <PluginManager>k__BackingField
+public bool IsGlobal
+public PluginManager PluginManager
+public bool get_IsGlobal()
+public PluginManager get_PluginManager()
+private void set_PluginManager(PluginManager value)
+public void .ctor(PluginManager pluginmanager)
+public bool Exists(string name)
+public Plugin Find(string name)
+public object CallHook(string hookname, Object[] args)
+public Plugin[] GetAll()
+}
+public Oxide.Core.Libraries.Time : Library {
+private DateTime Epoch
+public bool IsGlobal
+public bool get_IsGlobal()
+public UInt32 GetUnixTimestamp()
+public DateTime GetCurrentTime()
+}
+public Oxide.Core.Libraries.Timer : Library {
+private int <Count>k__BackingField
+internal object Lock
+internal OxideMod Oxide
+public int TimeSlots
+public int LastTimeSlot
+public float TickDuration
+private TimeSlot[] timeSlots
+private Queue`1<TimerInstance> expiredInstanceQueue
+private int currentSlot
+private double nextSlotAt
+public bool IsGlobal
+public int Count
+public bool get_IsGlobal()
+public int get_Count()
+private void set_Count(int value)
+public void Update(float delta)
+internal TimerInstance AddTimer(int repetitions, float delay, Action callback, Plugin owner)
+private void InsertTimer(TimerInstance timer, bool in_past)
+public TimerInstance Once(float delay, Action callback, Plugin owner)
+public TimerInstance Repeat(float delay, int reps, Action callback, Plugin owner)
+public TimerInstance NextFrame(Action callback)
+}
+public Oxide.Core.Libraries.UserData : object {
+private string <LastSeenNickname>k__BackingField
+private HashSet`1<string> <Perms>k__BackingField
+private HashSet`1<string> <Groups>k__BackingField
+public string LastSeenNickname
+public HashSet`1<string> Perms
+public HashSet`1<string> Groups
+public string get_LastSeenNickname()
+public void set_LastSeenNickname(string value)
+public HashSet`1<string> get_Perms()
+public void set_Perms(HashSet`1<string> value)
+public HashSet`1<string> get_Groups()
+public void set_Groups(HashSet`1<string> value)
+}
+public Oxide.Core.Libraries.WebRequests : Library {
+public float Timeout
+private Queue`1<WebRequest> queue
+private object syncroot
+private Thread workerthread
+private AutoResetEvent workevent
+private bool shutdown
+private int maxWorkerThreads
+private int maxCompletionPortThreads
+public void Shutdown()
+private void Worker()
+public void EnqueueGet(string url, Action`2<int, string> callback, Plugin owner, Dictionary`2<string, string> headers, float timeout)
+public void EnqueueDelete(string url, string body, Action`2<int, string> callback, Plugin owner, Dictionary`2<string, string> headers, float timeout)
+public void EnqueuePatch(string url, string body, Action`2<int, string> callback, Plugin owner, Dictionary`2<string, string> headers, float timeout)
+public void EnqueuePost(string url, string body, Action`2<int, string> callback, Plugin owner, Dictionary`2<string, string> headers, float timeout)
+public void EnqueuePut(string url, string body, Action`2<int, string> callback, Plugin owner, Dictionary`2<string, string> headers, float timeout)
+public int GetQueueLength()
+}
+public Oxide.Core.Logging.CallbackLogger : Logger {
+private NativeDebugCallback callback
+public void .ctor(NativeDebugCallback callback)
+protected void ProcessMessage(LogMessage message)
+}
+public Oxide.Core.Logging.CompoundLogger : Logger {
+private HashSet`1<Logger> subloggers
+private List`1<LogMessage> messagecache
+private bool usecache
+public void AddLogger(Logger logger)
+public void RemoveLogger(Logger logger)
+public void Shutdown()
+public void Write(LogType type, string format, Object[] args)
+public void DisableCache()
+}
+public Oxide.Core.Logging.Logger : object {
+protected Queue`1<LogMessage> MessageQueue
+private bool processImediately
+protected void .ctor(bool processImediately)
+protected LogMessage CreateLogMessage(LogType type, string format, Object[] args)
+public void Write(LogType type, string format, Object[] args)
+internal void Write(LogMessage msg)
+protected void ProcessMessage(LogMessage message)
+public void WriteException(string message, Exception ex)
+public void OnRemoved()
+}
+public Oxide.Core.Logging.LogType : Enum {
+public int value__
+public LogType Info
+public LogType Debug
+public LogType Warning
+public LogType Error
+public LogType Stacktrace
+}
+public Oxide.Core.Logging.RotatingFileLogger : ThreadedLogger {
+private string <Directory>k__BackingField
+private StreamWriter writer
+public string Directory
+public string get_Directory()
+public void set_Directory(string value)
+private string GetLogFilename(DateTime date)
+protected void BeginBatchProcess()
+protected void ProcessMessage(LogMessage message)
+protected void FinishBatchProcess()
+}
+public Oxide.Core.Logging.ThreadedLogger : Logger {
+private AutoResetEvent waitevent
+private bool exit
+private object syncroot
+private Thread workerthread
+protected void Finalize()
+public void OnRemoved()
+internal void Write(LogMessage msg)
+protected void BeginBatchProcess()
+protected void FinishBatchProcess()
+private void Worker()
+}
+public Oxide.Core.NativeDebugCallback : MulticastDelegate {
+public void .ctor(object object, IntPtr method)
+public void Invoke(string message)
+public IAsyncResult BeginInvoke(string message, AsyncCallback callback, object object)
+public void EndInvoke(IAsyncResult result)
+}
+public Oxide.Core.OxideMod : object {
+internal Version AssemblyVersion
+public VersionNumber Version
+private CompoundLogger <RootLogger>k__BackingField
+private PluginManager <RootPluginManager>k__BackingField
+private DataFileSystem <DataFileSystem>k__BackingField
+private string <RootDirectory>k__BackingField
+private string <ExtensionDirectory>k__BackingField
+private string <InstanceDirectory>k__BackingField
+private string <PluginDirectory>k__BackingField
+private string <ConfigDirectory>k__BackingField
+private string <DataDirectory>k__BackingField
+private string <LangDirectory>k__BackingField
+private string <LogDirectory>k__BackingField
+private bool <IsShuttingDown>k__BackingField
+private ExtensionManager extensionManager
+public CommandLine CommandLine
+private OxideConfig <Config>k__BackingField
+private Timer libtimer
+private Covalence covalence
+private Func`1<float> getTimeSinceStartup
+private List`1<Action> nextTickQueue
+private List`1<Action> lastTickQueue
+private object nextTickLock
+private Action`1<float> onFrame
+private bool isInitialized
+private bool <HasLoadedCorePlugins>k__BackingField
+public RemoteConsole RemoteConsole
+public ServerConsole ServerConsole
+private Stopwatch timer
+private NativeDebugCallback debugCallback
+public CompoundLogger RootLogger
+public PluginManager RootPluginManager
+public DataFileSystem DataFileSystem
+public string RootDirectory
+public string ExtensionDirectory
+public string InstanceDirectory
+public string PluginDirectory
+public string ConfigDirectory
+public string DataDirectory
+public string LangDirectory
+public string LogDirectory
+public float Now
+public bool IsShuttingDown
+public OxideConfig Config
+public bool HasLoadedCorePlugins
+public CompoundLogger get_RootLogger()
+private void set_RootLogger(CompoundLogger value)
+public PluginManager get_RootPluginManager()
+private void set_RootPluginManager(PluginManager value)
+public DataFileSystem get_DataFileSystem()
+private void set_DataFileSystem(DataFileSystem value)
+public string get_RootDirectory()
+private void set_RootDirectory(string value)
+public string get_ExtensionDirectory()
+private void set_ExtensionDirectory(string value)
+public string get_InstanceDirectory()
+private void set_InstanceDirectory(string value)
+public string get_PluginDirectory()
+private void set_PluginDirectory(string value)
+public string get_ConfigDirectory()
+private void set_ConfigDirectory(string value)
+public string get_DataDirectory()
+private void set_DataDirectory(string value)
+public string get_LangDirectory()
+private void set_LangDirectory(string value)
+public string get_LogDirectory()
+private void set_LogDirectory(string value)
+public float get_Now()
+public bool get_IsShuttingDown()
+private void set_IsShuttingDown(bool value)
+public OxideConfig get_Config()
+private void set_Config(OxideConfig value)
+public bool get_HasLoadedCorePlugins()
+private void set_HasLoadedCorePlugins(bool value)
+public void .ctor(NativeDebugCallback debugCallback)
+public void Load()
+public T GetLibrary(string name)
+public IEnumerable`1<Extension> GetAllExtensions()
+public IEnumerable`1<PluginLoader> GetPluginLoaders()
+public void LogInfo(string format, Object[] args)
+public void LogDebug(string format, Object[] args)
+public void LogWarning(string format, Object[] args)
+public void LogError(string format, Object[] args)
+public void LogException(string message, Exception ex)
+public void LoadAllPlugins(bool init)
+public void UnloadAllPlugins(IList`1<string> skip)
+public void ReloadAllPlugins(IList`1<string> skip)
+public bool LoadPlugin(string name)
+public bool PluginLoaded(Plugin plugin)
+public bool UnloadPlugin(string name)
+public bool ReloadPlugin(string name)
+private void plugin_OnError(Plugin sender, string message)
+public object CallHook(string hookname, Object[] args)
+public object CallDeprecatedHook(string oldHook, string newHook, DateTime expireDate, Object[] args)
+public void NextTick(Action callback)
+public void OnFrame(Action`1<float> callback)
+public void OnFrame(float delta)
+public void OnShutdown()
+public void RegisterEngineClock(Func`1<float> method)
+public bool CheckConsole(bool force)
+public bool EnableConsole(bool force)
+private void watcher_OnPluginSourceChanged(string name)
+private void watcher_OnPluginAdded(string name)
+private void watcher_OnPluginRemoved(string name)
+private void RegisterLibrarySearchPath(string path)
+private bool SetDllDirectory(string lpPathName)
+private float <Load>b__75_1()
+private float <Load>b__0_1()
+}
+public Oxide.Core.Plugins.CSPlugin : Plugin {
+protected Dictionary`2<string, List`1<HookMethod>> hooks
+public T GetLibrary(string name)
+public void HandleAddedToManager(PluginManager manager)
+protected void AddHookMethod(string name, MethodInfo method)
+protected object OnCallHook(string name, Object[] args)
+protected object InvokeMethod(HookMethod method, Object[] args)
+}
+public Oxide.Core.Plugins.HookMethodAttribute : Attribute {
+private string <Name>k__BackingField
+public string Name
+public string get_Name()
+public void .ctor(string name)
+}
+public Oxide.Core.Plugins.Plugin : object {
+private string <Filename>k__BackingField
+private string name
+private string <Title>k__BackingField
+private string <Description>k__BackingField
+private string <Author>k__BackingField
+private VersionNumber <Version>k__BackingField
+private int <ResourceId>k__BackingField
+private PluginManager <Manager>k__BackingField
+private bool <HasConfig>k__BackingField
+private bool <HasMessages>k__BackingField
+private bool isCorePlugin
+private PluginLoader <Loader>k__BackingField
+private DynamicConfigFile <Config>k__BackingField
+private PluginError OnError
+public PluginManagerEvent OnAddedToManager
+public PluginManagerEvent OnRemovedFromManager
+private bool <IsLoaded>k__BackingField
+private double <TotalHookTime>k__BackingField
+private Stopwatch trackStopwatch
+private Stopwatch stopwatch
+private float trackStartAt
+private float averageAt
+private double sum
+private int preHookGcCount
+protected int nestcount
+private IDictionary`2<string, CommandInfo> commandInfos
+private Permission permission
+public string Filename
+public string Name
+public string Title
+public string Description
+public string Author
+public VersionNumber Version
+public int ResourceId
+public PluginManager Manager
+public bool HasConfig
+public bool HasMessages
+public bool IsCorePlugin
+public PluginLoader Loader
+public object Object
+public DynamicConfigFile Config
+public bool IsLoaded
+public double TotalHookTime
+public bool op_Implicit(Plugin plugin)
+public bool op_LogicalNot(Plugin plugin)
+public string get_Filename()
+protected void set_Filename(string value)
+public string get_Name()
+public void set_Name(string value)
+public string get_Title()
+protected void set_Title(string value)
+public string get_Description()
+protected void set_Description(string value)
+public string get_Author()
+protected void set_Author(string value)
+public VersionNumber get_Version()
+protected void set_Version(VersionNumber value)
+public int get_ResourceId()
+protected void set_ResourceId(int value)
+public PluginManager get_Manager()
+private void set_Manager(PluginManager value)
+public bool get_HasConfig()
+protected void set_HasConfig(bool value)
+public bool get_HasMessages()
+protected void set_HasMessages(bool value)
+public bool get_IsCorePlugin()
+public void set_IsCorePlugin(bool value)
+public PluginLoader get_Loader()
+public void set_Loader(PluginLoader value)
+public object get_Object()
+public DynamicConfigFile get_Config()
+private void set_Config(DynamicConfigFile value)
+public void add_OnError(PluginError value)
+public void remove_OnError(PluginError value)
+public bool get_IsLoaded()
+internal void set_IsLoaded(bool value)
+public double get_TotalHookTime()
+internal void set_TotalHookTime(double value)
+protected void Subscribe(string hook)
+protected void Unsubscribe(string hook)
+public void HandleAddedToManager(PluginManager manager)
+public void HandleRemovedFromManager(PluginManager manager)
+public void Load()
+public object CallHook(string hook, Object[] args)
+public object Call(string hook, Object[] args)
+public T Call(string hook, Object[] args)
+protected object OnCallHook(string hook, Object[] args)
+public void RaiseError(string message)
+public void TrackStart()
+public void TrackEnd()
+protected void LoadConfig()
+protected void LoadDefaultConfig()
+protected void SaveConfig()
+protected void LoadDefaultMessages()
+public void AddCovalenceCommand(string command, string callback, string perm)
+public void AddCovalenceCommand(String[] commands, string callback, String[] perms)
+protected void AddCovalenceCommand(String[] commands, String[] perms, CommandCallback callback)
+private void RegisterWithCovalence()
+private bool CovalenceCommandCallback(IPlayer caller, string cmd, String[] args)
+private void UnregisterWithCovalence()
+}
+public Oxide.Core.Plugins.PluginError : MulticastDelegate {
+public void .ctor(object object, IntPtr method)
+public void Invoke(Plugin sender, string message)
+public IAsyncResult BeginInvoke(Plugin sender, string message, AsyncCallback callback, object object)
+public void EndInvoke(IAsyncResult result)
+}
+public Oxide.Core.Plugins.PluginEvent : MulticastDelegate {
+public void .ctor(object object, IntPtr method)
+public void Invoke(Plugin plugin)
+public IAsyncResult BeginInvoke(Plugin plugin, AsyncCallback callback, object object)
+public void EndInvoke(IAsyncResult result)
+}
+public Oxide.Core.Plugins.PluginLoader : object {
+private ConcurrentHashSet`1<string> <LoadingPlugins>k__BackingField
+public Dictionary`2<string, Plugin> LoadedPlugins
+private Dictionary`2<string, string> <PluginErrors>k__BackingField
+private Type[] <CorePlugins>k__BackingField
+private string <FileExtension>k__BackingField
+public ConcurrentHashSet`1<string> LoadingPlugins
+public Dictionary`2<string, string> PluginErrors
+public Type[] CorePlugins
+public string FileExtension
+public ConcurrentHashSet`1<string> get_LoadingPlugins()
+public Dictionary`2<string, string> get_PluginErrors()
+public Type[] get_CorePlugins()
+public string get_FileExtension()
+public IEnumerable`1<string> ScanDirectory(string directory)
+public Plugin Load(string directory, string name)
+protected Plugin GetPlugin(string filename)
+protected void LoadPlugin(Plugin plugin, bool waitingForAccess)
+public void Reload(string directory, string name)
+public void Unloading(Plugin plugin)
+}
+public Oxide.Core.Plugins.PluginManager : object {
+private Logger <Logger>k__BackingField
+private string <ConfigPath>k__BackingField
+private PluginEvent OnPluginAdded
+private PluginEvent OnPluginRemoved
+private IDictionary`2<string, Plugin> loadedPlugins
+private IDictionary`2<string, IList`1<Plugin>> hookSubscriptions
+private Dictionary`2<string, float> lastDeprecatedWarningAt
+private List`1<string> hookConflicts
+public Logger Logger
+public string ConfigPath
+public Logger get_Logger()
+private void set_Logger(Logger value)
+public string get_ConfigPath()
+public void set_ConfigPath(string value)
+public void add_OnPluginAdded(PluginEvent value)
+public void remove_OnPluginAdded(PluginEvent value)
+public void add_OnPluginRemoved(PluginEvent value)
+public void remove_OnPluginRemoved(PluginEvent value)
+public void .ctor(Logger logger)
+public bool AddPlugin(Plugin plugin)
+public bool RemovePlugin(Plugin plugin)
+public Plugin GetPlugin(string name)
+public IEnumerable`1<Plugin> GetPlugins()
+internal void SubscribeToHook(string hook, Plugin plugin)
+internal void UnsubscribeToHook(string hook, Plugin plugin)
+public object CallHook(string hook, Object[] args)
+public object CallDeprecatedHook(string oldHook, string newHook, DateTime expireDate, Object[] args)
+}
+public Oxide.Core.Plugins.Watchers.FileChange : object {
+private string <Name>k__BackingField
+private WatcherChangeTypes <ChangeType>k__BackingField
+public string Name
+public WatcherChangeTypes ChangeType
+public string get_Name()
+private void set_Name(string value)
+public WatcherChangeTypes get_ChangeType()
+private void set_ChangeType(WatcherChangeTypes value)
+public void .ctor(string name, WatcherChangeTypes changeType)
+}
+public Oxide.Core.Plugins.Watchers.FSWatcher : PluginChangeWatcher {
+private FileSystemWatcher watcher
+private ICollection`1<string> watchedPlugins
+private Dictionary`2<string, QueuedChange> changeQueue
+private Timer timers
+public void .ctor(string directory, string filter)
+private void LoadWatcher(string directory, string filter)
+public void AddMapping(string name)
+public void RemoveMapping(string name)
+private void watcher_Changed(object sender, FileSystemEventArgs e)
+private void watcher_Error(object sender, ErrorEventArgs e)
+}
+public Oxide.Core.Plugins.Watchers.PluginAddEvent : MulticastDelegate {
+public void .ctor(object object, IntPtr method)
+public void Invoke(string name)
+public IAsyncResult BeginInvoke(string name, AsyncCallback callback, object object)
+public void EndInvoke(IAsyncResult result)
+}
+public Oxide.Core.Plugins.Watchers.PluginChangeEvent : MulticastDelegate {
+public void .ctor(object object, IntPtr method)
+public void Invoke(string name)
+public IAsyncResult BeginInvoke(string name, AsyncCallback callback, object object)
+public void EndInvoke(IAsyncResult result)
+}
+public Oxide.Core.Plugins.Watchers.PluginChangeWatcher : object {
+private PluginChangeEvent OnPluginSourceChanged
+private PluginAddEvent OnPluginAdded
+private PluginRemoveEvent OnPluginRemoved
+public void add_OnPluginSourceChanged(PluginChangeEvent value)
+public void remove_OnPluginSourceChanged(PluginChangeEvent value)
+public void add_OnPluginAdded(PluginAddEvent value)
+public void remove_OnPluginAdded(PluginAddEvent value)
+public void add_OnPluginRemoved(PluginRemoveEvent value)
+public void remove_OnPluginRemoved(PluginRemoveEvent value)
+protected void FirePluginSourceChanged(string name)
+protected void FirePluginAdded(string name)
+protected void FirePluginRemoved(string name)
+}
+public Oxide.Core.Plugins.Watchers.PluginRemoveEvent : MulticastDelegate {
+public void .ctor(object object, IntPtr method)
+public void Invoke(string name)
+public IAsyncResult BeginInvoke(string name, AsyncCallback callback, object object)
+public void EndInvoke(IAsyncResult result)
+}
+public Oxide.Core.ProtoStorage : object {
+public IEnumerable`1<string> GetFiles(string subDirectory)
+public T Load(String[] subPaths)
+public void Save(T data, String[] subPaths)
+public bool Exists(String[] subPaths)
+public string GetFileName(String[] subPaths)
+public string GetFileDataPath(string name)
+}
+public Oxide.Core.Random : object {
+private Random random
+public int Range(int min, int max)
+public int Range(int max)
+public double Range(double min, double max)
+public float Range(float min, float max)
+}
+public Oxide.Core.RemoteConsole.RemoteConsole : object {
+private Covalence covalence
+private OxideRcon config
+private RconListener listener
+private WebSocketServer server
+public void Initalize()
+public void Shutdown(string reason, CloseStatusCode code)
+public void SendMessage(RemoteMessage message)
+public void SendMessage(string message, int identifier)
+public void SendMessage(WebSocketContext connection, string message, int identifier)
+private void OnMessage(MessageEventArgs e, WebSocketContext connection)
+private void BroadcastMessage(string command, String[] args, int identifier, WebSocketContext connection)
+private void PlayerListCommand(string command, String[] args, int identifier, WebSocketContext connection)
+private void HostnameCommand(string command, String[] args, int identifier, WebSocketContext connection)
+private void KickCommand(string command, String[] args, int identifier, WebSocketContext connection)
+private void BanCommand(string command, String[] args, int identifier, WebSocketContext connection)
+private void UnbanCommand(string command, String[] args, int identifier, WebSocketContext connection)
+private void TeleportCommand(string command, String[] args, int identifier, WebSocketContext connection)
+private RconListener <Initalize>b__4_0()
+}
+public Oxide.Core.RemoteConsole.RemoteMessage : object {
+public string Message
+public int Identifier
+public string Type
+public string Stacktrace
+public RemoteMessage CreateMessage(string message, int identifier, string type, string trace)
+public RemoteMessage GetMessage(string message)
+internal string ToJSON()
+}
+public Oxide.Core.RemoteLogger : object {
+private int projectId
+private string host
+private string publicKey
+private string secretKey
+private string Url
+private String[][] sentryAuth
+public string Filename
+private Dictionary`2<string, string> Tags
+private Timer Timers
+private WebRequests Webrequests
+private List`1<QueuedReport> QueuedReports
+private bool submittingReports
+public String[] ExceptionFilter
+private Dictionary`2<string, string> BuildHeaders()
+public void SetTag(string name, string value)
+public string GetTag(string name)
+public void Debug(string message)
+public void Info(string message)
+public void Warning(string message)
+public void Error(string message)
+public void Exception(string message, Exception exception)
+public void Exception(string message, string rawStackTrace)
+private void EnqueueReport(string level, Assembly assembly, string culprit, string message, string exception)
+private void EnqueueReport(string level, String[] stackTrace, string culprit, string message, string exception)
+private void EnqueueReport(Report report)
+private void SubmitNextReport()
+private string GetCurrentMethod()
+}
+public Oxide.Core.ServerConsole.ConsoleInput : object {
+private string inputString
+private List`1<string> inputHistory
+private int inputHistoryIndex
+private float nextUpdate
+private Action`1<string> OnInputText
+internal String[] StatusTextLeft
+internal String[] StatusTextRight
+internal ConsoleColor[] StatusTextLeftColor
+internal ConsoleColor[] StatusTextRightColor
+public Func`2<string, String[]> Completion
+public int LineWidth
+public bool Valid
+internal void add_OnInputText(Action`1<string> value)
+internal void remove_OnInputText(Action`1<string> value)
+public int get_LineWidth()
+public bool get_Valid()
+public void ClearLine(int numLines)
+public void RedrawInputLine()
+public void Update()
+private int GetFirstDiffIndex(string str1, string str2)
+}
+public Oxide.Core.ServerConsole.ConsoleWindow : object {
+private UInt32 ATTACH_PARENT_PROCESS
+private int STD_OUTPUT_HANDLE
+private TextWriter oldOutput
+private Encoding oldEncoding
+private bool AllocConsole()
+private bool AttachConsole(UInt32 dwProcessId)
+private bool FreeConsole()
+private IntPtr GetConsoleWindow()
+private bool SetConsoleOutputCP(UInt32 wCodePageId)
+private bool SetConsoleTitle(string lpConsoleTitle)
+private IntPtr GetModuleHandle(string lpModuleName)
+private IntPtr GetProcAddress(IntPtr hModule, string procName)
+private IntPtr GetStdHandle(int nStdHandle)
+public bool Check(bool force)
+public void SetTitle(string title)
+public bool Initialize()
+public void Shutdown()
+}
+public Oxide.Core.ServerConsole.ServerConsole : object {
+private ConsoleWindow console
+private ConsoleInput input
+private bool init
+private float nextUpdate
+private float nextTitleUpdate
+private Action`1<string> Input
+public Func`1<string> Title
+public Func`1<string> Status1Left
+public Func`1<string> Status1Right
+public Func`1<string> Status2Left
+public Func`1<string> Status2Right
+public Func`1<string> Status3Left
+public Func`1<string> Status3Right
+public Func`2<string, String[]> Completion
+public ConsoleColor Status1LeftColor
+public ConsoleColor Status1RightColor
+public ConsoleColor Status2LeftColor
+public ConsoleColor Status2RightColor
+public ConsoleColor Status3RightColor
+public ConsoleColor Status3LeftColor
+private string title
+private string status1Left
+private string status1Right
+private string status2Left
+private string status2Right
+private string status3Left
+private string status3Right
+public void add_Input(Action`1<string> value)
+public void remove_Input(Action`1<string> value)
+public Func`2<string, String[]> get_Completion()
+public void set_Completion(Func`2<string, String[]> value)
+public ConsoleColor get_Status1LeftColor()
+public void set_Status1LeftColor(ConsoleColor value)
+public ConsoleColor get_Status1RightColor()
+public void set_Status1RightColor(ConsoleColor value)
+public ConsoleColor get_Status2LeftColor()
+public void set_Status2LeftColor(ConsoleColor value)
+public ConsoleColor get_Status2RightColor()
+public void set_Status2RightColor(ConsoleColor value)
+public ConsoleColor get_Status3RightColor()
+public void set_Status3RightColor(ConsoleColor value)
+public ConsoleColor get_Status3LeftColor()
+public void set_Status3LeftColor(ConsoleColor value)
+private string get_title()
+private string get_status1Left()
+private string get_status1Right()
+private string get_status2Left()
+private string get_status2Right()
+private string get_status3Left()
+private string get_status3Right()
+private string GetStatusValue(Func`1<string> status)
+private string GetStatusRight(int leftLength, string right)
+public void AddMessage(string message, ConsoleColor color)
+public void OnDisable()
+public void OnEnable()
+private void OnInputText(string obj)
+public void PrintColored(Object[] objects)
+public void Update()
+private void UpdateStatus()
+}
+public Oxide.Core.Utility : object {
+public void DatafileToProto(string name, bool deleteAfter)
+public void PrintCallStack()
+public string FormatBytes(double bytes)
+public string GetDirectoryName(string name)
+public string GetFileNameWithoutExtension(string value)
+public string CleanPath(string path)
+}
+public Oxide.Core.VersionNumber : ValueType {
+public int Major
+public int Minor
+public int Patch
+public void .ctor(int major, int minor, int patch)
+public string ToString()
+public bool op_Equality(VersionNumber a, VersionNumber b)
+public bool op_Inequality(VersionNumber a, VersionNumber b)
+public bool op_GreaterThan(VersionNumber a, VersionNumber b)
+public bool op_GreaterThanOrEqual(VersionNumber a, VersionNumber b)
+public bool op_LessThan(VersionNumber a, VersionNumber b)
+public bool op_LessThanOrEqual(VersionNumber a, VersionNumber b)
+public bool Equals(object obj)
+public int GetHashCode()
+}

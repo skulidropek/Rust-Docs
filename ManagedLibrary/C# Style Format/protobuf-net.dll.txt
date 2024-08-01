@@ -1,0 +1,1870 @@
+public ProtoBuf.BclHelpers : object {
+private int FieldTimeSpanValue
+private int FieldTimeSpanScale
+private int FieldDecimalLow
+private int FieldDecimalHigh
+private int FieldDecimalSignScale
+private int FieldGuidLow
+private int FieldGuidHigh
+private int FieldExistingObjectKey
+private int FieldNewObjectKey
+private int FieldExistingTypeKey
+private int FieldNewTypeKey
+private int FieldTypeName
+private int FieldObject
+internal DateTime EpochOrigin
+public object GetUninitializedObject(Type type)
+public void WriteTimeSpan(TimeSpan timeSpan, ProtoWriter dest)
+public TimeSpan ReadTimeSpan(ProtoReader source)
+public DateTime ReadDateTime(ProtoReader source)
+public void WriteDateTime(DateTime value, ProtoWriter dest)
+private long ReadTimeSpanTicks(ProtoReader source)
+public decimal ReadDecimal(ProtoReader reader)
+public void WriteDecimal(decimal value, ProtoWriter writer)
+public void WriteGuid(Guid value, ProtoWriter dest)
+public Guid ReadGuid(ProtoReader source)
+public object ReadNetObject(object value, ProtoReader source, int key, Type type, NetObjectOptions options)
+public void WriteNetObject(object value, ProtoWriter dest, int key, NetObjectOptions options)
+}
+public ProtoBuf.BufferExtension : object {
+private Byte[] buffer
+private int ProtoBuf.IExtension.GetLength()
+private Stream ProtoBuf.IExtension.BeginAppend()
+private void ProtoBuf.IExtension.EndAppend(Stream stream, bool commit)
+private Stream ProtoBuf.IExtension.BeginQuery()
+private void ProtoBuf.IExtension.EndQuery(Stream stream)
+}
+internal ProtoBuf.BufferPool : object {
+private int PoolSize
+internal int BufferLength
+private Object[] pool
+internal void Flush()
+internal Byte[] GetBuffer()
+internal void ResizeAndFlushLeft(Byte[]& buffer, int toFitAtLeastBytes, int copyFromIndex, int copyBytes)
+internal void ReleaseBufferToPool(Byte[]& buffer)
+}
+internal ProtoBuf.Compiler.CodeLabel : ValueType {
+public Label Value
+public int Index
+public void .ctor(Label value, int index)
+}
+internal ProtoBuf.Compiler.CompilerContext : object {
+private DynamicMethod method
+private int next
+private bool isStatic
+private SerializerPair[] methodPairs
+private bool isWriter
+private bool nonPublic
+private Local inputValue
+private string assemblyName
+private ILGenerator il
+private MutableList locals
+private int nextLabel
+private BasicList knownTrustedAssemblies
+private BasicList knownUntrustedAssemblies
+private TypeModel model
+private ILVersion metadataVersion
+public TypeModel Model
+internal bool NonPublic
+public Local InputValue
+public ILVersion MetadataVersion
+public TypeModel get_Model()
+internal CodeLabel DefineLabel()
+internal void MarkLabel(CodeLabel label)
+public ProtoSerializer BuildSerializer(IProtoSerializer head, TypeModel model)
+public ProtoDeserializer BuildDeserializer(IProtoSerializer head, TypeModel model)
+internal void Return()
+private bool IsObject(Type type)
+internal void CastToObject(Type type)
+internal void CastFromObject(Type type)
+internal MethodBuilder GetDedicatedMethod(int metaKey, bool read)
+internal int MapMetaKeyToCompiledKey(int metaKey)
+internal bool get_NonPublic()
+public Local get_InputValue()
+internal void .ctor(ILGenerator il, bool isStatic, bool isWriter, SerializerPair[] methodPairs, TypeModel model, ILVersion metadataVersion, string assemblyName, Type inputType)
+private void .ctor(Type associatedType, bool isWriter, bool isStatic, TypeModel model, Type inputType)
+private void Emit(OpCode opcode)
+public void LoadValue(string value)
+public void LoadValue(float value)
+public void LoadValue(double value)
+public void LoadValue(long value)
+public void LoadValue(int value)
+internal LocalBuilder GetFromPool(Type type)
+internal void ReleaseToPool(LocalBuilder value)
+public void LoadReaderWriter()
+public void StoreValue(Local local)
+public void LoadValue(Local local)
+public Local GetLocalWithValue(Type type, Local fromValue)
+internal void EmitBasicRead(string methodName, Type expectedType)
+internal void EmitBasicRead(Type helperType, string methodName, Type expectedType)
+internal void EmitBasicWrite(string methodName, Local fromValue)
+private MethodInfo GetWriterMethod(string methodName)
+internal void EmitWrite(Type helperType, string methodName, Local valueFrom)
+public void EmitCall(MethodInfo method)
+public void LoadNullRef()
+internal void WriteNullCheckedTail(Type type, IProtoSerializer tail, Local valueFrom)
+internal void ReadNullCheckedTail(Type type, IProtoSerializer tail, Local valueFrom)
+public void EmitCtor(Type type)
+public void EmitCtor(ConstructorInfo ctor)
+public void EmitCtor(Type type, Type[] parameterTypes)
+private bool InternalsVisible(Assembly assembly)
+internal void CheckAccessibility(MemberInfo member)
+public void LoadValue(FieldInfo field)
+public void StoreValue(FieldInfo field)
+public void LoadValue(PropertyInfo property)
+public void StoreValue(PropertyInfo property)
+internal void LoadValue(ILGenerator il, int value)
+private bool UseShortForm(Local local)
+internal void LoadAddress(Local local, Type type)
+internal void Branch(CodeLabel label, bool short)
+internal void BranchIfFalse(CodeLabel label, bool short)
+internal void BranchIfTrue(CodeLabel label, bool short)
+internal void BranchIfEqual(CodeLabel label, bool short)
+internal void CopyValue()
+internal void BranchIfGreater(CodeLabel label, bool short)
+internal void BranchIfLess(CodeLabel label, bool short)
+internal void DiscardValue()
+public void Subtract()
+public void Switch(CodeLabel[] jumpTable)
+internal void EndFinally()
+internal void BeginFinally()
+internal void EndTry(CodeLabel label, bool short)
+internal CodeLabel BeginTry()
+internal void Constrain(Type type)
+internal void TryCast(Type type)
+internal void Cast(Type type)
+public IDisposable Using(Local local)
+internal void Add()
+internal void LoadLength(Local arr, bool zeroIfNull)
+internal void CreateArray(Type elementType, Local length)
+internal void LoadArrayValue(Local arr, Local i)
+internal void LoadValue(Type type)
+internal void ConvertToInt32(ProtoTypeCode typeCode, bool uint32Overflow)
+internal void ConvertFromInt32(ProtoTypeCode typeCode, bool uint32Overflow)
+internal void LoadValue(decimal value)
+internal void LoadValue(Guid value)
+internal void LoadSerializationContext()
+internal Type MapType(Type type)
+public ILVersion get_MetadataVersion()
+internal bool AllowInternal(PropertyInfo property)
+}
+internal ProtoBuf.Compiler.Local : object {
+private LocalBuilder value
+private CompilerContext ctx
+private Type type
+public Type Type
+internal LocalBuilder Value
+public Type get_Type()
+public Local AsCopy()
+internal LocalBuilder get_Value()
+public void Dispose()
+private void .ctor(LocalBuilder value, Type type)
+internal void .ctor(CompilerContext ctx, Type type)
+internal bool IsSame(Local other)
+}
+internal ProtoBuf.Compiler.ProtoDeserializer : MulticastDelegate {
+public void .ctor(object object, IntPtr method)
+public object Invoke(object value, ProtoReader source)
+public IAsyncResult BeginInvoke(object value, ProtoReader source, AsyncCallback callback, object object)
+public object EndInvoke(IAsyncResult result)
+}
+internal ProtoBuf.Compiler.ProtoSerializer : MulticastDelegate {
+public void .ctor(object object, IntPtr method)
+public void Invoke(object value, ProtoWriter dest)
+public IAsyncResult BeginInvoke(object value, ProtoWriter dest, AsyncCallback callback, object object)
+public void EndInvoke(IAsyncResult result)
+}
+public ProtoBuf.DataFormat : Enum {
+public int value__
+public DataFormat Default
+public DataFormat ZigZag
+public DataFormat TwosComplement
+public DataFormat FixedSize
+public DataFormat Group
+}
+public ProtoBuf.Extensible : object {
+private IExtension extensionObject
+private IExtension ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
+protected IExtension GetExtensionObject(bool createIfMissing)
+public IExtension GetExtensionObject(IExtension& extensionObject, bool createIfMissing)
+public void AppendValue(IExtensible instance, int tag, TValue value)
+public void AppendValue(IExtensible instance, int tag, DataFormat format, TValue value)
+public TValue GetValue(IExtensible instance, int tag)
+public TValue GetValue(IExtensible instance, int tag, DataFormat format)
+public bool TryGetValue(IExtensible instance, int tag, TValue& value)
+public bool TryGetValue(IExtensible instance, int tag, DataFormat format, TValue& value)
+public bool TryGetValue(IExtensible instance, int tag, DataFormat format, bool allowDefinedTag, TValue& value)
+public IEnumerable`1<TValue> GetValues(IExtensible instance, int tag)
+public IEnumerable`1<TValue> GetValues(IExtensible instance, int tag, DataFormat format)
+public bool TryGetValue(TypeModel model, Type type, IExtensible instance, int tag, DataFormat format, bool allowDefinedTag, Object& value)
+public IEnumerable GetValues(TypeModel model, Type type, IExtensible instance, int tag, DataFormat format)
+public void AppendValue(TypeModel model, IExtensible instance, int tag, DataFormat format, object value)
+}
+internal ProtoBuf.ExtensibleUtil : object {
+internal IEnumerable`1<TValue> GetExtendedValues(IExtensible instance, int tag, DataFormat format, bool singleton, bool allowDefinedTag)
+internal IEnumerable GetExtendedValues(TypeModel model, Type type, IExtensible instance, int tag, DataFormat format, bool singleton, bool allowDefinedTag)
+internal void AppendExtendValue(TypeModel model, IExtensible instance, int tag, DataFormat format, object value)
+}
+internal ProtoBuf.Helpers : object {
+public Type[] EmptyTypes
+public StringBuilder AppendLine(StringBuilder builder)
+public bool IsNullOrEmpty(string value)
+public void DebugWriteLine(string message, object obj)
+public void DebugWriteLine(string message)
+public void TraceWriteLine(string message)
+public void DebugAssert(bool condition, string message)
+public void DebugAssert(bool condition, string message, Object[] args)
+public void DebugAssert(bool condition)
+public void Sort(Int32[] keys, Object[] values)
+public void BlockCopy(Byte[] from, int fromIndex, Byte[] to, int toIndex, int count)
+public bool IsInfinity(float value)
+internal MethodInfo GetInstanceMethod(Type declaringType, string name)
+internal MethodInfo GetStaticMethod(Type declaringType, string name)
+internal MethodInfo GetInstanceMethod(Type declaringType, string name, Type[] types)
+internal bool IsSubclassOf(Type type, Type baseClass)
+public bool IsInfinity(double value)
+public ProtoTypeCode GetTypeCode(Type type)
+internal Type GetUnderlyingType(Type type)
+internal bool IsValueType(Type type)
+internal bool IsEnum(Type type)
+internal MethodInfo GetGetMethod(PropertyInfo property, bool nonPublic, bool allowInternal)
+internal MethodInfo GetSetMethod(PropertyInfo property, bool nonPublic, bool allowInternal)
+internal ConstructorInfo GetConstructor(Type type, Type[] parameterTypes, bool nonPublic)
+internal ConstructorInfo[] GetConstructors(Type type, bool nonPublic)
+internal PropertyInfo GetProperty(Type type, string name, bool nonPublic)
+internal object ParseEnum(Type type, string value)
+internal MemberInfo[] GetInstanceFieldsAndProperties(Type type, bool publicOnly)
+internal Type GetMemberType(MemberInfo member)
+internal bool IsAssignableFrom(Type target, Type type)
+}
+public ProtoBuf.IExtensible {
+public IExtension GetExtensionObject(bool createIfMissing)
+}
+public ProtoBuf.IExtension {
+public Stream BeginAppend()
+public void EndAppend(Stream stream, bool commit)
+public Stream BeginQuery()
+public void EndQuery(Stream stream)
+public int GetLength()
+}
+public ProtoBuf.ImplicitFields : Enum {
+public int value__
+public ImplicitFields None
+public ImplicitFields AllPublic
+public ImplicitFields AllFields
+}
+public ProtoBuf.MemberSerializationOptions : Enum {
+public int value__
+public MemberSerializationOptions None
+public MemberSerializationOptions Packed
+public MemberSerializationOptions Required
+public MemberSerializationOptions AsReference
+public MemberSerializationOptions DynamicType
+public MemberSerializationOptions OverwriteList
+public MemberSerializationOptions AsReferenceHasValue
+}
+internal ProtoBuf.Meta.AttributeMap : object {
+public Type AttributeType
+public object Target
+public bool TryGet(string key, bool publicOnly, Object& value)
+public bool TryGet(string key, Object& value)
+public Type get_AttributeType()
+public AttributeMap[] Create(TypeModel model, Type type, bool inherit)
+public AttributeMap[] Create(TypeModel model, MemberInfo member, bool inherit)
+public AttributeMap[] Create(TypeModel model, Assembly assembly)
+public object get_Target()
+}
+internal ProtoBuf.Meta.BasicList : object {
+private Node nil
+protected Node head
+public object Item
+public int Count
+public void CopyTo(Array array, int offset)
+public int Add(object value)
+public object get_Item(int index)
+public void Trim()
+public int get_Count()
+private IEnumerator System.Collections.IEnumerable.GetEnumerator()
+public NodeEnumerator GetEnumerator()
+internal int IndexOf(MatchPredicate predicate, object ctx)
+internal int IndexOfString(string value)
+internal int IndexOfReference(object instance)
+internal bool Contains(object value)
+internal BasicList GetContiguousGroups(Int32[] keys, Object[] values)
+}
+public ProtoBuf.Meta.CallbackSet : object {
+private MetaType metaType
+private MethodInfo beforeSerialize
+private MethodInfo afterSerialize
+private MethodInfo beforeDeserialize
+private MethodInfo afterDeserialize
+internal MethodInfo Item
+public MethodInfo BeforeSerialize
+public MethodInfo BeforeDeserialize
+public MethodInfo AfterSerialize
+public MethodInfo AfterDeserialize
+public bool NonTrivial
+internal void .ctor(MetaType metaType)
+internal MethodInfo get_Item(CallbackType callbackType)
+internal bool CheckCallbackParameters(TypeModel model, MethodInfo method)
+private MethodInfo SanityCheckCallback(TypeModel model, MethodInfo callback)
+internal Exception CreateInvalidCallbackSignature(MethodInfo method)
+public MethodInfo get_BeforeSerialize()
+public void set_BeforeSerialize(MethodInfo value)
+public MethodInfo get_BeforeDeserialize()
+public void set_BeforeDeserialize(MethodInfo value)
+public MethodInfo get_AfterSerialize()
+public void set_AfterSerialize(MethodInfo value)
+public MethodInfo get_AfterDeserialize()
+public void set_AfterDeserialize(MethodInfo value)
+public bool get_NonTrivial()
+}
+public ProtoBuf.Meta.LockContentedEventArgs : EventArgs {
+private string ownerStackTrace
+public string OwnerStackTrace
+internal void .ctor(string ownerStackTrace)
+public string get_OwnerStackTrace()
+}
+public ProtoBuf.Meta.LockContentedEventHandler : MulticastDelegate {
+public void .ctor(object object, IntPtr method)
+public void Invoke(object sender, LockContentedEventArgs args)
+public IAsyncResult BeginInvoke(object sender, LockContentedEventArgs args, AsyncCallback callback, object object)
+public void EndInvoke(IAsyncResult result)
+}
+public ProtoBuf.Meta.MetaType : object {
+private byte OPTIONS_Pending
+private byte OPTIONS_EnumPassThru
+private byte OPTIONS_Frozen
+private byte OPTIONS_PrivateOnApi
+private byte OPTIONS_SkipConstructor
+private byte OPTIONS_AsReferenceDefault
+private byte OPTIONS_AutoTuple
+private byte OPTIONS_IgnoreListHandling
+private MetaType baseType
+private BasicList subTypes
+internal Type ienumerable
+private CallbackSet callbacks
+private string name
+private MethodInfo factory
+private RuntimeTypeModel model
+private Type type
+private IProtoTypeSerializer serializer
+private Type constructType
+private Type surrogate
+private BasicList fields
+private Byte modreq(System.Runtime.CompilerServices.IsVolatile) flags
+private IProtoSerializer ProtoBuf.Serializers.ISerializerProxy.Serializer
+public MetaType BaseType
+internal TypeModel Model
+public bool IncludeSerializerMethod
+public bool AsReferenceDefault
+public bool HasCallbacks
+public bool HasSubtypes
+public CallbackSet Callbacks
+private bool IsValueType
+public string Name
+public Type Type
+internal IProtoTypeSerializer Serializer
+internal bool IsList
+public bool UseConstructor
+public Type ConstructType
+public ValueMember Item
+public ValueMember Item
+public bool EnumPassthru
+public bool IgnoreListHandling
+internal bool Pending
+internal IEnumerable Fields
+internal bool IsAutoTuple
+public string ToString()
+private IProtoSerializer ProtoBuf.Serializers.ISerializerProxy.get_Serializer()
+public MetaType get_BaseType()
+internal TypeModel get_Model()
+public bool get_IncludeSerializerMethod()
+public void set_IncludeSerializerMethod(bool value)
+public bool get_AsReferenceDefault()
+public void set_AsReferenceDefault(bool value)
+private bool IsValidSubType(Type subType)
+public MetaType AddSubType(int fieldNumber, Type derivedType)
+public MetaType AddSubType(int fieldNumber, Type derivedType, DataFormat dataFormat)
+private void SetBaseType(MetaType baseType)
+public bool get_HasCallbacks()
+public bool get_HasSubtypes()
+public CallbackSet get_Callbacks()
+private bool get_IsValueType()
+public MetaType SetCallbacks(MethodInfo beforeSerialize, MethodInfo afterSerialize, MethodInfo beforeDeserialize, MethodInfo afterDeserialize)
+public MetaType SetCallbacks(string beforeSerialize, string afterSerialize, string beforeDeserialize, string afterDeserialize)
+internal string GetSchemaTypeName()
+public string get_Name()
+public void set_Name(string value)
+public MetaType SetFactory(MethodInfo factory)
+public MetaType SetFactory(string factory)
+private MethodInfo ResolveMethod(string name, bool instance)
+internal Exception InbuiltType(Type type)
+internal void .ctor(RuntimeTypeModel model, Type type, MethodInfo factory)
+protected internal void ThrowIfFrozen()
+public Type get_Type()
+internal IProtoTypeSerializer get_Serializer()
+internal bool get_IsList()
+private IProtoTypeSerializer BuildSerializer()
+private Type GetBaseType(MetaType type)
+internal bool GetAsReferenceDefault(RuntimeTypeModel model, Type type)
+internal void ApplyDefaultBehaviour()
+private void ApplyDefaultBehaviour_AddMembers(TypeModel model, AttributeFamily family, bool isEnum, BasicList partialMembers, int dataMemberOffset, bool inferTagByName, ImplicitFields implicitMode, BasicList members, MemberInfo member, Boolean& forced, bool isPublic, bool isField, Type& effectiveType)
+private MethodInfo Coalesce(MethodInfo[] arr, int x, int y)
+internal AttributeFamily GetContractFamily(RuntimeTypeModel model, Type type, AttributeMap[] attributes)
+internal ConstructorInfo ResolveTupleConstructor(Type type, MemberInfo[]& mappedMembers)
+private void CheckForCallback(MethodInfo method, AttributeMap[] attributes, string callbackTypeName, MethodInfo[]& callbacks, int index)
+private bool HasFamily(AttributeFamily value, AttributeFamily required)
+private ProtoMemberAttribute NormalizeProtoMember(TypeModel model, MemberInfo member, AttributeFamily family, bool forced, bool isEnum, BasicList partialMembers, int dataMemberOffset, bool inferByTagName)
+private ValueMember ApplyDefaultBehaviour(bool isEnum, ProtoMemberAttribute normalizedAttribute)
+private void GetDataFormat(DataFormat& value, AttributeMap attrib, string memberName)
+private void GetIgnore(Boolean& ignore, AttributeMap attrib, AttributeMap[] attribs, string fullName)
+private void GetFieldBoolean(Boolean& value, AttributeMap attrib, string memberName)
+private bool GetFieldBoolean(Boolean& value, AttributeMap attrib, string memberName, bool publicOnly)
+private void GetFieldNumber(Int32& value, AttributeMap attrib, string memberName)
+private void GetFieldName(String& name, AttributeMap attrib, string memberName)
+private AttributeMap GetAttribute(AttributeMap[] attribs, string fullName)
+public MetaType Add(int fieldNumber, string memberName)
+public ValueMember AddField(int fieldNumber, string memberName)
+public bool get_UseConstructor()
+public void set_UseConstructor(bool value)
+public Type get_ConstructType()
+public void set_ConstructType(Type value)
+public MetaType Add(string memberName)
+public void SetSurrogate(Type surrogateType)
+internal MetaType GetSurrogateOrSelf()
+internal MetaType GetSurrogateOrBaseOrSelf(bool deep)
+private int GetNextFieldNumber()
+public MetaType Add(String[] memberNames)
+public MetaType Add(int fieldNumber, string memberName, object defaultValue)
+public MetaType Add(int fieldNumber, string memberName, Type itemType, Type defaultType)
+public ValueMember AddField(int fieldNumber, string memberName, Type itemType, Type defaultType)
+private ValueMember AddField(int fieldNumber, string memberName, Type itemType, Type defaultType, object defaultValue)
+internal void ResolveListTypes(TypeModel model, Type type, Type& itemType, Type& defaultType)
+private void Add(ValueMember member)
+public ValueMember get_Item(int fieldNumber)
+public ValueMember get_Item(MemberInfo member)
+public ValueMember[] GetFields()
+public SubType[] GetSubtypes()
+public void CompileInPlace()
+internal bool IsDefined(int fieldNumber)
+internal int GetKey(bool demand, bool getBaseKey)
+internal EnumPair[] GetEnumMap()
+public bool get_EnumPassthru()
+public void set_EnumPassthru(bool value)
+public bool get_IgnoreListHandling()
+public void set_IgnoreListHandling(bool value)
+internal bool get_Pending()
+internal void set_Pending(bool value)
+private bool HasFlag(byte flag)
+private void SetFlag(byte flag, bool value, bool throwIfFrozen)
+internal MetaType GetRootType(MetaType source)
+internal bool IsPrepared()
+internal IEnumerable get_Fields()
+internal StringBuilder NewLine(StringBuilder builder, int indent)
+internal bool get_IsAutoTuple()
+internal void WriteSchema(StringBuilder builder, int indent, Boolean& requiresBclImport)
+}
+internal ProtoBuf.Meta.MutableList : BasicList {
+public object Item
+public object get_Item(int index)
+public void set_Item(int index, object value)
+public void RemoveLast()
+public void Clear()
+}
+public ProtoBuf.Meta.RuntimeTypeModel : TypeModel {
+private byte OPTIONS_InferTagFromNameDefault
+private byte OPTIONS_IsDefaultModel
+private byte OPTIONS_Frozen
+private byte OPTIONS_AutoAddMissingTypes
+private byte OPTIONS_AutoCompile
+private byte OPTIONS_UseImplicitZeroDefaults
+private byte OPTIONS_AllowParseableTypes
+private byte OPTIONS_AutoAddProtoContractTypesOnly
+private int KnownTypes_Array
+private int KnownTypes_Dictionary
+private int KnownTypes_Hashtable
+private int KnownTypes_ArrayCutoff
+private byte options
+private MatchPredicate MetaTypeFinder
+private MatchPredicate BasicTypeFinder
+private BasicList basicTypes
+private BasicList types
+private int metadataTimeoutMilliseconds
+private int contentionCounter
+private object contentionLock
+private LockContentedEventHandler LockContended
+private MethodInfo defaultFactory
+public bool InferTagFromNameDefault
+public bool AutoAddProtoContractTypesOnly
+public bool UseImplicitZeroDefaults
+public bool AllowParseableTypes
+public RuntimeTypeModel Default
+public MetaType Item
+public bool AutoCompile
+public bool AutoAddMissingTypes
+public int MetadataTimeoutMilliseconds
+private bool GetOption(byte option)
+private void SetOption(byte option, bool value)
+public bool get_InferTagFromNameDefault()
+public void set_InferTagFromNameDefault(bool value)
+public bool get_AutoAddProtoContractTypesOnly()
+public void set_AutoAddProtoContractTypesOnly(bool value)
+public bool get_UseImplicitZeroDefaults()
+public void set_UseImplicitZeroDefaults(bool value)
+public bool get_AllowParseableTypes()
+public void set_AllowParseableTypes(bool value)
+public RuntimeTypeModel get_Default()
+public IEnumerable GetTypes()
+public string GetSchema(Type type)
+private void CascadeDependents(BasicList list, MetaType metaType)
+internal void .ctor(bool isDefault)
+public MetaType get_Item(Type type)
+internal MetaType FindWithoutAdd(Type type)
+private bool MetaTypeFinderImpl(object value, object ctx)
+private bool BasicTypeFinderImpl(object value, object ctx)
+private void WaitOnLock(MetaType type)
+internal IProtoSerializer TryGetBasicTypeSerializer(Type type)
+internal int FindOrAddAuto(Type type, bool demand, bool addWithContractOnly, bool addEvenIfAutoDisabled)
+private MetaType RecogniseCommonTypes(Type type)
+private MetaType Create(Type type)
+public MetaType Add(Type type, bool applyDefaultBehaviour)
+public bool get_AutoCompile()
+public void set_AutoCompile(bool value)
+public bool get_AutoAddMissingTypes()
+public void set_AutoAddMissingTypes(bool value)
+private void ThrowIfFrozen()
+public void Freeze()
+protected int GetKeyImpl(Type type)
+internal int GetKey(Type type, bool demand, bool getBaseKey)
+protected internal void Serialize(int key, object value, ProtoWriter dest)
+protected internal object Deserialize(int key, object value, ProtoReader source)
+internal ProtoSerializer GetSerializer(IProtoSerializer serializer, bool compiled)
+public void CompileInPlace()
+private void BuildAllSerializers()
+public TypeModel Compile()
+private ILGenerator Override(TypeBuilder type, string name)
+public TypeModel Compile(string name, string path)
+public TypeModel Compile(CompilerOptions options)
+private void WriteConstructors(TypeBuilder type, Int32& index, SerializerPair[] methodPairs, ILGenerator& il, int knownTypesCategory, FieldBuilder knownTypes, Type knownTypesLookupType, CompilerContext ctx)
+private CompilerContext WriteSerializeDeserialize(string assemblyName, TypeBuilder type, SerializerPair[] methodPairs, ILVersion ilVersion, ILGenerator& il)
+private void WriteGetKeyImpl(TypeBuilder type, bool hasInheritance, SerializerPair[] methodPairs, ILVersion ilVersion, string assemblyName, ILGenerator& il, Int32& knownTypesCategory, FieldBuilder& knownTypes, Type& knownTypesLookupType)
+private void WriteSerializers(CompilerOptions options, string assemblyName, TypeBuilder type, Int32& index, Boolean& hasInheritance, SerializerPair[]& methodPairs, ILVersion& ilVersion)
+private TypeBuilder WriteBasicTypeModel(CompilerOptions options, string typeName, ModuleBuilder module)
+private void WriteAssemblyAttributes(CompilerOptions options, string assemblyName, AssemblyBuilder asm)
+private MethodBuilder EmitBoxedSerializer(TypeBuilder type, int i, Type valueType, SerializerPair[] methodPairs, TypeModel model, ILVersion ilVersion, string assemblyName)
+internal bool IsPrepared(Type type)
+internal EnumPair[] GetEnumMap(Type type)
+public int get_MetadataTimeoutMilliseconds()
+public void set_MetadataTimeoutMilliseconds(int value)
+internal void TakeLock(Int32& opaqueToken)
+private int GetContention()
+private void AddContention()
+internal void ReleaseLock(int opaqueToken)
+public void add_LockContended(LockContentedEventHandler value)
+public void remove_LockContended(LockContentedEventHandler value)
+internal void ResolveListTypes(Type type, Type& itemType, Type& defaultType)
+internal string GetSchemaTypeName(Type effectiveType, DataFormat dataFormat, bool asReference, bool dynamicType, Boolean& requiresBclImport)
+public void SetDefaultFactory(MethodInfo methodInfo)
+internal void VerifyFactory(MethodInfo factory, Type type)
+}
+public ProtoBuf.Meta.SubType : object {
+private int fieldNumber
+private MetaType derivedType
+private DataFormat dataFormat
+private IProtoSerializer serializer
+public int FieldNumber
+public MetaType DerivedType
+internal IProtoSerializer Serializer
+public int get_FieldNumber()
+public MetaType get_DerivedType()
+public void .ctor(int fieldNumber, MetaType derivedType, DataFormat format)
+internal IProtoSerializer get_Serializer()
+private IProtoSerializer BuildSerializer()
+}
+public ProtoBuf.Meta.TypeFormatEventArgs : EventArgs {
+private Type type
+private string formattedName
+private bool typeFixed
+public Type Type
+public string FormattedName
+public Type get_Type()
+public void set_Type(Type value)
+public string get_FormattedName()
+public void set_FormattedName(string value)
+internal void .ctor(string formattedName)
+internal void .ctor(Type type)
+}
+public ProtoBuf.Meta.TypeFormatEventHandler : MulticastDelegate {
+public void .ctor(object object, IntPtr method)
+public void Invoke(object sender, TypeFormatEventArgs args)
+public IAsyncResult BeginInvoke(object sender, TypeFormatEventArgs args, AsyncCallback callback, object object)
+public void EndInvoke(IAsyncResult result)
+}
+public ProtoBuf.Meta.TypeModel : object {
+private Type ilist
+private TypeFormatEventHandler DynamicTypeFormatting
+protected internal Type MapType(Type type)
+protected internal Type MapType(Type type, bool demand)
+private WireType GetWireType(ProtoTypeCode code, DataFormat format, Type& type, Int32& modelKey)
+internal bool TrySerializeAuxiliaryType(ProtoWriter writer, Type type, DataFormat format, int tag, object value, bool isInsideList)
+private void SerializeCore(ProtoWriter writer, object value)
+public void Serialize(Stream dest, object value)
+public void Serialize(Stream dest, object value, SerializationContext context)
+public void Serialize(ProtoWriter dest, object value)
+public object DeserializeWithLengthPrefix(Stream source, object value, Type type, PrefixStyle style, int fieldNumber)
+public object DeserializeWithLengthPrefix(Stream source, object value, Type type, PrefixStyle style, int expectedField, TypeResolver resolver)
+public object DeserializeWithLengthPrefix(Stream source, object value, Type type, PrefixStyle style, int expectedField, TypeResolver resolver, Int32& bytesRead)
+private object DeserializeWithLengthPrefix(Stream source, object value, Type type, PrefixStyle style, int expectedField, TypeResolver resolver, Int32& bytesRead, Boolean& haveObject, SerializationContext context)
+public IEnumerable DeserializeItems(Stream source, Type type, PrefixStyle style, int expectedField, TypeResolver resolver)
+public IEnumerable DeserializeItems(Stream source, Type type, PrefixStyle style, int expectedField, TypeResolver resolver, SerializationContext context)
+public IEnumerable`1<T> DeserializeItems(Stream source, PrefixStyle style, int expectedField)
+public IEnumerable`1<T> DeserializeItems(Stream source, PrefixStyle style, int expectedField, SerializationContext context)
+public void SerializeWithLengthPrefix(Stream dest, object value, Type type, PrefixStyle style, int fieldNumber)
+public void SerializeWithLengthPrefix(Stream dest, object value, Type type, PrefixStyle style, int fieldNumber, SerializationContext context)
+public object Deserialize(Stream source, object value, Type type)
+public object Deserialize(Stream source, object value, Type type, SerializationContext context)
+private bool PrepareDeserialize(object value, Type& type)
+public object Deserialize(Stream source, object value, Type type, int length)
+public object Deserialize(Stream source, object value, Type type, int length, SerializationContext context)
+public object Deserialize(ProtoReader source, object value, Type type)
+private object DeserializeCore(ProtoReader reader, Type type, object value, bool noAutoCreate)
+internal MethodInfo ResolveListAdd(TypeModel model, Type listType, Type itemType, Boolean& isList)
+internal Type GetListItemType(TypeModel model, Type listType)
+private void TestEnumerableListPatterns(TypeModel model, BasicList candidates, Type iType)
+private bool CheckDictionaryAccessors(TypeModel model, Type pair, Type value)
+private bool TryDeserializeList(TypeModel model, ProtoReader reader, DataFormat format, int tag, Type listType, Type itemType, Object& value)
+private object CreateListInstance(Type listType, Type itemType)
+internal bool TryDeserializeAuxiliaryType(ProtoReader reader, DataFormat format, int tag, Type type, Object& value, bool skipOtherFields, bool asListItem, bool autoCreate, bool insideList)
+public RuntimeTypeModel Create()
+protected internal Type ResolveProxies(Type type)
+public bool IsDefined(Type type)
+protected internal int GetKey(Type& type)
+protected int GetKeyImpl(Type type)
+protected internal void Serialize(int key, object value, ProtoWriter dest)
+protected internal object Deserialize(int key, object value, ProtoReader source)
+public object DeepClone(object value)
+protected internal void ThrowUnexpectedSubtype(Type expected, Type actual)
+protected internal void ThrowUnexpectedType(Type type)
+internal Exception CreateNestedListsNotSupported()
+public void ThrowCannotCreateInstance(Type type)
+internal string SerializeType(TypeModel model, Type type)
+internal Type DeserializeType(TypeModel model, string value)
+public bool CanSerializeContractType(Type type)
+public bool CanSerialize(Type type)
+public bool CanSerializeBasicType(Type type)
+private bool CanSerialize(Type type, bool allowBasic, bool allowContract, bool allowLists)
+public string GetSchema(Type type)
+public void add_DynamicTypeFormatting(TypeFormatEventHandler value)
+public void remove_DynamicTypeFormatting(TypeFormatEventHandler value)
+public IFormatter CreateFormatter(Type type)
+internal Type GetType(string fullName, Assembly context)
+internal Type ResolveKnownType(string name, TypeModel model, Assembly assembly)
+}
+public ProtoBuf.Meta.ValueMember : object {
+private byte OPTIONS_IsStrict
+private byte OPTIONS_IsPacked
+private byte OPTIONS_IsRequired
+private byte OPTIONS_OverwriteList
+private byte OPTIONS_SupportNull
+private int fieldNumber
+private MemberInfo member
+private Type parentType
+private Type itemType
+private Type defaultType
+private Type memberType
+private object defaultValue
+private RuntimeTypeModel model
+private IProtoSerializer serializer
+private DataFormat dataFormat
+private bool asReference
+private bool dynamicType
+private MethodInfo getSpecified
+private MethodInfo setSpecified
+private string name
+private byte flags
+public int FieldNumber
+public MemberInfo Member
+public Type ItemType
+public Type MemberType
+public Type DefaultType
+public Type ParentType
+public object DefaultValue
+internal IProtoSerializer Serializer
+public DataFormat DataFormat
+public bool IsStrict
+public bool IsPacked
+public bool OverwriteList
+public bool IsRequired
+public bool AsReference
+public bool DynamicType
+public string Name
+public bool SupportNull
+public int get_FieldNumber()
+public MemberInfo get_Member()
+public Type get_ItemType()
+public Type get_MemberType()
+public Type get_DefaultType()
+public Type get_ParentType()
+public object get_DefaultValue()
+public void set_DefaultValue(object value)
+public void .ctor(RuntimeTypeModel model, Type parentType, int fieldNumber, MemberInfo member, Type memberType, Type itemType, Type defaultType, DataFormat dataFormat, object defaultValue)
+internal void .ctor(RuntimeTypeModel model, int fieldNumber, Type memberType, Type itemType, Type defaultType, DataFormat dataFormat)
+internal object GetRawEnumValue()
+private object ParseDefaultValue(Type type, object value)
+internal IProtoSerializer get_Serializer()
+public DataFormat get_DataFormat()
+public void set_DataFormat(DataFormat value)
+public bool get_IsStrict()
+public void set_IsStrict(bool value)
+public bool get_IsPacked()
+public void set_IsPacked(bool value)
+public bool get_OverwriteList()
+public void set_OverwriteList(bool value)
+public bool get_IsRequired()
+public void set_IsRequired(bool value)
+public bool get_AsReference()
+public void set_AsReference(bool value)
+public bool get_DynamicType()
+public void set_DynamicType(bool value)
+public void SetSpecified(MethodInfo getSpecified, MethodInfo setSpecified)
+private void ThrowIfFrozen()
+private IProtoSerializer BuildSerializer()
+private WireType GetIntWireType(DataFormat format, int width)
+private WireType GetDateTimeWireType(DataFormat format)
+internal IProtoSerializer TryGetCoreSerializer(RuntimeTypeModel model, DataFormat dataFormat, Type type, WireType& defaultWireType, bool asReference, bool dynamicType, bool overwriteList, bool allowComplexTypes)
+internal void SetName(string name)
+public string get_Name()
+private bool HasFlag(byte flag)
+private void SetFlag(byte flag, bool value, bool throwIfFrozen)
+public bool get_SupportNull()
+public void set_SupportNull(bool value)
+internal string GetSchemaTypeName(bool applyNetObjectProxy, Boolean& requiresBclImport)
+}
+internal ProtoBuf.NetObjectCache : object {
+internal int Root
+private MutableList underlyingList
+private object rootObject
+private int trapStartIndex
+private Dictionary`2<string, int> stringKeys
+private Dictionary`2<object, int> objectKeys
+private MutableList List
+private MutableList get_List()
+internal object GetKeyedObject(int key)
+internal void SetKeyedObject(int key, object value)
+internal int AddObjectKey(object value, Boolean& existing)
+internal void RegisterTrappedObject(object value)
+internal void Clear()
+}
+public ProtoBuf.PrefixStyle : Enum {
+public int value__
+public PrefixStyle None
+public PrefixStyle Base128
+public PrefixStyle Fixed32
+public PrefixStyle Fixed32BigEndian
+}
+public ProtoBuf.ProtoContractAttribute : Attribute {
+private byte OPTIONS_InferTagFromName
+private byte OPTIONS_InferTagFromNameHasValue
+private byte OPTIONS_UseProtoMembersOnly
+private byte OPTIONS_SkipConstructor
+private byte OPTIONS_IgnoreListHandling
+private byte OPTIONS_AsReferenceDefault
+private byte OPTIONS_EnumPassthru
+private byte OPTIONS_EnumPassthruHasValue
+private string name
+private int implicitFirstTag
+private ImplicitFields implicitFields
+private int dataMemberOffset
+private byte flags
+public string Name
+public int ImplicitFirstTag
+public bool UseProtoMembersOnly
+public bool IgnoreListHandling
+public ImplicitFields ImplicitFields
+public bool InferTagFromName
+internal bool InferTagFromNameHasValue
+public int DataMemberOffset
+public bool SkipConstructor
+public bool AsReferenceDefault
+public bool EnumPassthru
+internal bool EnumPassthruHasValue
+public string get_Name()
+public void set_Name(string value)
+public int get_ImplicitFirstTag()
+public void set_ImplicitFirstTag(int value)
+public bool get_UseProtoMembersOnly()
+public void set_UseProtoMembersOnly(bool value)
+public bool get_IgnoreListHandling()
+public void set_IgnoreListHandling(bool value)
+public ImplicitFields get_ImplicitFields()
+public void set_ImplicitFields(ImplicitFields value)
+public bool get_InferTagFromName()
+public void set_InferTagFromName(bool value)
+internal bool get_InferTagFromNameHasValue()
+public int get_DataMemberOffset()
+public void set_DataMemberOffset(int value)
+public bool get_SkipConstructor()
+public void set_SkipConstructor(bool value)
+public bool get_AsReferenceDefault()
+public void set_AsReferenceDefault(bool value)
+private bool HasFlag(byte flag)
+private void SetFlag(byte flag, bool value)
+public bool get_EnumPassthru()
+public void set_EnumPassthru(bool value)
+internal bool get_EnumPassthruHasValue()
+}
+public ProtoBuf.ProtoEnumAttribute : Attribute {
+private bool hasValue
+private int enumValue
+private string name
+public int Value
+public string Name
+public int get_Value()
+public void set_Value(int value)
+public bool HasValue()
+public string get_Name()
+public void set_Name(string value)
+}
+public ProtoBuf.ProtoException : Exception {
+public void .ctor(string message)
+public void .ctor(string message, Exception innerException)
+protected void .ctor(SerializationInfo info, StreamingContext context)
+}
+public ProtoBuf.ProtoIncludeAttribute : Attribute {
+private int tag
+private string knownTypeName
+private DataFormat dataFormat
+public int Tag
+public string KnownTypeName
+public Type KnownType
+public DataFormat DataFormat
+public void .ctor(int tag, Type knownType)
+public void .ctor(int tag, string knownTypeName)
+public int get_Tag()
+public string get_KnownTypeName()
+public Type get_KnownType()
+public DataFormat get_DataFormat()
+public void set_DataFormat(DataFormat value)
+}
+public ProtoBuf.ProtoMemberAttribute : Attribute {
+internal MemberInfo Member
+internal bool TagIsPinned
+private string name
+private DataFormat dataFormat
+private int tag
+private MemberSerializationOptions options
+public string Name
+public DataFormat DataFormat
+public int Tag
+public bool IsRequired
+public bool IsPacked
+public bool OverwriteList
+public bool AsReference
+internal bool AsReferenceHasValue
+public bool DynamicType
+public MemberSerializationOptions Options
+public int CompareTo(object other)
+public int CompareTo(ProtoMemberAttribute other)
+public void .ctor(int tag)
+internal void .ctor(int tag, bool forced)
+public string get_Name()
+public void set_Name(string value)
+public DataFormat get_DataFormat()
+public void set_DataFormat(DataFormat value)
+public int get_Tag()
+internal void Rebase(int tag)
+public bool get_IsRequired()
+public void set_IsRequired(bool value)
+public bool get_IsPacked()
+public void set_IsPacked(bool value)
+public bool get_OverwriteList()
+public void set_OverwriteList(bool value)
+public bool get_AsReference()
+public void set_AsReference(bool value)
+internal bool get_AsReferenceHasValue()
+internal void set_AsReferenceHasValue(bool value)
+public bool get_DynamicType()
+public void set_DynamicType(bool value)
+public MemberSerializationOptions get_Options()
+public void set_Options(MemberSerializationOptions value)
+}
+public ProtoBuf.ProtoPartialIgnoreAttribute : ProtoIgnoreAttribute {
+private string memberName
+public string MemberName
+public void .ctor(string memberName)
+public string get_MemberName()
+}
+public ProtoBuf.ProtoPartialMemberAttribute : ProtoMemberAttribute {
+private string memberName
+public string MemberName
+public void .ctor(int tag, string memberName)
+public string get_MemberName()
+}
+public ProtoBuf.ProtoReader : object {
+internal int TO_EOF
+private long Int64Msb
+private int Int32Msb
+private Stream source
+private Byte[] ioBuffer
+private TypeModel model
+private int fieldNumber
+private int depth
+private int dataRemaining
+private int ioIndex
+private int position
+private int available
+private int blockEnd
+private WireType wireType
+private bool isFixedLength
+private bool internStrings
+private NetObjectCache netCache
+private UInt32 trapCount
+private SerializationContext context
+private Dictionary`2<string, string> stringInterner
+private UTF8Encoding encoding
+private Byte[] EmptyBlob
+private ProtoReader lastReader
+public int FieldNumber
+public WireType WireType
+public bool InternStrings
+public SerializationContext Context
+public int Position
+public TypeModel Model
+internal NetObjectCache NetCache
+public int get_FieldNumber()
+public WireType get_WireType()
+public void .ctor(Stream source, TypeModel model, SerializationContext context)
+public bool get_InternStrings()
+public void set_InternStrings(bool value)
+public void .ctor(Stream source, TypeModel model, SerializationContext context, int length)
+private void Init(ProtoReader reader, Stream source, TypeModel model, SerializationContext context, int length)
+public SerializationContext get_Context()
+public void Dispose()
+internal int TryReadUInt32VariantWithoutMoving(bool trimNegative, UInt32& value)
+private UInt32 ReadUInt32Variant(bool trimNegative)
+private bool TryReadUInt32Variant(UInt32& value)
+public UInt32 ReadUInt32()
+public int get_Position()
+internal void Ensure(int count, bool strict)
+public short ReadInt16()
+public ushort ReadUInt16()
+public byte ReadByte()
+public sbyte ReadSByte()
+public int ReadInt32()
+private int Zag(UInt32 ziggedValue)
+private long Zag(ulong ziggedValue)
+public long ReadInt64()
+private int TryReadUInt64VariantWithoutMoving(UInt64& value)
+private ulong ReadUInt64Variant()
+private string Intern(string value)
+public string ReadString()
+public void ThrowEnumException(Type type, int value)
+private Exception CreateWireTypeException()
+private Exception CreateException(string message)
+public double ReadDouble()
+public object ReadObject(object value, int key, ProtoReader reader)
+internal object ReadTypedObject(object value, int key, ProtoReader reader, Type type)
+public void EndSubItem(SubItemToken token, ProtoReader reader)
+public SubItemToken StartSubItem(ProtoReader reader)
+public int ReadFieldHeader()
+public bool TryReadFieldHeader(int field)
+public TypeModel get_Model()
+public void Hint(WireType wireType)
+public void Assert(WireType wireType)
+public void SkipField()
+public ulong ReadUInt64()
+public float ReadSingle()
+public bool ReadBoolean()
+public Byte[] AppendBytes(Byte[] value, ProtoReader reader)
+private int ReadByteOrThrow(Stream source)
+public int ReadLengthPrefix(Stream source, bool expectHeader, PrefixStyle style, Int32& fieldNumber)
+public int DirectReadLittleEndianInt32(Stream source)
+public int DirectReadBigEndianInt32(Stream source)
+public int DirectReadVarintInt32(Stream source)
+public void DirectReadBytes(Stream source, Byte[] buffer, int offset, int count)
+public Byte[] DirectReadBytes(Stream source, int count)
+public string DirectReadString(Stream source, int length)
+public int ReadLengthPrefix(Stream source, bool expectHeader, PrefixStyle style, Int32& fieldNumber, Int32& bytesRead)
+private int TryReadUInt32Variant(Stream source, UInt32& value)
+internal void Seek(Stream source, int count, Byte[] buffer)
+internal Exception AddErrorData(Exception exception, ProtoReader source)
+private Exception EoF(ProtoReader source)
+public void AppendExtensionData(IExtensible instance)
+private void AppendExtensionField(ProtoWriter writer)
+public bool HasSubValue(WireType wireType, ProtoReader source)
+internal int GetTypeKey(Type& type)
+internal NetObjectCache get_NetCache()
+internal Type DeserializeType(string value)
+internal void SetRootObject(object value)
+public void NoteObject(object value, ProtoReader reader)
+public Type ReadType()
+internal void TrapNextObject(int newObjectKey)
+internal void CheckFullyConsumed()
+public object Merge(ProtoReader parent, object from, object to)
+internal ProtoReader Create(Stream source, TypeModel model, SerializationContext context, int len)
+private ProtoReader GetRecycled()
+internal void Recycle(ProtoReader reader)
+}
+internal ProtoBuf.ProtoTypeCode : Enum {
+public int value__
+public ProtoTypeCode Empty
+public ProtoTypeCode Unknown
+public ProtoTypeCode Boolean
+public ProtoTypeCode Char
+public ProtoTypeCode SByte
+public ProtoTypeCode Byte
+public ProtoTypeCode Int16
+public ProtoTypeCode UInt16
+public ProtoTypeCode Int32
+public ProtoTypeCode UInt32
+public ProtoTypeCode Int64
+public ProtoTypeCode UInt64
+public ProtoTypeCode Single
+public ProtoTypeCode Double
+public ProtoTypeCode Decimal
+public ProtoTypeCode DateTime
+public ProtoTypeCode String
+public ProtoTypeCode TimeSpan
+public ProtoTypeCode ByteArray
+public ProtoTypeCode Guid
+public ProtoTypeCode Uri
+public ProtoTypeCode Type
+}
+public ProtoBuf.ProtoWriter : object {
+private int RecursionCheckDepth
+private Stream dest
+private TypeModel model
+private NetObjectCache netCache
+private int fieldNumber
+private int flushLock
+private WireType wireType
+private int depth
+private MutableList recursionStack
+private SerializationContext context
+private Byte[] ioBuffer
+private int ioIndex
+private int position
+private UTF8Encoding encoding
+private int packedFieldNumber
+internal NetObjectCache NetCache
+internal WireType WireType
+public SerializationContext Context
+public TypeModel Model
+public void WriteObject(object value, int key, ProtoWriter writer)
+public void WriteRecursionSafeObject(object value, int key, ProtoWriter writer)
+internal void WriteObject(object value, int key, ProtoWriter writer, PrefixStyle style, int fieldNumber)
+internal int GetTypeKey(Type& type)
+internal NetObjectCache get_NetCache()
+internal WireType get_WireType()
+public void WriteFieldHeader(int fieldNumber, WireType wireType, ProtoWriter writer)
+internal void WriteHeaderCore(int fieldNumber, WireType wireType, ProtoWriter writer)
+public void WriteBytes(Byte[] data, ProtoWriter writer)
+public void WriteBytes(Byte[] data, int offset, int length, ProtoWriter writer)
+private void CopyRawFromStream(Stream source, ProtoWriter writer)
+private void IncrementedAndReset(int length, ProtoWriter writer)
+public SubItemToken StartSubItem(object instance, ProtoWriter writer)
+private void CheckRecursionStackAndPush(object instance)
+private void PopRecursionStack()
+private SubItemToken StartSubItem(object instance, ProtoWriter writer, bool allowFixed)
+public void EndSubItem(SubItemToken token, ProtoWriter writer)
+private void EndSubItem(SubItemToken token, ProtoWriter writer, PrefixStyle style)
+public void .ctor(Stream dest, TypeModel model, SerializationContext context)
+public SerializationContext get_Context()
+private void System.IDisposable.Dispose()
+private void Dispose()
+internal int GetPosition(ProtoWriter writer)
+private void DemandSpace(int required, ProtoWriter writer)
+public void Close()
+internal void CheckDepthFlushlock()
+public TypeModel get_Model()
+internal void Flush(ProtoWriter writer)
+private void WriteUInt32Variant(UInt32 value, ProtoWriter writer)
+internal UInt32 Zig(int value)
+internal ulong Zig(long value)
+private void WriteUInt64Variant(ulong value, ProtoWriter writer)
+public void WriteString(string value, ProtoWriter writer)
+public void WriteUInt64(ulong value, ProtoWriter writer)
+public void WriteInt64(long value, ProtoWriter writer)
+public void WriteUInt32(UInt32 value, ProtoWriter writer)
+public void WriteInt16(short value, ProtoWriter writer)
+public void WriteUInt16(ushort value, ProtoWriter writer)
+public void WriteByte(byte value, ProtoWriter writer)
+public void WriteSByte(sbyte value, ProtoWriter writer)
+private void WriteInt32ToBuffer(int value, Byte[] buffer, int index)
+public void WriteInt32(int value, ProtoWriter writer)
+public void WriteDouble(double value, ProtoWriter writer)
+public void WriteSingle(float value, ProtoWriter writer)
+public void ThrowEnumException(ProtoWriter writer, object enumValue)
+internal Exception CreateException(ProtoWriter writer)
+public void WriteBoolean(bool value, ProtoWriter writer)
+public void AppendExtensionData(IExtensible instance, ProtoWriter writer)
+public void SetPackedField(int fieldNumber, ProtoWriter writer)
+internal string SerializeType(Type type)
+public void SetRootObject(object value)
+public void WriteType(Type value, ProtoWriter writer)
+}
+public ProtoBuf.SerializationContext : object {
+private bool frozen
+private object context
+private SerializationContext default
+private StreamingContextStates state
+public object Context
+internal SerializationContext Default
+public StreamingContextStates State
+internal void Freeze()
+private void ThrowIfFrozen()
+public object get_Context()
+public void set_Context(object value)
+internal SerializationContext get_Default()
+public StreamingContextStates get_State()
+public void set_State(StreamingContextStates value)
+public StreamingContext op_Implicit(SerializationContext ctx)
+public SerializationContext op_Implicit(StreamingContext ctx)
+}
+public ProtoBuf.Serializer : object {
+private string ProtoBinaryField
+public int ListItemTag
+public string GetProto()
+public T DeepClone(T instance)
+public T Merge(Stream source, T instance)
+public T Deserialize(Stream source)
+public void Serialize(Stream destination, T instance)
+public TTo ChangeType(TFrom instance)
+public void Serialize(SerializationInfo info, T instance)
+public void Serialize(SerializationInfo info, StreamingContext context, T instance)
+public void Serialize(XmlWriter writer, T instance)
+public void Merge(XmlReader reader, T instance)
+public void Merge(SerializationInfo info, T instance)
+public void Merge(SerializationInfo info, StreamingContext context, T instance)
+public void PrepareSerializer()
+public IFormatter CreateFormatter()
+public IEnumerable`1<T> DeserializeItems(Stream source, PrefixStyle style, int fieldNumber)
+public T DeserializeWithLengthPrefix(Stream source, PrefixStyle style)
+public T DeserializeWithLengthPrefix(Stream source, PrefixStyle style, int fieldNumber)
+public T MergeWithLengthPrefix(Stream source, T instance, PrefixStyle style)
+public void SerializeWithLengthPrefix(Stream destination, T instance, PrefixStyle style)
+public void SerializeWithLengthPrefix(Stream destination, T instance, PrefixStyle style, int fieldNumber)
+public bool TryReadLengthPrefix(Stream source, PrefixStyle style, Int32& length)
+public bool TryReadLengthPrefix(Byte[] buffer, int index, int count, PrefixStyle style, Int32& length)
+public void FlushPool()
+}
+internal ProtoBuf.Serializers.ArrayDecorator : ProtoDecoratorBase {
+private byte OPTIONS_WritePacked
+private byte OPTIONS_OverwriteList
+private byte OPTIONS_SupportNull
+private int fieldNumber
+private byte options
+private WireType packedWireType
+private Type arrayType
+private Type itemType
+public Type ExpectedType
+public bool RequiresOldValue
+public bool ReturnsValue
+private bool AppendToCollection
+private bool SupportNull
+public void .ctor(TypeModel model, IProtoSerializer tail, int fieldNumber, bool writePacked, WireType packedWireType, Type arrayType, bool overwriteList, bool supportNull)
+public Type get_ExpectedType()
+public bool get_RequiresOldValue()
+public bool get_ReturnsValue()
+protected void EmitWrite(CompilerContext ctx, Local valueFrom)
+private void EmitWriteArrayLoop(CompilerContext ctx, Local i, Local arr)
+private bool get_AppendToCollection()
+private bool get_SupportNull()
+public void Write(object value, ProtoWriter dest)
+public object Read(object value, ProtoReader source)
+protected void EmitRead(CompilerContext ctx, Local valueFrom)
+}
+internal ProtoBuf.Serializers.BlobSerializer : object {
+private Type expectedType
+private bool overwriteList
+public Type ExpectedType
+private bool ProtoBuf.Serializers.IProtoSerializer.RequiresOldValue
+private bool ProtoBuf.Serializers.IProtoSerializer.ReturnsValue
+public Type get_ExpectedType()
+public void .ctor(TypeModel model, bool overwriteList)
+public object Read(object value, ProtoReader source)
+public void Write(object value, ProtoWriter dest)
+private bool ProtoBuf.Serializers.IProtoSerializer.get_RequiresOldValue()
+private bool ProtoBuf.Serializers.IProtoSerializer.get_ReturnsValue()
+private void ProtoBuf.Serializers.IProtoSerializer.EmitWrite(CompilerContext ctx, Local valueFrom)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitRead(CompilerContext ctx, Local valueFrom)
+}
+internal ProtoBuf.Serializers.BooleanSerializer : object {
+private Type expectedType
+public Type ExpectedType
+private bool ProtoBuf.Serializers.IProtoSerializer.RequiresOldValue
+private bool ProtoBuf.Serializers.IProtoSerializer.ReturnsValue
+public void .ctor(TypeModel model)
+public Type get_ExpectedType()
+public void Write(object value, ProtoWriter dest)
+public object Read(object value, ProtoReader source)
+private bool ProtoBuf.Serializers.IProtoSerializer.get_RequiresOldValue()
+private bool ProtoBuf.Serializers.IProtoSerializer.get_ReturnsValue()
+private void ProtoBuf.Serializers.IProtoSerializer.EmitWrite(CompilerContext ctx, Local valueFrom)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitRead(CompilerContext ctx, Local valueFrom)
+}
+internal ProtoBuf.Serializers.ByteSerializer : object {
+private Type expectedType
+public Type ExpectedType
+private bool ProtoBuf.Serializers.IProtoSerializer.RequiresOldValue
+private bool ProtoBuf.Serializers.IProtoSerializer.ReturnsValue
+public Type get_ExpectedType()
+public void .ctor(TypeModel model)
+private bool ProtoBuf.Serializers.IProtoSerializer.get_RequiresOldValue()
+private bool ProtoBuf.Serializers.IProtoSerializer.get_ReturnsValue()
+public void Write(object value, ProtoWriter dest)
+public object Read(object value, ProtoReader source)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitWrite(CompilerContext ctx, Local valueFrom)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitRead(CompilerContext ctx, Local valueFrom)
+}
+internal ProtoBuf.Serializers.CharSerializer : UInt16Serializer {
+private Type expectedType
+public Type ExpectedType
+public void .ctor(TypeModel model)
+public Type get_ExpectedType()
+public void Write(object value, ProtoWriter dest)
+public object Read(object value, ProtoReader source)
+}
+internal ProtoBuf.Serializers.CompiledSerializer : object {
+private IProtoTypeSerializer head
+private ProtoSerializer serializer
+private ProtoDeserializer deserializer
+private bool ProtoBuf.Serializers.IProtoSerializer.RequiresOldValue
+private bool ProtoBuf.Serializers.IProtoSerializer.ReturnsValue
+private Type ProtoBuf.Serializers.IProtoSerializer.ExpectedType
+private bool ProtoBuf.Serializers.IProtoTypeSerializer.HasCallbacks(CallbackType callbackType)
+private bool ProtoBuf.Serializers.IProtoTypeSerializer.CanCreateInstance()
+private object ProtoBuf.Serializers.IProtoTypeSerializer.CreateInstance(ProtoReader source)
+public void Callback(object value, CallbackType callbackType, SerializationContext context)
+public CompiledSerializer Wrap(IProtoTypeSerializer head, TypeModel model)
+private void .ctor(IProtoTypeSerializer head, TypeModel model)
+private bool ProtoBuf.Serializers.IProtoSerializer.get_RequiresOldValue()
+private bool ProtoBuf.Serializers.IProtoSerializer.get_ReturnsValue()
+private Type ProtoBuf.Serializers.IProtoSerializer.get_ExpectedType()
+private void ProtoBuf.Serializers.IProtoSerializer.Write(object value, ProtoWriter dest)
+private object ProtoBuf.Serializers.IProtoSerializer.Read(object value, ProtoReader source)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitWrite(CompilerContext ctx, Local valueFrom)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitRead(CompilerContext ctx, Local valueFrom)
+private void ProtoBuf.Serializers.IProtoTypeSerializer.EmitCallback(CompilerContext ctx, Local valueFrom, CallbackType callbackType)
+private void ProtoBuf.Serializers.IProtoTypeSerializer.EmitCreateInstance(CompilerContext ctx)
+}
+internal ProtoBuf.Serializers.DateTimeSerializer : object {
+private Type expectedType
+public Type ExpectedType
+private bool ProtoBuf.Serializers.IProtoSerializer.RequiresOldValue
+private bool ProtoBuf.Serializers.IProtoSerializer.ReturnsValue
+public Type get_ExpectedType()
+private bool ProtoBuf.Serializers.IProtoSerializer.get_RequiresOldValue()
+private bool ProtoBuf.Serializers.IProtoSerializer.get_ReturnsValue()
+public void .ctor(TypeModel model)
+public object Read(object value, ProtoReader source)
+public void Write(object value, ProtoWriter dest)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitWrite(CompilerContext ctx, Local valueFrom)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitRead(CompilerContext ctx, Local valueFrom)
+}
+internal ProtoBuf.Serializers.DecimalSerializer : object {
+private Type expectedType
+public Type ExpectedType
+private bool ProtoBuf.Serializers.IProtoSerializer.RequiresOldValue
+private bool ProtoBuf.Serializers.IProtoSerializer.ReturnsValue
+public void .ctor(TypeModel model)
+public Type get_ExpectedType()
+private bool ProtoBuf.Serializers.IProtoSerializer.get_RequiresOldValue()
+private bool ProtoBuf.Serializers.IProtoSerializer.get_ReturnsValue()
+public object Read(object value, ProtoReader source)
+public void Write(object value, ProtoWriter dest)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitWrite(CompilerContext ctx, Local valueFrom)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitRead(CompilerContext ctx, Local valueFrom)
+}
+internal ProtoBuf.Serializers.DefaultValueDecorator : ProtoDecoratorBase {
+private object defaultValue
+public Type ExpectedType
+public bool RequiresOldValue
+public bool ReturnsValue
+public Type get_ExpectedType()
+public bool get_RequiresOldValue()
+public bool get_ReturnsValue()
+public void .ctor(TypeModel model, object defaultValue, IProtoSerializer tail)
+public void Write(object value, ProtoWriter dest)
+public object Read(object value, ProtoReader source)
+protected void EmitWrite(CompilerContext ctx, Local valueFrom)
+private void EmitBeq(CompilerContext ctx, CodeLabel label, Type type)
+private void EmitBranchIfDefaultValue(CompilerContext ctx, CodeLabel label)
+protected void EmitRead(CompilerContext ctx, Local valueFrom)
+}
+internal ProtoBuf.Serializers.DoubleSerializer : object {
+private Type expectedType
+public Type ExpectedType
+private bool ProtoBuf.Serializers.IProtoSerializer.RequiresOldValue
+private bool ProtoBuf.Serializers.IProtoSerializer.ReturnsValue
+public void .ctor(TypeModel model)
+public Type get_ExpectedType()
+private bool ProtoBuf.Serializers.IProtoSerializer.get_RequiresOldValue()
+private bool ProtoBuf.Serializers.IProtoSerializer.get_ReturnsValue()
+public object Read(object value, ProtoReader source)
+public void Write(object value, ProtoWriter dest)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitWrite(CompilerContext ctx, Local valueFrom)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitRead(CompilerContext ctx, Local valueFrom)
+}
+internal ProtoBuf.Serializers.EnumSerializer : object {
+private Type enumType
+private EnumPair[] map
+public Type ExpectedType
+private bool ProtoBuf.Serializers.IProtoSerializer.RequiresOldValue
+private bool ProtoBuf.Serializers.IProtoSerializer.ReturnsValue
+public void .ctor(Type enumType, EnumPair[] map)
+private ProtoTypeCode GetTypeCode()
+public Type get_ExpectedType()
+private bool ProtoBuf.Serializers.IProtoSerializer.get_RequiresOldValue()
+private bool ProtoBuf.Serializers.IProtoSerializer.get_ReturnsValue()
+private int EnumToWire(object value)
+private object WireToEnum(int value)
+public object Read(object value, ProtoReader source)
+public void Write(object value, ProtoWriter dest)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitWrite(CompilerContext ctx, Local valueFrom)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitRead(CompilerContext ctx, Local valueFrom)
+private void WriteEnumValue(CompilerContext ctx, ProtoTypeCode typeCode, object value)
+private void WriteEnumValue(CompilerContext ctx, ProtoTypeCode typeCode, CodeLabel handler, CodeLabel continue, object value, Local local)
+}
+internal ProtoBuf.Serializers.FieldDecorator : ProtoDecoratorBase {
+private FieldInfo field
+private Type forType
+public Type ExpectedType
+public bool RequiresOldValue
+public bool ReturnsValue
+public Type get_ExpectedType()
+public bool get_RequiresOldValue()
+public bool get_ReturnsValue()
+public void .ctor(Type forType, FieldInfo field, IProtoSerializer tail)
+public void Write(object value, ProtoWriter dest)
+public object Read(object value, ProtoReader source)
+protected void EmitWrite(CompilerContext ctx, Local valueFrom)
+protected void EmitRead(CompilerContext ctx, Local valueFrom)
+}
+internal ProtoBuf.Serializers.GuidSerializer : object {
+private Type expectedType
+public Type ExpectedType
+private bool ProtoBuf.Serializers.IProtoSerializer.RequiresOldValue
+private bool ProtoBuf.Serializers.IProtoSerializer.ReturnsValue
+public void .ctor(TypeModel model)
+public Type get_ExpectedType()
+private bool ProtoBuf.Serializers.IProtoSerializer.get_RequiresOldValue()
+private bool ProtoBuf.Serializers.IProtoSerializer.get_ReturnsValue()
+public void Write(object value, ProtoWriter dest)
+public object Read(object value, ProtoReader source)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitWrite(CompilerContext ctx, Local valueFrom)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitRead(CompilerContext ctx, Local valueFrom)
+}
+internal ProtoBuf.Serializers.ImmutableCollectionDecorator : ListDecorator {
+private MethodInfo builderFactory
+private MethodInfo add
+private MethodInfo addRange
+private MethodInfo finish
+protected bool RequireAdd
+protected bool get_RequireAdd()
+private Type ResolveIReadOnlyCollection(Type declaredType, Type t)
+internal bool IdentifyImmutable(TypeModel model, Type declaredType, MethodInfo& builderFactory, MethodInfo& add, MethodInfo& addRange, MethodInfo& finish)
+internal void .ctor(TypeModel model, Type declaredType, Type concreteType, IProtoSerializer tail, int fieldNumber, bool writePacked, WireType packedWireType, bool returnList, bool overwriteList, bool supportNull, MethodInfo builderFactory, MethodInfo add, MethodInfo addRange, MethodInfo finish)
+public object Read(object value, ProtoReader source)
+protected void EmitRead(CompilerContext ctx, Local valueFrom)
+}
+internal ProtoBuf.Serializers.Int16Serializer : object {
+private Type expectedType
+public Type ExpectedType
+private bool ProtoBuf.Serializers.IProtoSerializer.RequiresOldValue
+private bool ProtoBuf.Serializers.IProtoSerializer.ReturnsValue
+public void .ctor(TypeModel model)
+public Type get_ExpectedType()
+private bool ProtoBuf.Serializers.IProtoSerializer.get_RequiresOldValue()
+private bool ProtoBuf.Serializers.IProtoSerializer.get_ReturnsValue()
+public object Read(object value, ProtoReader source)
+public void Write(object value, ProtoWriter dest)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitWrite(CompilerContext ctx, Local valueFrom)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitRead(CompilerContext ctx, Local valueFrom)
+}
+internal ProtoBuf.Serializers.Int32Serializer : object {
+private Type expectedType
+public Type ExpectedType
+private bool ProtoBuf.Serializers.IProtoSerializer.RequiresOldValue
+private bool ProtoBuf.Serializers.IProtoSerializer.ReturnsValue
+public void .ctor(TypeModel model)
+public Type get_ExpectedType()
+private bool ProtoBuf.Serializers.IProtoSerializer.get_RequiresOldValue()
+private bool ProtoBuf.Serializers.IProtoSerializer.get_ReturnsValue()
+public object Read(object value, ProtoReader source)
+public void Write(object value, ProtoWriter dest)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitWrite(CompilerContext ctx, Local valueFrom)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitRead(CompilerContext ctx, Local valueFrom)
+}
+internal ProtoBuf.Serializers.Int64Serializer : object {
+private Type expectedType
+public Type ExpectedType
+private bool ProtoBuf.Serializers.IProtoSerializer.RequiresOldValue
+private bool ProtoBuf.Serializers.IProtoSerializer.ReturnsValue
+public void .ctor(TypeModel model)
+public Type get_ExpectedType()
+private bool ProtoBuf.Serializers.IProtoSerializer.get_RequiresOldValue()
+private bool ProtoBuf.Serializers.IProtoSerializer.get_ReturnsValue()
+public object Read(object value, ProtoReader source)
+public void Write(object value, ProtoWriter dest)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitWrite(CompilerContext ctx, Local valueFrom)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitRead(CompilerContext ctx, Local valueFrom)
+}
+internal ProtoBuf.Serializers.IProtoSerializer {
+public Type ExpectedType
+public bool RequiresOldValue
+public bool ReturnsValue
+public Type get_ExpectedType()
+public void Write(object value, ProtoWriter dest)
+public object Read(object value, ProtoReader source)
+public bool get_RequiresOldValue()
+public bool get_ReturnsValue()
+public void EmitWrite(CompilerContext ctx, Local valueFrom)
+public void EmitRead(CompilerContext ctx, Local entity)
+}
+internal ProtoBuf.Serializers.IProtoTypeSerializer {
+public bool HasCallbacks(CallbackType callbackType)
+public bool CanCreateInstance()
+public object CreateInstance(ProtoReader source)
+public void Callback(object value, CallbackType callbackType, SerializationContext context)
+public void EmitCallback(CompilerContext ctx, Local valueFrom, CallbackType callbackType)
+public void EmitCreateInstance(CompilerContext ctx)
+}
+internal ProtoBuf.Serializers.ISerializerProxy {
+public IProtoSerializer Serializer
+public IProtoSerializer get_Serializer()
+}
+internal ProtoBuf.Serializers.ListDecorator : ProtoDecoratorBase {
+private byte OPTIONS_IsList
+private byte OPTIONS_SuppressIList
+private byte OPTIONS_WritePacked
+private byte OPTIONS_ReturnList
+private byte OPTIONS_OverwriteList
+private byte OPTIONS_SupportNull
+private byte options
+private Type declaredType
+private Type concreteType
+private MethodInfo add
+private int fieldNumber
+protected WireType packedWireType
+private Type ienumeratorType
+private Type ienumerableType
+private bool IsList
+private bool SuppressIList
+private bool WritePacked
+private bool SupportNull
+private bool ReturnList
+protected bool RequireAdd
+public Type ExpectedType
+public bool RequiresOldValue
+public bool ReturnsValue
+protected bool AppendToCollection
+internal bool CanPack(WireType wireType)
+private bool get_IsList()
+private bool get_SuppressIList()
+private bool get_WritePacked()
+private bool get_SupportNull()
+private bool get_ReturnList()
+internal ListDecorator Create(TypeModel model, Type declaredType, Type concreteType, IProtoSerializer tail, int fieldNumber, bool writePacked, WireType packedWireType, bool returnList, bool overwriteList, bool supportNull)
+protected void .ctor(TypeModel model, Type declaredType, Type concreteType, IProtoSerializer tail, int fieldNumber, bool writePacked, WireType packedWireType, bool returnList, bool overwriteList, bool supportNull)
+protected bool get_RequireAdd()
+public Type get_ExpectedType()
+public bool get_RequiresOldValue()
+public bool get_ReturnsValue()
+protected bool get_AppendToCollection()
+protected void EmitRead(CompilerContext ctx, Local valueFrom)
+internal void EmitReadList(CompilerContext ctx, Local list, IProtoSerializer tail, MethodInfo add, WireType packedWireType, bool castListForAdd)
+private void EmitReadAndAddItem(CompilerContext ctx, Local list, IProtoSerializer tail, MethodInfo add, bool castListForAdd)
+protected MethodInfo GetEnumeratorInfo(TypeModel model, MethodInfo& moveNext, MethodInfo& current)
+protected void EmitWrite(CompilerContext ctx, Local valueFrom)
+public void Write(object value, ProtoWriter dest)
+public object Read(object value, ProtoReader source)
+}
+internal ProtoBuf.Serializers.MemberSpecifiedDecorator : ProtoDecoratorBase {
+private MethodInfo getSpecified
+private MethodInfo setSpecified
+public Type ExpectedType
+public bool RequiresOldValue
+public bool ReturnsValue
+public Type get_ExpectedType()
+public bool get_RequiresOldValue()
+public bool get_ReturnsValue()
+public void .ctor(MethodInfo getSpecified, MethodInfo setSpecified, IProtoSerializer tail)
+public void Write(object value, ProtoWriter dest)
+public object Read(object value, ProtoReader source)
+protected void EmitWrite(CompilerContext ctx, Local valueFrom)
+protected void EmitRead(CompilerContext ctx, Local valueFrom)
+}
+internal ProtoBuf.Serializers.NetObjectSerializer : object {
+private int key
+private Type type
+private NetObjectOptions options
+public Type ExpectedType
+public bool ReturnsValue
+public bool RequiresOldValue
+public void .ctor(TypeModel model, Type type, int key, NetObjectOptions options)
+public Type get_ExpectedType()
+public bool get_ReturnsValue()
+public bool get_RequiresOldValue()
+public object Read(object value, ProtoReader source)
+public void Write(object value, ProtoWriter dest)
+public void EmitRead(CompilerContext ctx, Local valueFrom)
+public void EmitWrite(CompilerContext ctx, Local valueFrom)
+}
+internal ProtoBuf.Serializers.NullDecorator : ProtoDecoratorBase {
+public int Tag
+private Type expectedType
+public Type ExpectedType
+public bool ReturnsValue
+public bool RequiresOldValue
+public void .ctor(TypeModel model, IProtoSerializer tail)
+public Type get_ExpectedType()
+public bool get_ReturnsValue()
+public bool get_RequiresOldValue()
+protected void EmitRead(CompilerContext ctx, Local valueFrom)
+protected void EmitWrite(CompilerContext ctx, Local valueFrom)
+public object Read(object value, ProtoReader source)
+public void Write(object value, ProtoWriter dest)
+}
+internal ProtoBuf.Serializers.ParseableSerializer : object {
+private MethodInfo parse
+public Type ExpectedType
+private bool ProtoBuf.Serializers.IProtoSerializer.RequiresOldValue
+private bool ProtoBuf.Serializers.IProtoSerializer.ReturnsValue
+public ParseableSerializer TryCreate(Type type, TypeModel model)
+private MethodInfo GetCustomToString(Type type)
+private void .ctor(MethodInfo parse)
+public Type get_ExpectedType()
+private bool ProtoBuf.Serializers.IProtoSerializer.get_RequiresOldValue()
+private bool ProtoBuf.Serializers.IProtoSerializer.get_ReturnsValue()
+public object Read(object value, ProtoReader source)
+public void Write(object value, ProtoWriter dest)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitWrite(CompilerContext ctx, Local valueFrom)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitRead(CompilerContext ctx, Local valueFrom)
+}
+internal ProtoBuf.Serializers.PropertyDecorator : ProtoDecoratorBase {
+private PropertyInfo property
+private Type forType
+private bool readOptionsWriteValue
+private MethodInfo shadowSetter
+public Type ExpectedType
+public bool RequiresOldValue
+public bool ReturnsValue
+public Type get_ExpectedType()
+public bool get_RequiresOldValue()
+public bool get_ReturnsValue()
+public void .ctor(TypeModel model, Type forType, PropertyInfo property, IProtoSerializer tail)
+private void SanityCheck(TypeModel model, PropertyInfo property, IProtoSerializer tail, Boolean& writeValue, bool nonPublic, bool allowInternal)
+private MethodInfo GetShadowSetter(TypeModel model, PropertyInfo property)
+public void Write(object value, ProtoWriter dest)
+public object Read(object value, ProtoReader source)
+protected void EmitWrite(CompilerContext ctx, Local valueFrom)
+protected void EmitRead(CompilerContext ctx, Local valueFrom)
+internal bool CanWrite(TypeModel model, MemberInfo member)
+}
+internal ProtoBuf.Serializers.ProtoDecoratorBase : object {
+protected IProtoSerializer Tail
+public Type ExpectedType
+public bool ReturnsValue
+public bool RequiresOldValue
+public Type get_ExpectedType()
+protected void .ctor(IProtoSerializer tail)
+public bool get_ReturnsValue()
+public bool get_RequiresOldValue()
+public void Write(object value, ProtoWriter dest)
+public object Read(object value, ProtoReader source)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitWrite(CompilerContext ctx, Local valueFrom)
+protected void EmitWrite(CompilerContext ctx, Local valueFrom)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitRead(CompilerContext ctx, Local valueFrom)
+protected void EmitRead(CompilerContext ctx, Local valueFrom)
+}
+internal ProtoBuf.Serializers.SByteSerializer : object {
+private Type expectedType
+public Type ExpectedType
+private bool ProtoBuf.Serializers.IProtoSerializer.RequiresOldValue
+private bool ProtoBuf.Serializers.IProtoSerializer.ReturnsValue
+public void .ctor(TypeModel model)
+public Type get_ExpectedType()
+private bool ProtoBuf.Serializers.IProtoSerializer.get_RequiresOldValue()
+private bool ProtoBuf.Serializers.IProtoSerializer.get_ReturnsValue()
+public object Read(object value, ProtoReader source)
+public void Write(object value, ProtoWriter dest)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitWrite(CompilerContext ctx, Local valueFrom)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitRead(CompilerContext ctx, Local valueFrom)
+}
+internal ProtoBuf.Serializers.SingleSerializer : object {
+private Type expectedType
+public Type ExpectedType
+private bool ProtoBuf.Serializers.IProtoSerializer.RequiresOldValue
+private bool ProtoBuf.Serializers.IProtoSerializer.ReturnsValue
+public Type get_ExpectedType()
+public void .ctor(TypeModel model)
+private bool ProtoBuf.Serializers.IProtoSerializer.get_RequiresOldValue()
+private bool ProtoBuf.Serializers.IProtoSerializer.get_ReturnsValue()
+public object Read(object value, ProtoReader source)
+public void Write(object value, ProtoWriter dest)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitWrite(CompilerContext ctx, Local valueFrom)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitRead(CompilerContext ctx, Local valueFrom)
+}
+internal ProtoBuf.Serializers.StringSerializer : object {
+private Type expectedType
+public Type ExpectedType
+private bool ProtoBuf.Serializers.IProtoSerializer.RequiresOldValue
+private bool ProtoBuf.Serializers.IProtoSerializer.ReturnsValue
+public void .ctor(TypeModel model)
+public Type get_ExpectedType()
+public void Write(object value, ProtoWriter dest)
+private bool ProtoBuf.Serializers.IProtoSerializer.get_RequiresOldValue()
+private bool ProtoBuf.Serializers.IProtoSerializer.get_ReturnsValue()
+public object Read(object value, ProtoReader source)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitWrite(CompilerContext ctx, Local valueFrom)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitRead(CompilerContext ctx, Local valueFrom)
+}
+internal ProtoBuf.Serializers.SubItemSerializer : object {
+private int key
+private Type type
+private ISerializerProxy proxy
+private bool recursionCheck
+private Type ProtoBuf.Serializers.IProtoSerializer.ExpectedType
+private bool ProtoBuf.Serializers.IProtoSerializer.RequiresOldValue
+private bool ProtoBuf.Serializers.IProtoSerializer.ReturnsValue
+private bool ProtoBuf.Serializers.IProtoTypeSerializer.HasCallbacks(CallbackType callbackType)
+private bool ProtoBuf.Serializers.IProtoTypeSerializer.CanCreateInstance()
+private void ProtoBuf.Serializers.IProtoTypeSerializer.EmitCallback(CompilerContext ctx, Local valueFrom, CallbackType callbackType)
+private void ProtoBuf.Serializers.IProtoTypeSerializer.EmitCreateInstance(CompilerContext ctx)
+private void ProtoBuf.Serializers.IProtoTypeSerializer.Callback(object value, CallbackType callbackType, SerializationContext context)
+private object ProtoBuf.Serializers.IProtoTypeSerializer.CreateInstance(ProtoReader source)
+public void .ctor(Type type, int key, ISerializerProxy proxy, bool recursionCheck)
+private Type ProtoBuf.Serializers.IProtoSerializer.get_ExpectedType()
+private bool ProtoBuf.Serializers.IProtoSerializer.get_RequiresOldValue()
+private bool ProtoBuf.Serializers.IProtoSerializer.get_ReturnsValue()
+private void ProtoBuf.Serializers.IProtoSerializer.Write(object value, ProtoWriter dest)
+private object ProtoBuf.Serializers.IProtoSerializer.Read(object value, ProtoReader source)
+private bool EmitDedicatedMethod(CompilerContext ctx, Local valueFrom, bool read)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitWrite(CompilerContext ctx, Local valueFrom)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitRead(CompilerContext ctx, Local valueFrom)
+}
+internal ProtoBuf.Serializers.SurrogateSerializer : object {
+private Type forType
+private Type declaredType
+private MethodInfo toTail
+private MethodInfo fromTail
+private IProtoTypeSerializer rootTail
+public bool ReturnsValue
+public bool RequiresOldValue
+public Type ExpectedType
+private bool ProtoBuf.Serializers.IProtoTypeSerializer.HasCallbacks(CallbackType callbackType)
+private void ProtoBuf.Serializers.IProtoTypeSerializer.EmitCallback(CompilerContext ctx, Local valueFrom, CallbackType callbackType)
+private void ProtoBuf.Serializers.IProtoTypeSerializer.EmitCreateInstance(CompilerContext ctx)
+private bool ProtoBuf.Serializers.IProtoTypeSerializer.CanCreateInstance()
+private object ProtoBuf.Serializers.IProtoTypeSerializer.CreateInstance(ProtoReader source)
+private void ProtoBuf.Serializers.IProtoTypeSerializer.Callback(object value, CallbackType callbackType, SerializationContext context)
+public bool get_ReturnsValue()
+public bool get_RequiresOldValue()
+public Type get_ExpectedType()
+public void .ctor(Type forType, Type declaredType, IProtoTypeSerializer rootTail)
+private bool HasCast(Type type, Type from, Type to, MethodInfo& op)
+public MethodInfo GetConversion(bool toTail)
+public void Write(object value, ProtoWriter writer)
+public object Read(object value, ProtoReader source)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitRead(CompilerContext ctx, Local valueFrom)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitWrite(CompilerContext ctx, Local valueFrom)
+}
+internal ProtoBuf.Serializers.SystemTypeSerializer : object {
+private Type expectedType
+public Type ExpectedType
+private bool ProtoBuf.Serializers.IProtoSerializer.RequiresOldValue
+private bool ProtoBuf.Serializers.IProtoSerializer.ReturnsValue
+public void .ctor(TypeModel model)
+public Type get_ExpectedType()
+private void ProtoBuf.Serializers.IProtoSerializer.Write(object value, ProtoWriter dest)
+private object ProtoBuf.Serializers.IProtoSerializer.Read(object value, ProtoReader source)
+private bool ProtoBuf.Serializers.IProtoSerializer.get_RequiresOldValue()
+private bool ProtoBuf.Serializers.IProtoSerializer.get_ReturnsValue()
+private void ProtoBuf.Serializers.IProtoSerializer.EmitWrite(CompilerContext ctx, Local valueFrom)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitRead(CompilerContext ctx, Local valueFrom)
+}
+internal ProtoBuf.Serializers.TagDecorator : ProtoDecoratorBase {
+private bool strict
+private int fieldNumber
+private WireType wireType
+public Type ExpectedType
+public bool RequiresOldValue
+public bool ReturnsValue
+private bool NeedsHint
+public bool HasCallbacks(CallbackType callbackType)
+public bool CanCreateInstance()
+public object CreateInstance(ProtoReader source)
+public void Callback(object value, CallbackType callbackType, SerializationContext context)
+public void EmitCallback(CompilerContext ctx, Local valueFrom, CallbackType callbackType)
+public void EmitCreateInstance(CompilerContext ctx)
+public Type get_ExpectedType()
+public void .ctor(int fieldNumber, WireType wireType, bool strict, IProtoSerializer tail)
+public bool get_RequiresOldValue()
+public bool get_ReturnsValue()
+private bool get_NeedsHint()
+public object Read(object value, ProtoReader source)
+public void Write(object value, ProtoWriter dest)
+protected void EmitWrite(CompilerContext ctx, Local valueFrom)
+protected void EmitRead(CompilerContext ctx, Local valueFrom)
+}
+internal ProtoBuf.Serializers.TimeSpanSerializer : object {
+private Type expectedType
+public Type ExpectedType
+private bool ProtoBuf.Serializers.IProtoSerializer.RequiresOldValue
+private bool ProtoBuf.Serializers.IProtoSerializer.ReturnsValue
+public void .ctor(TypeModel model)
+public Type get_ExpectedType()
+private bool ProtoBuf.Serializers.IProtoSerializer.get_RequiresOldValue()
+private bool ProtoBuf.Serializers.IProtoSerializer.get_ReturnsValue()
+public object Read(object value, ProtoReader source)
+public void Write(object value, ProtoWriter dest)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitWrite(CompilerContext ctx, Local valueFrom)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitRead(CompilerContext ctx, Local valueFrom)
+}
+internal ProtoBuf.Serializers.TupleSerializer : object {
+private MemberInfo[] members
+private ConstructorInfo ctor
+private IProtoSerializer[] tails
+public Type ExpectedType
+public bool RequiresOldValue
+public bool ReturnsValue
+public void .ctor(RuntimeTypeModel model, ConstructorInfo ctor, MemberInfo[] members)
+public bool HasCallbacks(CallbackType callbackType)
+public void EmitCallback(CompilerContext ctx, Local valueFrom, CallbackType callbackType)
+public Type get_ExpectedType()
+private void ProtoBuf.Serializers.IProtoTypeSerializer.Callback(object value, CallbackType callbackType, SerializationContext context)
+private object ProtoBuf.Serializers.IProtoTypeSerializer.CreateInstance(ProtoReader source)
+private object GetValue(object obj, int index)
+public object Read(object value, ProtoReader source)
+public void Write(object value, ProtoWriter dest)
+public bool get_RequiresOldValue()
+public bool get_ReturnsValue()
+private Type GetMemberType(int index)
+private bool ProtoBuf.Serializers.IProtoTypeSerializer.CanCreateInstance()
+public void EmitWrite(CompilerContext ctx, Local valueFrom)
+private void ProtoBuf.Serializers.IProtoTypeSerializer.EmitCreateInstance(CompilerContext ctx)
+public void EmitRead(CompilerContext ctx, Local incoming)
+}
+internal ProtoBuf.Serializers.TypeSerializer : object {
+private Type forType
+private Type constructType
+private IProtoSerializer[] serializers
+private Int32[] fieldNumbers
+private bool isRootType
+private bool useConstructor
+private bool isExtensible
+private bool hasConstructor
+private CallbackSet callbacks
+private MethodInfo[] baseCtorCallbacks
+private MethodInfo factory
+private Type iextensible
+public Type ExpectedType
+private bool CanHaveInheritance
+private bool ProtoBuf.Serializers.IProtoSerializer.RequiresOldValue
+private bool ProtoBuf.Serializers.IProtoSerializer.ReturnsValue
+public bool HasCallbacks(CallbackType callbackType)
+public Type get_ExpectedType()
+public void .ctor(TypeModel model, Type forType, Int32[] fieldNumbers, IProtoSerializer[] serializers, MethodInfo[] baseCtorCallbacks, bool isRootType, bool useConstructor, CallbackSet callbacks, Type constructType, MethodInfo factory)
+private bool get_CanHaveInheritance()
+private bool ProtoBuf.Serializers.IProtoTypeSerializer.CanCreateInstance()
+private object ProtoBuf.Serializers.IProtoTypeSerializer.CreateInstance(ProtoReader source)
+public void Callback(object value, CallbackType callbackType, SerializationContext context)
+private IProtoSerializer GetMoreSpecificSerializer(object value)
+public void Write(object value, ProtoWriter dest)
+public object Read(object value, ProtoReader source)
+private object InvokeCallback(MethodInfo method, object obj, SerializationContext context)
+private object CreateInstance(ProtoReader source, bool includeLocalCallback)
+private bool ProtoBuf.Serializers.IProtoSerializer.get_RequiresOldValue()
+private bool ProtoBuf.Serializers.IProtoSerializer.get_ReturnsValue()
+private void ProtoBuf.Serializers.IProtoSerializer.EmitWrite(CompilerContext ctx, Local valueFrom)
+private void EmitInvokeCallback(CompilerContext ctx, MethodInfo method, bool copyValue, Type constructType, Type type)
+private void EmitCallbackIfNeeded(CompilerContext ctx, Local valueFrom, CallbackType callbackType)
+private void ProtoBuf.Serializers.IProtoTypeSerializer.EmitCallback(CompilerContext ctx, Local valueFrom, CallbackType callbackType)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitRead(CompilerContext ctx, Local valueFrom)
+private void WriteFieldHandler(CompilerContext ctx, Type expected, Local loc, CodeLabel handler, CodeLabel continue, IProtoSerializer serializer)
+private void ProtoBuf.Serializers.IProtoTypeSerializer.EmitCreateInstance(CompilerContext ctx)
+private void EmitCreateIfNull(CompilerContext ctx, Local storage)
+}
+internal ProtoBuf.Serializers.UInt16Serializer : object {
+private Type expectedType
+public Type ExpectedType
+private bool ProtoBuf.Serializers.IProtoSerializer.RequiresOldValue
+private bool ProtoBuf.Serializers.IProtoSerializer.ReturnsValue
+public void .ctor(TypeModel model)
+public Type get_ExpectedType()
+private bool ProtoBuf.Serializers.IProtoSerializer.get_RequiresOldValue()
+private bool ProtoBuf.Serializers.IProtoSerializer.get_ReturnsValue()
+public object Read(object value, ProtoReader source)
+public void Write(object value, ProtoWriter dest)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitWrite(CompilerContext ctx, Local valueFrom)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitRead(CompilerContext ctx, Local valueFrom)
+}
+internal ProtoBuf.Serializers.UInt32Serializer : object {
+private Type expectedType
+public Type ExpectedType
+private bool ProtoBuf.Serializers.IProtoSerializer.RequiresOldValue
+private bool ProtoBuf.Serializers.IProtoSerializer.ReturnsValue
+public void .ctor(TypeModel model)
+public Type get_ExpectedType()
+private bool ProtoBuf.Serializers.IProtoSerializer.get_RequiresOldValue()
+private bool ProtoBuf.Serializers.IProtoSerializer.get_ReturnsValue()
+public object Read(object value, ProtoReader source)
+public void Write(object value, ProtoWriter dest)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitWrite(CompilerContext ctx, Local valueFrom)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitRead(CompilerContext ctx, Local valueFrom)
+}
+internal ProtoBuf.Serializers.UInt64Serializer : object {
+private Type expectedType
+public Type ExpectedType
+private bool ProtoBuf.Serializers.IProtoSerializer.RequiresOldValue
+private bool ProtoBuf.Serializers.IProtoSerializer.ReturnsValue
+public void .ctor(TypeModel model)
+public Type get_ExpectedType()
+private bool ProtoBuf.Serializers.IProtoSerializer.get_RequiresOldValue()
+private bool ProtoBuf.Serializers.IProtoSerializer.get_ReturnsValue()
+public object Read(object value, ProtoReader source)
+public void Write(object value, ProtoWriter dest)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitWrite(CompilerContext ctx, Local valueFrom)
+private void ProtoBuf.Serializers.IProtoSerializer.EmitRead(CompilerContext ctx, Local valueFrom)
+}
+internal ProtoBuf.Serializers.UriDecorator : ProtoDecoratorBase {
+private Type expectedType
+public Type ExpectedType
+public bool RequiresOldValue
+public bool ReturnsValue
+public void .ctor(TypeModel model, IProtoSerializer tail)
+public Type get_ExpectedType()
+public bool get_RequiresOldValue()
+public bool get_ReturnsValue()
+public void Write(object value, ProtoWriter dest)
+public object Read(object value, ProtoReader source)
+protected void EmitWrite(CompilerContext ctx, Local valueFrom)
+protected void EmitRead(CompilerContext ctx, Local valueFrom)
+}
+public ProtoBuf.SubItemToken : ValueType {
+internal int value
+internal void .ctor(int value)
+}
+internal ProtoBuf.TimeSpanScale : Enum {
+public int value__
+public TimeSpanScale Days
+public TimeSpanScale Hours
+public TimeSpanScale Minutes
+public TimeSpanScale Seconds
+public TimeSpanScale Milliseconds
+public TimeSpanScale Ticks
+public TimeSpanScale MinMax
+}
+public ProtoBuf.WireType : Enum {
+public int value__
+public WireType None
+public WireType Variant
+public WireType Fixed64
+public WireType String
+public WireType StartGroup
+public WireType EndGroup
+public WireType Fixed32
+public WireType SignedVariant
+}

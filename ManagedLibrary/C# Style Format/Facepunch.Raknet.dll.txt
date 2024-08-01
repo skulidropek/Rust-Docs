@@ -1,0 +1,249 @@
+public Facepunch.Network.Raknet.Client : Client {
+public float MaxReceiveTime
+public string DemoHeader
+private Peer peer
+public Byte[] ReusableBytes
+private Stopwatch cycleTimer
+protected FileStream recordStream
+protected BinaryWriter recordWriter
+protected Stopwatch recordTime
+protected FileStream playbackStream
+protected BinaryReader playbackReader
+protected long playbackTime
+protected Stopwatch playbackTimer
+private long lastPlayedPacketTime
+public bool IsRecording
+public bool IsPlaying
+public bool PlayingFinished
+public bool IsConnected()
+public bool Connect(string strURL, int port)
+internal bool HandleRaknetPacket(byte type)
+protected void HandleMessage()
+public void Cycle()
+public void Disconnect(string reason, bool sendReasonToServer)
+public string GetDebug(Connection connection)
+public ulong GetStat(Connection connection, StatTypeLong type)
+public int GetAveragePing()
+public int GetLastPing()
+public int GetLowestPing()
+public bool StartRecording(string targetFilename, Byte[] header)
+public void StopRecording()
+public bool get_IsRecording()
+public void ManualRecordPacket(byte packetId, Byte[] data, int length)
+public Byte[] StartPlayback(string filename)
+public void StopPlayback()
+public bool get_IsPlaying()
+public bool get_PlayingFinished()
+public void UpdatePlayback(long frameTime, long maxTime)
+private bool PlaybackPacket()
+}
+internal Facepunch.Network.Raknet.Defines : object {
+public byte lowestUserPacket
+}
+internal Facepunch.Network.Raknet.DemoPeer : Peer {
+public Byte[] Packet
+public int Position
+public ulong incomingGUID
+public UInt32 incomingAddressInt
+public UInt32 incomingPort
+public int incomingBits
+public int incomingBitsUnread
+public ulong get_incomingGUID()
+public UInt32 get_incomingAddressInt()
+public UInt32 get_incomingPort()
+public int get_incomingBits()
+public int get_incomingBitsUnread()
+public void SetReadPos(int bitsOffset)
+public bool ReadBytes(Byte* data, int length)
+public string GetStatisticsString(ulong guid)
+public int GetPingAverage(ulong guid)
+public int GetPingLast(ulong guid)
+public int GetPingLowest(ulong guid)
+public RaknetStats GetStatistics(ulong guid)
+public ulong GetStat(Connection connection, StatTypeLong type)
+public void SendStart()
+protected void Write(Byte* data, int size)
+public UInt32 SendBroadcast(Priority priority, SendMethod reliability, sbyte channel)
+public UInt32 SendTo(ulong guid, Priority priority, SendMethod reliability, sbyte channel)
+}
+public Facepunch.Network.Raknet.Native : object {
+public IntPtr NET_Create()
+public void NET_Close(IntPtr nw)
+public int NET_StartClient(IntPtr nw, string hostName, int port, int retries, int retryDelay, int timeout)
+public int NET_StartServer(IntPtr nw, string ip, int port, int maxConnections)
+public IntPtr NET_LastStartupError(IntPtr nw)
+public bool NET_Receive(IntPtr nw)
+public ulong NETRCV_GUID(IntPtr nw)
+public UInt32 NETRCV_Address(IntPtr nw)
+public UInt32 NETRCV_Port(IntPtr nw)
+public IntPtr NETRCV_RawData(IntPtr nw)
+public int NETRCV_LengthBits(IntPtr nw)
+public int NETRCV_UnreadBits(IntPtr nw)
+public bool NETRCV_ReadBytes(IntPtr nw, Byte* data, int length)
+public void NETRCV_SetReadPointer(IntPtr nw, int bitsOffset)
+public void NETSND_Start(IntPtr nw)
+public void NETSND_WriteBytes(IntPtr nw, Byte* data, int length)
+public UInt32 NETSND_Size(IntPtr nw)
+public UInt32 NETSND_Broadcast(IntPtr nw, int priority, int reliability, int channel)
+public UInt32 NETSND_Send(IntPtr nw, ulong connectionID, int priority, int reliability, int channel)
+public void NET_CloseConnection(IntPtr nw, ulong connectionID)
+public IntPtr NET_GetAddress(IntPtr nw, ulong connectionID)
+public IntPtr NET_GetStatisticsString(IntPtr nw, ulong connectionID)
+public bool NET_GetStatistics(IntPtr nw, ulong connectionID, RaknetStats& data, int dataLength)
+public int NET_GetAveragePing(IntPtr nw, ulong connectionID)
+public int NET_GetLastPing(IntPtr nw, ulong connectionID)
+public int NET_GetLowestPing(IntPtr nw, ulong connectionID)
+public void NET_SendMessage(IntPtr nw, Byte* data, int length, UInt32 adr, ushort port)
+public float NETSND_ReadCompressedFloat(IntPtr nw)
+}
+public Facepunch.Network.Raknet.PacketType : object {
+public byte NEW_INCOMING_CONNECTION
+public byte CONNECTION_REQUEST_ACCEPTED
+public byte CONNECTION_ATTEMPT_FAILED
+public byte DISCONNECTION_NOTIFICATION
+public byte NO_FREE_INCOMING_CONNECTIONS
+public byte CONNECTION_LOST
+public byte CONNECTION_BANNED
+}
+internal Facepunch.Network.Raknet.Peer : object {
+private IntPtr ptr
+private Byte[] ReadBuffer
+private MemoryStream memoryStream
+private Byte[] ByteBuffer
+public ulong incomingGUID
+public UInt32 incomingAddressInt
+public UInt32 incomingPort
+public string incomingAddress
+public int incomingBits
+public int incomingBitsUnread
+public int incomingBytes
+public int incomingBytesUnread
+public Peer CreateServer(string ip, int port, int maxConnections)
+public Peer CreateConnection(string hostname, int port, int retries, int retryDelay, int timeout)
+public void Close()
+public bool Receive()
+public ulong get_incomingGUID()
+public UInt32 get_incomingAddressInt()
+public UInt32 get_incomingPort()
+public string get_incomingAddress()
+public int get_incomingBits()
+public int get_incomingBitsUnread()
+public int get_incomingBytes()
+public int get_incomingBytesUnread()
+public void SetReadPos(int bitsOffset)
+public bool ReadBytes(Byte* data, int length)
+public int Read(Byte[] buffer, int offset, int length)
+public byte ReadUInt8()
+public bool ReadBit()
+public sbyte ReadInt8()
+public long ReadInt64()
+public int ReadInt32()
+public short ReadInt16()
+public ulong ReadUInt64()
+public UInt32 ReadUInt32()
+public ushort ReadUInt16()
+public float ReadFloat()
+public double ReadDouble()
+public byte ReadByte()
+public IntPtr RawData()
+public MemoryStream ReadBytes(int length)
+private Byte* Read(int size, Byte* data)
+public void SendStart()
+public void WriteBool(bool val)
+public void WriteUInt16(ushort val)
+public void WriteUInt32(UInt32 val)
+public void WriteUInt64(ulong val)
+public void WriteInt8(sbyte val)
+public void WriteInt16(short val)
+public void WriteInt32(int val)
+public void WriteInt64(long val)
+public void WriteFloat(float val)
+public void WriteDouble(double val)
+public void WriteUInt8(byte val)
+public void WriteBytes(Byte[] val, int offset, int length)
+public void WriteBytes(Byte[] val)
+protected void Write(Byte* data, int size)
+public UInt32 SendBroadcast(Priority priority, SendMethod reliability, sbyte channel)
+public UInt32 SendTo(ulong guid, Priority priority, SendMethod reliability, sbyte channel)
+public void SendUnconnectedMessage(Byte* data, int length, UInt32 adr, ushort port)
+public string GetAddress(ulong guid)
+private string StringFromPointer(IntPtr p)
+public int ToRaknetPriority(Priority priority)
+public int ToRaknetPacketReliability(SendMethod priority)
+public void Kick(Connection connection)
+protected void Check()
+public string GetStatisticsString(ulong guid)
+public int GetPingAverage(ulong guid)
+public int GetPingLast(ulong guid)
+public int GetPingLowest(ulong guid)
+public RaknetStats GetStatistics(ulong guid)
+public ulong GetStat(Connection connection, StatTypeLong type)
+}
+public Facepunch.Network.Raknet.Server : Server {
+public float MaxReceiveTime
+public ulong MaxPacketsPerSecond
+private Peer peer
+public bool IsConnected()
+public bool Start()
+public void Stop(string shutdownMsg)
+public void Kick(Connection cn, string message)
+internal bool HandleRaknetPacket(byte type, Connection connection)
+internal void UnconnectedPacket()
+internal void ConnectedPacket(Connection connection)
+public void Cycle()
+protected void OnNewConnection()
+public string GetDebug(Connection connection)
+public int GetAveragePing(Connection connection)
+public ulong GetStat(Connection connection, StatTypeLong type)
+public void SendUnconnected(UInt32 netAddr, ushort netPort, Byte[] data, int size)
+}
+internal Facepunch.Network.Raknet.StreamRead : Read {
+private Peer peer
+public int length
+public int position
+public int unread
+public long Length
+public long Position
+public void .ctor(Peer peer)
+public void Shutdown()
+public int get_length()
+public int get_position()
+public int get_unread()
+public bool Bit()
+public byte UInt8()
+public ushort UInt16()
+public UInt32 UInt32()
+public ulong UInt64()
+public sbyte Int8()
+public short Int16()
+public int Int32()
+public long Int64()
+public float Float()
+public double Double()
+public int Read(Byte[] buffer, int offset, int count)
+public long get_Length()
+public long get_Position()
+public void set_Position(long value)
+}
+internal Facepunch.Network.Raknet.StreamWrite : Write {
+private Peer peer
+public void .ctor(Peer peer)
+public void Shutdown()
+public bool Start()
+public void Send(SendInfo info)
+public void PacketID(Type val)
+public void UInt8(byte val)
+public void UInt16(ushort val)
+public void UInt32(UInt32 val)
+public void UInt64(ulong val)
+public void Int8(sbyte val)
+public void Int16(short val)
+public void Int32(int val)
+public void Int64(long val)
+public void Bool(bool val)
+public void Float(float val)
+public void Double(double val)
+public void Bytes(Byte[] val)
+public void Write(Byte[] buffer, int offset, int count)
+public void WriteByte(byte value)
+}

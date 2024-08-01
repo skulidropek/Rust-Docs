@@ -1,0 +1,346 @@
+public EasyAntiCheat.Client.ClientAuth.ClientAuth : object {
+public void Dispose()
+public void WriteChallengeResponse(Byte[] ServerChallenge, Byte[] ClientResponse)
+}
+internal EasyAntiCheat.Client.ClientAuth.NativeClientAuth : object {
+private string DllFileName
+private string InterfaceVersion
+private IntPtr Instance
+private IntPtr dotCreateClientAuth(string InterfaceVersion)
+private void dotInitialize(IntPtr Instance)
+private void dotDestroy(IntPtr Instance)
+private void dotClientWriteChallengeResponse(IntPtr Instance, Byte[] ServerChallenge, Byte[] ClientResponse)
+public void Initialize()
+public void Dispose()
+public void ClientWriteChallengeResponse(Byte[] ServerChallenge, Byte[] ClientResponse)
+}
+public EasyAntiCheat.Client.ClientIntegrityViolationType : Enum {
+public int value__
+public ClientIntegrityViolationType IntegrityViolationNone
+public ClientIntegrityViolationType EACHashCatalogueFileNotFound
+public ClientIntegrityViolationType EACHashCatalogueError
+public ClientIntegrityViolationType EACHashCatalogueCertificateRevoked
+public ClientIntegrityViolationType UnknownGameFileVersion
+public ClientIntegrityViolationType RequiredGameFileNotFound
+public ClientIntegrityViolationType UncataloguedGameFileForbidden
+public ClientIntegrityViolationType UnknownSystemFileVersion
+public ClientIntegrityViolationType ForbiddenModuleLoaded
+public ClientIntegrityViolationType CorruptedMemory
+public ClientIntegrityViolationType HackToolDetected
+public ClientIntegrityViolationType InternalAntiCheatViolation
+public ClientIntegrityViolationType CorruptedNetworkMessageFlow
+public ClientIntegrityViolationType CannotRunUnderVirtualMachine
+public ClientIntegrityViolationType ForbiddenSystemConfiguration
+}
+public EasyAntiCheat.Client.ConnectionDescriptor : ValueType {
+private ConnectionStatus <Status>k__BackingField
+private string <StatusMessage>k__BackingField
+public bool Connected
+public ConnectionStatus Status
+public string StatusMessage
+internal void .ctor(ConnectionStatus status, string statusMessage)
+public bool get_Connected()
+public ConnectionStatus get_Status()
+private void set_Status(ConnectionStatus value)
+public string get_StatusMessage()
+private void set_StatusMessage(string value)
+}
+public EasyAntiCheat.Client.ConnectionStatus : Enum {
+public int value__
+public ConnectionStatus Disconnected
+public ConnectionStatus DomainResolveError
+public ConnectionStatus NetworkError
+public ConnectionStatus Connected
+}
+public EasyAntiCheat.Client.Debug : object {
+private TextWriter writer
+public void SetOut(WriterDelegate writer)
+public void SetOut(TextWriter writer)
+public void WriteLine(object value)
+public void WriteLine(string format, Object[] args)
+}
+internal EasyAntiCheat.Client.EventHandlerExtensions : object {
+public void Raise(EventHandler`1<T> eventHandler, object sender, T eventArgs)
+}
+public EasyAntiCheat.Client.GameLauncher : object {
+private LoadInfo loadInfo
+private EventWaitHandle waitHandle
+private ThreadSynchronizer eventContext
+private LoadResult LoadResultCode
+private string LoadResultMsg
+private bool LoadCancelled
+private int DisposedRef
+private EventHandler`1<LoadCompletedEventArgs> Completed
+private EventHandler`1<LoadProgressEventArgs> Progress
+public LoadInfo Options
+public void .ctor(string filename, string arguments)
+public void .ctor(LoadInfo loadInfo)
+public void add_Completed(EventHandler`1<LoadCompletedEventArgs> value)
+public void remove_Completed(EventHandler`1<LoadCompletedEventArgs> value)
+public void add_Progress(EventHandler`1<LoadProgressEventArgs> value)
+public void remove_Progress(EventHandler`1<LoadProgressEventArgs> value)
+public LoadInfo get_Options()
+public void BeginLoad()
+public void CancelLoad()
+public void Dispose()
+private void Load()
+private UInt32 OnLoadProgress(UInt32 Progress, IntPtr CallbackParameter)
+private void OnLoadFinished(LoadResult Result, string Message, IntPtr CallbackParameter)
+private void RaiseCompleted(LoadResult Result, string Message)
+private void RaiseProgress(LoadProgressEventArgs eventArgs)
+private void <BeginLoad>b__0(object state)
+}
+public EasyAntiCheat.Client.HostValidationResult : Enum {
+public int value__
+public HostValidationResult ServerHostValidationSuccess
+public HostValidationResult ServerHostValidationFailed
+public HostValidationResult ServerHostValidationTimedOut
+}
+internal EasyAntiCheat.Client.Hydra.NativeClient : object {
+private string InterfaceVersion
+private INativeModule Module
+private IntPtr Instance
+private Byte[] StaticMsgBuf
+private CallbackProgress nogcOnProgress
+private CallbackFinished nogcOnFinished
+private CallbackIntegrity nogcOnIntegrityViolation
+private CallbackHostValidation nogcOnHostValidation
+public bool IsStartedWithEasyAntiCheat()
+public bool IsUnity()
+public bool IsWindows()
+public void Dispose()
+public void Initialize(CallbackProgress OnProgress, CallbackFinished OnFinished, CallbackIntegrity OnIntegrityViolation, CallbackHostValidation OnHostValidation)
+public void ConnectionReset()
+public bool PopNetworkMessage(Byte[]& MessageBuffer, Int32& MessageLength)
+public void SetMaxAllowedMessageLength(int MaxMessageLength)
+public void PushNetworkMessage(Byte[] MessageBuffer, int MessageLength)
+public void PollStatus()
+public void ValidateServerHost(UInt32 TimeoutMs)
+}
+public EasyAntiCheat.Client.Hydra.Runtime : object {
+private CallbackProgress nogc_AntiCheatProgress
+private CallbackFinished nogc_AntiCheatEvent
+private bool initializeCalled
+private EventHandler`1<StateChangedEventArgs> onStateChanged
+private EventHandler`1<LoadCompletedEventArgs> onLoadCompleted
+private EventHandler`1<LoadProgressEventArgs> onProgress
+private bool <Initialized>k__BackingField
+private IntegrityDescriptor <Integrity>k__BackingField
+private HostValidationResult <HostValidation>k__BackingField
+public bool Initialized
+public IntegrityDescriptor Integrity
+public HostValidationResult HostValidation
+public bool get_Initialized()
+private void set_Initialized(bool value)
+public IntegrityDescriptor get_Integrity()
+private void set_Integrity(IntegrityDescriptor value)
+public HostValidationResult get_HostValidation()
+private void set_HostValidation(HostValidationResult value)
+public void Initialize(EventHandler`1<StateChangedEventArgs> onStateChanged, EventHandler`1<LoadCompletedEventArgs> onCompleted, EventHandler`1<LoadProgressEventArgs> onProgress)
+public bool IsActive()
+public void Release()
+public void ConnectionReset()
+public bool PopNetworkMessage(Byte[]& MessageBuffer, Int32& MessageLength)
+public void SetMaxAllowedMessageLength(int MaxMessageLength)
+public void PushNetworkMessage(Byte[] MessageBuffer, int MessageLength)
+public void PollStatus()
+public void ValidateServerHost(UInt32 TimeoutMs)
+private UInt32 OnInternalProgress(UInt32 Progress, IntPtr CallbackParameter)
+private void OnInternalEvent(LoadResult Result, string Message, IntPtr CallbackParameter)
+private UInt32 OnIntegrityViolation(ClientIntegrityViolationType ViolationType, string ViolationCause, string DefaultMessage, IntPtr CallbackParameter)
+private bool OnHostValidation(HostValidationResult Result, string Message, IntPtr CallbackParameter)
+}
+public EasyAntiCheat.Client.InstallerInfo : object {
+private bool <Allow>k__BackingField
+private string <Filename>k__BackingField
+private bool <Visible>k__BackingField
+public bool Allow
+public string Filename
+public bool Visible
+internal string FullPath
+public bool get_Allow()
+public void set_Allow(bool value)
+public string get_Filename()
+public void set_Filename(string value)
+public bool get_Visible()
+public void set_Visible(bool value)
+internal string get_FullPath()
+}
+public EasyAntiCheat.Client.IntegrityDescriptor : ValueType {
+private bool <Violated>k__BackingField
+private string <ViolationMessage>k__BackingField
+public bool Violated
+public string ViolationMessage
+public void .ctor(bool violated, string message)
+public bool get_Violated()
+private void set_Violated(bool value)
+public string get_ViolationMessage()
+private void set_ViolationMessage(string value)
+}
+internal EasyAntiCheat.Client.Legacy.NativeClient : object {
+private string InterfaceVersion
+private INativeModule Module
+private IntPtr Instance
+private CallbackProgress nogcOnProgress
+private CallbackFinished nogcOnFinished
+public bool IsStartedWithEasyAntiCheat()
+public bool IsUnity()
+public bool IsWindows()
+public void Dispose()
+public void Initialize(CallbackProgress OnProgress, CallbackFinished OnFinished)
+public void SetUserToken(Byte[] UserToken, int SizeOfToken)
+}
+public EasyAntiCheat.Client.Legacy.Runtime : object {
+private CallbackProgress nogc_AntiCheatProgress
+private CallbackFinished nogc_AntiCheatEvent
+private Byte[] userToken
+private bool initializeCalled
+private EventHandler`1<LoadProgressEventArgs> onProgress
+private EventHandler`1<LoadCompletedEventArgs> onLoadCompleted
+private EventHandler`1<StateChangedEventArgs> onStateChanged
+private ConnectionDescriptor <Connection>k__BackingField
+private bool <Initialized>k__BackingField
+private IntegrityDescriptor <Integrity>k__BackingField
+public ConnectionDescriptor Connection
+public bool Initialized
+public IntegrityDescriptor Integrity
+public Byte[] UserToken
+public ConnectionDescriptor get_Connection()
+private void set_Connection(ConnectionDescriptor value)
+public bool get_Initialized()
+private void set_Initialized(bool value)
+public IntegrityDescriptor get_Integrity()
+private void set_Integrity(IntegrityDescriptor value)
+public Byte[] get_UserToken()
+public void set_UserToken(Byte[] value)
+public void Initialize(EventHandler`1<LoadCompletedEventArgs> onCompleted, EventHandler`1<LoadProgressEventArgs> onProgress, EventHandler`1<StateChangedEventArgs> onStateChanged)
+public bool IsActive()
+public void Release()
+private UInt32 OnInternalProgress(UInt32 Progress, IntPtr CallbackParameter)
+private void OnInternalEvent(LoadResult Result, string Message, IntPtr CallbackParameter)
+private void UpdateUserToken()
+}
+public EasyAntiCheat.Client.LoadCompletedEventArgs : LoadEventArgs {
+private LoadResult <Status>k__BackingField
+public LoadResult Status
+internal void .ctor(LoadResult Result, string Message)
+public LoadResult get_Status()
+private void set_Status(LoadResult value)
+public Process GetGameProcess()
+public string ToString()
+}
+public EasyAntiCheat.Client.LoadEventArgs : EventArgs {
+private string <Message>k__BackingField
+public string Message
+protected internal void .ctor(string message)
+public string get_Message()
+private void set_Message(string value)
+public string ToString()
+}
+internal EasyAntiCheat.Client.LoadException : Exception {
+private LoadResult <ExitCode>k__BackingField
+public LoadResult ExitCode
+public void .ctor(LoadResult exitCode, string message)
+public void .ctor(LoadResult exitCode, string message, Exception innerException)
+public LoadResult get_ExitCode()
+public void set_ExitCode(LoadResult value)
+}
+public EasyAntiCheat.Client.LoadInfo : object {
+private string <Arguments>k__BackingField
+private string <Filename>k__BackingField
+private InstallerInfo <Installer>k__BackingField
+private bool <LoadOnly>k__BackingField
+public string Arguments
+public string Filename
+public InstallerInfo Installer
+public bool LoadOnly
+public void .ctor(string filename, string arguments)
+public string get_Arguments()
+public void set_Arguments(string value)
+public string get_Filename()
+public void set_Filename(string value)
+public InstallerInfo get_Installer()
+private void set_Installer(InstallerInfo value)
+public bool get_LoadOnly()
+private void set_LoadOnly(bool value)
+}
+public EasyAntiCheat.Client.LoadProgressEventArgs : LoadEventArgs {
+private int <Progress>k__BackingField
+public int Progress
+internal void .ctor(string message, int progress)
+public int get_Progress()
+private void set_Progress(int value)
+}
+public EasyAntiCheat.Client.LoadResult : Enum {
+public int value__
+public LoadResult InitSuccess
+public LoadResult LauncherInvalidParameter
+public LoadResult LauncherDNSError
+public LoadResult LauncherNetworkError
+public LoadResult LauncherFailure
+public LoadResult LauncherInstallError
+public LoadResult LauncherSuccessUnderWine
+public LoadResult InitCancelRequested
+public LoadResult GameClientConnected
+public LoadResult GameClientDisconnected
+public LoadResult GameClientAuthenticated
+public LoadResult GameClientIntegrityViolation
+}
+internal EasyAntiCheat.Client.Monitor : object {
+private object o
+public void .ctor(object o)
+public Monitor Enter(object o)
+public void Dispose()
+}
+internal EasyAntiCheat.Client.NativeLauncher : object {
+private LauncherProgress nogc_LauncherProgress
+private LauncherFinished nogc_LauncherFinished
+private string InterfaceVersion
+private INativeModule Module
+private IntPtr Instance
+public void Dispose()
+public void StartGame(bool InstallService, string ExecutablePath, string LaunchParameters, LauncherProgress OnProgress, LauncherFinished OnFinished)
+public Process GetGameProcess()
+}
+internal EasyAntiCheat.Client.Properties.Resources : object {
+private ResourceManager resourceMan
+private CultureInfo resourceCulture
+internal ResourceManager ResourceManager
+internal CultureInfo Culture
+internal ResourceManager get_ResourceManager()
+internal CultureInfo get_Culture()
+internal void set_Culture(CultureInfo value)
+}
+internal EasyAntiCheat.Client.Properties.Settings : ApplicationSettingsBase {
+private Settings defaultInstance
+public Settings Default
+public Settings get_Default()
+}
+public EasyAntiCheat.Client.StateChangedEventArgs : EventArgs {
+private string <Message>k__BackingField
+private StateChangeType <Type>k__BackingField
+public string Message
+public StateChangeType Type
+internal void .ctor(StateChangeType stateChangeType, string message)
+public string get_Message()
+private void set_Message(string value)
+public StateChangeType get_Type()
+private void set_Type(StateChangeType value)
+public string ToString()
+}
+public EasyAntiCheat.Client.StateChangeType : Enum {
+public int value__
+public StateChangeType Connection
+public StateChangeType Integrity
+public StateChangeType HostValidation
+}
+internal EasyAntiCheat.Client.ThreadSynchronizer : object {
+private Thread thread
+private Queue`1<KeyValuePair`2<WaitCallback, object>> tasks
+private Semaphore synchronizer
+private object syncRoot
+private bool enabled
+public void Dispose()
+public void Invoke(WaitCallback task, object state)
+private void Send()
+}

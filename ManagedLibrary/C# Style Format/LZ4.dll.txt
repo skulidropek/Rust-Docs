@@ -1,0 +1,207 @@
+internal LZ4.ILZ4Service {
+public string CodecName
+public string get_CodecName()
+public int Encode(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength)
+public int EncodeHC(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength)
+public int Decode(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength, bool knownOutputLength)
+}
+public LZ4.LZ4Codec : object {
+private int WRAP_OFFSET_0
+private int WRAP_OFFSET_4
+private int WRAP_OFFSET_8
+private int WRAP_LENGTH
+private ILZ4Service Encoder
+private ILZ4Service EncoderHC
+private ILZ4Service Decoder
+private ILZ4Service _service_MM32
+private ILZ4Service _service_MM64
+private ILZ4Service _service_CC32
+private ILZ4Service _service_CC64
+private ILZ4Service _service_N32
+private ILZ4Service _service_N64
+private ILZ4Service _service_S32
+private ILZ4Service _service_S64
+public string CodecName
+private void SelectCodec(ILZ4Service& encoder, ILZ4Service& decoder, ILZ4Service& encoderHC)
+private ILZ4Service AutoTest(ILZ4Service service)
+private void Try(Action method)
+private T Try(Func`1<T> method, T defaultValue)
+private ILZ4Service TryService()
+public string get_CodecName()
+public int MaximumOutputLength(int inputLength)
+public int Encode(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength)
+public Byte[] Encode(Byte[] input, int inputOffset, int inputLength)
+public int EncodeHC(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength)
+public Byte[] EncodeHC(Byte[] input, int inputOffset, int inputLength)
+public int Decode(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength, bool knownOutputLength)
+public Byte[] Decode(Byte[] input, int inputOffset, int inputLength, int outputLength)
+private void Poke4(Byte[] buffer, int offset, UInt32 value)
+private UInt32 Peek4(Byte[] buffer, int offset)
+private Byte[] Wrap(Byte[] inputBuffer, int inputOffset, int inputLength, bool highCompression)
+public Byte[] Wrap(Byte[] inputBuffer, int inputOffset, int inputLength)
+public Byte[] WrapHC(Byte[] inputBuffer, int inputOffset, int inputLength)
+public Byte[] Unwrap(Byte[] inputBuffer, int inputOffset)
+private bool Has2010Runtime()
+private void InitializeLZ4mm()
+private void InitializeLZ4cc()
+private void InitializeLZ4n()
+private void InitializeLZ4s()
+}
+public LZ4.LZ4Stream : Stream {
+private Stream _innerStream
+private LZ4StreamMode _compressionMode
+private bool _highCompression
+private bool _interactiveRead
+private bool _isolateInnerStream
+private int _blockSize
+private Byte[] _buffer
+private int _bufferLength
+private int _bufferOffset
+public bool CanRead
+public bool CanSeek
+public bool CanWrite
+public long Length
+public long Position
+public void .ctor(Stream innerStream, LZ4StreamMode compressionMode, bool highCompression, int blockSize, bool interactiveRead)
+public void .ctor(Stream innerStream, LZ4StreamMode compressionMode, LZ4StreamFlags compressionFlags, int blockSize)
+private NotSupportedException NotSupported(string operationName)
+private EndOfStreamException EndOfStream()
+private bool TryReadVarInt(UInt64& result)
+private ulong ReadVarInt()
+private int ReadBlock(Byte[] buffer, int offset, int length)
+private void WriteVarInt(ulong value)
+private void FlushCurrentChunk()
+private bool AcquireNextChunk()
+public bool get_CanRead()
+public bool get_CanSeek()
+public bool get_CanWrite()
+public void Flush()
+public long get_Length()
+public long get_Position()
+public void set_Position(long value)
+public int ReadByte()
+public int Read(Byte[] buffer, int offset, int count)
+public long Seek(long offset, SeekOrigin origin)
+public void SetLength(long value)
+public void WriteByte(byte value)
+public void Write(Byte[] buffer, int offset, int count)
+protected void Dispose(bool disposing)
+public void .ctor(Stream innerStream, CompressionMode compressionMode, bool highCompression, int blockSize, bool interactiveRead)
+public void .ctor(Stream innerStream, CompressionMode compressionMode, LZ4StreamFlags compressionFlags, int blockSize)
+private LZ4StreamMode ToLZ4StreamMode(CompressionMode compressionMode)
+private LZ4StreamFlags CombineLZ4Flags(bool highCompression, bool interactiveRead)
+}
+public LZ4.LZ4StreamFlags : Enum {
+public int value__
+public LZ4StreamFlags None
+public LZ4StreamFlags InteractiveRead
+public LZ4StreamFlags HighCompression
+public LZ4StreamFlags IsolateInnerStream
+public LZ4StreamFlags Default
+}
+public LZ4.LZ4StreamMode : Enum {
+public int value__
+public LZ4StreamMode Compress
+public LZ4StreamMode Decompress
+}
+internal LZ4.Services.Safe32LZ4Service : object {
+public string CodecName
+public string get_CodecName()
+public int Encode(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength)
+public int Decode(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength, bool knownOutputLength)
+public int EncodeHC(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength)
+}
+internal LZ4.Services.Safe64LZ4Service : object {
+public string CodecName
+public string get_CodecName()
+public int Encode(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength)
+public int Decode(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength, bool knownOutputLength)
+public int EncodeHC(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength)
+}
+public LZ4ps.LZ4Codec : object {
+private int MEMORY_USAGE
+private int NOTCOMPRESSIBLE_DETECTIONLEVEL
+private int BLOCK_COPY_LIMIT
+private int MINMATCH
+private int SKIPSTRENGTH
+private int COPYLENGTH
+private int LASTLITERALS
+private int MFLIMIT
+private int MINLENGTH
+private int MAXD_LOG
+private int MAXD
+private int MAXD_MASK
+private int MAX_DISTANCE
+private int ML_BITS
+private int ML_MASK
+private int RUN_BITS
+private int RUN_MASK
+private int STEPSIZE_64
+private int STEPSIZE_32
+private int LZ4_64KLIMIT
+private int HASH_LOG
+private int HASH_TABLESIZE
+private int HASH_ADJUST
+private int HASH64K_LOG
+private int HASH64K_TABLESIZE
+private int HASH64K_ADJUST
+private int HASHHC_LOG
+private int HASHHC_TABLESIZE
+private int HASHHC_ADJUST
+private int MAX_NB_ATTEMPTS
+private int OPTIMAL_ML
+private Int32[] DECODER_TABLE_32
+private Int32[] DECODER_TABLE_64
+private Int32[] DEBRUIJN_TABLE_32
+private Int32[] DEBRUIJN_TABLE_64
+public int MaximumOutputLength(int inputLength)
+internal void CheckArguments(Byte[] input, int inputOffset, Int32& inputLength, Byte[] output, int outputOffset, Int32& outputLength)
+private void Assert(bool condition, string errorMessage)
+internal void Poke2(Byte[] buffer, int offset, ushort value)
+internal ushort Peek2(Byte[] buffer, int offset)
+internal UInt32 Peek4(Byte[] buffer, int offset)
+private UInt32 Xor4(Byte[] buffer, int offset1, int offset2)
+private ulong Xor8(Byte[] buffer, int offset1, int offset2)
+private bool Equal2(Byte[] buffer, int offset1, int offset2)
+private bool Equal4(Byte[] buffer, int offset1, int offset2)
+private void Copy4(Byte[] buf, int src, int dst)
+private void Copy8(Byte[] buf, int src, int dst)
+private void BlockCopy(Byte[] src, int src_0, Byte[] dst, int dst_0, int len)
+private int WildCopy(Byte[] src, int src_0, Byte[] dst, int dst_0, int dst_end)
+private int SecureCopy(Byte[] buffer, int src, int dst, int dst_end)
+public int Encode32(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength)
+public Byte[] Encode32(Byte[] input, int inputOffset, int inputLength)
+public int Encode64(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength)
+public Byte[] Encode64(Byte[] input, int inputOffset, int inputLength)
+public int Decode32(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength, bool knownOutputLength)
+public Byte[] Decode32(Byte[] input, int inputOffset, int inputLength, int outputLength)
+public int Decode64(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength, bool knownOutputLength)
+public Byte[] Decode64(Byte[] input, int inputOffset, int inputLength, int outputLength)
+private LZ4HC_Data_Structure LZ4HC_Create(Byte[] src, int src_0, int src_len, Byte[] dst, int dst_0, int dst_len)
+private int LZ4_compressHC_32(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength)
+public int Encode32HC(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength)
+public Byte[] Encode32HC(Byte[] input, int inputOffset, int inputLength)
+private int LZ4_compressHC_64(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength)
+public int Encode64HC(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength)
+public Byte[] Encode64HC(Byte[] input, int inputOffset, int inputLength)
+private int LZ4_compressCtx_safe32(Int32[] hash_table, Byte[] src, Byte[] dst, int src_0, int dst_0, int src_len, int dst_maxlen)
+private int LZ4_compress64kCtx_safe32(UInt16[] hash_table, Byte[] src, Byte[] dst, int src_0, int dst_0, int src_len, int dst_maxlen)
+private int LZ4_uncompress_safe32(Byte[] src, Byte[] dst, int src_0, int dst_0, int dst_len)
+private int LZ4_uncompress_unknownOutputSize_safe32(Byte[] src, Byte[] dst, int src_0, int dst_0, int src_len, int dst_maxlen)
+private void LZ4HC_Insert_32(LZ4HC_Data_Structure ctx, int src_p)
+private int LZ4HC_CommonLength_32(LZ4HC_Data_Structure ctx, int p1, int p2)
+private int LZ4HC_InsertAndFindBestMatch_32(LZ4HC_Data_Structure ctx, int src_p, Int32& src_match)
+private int LZ4HC_InsertAndGetWiderMatch_32(LZ4HC_Data_Structure ctx, int src_p, int startLimit, int longest, Int32& matchpos, Int32& startpos)
+private int LZ4_encodeSequence_32(LZ4HC_Data_Structure ctx, Int32& src_p, Int32& dst_p, Int32& src_anchor, int matchLength, int src_ref, int dst_end)
+private int LZ4_compressHCCtx_32(LZ4HC_Data_Structure ctx)
+private int LZ4_compressCtx_safe64(Int32[] hash_table, Byte[] src, Byte[] dst, int src_0, int dst_0, int src_len, int dst_maxlen)
+private int LZ4_compress64kCtx_safe64(UInt16[] hash_table, Byte[] src, Byte[] dst, int src_0, int dst_0, int src_len, int dst_maxlen)
+private int LZ4_uncompress_safe64(Byte[] src, Byte[] dst, int src_0, int dst_0, int dst_len)
+private int LZ4_uncompress_unknownOutputSize_safe64(Byte[] src, Byte[] dst, int src_0, int dst_0, int src_len, int dst_maxlen)
+private void LZ4HC_Insert_64(LZ4HC_Data_Structure ctx, int src_p)
+private int LZ4HC_CommonLength_64(LZ4HC_Data_Structure ctx, int p1, int p2)
+private int LZ4HC_InsertAndFindBestMatch_64(LZ4HC_Data_Structure ctx, int src_p, Int32& matchpos)
+private int LZ4HC_InsertAndGetWiderMatch_64(LZ4HC_Data_Structure ctx, int src_p, int startLimit, int longest, Int32& matchpos, Int32& startpos)
+private int LZ4_encodeSequence_64(LZ4HC_Data_Structure ctx, Int32& src_p, Int32& dst_p, Int32& src_anchor, int matchLength, int src_ref)
+private int LZ4_compressHCCtx_64(LZ4HC_Data_Structure ctx)
+}
