@@ -450,8 +450,6 @@ private SampleCount _sampleCount
 private int _sampleCountValue
 private float _maxBlurRadius
 private DebugMode _debugMode
-private Shader _prefilterShader
-private Shader _reconstructionShader
 private Material _prefilterMaterial
 private Material _reconstructionMaterial
 public ExposureMode exposureMode
@@ -535,7 +533,6 @@ public bool stiffnessSprings
 public float stiffrate
 public float stiffdamp
 public bool lengthConstraints
-private Matrix4x4 wtm
 public MegaWireSolver verletsolver
 public bool showphysics
 public bool showconnections
@@ -884,7 +881,6 @@ public bool calcBounds
 public bool calcTangents
 public bool genuv
 public bool linInterp
-private Vector3 ropeup
 private Vector3[] cross
 private Vector3[] cnorms
 public void Copy(MegaWireStrandedMesher src)
@@ -955,7 +951,6 @@ public Server sv
 public ParticleScaler : MonoBehaviour {
 public float particleScale
 public bool alsoScaleGameobject
-private float prevScale
 private void Start()
 private void Update()
 private void ScaleShurikenSystems(float scaleFactor)
@@ -1061,6 +1056,7 @@ protected void OnValidate()
 protected void OnEnable()
 protected void Update()
 protected void OnPreCull()
+private TOD_Sky FindSky(bool fallback)
 public void DoDomeScaleToFarClip()
 public void DoDomePosToCamera()
 }
@@ -1317,11 +1313,12 @@ public TOD_FogType Gradient
 public TOD_ImageEffect : MonoBehaviour {
 public TOD_Sky sky
 protected Camera cam
+private Vector3[] frustumCornersArray
 protected Material CreateMaterial(Shader shader)
+private TOD_Sky FindSky(bool fallback)
 protected void Awake()
 protected bool CheckSupport(bool needDepth, bool needHdr)
 protected void DrawBorder(RenderTexture dest, Material material)
-protected void CustomBlit(RenderTexture source, RenderTexture dest, Material fxMaterial, int passNr)
 protected Matrix4x4 FrustumCorners()
 protected RenderTexture GetSkyMask(RenderTexture source, Material skyMaskMaterial, Material screenClearMaterial, ResolutionType resolution, Vector3 lightPos, int blurIterations, float blurRadius, float maxRadius)
 }
@@ -1711,9 +1708,10 @@ public Shader ScatteringShader
 public Shader ScreenClearShader
 public Shader SkyMaskShader
 public Texture2D DitheringTexture
-public float StartDistance
+public bool SinglePass
 public float GlobalDensity
 public float HeightFalloff
+public float StartDistance
 public float ZeroLevel
 public ResolutionType Resolution
 public int BlurIterations
@@ -1956,6 +1954,7 @@ public void UpdateFog()
 public void UpdateAmbient()
 public void UpdateReflection()
 public void LoadParameters(string xml)
+public string SaveParameters()
 private void UpdateQualitySettings()
 private void UpdateRenderSettings()
 private void UpdateShaderKeywords()
@@ -2090,7 +2089,6 @@ private dNP_RegisterProgramProfileID NP_RegisterProgramProfileID
 private dNP_QueryVersion NP_QueryVersion
 private dNP_RequestData NP_RequestData
 private dNP_GetData NP_GetData
-private dNP_UnregisterNotify NP_UnregisterNotify
 private dNP_StartCursor NP_StartCursor
 private dNP_StopCursor NP_StopCursor
 private dNP_ReCenter NP_ReCenter
@@ -2373,10 +2371,12 @@ public FloatParameter speedDown
 public bool IsEnabledAndSupported(PostProcessRenderContext context)
 }
 public UnityEngine.Rendering.PostProcessing.AutoExposureRenderer : PostProcessEffectRenderer`1<AutoExposure> {
-private RenderTexture[] m_AutoExposurePool
-private int m_AutoExposurePingPong
+private int k_NumEyes
+private int k_NumAutoExposureTextures
+private RenderTexture[][] m_AutoExposurePool
+private Int32[] m_AutoExposurePingPong
 private RenderTexture m_CurrentAutoExposure
-private void CheckTexture(int id)
+private void CheckTexture(int eye, int id)
 public void Render(PostProcessRenderContext context)
 public void Release()
 }
@@ -2387,7 +2387,7 @@ public FloatParameter softKnee
 public FloatParameter diffusion
 public FloatParameter anamorphicRatio
 public ColorParameter color
-public BoolParameter mobileOptimized
+public BoolParameter fastMode
 public TextureParameter dirtTexture
 public FloatParameter dirtIntensity
 public bool IsEnabledAndSupported(PostProcessRenderContext context)
@@ -2401,7 +2401,7 @@ public void Render(PostProcessRenderContext context)
 public UnityEngine.Rendering.PostProcessing.ChromaticAberration : PostProcessEffectSettings {
 public TextureParameter spectralLut
 public FloatParameter intensity
-public BoolParameter mobileOptimized
+public BoolParameter fastMode
 public bool IsEnabledAndSupported(PostProcessRenderContext context)
 }
 public UnityEngine.Rendering.PostProcessing.ChromaticAberrationRenderer : PostProcessEffectRenderer`1<ChromaticAberration> {
@@ -2518,15 +2518,18 @@ public FloatParameter focusDistance
 public FloatParameter aperture
 public FloatParameter focalLength
 public KernelSizeParameter kernelSize
+public bool IsEnabledAndSupported(PostProcessRenderContext context)
 }
 public UnityEngine.Rendering.PostProcessing.DepthOfFieldRenderer : PostProcessEffectRenderer`1<DepthOfField> {
-private RenderTexture[] m_CoCHistoryTextures
-private int m_HistoryPingPong
+private int k_NumEyes
+private int k_NumCoCHistoryTextures
+private RenderTexture[][] m_CoCHistoryTextures
+private Int32[] m_HistoryPingPong
 private float k_FilmHeight
 public DepthTextureMode GetCameraFlags()
 private RenderTextureFormat SelectFormat(RenderTextureFormat primary, RenderTextureFormat secondary)
 private float CalculateMaxCoCRadius(int screenHeight)
-private RenderTexture CheckHistory(int id, int width, int height, RenderTextureFormat format)
+private RenderTexture CheckHistory(int eye, int id, PostProcessRenderContext context, RenderTextureFormat format)
 public void Render(PostProcessRenderContext context)
 public void Release()
 }
@@ -2544,7 +2547,7 @@ public EyeAdaptation Progressive
 public EyeAdaptation Fixed
 }
 public UnityEngine.Rendering.PostProcessing.FastApproximateAntialiasing : object {
-public bool mobileOptimized
+public bool fastMode
 public bool keepAlpha
 }
 public UnityEngine.Rendering.PostProcessing.FloatParameter : ParameterOverride`1<float> {
@@ -2612,12 +2615,12 @@ public int width
 public int height
 public Channel channel
 private ComputeBuffer m_Data
-private int m_NumBins
-private int m_ThreadGroupSizeX
-private int m_ThreadGroupSizeY
-internal void OnEnable()
+private int k_NumBins
+private int k_ThreadGroupSizeX
+private int k_ThreadGroupSizeY
 internal void OnDisable()
 internal bool NeedsHalfRes()
+internal bool ShaderResourcesAvailable(PostProcessRenderContext context)
 internal void Render(PostProcessRenderContext context)
 }
 public UnityEngine.Rendering.PostProcessing.IAmbientOcclusionMethod {
@@ -2637,10 +2640,23 @@ public KernelSize Medium
 public KernelSize Large
 public KernelSize VeryLarge
 }
+public UnityEngine.Rendering.PostProcessing.LensDistortion : PostProcessEffectSettings {
+public FloatParameter intensity
+public FloatParameter intensityX
+public FloatParameter intensityY
+public FloatParameter centerX
+public FloatParameter centerY
+public FloatParameter scale
+public bool IsEnabledAndSupported(PostProcessRenderContext context)
+}
+public UnityEngine.Rendering.PostProcessing.LensDistortionRenderer : PostProcessEffectRenderer`1<LensDistortion> {
+public void Render(PostProcessRenderContext context)
+}
 public UnityEngine.Rendering.PostProcessing.LightMeterMonitor : Monitor {
 public int width
 public int height
 public bool showCurves
+internal bool ShaderResourcesAvailable(PostProcessRenderContext context)
 internal void Render(PostProcessRenderContext context)
 }
 public UnityEngine.Rendering.PostProcessing.LogHistogram : object {
@@ -2683,7 +2699,8 @@ internal bool requested
 public RenderTexture output
 public RenderTexture get_output()
 protected void set_output(RenderTexture value)
-public bool IsRequestedAndSupported()
+public bool IsRequestedAndSupported(PostProcessRenderContext context)
+internal bool ShaderResourcesAvailable(PostProcessRenderContext context)
 internal bool NeedsHalfRes()
 protected void CheckOutput(int width, int height)
 internal void OnEnable()
@@ -2746,6 +2763,9 @@ public bool overrideState
 internal void Interp(ParameterOverride from, ParameterOverride to, float t)
 public int GetHash()
 public T GetValue()
+protected internal void OnEnable()
+protected internal void OnDisable()
+internal void SetValue(ParameterOverride parameter)
 }
 public UnityEngine.Rendering.PostProcessing.ParameterOverride`1 : ParameterOverride {
 public T value
@@ -2754,6 +2774,7 @@ public void .ctor(T value, bool overrideState)
 internal void Interp(ParameterOverride from, ParameterOverride to, float t)
 public void Interp(T from, T to, float t)
 public void Override(T x)
+internal void SetValue(ParameterOverride parameter)
 public int GetHash()
 public T op_Implicit(ParameterOverride`1<T> prop)
 }
@@ -2859,6 +2880,7 @@ internal ReadOnlyCollection`1<ParameterOverride> parameters
 private Func`2<FieldInfo, bool> <>f__am$cache0
 private Func`2<FieldInfo, int> <>f__am$cache1
 private void OnEnable()
+private void OnDisable()
 public void SetAllOverridesTo(bool state, bool excludeEnabled)
 public bool IsEnabledAndSupported(PostProcessRenderContext context)
 public int GetHash()
@@ -2889,8 +2911,6 @@ public Dithering dithering
 public PostProcessDebugLayer debugLayer
 public RenderTextureFormat intermediateFormat
 private PostProcessResources m_Resources
-private bool m_ShowToolkit
-private bool m_ShowCustomSorter
 public bool breakBeforeColorGrading
 private List`1<SerializedBundleRef> m_BeforeTransparentBundles
 private List`1<SerializedBundleRef> m_BeforeStackBundles
@@ -2920,6 +2940,7 @@ private void set_sortedBundles(Dictionary`2<PostProcessEvent, List`1<SerializedB
 public bool get_haveBundlesBeenInited()
 private void set_haveBundlesBeenInited(bool value)
 private void OnEnable()
+private void InitLegacy()
 public void Init(PostProcessResources resources)
 public void InitBundles()
 private void UpdateBundleSortList(List`1<SerializedBundleRef> sortedList, PostProcessEvent evt)
@@ -2945,6 +2966,8 @@ public void Render(PostProcessRenderContext context)
 public void RenderOnlyTAA(PostProcessRenderContext context)
 private int RenderInjectionPoint(PostProcessEvent evt, PostProcessRenderContext context, string marker, int releaseTargetAfterUse)
 private void RenderList(List`1<SerializedBundleRef> list, PostProcessRenderContext context, string marker)
+private void ApplyFlip(PostProcessRenderContext context, MaterialPropertyBlock properties)
+private void ApplyDefaultFlip(MaterialPropertyBlock properties)
 private int RenderBuiltins(PostProcessRenderContext context, bool isFinalPass, int releaseTargetAfterUse)
 private void RenderFinalPass(PostProcessRenderContext context, int releaseTargetAfterUse)
 private int RenderEffect(PostProcessRenderContext context, bool useTempTarget)
@@ -2954,18 +2977,18 @@ private PostProcessBundle <UpdateBundleSortList>m__0(KeyValuePair`2<Type, PostPr
 public UnityEngine.Rendering.PostProcessing.PostProcessManager : object {
 private PostProcessManager s_Instance
 private int k_MaxLayerCount
-private List`1[] m_Volumes
-private Boolean[] m_SortNeeded
+private Dictionary`2<int, List`1<PostProcessVolume>> m_SortedVolumes
+private List`1<PostProcessVolume> m_Volumes
+private Dictionary`2<int, bool> m_SortNeeded
 private List`1<PostProcessEffectSettings> m_BaseSettings
 private List`1<Collider> m_TempColliders
 public Dictionary`2<Type, PostProcessAttribute> settingsTypes
-private Func`2<Assembly, IEnumerable`1<Type>> <>f__am$cache0
-private Func`2<Type, bool> <>f__am$cache1
+private Func`2<Type, bool> <>f__am$cache0
 public PostProcessManager instance
 public PostProcessManager get_instance()
 private void CleanBaseTypes()
 private void ReloadBaseTypes()
-public void GetActiveVolumes(PostProcessLayer layer, List`1<PostProcessVolume> results)
+public void GetActiveVolumes(PostProcessLayer layer, List`1<PostProcessVolume> results, bool skipDisabled, bool skipZeroWeight)
 public PostProcessVolume GetHighestPriorityVolume(PostProcessLayer layer)
 public PostProcessVolume GetHighestPriorityVolume(LayerMask mask)
 public PostProcessVolume QuickVolume(int layer, float priority, PostProcessEffectSettings[] settings)
@@ -2975,10 +2998,12 @@ private void Register(PostProcessVolume volume, int layer)
 internal void Register(PostProcessVolume volume)
 private void Unregister(PostProcessVolume volume, int layer)
 internal void Unregister(PostProcessVolume volume)
-internal void UpdateSettings(PostProcessLayer postProcessLayer)
+private void ReplaceData(PostProcessLayer postProcessLayer)
+internal void UpdateSettings(PostProcessLayer postProcessLayer, Camera camera)
+private List`1<PostProcessVolume> GrabVolumes(LayerMask mask)
 private void SortByPriority(List`1<PostProcessVolume> volumes)
-private IEnumerable`1<Type> <ReloadBaseTypes>m__0(Assembly a)
-private bool <ReloadBaseTypes>m__1(Type t)
+private bool IsVolumeRenderedByCamera(PostProcessVolume volume, Camera camera)
+private bool <ReloadBaseTypes>m__0(Type t)
 }
 public UnityEngine.Rendering.PostProcessing.PostProcessProfile : ScriptableObject {
 public List`1<PostProcessEffectSettings> settings
@@ -3009,9 +3034,10 @@ private Dictionary`2<string, object> <userData>k__BackingField
 private PostProcessDebugLayer <debugLayer>k__BackingField
 private int <width>k__BackingField
 private int <height>k__BackingField
+private bool <stereoActive>k__BackingField
 private int <xrActiveEye>k__BackingField
-private int <xrSingleEyeWidth>k__BackingField
-private int <xrSingleEyeHeight>k__BackingField
+private int <screenWidth>k__BackingField
+private int <screenHeight>k__BackingField
 private bool <isSceneView>k__BackingField
 private Antialiasing <antialiasing>k__BackingField
 private TemporalAntialiasing <temporalAntialiasing>k__BackingField
@@ -3020,6 +3046,7 @@ internal Texture autoExposureTexture
 internal LogHistogram logHistogram
 internal Texture logLut
 internal AutoExposure autoExposure
+internal int bloomBufferNameID
 public Camera camera
 public CommandBuffer command
 public RenderTargetIdentifier source
@@ -3032,9 +3059,10 @@ public Dictionary`2<string, object> userData
 public PostProcessDebugLayer debugLayer
 public int width
 public int height
+public bool stereoActive
 public int xrActiveEye
-public int xrSingleEyeWidth
-public int xrSingleEyeHeight
+public int screenWidth
+public int screenHeight
 public bool isSceneView
 public Antialiasing antialiasing
 public TemporalAntialiasing temporalAntialiasing
@@ -3062,12 +3090,14 @@ public int get_width()
 private void set_width(int value)
 public int get_height()
 private void set_height(int value)
+public bool get_stereoActive()
+private void set_stereoActive(bool value)
 public int get_xrActiveEye()
 private void set_xrActiveEye(int value)
-public int get_xrSingleEyeWidth()
-private void set_xrSingleEyeWidth(int value)
-public int get_xrSingleEyeHeight()
-private void set_xrSingleEyeHeight(int value)
+public int get_screenWidth()
+private void set_screenWidth(int value)
+public int get_screenHeight()
+private void set_screenHeight(int value)
 public bool get_isSceneView()
 internal void set_isSceneView(bool value)
 public Antialiasing get_antialiasing()
@@ -3078,6 +3108,8 @@ public void Reset()
 public bool IsTemporalAntialiasingActive()
 public bool IsDebugOverlayEnabled(DebugOverlay overlay)
 public void PushDebugOverlay(CommandBuffer cmd, RenderTargetIdentifier source, PropertySheet sheet, int pass)
+public void GetScreenSpaceTemporaryRT(CommandBuffer cmd, int nameID, int depthBufferBits, RenderTextureFormat colorFormat, RenderTextureReadWrite readWrite, FilterMode filter, int widthOverride, int heightOverride)
+public RenderTexture GetScreenSpaceTemporaryRT(int depthBufferBits, RenderTextureFormat colorFormat, RenderTextureReadWrite readWrite, int widthOverride, int heightOverride)
 }
 public UnityEngine.Rendering.PostProcessing.PostProcessResources : ScriptableObject {
 public Texture2D[] blueNoise64
@@ -3135,6 +3167,8 @@ private Mesh s_FullscreenTriangle
 private Material s_CopyStdMaterial
 private Material s_CopyMaterial
 private PropertySheet s_CopySheet
+private IEnumerable`1<Type> m_AssemblyTypes
+private Func`2<Assembly, IEnumerable`1<Type>> <>f__am$cache0
 public Texture2D whiteTexture
 public Texture2D blackTexture
 public Texture2D transparentTexture
@@ -3143,9 +3177,12 @@ public Material copyStdMaterial
 public Material copyMaterial
 public PropertySheet copySheet
 public bool scriptableRenderPipelineActive
+public bool supportsDeferredShading
+public bool supportsDepthNormals
 public bool isSinglePassStereoEnabled
 public bool isVREnabled
 public bool isAndroidOpenGL
+public RenderTextureFormat defaultHDRRenderTextureFormat
 public bool isLinearColorSpace
 public Texture2D get_whiteTexture()
 public Texture2D get_blackTexture()
@@ -3161,9 +3198,13 @@ public void BlitFullscreenTriangle(CommandBuffer cmd, RenderTargetIdentifier sou
 public void BlitFullscreenTriangle(Texture source, RenderTexture destination, Material material, int pass)
 public void CopyTexture(CommandBuffer cmd, RenderTargetIdentifier source, RenderTargetIdentifier destination)
 public bool get_scriptableRenderPipelineActive()
+public bool get_supportsDeferredShading()
+public bool get_supportsDepthNormals()
 public bool get_isSinglePassStereoEnabled()
 public bool get_isVREnabled()
 public bool get_isAndroidOpenGL()
+public RenderTextureFormat get_defaultHDRRenderTextureFormat()
+public bool isFloatingPointFormat(RenderTextureFormat format)
 public void Destroy(Object obj)
 public bool get_isLinearColorSpace()
 public bool IsResolvedDepthAvailable(Camera camera)
@@ -3175,10 +3216,12 @@ public float Exp2(float x)
 public Matrix4x4 GetJitteredPerspectiveProjectionMatrix(Camera camera, Vector2 offset)
 public Matrix4x4 GetJitteredOrthographicProjectionMatrix(Camera camera, Vector2 offset)
 public Matrix4x4 GenerateJitteredProjectionMatrixFromOriginal(PostProcessRenderContext context, Matrix4x4 origProj, Vector2 jitter)
+public IEnumerable`1<Type> GetAllAssemblyTypes()
 public T GetAttribute(Type type)
 public Attribute[] GetMemberAttributes(Expression`1<Func`2<TType, TValue>> expr)
 public string GetFieldPath(Expression`1<Func`2<TType, TValue>> expr)
 public object GetParentObject(string path, object obj)
+private IEnumerable`1<Type> <GetAllAssemblyTypes>m__0(Assembly t)
 }
 public UnityEngine.Rendering.PostProcessing.ScalableAO : object {
 private RenderTexture m_Result
@@ -3219,7 +3262,7 @@ public ScreenSpaceReflectionResolutionParameter resolution
 public FloatParameter thickness
 public FloatParameter maximumMarchDistance
 public FloatParameter distanceFade
-public FloatParameter attenuation
+public FloatParameter vignette
 public bool IsEnabledAndSupported(PostProcessRenderContext context)
 }
 public UnityEngine.Rendering.PostProcessing.ScreenSpaceReflectionsRenderer : PostProcessEffectRenderer`1<ScreenSpaceReflections> {
@@ -3299,9 +3342,7 @@ internal int TaaParams
 internal int AutoExposureTex
 internal int HistogramBuffer
 internal int Params
-internal int Speed
 internal int ScaleOffsetRes
-internal int ExposureCompensation
 internal int BloomTex
 internal int SampleScale
 internal int Threshold
@@ -3312,6 +3353,8 @@ internal int Bloom_Color
 internal int Bloom_DirtTileOffset
 internal int ChromaticAberration_Amount
 internal int ChromaticAberration_SpectralLut
+internal int Distortion_CenterScale
+internal int Distortion_Amount
 internal int Lut2D
 internal int Lut3D
 internal int Lut3D_Params
@@ -3355,6 +3398,8 @@ internal int HalfResFinalCopy
 internal int WaveformSource
 internal int WaveformBuffer
 internal int VectorscopeBuffer
+internal int RenderViewportScaleFactor
+internal int UVTransform
 }
 public UnityEngine.Rendering.PostProcessing.Spline : object {
 public int k_Precision
@@ -3372,9 +3417,11 @@ public float Evaluate(float t)
 public int GetHashCode()
 }
 public UnityEngine.Rendering.PostProcessing.SplineParameter : ParameterOverride`1<Spline> {
+protected internal void OnEnable()
 public void Interp(Spline from, Spline to, float t)
 }
 public UnityEngine.Rendering.PostProcessing.SubpixelMorphologicalAntialiasing : object {
+public Quality quality
 public bool IsSupported()
 internal void Render(PostProcessRenderContext context)
 }
@@ -3395,18 +3442,19 @@ private Vector2 <jitter>k__BackingField
 private RenderTargetIdentifier[] m_Mrt
 private bool m_ResetHistory
 private int k_SampleCount
-private int m_SampleIndex
+private int <sampleIndex>k__BackingField
 private int k_NumEyes
 private int k_NumHistoryTextures
 private RenderTexture[][] m_HistoryTextures
 private Int32[] m_HistoryPingPong
 public Vector2 jitter
-public int SampleIndex
-public int SampleCount
+public int sampleIndex
+public int sampleCount
 public Vector2 get_jitter()
 private void set_jitter(Vector2 value)
-public int get_SampleIndex()
-public int get_SampleCount()
+public int get_sampleIndex()
+private void set_sampleIndex(int value)
+public int get_sampleCount()
 public bool IsSupported()
 internal DepthTextureMode GetCameraFlags()
 internal void ResetHistory()
@@ -3420,8 +3468,10 @@ internal void Render(PostProcessRenderContext context)
 internal void Release()
 }
 public UnityEngine.Rendering.PostProcessing.TextureFormatUtilities : object {
-private Dictionary`2<TextureFormat, RenderTextureFormat> m_FormatMap
+private Dictionary`2<int, RenderTextureFormat> s_FormatAliasMap
+private Dictionary`2<int, bool> s_SupportedRenderTextureFormats
 public RenderTextureFormat GetUncompressedRenderTextureFormat(Texture texture)
+internal bool IsSupported(RenderTextureFormat format)
 }
 internal UnityEngine.Rendering.PostProcessing.TextureLerper : object {
 private TextureLerper m_Instance
@@ -3465,11 +3515,11 @@ public UnityEngine.Rendering.PostProcessing.VectorscopeMonitor : Monitor {
 public int size
 public float exposure
 private ComputeBuffer m_Data
-private int m_ThreadGroupSizeX
-private int m_ThreadGroupSizeY
-internal void OnEnable()
+private int k_ThreadGroupSizeX
+private int k_ThreadGroupSizeY
 internal void OnDisable()
 internal bool NeedsHalfRes()
+internal bool ShaderResourcesAvailable(PostProcessRenderContext context)
 internal void Render(PostProcessRenderContext context)
 }
 public UnityEngine.Rendering.PostProcessing.Vignette : PostProcessEffectSettings {
@@ -3496,12 +3546,12 @@ public UnityEngine.Rendering.PostProcessing.WaveformMonitor : Monitor {
 public float exposure
 public int height
 private ComputeBuffer m_Data
-private int m_ThreadGroupSize
-private int m_ThreadGroupSizeX
-private int m_ThreadGroupSizeY
-internal void OnEnable()
+private int k_ThreadGroupSize
+private int k_ThreadGroupSizeX
+private int k_ThreadGroupSizeY
 internal void OnDisable()
 internal bool NeedsHalfRes()
+internal bool ShaderResourcesAvailable(PostProcessRenderContext context)
 internal void Render(PostProcessRenderContext context)
 }
 public UnityStandardAssets.ImageEffects.AAMode : Enum {

@@ -10,6 +10,15 @@ public void Collect()
 public void Event(string category, string action)
 public void SendPayload(string payload)
 }
+public Oxide.Core.ArrayPool : object {
+private int MaxArrayLength
+private int InitialPoolAmount
+private int MaxPoolAmount
+private List`1<Queue`1<Object[]>> _pooledArrays
+public Object[] Get(int length)
+public void Free(Object[] array)
+private void SetupArrays(int length)
+}
 public Oxide.Core.Cleanup : object {
 internal HashSet`1<string> files
 public void Add(string file)
@@ -71,6 +80,7 @@ public void Save(string filename)
 public void WriteObject(T config, bool sync, string filename)
 public bool Exists(string filename)
 private string CheckPath(string filename)
+public string SanitizeName(string name)
 public string SanitiseName(string name)
 public void Clear()
 public void Remove(string key)
@@ -188,6 +198,7 @@ public DynamicConfigFile GetDatafile(string name)
 public void SaveDatafile(string name)
 public T ReadObject(string name)
 public void WriteObject(string name, T Object, bool sync)
+public void ForEachObject(string name, Action`1<T> callback)
 }
 public Oxide.Core.Event : object {
 public Callback First
@@ -295,14 +306,20 @@ public string Truncate(string text, int max)
 public Oxide.Core.Extensions.Extension : object {
 private bool <IsCoreExtension>k__BackingField
 private bool <IsGameExtension>k__BackingField
+private bool <SupportsReloading>k__BackingField
+private string <Filename>k__BackingField
+private string <Branch>k__BackingField
 private ExtensionManager <Manager>k__BackingField
 private String[] <WhitelistAssemblies>k__BackingField
 private String[] <WhitelistNamespaces>k__BackingField
 public bool IsCoreExtension
 public bool IsGameExtension
+public bool SupportsReloading
+public string Filename
 public string Name
 public string Author
 public VersionNumber Version
+public string Branch
 public ExtensionManager Manager
 public String[] WhitelistAssemblies
 public String[] WhitelistNamespaces
@@ -310,9 +327,14 @@ public bool get_IsCoreExtension()
 private void set_IsCoreExtension(bool value)
 public bool get_IsGameExtension()
 private void set_IsGameExtension(bool value)
+public bool get_SupportsReloading()
+private void set_SupportsReloading(bool value)
+public string get_Filename()
+public void set_Filename(string value)
 public string get_Name()
 public string get_Author()
 public VersionNumber get_Version()
+public string get_Branch()
 public ExtensionManager get_Manager()
 private void set_Manager(ExtensionManager value)
 public String[] get_WhitelistAssemblies()
@@ -321,6 +343,7 @@ public String[] get_WhitelistNamespaces()
 protected void set_WhitelistNamespaces(String[] value)
 public void .ctor(ExtensionManager manager)
 public void Load()
+public void Unload()
 public void LoadPluginWatchers(string pluginDirectory)
 public void OnModLoad()
 public void OnShutdown()
@@ -343,7 +366,9 @@ public IEnumerable`1<string> GetLibraries()
 public Library GetLibrary(string name)
 public void RegisterPluginChangeWatcher(PluginChangeWatcher watcher)
 public IEnumerable`1<PluginChangeWatcher> GetPluginChangeWatchers()
-public void LoadExtension(string filename)
+public void LoadExtension(string filename, bool forced)
+public void UnloadExtension(string filename)
+public void ReloadExtension(string filename)
 public void LoadAllExtensions(string directory)
 public IEnumerable`1<Extension> GetAllExtensions()
 public bool IsExtensionPresent(string name)
@@ -362,6 +387,17 @@ public void Initialize()
 public object CallDeprecatedHook(string oldHook, string newHook, DateTime expireDate, Object[] args)
 public object CallDeprecated(string oldHook, string newHook, DateTime expireDate, Object[] args)
 public object CallHook(string hook, Object[] args)
+public object CallHook(string hook)
+public object CallHook(string hook, object obj1)
+public object CallHook(string hook, object obj1, object obj2)
+public object CallHook(string hook, object obj1, object obj2, object obj3)
+public object CallHook(string hook, object obj1, object obj2, object obj3, object obj4)
+public object CallHook(string hook, object obj1, object obj2, object obj3, object obj4, object obj5)
+public object CallHook(string hook, object obj1, object obj2, object obj3, object obj4, object obj5, object obj6)
+public object CallHook(string hook, object obj1, object obj2, object obj3, object obj4, object obj5, object obj6, object obj7)
+public object CallHook(string hook, object obj1, object obj2, object obj3, object obj4, object obj5, object obj6, object obj7, object obj8)
+public object CallHook(string hook, object obj1, object obj2, object obj3, object obj4, object obj5, object obj6, object obj7, object obj8, object obj9)
+public object CallHook(string hook, object obj1, object obj2, object obj3, object obj4, object obj5, object obj6, object obj7, object obj8, object obj9, object obj10)
 public object Call(string hook, Object[] args)
 public T Call(string hook, Object[] args)
 public OxideMod GetMod()
@@ -808,6 +844,7 @@ public void set_Groups(HashSet`1<string> value)
 }
 public Oxide.Core.Libraries.WebRequests : Library {
 public float Timeout
+public bool AllowDecompression
 private Queue`1<WebRequest> queue
 private object syncroot
 private Thread workerthread
@@ -982,6 +1019,9 @@ public bool PluginLoaded(Plugin plugin)
 public bool UnloadPlugin(string name)
 public bool ReloadPlugin(string name)
 private void plugin_OnError(Plugin sender, string message)
+public bool LoadExtension(string name)
+public bool UnloadExtension(string name)
+public bool ReloadExtension(string name)
 public object CallHook(string hookname, Object[] args)
 public object CallDeprecatedHook(string oldHook, string newHook, DateTime expireDate, Object[] args)
 public void NextTick(Action callback)
@@ -1001,13 +1041,39 @@ private float <Load>b__0_1()
 }
 public Oxide.Core.Plugins.CSPlugin : Plugin {
 protected Dictionary`2<string, List`1<HookMethod>> Hooks
-protected Dictionary`2<string, List`1<HookMethod>> HooksCache
+protected HookCache HooksCache
 public T GetLibrary(string name)
 public void HandleAddedToManager(PluginManager manager)
 protected void AddHookMethod(string name, MethodInfo method)
 protected object OnCallHook(string name, Object[] args)
 protected List`1<HookMethod> FindHooks(string name, Object[] args)
 protected object InvokeMethod(HookMethod method, Object[] args)
+}
+public Oxide.Core.Plugins.HookCache : object {
+private string NullKey
+public Dictionary`2<string, HookCache> _cache
+public List`1<HookMethod> _methods
+public List`1<HookMethod> GetHookMethod(string hookName, Object[] args, HookCache& cache)
+public List`1<HookMethod> GetHookMethod(Object[] args, int index, HookCache& cache)
+public void SetupMethods(List`1<HookMethod> methods)
+}
+public Oxide.Core.Plugins.HookMethod : object {
+public string Name
+public MethodInfo Method
+private ParameterInfo[] <Parameters>k__BackingField
+private bool <IsBaseHook>k__BackingField
+public ParameterInfo[] Parameters
+public bool IsBaseHook
+public ParameterInfo[] get_Parameters()
+public void set_Parameters(ParameterInfo[] value)
+public bool get_IsBaseHook()
+public void set_IsBaseHook(bool value)
+public void .ctor(MethodInfo method)
+public bool HasMatchingSignature(Object[] args, Boolean& exact)
+private bool CanAssignNull(Type type)
+private bool IsNumber(object obj)
+private bool IsNumber(Type type)
+private bool CanConvertNumber(object value, Type type)
 }
 public Oxide.Core.Plugins.HookMethodAttribute : Attribute {
 private string <Name>k__BackingField
@@ -1409,6 +1475,8 @@ public string FormatBytes(double bytes)
 public string GetDirectoryName(string name)
 public string GetFileNameWithoutExtension(string value)
 public string CleanPath(string path)
+public T ConvertFromJson(string jsonstr)
+public string ConvertToJson(object obj, bool indented)
 }
 public Oxide.Core.VersionNumber : ValueType {
 public int Major

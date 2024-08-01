@@ -39,6 +39,7 @@ public void SerializeLengthDelimited(Stream stream, EffectData instance)
 public InputMessage : object {
 public int buttons
 public Vector3 aimAngles
+public Vector3 mouseDelta
 public bool ShouldPool
 private bool _disposed
 public void ResetToPool(InputMessage instance)
@@ -71,6 +72,7 @@ public ModelState : object {
 public float waterLevel
 public Vector3 lookDir
 public int flags
+public int poseType
 public bool ShouldPool
 private bool _disposed
 public bool ducked
@@ -82,7 +84,8 @@ public bool onLadder
 public bool flying
 public bool aiming
 public bool prone
-public bool sitting
+public bool mounted
+public bool relaxed
 public void ResetToPool(ModelState instance)
 public void ResetToPool()
 public void Dispose()
@@ -128,8 +131,10 @@ public bool get_aiming()
 public void set_aiming(bool value)
 public bool get_prone()
 public void set_prone(bool value)
-public bool get_sitting()
-public void set_sitting(bool value)
+public bool get_mounted()
+public void set_mounted(bool value)
+public bool get_relaxed()
+public void set_relaxed(bool value)
 public bool Equal(ModelState a, ModelState b)
 }
 public PlayerTick : object {
@@ -314,6 +319,7 @@ public ProtoBuf.BaseEntity : object {
 public Vector3 pos
 public Vector3 rot
 public int flags
+public float time
 public ulong skinid
 public bool ShouldPool
 private bool _disposed
@@ -550,6 +556,7 @@ public Byte[] SerializeToBytes(BradleyAPC instance)
 public void SerializeLengthDelimited(Stream stream, BradleyAPC instance)
 }
 public ProtoBuf.BuildingBlock : object {
+public int model
 public int grade
 public bool beingDemolished
 public bool ShouldPool
@@ -884,6 +891,7 @@ public SpinnerWheel spinnerWheel
 public Lift lift
 public BradleyAPC bradley
 public WaterWell waterwell
+public Motorboat motorBoat
 public bool createdThisFrame
 public bool ShouldPool
 private bool _disposed
@@ -1465,6 +1473,37 @@ public void ToProto(Stream stream)
 public Byte[] SerializeToBytes(ModuleMessage instance)
 public void SerializeLengthDelimited(Stream stream, ModuleMessage instance)
 }
+public ProtoBuf.Motorboat : object {
+public UInt32 storageid
+public UInt32 fuelStorageID
+public bool ShouldPool
+private bool _disposed
+public void ResetToPool(Motorboat instance)
+public void ResetToPool()
+public void Dispose()
+public void EnterPool()
+public void LeavePool()
+public void WriteToStream(Stream stream)
+public void WriteToStreamDelta(Stream stream, Motorboat previous)
+public void ReadFromStream(Stream stream, int size, bool isDelta)
+public void CopyTo(Motorboat instance)
+public Motorboat Copy()
+public Motorboat Deserialize(Stream stream)
+public Motorboat DeserializeLengthDelimited(Stream stream)
+public Motorboat DeserializeLength(Stream stream, int length)
+public Motorboat Deserialize(Byte[] buffer)
+public void FromProto(Stream stream, bool isDelta)
+public Motorboat Deserialize(Byte[] buffer, Motorboat instance, bool isDelta)
+public Motorboat Deserialize(Stream stream, Motorboat instance, bool isDelta)
+public Motorboat DeserializeLengthDelimited(Stream stream, Motorboat instance, bool isDelta)
+public Motorboat DeserializeLength(Stream stream, int length, Motorboat instance, bool isDelta)
+public void SerializeDelta(Stream stream, Motorboat instance, Motorboat previous)
+public void Serialize(Stream stream, Motorboat instance)
+public Byte[] ToProtoBytes()
+public void ToProto(Stream stream)
+public Byte[] SerializeToBytes(Motorboat instance)
+public void SerializeLengthDelimited(Stream stream, Motorboat instance)
+}
 public ProtoBuf.OwnerInfo : object {
 public ulong steamid
 public bool ShouldPool
@@ -1768,6 +1807,7 @@ public ProtoBuf.PlayerProjectileAttack : object {
 public PlayerAttack playerAttack
 public Vector3 hitVelocity
 public float hitDistance
+public float travelTime
 public bool ShouldPool
 private bool _disposed
 public void ResetToPool(PlayerProjectileAttack instance)
@@ -1801,6 +1841,8 @@ public int projectileID
 public Vector3 hitPosition
 public Vector3 inVelocity
 public Vector3 outVelocity
+public Vector3 hitNormal
+public float travelTime
 public bool ShouldPool
 private bool _disposed
 public void ResetToPool(PlayerProjectileRicochet instance)
@@ -1832,6 +1874,8 @@ public void SerializeLengthDelimited(Stream stream, PlayerProjectileRicochet ins
 public ProtoBuf.PlayerProjectileUpdate : object {
 public int projectileID
 public Vector3 curPosition
+public Vector3 curVelocity
+public float travelTime
 public bool ShouldPool
 private bool _disposed
 public void ResetToPool(PlayerProjectileUpdate instance)

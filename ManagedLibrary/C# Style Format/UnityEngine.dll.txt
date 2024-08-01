@@ -2249,18 +2249,22 @@ public bool get_isMatchingTarget()
 public float get_speed()
 public void set_speed(float value)
 public void ForceStateNormalizedTime(float normalizedTime)
-public void CrossFadeInFixedTime(string stateName, float transitionDuration, int layer)
-public void CrossFadeInFixedTime(string stateName, float transitionDuration)
-public void CrossFadeInFixedTime(string stateName, float transitionDuration, int layer, float fixedTime)
-public void CrossFadeInFixedTime(int stateNameHash, float transitionDuration, int layer, float fixedTime)
-public void CrossFadeInFixedTime(int stateNameHash, float transitionDuration, int layer)
-public void CrossFadeInFixedTime(int stateNameHash, float transitionDuration)
-public void CrossFade(string stateName, float transitionDuration, int layer)
-public void CrossFade(string stateName, float transitionDuration)
-public void CrossFade(string stateName, float transitionDuration, int layer, float normalizedTime)
-public void CrossFade(int stateNameHash, float transitionDuration, int layer, float normalizedTime)
-public void CrossFade(int stateNameHash, float transitionDuration, int layer)
-public void CrossFade(int stateNameHash, float transitionDuration)
+public void CrossFadeInFixedTime(string stateName, float fixedTransitionDuration, int layer, float fixedTimeOffset)
+public void CrossFadeInFixedTime(string stateName, float fixedTransitionDuration, int layer)
+public void CrossFadeInFixedTime(string stateName, float fixedTransitionDuration)
+public void CrossFadeInFixedTime(string stateName, float fixedTransitionDuration, int layer, float fixedTimeOffset, float normalizedTransitionTime)
+public void CrossFadeInFixedTime(int stateHashName, float fixedTransitionDuration, int layer, float fixedTimeOffset, float normalizedTransitionTime)
+public void CrossFadeInFixedTime(int stateHashName, float fixedTransitionDuration, int layer, float fixedTimeOffset)
+public void CrossFadeInFixedTime(int stateHashName, float fixedTransitionDuration, int layer)
+public void CrossFadeInFixedTime(int stateHashName, float fixedTransitionDuration)
+public void CrossFade(string stateName, float normalizedTransitionDuration, int layer, float normalizedTimeOffset)
+public void CrossFade(string stateName, float normalizedTransitionDuration, int layer)
+public void CrossFade(string stateName, float normalizedTransitionDuration)
+public void CrossFade(string stateName, float normalizedTransitionDuration, int layer, float normalizedTimeOffset, float normalizedTransitionTime)
+public void CrossFade(int stateHashName, float normalizedTransitionDuration, int layer, float normalizedTimeOffset, float normalizedTransitionTime)
+public void CrossFade(int stateHashName, float normalizedTransitionDuration, int layer, float normalizedTimeOffset)
+public void CrossFade(int stateHashName, float normalizedTransitionDuration, int layer)
+public void CrossFade(int stateHashName, float normalizedTransitionDuration)
 public void PlayInFixedTime(string stateName, int layer)
 public void PlayInFixedTime(string stateName)
 public void PlayInFixedTime(string stateName, int layer, float fixedTime)
@@ -2467,12 +2471,16 @@ public UnityEngine.AnimatorTransitionInfo : ValueType {
 private int m_FullPath
 private int m_UserName
 private int m_Name
+private bool m_HasFixedDuration
+private float m_Duration
 private float m_NormalizedTime
 private bool m_AnyState
 private int m_TransitionType
 public int fullPathHash
 public int nameHash
 public int userNameHash
+public DurationUnit durationUnit
+public float duration
 public float normalizedTime
 public bool anyState
 internal bool entry
@@ -2482,6 +2490,8 @@ public bool IsUserName(string name)
 public int get_fullPathHash()
 public int get_nameHash()
 public int get_userNameHash()
+public DurationUnit get_durationUnit()
+public float get_duration()
 public float get_normalizedTime()
 public bool get_anyState()
 internal bool get_entry()
@@ -4754,11 +4764,13 @@ public Vector3[] normals
 public float friction
 public float collisionMassScale
 public float useContinuousCollision
+public bool enableContinuousCollision
 public float useVirtualParticles
 public ClothSkinningCoefficient[] coefficients
 public float worldVelocityScale
 public float worldAccelerationScale
 public bool solverFrequency
+public float clothSolverFrequency
 public CapsuleCollider[] capsuleColliders
 public ClothSphereColliderPair[] sphereColliders
 public float get_sleepThreshold()
@@ -4791,6 +4803,8 @@ public float get_collisionMassScale()
 public void set_collisionMassScale(float value)
 public float get_useContinuousCollision()
 public void set_useContinuousCollision(float value)
+public bool get_enableContinuousCollision()
+public void set_enableContinuousCollision(bool value)
 public float get_useVirtualParticles()
 public void set_useVirtualParticles(float value)
 public void ClearTransformMotion()
@@ -4805,6 +4819,8 @@ public void SetEnabledFading(bool enabled, float interpolationTime)
 public void SetEnabledFading(bool enabled)
 public bool get_solverFrequency()
 public void set_solverFrequency(bool value)
+public float get_clothSolverFrequency()
+public void set_clothSolverFrequency(float value)
 public CapsuleCollider[] get_capsuleColliders()
 public void set_capsuleColliders(CapsuleCollider[] value)
 public ClothSphereColliderPair[] get_sphereColliders()
@@ -6238,6 +6254,7 @@ public bool wrapUpdateZones
 public void .ctor(int width, int height, RenderTextureFormat format, RenderTextureReadWrite readWrite)
 public void .ctor(int width, int height, RenderTextureFormat format)
 public void .ctor(int width, int height)
+private void Internal_CreateCustomRenderTexture(CustomRenderTexture rt, RenderTextureReadWrite readWrite)
 public void Update(int count)
 public void Update()
 public void Initialize()
@@ -6592,6 +6609,11 @@ public DrivenTransformProperties AnchorMax
 public DrivenTransformProperties Anchors
 public DrivenTransformProperties SizeDelta
 public DrivenTransformProperties Pivot
+}
+public UnityEngine.DurationUnit : Enum {
+public int value__
+public DurationUnit Fixed
+public DurationUnit Normalized
 }
 public UnityEngine.DynamicGI : object {
 public float indirectScale
@@ -23163,28 +23185,36 @@ internal UnityEngine.WWWTranscoder : object {
 private Byte[] ucHexChars
 private Byte[] lcHexChars
 private byte urlEscapeChar
-private byte urlSpace
+private Byte[] urlSpace
+private Byte[] dataSpace
 private Byte[] urlForbidden
 private byte qpEscapeChar
-private byte qpSpace
+private Byte[] qpSpace
 private Byte[] qpForbidden
 private byte Hex2Byte(Byte[] b, int offset)
 private Byte[] Byte2Hex(byte b, Byte[] hexChars)
 public string URLEncode(string toEncode)
 public string URLEncode(string toEncode, Encoding e)
 public Byte[] URLEncode(Byte[] toEncode)
+public string DataEncode(string toEncode)
+public string DataEncode(string toEncode, Encoding e)
+public Byte[] DataEncode(Byte[] toEncode)
 public string QPEncode(string toEncode)
 public string QPEncode(string toEncode, Encoding e)
 public Byte[] QPEncode(Byte[] toEncode)
-public Byte[] Encode(Byte[] input, byte escapeChar, byte space, Byte[] forbidden, bool uppercase)
+public Byte[] Encode(Byte[] input, byte escapeChar, Byte[] space, Byte[] forbidden, bool uppercase)
 private bool ByteArrayContains(Byte[] array, byte b)
 public string URLDecode(string toEncode)
 public string URLDecode(string toEncode, Encoding e)
 public Byte[] URLDecode(Byte[] toEncode)
+public string DataDecode(string toDecode)
+public string DataDecode(string toDecode, Encoding e)
+public Byte[] DataDecode(Byte[] toDecode)
 public string QPDecode(string toEncode)
 public string QPDecode(string toEncode, Encoding e)
 public Byte[] QPDecode(Byte[] toEncode)
-public Byte[] Decode(Byte[] input, byte escapeChar, byte space)
+private bool ByteSubArrayEquals(Byte[] array, int index, Byte[] comperand)
+public Byte[] Decode(Byte[] input, byte escapeChar, Byte[] space)
 public bool SevenBitClean(string s)
 public bool SevenBitClean(string s, Encoding e)
 public bool SevenBitClean(Byte[] input)

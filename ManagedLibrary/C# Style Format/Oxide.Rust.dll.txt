@@ -642,7 +642,7 @@ public BasePlayer FindPlayerById(ulong id)
 public BasePlayer FindPlayerByIdString(string id)
 private object IOnDisableServerConsole()
 private object IOnEnableServerConsole(ServerConsole serverConsole)
-private object IOnRconCommand(IPAddress sender, string message)
+private object IOnRconCommand(IPEndPoint sender, string message)
 private object IOnRconInitialize()
 private object IOnRunCommandLine()
 private object IOnServerCommand(Arg arg)
@@ -659,6 +659,8 @@ private void OnPlayerKicked(BasePlayer player, string reason)
 private object OnPlayerRespawn(BasePlayer player)
 private void OnPlayerRespawned(BasePlayer player)
 private object IOnBaseCombatEntityHurt(BaseCombatEntity entity, HitInfo info)
+private object IOnNpcPlayerTarget(NPCPlayerApex npc, BaseEntity target)
+private object IOnNpcTarget(BaseNpc npc, BaseEntity target)
 private object IOnLoseCondition(Item item, float amount)
 }
 public Oxide.Game.Rust.RustExtension : Extension {
@@ -672,12 +674,14 @@ public bool IsGameExtension
 public string Name
 public string Author
 public VersionNumber Version
+public string Branch
 public String[] WhitelistAssemblies
 public String[] WhitelistNamespaces
 public bool get_IsGameExtension()
 public string get_Name()
 public string get_Author()
 public VersionNumber get_Version()
+public string get_Branch()
 public String[] get_WhitelistAssemblies()
 public String[] get_WhitelistNamespaces()
 public void .ctor(ExtensionManager manager)
@@ -700,7 +704,7 @@ protected Player Player
 protected Server Server
 public void HandleAddedToManager(PluginManager manager)
 private void base_OnPlayerInit(BasePlayer player)
-private void base_OnPlayerDisconnected(BasePlayer player)
+private void base_OnPlayerDisconnected(BasePlayer player, string reason)
 private void AddOnlinePlayer(BasePlayer player)
 protected void PrintToConsole(BasePlayer player, string format, Object[] args)
 protected void PrintToConsole(string format, Object[] args)

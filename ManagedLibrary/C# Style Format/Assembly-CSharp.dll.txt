@@ -4,8 +4,7 @@ public RawImage avatar
 public Text subtitle
 }
 public AchievementGroup : object {
-private string titleToken
-private string titleEnglish
+public Phrase groupTitle
 public AchievementGroup[] All
 public AchievementItem[] Items
 private Func`2<AchievementItem, bool> <>f__am$cache0
@@ -15,9 +14,9 @@ public bool get_Unlocked()
 private bool <get_Unlocked>m__0(AchievementItem x)
 }
 public Achievements : SingletonComponent`1<Achievements> {
-public AudioClip listcomplete
-public AudioClip itemcomplete
-public AudioClip popup
+public SoundDefinition listComplete
+public SoundDefinition itemComplete
+public SoundDefinition popup
 }
 public AchievementTodo : BaseMonoBehaviour {
 public Text text
@@ -73,6 +72,9 @@ public Vector3 GetMoveDirection()
 public float GetMoveSpeed()
 public void Update()
 }
+public AiManagerLoadBalancer : LoadBalancer {
+public ILoadBalancer aiManagerLoadBalancer
+}
 public AimConeUtil : object {
 public Vector3 GetModifiedAimConeDirection(float aimCone, Vector3 inputVec, bool anywhereInside)
 public Quaternion GetAimConeQuat(float aimCone)
@@ -105,13 +107,7 @@ public bool isStatic
 public bool active
 public float cameraDistance
 public BoundingSphere boundingSphere
-private Sound baseSound
-private Modulator occlusionGain
 public float crossfadeTime
-private float lastCrossfade
-private List`1<int> biomeReadings
-private List`1<int> topologyReadings
-private int readingsToKeep
 private Enum <currentTopology>k__BackingField
 private Enum <currentBiome>k__BackingField
 public Dictionary`2<AmbienceDefinition, float> nextStingTime
@@ -129,23 +125,17 @@ public float maxDistance
 public float stingRadius
 public float stingFrequency
 public float stingFrequencyVariance
-private SynchronizedClock stingClock
 public SoundDefinition[] stingSounds
 }
 public AmbienceManager : SingletonComponent`1<AmbienceManager> {
 public List`1<EmitterTypeLimit> localEmitterLimits
 public EmitterTypeLimit catchallEmitterLimit
-private Dictionary`2<AmbienceDefinitionList, EmitterTypeLimit> emitterLimitByAmbience
 public int maxActiveLocalEmitters
+public int activeLocalEmitters
 public List`1<AmbienceEmitter> baseEmitters
 public List`1<AmbienceEmitter> emittersInRange
 public List`1<AmbienceEmitter> activeEmitters
 public List`1<AmbienceEmitter> emitters
-private float tickInterval
-private float lastTick
-private CullingGroup cullingGroup
-private List`1<AmbienceEmitter> emittersBySphereIdx
-private bool cullingGroupDirty
 public float localEmitterRange
 }
 public AmbienceSpawnEmitters : MonoBehaviour {
@@ -365,6 +355,11 @@ public Guid MurdererMove
 public Guid MurdererThink
 public Guid NpcAnimalGeneric
 public Guid NpcHumanScientist
+public Guid NpcHumanScientistCH47
+public Guid NpcHumanScientistJunkpile
+public Guid NpcHumanScientistMelee
+public Guid NpcHumanScientistTactical
+public Guid NpcHumanScientistTacticalMountable
 public Guid NPCPlayerAction
 public Guid NPCPlayerIdle
 public Guid NPCPlayerMove
@@ -493,6 +488,7 @@ public float attackLengthMin
 public float attackLengthMax
 public float attackSpacing
 public float aiAimSwayOffset
+public float aiAimCone
 public WeaponTypeEnum effectiveRangeType
 public SoundDefinition[] reloadSounds
 public SoundDefinition thirdPersonMeleeSound
@@ -534,6 +530,7 @@ public AutoTurret : StorageContainer {
 public GameObjectRef gun_fire_effect
 public GameObjectRef bulletEffect
 public float bulletSpeed
+public AmbienceEmitter ambienceEmitter
 public BaseCombatEntity target
 public Transform eyePos
 public Transform muzzlePos
@@ -562,7 +559,6 @@ private bool targetVisible
 private bool booting
 private float nextIdleAimTime
 private Vector3 targetAimDir
-private float nextTargetScanTime
 private Item ammoItem
 private float bulletDamage
 private float nextForcedAimTime
@@ -643,8 +639,44 @@ private int humanoidAgentTypeId
 public void ServerInit()
 public void OnAttacked(HitInfo info)
 }
+public BaseAIBrain`1 : EntityComponent`1<T> {
+public BasicAIState[] AIStates
+public int AIStateIndex_UNSET
+public int _currentState
+public Vector3 mainInterestPoint
+public T GetEntity()
+public void Awake()
+public void InitializeAI()
+public void AddState(BasicAIState<T> newState, int newIndex)
+public BasicAIState<T> GetCurrentState()
+public BasicAIState<T> GetState(int index)
+public void SwitchToState(int newState)
+public void AIThink(float delta)
+}
+public BaseAimable : BaseVehicleMountPoint {
+public Transform aimBase
+}
 public BaseAnimalNPC : BaseNpc {
 public void OnKilled(HitInfo hitInfo)
+}
+public BaseBoat : BaseVehicle {
+public float engineThrust
+public float gasPedal
+public float steering
+public Rigidbody myRigidBody
+public Transform thrustPoint
+public Transform centerOfMass
+public Buoyancy buoyancy
+public float MaxVelocity()
+public bool PhysicsDriven()
+public void ServerInit()
+public void PlayerServerInput(InputState inputState, BasePlayer player)
+public void DriverInput(InputState inputState, BasePlayer player)
+public bool EngineOn()
+public void VehicleFixedUpdate()
+public bool EngineInWater()
+public float WaterFactorForPlayer(BasePlayer player)
+public bool IsFlipped()
 }
 public BaseCar : BaseWheeledVehicle {
 public float brakePedal
@@ -675,7 +707,11 @@ public void ConvertInputToThrottle()
 private void ApplyForceAtWheels()
 public void NoDriverInput()
 public void PlayerServerInput(InputState inputState, BasePlayer player)
-public void LightToggle()
+public void DriverInput(InputState inputState, BasePlayer player)
+public void LightToggle(BasePlayer player)
+}
+public BaseChair : BaseMountable {
+public float GetComfort()
 }
 public BaseCollision : MonoBehaviour {
 public BaseEntity Owner
@@ -715,7 +751,7 @@ public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 public bool IsDead()
 public bool IsAlive()
 public Vector3 get_LastAttackedDir()
-private void set_LastAttackedDir(Vector3 value)
+protected void set_LastAttackedDir(Vector3 value)
 public float get_SecondsSinceAttacked()
 public float get_SecondsSinceDealtDamage()
 public float get_healthFraction()
@@ -824,6 +860,7 @@ protected bool isAnimatorVisible
 protected bool isShadowVisible
 protected OccludeeSphere localOccludee
 public EntityComponentBase[] Components
+public bool IsNpc
 public ulong OwnerID
 protected float PositionTickRate
 public Vector3 ServerPosition
@@ -836,6 +873,7 @@ public void OnCollision(Collision collision, BaseEntity hitEntity)
 protected void ReceiveCollisionMessages(bool b)
 public EntityComponentBase[] get_Components()
 public BasePlayer ToPlayer()
+public bool get_IsNpc()
 public void InitShared()
 public void DestroyShared()
 public void ResetState()
@@ -919,8 +957,6 @@ public void SetParent(BaseEntity entity, UInt32 boneID)
 private void DestroyOnClient(Connection connection)
 private void SendChildrenNetworkUpdate()
 public void ParentBecoming(BaseEntity ent)
-public Vector3 GetEstimatedWorldPosition()
-public Quaternion GetEstimatedWorldRotation()
 public BuildingPrivlidge GetBuildingPrivilege()
 public BuildingPrivlidge GetBuildingPrivilege(OBB obb)
 public void SV_RPCMessage(UInt32 nameID, Message message)
@@ -1005,17 +1041,8 @@ public bool IsValid(BaseEntity ent)
 }
 public BaseFootstepEffect : MonoBehaviour {
 public LayerMask validImpactLayers
-private float minTimeBetweenSteps
-private float lastFootstepTime
-private float minDistanceBetweenSteps
-private float minDistanceBetweenStepsSqr
-protected Vector3 lastFootstepPos
-private float maxDistanceToCamera
 }
 public BaseHelicopter : BaseCombatEntity {
-private Quaternion client_rotorPivotIdeal
-private float lastNetworkUpdate
-private float networkUpdateRate
 public GameObject rotorPivot
 public GameObject mainRotor
 public GameObject mainRotor_blades
@@ -1048,16 +1075,18 @@ public SoundDefinition engineSoundDef
 public SoundDefinition rotorSoundDef
 private Sound _engineSound
 private Sound _rotorSound
+private Sound _rotorWashSound
 public float spotlightJitterAmount
 public float spotlightJitterSpeed
 public GameObject[] nightLights
-private bool nightLightsOn
 public Vector3 spotlightTarget
 public float engineSpeed
 public float targetEngineSpeed
 public float blur_rotationScale
 public ParticleSystem[] _rotorWashParticles
 private PatrolHelicopterAI myAI
+private float lastNetworkUpdate
+private float networkUpdateRate
 public weakspot[] weakspots
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 public float MaxVelocity()
@@ -1072,6 +1101,38 @@ public void Update()
 public void InitalizeWeakspots()
 public void OnAttacked(HitInfo info)
 public void Hurt(HitInfo info)
+}
+public BaseHelicopterVehicle : BaseVehicle {
+public Rigidbody rigidBody
+public float engineThrustMax
+public Vector3 torqueScale
+public Transform com
+public Transform[] GroundPoints
+public Transform[] GroundEffects
+public GameObjectRef explosionEffect
+public GameObjectRef fireBall
+public Flags Flag_InternalLights
+private HelicopterInputState_t currentInputState
+private float lastPlayerInputTime
+public float currentThrottle
+public float avgThrust
+public float liftDotMax
+public float altForceDotMin
+public float liftFraction
+protected float hoverForceScale
+public float MaxVelocity()
+public void ServerInit()
+public float MouseToBinary(float amount)
+public void PilotInput(InputState inputState, BasePlayer player)
+public void PlayerServerInput(InputState inputState, BasePlayer player)
+public HelicopterInputState_t GetDefaultInputState()
+public void VehicleFixedUpdate()
+public void LightToggle(BasePlayer player)
+public void MovementUpdate()
+public void DelayedImpactDamage()
+public bool CollisionDamageEnabled()
+private void OnCollisionEnter(Collision collision)
+public void OnKilled(HitInfo info)
 }
 public BaseLadder : BaseCombatEntity {
 public bool ShouldBlockProjectiles()
@@ -1093,8 +1154,6 @@ public bool updateVMWater
 public float minThrowFrac
 public bool useThrowAnim
 public float fillMlPerSec
-private float timeSinceLastAttack
-private bool wasFilling
 private float lastFillTime
 private float nextFreeTime
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
@@ -1190,32 +1249,50 @@ public void LogEntry(LogEntryType log, int level, string str)
 }
 public BaseMountable : BaseCombatEntity {
 protected BasePlayer _mounted
-public bool mountedPlayerVisible
-public bool mountedPlayerFrozen
+public Transform eyeOverride
+public Vector2 pitchClamp
+public Vector2 yawClamp
+public bool canWieldItems
+public MountPoses mountPose
+public float maxMountDistance
 public Transform mountAnchor
 public Transform dismountAnchor
-public bool isMobile
 public Transform[] dismountPositions
-public Transform eyeOverride
-public float maxMountDistance
-private float targetHeight
-private float testHeight
+public Transform dismountCheckEyes
+public bool isMobile
+private float playerHeight
+private float playerRadius
+public Vector3 DISMOUNT_POS_INVALID
 protected float PositionTickRate
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+public bool CanHoldItems()
+public bool DirectlyMountable()
 public Vector3 EyePositionForPlayer(BasePlayer player)
+public float WaterFactorForPlayer(BasePlayer player)
 public float MaxVelocity()
+public void MounteeTookDamage(BasePlayer mountee, HitInfo info)
+public float GetSteering(BasePlayer player)
+public void LightToggle(BasePlayer player)
 public bool IsMounted()
+public BasePlayer GetMounted()
 protected float get_PositionTickRate()
 public bool CanPickup(BasePlayer player)
 public void OnKilled(HitInfo info)
 public void RPC_WantsMount(RPCMessage msg)
+public void AttemptMount(BasePlayer player)
+public bool AttemptDismount(BasePlayer player)
 public void RPC_WantsDismount(RPCMessage msg)
 public void MountPlayer(BasePlayer player)
 public void DismountAllPlayers()
-public void DismountPlayer(BasePlayer player)
+public void DismountPlayer(BasePlayer player, bool lite)
+public BaseVehicle VehicleParent()
+public Vector3 DismountVisCheckOrigin()
+public bool ValidDismountPosition(Vector3 disPos)
+public bool HasValidDismountPosition(BasePlayer player)
 public Vector3 GetDismountPosition(BasePlayer player)
 public void ServerInit()
 public void FixedUpdate()
+public void VehicleFixedUpdate()
 public void PlayerServerInput(InputState inputState, BasePlayer player)
 public float GetComfort()
 public bool NearMountPoint(BasePlayer player)
@@ -1255,6 +1332,10 @@ public bool get_IsDestroyed()
 private void set_IsDestroyed(bool value)
 public string get_PrefabName()
 public string get_ShortPrefabName()
+public Vector3 GetNetworkPosition()
+public Vector3 GetNetworkRotation()
+public bool PhysicsDriven()
+public float GetNetworkTime()
 public string InvokeString()
 public BaseEntity LookupPrefab()
 public bool EqualNetID(BaseNetworkable other)
@@ -1306,8 +1387,6 @@ protected void SendAsSnapshot(Connection connection, bool justCreated)
 public void SendNetworkUpdate(NetworkQueue queue)
 public void SendNetworkUpdateImmediate(bool justCreated)
 protected void SendNetworkUpdate_Position()
-public Vector3 GetNetworkPosition()
-public Vector3 GetNetworkRotation()
 private void ToStream(Stream stream, SaveInfo saveInfo)
 public bool CanUseNetworkCache(Connection connection)
 public void ToStreamForNetwork(Stream stream, SaveInfo saveInfo)
@@ -1355,7 +1434,7 @@ public bool IsDormant
 private BaseEntity <AttackTarget>k__BackingField
 private SeenInfo <AttackTargetMemory>k__BackingField
 private BaseEntity <FoodTarget>k__BackingField
-private Vector3 <GuardPosition>k__BackingField
+private Vector3 <SpawnPosition>k__BackingField
 public StateTimer BusyTimer
 public float Sleep
 public VitalLevel Stamina
@@ -1395,7 +1474,7 @@ public BaseEntity AttackTarget
 public SeenInfo AttackTargetMemory
 public BaseEntity FoodTarget
 public BaseCombatEntity CombatTarget
-public Vector3 GuardPosition
+public Vector3 SpawnPosition
 public float AttackTargetVisibleFor
 public float TimeAtDestination
 public BaseCombatEntity Entity
@@ -1424,7 +1503,7 @@ public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 public int get_AgentTypeIndex()
 public void set_AgentTypeIndex(int value)
 public bool get_IsStuck()
-private void set_IsStuck(bool value)
+public void set_IsStuck(bool value)
 public Vector2i get_CurrentCoord()
 public void set_CurrentCoord(Vector2i value)
 public Vector2i get_PreviousCoord()
@@ -1466,6 +1545,7 @@ public void Startled()
 private bool IsAfraid()
 private bool IsAfraidOf(FamilyEnum family)
 private bool CheckHealthThresholdToFlee()
+private void TickBehaviourState()
 private void WantsToFlee()
 private void TickFlee()
 public bool BlockEnemyTargeting(float timeout)
@@ -1501,8 +1581,8 @@ public void set_AttackTargetMemory(SeenInfo value)
 public BaseEntity get_FoodTarget()
 public void set_FoodTarget(BaseEntity value)
 public BaseCombatEntity get_CombatTarget()
-public Vector3 get_GuardPosition()
-public void set_GuardPosition(Vector3 value)
+public Vector3 get_SpawnPosition()
+public void set_SpawnPosition(Vector3 value)
 public float get_AttackTargetVisibleFor()
 public float get_TimeAtDestination()
 public BaseCombatEntity get_Entity()
@@ -1564,9 +1644,11 @@ private void TickFoodAwareness()
 private void SelectFood()
 private void SelectClosestFood()
 private void UpdateSelfFacts()
+private byte IsMoving()
 private bool AiCaresAbout(BaseEntity ent)
 private bool WithinVisionCone(BaseNpc npc, BaseEntity other)
 public List`1<NavPointSample> RequestNavPointSamplesInCircle(SampleCount sampleCount, float radius, SampleFeatures features)
+public List`1<NavPointSample> RequestNavPointSamplesInCircleWaterDepthOnly(SampleCount sampleCount, float radius, float waterDepth)
 public void ServerInit()
 internal void DoServerDestroy()
 private bool Apex.LoadBalancing.ILoadBalanced.get_repeat()
@@ -1583,7 +1665,7 @@ public void set_TargetSpeed(float value)
 }
 public BaseNPCContext : BaseContext {
 public NPCPlayerApex Human
-public SquadMember SquadMember
+public AiLocationManager AiLocationManager
 public void .ctor(IAIAgent agent)
 }
 public BaseOven : StorageContainer {
@@ -1656,10 +1738,9 @@ public float violationLevel
 public float lastViolationTime
 public float lastAdminCheatTime
 public AntiHackType lastViolationType
-public float speedhackDeltaTime
+public float speedhackPauseTime
 public float speedhackDistance
-public int speedhackTickets
-public Queue`1<float> speedhackHistory
+public float flyhackPauseTime
 public float flyhackDistanceVertical
 public float flyhackDistanceHorizontal
 public PlayerModel playerModel
@@ -1673,6 +1754,7 @@ private ModelState modelStateTick
 private bool wantsSendModelState
 private float nextModelStateUpdate
 private EntityRef mounted
+private float nextSeatSwapTime
 private Dictionary`2<int, FiredProjectile> firedProjectiles
 public PlayerStatistics stats
 public UInt32 svActiveItemID
@@ -1743,6 +1825,7 @@ public BasePlayer ToPlayer()
 public Connection get_Connection()
 public string get_displayName()
 public void set_displayName(string value)
+public Vector3 GetNetworkRotation()
 public string GetSubName(int maxlen)
 public bool CanInteract()
 public float StartHealth()
@@ -1789,8 +1872,11 @@ public string ToString()
 public string GetDebugStatus()
 public Item GetItem(UInt32 itemId)
 public TraitFlag get_Traits()
+public float WaterFactor()
 public bool TriggeredAntiHack(float seconds, float score)
 public bool UsedAdminCheat(float seconds)
+public void PauseFlyHackDetection(float seconds)
+public void PauseSpeedHackDetection(float seconds)
 public int GetAntiHackKicks()
 public void ResetAntiHack()
 public bool CanBeLooted(BasePlayer player)
@@ -1821,11 +1907,14 @@ private void UpdateModelState()
 private void SendModelState()
 public bool get_isMounted()
 public BaseMountable GetMounted()
+public void MarkSwapSeat()
+public bool SwapSeatCooldown()
 public void MountObject(BaseMountable mount, int desiredSeat)
 public void EnsureDismounted()
 public void DismountObject()
 public bool IsSleeping()
 public bool IsSpectating()
+public bool IsRelaxed()
 public bool CanBuild()
 public bool CanBuild(Vector3 position, Quaternion rotation, Bounds bounds)
 public bool CanBuild(OBB obb)
@@ -1888,13 +1977,12 @@ private void OnPlayerLanded(RPCMessage msg)
 private void SV_StartLootingPlayer(UInt32 entityID)
 public void SendGlobalSnapshot()
 public void SendFullSnapshot()
-public Vector3 GetNetworkRotation()
 public void OnNetworkGroupLeave(Group group)
 private void LeaveVisibility(Group group)
 public void OnNetworkGroupEnter(Group group)
 private void EnterVisibility(Group group)
 public void CheckDeathCondition(HitInfo info)
-public void CreateCorpse()
+public BaseCorpse CreateCorpse()
 public void OnKilled(HitInfo info)
 public void RespawnAt(Vector3 position, Quaternion rotation)
 public void Respawn()
@@ -2016,6 +2104,7 @@ private float stancePenalty
 private float aimconePenalty
 protected bool reloadStarted
 protected bool reloadFinished
+private Effect reusableInstance
 private Func`2<ProjectileWeaponMod, bool> <>f__am$cache0
 private Func`2<ProjectileWeaponMod, Modifier> <>f__am$cache1
 private Func`2<Modifier, float> <>f__am$cache2
@@ -2049,6 +2138,7 @@ private void OnDrawGizmos()
 public RecoilProperties GetRecoil()
 public void ServerReload()
 public Vector3 ModifyAIAim(Vector3 eulerInput, float swayModifier)
+public float GetAIAimcone()
 public void ServerUse()
 public void ServerInit()
 public void ServerCommand(Item item, string command, BasePlayer player)
@@ -2138,6 +2228,38 @@ internal GameObject InterestedInObject(GameObject obj)
 internal void OnObjectAdded(GameObject obj)
 internal void OnEmpty()
 }
+public BaseVehicle : BaseMountable {
+public GameObjectRef serverGibs
+public MountPointInfo[] mountPoints
+public Flags Flag_Headlights
+public bool highFidelityRotation
+public bool DirectlyMountable()
+public void MounteeTookDamage(BasePlayer mountee, HitInfo info)
+public void DismountAllPlayers()
+public void ServerInit()
+public void SpawnSubEntities()
+public void Spawn()
+public bool HasDriver()
+public int GetPlayerSeat(BasePlayer player)
+public void SwapSeats(BasePlayer player, int targetSeat)
+public bool HasMountPoints()
+public BaseMountable GetIdealMountPoint(Vector3 pos)
+public bool IsMounted()
+public void AttemptMount(BasePlayer player)
+public bool AttemptDismount(BasePlayer player)
+public Vector3 GetDismountPosition(BasePlayer player)
+}
+public BaseVehicleMountPoint : BaseMountable {
+public bool DirectlyMountable()
+public BaseVehicle GetVehicleParent()
+public float WaterFactorForPlayer(BasePlayer player)
+}
+public BaseVehicleSeat : BaseVehicleMountPoint {
+public void MounteeTookDamage(BasePlayer mountee, HitInfo info)
+public void PlayerServerInput(InputState inputState, BasePlayer player)
+public void LightToggle(BasePlayer player)
+public float GetSteering(BasePlayer player)
+}
 public BaseViewModel : MonoBehaviour {
 public LazyAimProperties lazyaimRegular
 public LazyAimProperties lazyaimIronsights
@@ -2159,7 +2281,6 @@ public string Categorize()
 }
 public BearTrap : BaseTrap {
 protected Animator animator
-private bool initialized
 private GameObject hurtTarget
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 public bool Armed()
@@ -2177,19 +2298,12 @@ public void Load(LoadInfo info)
 }
 public Binocular : AttackEntity {
 public Single[] fovs
-private bool vmVisible
-private bool isAiming
-private float timeAiming
-private int currentFovIndex
 public GameObjectRef fovChangeEffect
 }
 public BlendTexture : ProcessedTexture {
 public void .ctor(int width, int height, bool linear)
 public void Blend(Texture source, Texture target, float alpha)
 public void CopyTo(BlendTexture target)
-}
-public BlockCompress : MonoBehaviour {
-public Texture2D lena
 }
 public BlueprintButton : MonoBehaviour {
 public Text name
@@ -2213,8 +2327,8 @@ public BlueprintCategoryButton : MonoBehaviour {
 public Text amountLabel
 public ItemCategory Category
 public GameObject BackgroundHighlight
-public AudioClip clickSound
-public AudioClip hoverSound
+public SoundDefinition clickSound
+public SoundDefinition hoverSound
 }
 public BlueprintCraftGridRow : MonoBehaviour {
 public GameObject amount
@@ -2248,11 +2362,6 @@ public TraitFlag get_Traits()
 public bool WantsToEat(BaseEntity best)
 public string Categorize()
 }
-public BoneFollower : ListComponent`1<BoneFollower> {
-public Transform bone
-public Vector3 offset
-public Quaternion rotationOffset
-}
 public BoneInfoComponent : MonoBehaviour {
 public Vector3 sizeVariation
 public int sizeVariationSeed
@@ -2265,6 +2374,7 @@ public GameObject errorPanel
 public Text errorText
 public Text statusText
 public bool isGameInitRun
+private Func`1<int> <>f__mg$cache0
 public bool needsSetup
 public bool isPresent
 public bool get_needsSetup()
@@ -2320,7 +2430,6 @@ private Modulator turretTurnLoopPitch
 public float enginePitch
 public float rpmMultiplier
 private TreadAnimator treadAnimator
-private float lastTurretAngle
 public WheelCollider[] leftWheels
 public WheelCollider[] rightWheels
 public float moveForceMax
@@ -2387,8 +2496,6 @@ public List`1<TargetInfo> targetList
 private float nextCoaxTime
 private float coaxFireRate
 private int numCoaxBursted
-private float nextTopTurretTime
-private float topTurretFireRate
 private float bulletDamage
 public GameObjectRef gun_fire_effect
 public GameObjectRef bulletEffect
@@ -2483,8 +2590,8 @@ public BradleyAPC spawned
 public bool initialSpawn
 public float minRespawnTimeMinutes
 public float maxRespawnTimeMinutes
-private bool pendingRespawn
 public BradleySpawner singleton
+private bool pendingRespawn
 public void Start()
 public void DelayedStart()
 public void CheckIfRespawnNeeded()
@@ -2495,7 +2602,7 @@ public void SpawnBradley()
 public Branding : BaseMonoBehaviour {
 public Text versionText
 public CanvasGroup canvasGroup
-public GameObject devBranchExtra
+private string oldChangeId
 }
 public BucketVMFluidSim : MonoBehaviour {
 public Animator waterbucketAnim
@@ -2517,9 +2624,11 @@ private Vector3 initialPosition
 public BuildingBlock : StabilityEntity {
 public Construction blockDefinition
 private Vector3[] outsideLookupOffsets
+private int modelState
+private int lastModelState
 public Enum grade
-protected ConstructionSkin currentSkin
-protected Enum lastSkinGrade
+private Enum lastGrade
+private ConstructionSkin currentSkin
 private DeferredAction skinChange
 private MeshRenderer placeholderRenderer
 private MeshCollider placeholderCollider
@@ -2539,8 +2648,10 @@ private bool IsDemolishable()
 private bool HasDemolishPrivilege(BasePlayer player)
 private void DoDemolish(RPCMessage msg)
 private void DoImmediateDemolish(RPCMessage msg)
-private void StopBeingDemolishable()
-private void StartBeingDemolishable()
+public void StopBeingDemolishable()
+public void StartBeingDemolishable()
+public void SetConditionalModel(int state)
+public bool GetConditionalModel(int index)
 public ConstructionGrade get_currentGrade()
 private ConstructionGrade GetGrade(Enum iGrade)
 private bool CanChangeToGrade(Enum iGrade, BasePlayer player)
@@ -2570,8 +2681,8 @@ private bool IsRotatable()
 private bool IsRotationBlocked()
 private bool HasRotationPrivilege(BasePlayer player)
 private void DoRotation(RPCMessage msg)
-private void StopBeingRotatable()
-private void StartBeingRotatable()
+public void StopBeingRotatable()
+public void StartBeingRotatable()
 public void Save(SaveInfo info)
 public void Load(LoadInfo info)
 public void ServerInit()
@@ -2610,11 +2721,10 @@ public void Clear()
 }
 public BuildingPrivlidge : StorageContainer {
 public List`1<PlayerNameID> authorizedPlayers
-private float cachedUpkeepPeriodMinutes
-private float cachedUpkeepCostFraction
 private float cachedProtectedMinutes
 private float nextProtectedCalcTime
 private UpkeepBracket[] upkeepBrackets
+private List`1<ItemAmount> upkeepBuffer
 private Func`2<Item, int> <>f__am$cache0
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 public void ResetState()
@@ -2640,11 +2750,16 @@ public float CalculateUpkeepPeriodMinutes()
 public float CalculateUpkeepCostFraction()
 public void CalculateUpkeepCostAmounts(List`1<ItemAmount> itemAmounts)
 public float GetProtectedMinutes(bool force)
+public void OnKilled(HitInfo info)
 public void DecayTick()
 private bool EnsurePrimary()
 public void MarkProtectedMinutesDirty(float delay)
 private float CalculateBuildingTaxRate()
+private void ApplyUpkeepPayment()
+private void QueueUpkeepPayment(List`1<ItemAmount> itemAmounts)
+private bool CanAffordUpkeepPayment(List`1<ItemAmount> itemAmounts)
 public float PurchaseUpkeepTime(DecayEntity entity, float deltaTime)
+public void PurchaseUpkeepTime(float deltaTime)
 private int <GetProtectedMinutes>m__0(Item x)
 }
 public BuildingProximity : PrefabAttribute {
@@ -2658,6 +2773,33 @@ private ProximityInfo GetProximity(Construction construction1, Vector3 position1
 protected void AttributeSetup(GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
 protected Type GetIndexedType()
 public bool Check(BasePlayer player, Construction construction, Vector3 position, Quaternion rotation, BuildingProximity[] volumes)
+}
+public Buoyancy : MonoBehaviour {
+public BuoyancyPoint[] points
+public GameObjectRef[] waterImpacts
+public Rigidbody rigidBody
+public float buoyancyScale
+public float submergedFraction
+public bool doEffects
+public bool clientSide
+public float waveHeightScale
+public string DefaultWaterImpact()
+public void FixedUpdate()
+public Vector3 GetFlowDirection(Vector3 point)
+public void EnsurePointsInitialized()
+public void BuoyancyFixedUpdate()
+}
+public BuoyancyPoint : MonoBehaviour {
+public float buoyancyForce
+public float size
+public float randomOffset
+public float waveScale
+public float waveFrequency
+public bool wasSubmergedLastFrame
+public float nexSplashTime
+public bool doSplashEffects
+public void Start()
+public void OnDrawGizmos()
 }
 public BUTTON : Enum {
 public int value__
@@ -2786,6 +2928,20 @@ public void OnKilled(HitInfo info)
 public void OnAttacked(HitInfo info)
 public bool SupportsPooling()
 }
+public CH47AIBrain : BaseAIBrain`1<CH47HelicopterAIController> {
+public int CH47State_Idle
+public int CH47State_Patrol
+public int CH47State_Land
+public int CH47State_Dropoff
+public int CH47State_Orbit
+public int CH47State_Retreat
+public int CH47State_Egress
+private float age
+public void InitializeAI()
+public void FixedUpdate()
+public void OnDrawGizmos()
+public void AIThink(float delta)
+}
 public ch47Animator : MonoBehaviour {
 public Animator animator
 public bool bottomDoorOpen
@@ -2804,9 +2960,132 @@ public SkinnedMeshRenderer[] RotorBlades
 private bool blurredRotorBladesEnabled
 public float blurSpeedThreshold
 private void Start()
+public void SetDropDoorOpen(bool isOpen)
 private void Update()
 private void LateUpdate()
 private void EnableBlurredRotorBlades(bool enabled)
+}
+public CH47DropZone : MonoBehaviour {
+public float lastDropTime
+private List`1<CH47DropZone> dropZones
+public void Awake()
+public CH47DropZone GetClosest(Vector3 pos)
+public void OnDestroy()
+public float TimeSinceLastDrop()
+public void Used()
+public void OnDrawGizmos()
+}
+public CH47FlightTest : MonoBehaviour {
+public Rigidbody rigidBody
+public float engineThrustMax
+public Vector3 torqueScale
+public Transform com
+public Transform[] GroundPoints
+public Transform[] GroundEffects
+public Transform AIMoveTarget
+private float altitudeTolerance
+public float currentThrottle
+public float avgThrust
+public float liftDotMax
+public void Awake()
+public HelicopterInputState_t GetHelicopterInputState()
+public HelicopterInputState_t GetAIInputState()
+public float GetIdealAltitude()
+public void FixedUpdate()
+public void OnDrawGizmos()
+}
+public CH47Helicopter : BaseHelicopterVehicle {
+public GameObjectRef mapMarkerEntityPrefab
+private BaseEntity mapMarkerInstance
+public void ServerInit()
+public void PlayerServerInput(InputState inputState, BasePlayer player)
+public void CreateMapMarker()
+}
+public CH47HelicopterAIController : CH47Helicopter {
+public GameObjectRef scientistPrefab
+public float maxTiltAngle
+public float AiAltitudeForce
+public GameObjectRef lockedCratePrefab
+public Flags Flag_Damaged
+public Flags Flag_NearDeath
+public Flags Flag_DropDoorOpen
+private int numCrates
+private bool aimDirOverride
+private Vector3 _aimDirection
+private Vector3 _moveTarget
+private int lastAltitudeCheckFrame
+private float altOverride
+private float currentDesiredAltitude
+private float hoverHeight
+public void DropCrate()
+public bool OutOfCrates()
+public bool CanDropCrate()
+public void SetDropDoorOpen(bool open)
+public void TriggeredEventSpawn()
+public void AttemptMount(BasePlayer player)
+public void ServerInit()
+public void SpawnScientist(Vector3 spawnPos)
+public void SpawnScientists()
+public void EnableFacingOverride(bool enabled)
+public void SetMoveTarget(Vector3 position)
+public Vector3 GetMoveTarget()
+public void SetAimDirection(Vector3 dir)
+public Vector3 GetAimDirectionOverride()
+public Vector3 GetPosition()
+public void MounteeTookDamage(BasePlayer mountee, HitInfo info)
+public void CancelAnger()
+public void InitiateAnger()
+public void UnHostile()
+public void OnKilled(HitInfo info)
+public void OnAttacked(HitInfo info)
+public void DelayedKill()
+public void DismountAllPlayers()
+public float GetDesiredAltitude()
+public float CalculateOverrideAltitude()
+public HelicopterInputState_t GetDefaultInputState()
+public void MaintainAIAltutide()
+public void VehicleFixedUpdate()
+public void DestroyShared()
+}
+public Chainsaw : BaseMelee {
+public float fuelPerSec
+public int maxAmmo
+public int ammo
+public ItemDefinition fuelType
+public float reloadDuration
+public SoundPlayer idleLoop
+public SoundPlayer attackLoopAir
+public SoundPlayer revUp
+public SoundPlayer revDown
+public SoundPlayer offSound
+public float engineStartChance
+private float ammoRemainder
+public Renderer chainRenderer
+private MaterialPropertyBlock block
+private Vector2 saveST
+public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+public bool EngineOn()
+public bool IsAttacking()
+protected bool VerifyClientAttack(BasePlayer player)
+public void CollectedForCrafting(Item item, BasePlayer crafter)
+public void SetHeld(bool bHeld)
+public void ReduceAmmo(float firingTime)
+public void DoReload(RPCMessage msg)
+public void Save(SaveInfo info)
+public void SetEngineStatus(bool status)
+public void SetAttackStatus(bool status)
+public void EngineTick()
+public void AttackTick()
+public void Server_StartEngine(RPCMessage msg)
+public void Server_StopEngine(RPCMessage msg)
+public void Server_SetAttacking(RPCMessage msg)
+public void ServerCommand(Item item, string command, BasePlayer player)
+public void DisableHitEffects()
+public void EnableHitEffect(UInt32 hitMaterial)
+public void DoAttackShared(HitInfo info)
+public void Load(LoadInfo info)
+public bool HasAmmo()
+public Item GetAmmo()
 }
 public ChangeSignText : UIDialog {
 public Action`1<Texture2D> onUpdateTexture
@@ -2818,9 +3097,6 @@ public RawImage avatar
 public CanvasGroup canvasGroup
 public float lifeStarted
 public ulong steamid
-private Texture defaultTexture
-public float age
-public float get_age()
 }
 public Checksum : object {
 private List`1<byte> values
@@ -3087,6 +3363,12 @@ public void Log(Event val)
 public string Get(int count)
 public Queue`1<Event> Get(ulong id)
 }
+public CommandBufferEx : object {
+public void BlitArray(CommandBuffer cb, Mesh blitMesh, RenderTargetIdentifier source, Material mat, int pass)
+public void BlitArray(CommandBuffer cb, Mesh blitMesh, RenderTargetIdentifier source, RenderTargetIdentifier dest, Material mat, int pass)
+public void BlitArrayMip(CommandBuffer cb, Mesh blitMesh, Texture source, int sourceMip, Texture target, int targetMip, Material mat, int pass)
+public void BlitMip(CommandBuffer cb, Mesh blitMesh, Texture source, Texture target, int mip, Material mat, int pass)
+}
 public CommentComponent : MonoBehaviour {
 public string comment
 }
@@ -3106,12 +3388,15 @@ public T component
 public void Initialize(T source)
 }
 public ConditionalModel : PrefabAttribute {
+public bool onClient
+public bool onServer
 public ModelConditionTest[] conditions
 public GameObject prefabObject
 public string conditionalName
 public UInt32 conditionalID
 protected void AttributeSetup(GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
-public GameObject Run(GameObject parent)
+public bool RunTests(BaseEntity parent)
+public GameObject InstantiateSkin(BaseEntity parent)
 protected Type GetIndexedType()
 }
 public ConnectionAuth : MonoBehaviour {
@@ -3186,14 +3471,14 @@ private void <All>m__20(Arg arg)
 private void <All>m__21(Arg arg)
 private void <All>m__22(Arg arg)
 private void <All>m__23(Arg arg)
-private string <All>m__24()
-private void <All>m__25(string str)
-private string <All>m__26()
-private void <All>m__27(string str)
+private void <All>m__24(Arg arg)
+private void <All>m__25(Arg arg)
+private void <All>m__26(Arg arg)
+private void <All>m__27(Arg arg)
 private string <All>m__28()
 private void <All>m__29(string str)
-private string <All>m__2A()
-private void <All>m__2B(string str)
+private void <All>m__2A(Arg arg)
+private void <All>m__2B(Arg arg)
 private string <All>m__2C()
 private void <All>m__2D(string str)
 private string <All>m__2E()
@@ -3250,8 +3535,8 @@ private string <All>m__60()
 private void <All>m__61(string str)
 private string <All>m__62()
 private void <All>m__63(string str)
-private string <All>m__64()
-private void <All>m__65(string str)
+private void <All>m__64(Arg arg)
+private void <All>m__65(Arg arg)
 private string <All>m__66()
 private void <All>m__67(string str)
 private string <All>m__68()
@@ -3310,116 +3595,116 @@ private string <All>m__9C()
 private void <All>m__9D(string str)
 private string <All>m__9E()
 private void <All>m__9F(string str)
-private void <All>m__A0(Arg arg)
-private void <All>m__A1(Arg arg)
+private string <All>m__A0()
+private void <All>m__A1(string str)
 private string <All>m__A2()
 private void <All>m__A3(string str)
 private string <All>m__A4()
 private void <All>m__A5(string str)
-private void <All>m__A6(Arg arg)
-private string <All>m__A7()
-private void <All>m__A8(string str)
-private string <All>m__A9()
-private void <All>m__AA(string str)
-private string <All>m__AB()
-private void <All>m__AC(string str)
-private void <All>m__AD(Arg arg)
-private void <All>m__AE(Arg arg)
-private string <All>m__AF()
-private void <All>m__B0(string str)
-private void <All>m__B1(Arg arg)
-private void <All>m__B2(Arg arg)
-private void <All>m__B3(Arg arg)
+private string <All>m__A6()
+private void <All>m__A7(string str)
+private string <All>m__A8()
+private void <All>m__A9(string str)
+private string <All>m__AA()
+private void <All>m__AB(string str)
+private string <All>m__AC()
+private void <All>m__AD(string str)
+private string <All>m__AE()
+private void <All>m__AF(string str)
+private string <All>m__B0()
+private void <All>m__B1(string str)
+private string <All>m__B2()
+private void <All>m__B3(string str)
 private string <All>m__B4()
 private void <All>m__B5(string str)
-private void <All>m__B6(Arg arg)
-private void <All>m__B7(Arg arg)
-private void <All>m__B8(Arg arg)
-private string <All>m__B9()
-private void <All>m__BA(string str)
-private void <All>m__BB(Arg arg)
-private void <All>m__BC(Arg arg)
-private void <All>m__BD(Arg arg)
+private string <All>m__B6()
+private void <All>m__B7(string str)
+private string <All>m__B8()
+private void <All>m__B9(string str)
+private string <All>m__BA()
+private void <All>m__BB(string str)
+private string <All>m__BC()
+private void <All>m__BD(string str)
 private string <All>m__BE()
 private void <All>m__BF(string str)
 private string <All>m__C0()
 private void <All>m__C1(string str)
-private void <All>m__C2(Arg arg)
-private void <All>m__C3(Arg arg)
-private void <All>m__C4(Arg arg)
-private void <All>m__C5(Arg arg)
+private string <All>m__C2()
+private void <All>m__C3(string str)
+private string <All>m__C4()
+private void <All>m__C5(string str)
 private string <All>m__C6()
 private void <All>m__C7(string str)
-private void <All>m__C8(Arg arg)
-private string <All>m__C9()
-private void <All>m__CA(string str)
-private string <All>m__CB()
-private void <All>m__CC(string str)
-private string <All>m__CD()
-private void <All>m__CE(string str)
-private string <All>m__CF()
-private void <All>m__D0(string str)
-private string <All>m__D1()
-private void <All>m__D2(string str)
-private string <All>m__D3()
-private void <All>m__D4(string str)
-private string <All>m__D5()
-private void <All>m__D6(string str)
-private string <All>m__D7()
-private void <All>m__D8(string str)
-private string <All>m__D9()
-private void <All>m__DA(string str)
-private string <All>m__DB()
-private void <All>m__DC(string str)
-private string <All>m__DD()
-private void <All>m__DE(string str)
-private string <All>m__DF()
-private void <All>m__E0(string str)
+private string <All>m__C8()
+private void <All>m__C9(string str)
+private string <All>m__CA()
+private void <All>m__CB(string str)
+private string <All>m__CC()
+private void <All>m__CD(string str)
+private string <All>m__CE()
+private void <All>m__CF(string str)
+private string <All>m__D0()
+private void <All>m__D1(string str)
+private string <All>m__D2()
+private void <All>m__D3(string str)
+private string <All>m__D4()
+private void <All>m__D5(string str)
+private string <All>m__D6()
+private void <All>m__D7(string str)
+private string <All>m__D8()
+private void <All>m__D9(string str)
+private void <All>m__DA(Arg arg)
+private void <All>m__DB(Arg arg)
+private string <All>m__DC()
+private void <All>m__DD(string str)
+private string <All>m__DE()
+private void <All>m__DF(string str)
+private void <All>m__E0(Arg arg)
 private string <All>m__E1()
 private void <All>m__E2(string str)
 private string <All>m__E3()
 private void <All>m__E4(string str)
 private string <All>m__E5()
 private void <All>m__E6(string str)
-private string <All>m__E7()
-private void <All>m__E8(string str)
+private void <All>m__E7(Arg arg)
+private void <All>m__E8(Arg arg)
 private string <All>m__E9()
 private void <All>m__EA(string str)
-private string <All>m__EB()
-private void <All>m__EC(string str)
-private string <All>m__ED()
-private void <All>m__EE(string str)
-private string <All>m__EF()
-private void <All>m__F0(string str)
-private string <All>m__F1()
-private void <All>m__F2(string str)
+private void <All>m__EB(Arg arg)
+private void <All>m__EC(Arg arg)
+private void <All>m__ED(Arg arg)
+private string <All>m__EE()
+private void <All>m__EF(string str)
+private void <All>m__F0(Arg arg)
+private void <All>m__F1(Arg arg)
+private void <All>m__F2(Arg arg)
 private string <All>m__F3()
 private void <All>m__F4(string str)
-private string <All>m__F5()
-private void <All>m__F6(string str)
-private string <All>m__F7()
-private void <All>m__F8(string str)
-private string <All>m__F9()
-private void <All>m__FA(string str)
-private string <All>m__FB()
-private void <All>m__FC(string str)
-private string <All>m__FD()
-private void <All>m__FE(string str)
-private string <All>m__FF()
-private void <All>m__100(string str)
+private void <All>m__F5(Arg arg)
+private void <All>m__F6(Arg arg)
+private void <All>m__F7(Arg arg)
+private string <All>m__F8()
+private void <All>m__F9(string str)
+private string <All>m__FA()
+private void <All>m__FB(string str)
+private string <All>m__FC()
+private void <All>m__FD(string str)
+private void <All>m__FE(Arg arg)
+private void <All>m__FF(Arg arg)
+private void <All>m__100(Arg arg)
 private void <All>m__101(Arg arg)
-private void <All>m__102(Arg arg)
-private void <All>m__103(Arg arg)
+private string <All>m__102()
+private void <All>m__103(string str)
 private void <All>m__104(Arg arg)
 private void <All>m__105(Arg arg)
-private void <All>m__106(Arg arg)
-private void <All>m__107(Arg arg)
-private void <All>m__108(Arg arg)
-private void <All>m__109(Arg arg)
-private void <All>m__10A(Arg arg)
-private void <All>m__10B(Arg arg)
-private void <All>m__10C(Arg arg)
-private void <All>m__10D(Arg arg)
+private string <All>m__106()
+private void <All>m__107(string str)
+private string <All>m__108()
+private void <All>m__109(string str)
+private string <All>m__10A()
+private void <All>m__10B(string str)
+private string <All>m__10C()
+private void <All>m__10D(string str)
 private string <All>m__10E()
 private void <All>m__10F(string str)
 private string <All>m__110()
@@ -3432,47 +3717,47 @@ private string <All>m__116()
 private void <All>m__117(string str)
 private string <All>m__118()
 private void <All>m__119(string str)
-private void <All>m__11A(Arg arg)
-private void <All>m__11B(Arg arg)
-private void <All>m__11C(Arg arg)
-private void <All>m__11D(Arg arg)
+private string <All>m__11A()
+private void <All>m__11B(string str)
+private string <All>m__11C()
+private void <All>m__11D(string str)
 private string <All>m__11E()
 private void <All>m__11F(string str)
-private void <All>m__120(Arg arg)
-private void <All>m__121(Arg arg)
-private void <All>m__122(Arg arg)
-private void <All>m__123(Arg arg)
+private string <All>m__120()
+private void <All>m__121(string str)
+private string <All>m__122()
+private void <All>m__123(string str)
 private string <All>m__124()
 private void <All>m__125(string str)
-private void <All>m__126(Arg arg)
-private string <All>m__127()
-private void <All>m__128(string str)
-private void <All>m__129(Arg arg)
-private void <All>m__12A(Arg arg)
-private void <All>m__12B(Arg arg)
-private void <All>m__12C(Arg arg)
-private void <All>m__12D(Arg arg)
-private void <All>m__12E(Arg arg)
-private void <All>m__12F(Arg arg)
-private void <All>m__130(Arg arg)
-private void <All>m__131(Arg arg)
-private void <All>m__132(Arg arg)
-private void <All>m__133(Arg arg)
-private void <All>m__134(Arg arg)
-private void <All>m__135(Arg arg)
-private void <All>m__136(Arg arg)
-private void <All>m__137(Arg arg)
-private void <All>m__138(Arg arg)
-private void <All>m__139(Arg arg)
-private void <All>m__13A(Arg arg)
-private void <All>m__13B(Arg arg)
+private string <All>m__126()
+private void <All>m__127(string str)
+private string <All>m__128()
+private void <All>m__129(string str)
+private string <All>m__12A()
+private void <All>m__12B(string str)
+private string <All>m__12C()
+private void <All>m__12D(string str)
+private string <All>m__12E()
+private void <All>m__12F(string str)
+private string <All>m__130()
+private void <All>m__131(string str)
+private string <All>m__132()
+private void <All>m__133(string str)
+private string <All>m__134()
+private void <All>m__135(string str)
+private string <All>m__136()
+private void <All>m__137(string str)
+private string <All>m__138()
+private void <All>m__139(string str)
+private string <All>m__13A()
+private void <All>m__13B(string str)
 private string <All>m__13C()
 private void <All>m__13D(string str)
-private void <All>m__13E(Arg arg)
-private string <All>m__13F()
-private void <All>m__140(string str)
-private string <All>m__141()
-private void <All>m__142(string str)
+private string <All>m__13E()
+private void <All>m__13F(string str)
+private void <All>m__140(Arg arg)
+private void <All>m__141(Arg arg)
+private void <All>m__142(Arg arg)
 private void <All>m__143(Arg arg)
 private void <All>m__144(Arg arg)
 private void <All>m__145(Arg arg)
@@ -3484,95 +3769,95 @@ private void <All>m__14A(Arg arg)
 private void <All>m__14B(Arg arg)
 private void <All>m__14C(Arg arg)
 private void <All>m__14D(Arg arg)
-private void <All>m__14E(Arg arg)
-private void <All>m__14F(Arg arg)
-private void <All>m__150(Arg arg)
-private string <All>m__151()
-private void <All>m__152(string str)
-private string <All>m__153()
-private void <All>m__154(string str)
-private string <All>m__155()
-private void <All>m__156(string str)
-private void <All>m__157(Arg arg)
-private void <All>m__158(Arg arg)
-private void <All>m__159(Arg arg)
-private string <All>m__15A()
-private void <All>m__15B(string str)
-private string <All>m__15C()
-private void <All>m__15D(string str)
-private void <All>m__15E(Arg arg)
-private string <All>m__15F()
-private void <All>m__160(string str)
-private string <All>m__161()
-private void <All>m__162(string str)
-private string <All>m__163()
-private void <All>m__164(string str)
-private string <All>m__165()
-private void <All>m__166(string str)
+private string <All>m__14E()
+private void <All>m__14F(string str)
+private string <All>m__150()
+private void <All>m__151(string str)
+private string <All>m__152()
+private void <All>m__153(string str)
+private string <All>m__154()
+private void <All>m__155(string str)
+private string <All>m__156()
+private void <All>m__157(string str)
+private string <All>m__158()
+private void <All>m__159(string str)
+private void <All>m__15A(Arg arg)
+private void <All>m__15B(Arg arg)
+private void <All>m__15C(Arg arg)
+private void <All>m__15D(Arg arg)
+private string <All>m__15E()
+private void <All>m__15F(string str)
+private void <All>m__160(Arg arg)
+private void <All>m__161(Arg arg)
+private void <All>m__162(Arg arg)
+private void <All>m__163(Arg arg)
+private string <All>m__164()
+private void <All>m__165(string str)
+private void <All>m__166(Arg arg)
 private string <All>m__167()
 private void <All>m__168(string str)
-private string <All>m__169()
-private void <All>m__16A(string str)
-private string <All>m__16B()
-private void <All>m__16C(string str)
-private string <All>m__16D()
-private void <All>m__16E(string str)
+private void <All>m__169(Arg arg)
+private void <All>m__16A(Arg arg)
+private void <All>m__16B(Arg arg)
+private void <All>m__16C(Arg arg)
+private void <All>m__16D(Arg arg)
+private void <All>m__16E(Arg arg)
 private void <All>m__16F(Arg arg)
 private void <All>m__170(Arg arg)
 private void <All>m__171(Arg arg)
-private string <All>m__172()
-private void <All>m__173(string str)
-private string <All>m__174()
-private void <All>m__175(string str)
+private void <All>m__172(Arg arg)
+private void <All>m__173(Arg arg)
+private void <All>m__174(Arg arg)
+private void <All>m__175(Arg arg)
 private void <All>m__176(Arg arg)
 private void <All>m__177(Arg arg)
 private void <All>m__178(Arg arg)
 private void <All>m__179(Arg arg)
 private void <All>m__17A(Arg arg)
-private string <All>m__17B()
-private void <All>m__17C(string str)
-private string <All>m__17D()
-private void <All>m__17E(string str)
+private void <All>m__17B(Arg arg)
+private string <All>m__17C()
+private void <All>m__17D(string str)
+private void <All>m__17E(Arg arg)
 private string <All>m__17F()
 private void <All>m__180(string str)
 private string <All>m__181()
 private void <All>m__182(string str)
-private string <All>m__183()
-private void <All>m__184(string str)
+private void <All>m__183(Arg arg)
+private void <All>m__184(Arg arg)
 private void <All>m__185(Arg arg)
-private string <All>m__186()
-private void <All>m__187(string str)
-private string <All>m__188()
-private void <All>m__189(string str)
-private string <All>m__18A()
-private void <All>m__18B(string str)
-private string <All>m__18C()
-private void <All>m__18D(string str)
-private string <All>m__18E()
-private void <All>m__18F(string str)
+private void <All>m__186(Arg arg)
+private void <All>m__187(Arg arg)
+private void <All>m__188(Arg arg)
+private void <All>m__189(Arg arg)
+private void <All>m__18A(Arg arg)
+private void <All>m__18B(Arg arg)
+private void <All>m__18C(Arg arg)
+private void <All>m__18D(Arg arg)
+private void <All>m__18E(Arg arg)
+private void <All>m__18F(Arg arg)
 private void <All>m__190(Arg arg)
-private void <All>m__191(Arg arg)
-private string <All>m__192()
-private void <All>m__193(string str)
-private string <All>m__194()
-private void <All>m__195(string str)
-private string <All>m__196()
-private void <All>m__197(string str)
-private string <All>m__198()
-private void <All>m__199(string str)
+private string <All>m__191()
+private void <All>m__192(string str)
+private string <All>m__193()
+private void <All>m__194(string str)
+private string <All>m__195()
+private void <All>m__196(string str)
+private void <All>m__197(Arg arg)
+private void <All>m__198(Arg arg)
+private void <All>m__199(Arg arg)
 private string <All>m__19A()
 private void <All>m__19B(string str)
 private string <All>m__19C()
 private void <All>m__19D(string str)
-private string <All>m__19E()
-private void <All>m__19F(string str)
-private string <All>m__1A0()
-private void <All>m__1A1(string str)
-private string <All>m__1A2()
-private void <All>m__1A3(string str)
-private string <All>m__1A4()
-private void <All>m__1A5(string str)
-private void <All>m__1A6(Arg arg)
+private void <All>m__19E(Arg arg)
+private string <All>m__19F()
+private void <All>m__1A0(string str)
+private string <All>m__1A1()
+private void <All>m__1A2(string str)
+private string <All>m__1A3()
+private void <All>m__1A4(string str)
+private string <All>m__1A5()
+private void <All>m__1A6(string str)
 private string <All>m__1A7()
 private void <All>m__1A8(string str)
 private string <All>m__1A9()
@@ -3581,20 +3866,20 @@ private string <All>m__1AB()
 private void <All>m__1AC(string str)
 private string <All>m__1AD()
 private void <All>m__1AE(string str)
-private string <All>m__1AF()
-private void <All>m__1B0(string str)
-private string <All>m__1B1()
-private void <All>m__1B2(string str)
-private string <All>m__1B3()
-private void <All>m__1B4(string str)
-private string <All>m__1B5()
-private void <All>m__1B6(string str)
-private string <All>m__1B7()
-private void <All>m__1B8(string str)
-private string <All>m__1B9()
-private void <All>m__1BA(string str)
-private string <All>m__1BB()
-private void <All>m__1BC(string str)
+private void <All>m__1AF(Arg arg)
+private void <All>m__1B0(Arg arg)
+private void <All>m__1B1(Arg arg)
+private string <All>m__1B2()
+private void <All>m__1B3(string str)
+private string <All>m__1B4()
+private void <All>m__1B5(string str)
+private string <All>m__1B6()
+private void <All>m__1B7(string str)
+private void <All>m__1B8(Arg arg)
+private void <All>m__1B9(Arg arg)
+private void <All>m__1BA(Arg arg)
+private void <All>m__1BB(Arg arg)
+private void <All>m__1BC(Arg arg)
 private string <All>m__1BD()
 private void <All>m__1BE(string str)
 private string <All>m__1BF()
@@ -3605,72 +3890,72 @@ private string <All>m__1C3()
 private void <All>m__1C4(string str)
 private string <All>m__1C5()
 private void <All>m__1C6(string str)
-private string <All>m__1C7()
-private void <All>m__1C8(string str)
-private string <All>m__1C9()
-private void <All>m__1CA(string str)
-private string <All>m__1CB()
-private void <All>m__1CC(string str)
-private string <All>m__1CD()
-private void <All>m__1CE(string str)
-private string <All>m__1CF()
-private void <All>m__1D0(string str)
-private string <All>m__1D1()
-private void <All>m__1D2(string str)
-private string <All>m__1D3()
-private void <All>m__1D4(string str)
-private string <All>m__1D5()
-private void <All>m__1D6(string str)
-private string <All>m__1D7()
-private void <All>m__1D8(string str)
-private string <All>m__1D9()
-private void <All>m__1DA(string str)
-private string <All>m__1DB()
-private void <All>m__1DC(string str)
-private string <All>m__1DD()
-private void <All>m__1DE(string str)
-private string <All>m__1DF()
-private void <All>m__1E0(string str)
-private string <All>m__1E1()
-private void <All>m__1E2(string str)
-private void <All>m__1E3(Arg arg)
-private void <All>m__1E4(Arg arg)
-private void <All>m__1E5(Arg arg)
+private void <All>m__1C7(Arg arg)
+private string <All>m__1C8()
+private void <All>m__1C9(string str)
+private string <All>m__1CA()
+private void <All>m__1CB(string str)
+private string <All>m__1CC()
+private void <All>m__1CD(string str)
+private string <All>m__1CE()
+private void <All>m__1CF(string str)
+private string <All>m__1D0()
+private void <All>m__1D1(string str)
+private void <All>m__1D2(Arg arg)
+private void <All>m__1D3(Arg arg)
+private string <All>m__1D4()
+private void <All>m__1D5(string str)
+private string <All>m__1D6()
+private void <All>m__1D7(string str)
+private string <All>m__1D8()
+private void <All>m__1D9(string str)
+private string <All>m__1DA()
+private void <All>m__1DB(string str)
+private string <All>m__1DC()
+private void <All>m__1DD(string str)
+private string <All>m__1DE()
+private void <All>m__1DF(string str)
+private string <All>m__1E0()
+private void <All>m__1E1(string str)
+private string <All>m__1E2()
+private void <All>m__1E3(string str)
+private string <All>m__1E4()
+private void <All>m__1E5(string str)
 private string <All>m__1E6()
 private void <All>m__1E7(string str)
-private string <All>m__1E8()
-private void <All>m__1E9(string str)
-private string <All>m__1EA()
-private void <All>m__1EB(string str)
-private string <All>m__1EC()
-private void <All>m__1ED(string str)
-private void <All>m__1EE(Arg arg)
+private void <All>m__1E8(Arg arg)
+private string <All>m__1E9()
+private void <All>m__1EA(string str)
+private string <All>m__1EB()
+private void <All>m__1EC(string str)
+private string <All>m__1ED()
+private void <All>m__1EE(string str)
 private string <All>m__1EF()
 private void <All>m__1F0(string str)
 private string <All>m__1F1()
 private void <All>m__1F2(string str)
-private void <All>m__1F3(Arg arg)
-private string <All>m__1F4()
-private void <All>m__1F5(string str)
-private string <All>m__1F6()
-private void <All>m__1F7(string str)
-private string <All>m__1F8()
-private void <All>m__1F9(string str)
-private string <All>m__1FA()
-private void <All>m__1FB(string str)
-private string <All>m__1FC()
-private void <All>m__1FD(string str)
-private void <All>m__1FE(Arg arg)
-private void <All>m__1FF(Arg arg)
-private string <All>m__200()
-private void <All>m__201(string str)
-private void <All>m__202(Arg arg)
+private string <All>m__1F3()
+private void <All>m__1F4(string str)
+private string <All>m__1F5()
+private void <All>m__1F6(string str)
+private string <All>m__1F7()
+private void <All>m__1F8(string str)
+private string <All>m__1F9()
+private void <All>m__1FA(string str)
+private string <All>m__1FB()
+private void <All>m__1FC(string str)
+private string <All>m__1FD()
+private void <All>m__1FE(string str)
+private string <All>m__1FF()
+private void <All>m__200(string str)
+private string <All>m__201()
+private void <All>m__202(string str)
 private string <All>m__203()
 private void <All>m__204(string str)
-private void <All>m__205(Arg arg)
-private string <All>m__206()
-private void <All>m__207(string str)
-private void <All>m__208(Arg arg)
+private string <All>m__205()
+private void <All>m__206(string str)
+private string <All>m__207()
+private void <All>m__208(string str)
 private string <All>m__209()
 private void <All>m__20A(string str)
 private string <All>m__20B()
@@ -3683,119 +3968,119 @@ private string <All>m__211()
 private void <All>m__212(string str)
 private string <All>m__213()
 private void <All>m__214(string str)
-private void <All>m__215(Arg arg)
-private void <All>m__216(Arg arg)
-private void <All>m__217(Arg arg)
-private string <All>m__218()
-private void <All>m__219(string str)
-private string <All>m__21A()
-private void <All>m__21B(string str)
-private string <All>m__21C()
-private void <All>m__21D(string str)
-private string <All>m__21E()
-private void <All>m__21F(string str)
-private string <All>m__220()
-private void <All>m__221(string str)
-private string <All>m__222()
-private void <All>m__223(string str)
-private void <All>m__224(Arg arg)
-private string <All>m__225()
-private void <All>m__226(string str)
-private string <All>m__227()
-private void <All>m__228(string str)
-private void <All>m__229(Arg arg)
+private string <All>m__215()
+private void <All>m__216(string str)
+private string <All>m__217()
+private void <All>m__218(string str)
+private string <All>m__219()
+private void <All>m__21A(string str)
+private string <All>m__21B()
+private void <All>m__21C(string str)
+private string <All>m__21D()
+private void <All>m__21E(string str)
+private string <All>m__21F()
+private void <All>m__220(string str)
+private string <All>m__221()
+private void <All>m__222(string str)
+private string <All>m__223()
+private void <All>m__224(string str)
+private void <All>m__225(Arg arg)
+private void <All>m__226(Arg arg)
+private void <All>m__227(Arg arg)
+private string <All>m__228()
+private void <All>m__229(string str)
 private string <All>m__22A()
 private void <All>m__22B(string str)
 private string <All>m__22C()
 private void <All>m__22D(string str)
-private void <All>m__22E(Arg arg)
-private string <All>m__22F()
-private void <All>m__230(string str)
+private string <All>m__22E()
+private void <All>m__22F(string str)
+private void <All>m__230(Arg arg)
 private string <All>m__231()
 private void <All>m__232(string str)
 private string <All>m__233()
 private void <All>m__234(string str)
-private string <All>m__235()
-private void <All>m__236(string str)
-private void <All>m__237(Arg arg)
-private void <All>m__238(Arg arg)
-private string <All>m__239()
-private void <All>m__23A(string str)
-private string <All>m__23B()
-private void <All>m__23C(string str)
-private string <All>m__23D()
-private void <All>m__23E(string str)
-private string <All>m__23F()
-private void <All>m__240(string str)
-private string <All>m__241()
-private void <All>m__242(string str)
-private string <All>m__243()
-private void <All>m__244(string str)
+private void <All>m__235(Arg arg)
+private string <All>m__236()
+private void <All>m__237(string str)
+private string <All>m__238()
+private void <All>m__239(string str)
+private string <All>m__23A()
+private void <All>m__23B(string str)
+private string <All>m__23C()
+private void <All>m__23D(string str)
+private string <All>m__23E()
+private void <All>m__23F(string str)
+private void <All>m__240(Arg arg)
+private void <All>m__241(Arg arg)
+private string <All>m__242()
+private void <All>m__243(string str)
+private void <All>m__244(Arg arg)
 private string <All>m__245()
 private void <All>m__246(string str)
-private string <All>m__247()
-private void <All>m__248(string str)
-private string <All>m__249()
-private void <All>m__24A(string str)
+private void <All>m__247(Arg arg)
+private string <All>m__248()
+private void <All>m__249(string str)
+private void <All>m__24A(Arg arg)
 private string <All>m__24B()
 private void <All>m__24C(string str)
 private string <All>m__24D()
 private void <All>m__24E(string str)
 private string <All>m__24F()
 private void <All>m__250(string str)
-private void <All>m__251(Arg arg)
-private void <All>m__252(Arg arg)
-private void <All>m__253(Arg arg)
-private void <All>m__254(Arg arg)
+private string <All>m__251()
+private void <All>m__252(string str)
+private string <All>m__253()
+private void <All>m__254(string str)
 private string <All>m__255()
 private void <All>m__256(string str)
-private string <All>m__257()
-private void <All>m__258(string str)
-private string <All>m__259()
-private void <All>m__25A(string str)
-private void <All>m__25B(Arg arg)
+private void <All>m__257(Arg arg)
+private void <All>m__258(Arg arg)
+private void <All>m__259(Arg arg)
+private string <All>m__25A()
+private void <All>m__25B(string str)
 private string <All>m__25C()
 private void <All>m__25D(string str)
 private string <All>m__25E()
 private void <All>m__25F(string str)
-private void <All>m__260(Arg arg)
-private void <All>m__261(Arg arg)
-private void <All>m__262(Arg arg)
-private string <All>m__263()
-private void <All>m__264(string str)
-private string <All>m__265()
-private void <All>m__266(string str)
+private string <All>m__260()
+private void <All>m__261(string str)
+private string <All>m__262()
+private void <All>m__263(string str)
+private string <All>m__264()
+private void <All>m__265(string str)
+private void <All>m__266(Arg arg)
 private string <All>m__267()
 private void <All>m__268(string str)
 private string <All>m__269()
 private void <All>m__26A(string str)
-private string <All>m__26B()
-private void <All>m__26C(string str)
-private void <All>m__26D(Arg arg)
+private void <All>m__26B(Arg arg)
+private string <All>m__26C()
+private void <All>m__26D(string str)
 private string <All>m__26E()
 private void <All>m__26F(string str)
-private string <All>m__270()
-private void <All>m__271(string str)
-private string <All>m__272()
-private void <All>m__273(string str)
-private string <All>m__274()
-private void <All>m__275(string str)
-private string <All>m__276()
-private void <All>m__277(string str)
-private string <All>m__278()
-private void <All>m__279(string str)
-private string <All>m__27A()
-private void <All>m__27B(string str)
-private string <All>m__27C()
-private void <All>m__27D(string str)
-private string <All>m__27E()
-private void <All>m__27F(string str)
-private string <All>m__280()
-private void <All>m__281(string str)
-private string <All>m__282()
-private void <All>m__283(string str)
-private string <All>m__284()
-private void <All>m__285(string str)
+private void <All>m__270(Arg arg)
+private string <All>m__271()
+private void <All>m__272(string str)
+private string <All>m__273()
+private void <All>m__274(string str)
+private string <All>m__275()
+private void <All>m__276(string str)
+private string <All>m__277()
+private void <All>m__278(string str)
+private void <All>m__279(Arg arg)
+private void <All>m__27A(Arg arg)
+private string <All>m__27B()
+private void <All>m__27C(string str)
+private string <All>m__27D()
+private void <All>m__27E(string str)
+private string <All>m__27F()
+private void <All>m__280(string str)
+private string <All>m__281()
+private void <All>m__282(string str)
+private string <All>m__283()
+private void <All>m__284(string str)
+private void <All>m__285(Arg arg)
 private string <All>m__286()
 private void <All>m__287(string str)
 private string <All>m__288()
@@ -3812,42 +4097,88 @@ private string <All>m__292()
 private void <All>m__293(string str)
 private string <All>m__294()
 private void <All>m__295(string str)
-private string <All>m__296()
-private void <All>m__297(string str)
-private string <All>m__298()
-private void <All>m__299(string str)
-private string <All>m__29A()
-private void <All>m__29B(string str)
-private string <All>m__29C()
-private void <All>m__29D(string str)
-private string <All>m__29E()
-private void <All>m__29F(string str)
-private string <All>m__2A0()
-private void <All>m__2A1(string str)
+private void <All>m__296(Arg arg)
+private void <All>m__297(Arg arg)
+private void <All>m__298(Arg arg)
+private void <All>m__299(Arg arg)
+private void <All>m__29A(Arg arg)
+private string <All>m__29B()
+private void <All>m__29C(string str)
+private string <All>m__29D()
+private void <All>m__29E(string str)
+private string <All>m__29F()
+private void <All>m__2A0(string str)
+private void <All>m__2A1(Arg arg)
 private string <All>m__2A2()
 private void <All>m__2A3(string str)
 private string <All>m__2A4()
 private void <All>m__2A5(string str)
-private string <All>m__2A6()
-private void <All>m__2A7(string str)
-private string <All>m__2A8()
-private void <All>m__2A9(string str)
-private string <All>m__2AA()
-private void <All>m__2AB(string str)
-private string <All>m__2AC()
-private void <All>m__2AD(string str)
-private string <All>m__2AE()
-private void <All>m__2AF(string str)
-private string <All>m__2B0()
-private void <All>m__2B1(string str)
-private string <All>m__2B2()
-private void <All>m__2B3(string str)
-private string <All>m__2B4()
-private void <All>m__2B5(string str)
-private string <All>m__2B6()
-private void <All>m__2B7(string str)
-private string <All>m__2B8()
-private void <All>m__2B9(string str)
+private void <All>m__2A6(Arg arg)
+private void <All>m__2A7(Arg arg)
+private void <All>m__2A8(Arg arg)
+private string <All>m__2A9()
+private void <All>m__2AA(string str)
+private string <All>m__2AB()
+private void <All>m__2AC(string str)
+private string <All>m__2AD()
+private void <All>m__2AE(string str)
+private string <All>m__2AF()
+private void <All>m__2B0(string str)
+private string <All>m__2B1()
+private void <All>m__2B2(string str)
+private string <All>m__2B3()
+private void <All>m__2B4(string str)
+private string <All>m__2B5()
+private void <All>m__2B6(string str)
+private string <All>m__2B7()
+private void <All>m__2B8(string str)
+private string <All>m__2B9()
+private void <All>m__2BA(string str)
+private void <All>m__2BB(Arg arg)
+private string <All>m__2BC()
+private void <All>m__2BD(string str)
+private string <All>m__2BE()
+private void <All>m__2BF(string str)
+private string <All>m__2C0()
+private void <All>m__2C1(string str)
+private string <All>m__2C2()
+private void <All>m__2C3(string str)
+private string <All>m__2C4()
+private void <All>m__2C5(string str)
+private string <All>m__2C6()
+private void <All>m__2C7(string str)
+private string <All>m__2C8()
+private void <All>m__2C9(string str)
+private string <All>m__2CA()
+private void <All>m__2CB(string str)
+private string <All>m__2CC()
+private void <All>m__2CD(string str)
+private string <All>m__2CE()
+private void <All>m__2CF(string str)
+private string <All>m__2D0()
+private void <All>m__2D1(string str)
+private string <All>m__2D2()
+private void <All>m__2D3(string str)
+private string <All>m__2D4()
+private void <All>m__2D5(string str)
+private string <All>m__2D6()
+private void <All>m__2D7(string str)
+private string <All>m__2D8()
+private void <All>m__2D9(string str)
+private string <All>m__2DA()
+private void <All>m__2DB(string str)
+private string <All>m__2DC()
+private void <All>m__2DD(string str)
+private string <All>m__2DE()
+private void <All>m__2DF(string str)
+private string <All>m__2E0()
+private void <All>m__2E1(string str)
+private string <All>m__2E2()
+private void <All>m__2E3(string str)
+private string <All>m__2E4()
+private void <All>m__2E5(string str)
+private string <All>m__2E6()
+private void <All>m__2E7(string str)
 }
 public ConsoleNetwork : object {
 internal void Init()
@@ -3866,13 +4197,6 @@ public GameObject ItemTemplate
 public Color errorColor
 public Color warningColor
 public Color inputColor
-private TextBuffer buffer
-private TextBuffer history
-private string historyTemp
-private string historyText
-private int historyIndex
-private Button[] autocompleteButtons
-private int autocompleteIndex
 }
 public Construction : PrefabAttribute {
 public Option info
@@ -3885,6 +4209,7 @@ public Vector3 rotationAmount
 public float healthMultiplier
 public float costMultiplier
 public float maxplaceDistance
+public Mesh guideMesh
 public Socket_Base[] allSockets
 public ConstructionGrade defaultGrade
 public SocketHandle socketHandle
@@ -3926,10 +4251,11 @@ public ConstructionSkin : BasePrefab {
 private ColliderBatch[] colliderBatches
 private List`1<GameObject> conditionals
 private void RefreshColliderBatching()
-private void CreateConditionalModels(BaseEntity parent)
-private void DestroyConditionalModels(BaseEntity parent)
-public void Refresh(BaseEntity parent)
-public void Destroy(BaseEntity parent)
+public int DetermineConditionalModelState(BuildingBlock parent)
+private void CreateConditionalModels(BuildingBlock parent)
+private void DestroyConditionalModels(BuildingBlock parent)
+public void Refresh(BuildingBlock parent)
+public void Destroy(BuildingBlock parent)
 }
 public ConstructionSocket : Socket_Base {
 public Type socketType
@@ -3999,8 +4325,43 @@ public bool ignoreplayers
 public bool move
 public float sensetime
 public float frametime
+public bool npc_enable
+public int npc_max_population_military_tunnels
+public int npc_spawn_per_tick_max_military_tunnels
+public int npc_spawn_per_tick_min_military_tunnels
+public float npc_respawn_delay_max_military_tunnels
+public float npc_respawn_delay_min_military_tunnels
+public float npc_valid_aim_cone
+public float npc_valid_mounted_aim_cone
+public float npc_cover_compromised_cooldown
+public bool npc_cover_use_path_distance
+public float npc_cover_path_vs_straight_dist_max_diff
+public float npc_door_trigger_size
+public float npc_patrol_point_cooldown
+public float npc_speed_walk
+public float npc_speed_run
+public float npc_speed_sprint
+public float npc_speed_crouch_walk
+public float npc_speed_crouch_run
+public float npc_alertness_drain_rate
+public float npc_alertness_zero_detection_mod
+public float npc_junkpile_a_spawn_chance
+public float npc_junkpile_g_spawn_chance
+public int npc_max_junkpile_count
+public bool npc_families_no_hurt
+public bool npc_ignore_chairs
+public bool animal_ignore_food
 public float tickrate
 public float TickDelta()
+public void aiManagerLoadBalancerUpdateInterval(Arg args)
+public void defaultLoadBalancerUpdateInterval(Arg args)
+public void aiLoadBalancerUpdateInterval(Arg args)
+public void NpcSenseLoadBalancerUpdateInterval(Arg args)
+public void AnimalSenseLoadBalancerUpdateInterval(Arg args)
+public void aiDebug_toggle(Arg args)
+public void aiDebug_LoadBalanceOverdueReportServer(Arg args)
+private void AddLBTableEntry(TextTable& table, string name, LoadBalancedQueue lb)
+public void selectNPCLookatServer(Arg args)
 }
 public ConVar.AntiHack : ConsoleSystem {
 public bool reporting
@@ -4025,10 +4386,7 @@ public int speedhack_protection
 public bool speedhack_reject
 public float speedhack_penalty
 public float speedhack_forgiveness
-public float speedhack_deltatime
 public float speedhack_slopespeed
-public int speedhack_tickets
-public int speedhack_history
 public int flyhack_protection
 public bool flyhack_reject
 public float flyhack_penalty
@@ -4043,6 +4401,8 @@ public float projectile_penalty
 public float projectile_forgiveness
 public float projectile_serverframes
 public float projectile_clientframes
+public float projectile_trajectory_vertical
+public float projectile_trajectory_horizontal
 public int melee_protection
 public float melee_penalty
 public float melee_forgiveness
@@ -4122,10 +4482,12 @@ public void export(Arg args)
 public ConVar.Debugging : ConsoleSystem {
 public bool checktriggers
 public bool disablecondition
+public bool callbacks
 public bool log
 public void renderinfo(Arg arg)
 public void set_log(bool value)
 public bool get_log()
+public void stall(Arg arg)
 public void flushgroup(Arg arg)
 public void breakheld(Arg arg)
 public void breakitem(Arg arg)
@@ -4140,6 +4502,7 @@ public float scale
 public bool debug
 public bool upkeep
 public float upkeep_period_minutes
+public float upkeep_grief_protection
 public float upkeep_heal_scale
 public float upkeep_inside_decay_scale
 public float delay_override
@@ -4172,6 +4535,7 @@ public void find_entity(Arg args)
 public void find_id(Arg args)
 public void find_group(Arg args)
 public void find_parent(Arg args)
+public void find_status(Arg args)
 public void find_radius(Arg args)
 public void find_self(Arg args)
 public void debug_toggle(Arg args)
@@ -4202,6 +4566,7 @@ public int get_year()
 public void addtime(Arg arg)
 }
 public ConVar.FileConVar : ConsoleSystem {
+public bool debug
 public bool time
 }
 public ConVar.FPS : ConsoleSystem {
@@ -4297,6 +4662,7 @@ public int af
 public int parallax
 public bool itemskins
 public bool itemskincache
+public float itemskintimeout
 public int get_quality()
 public void set_quality(int value)
 public float EnforceShadowDistanceBounds(float distance)
@@ -4322,6 +4688,8 @@ public bool get_itemskins()
 public void set_itemskins(bool value)
 public bool get_itemskincache()
 public void set_itemskincache(bool value)
+public float get_itemskintimeout()
+public void set_itemskintimeout(float value)
 }
 public ConVar.Halloween : ConsoleSystem {
 public bool enabled
@@ -4396,6 +4764,7 @@ public void set_minsteps(float value)
 }
 public ConVar.Pool : ConsoleSystem {
 public int mode
+public bool debug
 public bool collider_batches
 private Func`2<KeyValuePair`2<Type, object>, long> <>f__am$cache0
 public void print_memory(Arg arg)
@@ -4556,7 +4925,6 @@ public void call(Arg arg)
 }
 public ConVar.Terrain : ConsoleSystem {
 public float quality
-public bool basetexcomp
 }
 public ConVar.Time : ConsoleSystem {
 public bool pausewhileloading
@@ -4569,6 +4937,10 @@ public float get_maxdelta()
 public void set_maxdelta(float value)
 public float get_timescale()
 public void set_timescale(float value)
+}
+public ConVar.vehicle : ConsoleSystem {
+public float boat_corpse_seconds
+public void swapseats(Arg arg)
 }
 public ConVar.Vis : ConsoleSystem {
 public bool lerp
@@ -4597,6 +4969,9 @@ public void clouds(Arg args)
 public void fog(Arg args)
 public void wind(Arg args)
 public void rain(Arg args)
+}
+public ConVar.Workshop : ConsoleSystem {
+public void print_approved_skins(Arg arg)
 }
 public ConVar.World : ConsoleSystem {
 public bool cache
@@ -4787,6 +5162,8 @@ public void AttachToBuilding(DecayEntity other)
 public BuildingBlock GetNearbyBuildingBlock()
 public void ResetUpkeepTime()
 public void DecayTouch()
+public void AddUpkeepTime(float time)
+public float GetProtectedSeconds()
 public void DecayTick()
 public void OnRepairFinished()
 public void Save(SaveInfo info)
@@ -4919,7 +5296,6 @@ public DeployableToSlot : MonoBehaviour {
 public Slot slot
 }
 public Deployer : HeldEntity {
-private string placementError
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 public ItemModDeployable GetModDeployable()
 public Deployable GetDeployable()
@@ -4932,7 +5308,6 @@ public void DoDeploy_Regular(Deployable deployable, Ray ray)
 }
 public DeployGuide : BaseMonoBehaviour {
 public DeployGuide current
-private bool hidden
 }
 public DeployVolume : PrefabAttribute {
 public LayerMask layers
@@ -4984,21 +5359,18 @@ private void OnGroundMissing()
 }
 public DevBotSpawner : FacepunchBehaviour {
 public GameObjectRef bot
-private Transform[] waypoints
 public Transform waypointParent
 public bool autoSelectLatestSpawnedGameObject
-private List`1<BaseEntity> _spawned
 public float spawnRate
 public int maxPopulation
+private Transform[] waypoints
+private List`1<BaseEntity> _spawned
 public bool HasFreePopulation()
 public void SpawnBot()
 public void Start()
 }
 public DevCamera : MonoBehaviour {
 public float movementScale
-private Vector3 view
-private Vector3 velocity
-private float zoom
 }
 public DevControls : MonoBehaviour {
 public GUISkin skin
@@ -5025,17 +5397,13 @@ public string TabName
 public DevEnvironment : DevControlsTab {
 public TOD_Sky sky
 }
-public DevImpactEffectTest : MonoBehaviour {
-private float timeNextFire
-private int attackType
-}
 public DevMovePlayer : BaseMonoBehaviour {
 public BasePlayer player
 public Transform[] Waypoints
-private int waypointIndex
 public bool moveRandomly
 public Vector3 destination
 public Vector3 lookPoint
+private int waypointIndex
 private float randRun
 public void Awake()
 public void LateSpawn()
@@ -5315,6 +5683,7 @@ private Dictionary`2<Client, Connection> client2connection
 private Dictionary`2<Connection, Client> connection2client
 private Dictionary`2<Connection, ClientStatus> connection2status
 private EasyAntiCheatServer`1<Client> easyAntiCheat
+private ClientStatusHandler<Client> <>f__mg$cache0
 public void Encrypt(Connection connection, MemoryStream src, int srcOffset, MemoryStream dst, int dstOffset)
 public void Decrypt(Connection connection, MemoryStream src, int srcOffset, MemoryStream dst, int dstOffset)
 public Client GetClient(Connection connection)
@@ -5393,8 +5762,6 @@ private MaterialPropertyBlock block
 public EngineAudioClip : MonoBehaviour {
 public AudioClip granularClip
 public AudioClip accelerationClip
-private Single[] accelerationAudioData
-private int accelerationChannels
 public TextAsset accelerationCyclesJson
 public List`1<EngineCycle> accelerationCycles
 public List`1<EngineCycleBucket> cycleBuckets
@@ -5404,9 +5771,6 @@ public int sampleRate
 public int samplesUntilNextGrain
 public int lastCycleId
 public List`1<Grain> grains
-private Random random
-private int currentCycleIndex
-private EngineCycle currentCycle
 public int currentRPM
 public int targetRPM
 public int minRPM
@@ -5414,7 +5778,6 @@ public int maxRPM
 public int cyclePadding
 public float RPMControl
 public AudioSource source
-private bool audioDataLoaded
 private int GetBucketRPM(int RPM)
 }
 public EngineSwitch : BaseEntity {
@@ -5507,12 +5870,17 @@ public EnvironmentType Get(Vector3 pos)
 public bool Check(OBB obb, EnvironmentType type)
 public bool Check(Vector3 pos, EnvironmentType type)
 }
+public EnvironmentMultiplier : object {
+public EnvironmentType Type
+public float Multiplier
+}
 public EnvironmentType : Enum {
 public int value__
 public EnvironmentType Underground
 public EnvironmentType Building
 public EnvironmentType Outdoor
 public EnvironmentType Elevator
+public EnvironmentType PlayerConstruction
 }
 public EnvironmentVolume : MonoBehaviour {
 public bool StickyGizmos
@@ -5532,6 +5900,19 @@ public void UpdateTrigger()
 public EnvironmentVolumeEx : object {
 public bool CheckEnvironmentVolumes(Transform transform, Vector3 pos, Quaternion rot, Vector3 scale, EnvironmentType type)
 public bool CheckEnvironmentVolumes(Transform transform, EnvironmentType type)
+}
+public EnvironmentVolumeProperties : ScriptableObject {
+public int ReflectionQuality
+public LayerMask ReflectionCullingFlags
+public EnvironmentMultiplier[] ReflectionMultipliers
+public EnvironmentMultiplier[] AmbientMultipliers
+public float FindReflectionMultiplier(EnvironmentType type)
+public float FindAmbientMultiplier(EnvironmentType type)
+}
+public EnvironmentVolumePropertiesCollection : ScriptableObject {
+public float TransitionSpeed
+public EnvironmentVolumeProperties[] Properties
+public EnvironmentVolumeProperties FindQuality(int quality)
 }
 public EnvironmentVolumeTrigger : MonoBehaviour {
 private EnvironmentVolume <volume>k__BackingField
@@ -5668,7 +6049,6 @@ private void Update()
 }
 public ExplosionsParticleSystemScaler : MonoBehaviour {
 public float particlesScale
-private float oldScale
 private void Start()
 private void Update()
 }
@@ -5939,22 +6319,21 @@ private IEnumerable`1<string> <GetAssetList>m__0(string x)
 private bool <GetAssetList>m__1(string x)
 }
 public FireBall : BaseEntity {
-private Vector3 lastPos
 public float lifeTimeMin
 public float lifeTimeMax
 public ParticleSystem[] movementSystems
 public ParticleSystem[] restingSystems
-private bool wasResting
 public float generation
 public GameObjectRef spreadSubEntity
 public float tickRate
 public float damagePerSecond
 public float radius
-private float deathTime
 public int waterToExtinguish
-private int wetness
 public bool canMerge
 public LayerMask AttackLayers
+private Vector3 lastPos
+private float deathTime
+private int wetness
 public void ServerInit()
 public float GetDeathTime()
 public void AddLife(float amountToAdd)
@@ -5984,6 +6363,11 @@ public void Load(LoadInfo info)
 }
 public FirstPersonEffect : MonoBehaviour {
 public bool isGunShot
+}
+public FishingBobber : BaseCombatEntity {
+public Transform centerOfMass
+public Rigidbody myRigidBody
+public void ServerInit()
 }
 internal FixAtlasMipLevelsState : Enum {
 public int value__
@@ -6067,8 +6451,6 @@ public float timeSinceLastAttack
 public float nextReadyTime
 public float flameRange
 public float flameRadius
-private float reloadDuration
-private bool isReloading
 public ParticleSystem[] flameEffects
 public FlameJet jet
 public GameObjectRef fireballPrefab
@@ -6173,11 +6555,8 @@ public Vector3 localEndPoint
 public LineRenderer beamRenderer
 }
 public FlintStrikeWeapon : BaseProjectile {
-private bool _didSparkThisFrame
-private bool _isStriking
 public float successFraction
 public RecoilProperties strikeRecoil
-private int strikes
 public RecoilProperties GetRecoil()
 }
 public FloatConditions : object {
@@ -6189,7 +6568,6 @@ public SoundDefinition flybySound
 public float flybySoundDistance
 public SoundDefinition closeFlybySound
 public float closeFlybyDistance
-private bool flybyPlayed
 }
 public FoliageDisplacement : MonoBehaviour {
 public bool moving
@@ -6214,6 +6592,8 @@ public float FilterScaling
 public float RandomScaling
 public MinMax Range
 public float RangeFade
+public float DistanceDensity
+public float DistanceScaling
 public Material material
 public Mesh mesh
 public int octaves
@@ -6238,10 +6618,6 @@ public Transform rightFoot
 public string footstepEffectName
 public string jumpStartEffectName
 public string jumpLandEffectName
-private bool lastWasLeft
-private bool lastWasStopped
-private BasePlayer player
-private bool isOnGround
 }
 public FootstepSound : MonoBehaviour {
 public SoundDefinition lightSound
@@ -6305,6 +6681,7 @@ private bool Clientside
 private bool Serverside
 private Func`2<PrefabProperties, bool> <>f__am$cache0
 public void .ctor(bool clientside, bool serverside)
+public void Reset()
 public UInt32 AddPrefab(string strPrefab, GameObject go)
 public GameObject FindPrefab(BaseEntity ent)
 public GameObject FindPrefab(string strPrefab)
@@ -6432,15 +6809,24 @@ public GeigerCounter : AttackEntity {
 public Transform geigerRod
 }
 public GenerateBiome : ProceduralComponent {
+public float Fade
+public float WarmToTemp
+public float TempToCold
+public float ColdToSnow
+public float Temp
 public void Process(UInt32 seed)
 }
 public GenerateCliffSplat : ProceduralComponent {
 private int filter
+public void Process(int x, int z)
 public void Process(UInt32 seed)
 }
 public GenerateCliffTopology : ProceduralComponent {
 public bool KeepExisting
 private int filter
+private int filter_del
+public void Process(int x, int z)
+private void Process(int x, int z, bool keepExisting)
 public void Process(UInt32 seed)
 }
 public GenerateClutterTopology : ProceduralComponent {
@@ -6550,8 +6936,8 @@ public GenericSpawnPoint : BaseSpawnPoint {
 public bool dropToGround
 public bool randomRot
 public GameObjectRef spawnEffect
-private UnityEvent OnObjectSpawnedEvent
-private UnityEvent OnObjectRetiredEvent
+public UnityEvent OnObjectSpawnedEvent
+public UnityEvent OnObjectRetiredEvent
 public void GetLocation(Vector3& pos, Quaternion& rot)
 public void ObjectSpawned(SpawnPointInstance instance)
 public void ObjectRetired(SpawnPointInstance instance)
@@ -6599,11 +6985,6 @@ public void DrawWirePath(Vector3 a, Vector3 b, float thickness)
 public void DrawSemiCircle(float radius)
 public void DrawMeshes(Transform transform)
 public void DrawBounds(Transform transform)
-}
-public GlobalWind : MonoBehaviour {
-private WindZone windZone
-private void Start()
-private void Update()
 }
 public GranularAudioClip : MonoBehaviour {
 public AudioClip sourceClip
@@ -6691,21 +7072,66 @@ public bool CheckTrigger(float offset, float radius)
 public bool IsTriggered()
 public Vector3 GetEyePosition()
 }
+public HackableLockedCrate : LootContainer {
+public Flags Flag_Hacking
+public Flags Flag_FullyHacked
+public Text timerText
+public float requiredHackSeconds
+public float decaySeconds
+public SoundPlayer hackProgressBeep
+private float hackSeconds
+public GameObjectRef shockEffect
+public GameObjectRef mapMarkerEntityPrefab
+public GameObjectRef landEffect
+private BaseEntity mapMarkerInstance
+private bool hasLanded
+private bool wasDropped
+public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+public bool IsBeingHacked()
+public bool IsFullyHacked()
+public void DestroyShared()
+public void CreateMapMarker(float durationMinutes)
+public void RefreshDecay()
+public void DelayedDestroy()
+public void OnAttacked(HitInfo info)
+public void SetWasDropped()
+public void ServerInit()
+public void LandCheck()
+public void PostServerLoad()
+public void RPC_Hack(RPCMessage msg)
+public void StartHacking()
+public void HackProgress()
+}
+public HairCapMask : Enum {
+public int value__
+public HairCapMask Head
+public HairCapMask Eyebrow
+public HairCapMask Facial
+public HairCapMask Armpit
+public HairCapMask Pubic
+}
 public HairDye : object {
-public Color baseColor
+public Color capBaseColor
 public Material sourceMaterial
 public CopyPropertyMask copyProperties
 private MaterialPropertyDesc[] transferableProps
-public void Apply(MaterialPropertyBlock block)
+private int _HairBaseColorUV1
+private int _HairBaseColorUV2
+private int _HairPackedMapUV1
+private int _HairPackedMapUV2
+public void Apply(HairDyeCollection collection, MaterialPropertyBlock block)
+public void ApplyCap(HairDyeCollection collection, HairType type, MaterialPropertyBlock block)
 }
 public HairDyeCollection : ScriptableObject {
+public Texture capMask
+public bool applyCap
 public HairDye[] Variations
 public HairDye Get(float seed)
 }
 public HairSet : ScriptableObject {
 public MeshReplace[] MeshReplacements
 public MaterialReplace[] MaterialReplacements
-public void Process(PlayerModelHair playerModelHair, HairDye dye, MaterialPropertyBlock block)
+public void Process(PlayerModelHair playerModelHair, HairDyeCollection dyeCollection, HairDye dye, MaterialPropertyBlock block)
 public void ProcessMorphs(GameObject obj, int blendShapeIndex)
 }
 public HairSetCollection : ScriptableObject {
@@ -6754,6 +7180,7 @@ public SoundDefinition thirdPersonAimSound
 public SoundDefinition thirdPersonAimEndSound
 public string handBone
 public AnimatorOverrideController HoldAnimationOverride
+public ToolTypeEnum toolType
 public float hostileScore
 public HolsterInfo holsterInfo
 private bool holsterVisible
@@ -6795,10 +7222,10 @@ public void Load(LoadInfo info)
 public void SendPunch(Vector3 amount, float duration)
 }
 public HelicopterDebris : ServerGib {
-private ResourceDispenser resourceDispenser
 public ItemDefinition metalFragments
 public ItemDefinition hqMetal
 public ItemDefinition charcoal
+private ResourceDispenser resourceDispenser
 private float tooHotUntil
 public void ServerInit()
 public void PhysicsInit(Mesh mesh)
@@ -6807,10 +7234,6 @@ public void OnAttacked(HitInfo info)
 }
 public HelicopterTurret : MonoBehaviour {
 public PatrolHelicopterAI _heliAI
-private float lastBurstTime
-private float lastFireTime
-private float lastSeenTargetTime
-private bool targetVisible
 public float fireRate
 public float burstLength
 public float timeBetweenBursts
@@ -6821,6 +7244,10 @@ public Transform gun_pitch
 public Transform muzzleTransform
 public bool left
 public BaseCombatEntity _target
+private float lastBurstTime
+private float lastFireTime
+private float lastSeenTargetTime
+private bool targetVisible
 public void SetTarget(BaseCombatEntity newTarget)
 public bool NeedsNewTarget()
 public bool UpdateTargetFromList(List`1<targetinfo> newTargetList)
@@ -7007,7 +7434,7 @@ public BaseCombatEntity CombatTarget
 public Vector3 AttackPosition
 public Vector3 CrouchedAttackPosition
 public Vector3 CurrentAimAngles
-public Vector3 GuardPosition
+public Vector3 SpawnPosition
 public BaseCombatEntity Entity
 public float GetAttackCost
 public float GetStamina
@@ -7067,8 +7494,8 @@ public Vector3 get_CrouchedAttackPosition()
 public Vector3 get_CurrentAimAngles()
 public float GetWantsToAttack(BaseEntity target)
 public float FearLevel(BaseEntity ent)
-public Vector3 get_GuardPosition()
-public void set_GuardPosition(Vector3 value)
+public Vector3 get_SpawnPosition()
+public void set_SpawnPosition(Vector3 value)
 public BaseCombatEntity get_Entity()
 public float get_GetAttackCost()
 public float get_GetStamina()
@@ -7087,6 +7514,7 @@ public byte GetFact(Facts fact)
 public void SetFact(Facts fact, byte value, bool triggerCallback, bool onlyTriggerCallbackOnDiffValue)
 public float ToSpeed(SpeedEnum speed)
 public List`1<NavPointSample> RequestNavPointSamplesInCircle(SampleCount sampleCount, float radius, SampleFeatures features)
+public List`1<NavPointSample> RequestNavPointSamplesInCircleWaterDepthOnly(SampleCount sampleCount, float radius, float waterDepth)
 public byte GetFact(Facts fact)
 public void SetFact(Facts fact, byte value, bool triggerCallback, bool onlyTriggerCallbackOnDiffValue)
 public float ToSpeed(SpeedEnum speed)
@@ -7121,6 +7549,15 @@ public void OnItemSetup(Item item)
 public IItemUpdate {
 public void OnItemUpdate(Item item)
 }
+public ILerpTarget {
+public float GetExtrapolationTime()
+public float GetInterpolationDelay()
+public float GetInterpolationSmoothing()
+public Vector3 GetNetworkPosition()
+public Vector3 GetNetworkRotation()
+public void UpdatePositionFromNetwork(Vector3 pos)
+public void UpdateRotationFromNetwork(Quaternion rot)
+}
 public ImagePainter : MonoBehaviour {
 public OnDrawingEvent onDrawing
 public MonoBehaviour redirectRightClick
@@ -7153,6 +7590,20 @@ public void Upsample2D(Single[0...,0...,0...] src, Single[0...,0...,0...] dst)
 public void Dilate2D(Int32[0...,0...] src, int srcmask, int radius, Action`2<int, int> action)
 public void FloodFill2D(int x, int y, Int32[0...,0...] data, int mask_any, int mask_not, Func`2<int, int> action)
 }
+public Imposter : MonoBehaviour {
+public ImposterAsset asset
+public GameObject reference
+public float angle
+public int resolution
+public int padding
+}
+public ImposterAsset : ScriptableObject {
+public TextureEntry[] textures
+public Vector2 size
+public Vector2 pivot
+public Mesh mesh
+public Texture2D FindTexture(string name)
+}
 public InfrastructureType : Enum {
 public int value__
 public InfrastructureType Road
@@ -7174,6 +7625,10 @@ public void SwallowButton(BUTTON btn)
 private Quaternion AimAngle()
 public void Flip(InputMessage newcurrent)
 public void Clear()
+}
+public InspectorNameAttribute : PropertyAttribute {
+public string name
+public void .ctor(string name)
 }
 public InstrumentEffect : SoundPlayer {
 public float pitch
@@ -7313,7 +7768,7 @@ public void OnAttacked(HitInfo hitInfo)
 public bool IsChildContainer(ItemContainer c)
 public bool CanMoveTo(ItemContainer newcontainer, int iTargetPos, bool allowStack)
 public bool MoveToContainer(ItemContainer newcontainer, int iTargetPos, bool allowStack)
-public BaseEntity CreateWorldObject(Vector3 pos, Quaternion rotation)
+public BaseEntity CreateWorldObject(Vector3 pos, Quaternion rotation, BaseEntity parentEnt, UInt32 parentBone)
 public BaseEntity Drop(Vector3 vPos, Vector3 vVelocity, Quaternion rotation)
 public bool IsBusy()
 public void BusyFor(float fTime)
@@ -7541,7 +7996,7 @@ public GameObjectRef worldModelPrefab
 public ItemMod[] itemMods
 public TraitFlag Traits
 public Skin[] skins
-private Definition[] _skins2
+public Definition[] _skins2
 public GameObject panel
 private bool <isWearable>k__BackingField
 private bool <isHoldable>k__BackingField
@@ -7556,6 +8011,8 @@ public bool isUsable
 public bool HasSkins
 public bool CraftableWithSkin
 public Definition[] get_skins2()
+public void InvalidateWorkshopSkinCache()
+public ulong FindSkin(int itemID, int skinID)
 public ItemBlueprint get_Blueprint()
 public bool HasFlag(Flag f)
 public void Initialize(List`1<ItemDefinition> itemList)
@@ -7608,7 +8065,7 @@ public bool allowSelection
 public bool allowDropping
 public Item item
 public bool invalidSlot
-public AudioClip hoverSound
+public SoundDefinition hoverSound
 public void OnPointerClick(PointerEventData eventData)
 public void OnPointerEnter(PointerEventData eventData)
 public void OnPointerExit(PointerEventData eventData)
@@ -7644,6 +8101,7 @@ private Func`2<GameObject, ItemBlueprint> <>f__am$cache2
 private Func`2<ItemBlueprint, bool> <>f__am$cache3
 private Func`2<ItemBlueprint, bool> <>f__am$cache4
 private Func`2<ItemBlueprint, int> <>f__am$cache5
+public void InvalidateWorkshopSkinCache()
 public void Initialize()
 public Item CreateByName(string strName, int iAmount, ulong skin)
 public Item CreateByPartialName(string strName, int iAmount)
@@ -7733,8 +8191,19 @@ public ItemModConsume : ItemMod {
 public GameObjectRef consumeEffect
 public string eatGesture
 public ItemAmountRandom[] product
+public ItemModConsumable primaryConsumable
+public ItemModConsumable GetConsumable()
+public GameObjectRef GetConsumeEffect()
 public void DoAction(Item item, BasePlayer player)
 public bool CanDoAction(Item item, BasePlayer player)
+}
+public ItemModConsumeChance : ItemModConsume {
+public float chanceForSecondaryConsume
+public GameObjectRef secondaryConsumeEffect
+public ItemModConsumable secondaryConsumable
+private bool GetChance()
+public ItemModConsumable GetConsumable()
+public GameObjectRef GetConsumeEffect()
 }
 public ItemModConsumeContents : ItemMod {
 public GameObjectRef consumeEffect
@@ -8014,6 +8483,7 @@ public JunkPile : BaseEntity {
 public GameObjectRef sinkEffect
 public SpawnGroup[] spawngroups
 private float lifetimeMinutes
+private List`1<NPCPlayerApex> _npcs
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 public void ServerInit()
 public bool SpawnGroupsEmpty()
@@ -8021,6 +8491,10 @@ public void CheckEmpty()
 public void TimeOut()
 public void SinkAndDestroy()
 public void KillMe()
+public void AddNpc(NPCPlayerApex npc)
+}
+public JunkPileWater : JunkPile {
+public void Spawn()
 }
 public KeyBindUI : MonoBehaviour {
 public GameObject blockingCanvas
@@ -8128,12 +8602,6 @@ public float m_flEmissionRate
 private void Start()
 private void Update()
 }
-public lerp : ConsoleSystem {
-public bool enabled
-public float smoothing
-public float interpolation
-public float extrapolation
-}
 public LerpBetweenPointsBool : MonoBehaviour {
 public Vector3 offsetPosLocal
 public float speed
@@ -8189,11 +8657,6 @@ public bool cloneShadowMask
 public string shaderPropNameMask
 public int cloneShadowMaskDownscale
 public RenderTexture mask
-private Light light
-private CommandBuffer mapCB
-private CommandBuffer maskCB
-private int screenWidth
-private int screenHeight
 }
 public LightEx : UpdateBehaviour {
 public bool alterColor
@@ -8360,7 +8823,6 @@ public float MaxRefreshDistance
 }
 public LODManager : SingletonComponent`1<LODManager> {
 public float MaxMilliseconds
-private ListHashSet`1<ILOD> members
 }
 public LODUtil : object {
 public float GetDistance(Transform transform, LODDistanceMode mode)
@@ -8419,6 +8881,7 @@ public float xpLootedScale
 public float xpDestroyedScale
 public bool BlockPlayerItemInput
 public int scrapAmount
+public string deathStat
 public spawnType SpawnType
 private ItemDefinition scrapDef
 public LootSpawnSlot[] LootSpawnSlots
@@ -8434,6 +8897,8 @@ public void PlayerStoppedLooting(BasePlayer player)
 public void RemoveMe()
 public bool ShouldDropItemsIndividually()
 public bool SupportsPooling()
+public void OnAttacked(HitInfo info)
+public void InitShared()
 }
 public LootPanel : MonoBehaviour {
 public Text Title
@@ -8587,27 +9052,13 @@ public PostProcessLayer post
 public CC_SharpenAndVignette sharpenAndVignette
 public SEScreenSpaceShadows contactShadows
 public VisualizeTexelDensity visualizeTexelDensity
-private TOD_Scattering todScattering
-private float ambientLightDay
-private float ambientLightNight
-private float ambientLightMultiplier
-private float ambientLightMultiplierTarget
-private float skyReflectionDay
-private float skyReflectionNight
-private float skyReflectionMultiplier
-private float skyReflectionMultiplierTarget
-private float environmentTimestamp
-private EnvironmentType environmentType
-private bool waterVisible
-private int screenWidth
-private int screenHeight
+public EnvironmentVolumePropertiesCollection environmentVolumeProperties
 public bool isValid
 public Vector3 position
 public Vector3 forward
 public Vector3 right
 public Vector3 up
 public Quaternion rotation
-public bool isWaterVisible
 public Ray Ray
 public RaycastHit Raycast
 public bool get_isValid()
@@ -8620,10 +9071,8 @@ public void set_right(Vector3 value)
 public Vector3 get_up()
 public void set_up(Vector3 value)
 public Quaternion get_rotation()
-public bool get_isWaterVisible()
 public Ray get_Ray()
 public RaycastHit get_Raycast()
-public bool InEnvironment(EnvironmentType type)
 }
 public MainMenuSystem : SingletonComponent`1<MainMenuSystem> {
 public bool isOpen
@@ -8672,30 +9121,35 @@ public void Load(LoadInfo info)
 public void Save(SaveInfo info)
 public void ImageUpdate(RPCMessage msg)
 }
-public MapGrid : SingletonComponent`1<MapGrid> {
+public MapGrid : MonoBehaviour {
 public Text coordinatePrefab
-public RawImage gridLinePrefab
 public int gridCellSize
 public float lineThickness
 public CanvasGroup group
 public float visibleAlphaLevel
+public RawImage TargetImage
 public bool show
 }
 public MapInterface : SingletonComponent`1<MapInterface> {
+public bool IsOpen
 public RawImage mapImage
 public Image cameraPositon
 public ScrollRectEx scrollRect
 public PaintableImageGrid paintGrid
 public UIPaintBox paintBox
 public Toggle showGridToggle
-public NeedsCursor needsCursor
+public Button FocusButton
 public GameObject monumentMarkerContainer
 public GameObject monumentMarkerPrefab
+public CanvasGroup CanvasGroup
 public bool followingPlayer
 }
 public MapMarker : BaseEntity {
 public List`1<MapMarker> mapMarkers
 public GameObject markerObj
+}
+public MapMarkerCH47 : MapMarker {
+private GameObject createdMarker
 }
 public MapMarkerExplosion : MapMarker {
 private float duration
@@ -8735,7 +9189,7 @@ public Material material
 private void OnRenderImage(RenderTexture source, RenderTexture destination)
 }
 public MaterialPropertyDesc : ValueType {
-public string name
+public int nameID
 public Type type
 public void .ctor(string name, Type type)
 }
@@ -8761,8 +9215,6 @@ public float healDurationOther
 public float maxDistanceOther
 public bool canUseOnOther
 public bool canRevive
-private BasePlayer useTarget
-private float resetTime
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 private void UseOther(RPCMessage msg)
 private void UseSelf(RPCMessage msg)
@@ -9115,9 +9567,6 @@ public Animator beltAnimator
 public Renderer beltScrollRenderer
 public int scrollMatIndex
 public SoundPlayer[] onSounds
-private List`1<Modulator> soundGainMods
-private List`1<Modulator> soundPitchMods
-private float beltSpeed
 public float processRate
 public float workToAdd
 public GameObjectRef bucketDropEffect
@@ -9177,7 +9626,7 @@ protected void OnEnable()
 public int GetSkin()
 }
 public ModelConditionTest : PrefabAttribute {
-public bool DoTest(GameObject obj)
+public bool DoTest(BaseEntity ent)
 protected Type GetIndexedType()
 }
 public ModelConditionTest_FoundationSide : ModelConditionTest {
@@ -9191,35 +9640,55 @@ private string triangle_northeast
 private string socket
 protected void OnDrawGizmosSelected()
 protected void AttributeSetup(GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
-public bool DoTest(GameObject obj)
+public bool DoTest(BaseEntity ent)
 }
 public ModelConditionTest_RoofBottom : ModelConditionTest {
 private string socket
 private string socket_female
 protected void OnDrawGizmosSelected()
-public bool DoTest(GameObject obj)
+public bool DoTest(BaseEntity ent)
 }
 public ModelConditionTest_RoofLeft : ModelConditionTest {
 private string socket
+private string socket_female
 protected void OnDrawGizmosSelected()
-public bool DoTest(GameObject obj)
+public bool DoTest(BaseEntity ent)
 }
 public ModelConditionTest_RoofRight : ModelConditionTest {
 private string socket
+private string socket_female
 protected void OnDrawGizmosSelected()
-public bool DoTest(GameObject obj)
+public bool DoTest(BaseEntity ent)
 }
 public ModelConditionTest_RoofTop : ModelConditionTest {
 private string socket
 private string socket_male
 protected void OnDrawGizmosSelected()
-public bool DoTest(GameObject obj)
+public bool DoTest(BaseEntity ent)
 }
-public ModelConditionTest_Sphere : ModelConditionTest {
-public float findRadius
-public bool wantEmpty
-private void OnDrawGizmos()
-public bool DoTest(GameObject obj)
+public ModelConditionTest_Wall : ModelConditionTest {
+private string socket_1
+private string socket_2
+private string socket_3
+private string socket
+public bool DoTest(BaseEntity ent)
+private bool CheckSocketOccupied(BaseEntity ent, string socket)
+}
+public ModelConditionTest_WallTriangleLeft : ModelConditionTest {
+private string socket_1
+private string socket_2
+private string socket_3
+private string socket
+public bool DoTest(BaseEntity ent)
+private bool CheckSocketOccupied(BaseEntity ent, string socket)
+}
+public ModelConditionTest_WallTriangleRight : ModelConditionTest {
+private string socket_1
+private string socket_2
+private string socket_3
+private string socket
+public bool DoTest(BaseEntity ent)
+private bool CheckSocketOccupied(BaseEntity ent, string socket)
 }
 public Monument : TerrainPlacement {
 public float Radius
@@ -9295,11 +9764,85 @@ public MonumentType Building
 public MonumentType Town
 public MonumentType Radtown
 public MonumentType Lighthouse
+public MonumentType WaterWell
 }
 public MorphCache : MonoBehaviour {
 public bool fallback
 public int blendShape
 public Single[] blendWeights
+}
+public MotorRowboat : BaseBoat {
+private Flags Flag_EngineOn
+private Flags Flag_ThrottleOn
+private Flags Flag_TurnLeft
+private Flags Flag_TurnRight
+private Flags Flag_Submerged
+private Flags Flag_HasFuel
+private Flags Flag_Stationary
+private Flags Flag_RecentlyPushed
+private float submergeFractionMinimum
+public GameObjectRef fuelStoragePrefab
+public Transform fuelStoragePoint
+public EntityRef fuelStorageInstance
+public float fuelPerSec
+public GameObjectRef storageUnitPrefab
+public Transform storageUnitPoint
+public EntityRef storageUnitInstance
+public Transform boatRear
+public ParticleSystemContainer wakeEffect
+public ParticleSystemContainer engineEffectIdle
+public ParticleSystemContainer engineEffectThrottle
+public Projector causticsProjector
+public Transform causticsDepthTest
+public Transform engineLeftHandPosition
+public Transform engineRotate
+public Transform propellerRotate
+public float population
+public float outsidedecayminutes
+public Transform[] stationaryDismounts
+public Collider mainCollider
+private float nextFuelCheckTime
+private bool cachedHasFuel
+private float pendingFuel
+private float nextPushTime
+private float lastHadDriverTime
+private bool dying
+private float maxVelForStationaryDismount
+public SoundPlayer engineIdleSound
+public SoundPlayer engineThrottleSound
+public SoundPlayer waveLapSound
+public SoundPlayer idleHullWavesSound
+private Modulator throttlePitchMod
+private Modulator throttleVolumeMod
+public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+public void ServerInit()
+public void SpawnSubEntities()
+public void BoatDecay()
+public int GetFuelAmount()
+public bool HasFuel(bool forceCheck)
+public bool UseFuel(float seconds)
+public bool RecentlyPushed()
+public void RPC_WantsPush(RPCMessage msg)
+public void RPC_OpenFuel(RPCMessage msg)
+public bool IsDriver(BasePlayer player)
+public void RPC_EngineToggle(RPCMessage msg)
+public void EngineToggle(bool wantsOn)
+public void PostServerLoad()
+public void CheckInvalidBoat()
+public void AttemptMount(BasePlayer player)
+public void PlayerServerInput(InputState inputState, BasePlayer player)
+public float GetSteering(BasePlayer player)
+public bool EngineOn()
+public float TimeSinceDriver()
+public void DriverInput(InputState inputState, BasePlayer player)
+public void VehicleFixedUpdate()
+public void UpdateDrag()
+public void OnKilled(HitInfo info)
+public void ActualDeath()
+public bool HasValidDismountPosition(BasePlayer player)
+public Vector3 GetDismountPosition(BasePlayer player)
+public void Save(SaveInfo info)
+public void Load(LoadInfo info)
 }
 public Mountain : TerrainPlacement {
 public float Fade
@@ -9322,6 +9865,7 @@ public float waterMovementFadeOutSpeed
 private Sound waterMovement
 private Modulator waterGainMod
 private Vector3 lastPos
+public bool mute
 }
 public MovementSoundTrigger : TriggerBase {
 public SoundDefinition softSound
@@ -9353,7 +9897,6 @@ public MusicChangeIntensity : MonoBehaviour {
 public float raiseTo
 public List`1<DistanceIntensity> distanceIntensities
 public float tickInterval
-private float lastTick
 }
 public MusicClip : ScriptableObject {
 public AudioClip audioClip
@@ -9392,10 +9935,6 @@ public int lastActiveClipRefresh
 public int activeClipRefreshInterval
 public bool forceThemeChange
 public float randomIntensityJumpChance
-private AudioSource syncSource
-private bool needsResync
-private int fadingClipCount
-private MusicClipLoader clipLoader
 public List`1<PositionedClip> activeClips
 public List`1<PositionedClip> activeMusicClips
 public List`1<PositionedClip> activeControlClips
@@ -9669,13 +10208,13 @@ public void ItemPickUp(ItemDefinition def, int amount, string nameOverride)
 public NPCBarricadeTriggerBox : MonoBehaviour {
 private Barricade target
 private int playerServerLayer
-public void Setup(Barricade target)
+public void Setup(Barricade t)
 private void OnTriggerEnter(Collider other)
 }
 public NPCDoorTriggerBox : MonoBehaviour {
 private Door door
 private int playerServerLayer
-public void Setup(Door door)
+public void Setup(Door d)
 private void OnTriggerEnter(Collider other)
 }
 public NPCFootstepEffects : BaseFootstepEffect {
@@ -9687,14 +10226,18 @@ public Transform backRightFoot
 }
 public NPCHumanContext : BaseNPCContext {
 private BaseEntity <LastAttacker>k__BackingField
+public List`1<BaseChair> Chairs
+public BaseChair ChairTarget
 private CoverPointVolume <CurrentCoverVolume>k__BackingField
 private List`1<CoverPoint> <sampledCoverPoints>k__BackingField
 private List`1<CoverType> <sampledCoverPointTypes>k__BackingField
+private PathInterestNode <CurrentPatrolPoint>k__BackingField
 public TacticalCoverPointSet CoverSet
 public BaseEntity LastAttacker
 public CoverPointVolume CurrentCoverVolume
 public List`1<CoverPoint> sampledCoverPoints
 public List`1<CoverType> sampledCoverPointTypes
+public PathInterestNode CurrentPatrolPoint
 public void .ctor(NPCPlayerApex human)
 public BaseEntity get_LastAttacker()
 public void set_LastAttacker(BaseEntity value)
@@ -9704,6 +10247,8 @@ public List`1<CoverPoint> get_sampledCoverPoints()
 private void set_sampledCoverPoints(List`1<CoverPoint> value)
 public List`1<CoverType> get_sampledCoverPointTypes()
 private void set_sampledCoverPointTypes(List`1<CoverType> value)
+public PathInterestNode get_CurrentPatrolPoint()
+public void set_CurrentPatrolPoint(PathInterestNode value)
 protected void Finalize()
 }
 public NPCMurderer : NPCPlayerApex {
@@ -9715,7 +10260,7 @@ public float StartMaxHealth()
 public float MaxHealth()
 public FamilyEnum get_Family()
 public bool ShouldDropActiveItem()
-public void CreateCorpse()
+public BaseCorpse CreateCorpse()
 }
 public NPCPlayer : BasePlayer {
 public Vector3 finalDestination
@@ -9731,14 +10276,16 @@ private bool <AgencyUpdateRequired>k__BackingField
 private bool <IsOnOffmeshLinkAndReachedNewCoord>k__BackingField
 public bool IsDormant
 private float triggerEndTime
-private float nextTriggerTime
+protected float nextTriggerTime
 private float lastThinkTime
 private Vector3 lastPos
+public bool IsNpc
 public Vector2i CurrentCoord
 public Vector2i PreviousCoord
 public bool AgencyUpdateRequired
 public bool IsOnOffmeshLinkAndReachedNewCoord
 protected float PositionTickRate
+public bool get_IsNpc()
 public Vector2i get_CurrentCoord()
 public void set_CurrentCoord(Vector2i value)
 public Vector2i get_PreviousCoord()
@@ -9752,7 +10299,7 @@ public void ServerInit()
 public void RandomMove()
 public void SetDestination(Vector3 newDestination)
 public AttackEntity GetAttackEntity()
-public void ShotTest()
+public bool ShotTest()
 public bool MeleeAttack()
 public void TriggerDown()
 public void EquipTest()
@@ -9768,7 +10315,7 @@ private void TraverseLink(float delta, Vector3& moveToPosition, Vector3 targetPo
 private void CompleteNavMeshLinkTraversal(bool failed, Vector3& moveToPosition)
 private bool ValidateNextPosition(Vector3& moveToPosition)
 private void UpdateSpeed(float delta)
-private void UpdatePositionAndRotation(Vector3 moveToPosition)
+protected void UpdatePositionAndRotation(Vector3 moveToPosition)
 public Vector3 GetPosition()
 public float DesiredMoveSpeed()
 public bool EligibleForWounding(HitInfo info)
@@ -9785,12 +10332,18 @@ public float stuckDuration
 public float lastStuckTime
 private float timeAtDestination
 public float TickRate
+public bool IsInvinsible
+public float lastInvinsibleStartTime
+public float InvinsibleTime
+public HashSet`1<NPCPlayerApex> AllJunkpileNPCs
 private float attackTargetVisibleFor
 private BaseEntity lastAttackTarget
 public AiStatistics Stats
 private UtilityAIComponent utilityAiComponent
 public bool NewAI
+public bool IsMountableAgent
 public float WeaponSwitchFrequency
+public float ToolSwitchFrequency
 private NPCHumanContext _aiContext
 public StateTimer BusyTimer
 private float maxFleeTime
@@ -9801,27 +10354,34 @@ private float lastAggroChanceCalcTime
 private float aggroChanceRecalcTimeout
 private BaseEntity blockTargetingThisEnemy
 public float NextWeaponSwitchTime
+public float NextToolSwitchTime
 private bool wasAggro
 public float TimeLastMoved
 public float TimeLastMovedToCover
-private Vector3 <GuardPosition>k__BackingField
+public float AllyAttackedRecentlyTimeout
+private Vector3 <SpawnPosition>k__BackingField
 private BaseEntity <AttackTarget>k__BackingField
 private SeenInfo <AttackTargetMemory>k__BackingField
 public Behaviour _currentBehavior
 private float <currentBehaviorDuration>k__BackingField
 private BaseEntity <FoodTarget>k__BackingField
 private float <TargetSpeed>k__BackingField
+protected float lastInRangeOfSpawnPositionTime
 private Vector3[] pathCornerCache
+private NavMeshPath _pathCache
 private ActionCallback <OnFleeExplosive>k__BackingField
 private ActionCallback <OnTakeCover>k__BackingField
 private ActionCallback <OnAggro>k__BackingField
 private ActionCallback <OnChatter>k__BackingField
 private ActionCallback <OnDeath>k__BackingField
 private ActionCallback <OnReload>k__BackingField
+public float CommunicationRadius
 public Byte[] CurrentFacts
+private List`1<KeyValuePair`2<EnemyRangeEnum, float>> sortedSqrRange
 public int ForgetUnseenEntityTime
 public float SensesTickRate
 public float MaxDistanceToCover
+public float MinDistanceToRetreatCover
 public float VisionRangeScore
 public float AggroRangeScore
 public float LongRangeScore
@@ -9833,11 +10393,17 @@ private CoverPointComparer coverPointComparer
 private float lastTickTime
 private int sensesTicksPerCoverSweep
 private int sensesTicksSinceLastCoverSweep
-private SquadMember squadMember
+private float alertness
+protected float lastSeenPlayerTime
+private Vector3 feetOffset
 private bool isAlreadyCheckingPathPending
 private int numPathPendingAttempts
 private float accumPathPendingDelay
+private float _lastHeardGunshotTime
+private Vector3 <LastHeardGunshotDirection>k__BackingField
+private Comparison`1<KeyValuePair`2<EnemyRangeEnum, float>> <>f__am$cache0
 private Func`2<BaseEntity, bool> <>f__mg$cache0
+private Func`2<BaseEntity, bool> <>f__mg$cache1
 private bool Apex.LoadBalancing.ILoadBalanced.repeat
 public FamilyEnum Family
 public int AgentTypeIndex
@@ -9848,7 +10414,7 @@ public Vector3 Destination
 public bool IsStopped
 public bool AutoBraking
 public bool HasPath
-public Vector3 GuardPosition
+public Vector3 SpawnPosition
 public float AttackTargetVisibleFor
 public BaseEntity AttackTarget
 public SeenInfo AttackTargetMemory
@@ -9872,18 +10438,23 @@ public float GetStuckDuration
 public float GetLastStuckTime
 public BaseEntity FoodTarget
 public float TargetSpeed
+public float SecondsSinceLastInRangeOfSpawnPosition
 public ActionCallback OnFleeExplosive
 public ActionCallback OnTakeCover
 public ActionCallback OnAggro
 public ActionCallback OnChatter
 public ActionCallback OnDeath
 public ActionCallback OnReload
+public float SecondsSinceSeenPlayer
+public float SecondsSinceLastHeardGunshot
+public Vector3 LastHeardGunshotDirection
 public FamilyEnum get_Family()
 public int get_AgentTypeIndex()
 public void set_AgentTypeIndex(int value)
 public bool get_IsStuck()
-private void set_IsStuck(bool value)
+public void set_IsStuck(bool value)
 public void ServerInit()
+private void DelayedReloadOnInit()
 internal void DoServerDestroy()
 private bool Apex.LoadBalancing.ILoadBalanced.get_repeat()
 private Nullable`1<float> Apex.LoadBalancing.ILoadBalanced.ExecuteUpdate(float deltaTime, float nextInterval)
@@ -9892,6 +10463,7 @@ public void OnKilled(HitInfo info)
 public void Hurt(HitInfo info)
 public void TickAi(float delta)
 public void MovementUpdate(float delta)
+protected void UpdatePositionAndRotation(Vector3 moveToPosition)
 public void TickStuck(float delta)
 public void OnBecomeStuck()
 public void OnBecomeUnStuck()
@@ -9908,6 +10480,8 @@ public Vector3 GetAimDirection()
 public void SetAimDirection(Vector3 newAim)
 public void StartAttack()
 public void StartAttack(AttackType type, BaseCombatEntity target)
+public bool ShotTest()
+public void TriggerDown()
 public bool AttackReady()
 public string Categorize()
 public NPCHumanContext get_AiContext()
@@ -9924,9 +10498,12 @@ public bool get_HasPath()
 public bool IsNavRunning()
 public void Pause()
 public void Resume()
+public void Mount(BaseMountable mountable)
+public void Dismount()
+public void DismountObject()
 private IEnumerator TryForceToNavmesh()
-public Vector3 get_GuardPosition()
-public void set_GuardPosition(Vector3 value)
+public Vector3 get_SpawnPosition()
+public void set_SpawnPosition(Vector3 value)
 public float get_AttackTargetVisibleFor()
 public BaseEntity get_AttackTarget()
 public void set_AttackTarget(BaseEntity value)
@@ -9966,14 +10543,19 @@ public float ToSpeed(SpeedEnum speed)
 public float get_TargetSpeed()
 public void set_TargetSpeed(float value)
 public List`1<NavPointSample> RequestNavPointSamplesInCircle(SampleCount sampleCount, float radius, SampleFeatures features)
+public List`1<NavPointSample> RequestNavPointSamplesInCircleWaterDepthOnly(SampleCount sampleCount, float radius, float waterDepth)
 private void OnFactChanged(Facts fact, byte oldValue, byte newValue)
+private void TickBehaviourState()
 public bool TryAggro(EnemyRangeEnum range)
-public bool StartAggro(float timeout)
+public bool StartAggro(float timeout, bool broadcastEvent)
 private void TickAggro()
 private bool CheckHealthThresholdToFlee()
 private void WantsToFlee()
 private void TickFlee()
+public float get_SecondsSinceLastInRangeOfSpawnPosition()
 private void FindCoverFromEnemy()
+private void FindCoverFromPosition(Vector3 position)
+private bool CoverToTargetPathDistanceIsValid(CoverPoint coverPoint)
 private float PathDistance(int count, Vector3[]& path)
 private void FindClosestCoverToUs()
 public bool ProvidesCoverFromPoint(CoverPoint cp, Vector3 point, float arcThreshold)
@@ -9989,12 +10571,23 @@ public ActionCallback get_OnDeath()
 public void set_OnDeath(ActionCallback value)
 public ActionCallback get_OnReload()
 public void set_OnReload(ActionCallback value)
+public bool IsInCommunicationRange(NPCPlayerApex npc)
+public int GetAlliesInRange(List`1& allies)
+public void SendStatement(AiStatement_EnemyEngaged statement)
+public void SendStatement(AiStatement_EnemySeen statement)
+public void OnAiStatement(NPCPlayerApex source, AiStatement_EnemyEngaged statement)
+public void OnAiStatement(NPCPlayerApex source, AiStatement_EnemySeen statement)
+public int AskQuestion(AiQuestion_ShareEnemyTarget question, List`1& answers)
+public AiAnswer_ShareEnemyTarget OnAiQuestion(NPCPlayerApex source, AiQuestion_ShareEnemyTarget question)
 public void InitFacts()
 public byte GetFact(Facts fact)
 public void SetFact(Facts fact, byte value, bool triggerCallback, bool onlyTriggerCallbackOnDiffValue)
-public EnemyRangeEnum ToEnemyRangeEnum(float range)
+public EnemyRangeEnum ToEnemyRangeEnum(float sqrRange)
+public float ToSqrRange(EnemyRangeEnum range)
 public bool IsWithinAggroRange(EnemyRangeEnum range)
-public AfraidRangeEnum ToAfraidRangeEnum(float range)
+public bool IsBeyondDeaggroRange(EnemyRangeEnum range)
+public bool IsBeyondDeaggroRange(KeyValuePair`2<EnemyRangeEnum, float> kvp)
+public AfraidRangeEnum ToAfraidRangeEnum(float sqrRange)
 public HealthEnum ToHealthEnum(float healthNormalized)
 public SpeedEnum ToSpeedEnum(float speed)
 public float ToSpeed(SpeedEnum speed)
@@ -10005,26 +10598,43 @@ public EnemyRangeEnum WeaponToEnemyRange(WeaponTypeEnum weapon)
 public EnemyRangeEnum CurrentWeaponToEnemyRange()
 public byte GetPathStatus()
 public NavMeshPathStatus ToPathStatus(byte value)
+public ToolTypeEnum GetCurrentToolTypeEnum()
+public float get_SecondsSinceSeenPlayer()
 private void TickSenses()
+public float Distance2DSqr(Vector3 a, Vector3 b)
 private void TickVision()
-private bool IsVisibleStanding(BasePlayer player)
-private bool IsVisibleCrouched(BasePlayer player)
+protected bool IsVisibleStanding(BasePlayer player)
+protected bool IsVisibleCrouched(BasePlayer player)
 private bool IsVisibleStanding(BaseNpc npc)
 private bool IsVisibleCrouched(BaseNpc npc)
 private void FindCoverPoints()
 private void TickHearing()
 private void TickSmell()
-private void TickSquad()
+private void TickMountableAwareness()
+private void SelectMountable()
+private void TargetClosestChair()
 private void TickEnemyAwareness()
 private void SelectEnemy()
+private void AggroClosestPlayer()
 private void AggroBestScorePlayerOrClosestAnimal()
+protected void SetAttackTarget(BasePlayer player, float score, float sqrDistance, bool lineOfSightStanding, bool lineOfSightCrouched)
+private float VisibilityScoreModifier(BasePlayer target, Vector3 dir, float dist, bool losStand, bool losCrouch)
+private void UpdateMountedSelfFacts()
 private void UpdateSelfFacts()
+private EnemyRangeEnum GetRangeToSpawnPoint()
 private byte IsMoving()
 private float NextAttackTime()
 public void SetTargetPathStatus(float pendingDelay)
 private void DelayedTargetPathStatus()
 private bool AiCaresAbout(BaseEntity ent)
+private bool AiCaresAboutIgnoreChairs(BaseEntity ent)
 private bool WithinVisionCone(NPCPlayerApex npc, BaseEntity other)
+public void OnSensation(Sensation sensation)
+protected void OnSenseGunshot(Sensation sensation)
+public float get_SecondsSinceLastHeardGunshot()
+public Vector3 get_LastHeardGunshotDirection()
+public void set_LastHeardGunshotDirection(Vector3 value)
+private int <InitFacts>m__0(KeyValuePair`2<EnemyRangeEnum, float> kvpA, KeyValuePair`2<EnemyRangeEnum, float> kvpB)
 }
 public NPCPlayerCorpse : PlayerCorpse {
 private bool lootEnabled
@@ -10204,7 +10814,6 @@ private void UnregisterOccludee(int slot, SimpleList`1<OccludeeState> occludees,
 public void UpdateDynamicOccludee(int id, Vector3 center, float radius)
 private void UpdateBuffers(SimpleList`1<OccludeeState> occludees, SimpleList`1<State> states, BufferSet set, List`1<int> changed, bool isStatic)
 private void UpdateCameraMatrices(bool starting)
-private void LateUpdate()
 private void OnPreCull()
 private void OnPostRender()
 private Single[] MatrixToFloatArray(Matrix4x4 m)
@@ -10285,7 +10894,6 @@ public float visualDistance
 public GameObjectRef visualEffect
 public GameObjectRef finishEffect
 public GameObjectRef damageEffect
-private ResourceDispenser resourceDispenser
 public OreResourceEntity owner
 public void OreOwner(OreResourceEntity newOwner)
 public void ServerInit()
@@ -10301,7 +10909,6 @@ public GameObjectRef bonusFailEffect
 public OreHotSpot _hotSpot
 private int bonusesKilled
 private int bonusesSpawned
-private Vector3 oldBonusPos
 private Vector3 lastNodeDir
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 protected void UpdateNetworkStage()
@@ -10403,6 +11010,10 @@ public int Heuristic(Point a, Point b)
 public int Heuristic(Point a, List`1<Point> b)
 }
 public PathInterestNode : MonoBehaviour {
+private float <NextVisitTime>k__BackingField
+public float NextVisitTime
+public float get_NextVisitTime()
+public void set_NextVisitTime(float value)
 public void OnDrawGizmos()
 }
 public PathInterpolator : object {
@@ -10503,10 +11114,6 @@ public float moveSpeed
 public float maxSpeed
 public float courseAdjustLerpTime
 public Quaternion targetRotation
-private Vector3 _aimTarget
-private bool movementLockingAiming
-private bool hasAimTarget
-private bool aimDoorSide
 public Vector3 windVec
 public Vector3 targetWindVec
 public float windForce
@@ -10517,12 +11124,16 @@ public float maxRotationSpeed
 public float rotationSpeed
 public float terrainPushForce
 public float obstaclePushForce
-private Vector3 pushVec
 public HelicopterTurret leftGun
 public HelicopterTurret rightGun
 public PatrolHelicopterAI heliInstance
 public BaseHelicopter helicopterBase
 public aiState _currentState
+private Vector3 _aimTarget
+private bool movementLockingAiming
+private bool hasAimTarget
+private bool aimDoorSide
+private Vector3 pushVec
 private Vector3 _lastPos
 private Vector3 _lastMoveDir
 private bool isDead
@@ -10540,6 +11151,8 @@ private float maxOrbitDuration
 private bool breakingOrbit
 public List`1<MonumentInfo> _visitedMonuments
 public float arrivalTime
+public GameObjectRef rocketProjectile
+public GameObjectRef rocketProjectile_Napalm
 private bool leftTubeFiredLast
 private float lastRocketTime
 private float timeBetweenRockets
@@ -10552,8 +11165,6 @@ private float strafe_firing_range
 private bool useNapalm
 private float lastNapalmTime
 private float lastStrafeTime
-public GameObjectRef rocketProjectile
-public GameObjectRef rocketProjectile_Napalm
 private float _lastThinkTime
 public void Awake()
 public void SetInitialDestination(Vector3 dest, float mapScaleDistance)
@@ -10640,10 +11251,10 @@ public BaseEntity entity
 public SoundDefinition physImpactSoundDef
 public float minTimeBetweenEffects
 public float minDistBetweenEffects
-private float lastEffectPlayed
 public float lowMedThreshold
 public float medHardThreshold
 public float enableDelay
+private float lastEffectPlayed
 private float enabledAt
 private float ignoreImpactThreshold
 private Vector3 lastCollisionPos
@@ -10678,10 +11289,10 @@ public Color colorIconActive
 public Color colorIconHovered
 public Color colorIconDisabled
 public Color colorBackgroundDisabled
-public AudioClip clipOpen
-public AudioClip clipCancel
-public AudioClip clipChanged
-public AudioClip clipSelected
+public SoundDefinition clipOpen
+public SoundDefinition clipCancel
+public SoundDefinition clipChanged
+public SoundDefinition clipSelected
 public MenuOption defaultOption
 private bool isClosing
 private CanvasGroup canvasGroup
@@ -10746,7 +11357,6 @@ public float hemisphere
 public float clampTest
 public float testDist
 private float nextTest
-private Vector3 lastDir
 public Vector3 RandomHemisphereDirection(Vector3 input, float degreesOffset)
 public Vector3 RandomCylinderPointAroundVector(Vector3 input, float distance, float minHeight, float maxHeight)
 public Vector3 ClampToHemisphere(Vector3 hemiInput, float degreesOffset, Vector3 inputVec)
@@ -10786,7 +11396,6 @@ public void Process(UInt32 seed)
 }
 public Planner : HeldEntity {
 public BaseEntity[] buildableList
-private Vector3 rotationOffset
 public bool isTypeDeployable
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 public ItemModDeployable GetModDeployable()
@@ -11055,7 +11664,11 @@ protected int throwWeapon
 protected int holster
 protected int aiming
 protected int onLadder
-protected int sitting
+protected int posing
+protected int poseType
+protected int relaxGunPose
+protected int vehicle_aim_yaw
+protected int vehicle_aim_speed
 protected int leftFootIK
 protected int rightFootIK
 public BoxCollider collision
@@ -11069,6 +11682,9 @@ public EyeController eyeController
 public Transform[] SpineBones
 public Transform leftFootBone
 public Transform rightFootBone
+public Vector3 rightHandTarget
+public Vector3 leftHandTargetPosition
+public Quaternion leftHandTargetRotation
 public RuntimeAnimatorController DefaultHoldType
 public RuntimeAnimatorController SleepGesture
 public RuntimeAnimatorController WoundedGesture
@@ -11082,6 +11698,7 @@ public float skinNumber
 public float meshNumber
 public float hairNumber
 public int skinType
+public MovementSounds movementSounds
 private Quaternion <LookAngles>k__BackingField
 public bool IsFemale
 public SkinSetCollection SkinSet
@@ -11097,8 +11714,13 @@ private Dictionary`2<Renderer, RendererMaterials> materials
 public Dictionary`2<Renderer, RendererMaterials> Materials
 public Dictionary`2<Renderer, RendererMaterials> get_Materials()
 private void CacheOriginalMaterials()
-private void Setup(HairType type, HairSetCollection hair, int baseSeed, float typeNum, int meshIndex, MaterialPropertyBlock block)
+private void Setup(HairType type, HairSetCollection hair, int meshIndex, float typeNum, float dyeNum, MaterialPropertyBlock block)
 public void Setup(SkinSetCollection skin, float hairNum, float meshNum, MaterialPropertyBlock block)
+public void GetRandomVariation(float hairNum, int typeIndex, int meshIndex, Single& typeNum, Single& dyeNum)
+}
+public PlayerModelHairCap : MonoBehaviour {
+public HairCapMask hairCapMask
+public void SetupHairCap(SkinSetCollection skin, float hairNum, float meshNum, MaterialPropertyBlock block)
 }
 public PlayerModelSkin : MonoBehaviour {
 public void Setup(SkinSetCollection skin, float materialNum, float meshNum)
@@ -11147,14 +11769,9 @@ public void Free()
 public void Clear()
 }
 public PostOpaqueDepth : SingletonComponent`1<PostOpaqueDepth> {
-private Material copyDepthMat
 public RenderTexture cameraDepth
 public RenderTexture postOpaqueDepth
-private CameraEvent commandBufferEvent
-private int commandBufferOrderId
-public Material CopyDepthMat
 public RenderTexture PostOpaque
-public Material get_CopyDepthMat()
 public RenderTexture get_PostOpaque()
 }
 public PowerlineNode : MonoBehaviour {
@@ -11382,13 +11999,11 @@ public Image progressField
 public Image iconField
 public Text leftField
 public Text rightField
-public AudioClip clipOpen
-public AudioClip clipCancel
-private bool isClosing
-private CanvasGroup canvasGroup
+public SoundDefinition clipOpen
+public SoundDefinition clipCancel
 public bool IsOpen
 }
-public Projectile : MonoBehaviour {
+public Projectile : BaseMonoBehaviour {
 public float lifeTime
 public Vector3 initialVelocity
 public float drag
@@ -11426,7 +12041,13 @@ public float integrity
 public float maxDistance
 public Modifier modifier
 public bool invisible
+private UInt32 _fleshMaterialID
+private UInt32 _waterMaterialID
+private UInt32 cachedWaterString
 public void CalculateDamage(HitInfo info, Modifier mod, float scale)
+public UInt32 FleshMaterialID()
+public UInt32 WaterMaterialID()
+public bool IsWaterMaterial(string hitMaterial)
 }
 public ProjectileWeaponInformationPanel : ItemInformationPanel {
 public ItemStatValue damageDisplay
@@ -11540,7 +12161,6 @@ private void StopGrab()
 }
 public RainSurfaceAmbience : MonoBehaviour {
 public float tickRate
-private float lastTick
 public float gridSize
 public float gridSamples
 public float startHeight
@@ -11609,10 +12229,10 @@ public BaseEntity GetEntity(RaycastHit hit)
 }
 public ReactiveTarget : DecayEntity {
 public Animator myAnimator
-private float knockdownHealth
 public GameObjectRef bullseyeEffect
 public GameObjectRef knockdownEffect
 private float lastToggleTime
+private float knockdownHealth
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 public void OnHitShared(HitInfo info)
 public bool IsKnockedDown()
@@ -11672,6 +12292,129 @@ public void StartRecycling()
 public void StopRecycling()
 public bool SupportsPooling()
 }
+public ReflectionProbeEx : MonoBehaviour {
+private UInt32[0...,0...] qualitySamples
+private Vector4[] sampleData
+public ReflectionProbeRefreshMode refreshMode
+public bool timeSlicing
+public int resolution
+public bool hdr
+public float shadowDistance
+public ReflectionProbeClearFlags clearFlags
+public Color background
+public float nearClip
+public float farClip
+public Transform attachToTarget
+public Light directionalLight
+public float textureMipBias
+public bool highPrecision
+public ConvolutionQuality convolutionQuality
+public List`1<RenderListEntry> staticRenderList
+public Cubemap reflectionCubemap
+public float reflectionIntensity
+private List`1<RenderListEntry> dynamicRenderList
+private ReflectionProbe probe
+private RenderTexture probeTexture
+private int probeResolution
+private bool probeHdr
+private float probeNearClip
+private float probeFarClip
+private int probeDepth
+private bool probeHighPrecision
+private TimeSlicingState timeSlicedRenderState
+private bool scriptingRenderQueued
+private Matrix4x4 faceProjMatrix
+private Matrix4x4 faceProjInvMatrix
+private ReflectionProbeRefreshMode savedProbeRefresh
+private ReflectionProbeMode savedProbeMode
+private Texture savedProbeCustomTexture
+private Mesh blitMesh
+private Mesh skyboxMesh
+private Single[] octaVerts
+private CubemapFaceMatrices[] cubemapFaceMatrices
+private CubemapFaceMatrices[] cubemapFaceMatricesD3D11
+private CubemapFaceMatrices[] shadowCubemapFaceMatrices
+private CubemapFaceMatrices[] platformCubemapFaceMatrices
+private HashSet`1<string> supportedShaderNames
+private Dictionary`2<Shader, Shader> supportedShaders
+private Dictionary`2<Material, Material> matchingMaterials
+private RenderTexture probeTempTexture
+private RenderTexture probeShadowTexture
+private RenderTexture arrayTexture
+private RenderTexture arrayTempTexture
+private RenderTexture arrayDepthTexture
+private int mipmapCount
+private Material blitMaterial
+private Material downsampleMaterial
+private Material filterMaterial
+private Material shadowMaterial
+private CommandBuffer forwardCB
+private CommandBuffer shadowCB
+private Matrix4x4[] viewProjMatrixArray
+private Matrix4x4[] objectToWorldArray
+private Matrix4x4[] cameraToWorldArray
+private Int32[] tab32
+public RenderTexture Texture
+private Vector2 Hammersley(UInt32 index, UInt32 numSamples)
+private float D_GGX(float roughness, float NdotH)
+private Vector3 ImportanceSampleGGX(Vector2 Xi, float roughness)
+private void GenerateMips(Texture target)
+private void ApplyConvolution(Texture target)
+public RenderTexture get_Texture()
+public void ClearRenderList()
+public void AddToRenderList(Renderer renderer, bool alwaysEnabled)
+private void Awake()
+private void OnEnable()
+private void OnDisable()
+private void OnCameraPreRender(Camera cam)
+public void RenderProbe()
+public bool IsFinishedRendering()
+private void ModifyProbeProperties()
+private void RestoreProbeSettings()
+private bool CheckUpdateCaptureSettings(Int32& resolution, Boolean& hdr, Single& nearClip, Single& farClip)
+private bool UpdateProperties()
+private void CreateMeshes()
+private void DestroyMeshes()
+private Mesh CreateBlitMesh()
+private CubemapSkyboxVertex SubDivVert(CubemapSkyboxVertex v1, CubemapSkyboxVertex v2)
+private void Subdivide(List`1<CubemapSkyboxVertex> destArray, CubemapSkyboxVertex v1, CubemapSkyboxVertex v2, CubemapSkyboxVertex v3)
+private void SubdivideYOnly(List`1<CubemapSkyboxVertex> destArray, CubemapSkyboxVertex v1, CubemapSkyboxVertex v2, CubemapSkyboxVertex v3)
+private Mesh CreateSkyboxMesh()
+private bool InitializeCubemapFaceMatrices()
+private void CreateTextures()
+private void DestroyTextures()
+private void RegisterMaterialReplacement(Material material)
+private Material FindMaterialReplacement(Material material)
+private void CreateMaterials()
+private void DestroyMaterials()
+private void CreateCommandBuffers()
+private void DestroyCommandBuffers()
+private void ClearCommandBuffers()
+private void AttachToLight()
+private void DetachFromLight()
+private void FindEnvironmentReflection()
+private void BindGlobalProperties()
+private void BindGlobalLight()
+private void BindGlobalAmbient()
+private void BindGlobalReflection()
+private void RenderObjects()
+private void RenderSkybox()
+private void IssueRender()
+private void IssueGenerateMips()
+private void IssueConvolution()
+private void IssueShadow()
+private void PrepareFullRender()
+private void PrepareTimeSlicedRender(TimeSlicingState state)
+private void ExecuteRender()
+private int FastLog2(int value)
+private UInt32 ReverseBits(UInt32 bits)
+private void SafeCreateMaterial(Material& mat, Shader shader)
+private void SafeCreateMaterial(Material& mat, string shaderName)
+private void SafeCreateCubeRT(RenderTexture& rt, string name, int size, int depth, bool mips, TextureDimension dim, FilterMode filter, RenderTextureFormat format, RenderTextureReadWrite readWrite)
+private void SafeCreateCB(CommandBuffer& cb, string name)
+private void SafeDestroy(T& obj)
+private void SafeDispose(T& obj)
+}
 public RenameSleepingBag : UIDialog {
 public InputField input
 public SleepingBag bag
@@ -11698,7 +12441,6 @@ public void RepairItem(RPCMessage msg)
 public bool SupportsPooling()
 }
 public RepairBenchPanel : LootPanel {
-private Item _displayItem
 public Text infoText
 public Button repairButton
 public Color gotColor
@@ -11755,7 +12497,6 @@ public GameObject itemDescTooMany
 public GameObject itemTakeBlueprint
 public Text successChanceText
 public ItemIcon scrapIcon
-private Item _researchItem
 public bool wasResearching
 public GameObject[] workbenchReqs
 }
@@ -11899,6 +12640,39 @@ public void ClientRun(string command)
 public Rust.Ai.AggressionRangeFromTargetEntity : BaseScorer {
 public float GetScore(BaseContext c)
 }
+public Rust.Ai.AiAnswer_ShareEnemyTarget : ValueType {
+private NPCPlayerApex <Source>k__BackingField
+public BasePlayer PlayerTarget
+public NPCPlayerApex Source
+public NPCPlayerApex get_Source()
+public void set_Source(NPCPlayerApex value)
+}
+public Rust.Ai.AiLocationManager : FacepunchBehaviour {
+public List`1<AiLocationManager> Managers
+public AiLocationSpawner MainSpawner
+public Transform CoverPointGroup
+public Transform PatrolPointGroup
+private List`1<PathInterestNode> patrolPoints
+public SquadSpawnerLocation LocationType
+public SquadSpawnerLocation get_LocationType()
+private void Awake()
+private void OnDestroy()
+public PathInterestNode GetFirstPatrolPointInRange(Vector3 from, float minRange, float maxRange)
+public PathInterestNode GetRandomPatrolPointInRange(Vector3 from, float minRange, float maxRange, PathInterestNode currentPatrolPoint)
+}
+public Rust.Ai.AiLocationSpawner : SpawnGroup {
+public SquadSpawnerLocation Location
+public AiLocationManager Manager
+public JunkPile Junkpile
+public bool IsMainSpawner
+public float chance
+private int defaultMaxPopulation
+private int defaultNumToSpawnPerTickMax
+private int defaultNumToSpawnPerTickMin
+public void SpawnInitial()
+protected void Spawn(int numToSpawn)
+protected BaseSpawnPoint GetSpawnPoint(Vector3& pos, Quaternion& rot)
+}
 public Rust.Ai.AiManagedAgent : FacepunchBehaviour {
 public int AgentTypeIndex
 public Vector2i NavmeshGridCoord
@@ -11911,11 +12685,12 @@ private void OnDisable()
 }
 public Rust.Ai.AiManager : SingletonComponent`1<AiManager> {
 private HashSet`1<IAIAgent> activeAgents
-private HashSet`1<IAIAgent> dormantAgents
+private List`1<IAIAgent> dormantAgents
 private HashSet`1<IAIAgent> pendingAddToActive
 private HashSet`1<IAIAgent> pendingAddToDormant
 private HashSet`1<IAIAgent> pendingRemoveFromActive
 private HashSet`1<IAIAgent> pendingRemoveFromDormant
+private int lastWakeUpDormantIndex
 public bool UseCover
 public float CoverPointVolumeCellSize
 public float CoverPointVolumeCellHeight
@@ -11962,11 +12737,8 @@ public NavMeshCollectGeometry NavMeshCollectGeometry
 public float CellTimeoutThreshold
 public GameObjectRef NavMeshLinkPrefab
 internal WorldSpaceGrid`1<NavMeshGridCell> NavMeshGrid
-private int lastUpdateCellIndex
 private Dictionary`2<int, NavMeshLinkInfo> AgentLinks
 internal PrefabPool LinkPool
-private int lastPlayerIndexForRebake
-private int lastDirectionIndexForRebake
 internal int NumCellsCurrentlyBaking
 internal int NumLinksCurrentlyGenerating
 private BinaryHeap`1<BakeInfo> bakeHeap
@@ -12039,6 +12811,14 @@ public Rust.Ai.AimingAtTarget : BaseScorer {
 public float arc
 public bool PerfectKnowledge
 public float GetScore(BaseContext c)
+}
+public Rust.Ai.AiStatement_EnemyEngaged : ValueType {
+public BasePlayer Enemy
+public float Score
+}
+public Rust.Ai.AiStatement_EnemySeen : ValueType {
+public BasePlayer Enemy
+public float Score
 }
 public Rust.Ai.AllowBreaking : BaseAction {
 public bool Allow
@@ -12116,6 +12896,7 @@ public List`1<BaseNpc> NpcsBehindUs
 public List`1<TimedExplosive> DeployedExplosives
 public BasePlayer EnemyPlayer
 public BaseNpc EnemyNpc
+public float LastTargetScore
 public float NextRoamTime
 public Vector3 lastSampledPosition
 public List`1<Vector3> sampledPositions
@@ -12137,7 +12918,7 @@ public Vector3 get_EnemyPosition()
 public byte GetFact(Facts fact)
 public void SetFact(Facts fact, byte value)
 public byte GetFact(Facts fact)
-public void SetFact(Facts fact, byte value)
+public void SetFact(Facts fact, byte value, bool triggerCallback, bool onlyTriggerCallbackOnDiffValue)
 }
 public Rust.Ai.BaseScorer : ContextualScorerBase {
 public bool InvertScore
@@ -12190,7 +12971,6 @@ public Vector3 Normal
 public CoverType NormalCoverType
 private BaseEntity <ReservedFor>k__BackingField
 private bool <IsCompromised>k__BackingField
-private float timeWhenCooldownComplete
 private float <Score>k__BackingField
 public CoverPointVolume Volume
 public BaseEntity ReservedFor
@@ -12223,7 +13003,6 @@ private List`1<CoverPointBlockerVolume> _coverPointBlockers
 private float _dynNavMeshBuildCompletionTime
 private int _genAttempts
 private Bounds bounds
-private Single[] tempVisRange
 public bool repeat
 public bool get_repeat()
 private void OnEnable()
@@ -12321,12 +13100,19 @@ public NavMeshPathStatus Status
 public float GetScore(BaseContext c)
 public bool Evaluate(NPCHumanContext c, NavMeshPathStatus s)
 }
+public Rust.Ai.HasAllyInLineOfFire : BaseScorer {
+public float GetScore(BaseContext ctx)
+}
 public Rust.Ai.HasAttackTarget : BaseScorer {
 public float GetScore(BaseContext c)
 }
 public Rust.Ai.HasBeenStuckFor : BaseScorer {
 public float StuckSeconds
 public float GetScore(BaseContext c)
+}
+public Rust.Ai.HasChairTarget : BaseScorer {
+public float GetScore(BaseContext context)
+public float Test(NPCHumanContext c)
 }
 public Rust.Ai.HasCurrentWeaponType : BaseScorer {
 public WeaponTypeEnum value
@@ -12447,10 +13233,13 @@ public void AttackEnemy(NPCHumanContext c, AttackType type)
 public Rust.Ai.HumanNavigateToOperator : BaseAction {
 public OperatorType Operator
 public void DoExecute(BaseContext c)
+public void MakeUnstuck(NPCHumanContext c)
 public void NavigateToEnemy(NPCHumanContext c)
 public void NavigateToRandomLoc(NPCHumanContext c)
 public void NavigateToPatrolLoc(NPCHumanContext c)
-public void NavigateToSpawn(NPCHumanContext c)
+public void NavigateToSpawnLoc(NPCHumanContext c)
+public void NavigateToMountableLoc(NPCHumanContext c, OperatorType mountableType)
+private void UpdateRoamTime(NPCHumanContext c)
 public void NavigateToCover(NPCHumanContext c, TakeCoverIntention intention)
 public void PathToCover(NPCHumanContext c, Vector3 coverPosition)
 public void FleeEnemy(NPCHumanContext c)
@@ -12460,12 +13249,21 @@ public void Sidestep(NPCHumanContext c)
 private bool NavigateInDirOfBestSample(NPCHumanContext c, SampleCount sampleCount, float radius, SampleFeatures features, float minRange, float maxRange)
 }
 public Rust.Ai.HumanVoiceOperator : BaseAction {
-public ActionCallbackEnum Voice
 public void DoExecute(BaseContext ctx)
+}
+public Rust.Ai.IAiAnswer {
+public NPCPlayerApex Source
+public NPCPlayerApex get_Source()
+public void set_Source(NPCPlayerApex value)
 }
 public Rust.Ai.InInCoverFromEntity : WeightedScorerBase`1<BaseEntity> {
 public float CoverArcThreshold
 public float GetScore(BaseContext ctx, BaseEntity option)
+}
+public Rust.Ai.InMountRangeOfChair : BaseScorer {
+public float GetScore(BaseContext context)
+public float Test(NPCHumanContext c)
+private float IsInRange(NPCHumanContext c, BaseMountable mountable)
 }
 public Rust.Ai.IsBusy : BaseScorer {
 public float GetScore(BaseContext c)
@@ -12494,6 +13292,11 @@ public float GetScore(BaseContext c, Vector3 position)
 public Rust.Ai.IsLastAttacker : WeightedScorerBase`1<BaseEntity> {
 public float MinScore
 public float GetScore(BaseContext context, BaseEntity option)
+}
+public Rust.Ai.IsMountedToType : BaseScorer {
+public MountPoses MountableType
+public float GetScore(BaseContext context)
+public float Test(NPCHumanContext c, MountPoses mountableType)
 }
 public Rust.Ai.IsRoamReady : BaseScorer {
 public float GetScore(BaseContext c)
@@ -12533,6 +13336,11 @@ public void AddDanger(Vector3 position, float amount)
 public SeenInfo GetInfo(BaseEntity entity)
 internal void Forget(float secondsOld)
 }
+public Rust.Ai.MountOperator : BaseAction {
+public MountOperationType Type
+public void DoExecute(BaseContext c)
+public void MountOperation(NPCHumanContext c, MountOperationType type)
+}
 public Rust.Ai.MoveToBestPosition : BaseActionWithOptions`1<Vector3> {
 public void DoExecute(BaseContext c)
 }
@@ -12545,6 +13353,7 @@ public void DoExecute(BaseContext c)
 public Rust.Ai.NavigateToOperator : BaseAction {
 public OperatorType Operator
 public void DoExecute(BaseContext c)
+public void MakeUnstuck(BaseContext c)
 public void NavigateToEnemy(BaseContext c)
 public void NavigateToRandomLoc(BaseContext c)
 public void NavigateToSpawn(BaseContext c)
@@ -12597,14 +13406,17 @@ public int Compare(NavPointSample a, NavPointSample b)
 public Rust.Ai.NavPointSampler : object {
 private float HalfPI
 private NavPointSampleComparer NavPointSampleComparer
+public bool SampleCircleWaterDepthOnly(SampleCount sampleCount, Vector3 center, float radius, SampleScoreParams scoreParams, List`1& samples)
 public bool SampleCircle(SampleCount sampleCount, Vector3 center, float radius, SampleScoreParams scoreParams, List`1& samples)
+public int GetFeatureCount(int features)
 public Vector3 GetPointOnCircle(Vector3 center, float radius, float degrees)
+public NavPointSample SamplePointWaterDepthOnly(Vector3 pos, float depth)
 public NavPointSample SamplePoint(Vector3 pos, SampleScoreParams scoreParams)
 private bool _SampleNavMesh(Vector3& pos, IAIAgent agent)
 private float _WaterDepth(Vector3 pos, float maxDepth)
 private float _DiscourageSharpTurns(Vector3 pos, IAIAgent agent)
 public bool IsValidPointDirectness(Vector3 point, Vector3 pos, Vector3 targetPos)
-public float PointDirectnessToTarget(Vector3 point, Vector3 pos, Vector3 targetPos)
+public bool PointDirectnessToTarget(Vector3 point, Vector3 pos, Vector3 targetPos, Single& value)
 public float RetreatPointValue(Vector3 point, IAIAgent agent)
 public float RetreatPointValueExplosive(Vector3 point, IAIAgent agent)
 public float ApproachPointValue(Vector3 point, IAIAgent agent)
@@ -12745,114 +13557,8 @@ public Rust.Ai.SetSpeed : BaseAction {
 public SpeedEnum value
 public void DoExecute(BaseContext c)
 }
-public Rust.Ai.Squad : object {
-private SquadManager <Manager>k__BackingField
-public List`1<SquadMember> Members
-public List`1<SquadMember> PendingRemoval
-public List`1<BasePlayer> NearbyEnemies
-public BasePlayer PrimaryTarget
-public float MinSpawnDistanceToEnemy
-private Vector3 <Position>k__BackingField
-private Bounds <Bounds>k__BackingField
-public SquadManager Manager
-public Vector3 Position
-public Bounds Bounds
-public SquadManager get_Manager()
-public void set_Manager(SquadManager value)
-public Vector3 get_Position()
-private void set_Position(Vector3 value)
-public Bounds get_Bounds()
-private void set_Bounds(Bounds value)
-public void EnterPool()
-public void LeavePool()
-public void Tick()
-public void SetAvgPositionAndExtents()
-public void UpdateNearbyEnemies()
-public void OnAggro(SquadMember member)
-}
-public Rust.Ai.SquadManager : FacepunchBehaviour {
-public GameObjectRef FleeExplosionEffect
-public GameObjectRef TakeCoverEffect
-public GameObjectRef AggroEffect
-public GameObjectRef ChatterEffect
-public GameObjectRef DeathEffect
-public GameObjectRef RespondDeathEffect
-public GameObjectRef RespondOkEffect
-public GameObjectRef ReloadEffect
-private Single[] ActionCallbackTimers
-public List`1<SquadMember> SquadlessMembers
-public List`1<Squad> Squads
-public List`1<Squad> DisbandingSquads
-public bool IsTicking
-public Transform CoverPointGroup
-public Transform PatrolPointGroup
-private List`1<PathInterestNode> patrolPoints
-public float squad_tick_rate
-public float squad_radius
-public float squad_min_delay_individual_speak
-public float squad_min_delay_topic_speak
-public bool squad_disable
-public int squad_max_population_military_tunnels
-public int squad_spawn_per_tick_max_military_tunnels
-public int squad_spawn_per_tick_min_military_tunnels
-public float squad_respawn_delay_max_military_tunnels
-public float squad_respawn_delay_min_military_tunnels
-public bool squad_try_spawn_intelligently
-public float squad_valid_aim_cone
-public float squad_cover_compromised_cooldown
-public bool squad_cover_use_path_distance
-public float squad_cover_path_vs_straight_dist_max_diff
-public float squad_door_trigger_size
-public void Tick()
-public void Add(SquadMember member)
-public void Remove(SquadMember member)
-private void EnterSquad(Squad squad, SquadMember member)
-private void LeaveSquad(Squad squad, SquadMember member)
-private void DisbandSquad(Squad squad)
-public Squad GetSquadClosestToPoint(Vector3 point, Single& distSqr)
-public void OnActionCallback(ActionCallbackEnum callback, Squad squad, SquadMember member)
-public IEnumerator RespondOk(Squad squad, SquadMember member, float delay)
-public IEnumerator RespondDeath(Squad squad, SquadMember member, float delay)
-public IEnumerator RespondChatter(Squad squad, SquadMember member, float delay)
-public PathInterestNode GetFirstPatrolPointInRange(Vector3 from, float minRange, float maxRange)
-public PathInterestNode GetRandomPatrolPointInRange(Vector3 from, float minRange, float maxRange)
-}
-public Rust.Ai.SquadMember : FacepunchBehaviour {
-private SquadManager <Manager>k__BackingField
-private Squad <Squad>k__BackingField
-private BaseEntity <Entity>k__BackingField
-private float NextSpeakTime
-public SquadManager Manager
-public Squad Squad
-public BaseEntity Entity
-public SquadManager get_Manager()
-public void set_Manager(SquadManager value)
-public Squad get_Squad()
-public void set_Squad(Squad value)
-public BaseEntity get_Entity()
-public void set_Entity(BaseEntity value)
-private void OnDisable()
-public void SetupCallbacks(NPCPlayerApex agent)
-private void OnFleeExplosive()
-private void OnTakeCover()
-private void OnAggro()
-private void OnChatter()
-private void OnDeath()
-private void OnReload()
-}
-public Rust.Ai.SquadSpawner : SpawnGroup {
-public SquadSpawnerLocation Location
-public SquadManager Manager
-public bool IsMainSpawner
-private int defaultMaxPopulation
-private int defaultNumToSpawnPerTickMax
-private int defaultNumToSpawnPerTickMin
-private float DefaultAggroDistSqr
-private int MaxRejectsInRow
-private int numRejectsInRow
-public void SpawnInitial()
-protected void Spawn(int numToSpawn)
-protected BaseSpawnPoint GetSpawnPoint(Vector3& pos, Quaternion& rot)
+public Rust.Ai.ShouldReturnToSpawnPoint : BaseScorer {
+public float GetScore(BaseContext ctx)
 }
 public Rust.Ai.StaminaLevel : BaseScorer {
 public float GetScore(BaseContext c)
@@ -12862,6 +13568,13 @@ public void DoExecute(BaseContext c)
 }
 public Rust.Ai.StopMoving : BaseAction {
 public void DoExecute(BaseContext c)
+}
+public Rust.Ai.SwitchToolOperator : BaseAction {
+private ToolTypeEnum ToolTypeDay
+private ToolTypeEnum ToolTypeNight
+public void DoExecute(BaseContext c)
+public bool TrySwitchToolTo(NPCHumanContext c, ToolTypeEnum toolDay, ToolTypeEnum toolNight)
+public Item FindTool(NPCHumanContext c, ToolTypeEnum tool)
 }
 public Rust.Ai.SwitchWeaponOperator : BaseAction {
 private WeaponTypeEnum WeaponType
@@ -12980,6 +13693,7 @@ public int network
 public int save
 public int report
 public int persistance
+public int storage
 public string printable
 public string get_printable()
 }
@@ -13093,15 +13807,29 @@ public GameObject outputPrefab
 }
 public Scientist : NPCPlayerApex {
 public LootSpawnSlot[] LootSpawnSlots
+private HashSet`1<Scientist> AllScientists
+private List`1<Scientist> CommQueryCache
+private List`1<AiAnswer_ShareEnemyTarget> CommTargetCache
 public FamilyEnum Family
 public string Categorize()
 public float StartHealth()
 public float StartMaxHealth()
 public float MaxHealth()
 public FamilyEnum get_Family()
+public void ServerInit()
+internal void DoServerDestroy()
 public bool ShouldDropActiveItem()
-public void CreateCorpse()
+public BaseCorpse CreateCorpse()
 public void Load(LoadInfo info)
+private void InitComm()
+private void OnDestroyComm()
+public int GetAlliesInRange(List`1& allies)
+public void SendStatement(AiStatement_EnemyEngaged statement)
+public void SendStatement(AiStatement_EnemySeen statement)
+public void OnAiStatement(NPCPlayerApex source, AiStatement_EnemyEngaged statement)
+public void OnAiStatement(NPCPlayerApex source, AiStatement_EnemySeen statement)
+public int AskQuestion(AiQuestion_ShareEnemyTarget question, List`1& answers)
+private void OnAggroComm()
 }
 public ScreenBounce : BaseScreenShake {
 public AnimationCurve bounceScale
@@ -13158,7 +13886,6 @@ private void Update()
 private void SetZoom(float z)
 }
 public SearchLight : StorageContainer {
-private BasePlayer mountedPlayer
 public GameObject pitchObject
 public GameObject yawObject
 public GameObject eyePoint
@@ -13166,6 +13893,7 @@ public GameObject lightEffect
 public SoundPlayer turnLoop
 public ItemDefinition fuelType
 private Vector3 aimDir
+private BasePlayer mountedPlayer
 private float secondsRemaining
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 public void ResetState()
@@ -13270,16 +13998,11 @@ public VirtualItemIcon MerchandiseIcon
 public VirtualItemIcon CurrencyIcon
 private ItemDefinition merchandiseInfo
 private ItemDefinition currencyInfo
-private bool merchIsBP
-private bool currencyIsBP
-private int merchandiseSellSize
-private int currencyAmountPerItem
 public GameObject buyButton
 public GameObject cantaffordNotification
 public GameObject outOfStockNotification
 private LootPanelVendingMachine vendingPanel
 public UIIntegerEntry intEntry
-private bool dirty
 }
 public SendMessageToEntityOnAnimationFinish : StateMachineBehaviour {
 public string messageToSendToEntity
@@ -13367,11 +14090,8 @@ public ServerGib : BaseCombatEntity {
 public GameObject _gibSource
 public string _gibName
 public PhysicMaterial physicsMaterial
-private MeshFilter meshFilter
-private MeshRenderer meshRenderer
-private Rigidbody rigidBody
 private MeshCollider meshCollider
-private bool initialized
+private Rigidbody rigidBody
 public float BoundsPadding()
 public List`1<ServerGib> CreateGibs(string entityToCreatePath, GameObject creator, GameObject gibSource, Vector3 inheritVelocity, float spreadVelocity)
 public void Save(SaveInfo info)
@@ -13379,7 +14099,6 @@ public MeshCollider GetCollider()
 public void ServerInit()
 public void RemoveMe()
 public void PhysicsInit(Mesh mesh)
-public void VisualsInit(Mesh mesh, Material[] materials)
 }
 public ServerHistory : MonoBehaviour {
 public ServerHistoryItem prefab
@@ -13400,13 +14119,13 @@ private bool useQueryPort
 public UserPersistance persistance
 private string _AssemblyHash
 private IEnumerator restartCoroutine
-private string SchemaURL
 public ConnectionQueue connectionQueue
 private Stopwatch queryTimer
 private Dictionary`2<UInt32, int> unconnectedQueries
 private Stopwatch queriesPerSeconTimer
 private int NumQueriesLastSecond
 private MemoryStream queryBuffer
+private Action`1<object> <>f__mg$cache0
 public int AvailableSlots
 private string AssemblyHash
 public bool Restarting
@@ -13418,6 +14137,8 @@ private void OnApplicationQuit()
 private void CreateImportantEntities()
 private void CreateImportantEntity(string prefabName)
 private void StartSteamServer()
+private void DebugPrintSteamCallback(object obj)
+private void OnInventoryDefinitionsUpdated()
 private void OnValidateAuthTicketResponse(ulong SteamId, ulong OwnerId, Status Status)
 private void EACUpdate()
 public int get_AvailableSlots()
@@ -13437,7 +14158,6 @@ public bool get_Restarting()
 internal void Shutdown()
 private IEnumerator ServerRestartWarning(string info, int iSeconds)
 public void RestartServer(string strNotice, int iSeconds)
-public IEnumerator UpdateInventoryFromSchema()
 private void Log(Exception e)
 private void OnNetworkMessage(Message packet)
 public void ProcessUnhandledPacket(Message packet)
@@ -13623,7 +14343,6 @@ public bool lightScaled
 public bool alignToCameraViaScript
 protected float tickRate
 private Vector3 fullSize
-private float visibleFraction
 public bool faceCameraPos
 public bool billboardViaShader
 private float artificialLightExposure
@@ -13688,8 +14407,8 @@ public List`1<Part> parts
 public Dictionary`2<string, Transform> boneDict
 public List`1<Part> createdParts
 public long lastBuildHash
-public MaterialPropertyBlock sharedBlockProperty
-public MaterialPropertyBlock hairBlockProperty
+public MaterialPropertyBlock sharedPropertyBlock
+public MaterialPropertyBlock hairPropertyBlock
 public float skinNumber
 public float meshNumber
 public float hairNumber
@@ -13768,8 +14487,6 @@ public void DeleteBag()
 }
 public SlicedGranularAudioClip : MonoBehaviour {
 public AudioClip sourceClip
-private Single[] sourceAudioData
-private int sourceChannels
 public AudioClip granularClip
 public int sampleRate
 public float grainAttack
@@ -13784,9 +14501,6 @@ public int samplesUntilNextGrain
 public List`1<Grain> grains
 public List`1<int> startPositions
 public int lastStartPositionIdx
-private AudioSource source
-private bool audioDataLoaded
-private Random random
 }
 public Smaa.DebugPass : Enum {
 public int value__
@@ -13984,9 +14698,7 @@ public float volumeExponent
 public SoundDefinition definition
 public SoundModifier[] modifiers
 public SoundSource soundSource
-private AudioSource[] audioSources
-private AudioSource audioSource
-private AudioSource distantAudioSource
+public AudioSource[] audioSources
 private SoundFade _fade
 private SoundModulation _modulation
 private SoundOcclusion _occlusion
@@ -13997,11 +14709,19 @@ public SoundFade get_fade()
 public SoundModulation get_modulation()
 public SoundOcclusion get_occlusion()
 }
+public SoundClass : ScriptableObject {
+public AudioMixerGroup output
+public bool enableOcclusion
+public bool playIfOccluded
+public float occlusionGain
+public AudioMixerGroup occludedOutput
+public int globalVoiceMaxCount
+}
 public SoundDefinition : ScriptableObject {
 public GameObjectRef template
 public List`1<WeightedAudioClip> weightedAudioClips
 public List`1<DistanceAudioClipList> distanceAudioClips
-public AudioMixerGroup output
+public SoundClass soundClass
 public bool defaultToFirstPerson
 public bool loop
 public bool randomizeStartPosition
@@ -14015,12 +14735,7 @@ public int localVoiceMaxCount
 public float localVoiceRange
 public float voiceLimitFadeOutTime
 public float localVoiceDebounceTime
-public bool enableOcclusion
-public bool playIfOccluded
-public float occlusionFilterFreq
-public float occlusionGain
 public bool forceOccludedPlayback
-public AudioMixerGroup occludedOutput
 public AnimationCurve falloffCurve
 public bool useCustomFalloffCurve
 public AnimationCurve spatialBlendCurve
@@ -14028,7 +14743,9 @@ public bool useCustomSpatialBlendCurve
 public AnimationCurve spreadCurve
 public bool useCustomSpreadCurve
 public float GetLength()
-public void OnValidate()
+}
+public SoundManager : SingletonComponent`1<SoundManager> {
+public SoundClass defaultSoundClass
 }
 public SoundModifier : MonoBehaviour {
 public Sound sound
@@ -14043,7 +14760,6 @@ public SoundPlayer : BaseMonoBehaviour {
 public SoundDefinition soundDefinition
 public bool playImmediately
 public bool debugRepeat
-private int playOnFrame
 public bool pending
 public Vector3 soundOffset
 }
@@ -14063,7 +14779,6 @@ public bool isOccluded
 public float occlusionAmount
 public float lodDistance
 public bool inRange
-private bool wasInRange
 public void PreClientComponentCull(IPrefabProcessor p)
 }
 public SoundVoiceLimiter : MonoBehaviour {
@@ -14248,7 +14963,6 @@ public float minTimeBetweenSpinAccentSounds
 public float spinAccentAngleDelta
 private Sound spinSound
 private Modulator spinSoundGain
-private float clientSpinSpeed
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 public void Save(SaveInfo info)
 public void Load(LoadInfo info)
@@ -14402,6 +15116,7 @@ public Phrase displayDescription
 public Category category
 public SubCategory subcategory
 public SteamInventoryCategory steamCategory
+public bool PreventBreakingDown
 public string itemname
 public ulong workshopID
 public ItemDefinition itemDefinition
@@ -14473,7 +15188,6 @@ public bool PlayerOpenLoot(BasePlayer player)
 public bool PlayerOpenLoot(BasePlayer player, string panelToOpen)
 public void PlayerStoppedLooting(BasePlayer player)
 public void Save(SaveInfo info)
-private void PreDie()
 public void OnKilled(HitInfo info)
 public void DropItems()
 public Vector3 GetDropPosition()
@@ -14484,9 +15198,6 @@ public void Load(LoadInfo info)
 public StreamEx : object {
 private Byte[] StaticBuffer
 public void WriteToOtherStream(Stream self, Stream target)
-}
-public StringBuilderEx : object {
-public void Clear(StringBuilder value)
 }
 public StringFormatCache : object {
 private Dictionary`2<Key1, string> dict1
@@ -14756,6 +15467,7 @@ public TerrainCarve : TerrainModifier {
 protected void Apply(Vector3 position, float opacity, float radius, float fade)
 }
 public TerrainCheck : PrefabAttribute {
+public bool Rotate
 public float Extents
 protected void OnDrawGizmosSelected()
 public bool Check(Vector3 pos)
@@ -14771,6 +15483,7 @@ public float PlacementFade
 public float PlacementDistance
 public float CheckExtentsMin
 public float CheckExtentsMax
+public bool CheckRotate
 }
 public TerrainCheckGeneratorVolumes : MonoBehaviour {
 public float PlacementRadius
@@ -14927,7 +15640,6 @@ public void ForEach(Vector2i v0, Vector2i v1, Vector2i v2, Vector2i v3, Action`2
 private void ForEachInternal(Vector2i v0, Vector2i v1, Vector2i v2, Vector2i v3, Action`2<int, int> action, Vector2i min, Vector2i max)
 public void ForEach(int x_min, int x_max, int z_min, int z_max, Action`2<int, int> action)
 public void ForEach(Action`2<int, int> action)
-protected float RandomMultiplier(int x, int z)
 public int Index(float normalized)
 public float Coordinate(int index)
 }
@@ -15254,7 +15966,7 @@ public int BUILDING
 public int CLIFFSIDE
 public int MOUNTAIN
 public int CLUTTER
-public int PADDING
+public int ALT
 public int TIER0
 public int TIER1
 public int TIER2
@@ -15326,41 +16038,11 @@ public void SetHeight(Vector3 worldPos, float height)
 public void SetHeight(float normX, float normZ, float height)
 public void SetHeight(int x, int z, float height)
 }
-public TextBuffer : object {
-private Queue`1<string> buffer
-private StringBuilder builder
-private string text
-private bool dirty
-private int curlines
-private int maxlines
-private int curchars
-private int maxchars
-public int Count
-public void .ctor(int maxlines, int maxchars)
-public int get_Count()
-public void Add(string text)
-public void Remove()
-public void Clear()
-public string Get(int index)
-public string ToString()
-}
 public TextEntryCookie : MonoBehaviour {
 public InputField control
 public InputField get_control()
 private void OnEnable()
 private void OnDisable()
-}
-public TextTable : object {
-private List`1<Row> rows
-private List`1<Column> columns
-private StringBuilder builder
-private string text
-private bool dirty
-public void Clear()
-public void AddColumns(String[] values)
-public void AddColumn(string title)
-public void AddRow(String[] values)
-public string ToString()
 }
 internal TextureCacheState : Enum {
 public int value__
@@ -15368,9 +16050,6 @@ public TextureCacheState Skipped
 public TextureCacheState Initializing
 public TextureCacheState Uncached
 public TextureCacheState CachedRaw
-public TextureCacheState CachedRawCompressFailed
-public TextureCacheState CachedRawCompressWaiting
-public TextureCacheState CachedCompressed
 }
 public TextureColorPicker : MonoBehaviour {
 public Texture2D texture
@@ -15537,8 +16216,6 @@ protected void OnValidate()
 }
 public TonemappingOverlay : ImageEffectLayer {
 public TonemappingColorGrading tonemapping
-private int screenWidth
-private int screenHeight
 }
 public Tooltip : BaseMonoBehaviour {
 public GameObject Current
@@ -15618,23 +16295,12 @@ protected BaseEntity xMarker
 private int currentBonusLevel
 private float lastDirection
 private float lastHitTime
-protected Transform treeBaseRef
-protected Vector3 oldInstancePos
-protected Quaternion oldInstanceRot
-protected float lastTreeFallTickTime
-protected float fallStartTime
 public bool fallOnKilled
 public float fallDuration
 public GameObjectRef fallStartSound
 public GameObjectRef fallImpactSound
 public GameObjectRef fallImpactParticles
 public SoundDefinition fallLeavesLoopDef
-private Sound fallLeavesLoop
-private Modulator fallLeavesGainMod
-private float impactSoundCheckHeight
-private Vector3 hitDirection
-private Vector3 rotateDirection
-private Vector3 fallDirection
 public Boolean[] usedHeights
 public bool impactSoundPlayed
 public float treeDistanceUponFalling
@@ -15685,12 +16351,12 @@ private void OnTriggerExit(Collider collider)
 private void OnTriggerExit(GameObject targetObj)
 }
 public TriggerComfort : TriggerBase {
-private List`1<BasePlayer> _players
 public float triggerSize
 public float baseComfort
 public float minComfortRange
 private float perPlayerComfortBonus
 private float bonusComfort
+private List`1<BasePlayer> _players
 private void OnValidate()
 internal GameObject InterestedInObject(GameObject obj)
 public float CalculateComfort(Vector3 position, BasePlayer forPlayer)
@@ -15838,10 +16504,8 @@ public float get_currentMax()
 }
 public UIBlackoutOverlay : MonoBehaviour {
 public CanvasGroup group
-private Vector3 initialPosition
 public Dictionary`2<blackoutType, UIBlackoutOverlay> instances
 public blackoutType overlayType
-private float myAlpha
 }
 public UIBlueprints : ListComponent`1<UIBlueprints> {
 public GameObjectRef buttonPrefab
@@ -16004,7 +16668,6 @@ private void Update()
 }
 public UIScopeOverlay : MonoBehaviour {
 public CanvasGroup group
-private Vector3 initialPosition
 public UIScopeOverlay instance
 }
 public UISleepingScreen : SingletonComponent`1<UISleepingScreen> {
@@ -16090,14 +16753,6 @@ public bool IsNaNOrInfinity(Ray r)
 public UnityEngine.SkinnedMeshRendererEx : object {
 public Transform FindRig(SkinnedMeshRenderer renderer)
 }
-public UnityEngine.StringEx : object {
-public string Replace(string originalString, string oldValue, string newValue, StringComparison comparisonType)
-public bool Contains(string haystack, string needle, CompareOptions options)
-public bool IsLower(string str)
-public string ToPrintable(string str, int maxLength)
-public IEnumerable`1<string> SplitToLines(string input)
-public IEnumerable`1<string> SplitToChunks(string str, int chunkLength)
-}
 public UnityEngine.TextureEx : object {
 private Color32[] buffer
 public void Clear(Texture2D tex, Color32 color)
@@ -16132,6 +16787,7 @@ public Bounds GetBounds(Transform transform, bool includeRenderers, bool include
 }
 public UnityEngine.UI.ScrollRectEx : UIBehaviour {
 public InputButton scrollButton
+public InputButton altScrollButton
 private RectTransform m_Content
 private bool m_Horizontal
 private bool m_Vertical
@@ -16378,19 +17034,15 @@ public float upkeepMultiplier
 protected Type GetIndexedType()
 }
 public UserPersistance : object {
-private Database blueprints
+public Database blueprints
 private Database deaths
-private string Folder
-private Func`2<char, string> <>f__am$cache0
 public void .ctor(string strFolder)
 public void Dispose()
 public PersistantPlayer GetPlayerInfo(ulong playerID)
-private string GetUserFolder(ulong playerID)
 private PersistantPlayer FetchFromDatabase(ulong playerID)
 public void SetPlayerInfo(ulong playerID, PersistantPlayer info)
 public void AddLifeStory(ulong playerID, PlayerLifeStory lifeStory)
 public PlayerLifeStory GetLastLifeStory(ulong playerID)
-private string <GetUserFolder>m__0(char x)
 }
 internal UVTextureAnimator : MonoBehaviour {
 public int Rows
@@ -16417,6 +17069,33 @@ private void OnDisable()
 private IEnumerator UpdateCorutine()
 private void UpdateCorutineFrame()
 private void OnDestroy()
+}
+public v_chainsaw : MonoBehaviour {
+public bool bAttacking
+public bool bHitMetal
+public bool bHitWood
+public bool bHitFlesh
+public bool bEngineOn
+public ParticleSystem[] hitMetalFX
+public ParticleSystem[] hitWoodFX
+public ParticleSystem[] hitFleshFX
+public ParticleSystem smokeEffect
+public AudioClip chainsawAttacking
+public AudioClip chainsawIdle
+public Animator chainsawAnimator
+public Renderer chainRenderer
+public Material chainlink
+private MaterialPropertyBlock block
+private Vector2 saveST
+private float chainSpeed
+private float chainAmount
+public float temp1
+public float temp2
+public void OnEnable()
+private void Awake()
+private void Start()
+private void ScrollChainTexture()
+private void Update()
 }
 public ValidBounds : SingletonComponent`1<ValidBounds> {
 public Bounds worldBounds
@@ -16507,7 +17186,6 @@ public Renderer fadeoutMesh
 public CanvasGroup screenCanvas
 public Renderer light1
 public Renderer light2
-private float imageCycleTime
 public float nextImageTime
 public int currentImageIndex
 }
@@ -16574,17 +17252,11 @@ public GameObjectRef modelObject
 public string targetBone
 public bool hideViewModelIronSights
 }
-public ViewmodelEditor : SingletonComponent`1<ViewmodelEditor> {
-private Vector3 view
-private bool meleeHit
-}
 public ViewmodelLower : MonoBehaviour {
-private bool shouldLower
 public void SetShouldLower(bool shouldLower)
 }
 public ViewmodelScope : MonoBehaviour {
 public float smoothSpeed
-private bool wasVisible
 }
 public ViewmodelSway : MonoBehaviour {
 public float positionalSwaySpeed
@@ -16670,38 +17342,14 @@ public Vector3 wind
 public bool showDebug
 public bool showGizmos
 public WaterQuality Quality
-private WaterQuality prevQuality
 public WaterSimulation simulation
 public WaterRendering rendering
-private MaterialPropertyBlock propertyBlock
-private ReflectionProbe reflectionProbe
-private float prevWaterLevel
-private Material oceanMaterialInst
-private Material riverMaterialInst
-private Material lakeMaterialInst
-private GameObject[] riverObjs
-private GameObject[] lakeObjs
-private List`1<MeshLink> riverLinks
-private List`1<MeshLink> lakeLinks
-private bool simulateNextFrame
-private int visibilityMask
-private CommandBufferManager commandBufferManager
 private WaterCollision <Collision>k__BackingField
 private bool initialized
 private Water instance
-public Material OceanMaterial
-public Material RiverMaterial
-public Material LakeMaterial
-public List`1<MeshLink> Rivers
-public List`1<MeshLink> Lakes
 public WaterCollision Collision
 public bool IsInitialized
 public Water Instance
-public Material get_OceanMaterial()
-public Material get_RiverMaterial()
-public Material get_LakeMaterial()
-public List`1<MeshLink> get_Rivers()
-public List`1<MeshLink> get_Lakes()
 public WaterCollision get_Collision()
 private void set_Collision(WaterCollision value)
 public bool get_IsInitialized()
@@ -16751,6 +17399,7 @@ public WaterLevel : object {
 public float Factor(Bounds bounds)
 public bool Test(Vector3 pos)
 public float GetWaterDepth(Vector3 pos)
+public float GetOverallWaterDepth(Vector3 pos)
 public WaterInfo GetWaterInfo(Vector3 pos)
 public WaterInfo GetWaterInfo(Bounds bounds)
 }
@@ -16780,12 +17429,12 @@ public void Awake()
 protected void Update()
 }
 public WaterPurifier : LiquidContainer {
-private LiquidContainer waterStorage
 public GameObjectRef storagePrefab
 public Transform storagePrefabAnchor
 public ItemDefinition freshWater
 public int waterToProcessPerMinute
 public int freshWaterRatio
+private LiquidContainer waterStorage
 private float dirtyWaterProcssed
 private float pendingFreshWater
 public void ServerInit()
@@ -16824,52 +17473,14 @@ private Vector3 RaycastPlane(Camera camera, float planeHeight, Vector3 pos)
 public Matrix4x4 ComputeLocalToWorldMatrix(Camera camera, float oceanWaterLevel)
 }
 public WaterRendering : object {
+public ReflectionProbeEx probe
+public float probeUpdateInterval
+public Material depthMaskMaterial
 public float MaxDisplacementDistance
 public SSRControlParams SSRControl
 public CausticsAnimation CausticsAnimation
-private Water water
-private Renderer renderer
-private WaterRadialMesh radialMesh
-private RenderState state
-private int MaxCullingVolumes
-private float MaxCullingVolumeDistanceToCamera
-private float MaxCullingVolumeSqrDistanceToCamera
-private Vector4[] cullingVolumeArray
-private Plane[] frustumPlanes
-private Material backgroundOceanMat
-private Material backgroundRiverMat
-private Material backgroundLakeMat
-private Material reflectionMat
-private Material underwaterMat
-private Material multiCopyMat
-private RenderTexture surfaceTex
-private RenderTexture preFogBackgroundTex
-private RenderTexture ssrReflectionTex
-private Mesh overlayMesh
-private CameraEvent waterDepthCBEvent
-private int waterDepthCBOrderId
-private CameraEvent preFogCBEvent
-private int preFogCBOrderId
-private CameraEvent postFogCBEvent
-private int postFogCBOrderId
-private RenderTargetIdentifier[] targets
-private Camera camera
-private CommandBufferManager commandBufferManager
-private bool hasValidCausticsAnims
-private bool useMRTBlendingFallback
-private bool initializedMaterials
 private bool initialized
-public Material BackgroundOceanMaterial
-public Material BackgroundRiverMaterial
-public Material BackgroundLakeMaterial
-public Material ReflectionMaterial
-public Material UnderwaterMaterial
 public bool IsInitialized
-public Material get_BackgroundOceanMaterial()
-public Material get_BackgroundRiverMaterial()
-public Material get_BackgroundLakeMaterial()
-public Material get_ReflectionMaterial()
-public Material get_UnderwaterMaterial()
 public bool get_IsInitialized()
 }
 public WaterResource : object {
@@ -16878,29 +17489,11 @@ public bool IsFreshWater(Vector3 pos)
 public ItemDefinition Merge(ItemDefinition first, ItemDefinition second)
 }
 public WaterSimulation : object {
-private int PerlinSize
-private int MaxSolverResolution
 public int solverResolution
 public float solverSizeInWorld
 public float gravity
 public float amplitude
 public TextAsset perlinNoiseData
-private Water water
-private int solverButterflyCount
-private Vector2 windDirection
-private float windMagnitude
-private Texture2D perlinNoiseMap
-private RenderTexture displacementMap
-private Vector4 displacementMapTexelSize
-private RenderTexture normalFoldMap
-public Texture2D PerlinNoiseMap
-public Texture DisplacementMap
-public Vector4 DisplacementMapTexelSize
-public RenderTexture NormalFoldMap
-public Texture2D get_PerlinNoiseMap()
-public Texture get_DisplacementMap()
-public Vector4 get_DisplacementMapTexelSize()
-public RenderTexture get_NormalFoldMap()
 }
 public WaterSurfaceDesc : object {
 public Material material
@@ -16938,7 +17531,6 @@ public float currentPressure
 public int waterPerPump
 public GameObject waterLevelObj
 public float waterLevelObjFullOffset
-private float cachedWaterLevel
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 public void ServerInit()
 public void RPC_Pump(RPCMessage msg)
@@ -17033,6 +17625,12 @@ private bool AllocConsole()
 private bool FreeConsole()
 private IntPtr GetStdHandle(int nStdHandle)
 private bool SetConsoleTitleA(string lpConsoleTitle)
+}
+public WindZoneExManager : MonoBehaviour {
+public float maxAccumMain
+public float maxAccumTurbulence
+public float globalMainScale
+public float globalTurbulenceScale
 }
 public Wolf : BaseAnimalNPC {
 public float Population
@@ -17152,11 +17750,6 @@ public void ParentBecoming(BaseEntity ent)
 }
 public WorldModel : MonoBehaviour {
 public float mass
-}
-public WorldModelOutline : OutlineObject {
-private Query query
-private float coverageRadius
-private float currentOcclusion
 }
 public WorldSerialization : object {
 private UInt32 <Version>k__BackingField
