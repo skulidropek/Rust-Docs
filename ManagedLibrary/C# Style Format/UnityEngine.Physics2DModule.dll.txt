@@ -72,74 +72,6 @@ public void set_flowMagnitude(float value)
 public float get_flowVariation()
 public void set_flowVariation(float value)
 }
-internal UnityEngine.CachedContactPoints2D : ValueType {
-private ContactPoint2D m_Contact0
-private ContactPoint2D m_Contact1
-private ContactPoint2D m_Contact2
-private ContactPoint2D m_Contact3
-private ContactPoint2D m_Contact4
-private ContactPoint2D m_Contact5
-private ContactPoint2D m_Contact6
-private ContactPoint2D m_Contact7
-private ContactPoint2D m_Contact8
-private ContactPoint2D m_Contact9
-private ContactPoint2D m_Contact10
-private ContactPoint2D m_Contact11
-private ContactPoint2D m_Contact12
-private ContactPoint2D m_Contact13
-private ContactPoint2D m_Contact14
-private ContactPoint2D m_Contact15
-private ContactPoint2D m_Contact16
-private ContactPoint2D m_Contact17
-private ContactPoint2D m_Contact18
-private ContactPoint2D m_Contact19
-private ContactPoint2D m_Contact20
-private ContactPoint2D m_Contact21
-private ContactPoint2D m_Contact22
-private ContactPoint2D m_Contact23
-private ContactPoint2D m_Contact24
-private ContactPoint2D m_Contact25
-private ContactPoint2D m_Contact26
-private ContactPoint2D m_Contact27
-private ContactPoint2D m_Contact28
-private ContactPoint2D m_Contact29
-private ContactPoint2D m_Contact30
-private ContactPoint2D m_Contact31
-private ContactPoint2D m_Contact32
-private ContactPoint2D m_Contact33
-private ContactPoint2D m_Contact34
-private ContactPoint2D m_Contact35
-private ContactPoint2D m_Contact36
-private ContactPoint2D m_Contact37
-private ContactPoint2D m_Contact38
-private ContactPoint2D m_Contact39
-private ContactPoint2D m_Contact40
-private ContactPoint2D m_Contact41
-private ContactPoint2D m_Contact42
-private ContactPoint2D m_Contact43
-private ContactPoint2D m_Contact44
-private ContactPoint2D m_Contact45
-private ContactPoint2D m_Contact46
-private ContactPoint2D m_Contact47
-private ContactPoint2D m_Contact48
-private ContactPoint2D m_Contact49
-private ContactPoint2D m_Contact50
-private ContactPoint2D m_Contact51
-private ContactPoint2D m_Contact52
-private ContactPoint2D m_Contact53
-private ContactPoint2D m_Contact54
-private ContactPoint2D m_Contact55
-private ContactPoint2D m_Contact56
-private ContactPoint2D m_Contact57
-private ContactPoint2D m_Contact58
-private ContactPoint2D m_Contact59
-private ContactPoint2D m_Contact60
-private ContactPoint2D m_Contact61
-private ContactPoint2D m_Contact62
-private ContactPoint2D m_Contact63
-public ContactPoint2D Item
-public ContactPoint2D get_Item(int i)
-}
 public UnityEngine.CapsuleCollider2D : Collider2D {
 public Vector2 size
 public CapsuleDirection2D direction
@@ -270,8 +202,8 @@ internal int m_OtherRigidbody
 internal Vector2 m_RelativeVelocity
 internal int m_Enabled
 internal int m_ContactCount
-internal CachedContactPoints2D m_CachedContactPoints
-internal ContactPoint2D[] m_LegacyContactArray
+internal ContactPoint2D[] m_RecycledContacts
+internal ContactPoint2D[] m_LegacyContacts
 public Collider2D collider
 public Collider2D otherCollider
 public Rigidbody2D rigidbody
@@ -281,6 +213,8 @@ public GameObject gameObject
 public Vector2 relativeVelocity
 public bool enabled
 public ContactPoint2D[] contacts
+public int contactCount
+private ContactPoint2D[] GetContacts_Internal()
 public Collider2D get_collider()
 public Collider2D get_otherCollider()
 public Rigidbody2D get_rigidbody()
@@ -290,6 +224,8 @@ public GameObject get_gameObject()
 public Vector2 get_relativeVelocity()
 public bool get_enabled()
 public ContactPoint2D[] get_contacts()
+public int get_contactCount()
+public ContactPoint2D GetContact(int index)
 public int GetContacts(ContactPoint2D[] contacts)
 }
 public UnityEngine.CollisionDetectionMode2D : Enum {
@@ -580,12 +516,14 @@ public int IgnoreRaycastLayer
 public int DefaultRaycastLayers
 public int AllLayers
 private List`1<Rigidbody2D> m_LastDisabledRigidbody2D
+public PhysicsScene2D defaultPhysicsScene
 public int velocityIterations
 public int positionIterations
 public Vector2 gravity
 public bool queriesHitTriggers
 public bool queriesStartInColliders
 public bool callbacksOnDisable
+public bool reuseCollisionCallbacks
 public bool autoSyncTransforms
 public bool autoSimulation
 public PhysicsJobOptions2D jobOptions
@@ -609,6 +547,7 @@ public Color colliderAwakeColor
 public Color colliderAsleepColor
 public Color colliderContactColor
 public Color colliderAABBColor
+public PhysicsScene2D get_defaultPhysicsScene()
 public int get_velocityIterations()
 public void set_velocityIterations(int value)
 public int get_positionIterations()
@@ -621,6 +560,8 @@ public bool get_queriesStartInColliders()
 public void set_queriesStartInColliders(bool value)
 public bool get_callbacksOnDisable()
 public void set_callbacksOnDisable(bool value)
+public bool get_reuseCollisionCallbacks()
+public void set_reuseCollisionCallbacks(bool value)
 public bool get_autoSyncTransforms()
 public void set_autoSyncTransforms(bool value)
 public bool get_autoSimulation()
@@ -668,6 +609,7 @@ public void set_colliderContactColor(Color value)
 public Color get_colliderAABBColor()
 public void set_colliderAABBColor(Color value)
 public bool Simulate(float step)
+internal bool Simulate_Internal(PhysicsScene2D physicsScene, float step)
 public void SyncTransforms()
 public void IgnoreCollision(Collider2D collider1, Collider2D collider2)
 public void IgnoreCollision(Collider2D collider1, Collider2D collider2, bool ignore)
@@ -699,13 +641,11 @@ public RaycastHit2D[] LinecastAll(Vector2 start, Vector2 end)
 public RaycastHit2D[] LinecastAll(Vector2 start, Vector2 end, int layerMask)
 public RaycastHit2D[] LinecastAll(Vector2 start, Vector2 end, int layerMask, float minDepth)
 public RaycastHit2D[] LinecastAll(Vector2 start, Vector2 end, int layerMask, float minDepth, float maxDepth)
+private RaycastHit2D[] LinecastAll_Internal(PhysicsScene2D physicsScene, Vector2 start, Vector2 end, ContactFilter2D contactFilter)
 public int LinecastNonAlloc(Vector2 start, Vector2 end, RaycastHit2D[] results)
 public int LinecastNonAlloc(Vector2 start, Vector2 end, RaycastHit2D[] results, int layerMask)
 public int LinecastNonAlloc(Vector2 start, Vector2 end, RaycastHit2D[] results, int layerMask, float minDepth)
 public int LinecastNonAlloc(Vector2 start, Vector2 end, RaycastHit2D[] results, int layerMask, float minDepth, float maxDepth)
-private RaycastHit2D Linecast_Internal(Vector2 start, Vector2 end, ContactFilter2D contactFilter)
-private RaycastHit2D[] LinecastAll_Internal(Vector2 start, Vector2 end, ContactFilter2D contactFilter)
-private int LinecastNonAlloc_Internal(Vector2 start, Vector2 end, ContactFilter2D contactFilter, RaycastHit2D[] results)
 public RaycastHit2D Raycast(Vector2 origin, Vector2 direction)
 public RaycastHit2D Raycast(Vector2 origin, Vector2 direction, float distance)
 public RaycastHit2D Raycast(Vector2 origin, Vector2 direction, float distance, int layerMask)
@@ -713,19 +653,17 @@ public RaycastHit2D Raycast(Vector2 origin, Vector2 direction, float distance, i
 public RaycastHit2D Raycast(Vector2 origin, Vector2 direction, float distance, int layerMask, float minDepth, float maxDepth)
 public int Raycast(Vector2 origin, Vector2 direction, ContactFilter2D contactFilter, RaycastHit2D[] results)
 public int Raycast(Vector2 origin, Vector2 direction, ContactFilter2D contactFilter, RaycastHit2D[] results, float distance)
-public RaycastHit2D[] RaycastAll(Vector2 origin, Vector2 direction)
-public RaycastHit2D[] RaycastAll(Vector2 origin, Vector2 direction, float distance)
-public RaycastHit2D[] RaycastAll(Vector2 origin, Vector2 direction, float distance, int layerMask)
-public RaycastHit2D[] RaycastAll(Vector2 origin, Vector2 direction, float distance, int layerMask, float minDepth)
-public RaycastHit2D[] RaycastAll(Vector2 origin, Vector2 direction, float distance, int layerMask, float minDepth, float maxDepth)
 public int RaycastNonAlloc(Vector2 origin, Vector2 direction, RaycastHit2D[] results)
 public int RaycastNonAlloc(Vector2 origin, Vector2 direction, RaycastHit2D[] results, float distance)
 public int RaycastNonAlloc(Vector2 origin, Vector2 direction, RaycastHit2D[] results, float distance, int layerMask)
 public int RaycastNonAlloc(Vector2 origin, Vector2 direction, RaycastHit2D[] results, float distance, int layerMask, float minDepth)
 public int RaycastNonAlloc(Vector2 origin, Vector2 direction, RaycastHit2D[] results, float distance, int layerMask, float minDepth, float maxDepth)
-private RaycastHit2D Raycast_Internal(Vector2 origin, Vector2 direction, float distance, ContactFilter2D contactFilter)
-private RaycastHit2D[] RaycastAll_Internal(Vector2 origin, Vector2 direction, float distance, ContactFilter2D contactFilter)
-private int RaycastNonAlloc_Internal(Vector2 origin, Vector2 direction, float distance, ContactFilter2D contactFilter, RaycastHit2D[] results)
+public RaycastHit2D[] RaycastAll(Vector2 origin, Vector2 direction)
+public RaycastHit2D[] RaycastAll(Vector2 origin, Vector2 direction, float distance)
+public RaycastHit2D[] RaycastAll(Vector2 origin, Vector2 direction, float distance, int layerMask)
+public RaycastHit2D[] RaycastAll(Vector2 origin, Vector2 direction, float distance, int layerMask, float minDepth)
+public RaycastHit2D[] RaycastAll(Vector2 origin, Vector2 direction, float distance, int layerMask, float minDepth, float maxDepth)
+private RaycastHit2D[] RaycastAll_Internal(PhysicsScene2D physicsScene, Vector2 origin, Vector2 direction, float distance, ContactFilter2D contactFilter)
 public RaycastHit2D CircleCast(Vector2 origin, float radius, Vector2 direction)
 public RaycastHit2D CircleCast(Vector2 origin, float radius, Vector2 direction, float distance)
 public RaycastHit2D CircleCast(Vector2 origin, float radius, Vector2 direction, float distance, int layerMask)
@@ -738,14 +676,12 @@ public RaycastHit2D[] CircleCastAll(Vector2 origin, float radius, Vector2 direct
 public RaycastHit2D[] CircleCastAll(Vector2 origin, float radius, Vector2 direction, float distance, int layerMask)
 public RaycastHit2D[] CircleCastAll(Vector2 origin, float radius, Vector2 direction, float distance, int layerMask, float minDepth)
 public RaycastHit2D[] CircleCastAll(Vector2 origin, float radius, Vector2 direction, float distance, int layerMask, float minDepth, float maxDepth)
+private RaycastHit2D[] CircleCastAll_Internal(PhysicsScene2D physicsScene, Vector2 origin, float radius, Vector2 direction, float distance, ContactFilter2D contactFilter)
 public int CircleCastNonAlloc(Vector2 origin, float radius, Vector2 direction, RaycastHit2D[] results)
 public int CircleCastNonAlloc(Vector2 origin, float radius, Vector2 direction, RaycastHit2D[] results, float distance)
 public int CircleCastNonAlloc(Vector2 origin, float radius, Vector2 direction, RaycastHit2D[] results, float distance, int layerMask)
 public int CircleCastNonAlloc(Vector2 origin, float radius, Vector2 direction, RaycastHit2D[] results, float distance, int layerMask, float minDepth)
 public int CircleCastNonAlloc(Vector2 origin, float radius, Vector2 direction, RaycastHit2D[] results, float distance, int layerMask, float minDepth, float maxDepth)
-private RaycastHit2D CircleCast_Internal(Vector2 origin, float radius, Vector2 direction, float distance, ContactFilter2D contactFilter)
-private RaycastHit2D[] CircleCastAll_Internal(Vector2 origin, float radius, Vector2 direction, float distance, ContactFilter2D contactFilter)
-private int CircleCastNonAlloc_Internal(Vector2 origin, float radius, Vector2 direction, float distance, ContactFilter2D contactFilter, RaycastHit2D[] results)
 public RaycastHit2D BoxCast(Vector2 origin, Vector2 size, float angle, Vector2 direction)
 public RaycastHit2D BoxCast(Vector2 origin, Vector2 size, float angle, Vector2 direction, float distance)
 public RaycastHit2D BoxCast(Vector2 origin, Vector2 size, float angle, Vector2 direction, float distance, int layerMask)
@@ -758,14 +694,12 @@ public RaycastHit2D[] BoxCastAll(Vector2 origin, Vector2 size, float angle, Vect
 public RaycastHit2D[] BoxCastAll(Vector2 origin, Vector2 size, float angle, Vector2 direction, float distance, int layerMask)
 public RaycastHit2D[] BoxCastAll(Vector2 origin, Vector2 size, float angle, Vector2 direction, float distance, int layerMask, float minDepth)
 public RaycastHit2D[] BoxCastAll(Vector2 origin, Vector2 size, float angle, Vector2 direction, float distance, int layerMask, float minDepth, float maxDepth)
+private RaycastHit2D[] BoxCastAll_Internal(PhysicsScene2D physicsScene, Vector2 origin, Vector2 size, float angle, Vector2 direction, float distance, ContactFilter2D contactFilter)
 public int BoxCastNonAlloc(Vector2 origin, Vector2 size, float angle, Vector2 direction, RaycastHit2D[] results)
 public int BoxCastNonAlloc(Vector2 origin, Vector2 size, float angle, Vector2 direction, RaycastHit2D[] results, float distance)
 public int BoxCastNonAlloc(Vector2 origin, Vector2 size, float angle, Vector2 direction, RaycastHit2D[] results, float distance, int layerMask)
 public int BoxCastNonAlloc(Vector2 origin, Vector2 size, float angle, Vector2 direction, RaycastHit2D[] results, float distance, int layerMask, float minDepth)
 public int BoxCastNonAlloc(Vector2 origin, Vector2 size, float angle, Vector2 direction, RaycastHit2D[] results, float distance, int layerMask, float minDepth, float maxDepth)
-private RaycastHit2D BoxCast_Internal(Vector2 origin, Vector2 size, float angle, Vector2 direction, float distance, ContactFilter2D contactFilter)
-private RaycastHit2D[] BoxCastAll_Internal(Vector2 origin, Vector2 size, float angle, Vector2 direction, float distance, ContactFilter2D contactFilter)
-private int BoxCastNonAlloc_Internal(Vector2 origin, Vector2 size, float angle, Vector2 direction, float distance, ContactFilter2D contactFilter, RaycastHit2D[] results)
 public RaycastHit2D CapsuleCast(Vector2 origin, Vector2 size, CapsuleDirection2D capsuleDirection, float angle, Vector2 direction)
 public RaycastHit2D CapsuleCast(Vector2 origin, Vector2 size, CapsuleDirection2D capsuleDirection, float angle, Vector2 direction, float distance)
 public RaycastHit2D CapsuleCast(Vector2 origin, Vector2 size, CapsuleDirection2D capsuleDirection, float angle, Vector2 direction, float distance, int layerMask)
@@ -775,6 +709,7 @@ public int CapsuleCast(Vector2 origin, Vector2 size, CapsuleDirection2D capsuleD
 public int CapsuleCast(Vector2 origin, Vector2 size, CapsuleDirection2D capsuleDirection, float angle, Vector2 direction, ContactFilter2D contactFilter, RaycastHit2D[] results, float distance)
 public RaycastHit2D[] CapsuleCastAll(Vector2 origin, Vector2 size, CapsuleDirection2D capsuleDirection, float angle, Vector2 direction)
 public RaycastHit2D[] CapsuleCastAll(Vector2 origin, Vector2 size, CapsuleDirection2D capsuleDirection, float angle, Vector2 direction, float distance)
+private RaycastHit2D[] CapsuleCastAll_Internal(PhysicsScene2D physicsScene, Vector2 origin, Vector2 size, CapsuleDirection2D capsuleDirection, float angle, Vector2 direction, float distance, ContactFilter2D contactFilter)
 public RaycastHit2D[] CapsuleCastAll(Vector2 origin, Vector2 size, CapsuleDirection2D capsuleDirection, float angle, Vector2 direction, float distance, int layerMask)
 public RaycastHit2D[] CapsuleCastAll(Vector2 origin, Vector2 size, CapsuleDirection2D capsuleDirection, float angle, Vector2 direction, float distance, int layerMask, float minDepth)
 public RaycastHit2D[] CapsuleCastAll(Vector2 origin, Vector2 size, CapsuleDirection2D capsuleDirection, float angle, Vector2 direction, float distance, int layerMask, float minDepth, float maxDepth)
@@ -783,21 +718,16 @@ public int CapsuleCastNonAlloc(Vector2 origin, Vector2 size, CapsuleDirection2D 
 public int CapsuleCastNonAlloc(Vector2 origin, Vector2 size, CapsuleDirection2D capsuleDirection, float angle, Vector2 direction, RaycastHit2D[] results, float distance, int layerMask)
 public int CapsuleCastNonAlloc(Vector2 origin, Vector2 size, CapsuleDirection2D capsuleDirection, float angle, Vector2 direction, RaycastHit2D[] results, float distance, int layerMask, float minDepth)
 public int CapsuleCastNonAlloc(Vector2 origin, Vector2 size, CapsuleDirection2D capsuleDirection, float angle, Vector2 direction, RaycastHit2D[] results, float distance, int layerMask, float minDepth, float maxDepth)
-private RaycastHit2D CapsuleCast_Internal(Vector2 origin, Vector2 size, CapsuleDirection2D capsuleDirection, float angle, Vector2 direction, float distance, ContactFilter2D contactFilter)
-private RaycastHit2D[] CapsuleCastAll_Internal(Vector2 origin, Vector2 size, CapsuleDirection2D capsuleDirection, float angle, Vector2 direction, float distance, ContactFilter2D contactFilter)
-private int CapsuleCastNonAlloc_Internal(Vector2 origin, Vector2 size, CapsuleDirection2D capsuleDirection, float angle, Vector2 direction, float distance, ContactFilter2D contactFilter, RaycastHit2D[] results)
 public RaycastHit2D GetRayIntersection(Ray ray)
 public RaycastHit2D GetRayIntersection(Ray ray, float distance)
 public RaycastHit2D GetRayIntersection(Ray ray, float distance, int layerMask)
 public RaycastHit2D[] GetRayIntersectionAll(Ray ray)
 public RaycastHit2D[] GetRayIntersectionAll(Ray ray, float distance)
 public RaycastHit2D[] GetRayIntersectionAll(Ray ray, float distance, int layerMask)
+private RaycastHit2D[] GetRayIntersectionAll_Internal(PhysicsScene2D physicsScene, Vector3 origin, Vector3 direction, float distance, int layerMask)
 public int GetRayIntersectionNonAlloc(Ray ray, RaycastHit2D[] results)
 public int GetRayIntersectionNonAlloc(Ray ray, RaycastHit2D[] results, float distance)
 public int GetRayIntersectionNonAlloc(Ray ray, RaycastHit2D[] results, float distance, int layerMask)
-private RaycastHit2D GetRayIntersection_Internal(Vector3 origin, Vector3 direction, float distance, int layerMask)
-private RaycastHit2D[] GetRayIntersectionAll_Internal(Vector3 origin, Vector3 direction, float distance, int layerMask)
-private int GetRayIntersectionNonAlloc_Internal(Vector3 origin, Vector3 direction, float distance, int layerMask, RaycastHit2D[] results)
 public Collider2D OverlapPoint(Vector2 point)
 public Collider2D OverlapPoint(Vector2 point, int layerMask)
 public Collider2D OverlapPoint(Vector2 point, int layerMask, float minDepth)
@@ -807,13 +737,11 @@ public Collider2D[] OverlapPointAll(Vector2 point)
 public Collider2D[] OverlapPointAll(Vector2 point, int layerMask)
 public Collider2D[] OverlapPointAll(Vector2 point, int layerMask, float minDepth)
 public Collider2D[] OverlapPointAll(Vector2 point, int layerMask, float minDepth, float maxDepth)
+private Collider2D[] OverlapPointAll_Internal(PhysicsScene2D physicsScene, Vector2 point, ContactFilter2D contactFilter)
 public int OverlapPointNonAlloc(Vector2 point, Collider2D[] results)
 public int OverlapPointNonAlloc(Vector2 point, Collider2D[] results, int layerMask)
 public int OverlapPointNonAlloc(Vector2 point, Collider2D[] results, int layerMask, float minDepth)
 public int OverlapPointNonAlloc(Vector2 point, Collider2D[] results, int layerMask, float minDepth, float maxDepth)
-private Collider2D OverlapPoint_Internal(Vector2 point, ContactFilter2D contactFilter)
-private Collider2D[] OverlapPointAll_Internal(Vector2 point, ContactFilter2D contactFilter)
-private int OverlapPointNonAlloc_Internal(Vector2 point, ContactFilter2D contactFilter, Collider2D[] results)
 public Collider2D OverlapCircle(Vector2 point, float radius)
 public Collider2D OverlapCircle(Vector2 point, float radius, int layerMask)
 public Collider2D OverlapCircle(Vector2 point, float radius, int layerMask, float minDepth)
@@ -823,13 +751,11 @@ public Collider2D[] OverlapCircleAll(Vector2 point, float radius)
 public Collider2D[] OverlapCircleAll(Vector2 point, float radius, int layerMask)
 public Collider2D[] OverlapCircleAll(Vector2 point, float radius, int layerMask, float minDepth)
 public Collider2D[] OverlapCircleAll(Vector2 point, float radius, int layerMask, float minDepth, float maxDepth)
+private Collider2D[] OverlapCircleAll_Internal(PhysicsScene2D physicsScene, Vector2 point, float radius, ContactFilter2D contactFilter)
 public int OverlapCircleNonAlloc(Vector2 point, float radius, Collider2D[] results)
 public int OverlapCircleNonAlloc(Vector2 point, float radius, Collider2D[] results, int layerMask)
 public int OverlapCircleNonAlloc(Vector2 point, float radius, Collider2D[] results, int layerMask, float minDepth)
 public int OverlapCircleNonAlloc(Vector2 point, float radius, Collider2D[] results, int layerMask, float minDepth, float maxDepth)
-private Collider2D OverlapCircle_Internal(Vector2 point, float radius, ContactFilter2D contactFilter)
-private Collider2D[] OverlapCircleAll_Internal(Vector2 point, float radius, ContactFilter2D contactFilter)
-private int OverlapCircleNonAlloc_Internal(Vector2 point, float radius, ContactFilter2D contactFilter, Collider2D[] results)
 public Collider2D OverlapBox(Vector2 point, Vector2 size, float angle)
 public Collider2D OverlapBox(Vector2 point, Vector2 size, float angle, int layerMask)
 public Collider2D OverlapBox(Vector2 point, Vector2 size, float angle, int layerMask, float minDepth)
@@ -839,18 +765,15 @@ public Collider2D[] OverlapBoxAll(Vector2 point, Vector2 size, float angle)
 public Collider2D[] OverlapBoxAll(Vector2 point, Vector2 size, float angle, int layerMask)
 public Collider2D[] OverlapBoxAll(Vector2 point, Vector2 size, float angle, int layerMask, float minDepth)
 public Collider2D[] OverlapBoxAll(Vector2 point, Vector2 size, float angle, int layerMask, float minDepth, float maxDepth)
+private Collider2D[] OverlapBoxAll_Internal(PhysicsScene2D physicsScene, Vector2 point, Vector2 size, float angle, ContactFilter2D contactFilter)
 public int OverlapBoxNonAlloc(Vector2 point, Vector2 size, float angle, Collider2D[] results)
 public int OverlapBoxNonAlloc(Vector2 point, Vector2 size, float angle, Collider2D[] results, int layerMask)
 public int OverlapBoxNonAlloc(Vector2 point, Vector2 size, float angle, Collider2D[] results, int layerMask, float minDepth)
 public int OverlapBoxNonAlloc(Vector2 point, Vector2 size, float angle, Collider2D[] results, int layerMask, float minDepth, float maxDepth)
-private Collider2D OverlapBox_Internal(Vector2 point, Vector2 size, float angle, ContactFilter2D contactFilter)
-private Collider2D[] OverlapBoxAll_Internal(Vector2 point, Vector2 size, float angle, ContactFilter2D contactFilter)
-private int OverlapBoxNonAlloc_Internal(Vector2 point, Vector2 size, float angle, ContactFilter2D contactFilter, Collider2D[] results)
 public Collider2D OverlapArea(Vector2 pointA, Vector2 pointB)
 public Collider2D OverlapArea(Vector2 pointA, Vector2 pointB, int layerMask)
 public Collider2D OverlapArea(Vector2 pointA, Vector2 pointB, int layerMask, float minDepth)
 public Collider2D OverlapArea(Vector2 pointA, Vector2 pointB, int layerMask, float minDepth, float maxDepth)
-private Collider2D OverlapAreaToBox_Internal(Vector2 pointA, Vector2 pointB, int layerMask, float minDepth, float maxDepth)
 public int OverlapArea(Vector2 pointA, Vector2 pointB, ContactFilter2D contactFilter, Collider2D[] results)
 public Collider2D[] OverlapAreaAll(Vector2 pointA, Vector2 pointB)
 public Collider2D[] OverlapAreaAll(Vector2 pointA, Vector2 pointB, int layerMask)
@@ -861,7 +784,6 @@ public int OverlapAreaNonAlloc(Vector2 pointA, Vector2 pointB, Collider2D[] resu
 public int OverlapAreaNonAlloc(Vector2 pointA, Vector2 pointB, Collider2D[] results, int layerMask)
 public int OverlapAreaNonAlloc(Vector2 pointA, Vector2 pointB, Collider2D[] results, int layerMask, float minDepth)
 public int OverlapAreaNonAlloc(Vector2 pointA, Vector2 pointB, Collider2D[] results, int layerMask, float minDepth, float maxDepth)
-private int OverlapAreaNonAllocToBox_Internal(Vector2 pointA, Vector2 pointB, Collider2D[] results, int layerMask, float minDepth, float maxDepth)
 public Collider2D OverlapCapsule(Vector2 point, Vector2 size, CapsuleDirection2D direction, float angle)
 public Collider2D OverlapCapsule(Vector2 point, Vector2 size, CapsuleDirection2D direction, float angle, int layerMask)
 public Collider2D OverlapCapsule(Vector2 point, Vector2 size, CapsuleDirection2D direction, float angle, int layerMask, float minDepth)
@@ -871,13 +793,11 @@ public Collider2D[] OverlapCapsuleAll(Vector2 point, Vector2 size, CapsuleDirect
 public Collider2D[] OverlapCapsuleAll(Vector2 point, Vector2 size, CapsuleDirection2D direction, float angle, int layerMask)
 public Collider2D[] OverlapCapsuleAll(Vector2 point, Vector2 size, CapsuleDirection2D direction, float angle, int layerMask, float minDepth)
 public Collider2D[] OverlapCapsuleAll(Vector2 point, Vector2 size, CapsuleDirection2D direction, float angle, int layerMask, float minDepth, float maxDepth)
+private Collider2D[] OverlapCapsuleAll_Internal(PhysicsScene2D physicsScene, Vector2 point, Vector2 size, CapsuleDirection2D direction, float angle, ContactFilter2D contactFilter)
 public int OverlapCapsuleNonAlloc(Vector2 point, Vector2 size, CapsuleDirection2D direction, float angle, Collider2D[] results)
 public int OverlapCapsuleNonAlloc(Vector2 point, Vector2 size, CapsuleDirection2D direction, float angle, Collider2D[] results, int layerMask)
 public int OverlapCapsuleNonAlloc(Vector2 point, Vector2 size, CapsuleDirection2D direction, float angle, Collider2D[] results, int layerMask, float minDepth)
 public int OverlapCapsuleNonAlloc(Vector2 point, Vector2 size, CapsuleDirection2D direction, float angle, Collider2D[] results, int layerMask, float minDepth, float maxDepth)
-private Collider2D OverlapCapsule_Internal(Vector2 point, Vector2 size, CapsuleDirection2D direction, float angle, ContactFilter2D contactFilter)
-private Collider2D[] OverlapCapsuleAll_Internal(Vector2 point, Vector2 size, CapsuleDirection2D direction, float angle, ContactFilter2D contactFilter)
-private int OverlapCapsuleNonAlloc_Internal(Vector2 point, Vector2 size, CapsuleDirection2D direction, float angle, ContactFilter2D contactFilter, Collider2D[] results)
 public int OverlapCollider(Collider2D collider, ContactFilter2D contactFilter, Collider2D[] results)
 public int GetContacts(Collider2D collider1, Collider2D collider2, ContactFilter2D contactFilter, ContactPoint2D[] contacts)
 public int GetContacts(Collider2D collider, ContactPoint2D[] contacts)
@@ -894,6 +814,7 @@ private int GetRigidbodyContacts(Rigidbody2D rigidbody, ContactFilter2D contactF
 private int GetColliderContactsCollidersOnly(Collider2D collider, ContactFilter2D contactFilter, Collider2D[] results)
 private int GetRigidbodyContactsCollidersOnly(Rigidbody2D rigidbody, ContactFilter2D contactFilter, Collider2D[] results)
 internal void SetEditorDragMovement(bool dragging, GameObject[] objs)
+private void get_defaultPhysicsScene_Injected(PhysicsScene2D& ret)
 private void get_gravity_Injected(Vector2& ret)
 private void set_gravity_Injected(Vector2& value)
 private void get_jobOptions_Injected(PhysicsJobOptions2D& ret)
@@ -906,40 +827,20 @@ private void get_colliderContactColor_Injected(Color& ret)
 private void set_colliderContactColor_Injected(Color& value)
 private void get_colliderAABBColor_Injected(Color& ret)
 private void set_colliderAABBColor_Injected(Color& value)
+private bool Simulate_Internal_Injected(PhysicsScene2D& physicsScene, float step)
 private bool IsTouching_TwoCollidersWithFilter_Injected(Collider2D collider1, Collider2D collider2, ContactFilter2D& contactFilter)
 private bool IsTouching_SingleColliderWithFilter_Injected(Collider2D collider, ContactFilter2D& contactFilter)
 private void Distance_Internal_Injected(Collider2D colliderA, Collider2D colliderB, ColliderDistance2D& ret)
-private void Linecast_Internal_Injected(Vector2& start, Vector2& end, ContactFilter2D& contactFilter, RaycastHit2D& ret)
-private RaycastHit2D[] LinecastAll_Internal_Injected(Vector2& start, Vector2& end, ContactFilter2D& contactFilter)
-private int LinecastNonAlloc_Internal_Injected(Vector2& start, Vector2& end, ContactFilter2D& contactFilter, RaycastHit2D[] results)
-private void Raycast_Internal_Injected(Vector2& origin, Vector2& direction, float distance, ContactFilter2D& contactFilter, RaycastHit2D& ret)
-private RaycastHit2D[] RaycastAll_Internal_Injected(Vector2& origin, Vector2& direction, float distance, ContactFilter2D& contactFilter)
-private int RaycastNonAlloc_Internal_Injected(Vector2& origin, Vector2& direction, float distance, ContactFilter2D& contactFilter, RaycastHit2D[] results)
-private void CircleCast_Internal_Injected(Vector2& origin, float radius, Vector2& direction, float distance, ContactFilter2D& contactFilter, RaycastHit2D& ret)
-private RaycastHit2D[] CircleCastAll_Internal_Injected(Vector2& origin, float radius, Vector2& direction, float distance, ContactFilter2D& contactFilter)
-private int CircleCastNonAlloc_Internal_Injected(Vector2& origin, float radius, Vector2& direction, float distance, ContactFilter2D& contactFilter, RaycastHit2D[] results)
-private void BoxCast_Internal_Injected(Vector2& origin, Vector2& size, float angle, Vector2& direction, float distance, ContactFilter2D& contactFilter, RaycastHit2D& ret)
-private RaycastHit2D[] BoxCastAll_Internal_Injected(Vector2& origin, Vector2& size, float angle, Vector2& direction, float distance, ContactFilter2D& contactFilter)
-private int BoxCastNonAlloc_Internal_Injected(Vector2& origin, Vector2& size, float angle, Vector2& direction, float distance, ContactFilter2D& contactFilter, RaycastHit2D[] results)
-private void CapsuleCast_Internal_Injected(Vector2& origin, Vector2& size, CapsuleDirection2D capsuleDirection, float angle, Vector2& direction, float distance, ContactFilter2D& contactFilter, RaycastHit2D& ret)
-private RaycastHit2D[] CapsuleCastAll_Internal_Injected(Vector2& origin, Vector2& size, CapsuleDirection2D capsuleDirection, float angle, Vector2& direction, float distance, ContactFilter2D& contactFilter)
-private int CapsuleCastNonAlloc_Internal_Injected(Vector2& origin, Vector2& size, CapsuleDirection2D capsuleDirection, float angle, Vector2& direction, float distance, ContactFilter2D& contactFilter, RaycastHit2D[] results)
-private void GetRayIntersection_Internal_Injected(Vector3& origin, Vector3& direction, float distance, int layerMask, RaycastHit2D& ret)
-private RaycastHit2D[] GetRayIntersectionAll_Internal_Injected(Vector3& origin, Vector3& direction, float distance, int layerMask)
-private int GetRayIntersectionNonAlloc_Internal_Injected(Vector3& origin, Vector3& direction, float distance, int layerMask, RaycastHit2D[] results)
-private Collider2D OverlapPoint_Internal_Injected(Vector2& point, ContactFilter2D& contactFilter)
-private Collider2D[] OverlapPointAll_Internal_Injected(Vector2& point, ContactFilter2D& contactFilter)
-private int OverlapPointNonAlloc_Internal_Injected(Vector2& point, ContactFilter2D& contactFilter, Collider2D[] results)
-private Collider2D OverlapCircle_Internal_Injected(Vector2& point, float radius, ContactFilter2D& contactFilter)
-private Collider2D[] OverlapCircleAll_Internal_Injected(Vector2& point, float radius, ContactFilter2D& contactFilter)
-private int OverlapCircleNonAlloc_Internal_Injected(Vector2& point, float radius, ContactFilter2D& contactFilter, Collider2D[] results)
-private Collider2D OverlapBox_Internal_Injected(Vector2& point, Vector2& size, float angle, ContactFilter2D& contactFilter)
-private Collider2D[] OverlapBoxAll_Internal_Injected(Vector2& point, Vector2& size, float angle, ContactFilter2D& contactFilter)
-private int OverlapBoxNonAlloc_Internal_Injected(Vector2& point, Vector2& size, float angle, ContactFilter2D& contactFilter, Collider2D[] results)
-private Collider2D OverlapCapsule_Internal_Injected(Vector2& point, Vector2& size, CapsuleDirection2D direction, float angle, ContactFilter2D& contactFilter)
-private Collider2D[] OverlapCapsuleAll_Internal_Injected(Vector2& point, Vector2& size, CapsuleDirection2D direction, float angle, ContactFilter2D& contactFilter)
-private int OverlapCapsuleNonAlloc_Internal_Injected(Vector2& point, Vector2& size, CapsuleDirection2D direction, float angle, ContactFilter2D& contactFilter, Collider2D[] results)
-private int OverlapCollider_Injected(Collider2D collider, ContactFilter2D& contactFilter, Collider2D[] results)
+private RaycastHit2D[] LinecastAll_Internal_Injected(PhysicsScene2D& physicsScene, Vector2& start, Vector2& end, ContactFilter2D& contactFilter)
+private RaycastHit2D[] RaycastAll_Internal_Injected(PhysicsScene2D& physicsScene, Vector2& origin, Vector2& direction, float distance, ContactFilter2D& contactFilter)
+private RaycastHit2D[] CircleCastAll_Internal_Injected(PhysicsScene2D& physicsScene, Vector2& origin, float radius, Vector2& direction, float distance, ContactFilter2D& contactFilter)
+private RaycastHit2D[] BoxCastAll_Internal_Injected(PhysicsScene2D& physicsScene, Vector2& origin, Vector2& size, float angle, Vector2& direction, float distance, ContactFilter2D& contactFilter)
+private RaycastHit2D[] CapsuleCastAll_Internal_Injected(PhysicsScene2D& physicsScene, Vector2& origin, Vector2& size, CapsuleDirection2D capsuleDirection, float angle, Vector2& direction, float distance, ContactFilter2D& contactFilter)
+private RaycastHit2D[] GetRayIntersectionAll_Internal_Injected(PhysicsScene2D& physicsScene, Vector3& origin, Vector3& direction, float distance, int layerMask)
+private Collider2D[] OverlapPointAll_Internal_Injected(PhysicsScene2D& physicsScene, Vector2& point, ContactFilter2D& contactFilter)
+private Collider2D[] OverlapCircleAll_Internal_Injected(PhysicsScene2D& physicsScene, Vector2& point, float radius, ContactFilter2D& contactFilter)
+private Collider2D[] OverlapBoxAll_Internal_Injected(PhysicsScene2D& physicsScene, Vector2& point, Vector2& size, float angle, ContactFilter2D& contactFilter)
+private Collider2D[] OverlapCapsuleAll_Internal_Injected(PhysicsScene2D& physicsScene, Vector2& point, Vector2& size, CapsuleDirection2D direction, float angle, ContactFilter2D& contactFilter)
 private int GetColliderContacts_Injected(Collider2D collider, ContactFilter2D& contactFilter, ContactPoint2D[] results)
 private int GetColliderColliderContacts_Injected(Collider2D collider1, Collider2D collider2, ContactFilter2D& contactFilter, ContactPoint2D[] results)
 private int GetRigidbodyContacts_Injected(Rigidbody2D rigidbody, ContactFilter2D& contactFilter, ContactPoint2D[] results)
@@ -1025,6 +926,115 @@ public float get_bounciness()
 public void set_bounciness(float value)
 public float get_friction()
 public void set_friction(float value)
+}
+public UnityEngine.PhysicsScene2D : ValueType {
+private int m_Handle
+public string ToString()
+public bool op_Equality(PhysicsScene2D lhs, PhysicsScene2D rhs)
+public bool op_Inequality(PhysicsScene2D lhs, PhysicsScene2D rhs)
+public int GetHashCode()
+public bool Equals(object other)
+public bool Equals(PhysicsScene2D other)
+public bool IsValid()
+private bool IsValid_Internal(PhysicsScene2D physicsScene)
+public bool IsEmpty()
+private bool IsEmpty_Internal(PhysicsScene2D physicsScene)
+public bool Simulate(float step)
+public RaycastHit2D Linecast(Vector2 start, Vector2 end, int layerMask)
+public RaycastHit2D Linecast(Vector2 start, Vector2 end, ContactFilter2D contactFilter)
+private RaycastHit2D Linecast_Internal(PhysicsScene2D physicsScene, Vector2 start, Vector2 end, ContactFilter2D contactFilter)
+public int Linecast(Vector2 start, Vector2 end, RaycastHit2D[] results, int layerMask)
+public int Linecast(Vector2 start, Vector2 end, ContactFilter2D contactFilter, RaycastHit2D[] results)
+private int LinecastNonAlloc_Internal(PhysicsScene2D physicsScene, Vector2 start, Vector2 end, ContactFilter2D contactFilter, RaycastHit2D[] results)
+public RaycastHit2D Raycast(Vector2 origin, Vector2 direction, float distance, int layerMask)
+public RaycastHit2D Raycast(Vector2 origin, Vector2 direction, float distance, ContactFilter2D contactFilter)
+private RaycastHit2D Raycast_Internal(PhysicsScene2D physicsScene, Vector2 origin, Vector2 direction, float distance, ContactFilter2D contactFilter)
+public int Raycast(Vector2 origin, Vector2 direction, float distance, RaycastHit2D[] results, int layerMask)
+public int Raycast(Vector2 origin, Vector2 direction, float distance, ContactFilter2D contactFilter, RaycastHit2D[] results)
+private int RaycastNonAlloc_Internal(PhysicsScene2D physicsScene, Vector2 origin, Vector2 direction, float distance, ContactFilter2D contactFilter, RaycastHit2D[] results)
+public RaycastHit2D CircleCast(Vector2 origin, float radius, Vector2 direction, float distance, int layerMask)
+public RaycastHit2D CircleCast(Vector2 origin, float radius, Vector2 direction, float distance, ContactFilter2D contactFilter)
+private RaycastHit2D CircleCast_Internal(PhysicsScene2D physicsScene, Vector2 origin, float radius, Vector2 direction, float distance, ContactFilter2D contactFilter)
+public int CircleCast(Vector2 origin, float radius, Vector2 direction, float distance, RaycastHit2D[] results, int layerMask)
+public int CircleCast(Vector2 origin, float radius, Vector2 direction, float distance, ContactFilter2D contactFilter, RaycastHit2D[] results)
+private int CircleCastNonAlloc_Internal(PhysicsScene2D physicsScene, Vector2 origin, float radius, Vector2 direction, float distance, ContactFilter2D contactFilter, RaycastHit2D[] results)
+public RaycastHit2D BoxCast(Vector2 origin, Vector2 size, float angle, Vector2 direction, float distance, int layerMask)
+public RaycastHit2D BoxCast(Vector2 origin, Vector2 size, float angle, Vector2 direction, float distance, ContactFilter2D contactFilter)
+private RaycastHit2D BoxCast_Internal(PhysicsScene2D physicsScene, Vector2 origin, Vector2 size, float angle, Vector2 direction, float distance, ContactFilter2D contactFilter)
+public int BoxCast(Vector2 origin, Vector2 size, float angle, Vector2 direction, float distance, RaycastHit2D[] results, int layerMask)
+public int BoxCast(Vector2 origin, Vector2 size, float angle, Vector2 direction, float distance, ContactFilter2D contactFilter, RaycastHit2D[] results)
+private int BoxCastNonAlloc_Internal(PhysicsScene2D physicsScene, Vector2 origin, Vector2 size, float angle, Vector2 direction, float distance, ContactFilter2D contactFilter, RaycastHit2D[] results)
+public RaycastHit2D CapsuleCast(Vector2 origin, Vector2 size, CapsuleDirection2D capsuleDirection, float angle, Vector2 direction, float distance, int layerMask)
+public RaycastHit2D CapsuleCast(Vector2 origin, Vector2 size, CapsuleDirection2D capsuleDirection, float angle, Vector2 direction, float distance, ContactFilter2D contactFilter)
+private RaycastHit2D CapsuleCast_Internal(PhysicsScene2D physicsScene, Vector2 origin, Vector2 size, CapsuleDirection2D capsuleDirection, float angle, Vector2 direction, float distance, ContactFilter2D contactFilter)
+public int CapsuleCast(Vector2 origin, Vector2 size, CapsuleDirection2D capsuleDirection, float angle, Vector2 direction, float distance, RaycastHit2D[] results, int layerMask)
+public int CapsuleCast(Vector2 origin, Vector2 size, CapsuleDirection2D capsuleDirection, float angle, Vector2 direction, float distance, ContactFilter2D contactFilter, RaycastHit2D[] results)
+private int CapsuleCastNonAlloc_Internal(PhysicsScene2D physicsScene, Vector2 origin, Vector2 size, CapsuleDirection2D capsuleDirection, float angle, Vector2 direction, float distance, ContactFilter2D contactFilter, RaycastHit2D[] results)
+public RaycastHit2D GetRayIntersection(Ray ray, float distance, int layerMask)
+private RaycastHit2D GetRayIntersection_Internal(PhysicsScene2D physicsScene, Vector3 origin, Vector3 direction, float distance, int layerMask)
+public int GetRayIntersection(Ray ray, float distance, RaycastHit2D[] results, int layerMask)
+private int GetRayIntersectionNonAlloc_Internal(PhysicsScene2D physicsScene, Vector3 origin, Vector3 direction, float distance, int layerMask, RaycastHit2D[] results)
+public Collider2D OverlapPoint(Vector2 point, int layerMask)
+public Collider2D OverlapPoint(Vector2 point, ContactFilter2D contactFilter)
+private Collider2D OverlapPoint_Internal(PhysicsScene2D physicsScene, Vector2 point, ContactFilter2D contactFilter)
+public int OverlapPoint(Vector2 point, Collider2D[] results, int layerMask)
+public int OverlapPoint(Vector2 point, ContactFilter2D contactFilter, Collider2D[] results)
+private int OverlapPointNonAlloc_Internal(PhysicsScene2D physicsScene, Vector2 point, ContactFilter2D contactFilter, Collider2D[] results)
+public Collider2D OverlapCircle(Vector2 point, float radius, int layerMask)
+public Collider2D OverlapCircle(Vector2 point, float radius, ContactFilter2D contactFilter)
+private Collider2D OverlapCircle_Internal(PhysicsScene2D physicsScene, Vector2 point, float radius, ContactFilter2D contactFilter)
+public int OverlapCircle(Vector2 point, float radius, Collider2D[] results, int layerMask)
+public int OverlapCircle(Vector2 point, float radius, ContactFilter2D contactFilter, Collider2D[] results)
+private int OverlapCircleNonAlloc_Internal(PhysicsScene2D physicsScene, Vector2 point, float radius, ContactFilter2D contactFilter, Collider2D[] results)
+public Collider2D OverlapBox(Vector2 point, Vector2 size, float angle, int layerMask)
+public Collider2D OverlapBox(Vector2 point, Vector2 size, float angle, ContactFilter2D contactFilter)
+private Collider2D OverlapBox_Internal(PhysicsScene2D physicsScene, Vector2 point, Vector2 size, float angle, ContactFilter2D contactFilter)
+public int OverlapBox(Vector2 point, Vector2 size, float angle, Collider2D[] results, int layerMask)
+public int OverlapBox(Vector2 point, Vector2 size, float angle, ContactFilter2D contactFilter, Collider2D[] results)
+private int OverlapBoxNonAlloc_Internal(PhysicsScene2D physicsScene, Vector2 point, Vector2 size, float angle, ContactFilter2D contactFilter, Collider2D[] results)
+public Collider2D OverlapArea(Vector2 pointA, Vector2 pointB, int layerMask)
+public Collider2D OverlapArea(Vector2 pointA, Vector2 pointB, ContactFilter2D contactFilter)
+private Collider2D OverlapAreaToBox_Internal(Vector2 pointA, Vector2 pointB, ContactFilter2D contactFilter)
+public int OverlapArea(Vector2 pointA, Vector2 pointB, Collider2D[] results, int layerMask)
+public int OverlapArea(Vector2 pointA, Vector2 pointB, ContactFilter2D contactFilter, Collider2D[] results)
+private int OverlapAreaNonAllocToBox_Internal(Vector2 pointA, Vector2 pointB, ContactFilter2D contactFilter, Collider2D[] results)
+public Collider2D OverlapCapsule(Vector2 point, Vector2 size, CapsuleDirection2D direction, float angle, int layerMask)
+public Collider2D OverlapCapsule(Vector2 point, Vector2 size, CapsuleDirection2D direction, float angle, ContactFilter2D contactFilter)
+private Collider2D OverlapCapsule_Internal(PhysicsScene2D physicsScene, Vector2 point, Vector2 size, CapsuleDirection2D direction, float angle, ContactFilter2D contactFilter)
+public int OverlapCapsule(Vector2 point, Vector2 size, CapsuleDirection2D direction, float angle, Collider2D[] results, int layerMask)
+public int OverlapCapsule(Vector2 point, Vector2 size, CapsuleDirection2D direction, float angle, ContactFilter2D contactFilter, Collider2D[] results)
+private int OverlapCapsuleNonAlloc_Internal(PhysicsScene2D physicsScene, Vector2 point, Vector2 size, CapsuleDirection2D direction, float angle, ContactFilter2D contactFilter, Collider2D[] results)
+public int OverlapCollider(Collider2D collider, Collider2D[] results, int layerMask)
+public int OverlapCollider(Collider2D collider, ContactFilter2D contactFilter, Collider2D[] results)
+private int OverlapCollider_Internal(Collider2D collider, ContactFilter2D contactFilter, Collider2D[] results)
+private bool IsValid_Internal_Injected(PhysicsScene2D& physicsScene)
+private bool IsEmpty_Internal_Injected(PhysicsScene2D& physicsScene)
+private void Linecast_Internal_Injected(PhysicsScene2D& physicsScene, Vector2& start, Vector2& end, ContactFilter2D& contactFilter, RaycastHit2D& ret)
+private int LinecastNonAlloc_Internal_Injected(PhysicsScene2D& physicsScene, Vector2& start, Vector2& end, ContactFilter2D& contactFilter, RaycastHit2D[] results)
+private void Raycast_Internal_Injected(PhysicsScene2D& physicsScene, Vector2& origin, Vector2& direction, float distance, ContactFilter2D& contactFilter, RaycastHit2D& ret)
+private int RaycastNonAlloc_Internal_Injected(PhysicsScene2D& physicsScene, Vector2& origin, Vector2& direction, float distance, ContactFilter2D& contactFilter, RaycastHit2D[] results)
+private void CircleCast_Internal_Injected(PhysicsScene2D& physicsScene, Vector2& origin, float radius, Vector2& direction, float distance, ContactFilter2D& contactFilter, RaycastHit2D& ret)
+private int CircleCastNonAlloc_Internal_Injected(PhysicsScene2D& physicsScene, Vector2& origin, float radius, Vector2& direction, float distance, ContactFilter2D& contactFilter, RaycastHit2D[] results)
+private void BoxCast_Internal_Injected(PhysicsScene2D& physicsScene, Vector2& origin, Vector2& size, float angle, Vector2& direction, float distance, ContactFilter2D& contactFilter, RaycastHit2D& ret)
+private int BoxCastNonAlloc_Internal_Injected(PhysicsScene2D& physicsScene, Vector2& origin, Vector2& size, float angle, Vector2& direction, float distance, ContactFilter2D& contactFilter, RaycastHit2D[] results)
+private void CapsuleCast_Internal_Injected(PhysicsScene2D& physicsScene, Vector2& origin, Vector2& size, CapsuleDirection2D capsuleDirection, float angle, Vector2& direction, float distance, ContactFilter2D& contactFilter, RaycastHit2D& ret)
+private int CapsuleCastNonAlloc_Internal_Injected(PhysicsScene2D& physicsScene, Vector2& origin, Vector2& size, CapsuleDirection2D capsuleDirection, float angle, Vector2& direction, float distance, ContactFilter2D& contactFilter, RaycastHit2D[] results)
+private void GetRayIntersection_Internal_Injected(PhysicsScene2D& physicsScene, Vector3& origin, Vector3& direction, float distance, int layerMask, RaycastHit2D& ret)
+private int GetRayIntersectionNonAlloc_Internal_Injected(PhysicsScene2D& physicsScene, Vector3& origin, Vector3& direction, float distance, int layerMask, RaycastHit2D[] results)
+private Collider2D OverlapPoint_Internal_Injected(PhysicsScene2D& physicsScene, Vector2& point, ContactFilter2D& contactFilter)
+private int OverlapPointNonAlloc_Internal_Injected(PhysicsScene2D& physicsScene, Vector2& point, ContactFilter2D& contactFilter, Collider2D[] results)
+private Collider2D OverlapCircle_Internal_Injected(PhysicsScene2D& physicsScene, Vector2& point, float radius, ContactFilter2D& contactFilter)
+private int OverlapCircleNonAlloc_Internal_Injected(PhysicsScene2D& physicsScene, Vector2& point, float radius, ContactFilter2D& contactFilter, Collider2D[] results)
+private Collider2D OverlapBox_Internal_Injected(PhysicsScene2D& physicsScene, Vector2& point, Vector2& size, float angle, ContactFilter2D& contactFilter)
+private int OverlapBoxNonAlloc_Internal_Injected(PhysicsScene2D& physicsScene, Vector2& point, Vector2& size, float angle, ContactFilter2D& contactFilter, Collider2D[] results)
+private Collider2D OverlapCapsule_Internal_Injected(PhysicsScene2D& physicsScene, Vector2& point, Vector2& size, CapsuleDirection2D direction, float angle, ContactFilter2D& contactFilter)
+private int OverlapCapsuleNonAlloc_Internal_Injected(PhysicsScene2D& physicsScene, Vector2& point, Vector2& size, CapsuleDirection2D direction, float angle, ContactFilter2D& contactFilter, Collider2D[] results)
+private int OverlapCollider_Internal_Injected(Collider2D collider, ContactFilter2D& contactFilter, Collider2D[] results)
+}
+public UnityEngine.PhysicsSceneExtensions2D : object {
+public PhysicsScene2D GetPhysicsScene2D(Scene scene)
+private PhysicsScene2D GetPhysicsScene_Internal(Scene scene)
+private void GetPhysicsScene_Internal_Injected(Scene& scene, PhysicsScene2D& ret)
 }
 public UnityEngine.PlatformEffector2D : Effector2D {
 public bool useOneWay

@@ -2735,6 +2735,7 @@ private MonoTlsProvider defaultProvider
 private Dictionary`2<string, Tuple`2<Guid, string>> providerRegistration
 private Dictionary`2<Guid, MonoTlsProvider> providerCache
 private bool enableDebug
+internal Guid UnityTlsId
 internal Guid AppleTlsId
 internal Guid BtlsId
 internal Guid LegacyId
@@ -2919,6 +2920,102 @@ private bool CheckCertificateUsage(X509Certificate2 cert)
 private bool CheckServerIdentity(X509Certificate2 cert, string targetHost)
 private bool CheckDomainName(string subjectName, string targetHost)
 private bool Match(string hostname, string pattern)
+}
+internal Mono.Unity.CertHelper : object {
+public void AddCertificatesToNativeChain(unitytls_x509list* nativeCertificateChain, X509CertificateCollection certificates, unitytls_errorstate* errorState)
+public void AddCertificateToNativeChain(unitytls_x509list* nativeCertificateChain, X509Certificate certificate, unitytls_errorstate* errorState)
+public X509CertificateCollection NativeChainToManagedCollection(unitytls_x509list_ref nativeCertificateChain, unitytls_errorstate* errorState)
+}
+internal Mono.Unity.Debug : object {
+public void CheckAndThrow(unitytls_errorstate errorState, string context, AlertDescription defaultAlert)
+public void CheckAndThrow(unitytls_errorstate errorState, unitytls_x509verify_result verifyResult, string context, AlertDescription defaultAlert)
+}
+internal Mono.Unity.UnityTls : object {
+private unitytls_interface_struct marshalledInterface
+public bool IsSupported
+public unitytls_interface_struct NativeInterface
+private IntPtr GetUnityTlsInterface()
+public bool get_IsSupported()
+public unitytls_interface_struct get_NativeInterface()
+}
+internal Mono.Unity.UnityTlsContext : MobileTlsContext {
+private bool ActivateTracing
+private unitytls_tlsctx* tlsContext
+private unitytls_x509list* requestedClientCertChain
+private unitytls_key* requestedClientKey
+private X509Certificate localClientCertificate
+private X509Certificate remoteCertificate
+private MonoTlsConnectionInfo connectioninfo
+private bool isAuthenticated
+private bool hasContext
+private bool closedGraceful
+private Byte[] writeBuffer
+private Byte[] readBuffer
+private GCHandle handle
+private Exception lastException
+public bool HasContext
+public bool IsAuthenticated
+public MonoTlsConnectionInfo ConnectionInfo
+internal bool IsRemoteCertificateAvailable
+internal X509Certificate LocalClientCertificate
+public X509Certificate RemoteCertificate
+public TlsProtocols NegotiatedProtocol
+public void .ctor(MobileAuthenticatedStream parent, bool serverMode, string targetHost, SslProtocols enabledProtocols, X509Certificate serverCertificate, X509CertificateCollection clientCertificates, bool askForClientCert)
+private void ExtractNativeKeyAndChainFromManagedCertificate(X509Certificate cert, unitytls_errorstate* errorState, unitytls_x509list*& nativeCertChain, unitytls_key*& nativeKey)
+public bool get_HasContext()
+public bool get_IsAuthenticated()
+public MonoTlsConnectionInfo get_ConnectionInfo()
+internal bool get_IsRemoteCertificateAvailable()
+internal X509Certificate get_LocalClientCertificate()
+public X509Certificate get_RemoteCertificate()
+public TlsProtocols get_NegotiatedProtocol()
+public void Flush()
+public ValueTuple`2<int, bool> Read(Byte[] buffer, int offset, int count)
+public ValueTuple`2<int, bool> Write(Byte[] buffer, int offset, int count)
+public void Shutdown()
+protected void Dispose(bool disposing)
+public void StartHandshake()
+public bool ProcessHandshake()
+public void FinishHandshake()
+private IntPtr WriteCallback(Void* userData, Byte* data, IntPtr bufferLen, unitytls_errorstate* errorState)
+private IntPtr WriteCallback(Byte* data, IntPtr bufferLen, unitytls_errorstate* errorState)
+private IntPtr ReadCallback(Void* userData, Byte* buffer, IntPtr bufferLen, unitytls_errorstate* errorState)
+private IntPtr ReadCallback(Byte* buffer, IntPtr bufferLen, unitytls_errorstate* errorState)
+private unitytls_x509verify_result VerifyCallback(Void* userData, unitytls_x509list_ref chain, unitytls_errorstate* errorState)
+private unitytls_x509verify_result VerifyCallback(unitytls_x509list_ref chain, unitytls_errorstate* errorState)
+private void CertificateCallback(Void* userData, unitytls_tlsctx* ctx, Byte* cn, IntPtr cnLen, unitytls_x509name* caList, IntPtr caListLen, unitytls_x509list_ref* chain, unitytls_key_ref* key, unitytls_errorstate* errorState)
+private void CertificateCallback(unitytls_tlsctx* ctx, Byte* cn, IntPtr cnLen, unitytls_x509name* caList, IntPtr caListLen, unitytls_x509list_ref* chain, unitytls_key_ref* key, unitytls_errorstate* errorState)
+private void TraceCallback(Void* userData, unitytls_tlsctx* ctx, Byte* traceMessage, IntPtr traceMessageLen)
+}
+internal Mono.Unity.UnityTlsConversions : object {
+public unitytls_protocol GetMinProtocol(SslProtocols protocols)
+public unitytls_protocol GetMaxProtocol(SslProtocols protocols)
+public TlsProtocols ConvertProtocolVersion(unitytls_protocol protocol)
+public AlertDescription VerifyResultToAlertDescription(unitytls_x509verify_result verifyResult, AlertDescription defaultAlert)
+public MonoSslPolicyErrors VerifyResultToPolicyErrror(unitytls_x509verify_result verifyResult)
+}
+internal Mono.Unity.UnityTlsProvider : MonoTlsProvider {
+public string Name
+public Guid ID
+public bool SupportsSslStream
+public bool SupportsMonoExtensions
+public bool SupportsConnectionInfo
+internal bool SupportsCleanShutdown
+public SslProtocols SupportedProtocols
+public string get_Name()
+public Guid get_ID()
+public bool get_SupportsSslStream()
+public bool get_SupportsMonoExtensions()
+public bool get_SupportsConnectionInfo()
+internal bool get_SupportsCleanShutdown()
+public SslProtocols get_SupportedProtocols()
+public IMonoSslStream CreateSslStream(Stream innerStream, bool leaveInnerStreamOpen, MonoTlsSettings settings)
+internal IMonoSslStream CreateSslStreamInternal(SslStream sslStream, Stream innerStream, bool leaveInnerStreamOpen, MonoTlsSettings settings)
+internal bool ValidateCertificate(ICertificateValidator2 validator, string targetHost, bool serverMode, X509CertificateCollection certificates, bool wantsChain, X509Chain& chain, MonoSslPolicyErrors& errors, Int32& status11)
+}
+internal Mono.Unity.UnityTlsStream : MobileAuthenticatedStream {
+public void .ctor(Stream innerStream, bool leaveInnerStreamOpen, SslStream owner, MonoTlsSettings settings, MonoTlsProvider provider)
+protected MobileTlsContext CreateContext(bool serverMode, string targetHost, SslProtocols enabledProtocols, X509Certificate serverCertificate, X509CertificateCollection clientCertificates, bool askForClientCert)
 }
 internal Mono.Util.MonoPInvokeCallbackAttribute : Attribute {
 public void .ctor(Type t)
@@ -11598,6 +11695,19 @@ internal ConnectionStringSettingsCollection ConnectionStrings
 internal ConnectionStringSettingsCollection get_ConnectionStrings()
 internal object GetSection(string sectionName)
 }
+public System.Configuration.SchemeSettingElement : ConfigurationElement {
+public GenericUriParserOptions GenericUriParserOptions
+public string Name
+public GenericUriParserOptions get_GenericUriParserOptions()
+public string get_Name()
+}
+public System.Configuration.SchemeSettingElementCollection : ConfigurationElementCollection {
+public SchemeSettingElement Item
+public SchemeSettingElement get_Item(int index)
+protected ConfigurationElement CreateNewElement()
+protected object GetElementKey(ConfigurationElement element)
+public int IndexOf(SchemeSettingElement element)
+}
 internal System.Configuration.SectionData : object {
 public string SectionName
 public string TypeName
@@ -11948,9 +12058,11 @@ private ConfigurationProperty iriParsing_prop
 public IdnElement Idn
 public IriParsingElement IriParsing
 protected ConfigurationPropertyCollection Properties
+public SchemeSettingElementCollection SchemeSettings
 public IdnElement get_Idn()
 public IriParsingElement get_IriParsing()
 protected ConfigurationPropertyCollection get_Properties()
+public SchemeSettingElementCollection get_SchemeSettings()
 }
 internal System.Configuration.UserConfigLocationOption : Enum {
 public UInt32 value__
@@ -13652,6 +13764,14 @@ public SourceLevels get_Level()
 public void set_Level(SourceLevels value)
 public bool ShouldTrace(TraceEventType eventType)
 protected void OnValueChanged()
+}
+public System.Diagnostics.StackFrameExtensions : object {
+public IntPtr GetNativeImageBase(StackFrame stackFrame)
+public IntPtr GetNativeIP(StackFrame stackFrame)
+public bool HasILOffset(StackFrame stackFrame)
+public bool HasMethod(StackFrame stackFrame)
+public bool HasNativeImage(StackFrame stackFrame)
+public bool HasSource(StackFrame stackFrame)
 }
 public System.Diagnostics.Stopwatch : object {
 public long Frequency
@@ -16329,6 +16449,26 @@ protected ConfigurationPropertyCollection get_Properties()
 protected void DeserializeElement(XmlReader reader, bool serializeCollectionKey)
 protected void Reset(ConfigurationElement parentElement)
 }
+public System.Net.Configuration.HttpListenerElement : ConfigurationElement {
+public HttpListenerTimeoutsElement Timeouts
+public bool UnescapeRequestUrl
+public HttpListenerTimeoutsElement get_Timeouts()
+public bool get_UnescapeRequestUrl()
+}
+public System.Net.Configuration.HttpListenerTimeoutsElement : ConfigurationElement {
+public TimeSpan DrainEntityBody
+public TimeSpan EntityBody
+public TimeSpan HeaderWait
+public TimeSpan IdleConnection
+public long MinSendBytesPerSecond
+public TimeSpan RequestQueue
+public TimeSpan get_DrainEntityBody()
+public TimeSpan get_EntityBody()
+public TimeSpan get_HeaderWait()
+public TimeSpan get_IdleConnection()
+public long get_MinSendBytesPerSecond()
+public TimeSpan get_RequestQueue()
+}
 public System.Net.Configuration.HttpWebRequestElement : ConfigurationElement {
 private ConfigurationProperty maximumErrorResponseLengthProp
 private ConfigurationProperty maximumResponseHeadersLengthProp
@@ -16475,6 +16615,7 @@ public bool EnableDnsRoundRobin
 public bool Expect100Continue
 public bool UseNagleAlgorithm
 protected ConfigurationPropertyCollection Properties
+public EncryptionPolicy EncryptionPolicy
 public bool get_CheckCertificateName()
 public void set_CheckCertificateName(bool value)
 public bool get_CheckCertificateRevocationList()
@@ -16489,6 +16630,8 @@ public bool get_UseNagleAlgorithm()
 public void set_UseNagleAlgorithm(bool value)
 protected ConfigurationPropertyCollection get_Properties()
 protected void PostDeserialize()
+public EncryptionPolicy get_EncryptionPolicy()
+public void set_EncryptionPolicy(EncryptionPolicy value)
 }
 public System.Net.Configuration.SettingsSection : ConfigurationSection {
 private ConfigurationPropertyCollection properties
@@ -16505,6 +16648,8 @@ public ServicePointManagerElement ServicePointManager
 public SocketElement Socket
 public WebProxyScriptElement WebProxyScript
 protected ConfigurationPropertyCollection Properties
+public HttpListenerElement HttpListener
+public WebUtilityElement WebUtility
 public HttpWebRequestElement get_HttpWebRequest()
 public Ipv6Element get_Ipv6()
 public PerformanceCountersElement get_PerformanceCounters()
@@ -16512,6 +16657,8 @@ public ServicePointManagerElement get_ServicePointManager()
 public SocketElement get_Socket()
 public WebProxyScriptElement get_WebProxyScript()
 protected ConfigurationPropertyCollection get_Properties()
+public HttpListenerElement get_HttpListener()
+public WebUtilityElement get_WebUtility()
 }
 internal System.Net.Configuration.SettingsSectionInternal : object {
 private SettingsSectionInternal instance
@@ -16561,6 +16708,7 @@ public string UserName
 public string TargetName
 public bool EnableSsl
 protected ConfigurationPropertyCollection Properties
+public string ClientDomain
 public bool get_DefaultCredentials()
 public void set_DefaultCredentials(bool value)
 public string get_Host()
@@ -16577,6 +16725,8 @@ public bool get_EnableSsl()
 public void set_EnableSsl(bool value)
 protected ConfigurationPropertyCollection get_Properties()
 protected void PostDeserialize()
+public string get_ClientDomain()
+public void set_ClientDomain(string value)
 }
 public System.Net.Configuration.SmtpSection : ConfigurationSection {
 public SmtpDeliveryMethod DeliveryMethod
@@ -16611,12 +16761,15 @@ private ConfigurationProperty alwaysUseCompletionPortsForConnectProp
 public bool AlwaysUseCompletionPortsForAccept
 public bool AlwaysUseCompletionPortsForConnect
 protected ConfigurationPropertyCollection Properties
+public IPProtectionLevel IPProtectionLevel
 public bool get_AlwaysUseCompletionPortsForAccept()
 public void set_AlwaysUseCompletionPortsForAccept(bool value)
 public bool get_AlwaysUseCompletionPortsForConnect()
 public void set_AlwaysUseCompletionPortsForConnect(bool value)
 protected ConfigurationPropertyCollection get_Properties()
 protected void PostDeserialize()
+public IPProtectionLevel get_IPProtectionLevel()
+public void set_IPProtectionLevel(IPProtectionLevel value)
 }
 public System.Net.Configuration.UnicodeDecodingConformance : Enum {
 public int value__
@@ -16684,6 +16837,14 @@ protected ConfigurationPropertyCollection get_Properties()
 public WebRequestModuleElementCollection get_WebRequestModules()
 protected void PostDeserialize()
 protected void InitializeDefault()
+}
+public System.Net.Configuration.WebUtilityElement : ConfigurationElement {
+public UnicodeDecodingConformance UnicodeDecodingConformance
+public UnicodeEncodingConformance UnicodeEncodingConformance
+public UnicodeDecodingConformance get_UnicodeDecodingConformance()
+public void set_UnicodeDecodingConformance(UnicodeDecodingConformance value)
+public UnicodeEncodingConformance get_UnicodeEncodingConformance()
+public void set_UnicodeEncodingConformance(UnicodeEncodingConformance value)
 }
 internal System.Net.ConnectionPool : object {
 private Callback s_CleanupCallback
@@ -21707,6 +21868,7 @@ public void add_NetworkAvailabilityChanged(NetworkAvailabilityChangedEventHandle
 public void remove_NetworkAvailabilityChanged(NetworkAvailabilityChangedEventHandler value)
 private void MaybeCreate()
 private void MaybeDispose()
+public void RegisterNetworkChange(NetworkChange nc)
 }
 public System.Net.NetworkInformation.NetworkInformationAccess : Enum {
 public int value__
@@ -22277,14 +22439,38 @@ public NetworkInterfaceType IfType
 public OperationalStatus OperStatus
 public int Ipv6IfIndex
 public UInt32[] ZoneIndices
+public IntPtr FirstPrefix
+public ulong TransmitLinkSpeed
+public ulong ReceiveLinkSpeed
+public IntPtr FirstWinsServerAddress
+public IntPtr FirstGatewayAddress
+public UInt32 Ipv4Metric
+public UInt32 Ipv6Metric
+public ulong Luid
+public Win32_SOCKET_ADDRESS Dhcpv4Server
+public UInt32 CompartmentId
+public ulong NetworkGuid
+public int ConnectionType
+public int TunnelType
+public Win32_SOCKET_ADDRESS Dhcpv6Server
+public Byte[] Dhcpv6ClientDuid
+public ulong Dhcpv6ClientDuidLength
+public ulong Dhcpv6Iaid
+public IntPtr FirstDnsSuffix
+public int GAA_FLAG_INCLUDE_WINS_INFO
+public int GAA_FLAG_INCLUDE_GATEWAYS
 private int MAX_ADAPTER_ADDRESS_LENGTH
+private int MAX_DHCPV6_DUID_LENGTH
 private int IP_ADAPTER_DDNS_ENABLED
+private int IP_ADAPTER_DHCP_ENABLED
 private int IP_ADAPTER_RECEIVE_ONLY
 private int IP_ADAPTER_NO_MULTICAST
 public bool DdnsEnabled
+public bool DhcpEnabled
 public bool IsReceiveOnly
 public bool NoMulticast
 public bool get_DdnsEnabled()
+public bool get_DhcpEnabled()
 public bool get_IsReceiveOnly()
 public bool get_NoMulticast()
 }
@@ -22294,6 +22480,11 @@ public IntPtr Next
 public Win32_SOCKET_ADDRESS Address
 }
 internal System.Net.NetworkInformation.Win32_IP_ADAPTER_DNS_SERVER_ADDRESS : ValueType {
+public Win32LengthFlagsUnion LengthFlags
+public IntPtr Next
+public Win32_SOCKET_ADDRESS Address
+}
+internal System.Net.NetworkInformation.Win32_IP_ADAPTER_GATEWAY_ADDRESS : ValueType {
 public Win32LengthFlagsUnion LengthFlags
 public IntPtr Next
 public Win32_SOCKET_ADDRESS Address
@@ -22337,6 +22528,11 @@ public UInt32 ValidLifetime
 public UInt32 PreferredLifetime
 public UInt32 LeaseLifetime
 public byte OnLinkPrefixLength
+}
+internal System.Net.NetworkInformation.Win32_IP_ADAPTER_WINS_SERVER_ADDRESS : ValueType {
+public Win32LengthFlagsUnion LengthFlags
+public IntPtr Next
+public Win32_SOCKET_ADDRESS Address
 }
 internal System.Net.NetworkInformation.Win32_IP_ADDR_STRING : ValueType {
 public IntPtr Next
@@ -22598,6 +22794,8 @@ public void .ctor(IntPtr[] heads)
 public void .ctor(Win32_IP_ADDR_STRING[] al)
 public Win32IPAddressCollection FromAnycast(IntPtr ptr)
 public Win32IPAddressCollection FromDnsServer(IntPtr ptr)
+public Win32IPAddressCollection FromSocketAddress(Win32_SOCKET_ADDRESS addr)
+public Win32IPAddressCollection FromWinsServer(IntPtr ptr)
 private void AddSubsequentlyString(IntPtr head)
 }
 internal System.Net.NetworkInformation.Win32IPGlobalProperties : IPGlobalProperties {
@@ -22635,6 +22833,7 @@ private int GetUdpStatisticsEx(Win32_MIB_UDPSTATS& pStats, int dwFamily)
 private int GetIcmpStatistics(Win32_MIBICMPINFO& pStats, int dwFamily)
 private int GetIcmpStatisticsEx(Win32_MIB_ICMP_EX& pStats, int dwFamily)
 private int GetIpStatisticsEx(Win32_MIB_IPSTATS& pStats, int dwFamily)
+private ushort ntohs(ushort netshort)
 }
 internal System.Net.NetworkInformation.Win32IPGlobalStatistics : IPGlobalStatistics {
 private Win32_MIB_IPSTATS info
@@ -22707,7 +22906,6 @@ public IPAddressCollection get_DhcpServerAddresses()
 public IPAddressCollection get_DnsAddresses()
 public string get_DnsSuffix()
 public GatewayIPAddressInformationCollection get_GatewayAddresses()
-private void AddSubsequently(IntPtr head, GatewayIPAddressInformationCollection col)
 public bool get_IsDnsEnabled()
 public bool get_IsDynamicDnsEnabled()
 public MulticastIPAddressInformationCollection get_MulticastAddresses()
@@ -22717,7 +22915,7 @@ private UnicastIPAddressInformationCollection Win32FromUnicast(IntPtr ptr)
 public IPAddressCollection get_WinsServersAddresses()
 }
 internal System.Net.NetworkInformation.Win32IPv4InterfaceProperties : IPv4InterfaceProperties {
-private Win32_IP_ADAPTER_INFO ainfo
+private Win32_IP_ADAPTER_ADDRESSES addr
 private Win32_IP_PER_ADAPTER_INFO painfo
 private Win32_MIB_IFROW mib
 public int Index
@@ -22728,7 +22926,7 @@ public bool IsForwardingEnabled
 public int Mtu
 public bool UsesWins
 private int GetPerAdapterInfo(int IfIndex, Win32_IP_PER_ADAPTER_INFO pPerAdapterInfo, Int32& pOutBufLen)
-public void .ctor(Win32_IP_ADAPTER_INFO ainfo, Win32_MIB_IFROW mib)
+public void .ctor(Win32_IP_ADAPTER_ADDRESSES addr, Win32_MIB_IFROW mib)
 public int get_Index()
 public bool get_IsAutomaticPrivateAddressingActive()
 public bool get_IsAutomaticPrivateAddressingEnabled()
@@ -22806,7 +23004,6 @@ public long Speed
 public bool SupportsMulticast
 private int GetAdaptersInfo(IntPtr info, Int32& size)
 private int GetIfEntry(Win32_MIB_IFROW& row)
-public Win32_IP_ADAPTER_INFO GetAdapterInfoByIndex(int index)
 private Win32_IP_ADAPTER_INFO[] GetAdaptersInfo()
 internal void .ctor(Win32_IP_ADAPTER_ADDRESSES addr)
 public IPInterfaceProperties GetIPProperties()
@@ -23406,6 +23603,12 @@ public IAsyncResult BeginRead(Byte[] buffer, int offset, int count, AsyncCallbac
 public int EndRead(IAsyncResult asyncResult)
 public IAsyncResult BeginWrite(Byte[] buffer, int offset, int count, AsyncCallback asyncCallback, object asyncState)
 public void EndWrite(IAsyncResult asyncResult)
+public void AuthenticateAsClient(string targetHost, X509CertificateCollection clientCertificates, bool checkCertificateRevocation)
+public Task AuthenticateAsClientAsync(string targetHost, X509CertificateCollection clientCertificates, bool checkCertificateRevocation)
+public void AuthenticateAsServer(X509Certificate serverCertificate, bool clientCertificateRequired, bool checkCertificateRevocation)
+public Task AuthenticateAsServerAsync(X509Certificate serverCertificate, bool clientCertificateRequired, bool checkCertificateRevocation)
+public IAsyncResult BeginAuthenticateAsClient(string targetHost, X509CertificateCollection clientCertificates, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState)
+public IAsyncResult BeginAuthenticateAsServer(X509Certificate serverCertificate, bool clientCertificateRequired, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState)
 }
 internal System.Net.SecurityBuffer : object {
 public int size
@@ -24492,6 +24695,7 @@ public SocketFlags SocketFlags
 public object UserToken
 public Socket ConnectSocket
 internal bool PolicyRestricted
+public SocketClientAccessPolicyProtocol SocketClientAccessPolicyProtocol
 public Exception get_ConnectByNameError()
 internal void set_ConnectByNameError(Exception value)
 public Socket get_AcceptSocket()
@@ -24546,6 +24750,8 @@ internal void FinishConnectByNameSyncFailure(Exception exception, int bytesTrans
 internal void FinishOperationAsyncFailure(Exception exception, int bytesTransferred, SocketFlags flags)
 internal void FinishWrapperConnectSuccess(Socket connectSocket, int bytesTransferred, SocketFlags flags)
 internal void SetResults(SocketError socketError, int bytesTransferred, SocketFlags flags)
+public SocketClientAccessPolicyProtocol get_SocketClientAccessPolicyProtocol()
+public void set_SocketClientAccessPolicyProtocol(SocketClientAccessPolicyProtocol value)
 }
 public System.Net.Sockets.SocketAsyncOperation : Enum {
 public int value__
@@ -26702,6 +26908,9 @@ private void CheckOS()
 public bool get_IsMacOS()
 public bool get_IsFreeBSD()
 }
+public System.Reflection.ICustomTypeProvider {
+public Type GetCustomType()
+}
 public System.Runtime.InteropServices.ComTypes.ADVF : Enum {
 public int value__
 public ADVF ADVF_NODATA
@@ -26956,6 +27165,7 @@ protected ConfigurationPropertyCollection get_Properties()
 public System.Security.Authentication.ExtendedProtection.Configuration.ServiceNameElementCollection : ConfigurationElementCollection {
 public ServiceNameElement Item
 public ServiceNameElement Item
+public string Item
 public ServiceNameElement get_Item(int index)
 public ServiceNameElement get_Item(string name)
 public void Add(ServiceNameElement element)
@@ -26966,6 +27176,8 @@ public int IndexOf(ServiceNameElement element)
 public void Remove(string name)
 public void Remove(ServiceNameElement element)
 public void RemoveAt(int index)
+public void set_Item(int index, ServiceNameElement value)
+public void set_Item(string name, ServiceNameElement value)
 }
 public System.Security.Authentication.ExtendedProtection.ExtendedProtectionPolicy : object {
 public ChannelBinding CustomChannelBinding
@@ -27030,6 +27242,9 @@ public int value__
 public HashAlgorithmType None
 public HashAlgorithmType Md5
 public HashAlgorithmType Sha1
+public HashAlgorithmType Sha256
+public HashAlgorithmType Sha384
+public HashAlgorithmType Sha512
 }
 public System.Security.Authentication.InvalidCredentialException : AuthenticationException {
 public void .ctor(string message)
@@ -27045,6 +27260,9 @@ public SslProtocols Tls
 public SslProtocols Tls11
 public SslProtocols Tls12
 public SslProtocols Default
+}
+public System.Security.Claims.DynamicRoleClaimProvider : object {
+public void AddDynamicRoleClaims(ClaimsIdentity claimsIdentity, IEnumerable`1<Claim> claims)
 }
 internal System.Security.Cryptography.AsnDecodeStatus : Enum {
 public int value__
@@ -28137,10 +28355,26 @@ public SecurityElement ToXml()
 public void FromXml(SecurityElement securityElement)
 internal void VerifyFlags(TypeDescriptorPermissionFlags flags)
 }
+public System.Security.Permissions.TypeDescriptorPermissionAttribute : CodeAccessSecurityAttribute {
+public TypeDescriptorPermissionFlags Flags
+public bool RestrictedRegistrationAccess
+public void .ctor(SecurityAction action)
+public TypeDescriptorPermissionFlags get_Flags()
+public void set_Flags(TypeDescriptorPermissionFlags value)
+public bool get_RestrictedRegistrationAccess()
+public void set_RestrictedRegistrationAccess(bool value)
+public IPermission CreatePermission()
+}
 public System.Security.Permissions.TypeDescriptorPermissionFlags : Enum {
 public int value__
 public TypeDescriptorPermissionFlags NoFlags
 public TypeDescriptorPermissionFlags RestrictedRegistrationAccess
+}
+public System.Security.SecureStringMarshal : object {
+public IntPtr SecureStringToCoTaskMemAnsi(SecureString s)
+public IntPtr SecureStringToGlobalAllocAnsi(SecureString s)
+public IntPtr SecureStringToCoTaskMemUnicode(SecureString s)
+public IntPtr SecureStringToGlobalAllocUnicode(SecureString s)
 }
 internal System.SecurityUtils : object {
 private ReflectionPermission modreq(System.Runtime.CompilerServices.IsVolatile) memberAccessPermission
@@ -28172,6 +28406,12 @@ public string get_Description()
 internal System.StringExtensions : object {
 internal string SubstringTrim(string value, int startIndex)
 internal string SubstringTrim(string value, int startIndex, int length)
+}
+public System.StringNormalizationExtensions : object {
+public bool IsNormalized(string value)
+public bool IsNormalized(string value, NormalizationForm normalizationForm)
+public string Normalize(string value)
+public string Normalize(string value, NormalizationForm normalizationForm)
 }
 internal System.Text.RegularExpressions.CachedCodeEntry : object {
 internal string _key
@@ -29988,4 +30228,7 @@ public void .ctor(Type valueSerializerType)
 public void .ctor(string valueSerializerTypeName)
 public Type get_ValueSerializerType()
 public string get_ValueSerializerTypeName()
+}
+internal Unity.ThrowStub : ObjectDisposedException {
+public void ThrowNotSupportedException()
 }

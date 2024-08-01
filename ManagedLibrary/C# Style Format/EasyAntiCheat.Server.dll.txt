@@ -36,6 +36,12 @@ public int AttackerFieldOfView
 public int WeaponID
 public int HitBoneID
 public int DamageTaken
+public PlayerTakeDamageFlags DamageFlags
+}
+public EasyAntiCheat.Server.Cerberus.PlayerTakeDamageFlags : Enum {
+public int value__
+public PlayerTakeDamageFlags PlayerTakeDamageNormalHit
+public PlayerTakeDamageFlags PlayerTakeDamageCriticalHit
 }
 public EasyAntiCheat.Server.Cerberus.PlayerTick : ValueType {
 public Vector3 Position
@@ -108,6 +114,7 @@ private Nullable`1<DateTime> TimeBanExpires
 private TClient <Client>k__BackingField
 private string <Message>k__BackingField
 private ClientStatus <Status>k__BackingField
+private DateTime epochTimeStartUTC
 public TClient Client
 public string Message
 public bool RequiresKick
@@ -119,9 +126,10 @@ private void set_Message(string value)
 public bool get_RequiresKick()
 public ClientStatus get_Status()
 private void set_Status(ClientStatus value)
-internal void .ctor(TClient client, ClientStatus clientStatus, Nullable`1<DateTime> timeBanExpires, string message)
+internal void .ctor(TClient client, ClientStatus clientStatus, long timeBanExpiresEpochSeconds, string message)
 public bool IsBanned(Nullable`1& timeBanExpires)
 public string ToString()
+private Nullable`1<DateTime> getTimeBanExpiresValue(long timeBanExpiresEpochSeconds)
 }
 public EasyAntiCheat.Server.Hydra.EasyAntiCheatServer`1 : object {
 private ClientStatusHandler<TClient> _ClientStatusHandler
@@ -149,6 +157,7 @@ public bool PopNetworkMessage(TClient desiredClient, Byte[]& messageBuffer, Int3
 public void SetMaxAllowedMessageLength(TClient client, int maxMessageLength)
 public void PushNetworkMessage(TClient client, Byte[] messageBuffer, int messageLength)
 public void SetClientNetworkState(TClient client, bool networkActive)
+public void SetGameSessionId(string gameSessionId)
 private IntPtr GetNextClientObject()
 }
 internal EasyAntiCheat.Server.Hydra.NativeCerberus : object {
@@ -163,7 +172,7 @@ private void dotPlayerDespawn(IntPtr Instance, IntPtr Player, UInt32 IsPlayerDea
 private void dotPlayerRevive(IntPtr Instance, IntPtr PlayerRevived, IntPtr PlayerReviving)
 private void dotPlayerTick(IntPtr Instance, IntPtr Player, float PositionX, float PositionY, float PositionZ, float ViewAnglesX, float ViewAnglesY, float ViewAnglesZ, UInt32 Health, UInt32 TickFlags)
 private void dotPlayerUseWeapon(IntPtr Instance, IntPtr Player, float PositionX, float PositionY, float PositionZ, float ViewAnglesX, float ViewAnglesY, float ViewAnglesZ, UInt32 FieldOfView, UInt32 WeaponID)
-private void dotPlayerTakeDamage(IntPtr Instance, IntPtr PlayerVictim, float VictimPositionX, float VictimPositionY, float VictimPositionZ, float VictimViewAnglesX, float VictimViewAnglesY, float VictimViewAnglesZ, IntPtr PlayerAttacker, float AttackerPositionX, float AttackerPositionY, float AttackerPositionZ, float AttackerViewAnglesX, float AttackerViewAnglesY, float AttackerViewAnglesZ, UInt32 AttackerFieldOfView, UInt32 WeaponID, UInt32 HitBoneID, UInt32 DamageTaken)
+private void dotPlayerTakeDamage(IntPtr Instance, IntPtr PlayerVictim, float VictimPositionX, float VictimPositionY, float VictimPositionZ, float VictimViewAnglesX, float VictimViewAnglesY, float VictimViewAnglesZ, IntPtr PlayerAttacker, float AttackerPositionX, float AttackerPositionY, float AttackerPositionZ, float AttackerViewAnglesX, float AttackerViewAnglesY, float AttackerViewAnglesZ, UInt32 AttackerFieldOfView, UInt32 WeaponID, UInt32 HitBoneID, UInt32 DamageTaken, UInt32 DamageFlags)
 internal void SetInstance(IntPtr CerberusInstance)
 internal void BeginFrame()
 internal void EndFrame()
@@ -198,6 +207,7 @@ private void dotSetLogCallback(IntPtr Instance, LogEventHandler LogCallback, Log
 private IntPtr dotCerberus(IntPtr Instance)
 private IntPtr dotNetProtect(IntPtr Instance)
 private void dotSetClientNetworkState(IntPtr Instance, IntPtr ClientObject, bool NetworkActive)
+private void dotSetGameSessionId(IntPtr Instance, string gameSessionId)
 public bool Initialize(ServerConfiguration config)
 public bool InitializeWithGameID(int GameID, ServerConfiguration config)
 public void Unload()
@@ -211,6 +221,7 @@ public void PushNetworkMessage(IntPtr ClientObject, Byte[] MessageBuffer, int Me
 public IntPtr Cerberus()
 public IntPtr NetProtect()
 public void SetClientNetworkState(IntPtr ClientObject, bool NetworkActive)
+public void SetGameSessionId(string gameSessionId)
 private void OnLogEvent(LogLevel LogLevel, string Message)
 }
 internal EasyAntiCheat.Server.Hydra.NativeNetProtect : object {
@@ -387,17 +398,13 @@ public EasyAntiCheat.Server.PlayerRegisterFlags : Enum {
 public int value__
 public PlayerRegisterFlags PlayerRegisterFlagNone
 public PlayerRegisterFlags PlayerRegisterFlagAdmin
-}
-internal EasyAntiCheat.Server.Protocol.EpochTime : ValueType {
-private DateTime Epoch
-private long _millisecondsFromEpoch
-public void .ctor(long millisecondsFromEpoch)
-public void .ctor(DateTime dateTime)
-public long op_Explicit(EpochTime epochTime)
-public EpochTime op_Explicit(long millisecondsFromEpoch)
-public DateTime op_Implicit(EpochTime epochTime)
-public EpochTime op_Implicit(DateTime dateTime)
-public long GetTimeInMillis()
+public PlayerRegisterFlags PlayerRegisterFlagMouseKeyboardControl
+public PlayerRegisterFlags PlayerRegisterFlagGamepadControl
+public PlayerRegisterFlags PlayerRegisterFlagTouchControl
+public PlayerRegisterFlags PlayerRegisterFlagXBox
+public PlayerRegisterFlags PlayerRegisterFlagPlaystation
+public PlayerRegisterFlags PlayerRegisterFlagiOS
+public PlayerRegisterFlags PlayerRegisterFlagAndroid
 }
 public EasyAntiCheat.Server.Scout.InvalidPlayerStateReportCategory : Enum {
 public int value__

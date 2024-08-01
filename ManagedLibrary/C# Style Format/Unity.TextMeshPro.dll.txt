@@ -27,6 +27,13 @@ public CaretPosition None
 public CaretPosition Left
 public CaretPosition Right
 }
+public TMPro.ColorMode : Enum {
+public int value__
+public ColorMode Single
+public ColorMode HorizontalGradient
+public ColorMode VerticalGradient
+public ColorMode FourCornersGradient
+}
 internal TMPro.ColorTween : ValueType {
 private ColorTweenCallback m_Target
 private Color m_StartColor
@@ -223,14 +230,14 @@ public UInt32 firstGlyph
 public GlyphValueRecord firstGlyphAdjustments
 public UInt32 secondGlyph
 public GlyphValueRecord secondGlyphAdjustments
-public void .ctor(UInt32 left, UInt32 right, float offset)
-public void .ctor(UInt32 firstGlyph, GlyphValueRecord firstGlyphAdjustments, UInt32 secondGlyph, GlyphValueRecord secondGlyphAdjustments)
 public UInt32 get_firstGlyph()
 public void set_firstGlyph(UInt32 value)
 public GlyphValueRecord get_firstGlyphAdjustments()
 public UInt32 get_secondGlyph()
 public void set_secondGlyph(UInt32 value)
 public GlyphValueRecord get_secondGlyphAdjustments()
+public void .ctor(UInt32 left, UInt32 right, float offset)
+public void .ctor(UInt32 firstGlyph, GlyphValueRecord firstGlyphAdjustments, UInt32 secondGlyph, GlyphValueRecord secondGlyphAdjustments)
 internal void ConvertLegacyKerningData()
 }
 public TMPro.KerningPairKey : ValueType {
@@ -241,16 +248,12 @@ public void .ctor(UInt32 ascii_left, UInt32 ascii_right)
 }
 public TMPro.KerningTable : object {
 public List`1<KerningPair> kerningPairs
-private Func`2<KerningPair, UInt32> <>f__am$cache0
-private Func`2<KerningPair, UInt32> <>f__am$cache1
 public void AddKerningPair()
 public int AddKerningPair(UInt32 first, UInt32 second, float offset)
 public int AddGlyphPairAdjustmentRecord(UInt32 first, GlyphValueRecord firstAdjustments, UInt32 second, GlyphValueRecord secondAdjustments)
 public void RemoveKerningPair(int left, int right)
 public void RemoveKerningPair(int index)
 public void SortKerningPairs()
-private UInt32 <SortKerningPairs>m__0(KerningPair s)
-private UInt32 <SortKerningPairs>m__1(KerningPair s)
 }
 public TMPro.MaskingOffsetMode : Enum {
 public int value__
@@ -611,7 +614,7 @@ private void SetPerspectiveCorrection()
 protected float GetPaddingForMaterial(Material mat)
 protected float GetPaddingForMaterial()
 protected int SetArraySizes(Int32[] chars)
-protected void ComputeMarginSize()
+public void ComputeMarginSize()
 protected void OnDidApplyAnimationProperties()
 protected void OnTransformParentChanged()
 protected void OnRectTransformDimensionsChange()
@@ -706,7 +709,7 @@ protected float GetPaddingForMaterial(Material mat)
 protected float GetPaddingForMaterial()
 private void SetMeshArrays(int size)
 protected int SetArraySizes(Int32[] chars)
-protected void ComputeMarginSize()
+public void ComputeMarginSize()
 protected void OnDidApplyAnimationProperties()
 protected void OnCanvasHierarchyChanged()
 protected void OnTransformParentChanged()
@@ -800,11 +803,13 @@ public FontStyles style
 public bool isVisible
 }
 public TMPro.TMP_ColorGradient : ScriptableObject {
+public ColorMode colorMode
 public Color topLeft
 public Color topRight
 public Color bottomLeft
 public Color bottomRight
-private Color k_defaultColor
+private ColorMode k_DefaultColorMode
+private Color k_DefaultColor
 public void .ctor(Color color)
 public void .ctor(Color color0, Color color1, Color color2, Color color3)
 }
@@ -917,8 +922,6 @@ public float boldSpacing
 public byte italicStyle
 public byte tabSize
 private byte m_oldTabSize
-private Func`2<TMP_Glyph, int> <>f__am$cache0
-private Func`2<TMP_Glyph, int> <>f__am$cache1
 public TMP_FontAsset defaultFontAsset
 public FaceInfo fontInfo
 public Dictionary`2<int, TMP_Glyph> characterDictionary
@@ -947,8 +950,6 @@ public bool HasCharacters(string text, List`1& missingCharacters)
 public bool HasCharacters(string text)
 public string GetCharacters(TMP_FontAsset fontAsset)
 public Int32[] GetCharactersArray(TMP_FontAsset fontAsset)
-private int <AddGlyphInfo>m__0(TMP_Glyph s)
-private int <SortGlyphs>m__1(TMP_Glyph item)
 }
 public TMPro.TMP_FontUtilities : object {
 private List`1<int> k_searchedFontAssets
@@ -1287,7 +1288,6 @@ protected void DoStateTransition(SelectionState state, bool instant)
 public void SetGlobalPointSize(float pointSize)
 public void SetGlobalFontAsset(TMP_FontAsset fontAsset)
 private Transform UnityEngine.UI.ICanvasElement.get_transform()
-private bool UnityEngine.UI.ICanvasElement.IsDestroyed()
 }
 public TMPro.TMP_InputValidator : ScriptableObject {
 public char Validate(String& text, Int32& pos, char ch)
@@ -1330,7 +1330,6 @@ internal TMPro.TMP_ListPool`1 : object {
 private TMP_ObjectPool`1<List`1<T>> s_ListPool
 public List`1<T> Get()
 public void Release(List`1<T> toRelease)
-private void <s_ListPool>m__0(List`1<T> l)
 }
 public TMPro.TMP_MaterialManager : object {
 private List`1<MaskingMaterial> m_materialList
@@ -1403,11 +1402,11 @@ private int <countAll>k__BackingField
 public int countAll
 public int countActive
 public int countInactive
-public void .ctor(UnityAction`1<T> actionOnGet, UnityAction`1<T> actionOnRelease)
 public int get_countAll()
 private void set_countAll(int value)
 public int get_countActive()
 public int get_countInactive()
+public void .ctor(UnityAction`1<T> actionOnGet, UnityAction`1<T> actionOnRelease)
 public T Get()
 public void Release(T element)
 }
@@ -1595,6 +1594,7 @@ public TMP_StyleSheet LoadDefaultStyleSheet()
 public TMP_Style GetStyle(int hashCode)
 private TMP_Style GetStyleInternal(int hashCode)
 public void UpdateStyleDictionaryKey(int old_key, int new_key)
+public void UpdateStyleSheet()
 public void RefreshStyles()
 private void LoadStyleDictionaryInternal()
 }
@@ -1610,7 +1610,6 @@ private float m_padding
 private Renderer m_renderer
 private MeshFilter m_meshFilter
 private Mesh m_mesh
-private BoxCollider m_boxCollider
 private TextMeshPro m_TextComponent
 private bool m_isRegisteredForEvents
 public TMP_FontAsset fontAsset
@@ -1624,7 +1623,6 @@ public float padding
 public Renderer renderer
 public MeshFilter meshFilter
 public Mesh mesh
-public BoxCollider boxCollider
 public TMP_FontAsset get_fontAsset()
 public void set_fontAsset(TMP_FontAsset value)
 public TMP_SpriteAsset get_spriteAsset()
@@ -1645,7 +1643,6 @@ public Renderer get_renderer()
 public MeshFilter get_meshFilter()
 public Mesh get_mesh()
 public void set_mesh(Mesh value)
-public BoxCollider get_boxCollider()
 private void OnEnable()
 private void OnDisable()
 private void OnDestroy()
@@ -1660,7 +1657,6 @@ public void UpdateMeshPadding(bool isExtraPadding, bool isUsingBold)
 public void SetVerticesDirty()
 public void SetMaterialDirty()
 protected void UpdateMaterial()
-public void UpdateColliders(int vertexCount)
 }
 public TMPro.TMP_SubMeshUI : MaskableGraphic {
 private TMP_FontAsset m_fontAsset
@@ -1760,6 +1756,7 @@ protected Color32 m_underlineColor
 protected Color32 m_strikethroughColor
 protected Color32 m_highlightColor
 protected bool m_enableVertexGradient
+protected ColorMode m_colorMode
 protected VertexGradient m_fontColorGradient
 protected TMP_ColorGradient m_fontColorGradientPreset
 protected TMP_SpriteAsset m_spriteAsset
@@ -2261,7 +2258,7 @@ protected Bounds GetTextBounds(bool onlyVisibleCharacters)
 protected void AdjustLineOffset(int startIndex, int endIndex, float offset)
 protected void ResizeLineExtents(int size)
 public TMP_TextInfo GetTextInfo(string text)
-protected void ComputeMarginSize()
+public void ComputeMarginSize()
 protected void SaveWordWrappingState(WordWrapState& state, int index, int count)
 protected int RestoreWordWrappingState(WordWrapState& state)
 protected void SaveGlyphVertexInfo(float padding, float style_padding, Color32 vertexColor)
@@ -2474,6 +2471,8 @@ public void ON_COMPUTE_DT_EVENT(object Sender, Compute_DT_EventArgs e)
 }
 public TMPro.TMPro_ExtensionMethods : object {
 public string ArrayToString(Char[] chars)
+public string IntToString(Int32[] unicodes)
+public string IntToString(Int32[] unicodes, int start, int length)
 public int FindInstanceID(List`1<T> list, T target)
 public bool Compare(Color32 a, Color32 b)
 public bool CompareRGB(Color32 a, Color32 b)

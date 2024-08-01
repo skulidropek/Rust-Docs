@@ -7,11 +7,9 @@ public AchievementGroup : object {
 public Phrase groupTitle
 public AchievementGroup[] All
 public AchievementItem[] Items
-private Func`2<AchievementItem, bool> <>f__am$cache0
 public bool Unlocked
 public void .ctor(string token, string english)
 public bool get_Unlocked()
-private bool <get_Unlocked>m__0(AchievementItem x)
 }
 public Achievements : SingletonComponent`1<Achievements> {
 public SoundDefinition listComplete
@@ -33,6 +31,14 @@ public ActionPriority High
 public ActionPriority Medium
 public ActionPriority Low
 public ActionPriority Lowest
+}
+public AdaptMeshToTerrain : MonoBehaviour {
+public LayerMask LayerMask
+public float RayHeight
+public float RayMaxDistance
+public float MinDisplacement
+public float MaxDisplacement
+public int PlaneResolution
 }
 public AddSellOrderManager : MonoBehaviour {
 public VirtualItemIcon sellItemIcon
@@ -166,10 +172,10 @@ private int m_major
 private int m_minor
 private int m_release
 public int Number
-private void .ctor(byte major, byte minor, byte release)
 public string StaticToString()
 public string ToString()
 public int get_Number()
+private void .ctor(byte major, byte minor, byte release)
 public VersionInfo Current()
 public bool Matches(VersionInfo version)
 }
@@ -384,24 +390,17 @@ private float UpdateBoundsFadeStart
 private float UpdateBoundsFadeLength
 private float UpdateBoundsMaxFrequency
 private float UpdateBoundsMinFrequency
-public bool registerCullingOnStart
 private LODGroup lodGroup
-private List`1<Renderer> renderers
-private List`1<Collider> colliders
+public List`1<Collider> colliders
 private OccludeeSphere localOccludee
+private List`1<Renderer> renderers
 private bool isVisible
-private SkinnedMeshRenderer fixedBoundsRef
 private Action TriggerUpdateVisibilityBoundsDelegate
 public bool IsVisible
-public SkinnedMeshRenderer FixedBoundsRef
 public bool get_IsVisible()
-public SkinnedMeshRenderer get_FixedBoundsRef()
-public void set_FixedBoundsRef(SkinnedMeshRenderer value)
-protected void OnEnable()
 protected void OnDisable()
 public void ClearVisibility()
-public void ProcessVisibility(LODGroup lod, List`1<Collider> colliders)
-public void ProcessVisibility(List`1<Renderer> renderers, List`1<Collider> colliders)
+public void ProcessVisibility(LODGroup lod)
 private void RegisterForCulling(Sphere sphere, bool visible)
 private void UnregisterFromCulling()
 public void UpdateCullingBounds()
@@ -447,11 +446,11 @@ private Action worker
 public bool keepWaiting
 public bool isDone
 public Mesh mesh
-public void .ctor(Vector3 pivot, int width, int height, bool normal, bool alpha)
 public bool get_keepWaiting()
 public bool get_isDone()
 public NavMeshBuildSource CreateNavMeshBuildSource(bool addSourceObject)
 public Mesh get_mesh()
+public void .ctor(Vector3 pivot, int width, int height, bool normal, bool alpha)
 private void DoWork()
 private void Invoke()
 private void Callback(IAsyncResult result)
@@ -548,6 +547,7 @@ public GameObjectRef targetLostEffect
 public float aimCone
 public List`1<PlayerNameID> authorizedPlayers
 public ItemDefinition ammoType
+public TargetTrigger targetTrigger
 private float nextShotTime
 private float nextVisCheck
 public float lastTargetSeenTime
@@ -747,7 +747,6 @@ public Collider _collider
 public bool ResetLifeStateOnSpawn
 public DirectionProperties[] propDirection
 public float unHostileTime
-private Func`2<ItemAmount, float> <>f__am$cache0
 public Vector3 LastAttackedDir
 public float SecondsSinceAttacked
 public float SecondsSinceDealtDamage
@@ -804,7 +803,6 @@ public void OnKilled(HitInfo info)
 public void Die(HitInfo info)
 public void DieInstantly()
 public void UpdateSurroundings()
-private float <DoRepair>m__0(ItemAmount x)
 }
 public BaseCommandBuffer : MonoBehaviour {
 private Dictionary`2<Camera, Dictionary`2<int, CommandBuffer>> cameras
@@ -837,6 +835,7 @@ public void Eat(BaseNpc baseNpc, float timeSpent)
 }
 public BaseDetector : IOEntity {
 public PlayerDetectionTrigger myTrigger
+public Flags Flag_HasContents
 public void OnObjects()
 public void OnEmpty()
 public int ConsumptionAmount()
@@ -1051,6 +1050,7 @@ private void BroadcastSignalFromClient(RPCMessage msg)
 public void SignalBroadcast(Signal signal, string arg, Connection sourceConnection)
 public void SignalBroadcast(Signal signal, Connection sourceConnection)
 private void OnSkinChanged(ulong oldSkinID, ulong newSkinID)
+public void PreProcess(IPrefabProcessor preProcess, GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
 public bool HasAnySlot()
 public BaseEntity GetSlot(Slot slot)
 public string GetSlotAnchorName(Slot slot)
@@ -1143,15 +1143,23 @@ public Transform[] GroundPoints
 public Transform[] GroundEffects
 public GameObjectRef explosionEffect
 public GameObjectRef fireBall
+public GameObjectRef impactEffectSmall
+public GameObjectRef impactEffectLarge
+private float avgTerrainHeight
 public Flags Flag_InternalLights
-private HelicopterInputState_t currentInputState
-private float lastPlayerInputTime
+protected HelicopterInputState currentInputState
+protected float lastPlayerInputTime
 public float currentThrottle
 public float avgThrust
 public float liftDotMax
 public float altForceDotMin
 public float liftFraction
 protected float hoverForceScale
+public float thrustLerpSpeed
+private float nextDamageTime
+private float nextEffectTime
+private float pendingImpactDamage
+public float GetServiceCeiling()
 public Vector3 GetLocalVelocityServer()
 public Quaternion GetAngularVelocityServer()
 public float MaxVelocity()
@@ -1159,12 +1167,14 @@ public void ServerInit()
 public float MouseToBinary(float amount)
 public void PilotInput(InputState inputState, BasePlayer player)
 public void PlayerServerInput(InputState inputState, BasePlayer player)
-public HelicopterInputState_t GetDefaultInputState()
+public void SetDefaultInputState()
+public bool IsEnginePowered()
 public void VehicleFixedUpdate()
 public void LightToggle(BasePlayer player)
 public void MovementUpdate()
 public void DelayedImpactDamage()
 public bool CollisionDamageEnabled()
+public void ProcessCollision(Collision collision)
 private void OnCollisionEnter(Collision collision)
 public void OnKilled(HitInfo info)
 }
@@ -1239,6 +1249,7 @@ public float heartStress
 public GatherProperties gathering
 public bool canThrowAsProjectile
 public bool canAiHearIt
+public bool onlyThrowAsProjectile
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 public void GetAttackStats(HitInfo info)
 public void DoAttackShared(HitInfo info)
@@ -1307,6 +1318,7 @@ public bool DirectlyMountable()
 public Vector3 EyePositionForPlayer(BasePlayer player)
 public float WaterFactorForPlayer(BasePlayer player)
 public float MaxVelocity()
+public BaseVehicle VehicleParent()
 public void PostServerLoad()
 public void MounteeTookDamage(BasePlayer mountee, HitInfo info)
 public float GetSteering(BasePlayer player)
@@ -1323,7 +1335,6 @@ public void RPC_WantsDismount(RPCMessage msg)
 public void MountPlayer(BasePlayer player)
 public void DismountAllPlayers()
 public void DismountPlayer(BasePlayer player, bool lite)
-public BaseVehicle VehicleParent()
 public Vector3 DismountVisCheckOrigin()
 public bool ValidDismountPosition(Vector3 disPos)
 public bool HasValidDismountPosition(BasePlayer player)
@@ -1415,6 +1426,7 @@ public Library get_prefabAttribute()
 public Group get_GlobalNetworkGroup()
 public Group get_LimboNetworkGroup()
 public void Spawn()
+public bool IsFullySpawned()
 public void ServerInit()
 protected List`1<Connection> GetSubscribers()
 public void KillMessage()
@@ -1434,7 +1446,7 @@ public void ToStreamForNetwork(Stream stream, SaveInfo saveInfo)
 public void InvalidateNetworkCache()
 public MemoryStream GetSaveCache()
 public void UpdateNetworkGroup()
-private bool <OnNetworkLimitStart>m__0(Connection x)
+private bool <OnNetworkLimitStart>b__57_0(Connection x)
 }
 public BaseNpc : BaseCombatEntity {
 public int agentTypeIndex
@@ -1513,8 +1525,6 @@ private float nextFlinchTime
 private float _lastHeardGunshotTime
 private Vector3 <LastHeardGunshotDirection>k__BackingField
 private float <TargetSpeed>k__BackingField
-private Func`2<BaseEntity, bool> <>f__mg$cache0
-private bool Apex.LoadBalancing.ILoadBalanced.repeat
 public int AgentTypeIndex
 public bool IsStuck
 public bool AgencyUpdateRequired
@@ -1554,6 +1564,7 @@ public Behaviour CurrentBehaviour
 public bool IsSitting
 public bool IsChasing
 public bool IsSleeping
+private bool Apex.LoadBalancing.ILoadBalanced.repeat
 public float SecondsSinceLastHeardGunshot
 public Vector3 LastHeardGunshotDirection
 public float TargetSpeed
@@ -1856,6 +1867,7 @@ private float <estimatedSpeed2D>k__BackingField
 private int <secondsConnected>k__BackingField
 private float <desyncTime>k__BackingField
 public Vector3 viewAngles
+private float lastSubscriptionTick
 private float lastPlayerTick
 private float playerTickRate
 private float sleepStartTime
@@ -1882,10 +1894,6 @@ private TickInterpolator tickInterpolator
 private float woundedDuration
 private float woundedStartTime
 private float lastWoundedTime
-private Predicate`1<BasePlayer> <>f__am$cache0
-private Func`2<KeyValuePair`2<int, FiredProjectile>, bool> <>f__am$cache1
-private Func`2<BasePlayer, bool> <>f__am$cache2
-private Func`2<BasePlayer, string> <>f__am$cache3
 public IPlayer IPlayer
 public Connection Connection
 public string displayName
@@ -2013,6 +2021,7 @@ private void UpdateModelState()
 private void SendModelState()
 public bool get_isMounted()
 public BaseMountable GetMounted()
+public BaseVehicle GetMountedVehicle()
 public void MarkSwapSeat()
 public bool SwapSeatCooldown()
 public void MountObject(BaseMountable mount, int desiredSeat)
@@ -2172,12 +2181,9 @@ public void StopWounded()
 public void ProlongWounding(float delay)
 private void WoundingTick()
 private bool WoundingCausingImmportality()
-private bool <ServerCycle>m__0(BasePlayer x)
-private bool <CleanupExpiredProjectiles>m__1(KeyValuePair`2<int, FiredProjectile> x)
-private bool <UpdateSpectateTarget>m__2(BasePlayer x)
-private bool <UpdateSpectateTarget>m__3(BasePlayer x)
-private bool <UpdateSpectateTarget>m__4(BasePlayer x)
-private string <UpdateSpectateTarget>m__5(BasePlayer x)
+private bool <UpdateSpectateTarget>b__322_1(BaseNetworkable x)
+private bool <UpdateSpectateTarget>b__322_3(BasePlayer x)
+private bool <UpdateSpectateTarget>b__322_4(BasePlayer x)
 }
 public BasePrefab : BaseMonoBehaviour {
 public UInt32 prefabID
@@ -2222,28 +2228,6 @@ private float aimconePenalty
 protected bool reloadStarted
 protected bool reloadFinished
 private Effect reusableInstance
-private Func`2<ProjectileWeaponMod, bool> <>f__am$cache0
-private Func`2<ProjectileWeaponMod, Modifier> <>f__am$cache1
-private Func`2<Modifier, float> <>f__am$cache2
-private Func`2<ProjectileWeaponMod, Modifier> <>f__am$cache3
-private Func`2<Modifier, float> <>f__am$cache4
-private Func`2<ProjectileWeaponMod, Modifier> <>f__am$cache5
-private Func`2<Modifier, float> <>f__am$cache6
-private Func`2<ProjectileWeaponMod, Modifier> <>f__am$cache7
-private Func`2<Modifier, float> <>f__am$cache8
-private Func`2<ProjectileWeaponMod, Modifier> <>f__am$cache9
-private Func`2<Modifier, float> <>f__am$cacheA
-private Func`2<ProjectileWeaponMod, Modifier> <>f__am$cacheB
-private Func`2<Modifier, float> <>f__am$cacheC
-private Func`2<ProjectileWeaponMod, Modifier> <>f__am$cacheD
-private Func`2<Modifier, float> <>f__am$cacheE
-private Func`2<ProjectileWeaponMod, Modifier> <>f__am$cacheF
-private Func`2<Modifier, float> <>f__am$cache10
-private Func`2<ProjectileWeaponMod, Modifier> <>f__am$cache11
-private Func`2<Modifier, float> <>f__am$cache12
-private Func`2<ProjectileWeaponMod, Modifier> <>f__am$cache13
-private Func`2<Modifier, float> <>f__am$cache14
-private Func`2<ProjectileWeaponMod, bool> <>f__am$cache15
 private bool UsingInfiniteAmmoCheat
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 public float GetDamageScale(bool getMax)
@@ -2285,28 +2269,6 @@ public bool CanUseNetworkCache(Connection sendingTo)
 public void Save(SaveInfo info)
 public bool ForceSendMagazine()
 public void Load(LoadInfo info)
-private bool <SetLightsOn>m__0(ProjectileWeaponMod x)
-private Modifier <GetAimCone>m__1(ProjectileWeaponMod x)
-private float <GetAimCone>m__2(Modifier y)
-private Modifier <GetAimCone>m__3(ProjectileWeaponMod x)
-private float <GetAimCone>m__4(Modifier y)
-private Modifier <GetAimCone>m__5(ProjectileWeaponMod x)
-private float <GetAimCone>m__6(Modifier y)
-private Modifier <GetAimCone>m__7(ProjectileWeaponMod x)
-private float <GetAimCone>m__8(Modifier y)
-private Modifier <ScaleRepeatDelay>m__9(ProjectileWeaponMod x)
-private float <ScaleRepeatDelay>m__A(Modifier y)
-private Modifier <ScaleRepeatDelay>m__B(ProjectileWeaponMod x)
-private float <ScaleRepeatDelay>m__C(Modifier y)
-private Modifier <GetProjectileModifier>m__D(ProjectileWeaponMod x)
-private float <GetProjectileModifier>m__E(Modifier y)
-private Modifier <GetProjectileModifier>m__F(ProjectileWeaponMod x)
-private float <GetProjectileModifier>m__10(Modifier y)
-private Modifier <GetProjectileModifier>m__11(ProjectileWeaponMod x)
-private float <GetProjectileModifier>m__12(Modifier y)
-private Modifier <GetProjectileModifier>m__13(ProjectileWeaponMod x)
-private float <GetProjectileModifier>m__14(Modifier y)
-private bool <IsSilenced>m__15(ProjectileWeaponMod x)
 }
 public BaseResourceExtractor : BaseCombatEntity {
 public bool canExtractLiquid
@@ -2352,6 +2314,8 @@ internal void OnEmpty()
 }
 public BaseVehicle : BaseMountable {
 public GameObjectRef serverGibs
+public bool mountChaining
+public bool shouldShowHudHealth
 public MountPointInfo[] mountPoints
 public Flags Flag_Headlights
 public bool seatClipCheck
@@ -2462,6 +2426,10 @@ public Binocular : AttackEntity {
 public Single[] fovs
 public GameObjectRef fovChangeEffect
 }
+public BirthdayBalloonHandler : MonoBehaviour {
+public float checkOffset
+public float checkRadius
+}
 public BlendedSoundLoops : MonoBehaviour {
 public float blend
 public float blendSmoothing
@@ -2547,8 +2515,6 @@ public string messageString
 public GameObject errorPanel
 public Text errorText
 public Text statusText
-private Func`1<int> <>f__mg$cache0
-private Action`1<string> <>f__mg$cache1
 public bool needsSetup
 public bool isPresent
 public bool get_needsSetup()
@@ -2897,6 +2863,8 @@ public Building GetBuilding(UInt32 buildingID)
 public void Add(DecayEntity ent)
 public void Remove(DecayEntity ent)
 public void Clear()
+protected Building CreateBuilding(UInt32 id)
+protected void DisposeBuilding(Building& building)
 }
 public BuildingPrivlidge : StorageContainer {
 public List`1<PlayerNameID> authorizedPlayers
@@ -2904,7 +2872,6 @@ private float cachedProtectedMinutes
 private float nextProtectedCalcTime
 private UpkeepBracket[] upkeepBrackets
 private List`1<ItemAmount> upkeepBuffer
-private Func`2<Item, int> <>f__am$cache0
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 public void ResetState()
 public bool IsAuthed(BasePlayer player)
@@ -2938,7 +2905,6 @@ private void QueueUpkeepPayment(List`1<ItemAmount> itemAmounts)
 private bool CanAffordUpkeepPayment(List`1<ItemAmount> itemAmounts)
 public float PurchaseUpkeepTime(DecayEntity entity, float deltaTime)
 public void PurchaseUpkeepTime(float deltaTime)
-private int <GetProtectedMinutes>m__0(Item x)
 }
 public BuildingProximity : PrefabAttribute {
 private float check_radius
@@ -2958,10 +2924,12 @@ public float buoyancyScale
 public float submergedFraction
 public bool doEffects
 public bool clientSide
+public Action`1<bool> SubmergedChanged
+private BuoyancyPointData[] pointData
 public float waveHeightScale
 public string DefaultWaterImpact()
 public void FixedUpdate()
-public Vector3 GetFlowDirection(Vector3 point)
+public Vector3 GetFlowDirection(float normX, float normZ)
 public void EnsurePointsInitialized()
 public void BuoyancyFixedUpdate()
 }
@@ -3174,8 +3142,6 @@ private int lootRoundsPassed
 private int hornCount
 private float currentRadiation
 private bool egressing
-private bool playersNearby
-private float playerSearchRadius
 public bool PhysicsDriven()
 public void UpdateLayoutFromFlags()
 public void TriggeredEventSpawn()
@@ -3192,7 +3158,7 @@ public void UpdateRadiation()
 public void StartEgress()
 public void DelayedDestroy()
 public void FindInitialNode()
-public void PlayerCheck()
+public void BuildingCheck()
 public void FixedUpdate()
 public void UpdateMovement()
 public int GetClosestNodeToUs()
@@ -3357,7 +3323,7 @@ public void DelayedKill()
 public void DismountAllPlayers()
 public float GetDesiredAltitude()
 public float CalculateOverrideAltitude()
-public HelicopterInputState_t GetDefaultInputState()
+public void SetDefaultInputState()
 public void MaintainAIAltutide()
 public void VehicleFixedUpdate()
 public void DestroyShared()
@@ -3443,6 +3409,12 @@ public float fieldOfView
 public string folder
 public void CreateScreenshots()
 public void PositionCamera(Camera cam, GameObject obj)
+}
+public ChineseLantern : BaseFuelLightSource {
+public Transform pivotRotator
+public float swaySpeed
+public float swayDistance
+public float lerpSpeed
 }
 public ChristmasTree : StorageContainer {
 public GameObject[] decorations
@@ -3694,13 +3666,13 @@ private Action`1<CommandBuffer> <FillDelegate>k__BackingField
 public CameraEvent CameraEvent
 public int OrderId
 public Action`1<CommandBuffer> FillDelegate
-public void .ctor(CameraEvent cameraEvent, int orderId, FillCommandBuffer fill)
 public CameraEvent get_CameraEvent()
 private void set_CameraEvent(CameraEvent value)
 public int get_OrderId()
 private void set_OrderId(int value)
 public Action`1<CommandBuffer> get_FillDelegate()
 private void set_FillDelegate(Action`1<CommandBuffer> value)
+public void .ctor(CameraEvent cameraEvent, int orderId, FillCommandBuffer fill)
 }
 public CommandBufferEx : object {
 public void BlitArray(CommandBuffer cb, Mesh blitMesh, RenderTargetIdentifier source, Material mat, int slice, int pass)
@@ -3798,861 +3770,6 @@ public UnityEvent onShowConnectionScreen
 }
 public ConsoleGen : object {
 public Command[] All
-private string <All>m__0()
-private void <All>m__1(string str)
-private string <All>m__2()
-private void <All>m__3(string str)
-private string <All>m__4()
-private void <All>m__5(string str)
-private string <All>m__6()
-private void <All>m__7(string str)
-private string <All>m__8()
-private void <All>m__9(string str)
-private string <All>m__A()
-private void <All>m__B(string str)
-private string <All>m__C()
-private void <All>m__D(string str)
-private string <All>m__E()
-private void <All>m__F(string str)
-private string <All>m__10()
-private void <All>m__11(string str)
-private string <All>m__12()
-private void <All>m__13(string str)
-private string <All>m__14()
-private void <All>m__15(string str)
-private void <All>m__16(Arg arg)
-private void <All>m__17(Arg arg)
-private void <All>m__18(Arg arg)
-private void <All>m__19(Arg arg)
-private void <All>m__1A(Arg arg)
-private void <All>m__1B(Arg arg)
-private void <All>m__1C(Arg arg)
-private void <All>m__1D(Arg arg)
-private void <All>m__1E(Arg arg)
-private void <All>m__1F(Arg arg)
-private void <All>m__20(Arg arg)
-private void <All>m__21(Arg arg)
-private void <All>m__22(Arg arg)
-private void <All>m__23(Arg arg)
-private void <All>m__24(Arg arg)
-private void <All>m__25(Arg arg)
-private void <All>m__26(Arg arg)
-private void <All>m__27(Arg arg)
-private void <All>m__28(Arg arg)
-private void <All>m__29(Arg arg)
-private void <All>m__2A(Arg arg)
-private void <All>m__2B(Arg arg)
-private void <All>m__2C(Arg arg)
-private void <All>m__2D(Arg arg)
-private void <All>m__2E(Arg arg)
-private void <All>m__2F(Arg arg)
-private void <All>m__30(Arg arg)
-private void <All>m__31(Arg arg)
-private void <All>m__32(Arg arg)
-private void <All>m__33(Arg arg)
-private void <All>m__34(Arg arg)
-private void <All>m__35(Arg arg)
-private void <All>m__36(Arg arg)
-private void <All>m__37(Arg arg)
-private string <All>m__38()
-private void <All>m__39(string str)
-private void <All>m__3A(Arg arg)
-private void <All>m__3B(Arg arg)
-private string <All>m__3C()
-private void <All>m__3D(string str)
-private string <All>m__3E()
-private void <All>m__3F(string str)
-private string <All>m__40()
-private void <All>m__41(string str)
-private string <All>m__42()
-private void <All>m__43(string str)
-private string <All>m__44()
-private void <All>m__45(string str)
-private string <All>m__46()
-private void <All>m__47(string str)
-private string <All>m__48()
-private void <All>m__49(string str)
-private string <All>m__4A()
-private void <All>m__4B(string str)
-private string <All>m__4C()
-private void <All>m__4D(string str)
-private string <All>m__4E()
-private void <All>m__4F(string str)
-private string <All>m__50()
-private void <All>m__51(string str)
-private string <All>m__52()
-private void <All>m__53(string str)
-private string <All>m__54()
-private void <All>m__55(string str)
-private string <All>m__56()
-private void <All>m__57(string str)
-private string <All>m__58()
-private void <All>m__59(string str)
-private string <All>m__5A()
-private void <All>m__5B(string str)
-private string <All>m__5C()
-private void <All>m__5D(string str)
-private string <All>m__5E()
-private void <All>m__5F(string str)
-private string <All>m__60()
-private void <All>m__61(string str)
-private string <All>m__62()
-private void <All>m__63(string str)
-private string <All>m__64()
-private void <All>m__65(string str)
-private string <All>m__66()
-private void <All>m__67(string str)
-private string <All>m__68()
-private void <All>m__69(string str)
-private string <All>m__6A()
-private void <All>m__6B(string str)
-private string <All>m__6C()
-private void <All>m__6D(string str)
-private string <All>m__6E()
-private void <All>m__6F(string str)
-private string <All>m__70()
-private void <All>m__71(string str)
-private string <All>m__72()
-private void <All>m__73(string str)
-private string <All>m__74()
-private void <All>m__75(string str)
-private string <All>m__76()
-private void <All>m__77(string str)
-private string <All>m__78()
-private void <All>m__79(string str)
-private string <All>m__7A()
-private void <All>m__7B(string str)
-private string <All>m__7C()
-private void <All>m__7D(string str)
-private string <All>m__7E()
-private void <All>m__7F(string str)
-private string <All>m__80()
-private void <All>m__81(string str)
-private string <All>m__82()
-private void <All>m__83(string str)
-private string <All>m__84()
-private void <All>m__85(string str)
-private string <All>m__86()
-private void <All>m__87(string str)
-private string <All>m__88()
-private void <All>m__89(string str)
-private string <All>m__8A()
-private void <All>m__8B(string str)
-private string <All>m__8C()
-private void <All>m__8D(string str)
-private string <All>m__8E()
-private void <All>m__8F(string str)
-private string <All>m__90()
-private void <All>m__91(string str)
-private string <All>m__92()
-private void <All>m__93(string str)
-private string <All>m__94()
-private void <All>m__95(string str)
-private string <All>m__96()
-private void <All>m__97(string str)
-private string <All>m__98()
-private void <All>m__99(string str)
-private string <All>m__9A()
-private void <All>m__9B(string str)
-private string <All>m__9C()
-private void <All>m__9D(string str)
-private void <All>m__9E(Arg arg)
-private string <All>m__9F()
-private void <All>m__A0(string str)
-private void <All>m__A1(Arg arg)
-private string <All>m__A2()
-private void <All>m__A3(string str)
-private string <All>m__A4()
-private void <All>m__A5(string str)
-private string <All>m__A6()
-private void <All>m__A7(string str)
-private string <All>m__A8()
-private void <All>m__A9(string str)
-private string <All>m__AA()
-private void <All>m__AB(string str)
-private string <All>m__AC()
-private void <All>m__AD(string str)
-private string <All>m__AE()
-private void <All>m__AF(string str)
-private string <All>m__B0()
-private void <All>m__B1(string str)
-private string <All>m__B2()
-private void <All>m__B3(string str)
-private string <All>m__B4()
-private void <All>m__B5(string str)
-private string <All>m__B6()
-private void <All>m__B7(string str)
-private string <All>m__B8()
-private void <All>m__B9(string str)
-private string <All>m__BA()
-private void <All>m__BB(string str)
-private string <All>m__BC()
-private void <All>m__BD(string str)
-private string <All>m__BE()
-private void <All>m__BF(string str)
-private string <All>m__C0()
-private void <All>m__C1(string str)
-private string <All>m__C2()
-private void <All>m__C3(string str)
-private string <All>m__C4()
-private void <All>m__C5(string str)
-private string <All>m__C6()
-private void <All>m__C7(string str)
-private string <All>m__C8()
-private void <All>m__C9(string str)
-private string <All>m__CA()
-private void <All>m__CB(string str)
-private string <All>m__CC()
-private void <All>m__CD(string str)
-private string <All>m__CE()
-private void <All>m__CF(string str)
-private string <All>m__D0()
-private void <All>m__D1(string str)
-private string <All>m__D2()
-private void <All>m__D3(string str)
-private string <All>m__D4()
-private void <All>m__D5(string str)
-private string <All>m__D6()
-private void <All>m__D7(string str)
-private string <All>m__D8()
-private void <All>m__D9(string str)
-private string <All>m__DA()
-private void <All>m__DB(string str)
-private string <All>m__DC()
-private void <All>m__DD(string str)
-private string <All>m__DE()
-private void <All>m__DF(string str)
-private string <All>m__E0()
-private void <All>m__E1(string str)
-private string <All>m__E2()
-private void <All>m__E3(string str)
-private string <All>m__E4()
-private void <All>m__E5(string str)
-private string <All>m__E6()
-private void <All>m__E7(string str)
-private string <All>m__E8()
-private void <All>m__E9(string str)
-private string <All>m__EA()
-private void <All>m__EB(string str)
-private string <All>m__EC()
-private void <All>m__ED(string str)
-private string <All>m__EE()
-private void <All>m__EF(string str)
-private string <All>m__F0()
-private void <All>m__F1(string str)
-private string <All>m__F2()
-private void <All>m__F3(string str)
-private string <All>m__F4()
-private void <All>m__F5(string str)
-private string <All>m__F6()
-private void <All>m__F7(string str)
-private string <All>m__F8()
-private void <All>m__F9(string str)
-private string <All>m__FA()
-private void <All>m__FB(string str)
-private string <All>m__FC()
-private void <All>m__FD(string str)
-private string <All>m__FE()
-private void <All>m__FF(string str)
-private string <All>m__100()
-private void <All>m__101(string str)
-private string <All>m__102()
-private void <All>m__103(string str)
-private string <All>m__104()
-private void <All>m__105(string str)
-private string <All>m__106()
-private void <All>m__107(string str)
-private string <All>m__108()
-private void <All>m__109(string str)
-private string <All>m__10A()
-private void <All>m__10B(string str)
-private string <All>m__10C()
-private void <All>m__10D(string str)
-private string <All>m__10E()
-private void <All>m__10F(string str)
-private string <All>m__110()
-private void <All>m__111(string str)
-private string <All>m__112()
-private void <All>m__113(string str)
-private string <All>m__114()
-private void <All>m__115(string str)
-private void <All>m__116(Arg arg)
-private void <All>m__117(Arg arg)
-private string <All>m__118()
-private void <All>m__119(string str)
-private string <All>m__11A()
-private void <All>m__11B(string str)
-private void <All>m__11C(Arg arg)
-private string <All>m__11D()
-private void <All>m__11E(string str)
-private string <All>m__11F()
-private void <All>m__120(string str)
-private string <All>m__121()
-private void <All>m__122(string str)
-private void <All>m__123(Arg arg)
-private void <All>m__124(Arg arg)
-private string <All>m__125()
-private void <All>m__126(string str)
-private void <All>m__127(Arg arg)
-private void <All>m__128(Arg arg)
-private void <All>m__129(Arg arg)
-private string <All>m__12A()
-private void <All>m__12B(string str)
-private void <All>m__12C(Arg arg)
-private void <All>m__12D(Arg arg)
-private void <All>m__12E(Arg arg)
-private string <All>m__12F()
-private void <All>m__130(string str)
-private void <All>m__131(Arg arg)
-private void <All>m__132(Arg arg)
-private void <All>m__133(Arg arg)
-private string <All>m__134()
-private void <All>m__135(string str)
-private string <All>m__136()
-private void <All>m__137(string str)
-private string <All>m__138()
-private void <All>m__139(string str)
-private void <All>m__13A(Arg arg)
-private void <All>m__13B(Arg arg)
-private void <All>m__13C(Arg arg)
-private void <All>m__13D(Arg arg)
-private string <All>m__13E()
-private void <All>m__13F(string str)
-private void <All>m__140(Arg arg)
-private void <All>m__141(Arg arg)
-private void <All>m__142(Arg arg)
-private void <All>m__143(Arg arg)
-private string <All>m__144()
-private void <All>m__145(string str)
-private string <All>m__146()
-private void <All>m__147(string str)
-private string <All>m__148()
-private void <All>m__149(string str)
-private string <All>m__14A()
-private void <All>m__14B(string str)
-private string <All>m__14C()
-private void <All>m__14D(string str)
-private string <All>m__14E()
-private void <All>m__14F(string str)
-private string <All>m__150()
-private void <All>m__151(string str)
-private string <All>m__152()
-private void <All>m__153(string str)
-private string <All>m__154()
-private void <All>m__155(string str)
-private string <All>m__156()
-private void <All>m__157(string str)
-private string <All>m__158()
-private void <All>m__159(string str)
-private string <All>m__15A()
-private void <All>m__15B(string str)
-private string <All>m__15C()
-private void <All>m__15D(string str)
-private string <All>m__15E()
-private void <All>m__15F(string str)
-private string <All>m__160()
-private void <All>m__161(string str)
-private string <All>m__162()
-private void <All>m__163(string str)
-private string <All>m__164()
-private void <All>m__165(string str)
-private string <All>m__166()
-private void <All>m__167(string str)
-private string <All>m__168()
-private void <All>m__169(string str)
-private string <All>m__16A()
-private void <All>m__16B(string str)
-private string <All>m__16C()
-private void <All>m__16D(string str)
-private string <All>m__16E()
-private void <All>m__16F(string str)
-private string <All>m__170()
-private void <All>m__171(string str)
-private string <All>m__172()
-private void <All>m__173(string str)
-private string <All>m__174()
-private void <All>m__175(string str)
-private string <All>m__176()
-private void <All>m__177(string str)
-private string <All>m__178()
-private void <All>m__179(string str)
-private string <All>m__17A()
-private void <All>m__17B(string str)
-private string <All>m__17C()
-private void <All>m__17D(string str)
-private void <All>m__17E(Arg arg)
-private void <All>m__17F(Arg arg)
-private void <All>m__180(Arg arg)
-private void <All>m__181(Arg arg)
-private void <All>m__182(Arg arg)
-private void <All>m__183(Arg arg)
-private void <All>m__184(Arg arg)
-private void <All>m__185(Arg arg)
-private void <All>m__186(Arg arg)
-private void <All>m__187(Arg arg)
-private void <All>m__188(Arg arg)
-private void <All>m__189(Arg arg)
-private void <All>m__18A(Arg arg)
-private void <All>m__18B(Arg arg)
-private string <All>m__18C()
-private void <All>m__18D(string str)
-private string <All>m__18E()
-private void <All>m__18F(string str)
-private string <All>m__190()
-private void <All>m__191(string str)
-private string <All>m__192()
-private void <All>m__193(string str)
-private string <All>m__194()
-private void <All>m__195(string str)
-private string <All>m__196()
-private void <All>m__197(string str)
-private void <All>m__198(Arg arg)
-private void <All>m__199(Arg arg)
-private void <All>m__19A(Arg arg)
-private void <All>m__19B(Arg arg)
-private string <All>m__19C()
-private void <All>m__19D(string str)
-private void <All>m__19E(Arg arg)
-private void <All>m__19F(Arg arg)
-private void <All>m__1A0(Arg arg)
-private void <All>m__1A1(Arg arg)
-private string <All>m__1A2()
-private void <All>m__1A3(string str)
-private void <All>m__1A4(Arg arg)
-private string <All>m__1A5()
-private void <All>m__1A6(string str)
-private void <All>m__1A7(Arg arg)
-private void <All>m__1A8(Arg arg)
-private void <All>m__1A9(Arg arg)
-private void <All>m__1AA(Arg arg)
-private void <All>m__1AB(Arg arg)
-private void <All>m__1AC(Arg arg)
-private void <All>m__1AD(Arg arg)
-private void <All>m__1AE(Arg arg)
-private void <All>m__1AF(Arg arg)
-private void <All>m__1B0(Arg arg)
-private void <All>m__1B1(Arg arg)
-private void <All>m__1B2(Arg arg)
-private void <All>m__1B3(Arg arg)
-private void <All>m__1B4(Arg arg)
-private void <All>m__1B5(Arg arg)
-private void <All>m__1B6(Arg arg)
-private void <All>m__1B7(Arg arg)
-private void <All>m__1B8(Arg arg)
-private void <All>m__1B9(Arg arg)
-private string <All>m__1BA()
-private void <All>m__1BB(string str)
-private void <All>m__1BC(Arg arg)
-private string <All>m__1BD()
-private void <All>m__1BE(string str)
-private string <All>m__1BF()
-private void <All>m__1C0(string str)
-private string <All>m__1C1()
-private void <All>m__1C2(string str)
-private string <All>m__1C3()
-private void <All>m__1C4(string str)
-private string <All>m__1C5()
-private void <All>m__1C6(string str)
-private string <All>m__1C7()
-private void <All>m__1C8(string str)
-private string <All>m__1C9()
-private void <All>m__1CA(string str)
-private string <All>m__1CB()
-private void <All>m__1CC(string str)
-private void <All>m__1CD(Arg arg)
-private void <All>m__1CE(Arg arg)
-private void <All>m__1CF(Arg arg)
-private void <All>m__1D0(Arg arg)
-private void <All>m__1D1(Arg arg)
-private void <All>m__1D2(Arg arg)
-private void <All>m__1D3(Arg arg)
-private void <All>m__1D4(Arg arg)
-private void <All>m__1D5(Arg arg)
-private void <All>m__1D6(Arg arg)
-private void <All>m__1D7(Arg arg)
-private void <All>m__1D8(Arg arg)
-private void <All>m__1D9(Arg arg)
-private void <All>m__1DA(Arg arg)
-private string <All>m__1DB()
-private void <All>m__1DC(string str)
-private string <All>m__1DD()
-private void <All>m__1DE(string str)
-private string <All>m__1DF()
-private void <All>m__1E0(string str)
-private void <All>m__1E1(Arg arg)
-private void <All>m__1E2(Arg arg)
-private void <All>m__1E3(Arg arg)
-private string <All>m__1E4()
-private void <All>m__1E5(string str)
-private string <All>m__1E6()
-private void <All>m__1E7(string str)
-private void <All>m__1E8(Arg arg)
-private void <All>m__1E9(Arg arg)
-private string <All>m__1EA()
-private void <All>m__1EB(string str)
-private string <All>m__1EC()
-private void <All>m__1ED(string str)
-private string <All>m__1EE()
-private void <All>m__1EF(string str)
-private string <All>m__1F0()
-private void <All>m__1F1(string str)
-private string <All>m__1F2()
-private void <All>m__1F3(string str)
-private string <All>m__1F4()
-private void <All>m__1F5(string str)
-private string <All>m__1F6()
-private void <All>m__1F7(string str)
-private string <All>m__1F8()
-private void <All>m__1F9(string str)
-private void <All>m__1FA(Arg arg)
-private void <All>m__1FB(Arg arg)
-private void <All>m__1FC(Arg arg)
-private string <All>m__1FD()
-private void <All>m__1FE(string str)
-private string <All>m__1FF()
-private void <All>m__200(string str)
-private void <All>m__201(Arg arg)
-private string <All>m__202()
-private void <All>m__203(string str)
-private void <All>m__204(Arg arg)
-private void <All>m__205(Arg arg)
-private void <All>m__206(Arg arg)
-private void <All>m__207(Arg arg)
-private void <All>m__208(Arg arg)
-private string <All>m__209()
-private void <All>m__20A(string str)
-private string <All>m__20B()
-private void <All>m__20C(string str)
-private string <All>m__20D()
-private void <All>m__20E(string str)
-private string <All>m__20F()
-private void <All>m__210(string str)
-private string <All>m__211()
-private void <All>m__212(string str)
-private void <All>m__213(Arg arg)
-private string <All>m__214()
-private void <All>m__215(string str)
-private string <All>m__216()
-private void <All>m__217(string str)
-private string <All>m__218()
-private void <All>m__219(string str)
-private string <All>m__21A()
-private void <All>m__21B(string str)
-private string <All>m__21C()
-private void <All>m__21D(string str)
-private void <All>m__21E(Arg arg)
-private void <All>m__21F(Arg arg)
-private string <All>m__220()
-private void <All>m__221(string str)
-private string <All>m__222()
-private void <All>m__223(string str)
-private string <All>m__224()
-private void <All>m__225(string str)
-private string <All>m__226()
-private void <All>m__227(string str)
-private string <All>m__228()
-private void <All>m__229(string str)
-private string <All>m__22A()
-private void <All>m__22B(string str)
-private string <All>m__22C()
-private void <All>m__22D(string str)
-private string <All>m__22E()
-private void <All>m__22F(string str)
-private string <All>m__230()
-private void <All>m__231(string str)
-private string <All>m__232()
-private void <All>m__233(string str)
-private string <All>m__234()
-private void <All>m__235(string str)
-private void <All>m__236(Arg arg)
-private string <All>m__237()
-private void <All>m__238(string str)
-private string <All>m__239()
-private void <All>m__23A(string str)
-private string <All>m__23B()
-private void <All>m__23C(string str)
-private string <All>m__23D()
-private void <All>m__23E(string str)
-private string <All>m__23F()
-private void <All>m__240(string str)
-private string <All>m__241()
-private void <All>m__242(string str)
-private string <All>m__243()
-private void <All>m__244(string str)
-private string <All>m__245()
-private void <All>m__246(string str)
-private string <All>m__247()
-private void <All>m__248(string str)
-private string <All>m__249()
-private void <All>m__24A(string str)
-private string <All>m__24B()
-private void <All>m__24C(string str)
-private string <All>m__24D()
-private void <All>m__24E(string str)
-private string <All>m__24F()
-private void <All>m__250(string str)
-private string <All>m__251()
-private void <All>m__252(string str)
-private string <All>m__253()
-private void <All>m__254(string str)
-private string <All>m__255()
-private void <All>m__256(string str)
-private string <All>m__257()
-private void <All>m__258(string str)
-private string <All>m__259()
-private void <All>m__25A(string str)
-private string <All>m__25B()
-private void <All>m__25C(string str)
-private string <All>m__25D()
-private void <All>m__25E(string str)
-private string <All>m__25F()
-private void <All>m__260(string str)
-private string <All>m__261()
-private void <All>m__262(string str)
-private string <All>m__263()
-private void <All>m__264(string str)
-private string <All>m__265()
-private void <All>m__266(string str)
-private string <All>m__267()
-private void <All>m__268(string str)
-private string <All>m__269()
-private void <All>m__26A(string str)
-private string <All>m__26B()
-private void <All>m__26C(string str)
-private string <All>m__26D()
-private void <All>m__26E(string str)
-private string <All>m__26F()
-private void <All>m__270(string str)
-private string <All>m__271()
-private void <All>m__272(string str)
-private string <All>m__273()
-private void <All>m__274(string str)
-private string <All>m__275()
-private void <All>m__276(string str)
-private string <All>m__277()
-private void <All>m__278(string str)
-private void <All>m__279(Arg arg)
-private void <All>m__27A(Arg arg)
-private void <All>m__27B(Arg arg)
-private string <All>m__27C()
-private void <All>m__27D(string str)
-private string <All>m__27E()
-private void <All>m__27F(string str)
-private string <All>m__280()
-private void <All>m__281(string str)
-private string <All>m__282()
-private void <All>m__283(string str)
-private void <All>m__284(Arg arg)
-private string <All>m__285()
-private void <All>m__286(string str)
-private string <All>m__287()
-private void <All>m__288(string str)
-private void <All>m__289(Arg arg)
-private string <All>m__28A()
-private void <All>m__28B(string str)
-private string <All>m__28C()
-private void <All>m__28D(string str)
-private string <All>m__28E()
-private void <All>m__28F(string str)
-private string <All>m__290()
-private void <All>m__291(string str)
-private string <All>m__292()
-private void <All>m__293(string str)
-private void <All>m__294(Arg arg)
-private void <All>m__295(Arg arg)
-private string <All>m__296()
-private void <All>m__297(string str)
-private void <All>m__298(Arg arg)
-private string <All>m__299()
-private void <All>m__29A(string str)
-private void <All>m__29B(Arg arg)
-private string <All>m__29C()
-private void <All>m__29D(string str)
-private void <All>m__29E(Arg arg)
-private string <All>m__29F()
-private void <All>m__2A0(string str)
-private string <All>m__2A1()
-private void <All>m__2A2(string str)
-private string <All>m__2A3()
-private void <All>m__2A4(string str)
-private string <All>m__2A5()
-private void <All>m__2A6(string str)
-private string <All>m__2A7()
-private void <All>m__2A8(string str)
-private string <All>m__2A9()
-private void <All>m__2AA(string str)
-private void <All>m__2AB(Arg arg)
-private void <All>m__2AC(Arg arg)
-private void <All>m__2AD(Arg arg)
-private void <All>m__2AE(Arg arg)
-private string <All>m__2AF()
-private void <All>m__2B0(string str)
-private string <All>m__2B1()
-private void <All>m__2B2(string str)
-private string <All>m__2B3()
-private void <All>m__2B4(string str)
-private string <All>m__2B5()
-private void <All>m__2B6(string str)
-private string <All>m__2B7()
-private void <All>m__2B8(string str)
-private string <All>m__2B9()
-private void <All>m__2BA(string str)
-private void <All>m__2BB(Arg arg)
-private string <All>m__2BC()
-private void <All>m__2BD(string str)
-private string <All>m__2BE()
-private void <All>m__2BF(string str)
-private string <All>m__2C0()
-private void <All>m__2C1(string str)
-private void <All>m__2C2(Arg arg)
-private string <All>m__2C3()
-private void <All>m__2C4(string str)
-private string <All>m__2C5()
-private void <All>m__2C6(string str)
-private string <All>m__2C7()
-private void <All>m__2C8(string str)
-private string <All>m__2C9()
-private void <All>m__2CA(string str)
-private void <All>m__2CB(Arg arg)
-private string <All>m__2CC()
-private void <All>m__2CD(string str)
-private string <All>m__2CE()
-private void <All>m__2CF(string str)
-private string <All>m__2D0()
-private void <All>m__2D1(string str)
-private string <All>m__2D2()
-private void <All>m__2D3(string str)
-private void <All>m__2D4(Arg arg)
-private void <All>m__2D5(Arg arg)
-private string <All>m__2D6()
-private void <All>m__2D7(string str)
-private string <All>m__2D8()
-private void <All>m__2D9(string str)
-private string <All>m__2DA()
-private void <All>m__2DB(string str)
-private string <All>m__2DC()
-private void <All>m__2DD(string str)
-private string <All>m__2DE()
-private void <All>m__2DF(string str)
-private void <All>m__2E0(Arg arg)
-private string <All>m__2E1()
-private void <All>m__2E2(string str)
-private string <All>m__2E3()
-private void <All>m__2E4(string str)
-private string <All>m__2E5()
-private void <All>m__2E6(string str)
-private string <All>m__2E7()
-private void <All>m__2E8(string str)
-private string <All>m__2E9()
-private void <All>m__2EA(string str)
-private string <All>m__2EB()
-private void <All>m__2EC(string str)
-private string <All>m__2ED()
-private void <All>m__2EE(string str)
-private string <All>m__2EF()
-private void <All>m__2F0(string str)
-private void <All>m__2F1(Arg arg)
-private void <All>m__2F2(Arg arg)
-private void <All>m__2F3(Arg arg)
-private void <All>m__2F4(Arg arg)
-private void <All>m__2F5(Arg arg)
-private string <All>m__2F6()
-private void <All>m__2F7(string str)
-private string <All>m__2F8()
-private void <All>m__2F9(string str)
-private string <All>m__2FA()
-private void <All>m__2FB(string str)
-private void <All>m__2FC(Arg arg)
-private string <All>m__2FD()
-private void <All>m__2FE(string str)
-private string <All>m__2FF()
-private void <All>m__300(string str)
-private void <All>m__301(Arg arg)
-private void <All>m__302(Arg arg)
-private void <All>m__303(Arg arg)
-private string <All>m__304()
-private void <All>m__305(string str)
-private string <All>m__306()
-private void <All>m__307(string str)
-private string <All>m__308()
-private void <All>m__309(string str)
-private string <All>m__30A()
-private void <All>m__30B(string str)
-private string <All>m__30C()
-private void <All>m__30D(string str)
-private string <All>m__30E()
-private void <All>m__30F(string str)
-private string <All>m__310()
-private void <All>m__311(string str)
-private string <All>m__312()
-private void <All>m__313(string str)
-private string <All>m__314()
-private void <All>m__315(string str)
-private string <All>m__316()
-private void <All>m__317(string str)
-private string <All>m__318()
-private void <All>m__319(string str)
-private string <All>m__31A()
-private void <All>m__31B(string str)
-private string <All>m__31C()
-private void <All>m__31D(string str)
-private string <All>m__31E()
-private void <All>m__31F(string str)
-private string <All>m__320()
-private void <All>m__321(string str)
-private void <All>m__322(Arg arg)
-private string <All>m__323()
-private void <All>m__324(string str)
-private void <All>m__325(Arg arg)
-private void <All>m__326(Arg arg)
-private void <All>m__327(Arg arg)
-private void <All>m__328(Arg arg)
-private void <All>m__329(Arg arg)
-private string <All>m__32A()
-private void <All>m__32B(string str)
-private void <All>m__32C(Arg arg)
-private void <All>m__32D(Arg arg)
-private void <All>m__32E(Arg arg)
-private void <All>m__32F(Arg arg)
-private void <All>m__330(Arg arg)
-private string <All>m__331()
-private void <All>m__332(string str)
-private string <All>m__333()
-private void <All>m__334(string str)
-private string <All>m__335()
-private void <All>m__336(string str)
-private string <All>m__337()
-private void <All>m__338(string str)
-private string <All>m__339()
-private void <All>m__33A(string str)
-private string <All>m__33B()
-private void <All>m__33C(string str)
-private string <All>m__33D()
-private void <All>m__33E(string str)
-private string <All>m__33F()
-private void <All>m__340(string str)
-private string <All>m__341()
-private void <All>m__342(string str)
-private string <All>m__343()
-private void <All>m__344(string str)
-private string <All>m__345()
-private void <All>m__346(string str)
-private string <All>m__347()
-private void <All>m__348(string str)
-private string <All>m__349()
-private void <All>m__34A(string str)
-private string <All>m__34B()
-private void <All>m__34C(string str)
-private string <All>m__34D()
-private void <All>m__34E(string str)
-private string <All>m__34F()
-private void <All>m__350(string str)
-private string <All>m__351()
-private void <All>m__352(string str)
-private string <All>m__353()
-private void <All>m__354(string str)
-private string <All>m__355()
-private void <All>m__356(string str)
 }
 public ConsoleNetwork : object {
 internal void Init()
@@ -4763,7 +3880,6 @@ public ContainerSourceSelectedItem : ItemContainerSource {
 public ItemContainer GetItemContainer()
 }
 public ConVar.Admin : ConsoleSystem {
-private Func`2<BasePlayer, PlayerInfo> <>f__am$cache0
 public void status(Arg arg)
 public void stats(Arg arg)
 public void kick(Arg arg)
@@ -4792,7 +3908,6 @@ public PlayerInfo[] playerlist()
 public User[] Bans()
 public ServerInfoOutput ServerInfo()
 public BuildInfo BuildInfo()
-private PlayerInfo <playerlist>m__0(BasePlayer x)
 }
 public ConVar.AI : ConsoleSystem {
 public bool think
@@ -4952,6 +4067,7 @@ private float textVolumeBoost
 public bool enabled
 private List`1<ChatEntry> History
 public bool serverlog
+public string EscapeRichText(string message)
 public void Broadcast(string message, string username, string color, ulong userid)
 public void say(Arg arg)
 public IEnumerable`1<ChatEntry> tail(Arg arg)
@@ -4980,7 +4096,6 @@ public ConVar.Debugging : ConsoleSystem {
 public bool checktriggers
 public bool disablecondition
 public bool callbacks
-private Func`2<BaseNetworkable, bool> <>f__am$cache0
 public bool log
 public void renderinfo(Arg arg)
 public void set_log(bool value)
@@ -4994,7 +4109,6 @@ public void breakitem(Arg arg)
 public void hurt(Arg arg)
 public void eat(Arg arg)
 public void drink(Arg arg)
-private bool <puzzleprefabrespawn>m__0(BaseNetworkable x)
 }
 public ConVar.Decay : ConsoleSystem {
 public float outside_test_range
@@ -5028,9 +4142,6 @@ public int bracket_3_blockcount
 public float bracket_3_costfraction
 }
 public ConVar.Entity : ConsoleSystem {
-private Func`2<string, string> <>f__mg$cache0
-private Func`2<string, string> <>f__am$cache0
-private Func`2<ItemDefinition, string> <>f__am$cache1
 private TextTable GetEntityTable(Func`2<EntityInfo, bool> filter)
 public void find_entity(Arg args)
 public void find_id(Arg args)
@@ -5045,8 +4156,6 @@ public string svspawn(string name, Vector3 pos)
 public string svspawnitem(string name, Vector3 pos)
 public void spawnlootfrom(Arg args)
 public int DeleteBy(ulong SteamId)
-private string <svspawn>m__0(string x)
-private string <svspawnitem>m__1(ItemDefinition x)
 }
 public ConVar.Env : ConsoleSystem {
 public bool progresstime
@@ -5084,6 +4193,10 @@ public int get_graph()
 public void set_graph(int value)
 }
 public ConVar.GC : ConsoleSystem {
+private int m_buffer
+public int buffer
+public int get_buffer()
+public void set_buffer(int value)
 public void collect()
 public void unload()
 }
@@ -5093,9 +4206,6 @@ public int maxthreads
 public int perf
 public bool god
 public bool specnet
-private Func`2<KeyValuePair`2<Type, long>, long> <>f__am$cache0
-private Func`2<Collider, bool> <>f__am$cache1
-private Func`2<Collider, bool> <>f__am$cache2
 public bool timewarning
 public int developer
 public bool get_timewarning()
@@ -5130,9 +4240,6 @@ public void sysinfo(Arg arg)
 public void sysuid(Arg arg)
 public void breakitem(Arg args)
 public void subscriptions(Arg arg)
-private long <objects>m__0(KeyValuePair`2<Type, long> x)
-private bool <colliders>m__1(Collider x)
-private bool <colliders>m__2(Collider x)
 }
 public ConVar.Graphics : ConsoleSystem {
 private float MinShadowDistance
@@ -5276,7 +4383,6 @@ public ConVar.Pool : ConsoleSystem {
 public int mode
 public bool enabled
 public bool debug
-private Func`2<KeyValuePair`2<Type, ICollection>, long> <>f__am$cache0
 public void print_memory(Arg arg)
 public void print_prefabs(Arg arg)
 public void print_assets(Arg arg)
@@ -5284,7 +4390,6 @@ public void clear_memory(Arg arg)
 public void clear_prefabs(Arg arg)
 public void clear_assets(Arg arg)
 public void export_prefabs(Arg arg)
-private long <print_memory>m__0(KeyValuePair`2<Type, ICollection> x)
 }
 public ConVar.Profile : ConsoleSystem {
 public void start(Arg arg)
@@ -5337,6 +4442,8 @@ public float bulletarmor
 public float bleedingarmor
 public int updatebatch
 public int updatebatchspawn
+public int entitybatchsize
+public float entitybatchtime
 public float planttick
 public float planttickscale
 public float metabolismtick
@@ -5512,7 +4619,6 @@ public bool runOnClient
 public List`1<ConvarEvent> List
 protected void OnEnable()
 protected void OnDisable()
-protected void OnValidate()
 private bool ShouldRun()
 }
 public ConvarControlledSpawnPopulation : SpawnPopulation {
@@ -5550,37 +4656,7 @@ public int target
 }
 public CoverageQueries : MonoBehaviour {
 public float depthBias
-private List`1<Query> pool
-private List`1<Query> added
-private List`1<Query> reused
-private List`1<int> removed
-private List`1<int> changed
-private Queue`1<int> freed
-private BufferSet buffer
-private Camera camera
-private Material coverageMat
-private CoverageQueries instance
-private bool _debugShow
 public bool debug
-public CoverageQueries Instance
-public bool Supported
-public bool DebugShow
-public CoverageQueries get_Instance()
-public bool get_Supported()
-public bool get_DebugShow()
-public void set_DebugShow(bool value)
-private void Awake()
-private void OnEnable()
-private void OnDisable()
-private void Update()
-private void OnPostRender()
-private void UpdateCollection()
-private void PrepareAndDispatch()
-private void IssueRead()
-private void FetchAndAnalyseResults()
-public void RegisterQuery(Query query)
-public void UnregisterQuery(Query query)
-public void UpdateQuery(Query query)
 }
 public CoverageQueryFlare : SimpleFlare {
 private Query query
@@ -5678,7 +4754,6 @@ public MinMax range
 }
 public Decay : PrefabAttribute {
 private float hours
-private Action`1<DecayEntity> <>f__am$cache0
 protected float GetDecayDelay(Enum grade)
 protected float GetDecayDuration(Enum grade)
 public void BuildingDecayTouch(BuildingBlock buildingBlock)
@@ -5688,7 +4763,6 @@ public bool ShouldDecay(BaseEntity entity)
 public float GetDecayDelay(BaseEntity entity)
 public float GetDecayDuration(BaseEntity entity)
 protected Type GetIndexedType()
-private void <EntityLinkDecayTouch>m__0(DecayEntity decayEnt)
 }
 public DecayEntity : BaseCombatEntity {
 public UInt32 buildingID
@@ -5788,10 +4862,10 @@ private ActionPriority priority
 private bool <Idle>k__BackingField
 public bool Idle
 public int Index
-public void .ctor(Object sender, Action action, ActionPriority priority)
 public bool get_Idle()
 private void set_Idle(bool value)
 public int get_Index()
+public void .ctor(Object sender, Action action, ActionPriority priority)
 public void Action()
 public void Invoke()
 public bool op_Implicit(DeferredAction obj)
@@ -5817,20 +4891,6 @@ public bool debug
 }
 public DeferredExtensionMesh : MonoBehaviour {
 public SubsurfaceProfile subsurfaceProfile
-}
-public Definition`1 : BaseScriptableObject {
-private T[] _all
-public int Id
-public string shortname
-public Phrase displayName
-private Func`2<Object, bool> <>f__am$cache0
-public T[] All
-public T[] get_All()
-public T GetById(int forId)
-private bool <get_All>m__0(Object n)
-}
-public Definitions : object {
-public bool Refresh
 }
 public Deployable : PrefabAttribute {
 public Mesh guideMesh
@@ -5916,6 +4976,25 @@ protected bool Check(Vector3 position, Quaternion rotation, OBB obb, int mask)
 public DestroyOnGroundMissing : MonoBehaviour {
 private void OnGroundMissing()
 }
+public Detonator : HeldEntity {
+public int frequency
+private float timeSinceDeploy
+public GameObject frequencyPanelPrefab
+public GameObjectRef attackEffect
+public GameObjectRef unAttackEffect
+private float nextChangeTime
+public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+public void SetPressed(RPCMessage msg)
+internal void InternalSetPressed(bool pressed)
+public Vector3 GetPosition()
+public float GetMaxRange()
+public void RFSignalUpdate(bool on)
+public void SetHeld(bool bHeld)
+public void ServerSetFrequency(RPCMessage msg)
+public void Save(SaveInfo info)
+public void Load(LoadInfo info)
+public int GetFrequency()
+}
 public DevBotSpawner : FacepunchBehaviour {
 public GameObjectRef bot
 public Transform waypointParent
@@ -5937,12 +5016,8 @@ public GUISkin skin
 public DevDressPlayer : MonoBehaviour {
 public bool DressRandomly
 public List`1<ItemAmount> clothesToWear
-private Func`2<ItemDefinition, bool> <>f__am$cache0
-private Func`2<ItemDefinition, Guid> <>f__am$cache1
 private void ServerInitComponent()
 private void DoRandomClothes(BasePlayer player)
-private bool <DoRandomClothes>m__0(ItemDefinition x)
-private Guid <DoRandomClothes>m__1(ItemDefinition x)
 }
 public DeveloperList : object {
 public bool Contains(ulong steamid)
@@ -5978,37 +5053,6 @@ protected void Awake()
 protected void OnGUI()
 }
 public DiagnosticsConSys : ConsoleSystem {
-private Func`2<IGrouping`2<string, Animator>, int> <>f__mg$cache0
-private Func`2<IGrouping`2<string, Animator>, int> <>f__mg$cache1
-private Func`2<Animator, string> <>f__am$cache0
-private Func`2<Animator, string> <>f__am$cache1
-private Func`2<IGrouping`2<UInt32, BaseNetworkable>, int> <>f__mg$cache2
-private Func`2<IGrouping`2<UInt32, BaseEntity>, int> <>f__mg$cache3
-private Func`2<BaseNetworkable, UInt32> <>f__am$cache2
-private Func`2<BaseEntity, UInt32> <>f__am$cache3
-private Func`2<IGrouping`2<string, LODGroup>, int> <>f__mg$cache4
-private Func`2<LODGroup, string> <>f__am$cache4
-private Func`2<IGrouping`2<Type, Object>, int> <>f__mg$cache5
-private Func`2<IGrouping`2<Type, Object>, int> <>f__mg$cache6
-private Func`2<Object, Type> <>f__am$cache5
-private Func`2<Object, bool> <>f__am$cache6
-private Func`2<Object, Type> <>f__am$cache7
-private Func`2<Collider, bool> <>f__am$cache8
-private Func`2<IGrouping`2<string, Collider>, int> <>f__mg$cache7
-private Func`2<Collider, string> <>f__am$cache9
-private Func`2<Collider, bool> <>f__am$cacheA
-private Func`2<Collider, bool> <>f__am$cacheB
-private Func`2<IGrouping`2<string, Rigidbody>, int> <>f__mg$cache8
-private Func`2<Rigidbody, string> <>f__am$cacheC
-private Func`2<Rigidbody, bool> <>f__am$cacheD
-private Func`2<Rigidbody, bool> <>f__am$cacheE
-private Func`2<Rigidbody, bool> <>f__am$cacheF
-private Func`2<IGrouping`2<string, Transform>, int> <>f__mg$cache9
-private Func`2<Transform, string> <>f__am$cache10
-private Func`2<Transform, string> <>f__am$cache11
-private Func`2<IGrouping`2<string, Transform>, KeyValuePair`2<Transform, int>> <>f__am$cache12
-private Func`2<KeyValuePair`2<Transform, int>, int> <>f__am$cache13
-private Func`2<Transform, int> <>f__am$cache14
 private void DumpAnimators(string targetFolder)
 public void dump(Arg args)
 private void DumpSystemInformation(string targetFolder)
@@ -6024,27 +5068,6 @@ private void DumpColliders(string targetFolder)
 private void DumpRigidBodies(string targetFolder)
 private void DumpGameObjects(string targetFolder)
 private void DumpGameObjectRecursive(StringBuilder str, Transform tx, int indent, bool includeComponents)
-private string <DumpAnimators>m__0(Animator x)
-private string <DumpAnimators>m__1(Animator x)
-private UInt32 <DumpEntities>m__2(BaseNetworkable x)
-private UInt32 <DumpEntities>m__3(BaseEntity x)
-private string <DumpLODGroupTotals>m__4(LODGroup x)
-private Type <DumpObjects>m__5(Object x)
-private bool <DumpObjects>m__6(Object x)
-private Type <DumpObjects>m__7(Object x)
-private bool <DumpTotals>m__8(Collider x)
-private string <DumpColliders>m__9(Collider x)
-private bool <DumpColliders>m__A(Collider x)
-private bool <DumpColliders>m__B(Collider x)
-private string <DumpRigidBodies>m__C(Rigidbody x)
-private bool <DumpRigidBodies>m__D(Rigidbody x)
-private bool <DumpRigidBodies>m__E(Rigidbody x)
-private bool <DumpRigidBodies>m__F(Rigidbody x)
-private string <DumpGameObjects>m__10(Transform x)
-private string <DumpGameObjects>m__11(Transform x)
-private KeyValuePair`2<Transform, int> <DumpGameObjects>m__12(IGrouping`2<string, Transform> x)
-private int <DumpGameObjects>m__13(KeyValuePair`2<Transform, int> x)
-private int <DumpGameObjects>m__14(Transform y)
 }
 public DirectionalDamageTrigger : TriggerBase {
 public float repeatRate
@@ -6079,6 +5102,7 @@ public GameObjectRef knockEffect
 public bool canTakeLock
 public bool hasHatch
 public bool canTakeCloser
+public bool canTakeKnocker
 public bool canNpcOpen
 public bool canHandOpen
 public bool isSecurityDoor
@@ -6128,6 +5152,12 @@ public void Think()
 public void SendClose()
 public void RPC_Take(RPCMessage rpc)
 public Door GetDoor()
+}
+public DoorKnocker : BaseCombatEntity {
+public Animator knocker1
+public Animator knocker2
+public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+public void Knock(BasePlayer player)
 }
 public DoorManipulator : IOEntity {
 public EntityRef entityRef
@@ -6266,7 +5296,6 @@ private Dictionary`2<Client, Connection> client2connection
 private Dictionary`2<Connection, Client> connection2client
 private Dictionary`2<Connection, ClientStatus> connection2status
 private EasyAntiCheatServer`1<Client> easyAntiCheat
-private ClientStatusHandler<Client> <>f__mg$cache0
 public void Encrypt(Connection connection, MemoryStream src, int srcOffset, MemoryStream dst, int dstOffset)
 public void Decrypt(Connection connection, MemoryStream src, int srcOffset, MemoryStream dst, int dstOffset)
 public Client GetClient(Connection connection)
@@ -6337,8 +5366,8 @@ public EffectRecycleLite : BasePrefab {
 private float lifeTime
 }
 public ElectricalBlocker : IOEntity {
-private int input1Amount
-private int input2Amount
+protected int input1Amount
+protected int input2Amount
 public int GetPassthroughAmount(int outputSlot)
 public bool WantsPower()
 public void UpdateHasPower(int inputAmount, int inputSlot)
@@ -6360,6 +5389,7 @@ public void Load(LoadInfo info)
 public ElectricalCombiner : IOEntity {
 public int input1Amount
 public int input2Amount
+private bool wasShorted
 public bool IsRootEntity()
 public int GetPassthroughAmount(int outputSlot)
 public void UpdateHasPower(int inputAmount, int inputSlot)
@@ -6368,6 +5398,7 @@ public void UpdateFromInput(int inputAmount, int slot)
 public ElectricalDFlipFlop : IOEntity {
 private int setAmount
 private int resetAmount
+private int toggleAmount
 public void UpdateHasPower(int inputAmount, int inputSlot)
 public bool GetDesiredState()
 public void UpdateState()
@@ -6434,6 +5465,14 @@ public void Save(SaveInfo info)
 public bool AmIVisible()
 public void WindUpdate()
 public Vector3 GetWindAimDir(float time)
+}
+public EmissionScaledByLight : MonoBehaviour {
+private Color emissionColor
+public Renderer[] targetRenderers
+public int materialIndex
+private MaterialPropertyBlock block
+public Light lightToFollow
+public float maxEmissionValue
 }
 public EmissionToggle : MonoBehaviour {
 private Color emissionColor
@@ -6878,7 +5917,6 @@ public Facepunch.Output : object {
 private Action`3<string, string, LogType> OnMessage
 public bool installed
 public List`1<Entry> HistoryOutput
-private LogCallback <>f__mg$cache0
 public void add_OnMessage(Action`3<string, string, LogType> value)
 public void remove_OnMessage(Action`3<string, string, LogType> value)
 public void Install()
@@ -6904,9 +5942,6 @@ internal int SERVERDATA_AUTH_RESPONSE
 internal int SERVERDATA_RESPONSE_VALUE
 internal int SERVERDATA_CONSOLE_LOG
 internal int SERVERDATA_SWITCH_UTF8
-private Action`3<string, string, LogType> <>f__mg$cache0
-private Action`3<IPEndPoint, string, string> <>f__am$cache0
-private Predicate`1<BannedAddresses> <>f__am$cache1
 public void Initialize()
 public void Shutdown()
 public void Broadcast(LogType type, object obj)
@@ -6915,8 +5950,6 @@ public void BanIP(IPAddress addr, float seconds)
 public bool IsBanned(IPAddress addr)
 private void OnCommand(Command cmd)
 private void OnMessage(string message, string stacktrace, LogType type)
-private void <Initialize>m__0(IPEndPoint ip, string id, string msg)
-private bool <Update>m__1(BannedAddresses x)
 }
 public Facepunch.Rust.Analytics : object {
 internal void Death(string v)
@@ -6954,11 +5987,9 @@ public void Backup(String[] names)
 }
 public FileStorage : object {
 private Database db
-public int MaxSize
 private CRC32 crc
 private Dictionary`2<UInt32, CacheData> _cache
 public FileStorage server
-private Func`2<KeyValuePair`2<UInt32, CacheData>, UInt32> <>f__am$cache0
 protected void .ctor(string name, bool server)
 protected void Finalize()
 public void Dispose()
@@ -6968,7 +5999,6 @@ public Byte[] Get(UInt32 crc, Type type, UInt32 entityID)
 public void Remove(UInt32 crc, Type type, UInt32 entityID)
 public void RemoveEntityNum(UInt32 entityid, UInt32 numid)
 internal void RemoveAllByEntity(UInt32 entityid)
-private UInt32 <RemoveEntityNum>m__0(KeyValuePair`2<UInt32, CacheData> x)
 }
 public FileSystem : object {
 public bool LogDebug
@@ -6984,15 +6014,11 @@ public FileSystem_Warmup : MonoBehaviour {
 private bool run
 private bool running
 private String[] excludeFilter
-private Func`2<PrefabProperties, string> <>f__am$cache0
-private Func`2<string, bool> <>f__am$cache1
 public void Run()
 public IEnumerator Run(float deltaTime, Action`1<string> statusFunction, string format)
 private bool ShouldIgnore(string path)
 private String[] GetAssetList()
 private void PrefabWarmup(string path)
-private string <GetAssetList>m__0(PrefabProperties x)
-private bool <GetAssetList>m__1(string x)
 }
 public FireBall : BaseEntity {
 public float lifeTimeMin
@@ -7198,6 +6224,7 @@ public List`1<DamageTypeEntry> damagePerSec
 public GameObjectRef triggeredEffect
 public GameObjectRef fireballPrefab
 public GameObjectRef explosionEffect
+public TargetTrigger trigger
 private float nextFireballTime
 private int turnDir
 private float lastServerThink
@@ -7223,6 +6250,14 @@ public int GetFuelAmount()
 public bool HasFuel()
 public bool UseFuel(float seconds)
 public void DoFlame(float delta)
+}
+public FlasherLight : IOEntity {
+public EmissionToggle toggler
+public Light myLight
+public float flashSpacing
+public float flashBurstSpacing
+public float flashOnTime
+public int numFlashesPerBurst
 }
 public FlashlightBeam : MonoBehaviour {
 public Vector2 scrollDir
@@ -7250,6 +6285,7 @@ public Flags MotionMode
 public Flags Emitting
 public Flags Flag_HasJuice
 public float fogLength
+public float nozzleBlastDuration
 public float fuelPerSec
 private float pendingFuel
 public bool IsEmitting()
@@ -7268,6 +6304,7 @@ public void PlayerStoppedLooting(BasePlayer player)
 public int GetFuelAmount()
 public bool HasFuel()
 public bool UseFuel(float seconds)
+public bool MotionModeEnabled()
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 }
 public FogSettings : ValueType {
@@ -7361,6 +6398,11 @@ public Rigidbody GetRB()
 public bool IsTiedDown()
 public void ServerInit()
 public void RPC_FreeCrate(RPCMessage msg)
+}
+public FrequencyConfig : UIDialog {
+private IRFObject rfObject
+public InputField input
+public int target
 }
 public FruitScale : MonoBehaviour {
 public void SetProgress(float progress)
@@ -7479,7 +6521,6 @@ private Settings _settings
 private GameAnalytics _instance
 private bool _hasInitializeBeenCalled
 private Action OnCommandCenterUpdatedEvent
-private LogCallback <>f__mg$cache0
 public Settings SettingsGA
 public Settings get_SettingsGA()
 private void set_SettingsGA(Settings value)
@@ -7544,7 +6585,6 @@ public string Name
 public int ID
 public string GameKey
 public string SecretKey
-public void .ctor(string name, int id, string gameKey, string secretKey)
 public string get_Name()
 private void set_Name(string value)
 public int get_ID()
@@ -7553,6 +6593,7 @@ public string get_GameKey()
 private void set_GameKey(string value)
 public string get_SecretKey()
 private void set_SecretKey(string value)
+public void .ctor(string name, int id, string gameKey, string secretKey)
 }
 public GameAnalyticsSDK.Setup.Settings : ScriptableObject {
 public string VERSION
@@ -7659,13 +6700,13 @@ private List`1<Game> <Games>k__BackingField
 public string Name
 public string ID
 public List`1<Game> Games
-public void .ctor(string name, string id, List`1<Game> games)
 public string get_Name()
 private void set_Name(string value)
 public string get_ID()
 private void set_ID(string value)
 public List`1<Game> get_Games()
 private void set_Games(List`1<Game> value)
+public void .ctor(string name, string id, List`1<Game> games)
 public String[] GetStudioNames(List`1<Studio> studios, bool addFirstEmpty)
 public String[] GetGameNames(int index, List`1<Studio> studios)
 }
@@ -7792,8 +6833,8 @@ internal PrefabPreProcess preProcessed
 internal PrefabPoolCollection pool
 private bool Clientside
 private bool Serverside
-public void .ctor(bool clientside, bool serverside)
 public void Reset()
+public void .ctor(bool clientside, bool serverside)
 public GameObject FindPrefab(UInt32 prefabID)
 public GameObject FindPrefab(BaseEntity ent)
 public GameObject FindPrefab(string strPrefab)
@@ -7840,8 +6881,6 @@ public GamePhysics : object {
 public int BufferLength
 private RaycastHit[] hitBuffer
 private Collider[] colBuffer
-private Comparison`1<RaycastHit> <>f__am$cache0
-private Comparison`1<RaycastHit> <>f__am$cache1
 public bool CheckSphere(Vector3 position, float radius, int layerMask, QueryTriggerInteraction triggerInteraction)
 public bool CheckCapsule(Vector3 start, Vector3 end, float radius, int layerMask, QueryTriggerInteraction triggerInteraction)
 public bool CheckOBB(OBB obb, int layerMask, QueryTriggerInteraction triggerInteraction)
@@ -7873,8 +6912,6 @@ public bool Verify(Collider collider, Vector3 point)
 public int HandleTerrainCollision(Vector3 position, int layerMask)
 public void Sort(List`1<RaycastHit> hits)
 public void Sort(RaycastHit[] hits)
-private int <Sort>m__0(RaycastHit a, RaycastHit b)
-private int <Sort>m__1(RaycastHit a, RaycastHit b)
 }
 public GameSetup : MonoBehaviour {
 public bool RunOnce
@@ -7948,11 +6985,7 @@ public void Process(UInt32 seed)
 public GeneratePowerlineLayout : ProceduralComponent {
 public float Width
 private int MaxDepth
-private Func`2<PathNode, Point> <>f__am$cache0
-private Func`2<PathNode, Point> <>f__am$cache1
 public void Process(UInt32 seed)
-private Point <Process>m__0(PathNode x)
-private Point <Process>m__1(PathNode x)
 }
 public GeneratePowerlineTopology : ProceduralComponent {
 public void Process(UInt32 seed)
@@ -7966,9 +6999,7 @@ public float OuterFade
 public float RandomScale
 public float MeshOffset
 public float TerrainOffset
-private Comparison`1<PathList> <>f__am$cache0
 public void Process(UInt32 seed)
-private int <Process>m__0(PathList a, PathList b)
 }
 public GenerateRiverMeshes : ProceduralComponent {
 public Material RiverMaterial
@@ -7990,11 +7021,7 @@ public float RandomScale
 public float MeshOffset
 public float TerrainOffset
 private int MaxDepth
-private Func`2<PathNode, Point> <>f__am$cache0
-private Func`2<PathNode, Point> <>f__am$cache1
 public void Process(UInt32 seed)
-private Point <Process>m__0(PathNode x)
-private Point <Process>m__1(PathNode x)
 }
 public GenerateRoadMeshes : ProceduralComponent {
 public Material RoadMaterial
@@ -8165,13 +7192,14 @@ public int numPellets
 public int aimCone
 public float sensorRadius
 public ItemDefinition ammoType
+public TargetTrigger trigger
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 public bool UseAmmo()
 public void FireWeapon()
 public void FireBullet()
 public void ServerInit()
 public void TriggerCheck()
-public bool CheckTrigger(float offset, float radius)
+public bool CheckTrigger()
 public bool IsTriggered()
 public Vector3 GetEyePosition()
 }
@@ -8275,6 +7303,22 @@ public Vector4 op_Explicit(Half4 vec)
 public Hammer : BaseMelee {
 public bool CanHit(HitTest info)
 public void DoAttackShared(HitInfo info)
+}
+public HBHFSensor : BaseDetector {
+public GameObjectRef detectUp
+public GameObjectRef detectDown
+public Flags Flag_IncludeOthers
+public Flags Flag_IncludeAuthed
+private int detectedPlayers
+public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+public int GetPassthroughAmount(int outputSlot)
+public void OnObjects()
+public void OnEmpty()
+public void UpdatePassthroughAmount()
+public void SetIncludeAuth(RPCMessage msg)
+public void SetIncludeOthers(RPCMessage msg)
+public bool ShouldIncludeAuthorized()
+public bool ShouldIncludeOthers()
 }
 public HeldEntity : BaseEntity {
 public Animator worldModelAnimator
@@ -8438,12 +7482,12 @@ public bool isHeadshot
 public Phrase bonePhrase
 public string boneName
 public HitArea boneArea
-public void .ctor(BaseEntity attacker, BaseEntity target, DamageType type, float damageAmount, Vector3 vhitPosition)
-public void .ctor(BaseEntity attacker, BaseEntity target, DamageType type, float damageAmount)
 public bool IsProjectile()
 public BasePlayer get_InitiatorPlayer()
 public Vector3 get_attackNormal()
 public bool get_hasDamage()
+public void .ctor(BaseEntity attacker, BaseEntity target, DamageType type, float damageAmount, Vector3 vhitPosition)
+public void .ctor(BaseEntity attacker, BaseEntity target, DamageType type, float damageAmount)
 public void LoadFromAttack(Attack attack, bool serverSide)
 public bool get_isHeadshot()
 public Phrase get_bonePhrase()
@@ -8543,6 +7587,7 @@ private float avgTerrainHeight
 public Bounds collapsedBounds
 public Bounds raisedBounds
 public GameObject balloonCollider
+protected bool grounded
 private float nextFuelCheckTime
 private bool cachedHasFuel
 private float pendingFuel
@@ -8558,6 +7603,7 @@ public void ServerInit()
 public void DecayTick()
 public void EngineSwitch(RPCMessage msg)
 public void ScheduleOff()
+public void UpdateIsGrounded()
 protected void FixedUpdate()
 public Vector3 GetLocalVelocityServer()
 public Quaternion GetAngularVelocityServer()
@@ -8965,13 +8011,13 @@ private int hash
 public Renderer Renderer
 public Mesh Mesh
 public Material Material
-public void .ctor(Renderer renderer, Mesh mesh, Material material)
 private void set_Renderer(Renderer value)
 public Renderer get_Renderer()
 private void set_Mesh(Mesh value)
 public Mesh get_Mesh()
 private void set_Material(Material value)
 public Material get_Material()
+public void .ctor(Renderer renderer, Mesh mesh, Material material)
 private int GenerateHashCode()
 public bool Equals(object obj)
 public int GetHashCode()
@@ -9031,6 +8077,7 @@ public int lastResetIndex
 public float framebudgetms
 public float responsetime
 public int backtracking
+public Flags Flag_ShortCircuit
 public Flags Flag_HasPower
 public IOSlot[] inputs
 public IOSlot[] outputs
@@ -9043,12 +8090,13 @@ protected int currentEnergy
 private float lastUpdateTime
 protected bool ensureOutputsUpdated
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+public void ResetState()
 public string GetDisplayName()
 public bool IsRootEntity()
 public bool WantsPower()
 public bool IsPowered()
-public bool IsConnectedTo(IOEntity entity, int slot, int depth)
-public bool IsConnectedTo(IOEntity entity, int depth)
+public bool IsConnectedTo(IOEntity entity, int slot, int depth, bool defaultReturn)
+public bool IsConnectedTo(IOEntity entity, int depth, bool defaultReturn)
 private void Server_RequestData(RPCMessage msg)
 public void SendAdditionalData(BasePlayer player)
 public void ProcessQueue()
@@ -9102,6 +8150,12 @@ public void PreProcess(IPrefabProcessor preProcess, GameObject rootObj, string n
 public IPrefabProcessor {
 public void RemoveComponent(Component component)
 public void NominateForDeletion(GameObject obj)
+}
+public IRFObject {
+public Vector3 GetPosition()
+public float GetMaxRange()
+public void RFSignalUpdate(bool on)
+public int GetFrequency()
 }
 public IronsightAimPoint : MonoBehaviour {
 public Transform targetPoint
@@ -9166,7 +8220,6 @@ public ItemContainer parent
 private EntityRef worldEnt
 private EntityRef heldEntity
 private Action`2<Item, float> onCycle
-private Func`2<Item, int> <>f__am$cache0
 public float condition
 public float maxCondition
 public float maxConditionNormalized
@@ -9257,7 +8310,6 @@ public int MaxStackable()
 public TraitFlag get_Traits()
 public Item Save(bool bIncludeContainer, bool bIncludeOwners)
 public void Load(Item load)
-private int <MoveToContainer>m__0(Item x)
 }
 public ItemAmount : object {
 public ItemDefinition itemDef
@@ -9277,8 +8329,8 @@ public int RandomAmount()
 }
 public ItemAmountRanged : ItemAmount {
 public float maxAmount
-public void .ctor(ItemDefinition item, float amt, float max)
 public void OnAfterDeserialize()
+public void .ctor(ItemDefinition item, float amt, float max)
 public float GetAmount()
 }
 public ItemBasedFlowRestrictor : IOEntity {
@@ -9512,7 +8564,7 @@ private void set_isUsable(bool value)
 public bool get_HasSkins()
 public bool get_CraftableWithSkin()
 private void set_CraftableWithSkin(bool value)
-private bool <Initialize>m__0(ItemDefinition x)
+private bool <Initialize>b__42_0(ItemDefinition x)
 }
 public ItemDropCommand : MonoBehaviour {
 public string command
@@ -9565,16 +8617,10 @@ public ItemListTools : MonoBehaviour {
 public GameObject categoryButton
 public GameObject itemButton
 internal Button lastCategory
-private Func`2<ItemDefinition, ItemCategory> <>f__am$cache0
-private Func`2<IGrouping`2<ItemCategory, ItemDefinition>, ItemCategory> <>f__am$cache1
-private Func`2<ItemDefinition, string> <>f__am$cache2
 public void OnPanelOpened()
 public void Refresh()
 private void RebuildCategories()
 private void SwitchItemCategory(ItemDefinition[] defs)
-private ItemCategory <RebuildCategories>m__0(ItemDefinition x)
-private ItemCategory <RebuildCategories>m__1(IGrouping`2<ItemCategory, ItemDefinition> x)
-private string <SwitchItemCategory>m__2(ItemDefinition x)
 }
 public ItemManager : object {
 public List`1<ItemDefinition> itemList
@@ -9582,12 +8628,6 @@ public Dictionary`2<int, ItemDefinition> itemDictionary
 public List`1<ItemBlueprint> bpList
 public Int32[] defaultBlueprints
 private List`1<ItemRemove> ItemRemoves
-private Func`2<GameObject, ItemDefinition> <>f__am$cache0
-private Func`2<ItemDefinition, bool> <>f__am$cache1
-private Func`2<GameObject, ItemBlueprint> <>f__am$cache2
-private Func`2<ItemBlueprint, bool> <>f__am$cache3
-private Func`2<ItemBlueprint, bool> <>f__am$cache4
-private Func`2<ItemBlueprint, int> <>f__am$cache5
 public void InvalidateWorkshopSkinCache()
 public void Initialize()
 public Item CreateByName(string strName, int iAmount, ulong skin)
@@ -9603,12 +8643,6 @@ public List`1<ItemBlueprint> GetBlueprints()
 public void DoRemoves()
 public void Heartbeat()
 public void RemoveItem(Item item, float fTime)
-private ItemDefinition <Initialize>m__0(GameObject x)
-private bool <Initialize>m__1(ItemDefinition x)
-private ItemBlueprint <Initialize>m__2(GameObject x)
-private bool <Initialize>m__3(ItemBlueprint x)
-private bool <Initialize>m__4(ItemBlueprint x)
-private int <Initialize>m__5(ItemBlueprint x)
 }
 public ItemMod : MonoBehaviour {
 private ItemMod[] siblingMods
@@ -9662,7 +8696,7 @@ public ItemModConditionHasContents : ItemMod {
 public ItemDefinition itemDef
 public bool requiredState
 public bool Passes(Item item)
-private bool <Passes>m__0(Item x)
+private bool <Passes>b__2_0(Item x)
 }
 public ItemModConditionHasFlag : ItemMod {
 public Flag flag
@@ -9836,6 +8870,21 @@ public int revealedItemAmount
 public LootSpawn revealList
 public GameObjectRef successEffect
 public void ServerCommand(Item item, string command, BasePlayer player)
+}
+public ItemModRFListener : ItemMod {
+public GameObject frequencyPanelPrefab
+public GameObjectRef entityPrefab
+public void OnVirginItem(Item item)
+public void OnRemove(Item item)
+public void OnChanged(Item item)
+public void OnMovedToWorld(Item item)
+public void OnRemovedFromWorld(Item item)
+public void UpdateParent(Item item)
+public void OnParentChanged(Item item)
+public BaseEntity GetEntityForParenting(Item item)
+public float GetMaxRange()
+public void ServerCommand(Item item, string command, BasePlayer player)
+public PagerEntity GetPagerEnt(Item item, bool isServer)
 }
 public ItemModSound : ItemMod {
 public GameObjectRef effect
@@ -10419,6 +9468,7 @@ public Text wireLengthText
 public Text wireClipsText
 public Text errorReasonTextTooFar
 public Text errorReasonTextNoSurface
+public Text errorShortCircuit
 }
 public LookAtPlant : MonoBehaviour {
 public CanvasGroup group
@@ -10536,11 +9586,9 @@ public Button drinkButton
 public LootSpawn : ScriptableObject {
 public ItemAmountRanged[] items
 public Entry[] subSpawn
-private Func`2<Entry, int> <>f__am$cache0
 public ItemDefinition GetBlueprintBaseDef()
 public void SpawnIntoContainer(ItemContainer container)
 private void SubCategoryIntoContainer(ItemContainer container)
-private int <SubCategoryIntoContainer>m__0(Entry x)
 }
 public m2bradleyAnimator : MonoBehaviour {
 public Animator m2Animator
@@ -10898,6 +9946,7 @@ public Transform LookupTransform(int triangleIndex)
 public Rigidbody LookupRigidbody(int triangleIndex)
 public Collider LookupCollider(int triangleIndex)
 public void LookupColliders(Vector3 position, float distance, List`1<T> list)
+public void LookupColliders(OBB bounds, List`1<T> list)
 protected void Awake()
 public void Setup(Vector3 position, LayerMask layer, PhysicMaterial material)
 public void Add(MeshColliderInstance instance)
@@ -11144,6 +10193,93 @@ public void MoveTowards(float fTarget, float fRate)
 public bool HasChanged()
 public bool HasGreatlyChanged()
 public void SetValue(float newValue)
+}
+public MiniCopter : BaseHelicopterVehicle {
+public Transform waterSample
+public WheelCollider leftWheel
+public WheelCollider rightWheel
+public WheelCollider frontWheel
+public Transform leftWheelTrans
+public Transform rightWheelTrans
+public Transform frontWheelTrans
+public float cachedrotation_left
+public float cachedrotation_right
+public float cachedrotation_front
+public AnimationCurve bladeEngineCurve
+public Flags Flag_EngineStart
+public Transform mainRotorBlur
+public Transform mainRotorBlades
+public Transform rearRotorBlades
+public Transform rearRotorBlur
+public float motorForceConstant
+public float brakeForceConstant
+public GameObject preventBuildingObject
+public float population
+public float outsidedecayminutes
+private float lastEngineTime
+public float rotorBlurThreshold
+public GameObjectRef fuelStoragePrefab
+public Transform fuelStoragePoint
+public EntityRef fuelStorageInstance
+public float fuelPerSec
+private float nextFuelCheckTime
+private bool cachedHasFuel
+private float pendingFuel
+public bool IsStartingUp()
+public float GetServiceCeiling()
+public void PilotInput(InputState inputState, BasePlayer player)
+public bool Grounded()
+public void SetDefaultInputState()
+private void ApplyForceAtWheels()
+public void ApplyWheelForce(WheelCollider wheel, float gasScale, float brakeScale, float turning)
+public void MovementUpdate()
+public void EngineStartup()
+public void EngineOn()
+public void EngineOff()
+public void ServerInit()
+public void DecayTick()
+public void SpawnSubEntities()
+public bool PhysicsDriven()
+public bool Waterlogged()
+public void VehicleFixedUpdate()
+public void UpdateNetwork()
+public void UpdateCOM()
+public void Save(SaveInfo info)
+public void DismountAllPlayers()
+public void Load(LoadInfo info)
+public void SpawnFuelObject()
+public int GetFuelAmount()
+public bool HasFuel(bool forceCheck)
+public bool UseFuel(float seconds)
+public void RPC_OpenFuel(RPCMessage msg)
+public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+}
+public MiniCopterAnimation : MonoBehaviour {
+public void UpdateRotorSpeed(float newSpeed)
+private void Update()
+}
+public MiniCopterSounds : MonoBehaviour {
+public MiniCopter miniCopter
+public GameObject soundAttachPoint
+public SoundDefinition engineStartDef
+public SoundDefinition engineLoopDef
+public SoundDefinition engineStopDef
+public SoundDefinition rotorLoopDef
+public float engineStartFadeOutTime
+public float engineLoopFadeInTime
+public float engineLoopFadeOutTime
+public float engineStopFadeOutTime
+public float rotorLoopFadeInTime
+public float rotorLoopFadeOutTime
+public float enginePitchInterpRate
+public float rotorPitchInterpRate
+public float rotorGainInterpRate
+public float rotorStartStopPitchRateUp
+public float rotorStartStopPitchRateDown
+public float rotorStartStopGainRateUp
+public float rotorStartStopGainRateDown
+public AnimationCurve engineUpDotPitchCurve
+public AnimationCurve rotorUpDotPitchCurve
 }
 public MiningQuarry : BaseResourceExtractor {
 public Animator beltAnimator
@@ -11850,7 +10986,6 @@ public List`1<CoverPoint> EnemyCoverPoints
 public CoverPoint EnemyHideoutGuess
 public List`1<HideoutPoint> CheckedHideoutPoints
 public PathInterestNode CurrentPatrolPoint
-public void .ctor(NPCPlayerApex human)
 public BaseEntity get_LastAttacker()
 public void set_LastAttacker(BaseEntity value)
 public CoverPointVolume get_CurrentCoverVolume()
@@ -11867,6 +11002,7 @@ public List`1<HideoutPoint> get_CheckedHideoutPoints()
 public void set_CheckedHideoutPoints(List`1<HideoutPoint> value)
 public PathInterestNode get_CurrentPatrolPoint()
 public void set_CurrentPatrolPoint(PathInterestNode value)
+public void .ctor(NPCPlayerApex human)
 protected void Finalize()
 public void ForgetCheckedHideouts(float forgetTime)
 public bool HasCheckedHideout(CoverPoint hideout)
@@ -12066,14 +11202,11 @@ private float nextCoverInfoTick
 private float nextCoverPosInfoTick
 private float _lastHeardGunshotTime
 private Vector3 <LastHeardGunshotDirection>k__BackingField
-private Func`2<BaseEntity, bool> <>f__mg$cache0
-private Func`2<BaseEntity, bool> <>f__mg$cache1
-private Func`2<BaseEntity, bool> <>f__am$cache0
-private bool Apex.LoadBalancing.ILoadBalanced.repeat
 public FamilyEnum Family
 public int AgentTypeIndex
 public bool IsStuck
 public bool IsDormant
+private bool Apex.LoadBalancing.ILoadBalanced.repeat
 public NPCHumanContext AiContext
 public float TimeAtDestination
 public int WaypointDirection
@@ -12364,8 +11497,7 @@ protected void OnSenseGunshot(Sensation sensation, BasePlayer invoker)
 public float get_SecondsSinceLastHeardGunshot()
 public Vector3 get_LastHeardGunshotDirection()
 public void set_LastHeardGunshotDirection(Vector3 value)
-private bool <_FindPlayersInVisionRange>m__0(BasePlayer player)
-private bool <_FindEntitiesInCloseRange>m__1(BaseEntity entity)
+private bool <_FindPlayersInVisionRange>b__406_0(BasePlayer player)
 }
 public NPCPlayerCorpse : PlayerCorpse {
 private bool lootEnabled
@@ -12466,10 +11598,10 @@ public int id
 public OccludeeState state
 public Sphere sphere
 public bool IsRegistered
-public void .ctor(int id)
-public void .ctor(int id, Sphere sphere)
 public bool get_IsRegistered()
 public void Invalidate()
+public void .ctor(int id)
+public void .ctor(int id, Sphere sphere)
 }
 public OccludeeState : SmartListValue {
 public int slot
@@ -12648,18 +11780,6 @@ public void SendOnSendNetworkUpdate(GameObject go, BaseEntity entity)
 public OpenSteamURL : MonoBehaviour {
 public bool openInSteam
 }
-public OptimizeAnimator : ArticulatedOccludee {
-public Bounds fixedLocalBounds
-public Transform followBone
-public Vector3 followBoneOffset
-public bool optimizeOnStart
-private HashSet`1<SkinnedMeshRenderer> rendererSet
-protected void OnEnable()
-public void ClearSkinnedRenderers()
-public void ProcessRootOptimization(List`1<SkinnedMeshRenderer> skinnedRenderers, Transform reference)
-public void UpdateSkinnedRenderers()
-public void TriggerUpdateVisibilityBounds()
-}
 public OreHotSpot : BaseCombatEntity {
 public float visualDistance
 public GameObjectRef visualEffect
@@ -12714,6 +11834,30 @@ public Material blendGlowMaterial
 public OutlineObject : MonoBehaviour {
 public Mesh[] meshes
 public Transform[] meshTransforms
+}
+public PagerEntity : BaseEntity {
+public Flags Flag_Silent
+private int frequency
+public float beepRepeat
+public GameObjectRef pagerEffect
+public GameObjectRef silentEffect
+private float nextChangeTime
+public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+public int GetFrequency()
+public void SwitchParent(BaseEntity ent)
+public void ServerInit()
+internal void DoServerDestroy()
+public Vector3 GetPosition()
+public float GetMaxRange()
+public void RFSignalUpdate(bool on)
+public void SetSilentMode(bool wantsSilent)
+public void SetOff()
+public void ChangeFrequency(int newFreq)
+public void ServerSetFrequency(RPCMessage msg)
+public void Save(SaveInfo info)
+internal void OnParentRemoved()
+public void OnParentDestroying()
+public void Load(LoadInfo info)
 }
 public PaintableImageGrid : UIBehaviour {
 public UIPaintableImage templateImage
@@ -12810,7 +11954,6 @@ public int DefaultMinIndex
 public int DefaultMaxIndex
 public float StartOffset
 public float EndOffset
-public void .ctor(Vector3[] points)
 public int get_MinIndex()
 public void set_MinIndex(int value)
 public int get_MaxIndex()
@@ -12823,6 +11966,7 @@ public int get_DefaultMinIndex()
 public int get_DefaultMaxIndex()
 public float get_StartOffset()
 public float get_EndOffset()
+public void .ctor(Vector3[] points)
 public void RecalculateTangents()
 public void Resample(float distance)
 public void Smoothen(int iterations)
@@ -13079,7 +12223,6 @@ private CanvasGroup canvasGroup
 public bool IsOpen
 internal MenuOption selectedOption
 private AnimationCurve easePunch
-private Func`2<MenuOption, int> <>f__am$cache0
 protected void Start()
 public void Clear()
 public void AddOption(MenuOption option)
@@ -13093,7 +12236,6 @@ private void Update()
 public void Rebuild()
 public void UpdateInteraction(bool allowLerp)
 public bool DoSelect()
-private int <Rebuild>m__0(MenuOption x)
 }
 public PieOption : MonoBehaviour {
 public PieShape background
@@ -13295,8 +12437,8 @@ public PlayerBelt : object {
 public int SelectedSlot
 protected BasePlayer player
 public int MaxBeltSlots
-public void .ctor(BasePlayer player)
 public int get_MaxBeltSlots()
+public void .ctor(BasePlayer player)
 public void DropActive(Vector3 position, Vector3 velocity)
 }
 public PlayerBlueprints : EntityComponent`1<BasePlayer> {
@@ -13309,7 +12451,12 @@ public bool HasUnlocked(ItemDefinition targetItem)
 public bool CanCraft(int itemid, int skinItemId)
 }
 public PlayerCorpse : LootableCorpse {
+public Buoyancy buoyancy
+public Flags Flag_Buoyant
+public bool IsBuoyant()
 public bool OnStartBeingLooted(BasePlayer baseEntity)
+public void ServerInit()
+public void BuoyancyChanged(bool isSubmerged)
 public void Save(SaveInfo info)
 public string Categorize()
 }
@@ -13377,9 +12524,9 @@ public ItemContainer containerBelt
 public ItemContainer containerWear
 public ItemCrafter crafting
 public PlayerLoot loot
+public bool forceBirthday
 private float nextCheckTime
 private bool wasBirthday
-private Func`2<HeldEntity, float> <>f__am$cache0
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 protected void Initialize()
 public void DoDestroy()
@@ -13408,6 +12555,7 @@ public bool GiveItem(Item item, ItemContainer container)
 protected void GetIdealPickupContainer(Item item, ItemContainer& container, Int32& position)
 public void Strip()
 public bool IsBirthday()
+public bool IsChristmas()
 public void GiveDefaultItems()
 public PlayerInventory Save(bool bForDisk)
 public void Load(PlayerInventory msg)
@@ -13417,7 +12565,6 @@ public Item[] AllItems()
 public int AllItemsNoAlloc(List`1& items)
 public void FindAmmo(List`1<Item> list, AmmoTypes ammoType)
 public bool HasAmmo(AmmoTypes ammoType)
-private float <UpdatedVisibleHolsteredItems>m__0(HeldEntity x)
 }
 public PlayerInventoryProperties : ScriptableObject {
 public string niceName
@@ -13792,30 +12939,28 @@ public GameObject Pop(UInt32 id, Vector3 pos, Quaternion rot)
 public void Clear()
 }
 public PrefabPoolWarmup : object {
-private Func`2<PrefabProperties, bool> <>f__am$cache0
-private Func`2<PrefabProperties, string> <>f__am$cache1
 public void Run()
 public IEnumerator Run(float deltaTime, Action`1<string> statusFunction, string format)
 private String[] GetAssetList()
 private void PrefabWarmup(string path)
-private bool <GetAssetList>m__0(PrefabProperties x)
-private string <GetAssetList>m__1(PrefabProperties x)
 }
 public PrefabPreProcess : object {
 public Type[] clientsideOnlyTypes
 public Type[] serversideOnlyTypes
 public bool isClientside
 public bool isServerside
+public bool isBundling
 internal Dictionary`2<string, GameObject> prefabList
 private List`1<Component> destroyList
 private List`1<GameObject> cleanupList
-public void .ctor(bool clientside, bool serverside)
+public void .ctor(bool clientside, bool serverside, bool bundling)
 public GameObject Find(string strPrefab)
 public bool NeedsProcessing(GameObject go)
-public bool ProcessObject(string name, GameObject go, bool isBundling, bool resetLocalTransform)
+public void ProcessObject(string name, GameObject go, bool resetLocalTransform)
 public void Process(string name, GameObject go)
 public void AddPrefab(string name, GameObject go)
 private void DestroyComponents(Type t, GameObject go, bool client, bool server)
+private bool ShouldExclude(Transform transform)
 private bool HasComponents(Transform transform)
 private bool HasComponents(Transform transform, Type t)
 public List`1<T> FindComponents(Transform transform)
@@ -14002,9 +13147,6 @@ public bool isMuzzleBoost
 public bool isScope
 public float zoomAmountDisplayOnly
 public bool needsOnForEffects
-private Func`2<ProjectileWeaponMod, bool> <>f__am$cache0
-private Func`2<Modifier, bool> <>f__am$cache1
-private Func`2<ProjectileWeaponMod, bool> <>f__am$cache2
 public void ServerInit()
 public void PostServerLoad()
 public float Sum(BaseEntity parentEnt, Func`2<ProjectileWeaponMod, Modifier> selector_modifier, Func`2<Modifier, float> selector_value, float def)
@@ -14013,9 +13155,6 @@ public float Max(BaseEntity parentEnt, Func`2<ProjectileWeaponMod, Modifier> sel
 public float Min(BaseEntity parentEnt, Func`2<ProjectileWeaponMod, Modifier> selector_modifier, Func`2<Modifier, float> selector_value, float def)
 public IEnumerable`1<float> GetMods(BaseEntity parentEnt, Func`2<ProjectileWeaponMod, Modifier> selector_modifier, Func`2<Modifier, float> selector_value)
 public bool HasBrokenWeaponMod(BaseEntity parentEnt)
-private bool <GetMods>m__0(ProjectileWeaponMod x)
-private bool <GetMods>m__1(Modifier x)
-private bool <HasBrokenWeaponMod>m__2(ProjectileWeaponMod x)
 }
 public ProtectionProperties : ScriptableObject {
 public string comments
@@ -14161,6 +13300,13 @@ public float Probability
 public string ResourceFolder
 protected void Start()
 }
+public RANDSwitch : ElectricalBlocker {
+private bool rand
+public int GetPassthroughAmount(int outputSlot)
+public void UpdateBlocked()
+public bool RandomRoll()
+public void UpdateFromInput(int inputAmount, int inputSlot)
+}
 public RawWriter : object {
 public void Write(IEnumerable`1<byte> data, string path)
 public void Write(IEnumerable`1<int> data, string path)
@@ -14238,8 +13384,6 @@ public void StartRecycling()
 public void StopRecycling()
 }
 public ReflectionProbeEx : MonoBehaviour {
-private UInt32[0...,0...] qualitySamples
-private Vector4[] sampleData
 public ReflectionProbeRefreshMode refreshMode
 public bool timeSlicing
 public int resolution
@@ -14257,24 +13401,6 @@ public ConvolutionQuality convolutionQuality
 public List`1<RenderListEntry> staticRenderList
 public Cubemap reflectionCubemap
 public float reflectionIntensity
-private List`1<RenderListEntry> dynamicRenderList
-private ReflectionProbe probe
-private RenderTexture probeTexture
-private int probeResolution
-private bool probeHdr
-private float probeShadowDistance
-private float probeNearClip
-private float probeFarClip
-private int probeDepth
-private bool probeHighPrecision
-private TimeSlicingState timeSlicedRenderState
-private bool scriptingRenderQueued
-private Matrix4x4 faceProjMatrix
-private Matrix4x4 faceProjInvMatrix
-private int prevFrame
-private ReflectionProbeRefreshMode savedProbeRefresh
-private ReflectionProbeMode savedProbeMode
-private Texture savedProbeCustomTexture
 private Mesh blitMesh
 private Mesh skyboxMesh
 private Single[] octaVerts
@@ -14282,43 +13408,7 @@ private CubemapFaceMatrices[] cubemapFaceMatrices
 private CubemapFaceMatrices[] cubemapFaceMatricesD3D11
 private CubemapFaceMatrices[] shadowCubemapFaceMatrices
 private CubemapFaceMatrices[] platformCubemapFaceMatrices
-private HashSet`1<string> supportedShaderNames
-private Dictionary`2<Shader, Shader> supportedShaders
-private Dictionary`2<Material, Material> matchingMaterials
-private RenderTexture probeTempTexture
-private RenderTexture probeShadowTexture
-private RenderTexture arrayTexture
-private RenderTexture arrayTempTexture
-private RenderTexture arrayDepthTexture
-private int mipmapCount
-private Material blitMaterial
-private Material filterMaterial
-private Material shadowMaterial
-private CommandBuffer forwardCB
-private CommandBuffer shadowCB
-private Matrix4x4[] viewProjMatrixArray
-private Matrix4x4[] objectToWorldArray
-private Matrix4x4[] cameraToWorldArray
-private bool useGeometryShader
-private int PassCount
 private Int32[] tab32
-public RenderTexture Texture
-private Vector2 Hammersley(UInt32 index, UInt32 numSamples)
-private float D_GGX(float roughness, float NdotH)
-private Vector3 ImportanceSampleGGX(Vector2 Xi, float roughness)
-private void ApplyConvolution(Texture target)
-public RenderTexture get_Texture()
-public void ClearRenderList()
-public void AddToRenderList(Renderer renderer, bool alwaysEnabled)
-private void Awake()
-private void OnEnable()
-private void OnDisable()
-private void OnCameraPreRender(Camera cam)
-public void RenderProbe()
-public bool IsFinishedRendering()
-private void ModifyProbeProperties()
-private void RestoreProbeSettings()
-private bool UpdateProperties()
 private void CreateMeshes()
 private void DestroyMeshes()
 private Mesh CreateBlitMesh()
@@ -14327,31 +13417,6 @@ private void Subdivide(List`1<CubemapSkyboxVertex> destArray, CubemapSkyboxVerte
 private void SubdivideYOnly(List`1<CubemapSkyboxVertex> destArray, CubemapSkyboxVertex v1, CubemapSkyboxVertex v2, CubemapSkyboxVertex v3)
 private Mesh CreateSkyboxMesh()
 private bool InitializeCubemapFaceMatrices()
-private void CreateTextures()
-private void DestroyTextures()
-private Material RegisterMaterialReplacement(Material material)
-private Material FindMaterialReplacement(Material material)
-private void CreateMaterials()
-private void DestroyMaterials()
-private void CreateCommandBuffers()
-private void DestroyCommandBuffers()
-private void ClearCommandBuffers()
-private void AttachToLight()
-private void DetachFromLight()
-private void FindEnvironmentReflection()
-private void BindGlobalProperties()
-private void BindGlobalLight()
-private void BindGlobalAmbient()
-private void BindGlobalReflection()
-private void RenderObjects()
-private void RenderSkybox()
-private void IssueRender()
-private void IssueGenerateMips()
-private void IssueConvolution()
-private void IssueShadow()
-private void PrepareFullRender()
-private void PrepareTimeSlicedRender(TimeSlicingState state)
-private void ExecuteRender()
 private int FastLog2(int value)
 private UInt32 ReverseBits(UInt32 bits)
 private void SafeCreateMaterial(Material& mat, Shader shader)
@@ -14410,7 +13475,7 @@ private float nextSkinChangeTime
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 public float GetRepairFraction(Item itemToRepair)
 public float RepairCostFraction(Item itemToRepair)
-public List`1<ItemAmount> GetRepairCostList(ItemBlueprint bp)
+public void GetRepairCostList(ItemBlueprint bp, List`1<ItemAmount> allIngredients)
 public void debugprint(string toPrint)
 public void ChangeSkin(RPCMessage msg)
 public void RepairItem(RPCMessage msg)
@@ -14501,9 +13566,6 @@ public List`1<ItemAmount> finishBonus
 public float fractionRemaining
 private float categoriesRemaining
 private float startingItemCounts
-private Func`2<ItemAmount, float> <>f__am$cache0
-private Func`2<ItemAmount, float> <>f__am$cache1
-private Func`2<ItemAmount, float> <>f__am$cache2
 public void Start()
 public void Initialize()
 public void DoGather(HitInfo info)
@@ -14517,9 +13579,6 @@ private void UpdateVars()
 public void UpdateRemainingCategories()
 public void CountAllItems()
 private void UpdateFraction()
-private float <CountAllItems>m__0(ItemAmount x)
-private float <UpdateFraction>m__1(ItemAmount x)
-private float <UpdateFraction>m__2(ItemAmount x)
 }
 public ResourceEntity : BaseEntity {
 public float startHealth
@@ -14571,6 +13630,57 @@ public float lodDistance
 public bool inRange
 public ReverbSettings reverbSettings
 public void PreClientComponentCull(IPrefabProcessor p)
+}
+public RFBroadcaster : IOEntity {
+public int frequency
+public GameObject frequencyPanelPrefab
+public Flags Flag_Broadcasting
+private float nextChangeTime
+private float nextStopTime
+public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+public int GetFrequency()
+public bool WantsPower()
+public Vector3 GetPosition()
+public float GetMaxRange()
+public void RFSignalUpdate(bool on)
+public void ServerSetFrequency(RPCMessage msg)
+public void Save(SaveInfo info)
+public void IOStateChanged(int inputAmount, int inputSlot)
+public void StopBroadcasting()
+internal void DoServerDestroy()
+public void Load(LoadInfo info)
+}
+public RFManager : object {
+public Dictionary`2<int, List`1<IRFObject>> _listeners
+public Dictionary`2<int, List`1<IRFObject>> _broadcasters
+public int minFreq
+public int maxFreq
+public int ClampFrequency(int freq)
+public List`1<IRFObject> GetListenList(int frequency)
+public List`1<IRFObject> GetBroadcasterList(int frequency)
+public void AddListener(int frequency, IRFObject obj)
+public void RemoveListener(int frequency, IRFObject obj)
+public void AddBroadcaster(int frequency, IRFObject obj)
+public void RemoveBroadcaster(int frequency, IRFObject obj)
+public void ChangeFrequency(int oldFrequency, int newFrequency, IRFObject obj, bool isListener, bool isOn)
+public void MarkFrequencyDirty(int frequency)
+}
+public RFReceiver : IOEntity {
+public int frequency
+public GameObject frequencyPanelPrefab
+public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+public int GetFrequency()
+public bool WantsPower()
+public void ResetIOState()
+public int GetPassthroughAmount(int outputSlot)
+public Vector3 GetPosition()
+public float GetMaxRange()
+public void Init()
+internal void DoServerDestroy()
+public void RFSignalUpdate(bool on)
+public void ServerSetFrequency(RPCMessage msg)
+public void Save(SaveInfo info)
+public void Load(LoadInfo info)
 }
 public RHIB : MotorRowboat {
 public GameObject steeringWheel
@@ -14703,7 +13813,6 @@ public float ai_htn_animal_tick_budget
 public bool ai_htn_use_agency_tick
 private BasePlayer[] playerVicinityQuery
 private Func`2<BasePlayer, bool> filter
-private Func`2<BasePlayer, bool> <>f__mg$cache0
 public AgencyHTN HTNAgency
 public bool repeat
 internal void OnEnableAgency()
@@ -14759,8 +13868,8 @@ public float G
 public float H
 public BasePathNode Node
 public float F
-public void .ctor(float g, float h, AStarNode parent, BasePathNode node)
 public float get_F()
+public void .ctor(float g, float h, AStarNode parent, BasePathNode node)
 public void Update(float g, float h, AStarNode parent, BasePathNode node)
 public bool Satisfies(BasePathNode node)
 public bool op_LessThan(AStarNode lhs, AStarNode rhs)
@@ -14983,7 +14092,6 @@ public BaseEntity ReservedFor
 public bool IsReserved
 public bool IsCompromised
 public float Score
-public void .ctor(CoverPointVolume volume, float score)
 public CoverPointVolume get_Volume()
 private void set_Volume(CoverPointVolume value)
 public Vector3 get_Position()
@@ -14998,6 +14106,7 @@ public void set_IsCompromised(bool value)
 public float get_Score()
 public void set_Score(float value)
 public bool IsValidFor(BaseEntity entity)
+public void .ctor(CoverPointVolume volume, float score)
 public void CoverIsCompromised(float cooldown)
 private IEnumerator StartCooldown(float cooldown)
 public bool ProvidesCoverFromPoint(Vector3 point, float arcThreshold)
@@ -15383,8 +14492,8 @@ public AnimalInfo PrimaryKnownAnimal
 public Vector3 LastClosestEdgeNormal
 public BaseNpcContext NpcContext
 public BaseNpcDefinition Definition
-public void .ctor(BaseNpcContext context)
 public BaseNpcDefinition get_Definition()
+public void .ctor(BaseNpcContext context)
 public void ResetState()
 public bool IsValid(Vector3 destination)
 public void AddFailedDestination(Vector3 destination)
@@ -15450,7 +14559,6 @@ public NpcPlayerInfo PrimaryEnemyPlayerAudible
 public List`1<AnimalInfo> AnimalsInRange
 public Vector3 BodyPosition
 public BaseNpcMemory BaseMemory
-public void .ctor(HTNAnimal body, BearDomain domain)
 public PlanResultType get_PlanResult()
 public void set_PlanResult(PlanResultType value)
 public PlanStateType get_PlanState()
@@ -15496,6 +14604,7 @@ public Vector3 get_BodyPosition()
 public BaseNpcMemory get_BaseMemory()
 public void StartDomainDecomposition()
 public void ResetState()
+public void .ctor(HTNAnimal body, BearDomain domain)
 public void Dispose()
 public bool IsBodyAlive()
 public void IncrementFact(Facts fact, int value, bool invokeChangedEvent, bool setAsDirty, bool checkValueDiff)
@@ -15617,8 +14726,8 @@ public BearContext BearContext
 public Vector3 CachedPreferredDistanceDestination
 public float CachedPreferredDistanceDestinationTime
 public BaseNpcDefinition Definition
-public void .ctor(BearContext context)
 public BaseNpcDefinition get_Definition()
+public void .ctor(BearContext context)
 public void ResetState()
 protected void OnSetPrimaryKnownEnemyPlayer(EnemyPlayerInfo& info)
 }
@@ -15823,7 +14932,6 @@ public BaseNpc[] QueryResults
 public int QueryResultCount
 private float <TickFrequency>k__BackingField
 private float <LastTickTime>k__BackingField
-private Func`2<BaseEntity, bool> <>f__am$cache0
 public float TickFrequency
 public float LastTickTime
 public float get_TickFrequency()
@@ -15831,7 +14939,6 @@ public void set_TickFrequency(float value)
 public float get_LastTickTime()
 public void set_LastTickTime(float value)
 public void Tick(IHTNAgent npc, float deltaTime, float time)
-private bool <Tick>m__0(BaseEntity entity)
 }
 public Rust.Ai.HTN.Bear.Sensors.BearEnemyPlayersHearingSensor : object {
 private float <TickFrequency>k__BackingField
@@ -15894,7 +15001,6 @@ public BasePlayer[] PlayerQueryResults
 public int PlayerQueryResultCount
 private float <TickFrequency>k__BackingField
 private float <LastTickTime>k__BackingField
-private Func`2<BasePlayer, bool> <>f__am$cache0
 public float TickFrequency
 public float LastTickTime
 public float get_TickFrequency()
@@ -15902,7 +15008,6 @@ public void set_TickFrequency(float value)
 public float get_LastTickTime()
 public void set_LastTickTime(float value)
 public void Tick(IHTNAgent npc, float deltaTime, float time)
-private bool <Tick>m__0(BasePlayer player)
 }
 public Rust.Ai.HTN.Bear.Sensors.BearPlayersOutsideRangeSensor : object {
 private float <TickFrequency>k__BackingField
@@ -16166,7 +15271,6 @@ public List`1<AnimalInfo> AnimalsInRange
 public Vector3 BodyPosition
 public BaseNpcMemory BaseMemory
 public CoverPoint ClosestCover
-public void .ctor(HTNPlayer body, MurdererDomain domain)
 public PlanResultType get_PlanResult()
 public void set_PlanResult(PlanResultType value)
 public PlanStateType get_PlanState()
@@ -16214,6 +15318,7 @@ public CoverPoint get_ClosestCover()
 public void ReserveCoverPoint(CoverPoint coverPoint)
 public void StartDomainDecomposition()
 public void ResetState()
+public void .ctor(HTNPlayer body, MurdererDomain domain)
 public void Dispose()
 public bool IsBodyAlive()
 public void IncrementFact(Facts fact, int value, bool invokeChangedEvent, bool setAsDirty, bool checkValueDiff)
@@ -16366,8 +15471,8 @@ public float CachedPreferredDistanceDestinationTime
 public Vector3 CachedRoamDestination
 public float CachedRoamDestinationTime
 public BaseNpcDefinition Definition
-public void .ctor(MurdererContext context)
 public BaseNpcDefinition get_Definition()
+public void .ctor(MurdererContext context)
 public void ResetState()
 protected void OnSetPrimaryKnownEnemyPlayer(EnemyPlayerInfo& info)
 }
@@ -16573,7 +15678,6 @@ public BaseNpc[] QueryResults
 public int QueryResultCount
 private float <TickFrequency>k__BackingField
 private float <LastTickTime>k__BackingField
-private Func`2<BaseEntity, bool> <>f__am$cache0
 public float TickFrequency
 public float LastTickTime
 public float get_TickFrequency()
@@ -16581,7 +15685,6 @@ public void set_TickFrequency(float value)
 public float get_LastTickTime()
 public void set_LastTickTime(float value)
 public void Tick(IHTNAgent npc, float deltaTime, float time)
-private bool <Tick>m__0(BaseEntity entity)
 }
 public Rust.Ai.HTN.NpcOrientation : Enum {
 public int value__
@@ -16685,7 +15788,6 @@ public NpcPlayerInfo PrimaryEnemyPlayerAudible
 public List`1<AnimalInfo> AnimalsInRange
 public Vector3 BodyPosition
 public BaseNpcMemory BaseMemory
-public void .ctor(HTNPlayer body, NPCTurretDomain domain)
 public PlanResultType get_PlanResult()
 public void set_PlanResult(PlanResultType value)
 public PlanStateType get_PlanState()
@@ -16731,6 +15833,7 @@ public Vector3 get_BodyPosition()
 public BaseNpcMemory get_BaseMemory()
 public void StartDomainDecomposition()
 public void ResetState()
+public void .ctor(HTNPlayer body, NPCTurretDomain domain)
 public void Dispose()
 public bool IsBodyAlive()
 public void IncrementFact(Facts fact, int value, bool invokeChangedEvent, bool setAsDirty, bool checkValueDiff)
@@ -16863,8 +15966,8 @@ protected void TickSensor(INpcSensor sensor, float deltaTime, float time)
 public Rust.Ai.HTN.NPCTurret.NPCTurretMemory : BaseNpcMemory {
 public NPCTurretContext NPCTurretContext
 public BaseNpcDefinition Definition
-public void .ctor(NPCTurretContext context)
 public BaseNpcDefinition get_Definition()
+public void .ctor(NPCTurretContext context)
 public void ResetState()
 }
 public Rust.Ai.HTN.NPCTurret.NPCTurretSpawner : MonoBehaviour {
@@ -16996,7 +16099,6 @@ public BaseNpc[] QueryResults
 public int QueryResultCount
 private float <TickFrequency>k__BackingField
 private float <LastTickTime>k__BackingField
-private Func`2<BaseEntity, bool> <>f__am$cache0
 public float TickFrequency
 public float LastTickTime
 public float get_TickFrequency()
@@ -17004,7 +16106,6 @@ public void set_TickFrequency(float value)
 public float get_LastTickTime()
 public void set_LastTickTime(float value)
 public void Tick(IHTNAgent npc, float deltaTime, float time)
-private bool <Tick>m__0(BaseEntity entity)
 }
 public Rust.Ai.HTN.PathStatus : Enum {
 public byte value__
@@ -17389,7 +16490,6 @@ public List`1<AnimalInfo> AnimalsInRange
 public Vector3 BodyPosition
 public BaseNpcMemory BaseMemory
 public CoverPoint ClosestCover
-public void .ctor(HTNPlayer body, ScientistDomain domain)
 public PlanResultType get_PlanResult()
 public void set_PlanResult(PlanResultType value)
 public PlanStateType get_PlanState()
@@ -17437,6 +16537,7 @@ public CoverPoint get_ClosestCover()
 public void ReserveCoverPoint(CoverPoint coverPoint)
 public void StartDomainDecomposition()
 public void ResetState()
+public void .ctor(HTNPlayer body, ScientistDomain domain)
 public void Dispose()
 public bool IsBodyAlive()
 public void IncrementFact(Facts fact, int value, bool invokeChangedEvent, bool setAsDirty, bool checkValueDiff)
@@ -17593,8 +16694,8 @@ public float CachedPreferredDistanceDestinationTime
 public Vector3 CachedCoverDestination
 public float CachedCoverDestinationTime
 public BaseNpcDefinition Definition
-public void .ctor(ScientistContext context)
 public BaseNpcDefinition get_Definition()
+public void .ctor(ScientistContext context)
 public void ResetState()
 protected void OnSetPrimaryKnownEnemyPlayer(EnemyPlayerInfo& info)
 }
@@ -17631,7 +16732,6 @@ public BaseNpc[] QueryResults
 public int QueryResultCount
 private float <TickFrequency>k__BackingField
 private float <LastTickTime>k__BackingField
-private Func`2<BaseEntity, bool> <>f__am$cache0
 public float TickFrequency
 public float LastTickTime
 public float get_TickFrequency()
@@ -17639,7 +16739,6 @@ public void set_TickFrequency(float value)
 public float get_LastTickTime()
 public void set_LastTickTime(float value)
 public void Tick(IHTNAgent npc, float deltaTime, float time)
-private bool <Tick>m__0(BaseEntity entity)
 }
 public Rust.Ai.HTN.Scientist.Sensors.CoverPointsInRangeSensor : object {
 private float <TickFrequency>k__BackingField
@@ -18034,7 +17133,6 @@ public Vector3 BodyPosition
 public Vector3 BodyLocalPosition
 public BaseNpcMemory BaseMemory
 public CoverPoint ClosestCover
-public void .ctor(HTNPlayer body, ScientistAStarDomain domain)
 public PlanResultType get_PlanResult()
 public void set_PlanResult(PlanResultType value)
 public PlanStateType get_PlanState()
@@ -18083,6 +17181,7 @@ public CoverPoint get_ClosestCover()
 public void ReserveCoverPoint(CoverPoint coverPoint)
 public void StartDomainDecomposition()
 public void ResetState()
+public void .ctor(HTNPlayer body, ScientistAStarDomain domain)
 public void Dispose()
 public bool IsBodyAlive()
 public void IncrementFact(Facts fact, int value, bool invokeChangedEvent, bool setAsDirty, bool checkValueDiff)
@@ -18262,8 +17361,8 @@ public float CachedPreferredDistanceDestinationTime
 public Vector3 CachedCoverDestination
 public float CachedCoverDestinationTime
 public BaseNpcDefinition Definition
-public void .ctor(ScientistAStarContext context)
 public BaseNpcDefinition get_Definition()
+public void .ctor(ScientistAStarContext context)
 public void ResetState()
 protected void OnSetPrimaryKnownEnemyPlayer(EnemyPlayerInfo& info)
 }
@@ -18294,7 +17393,6 @@ public BaseNpc[] QueryResults
 public int QueryResultCount
 private float <TickFrequency>k__BackingField
 private float <LastTickTime>k__BackingField
-private Func`2<BaseEntity, bool> <>f__am$cache0
 public float TickFrequency
 public float LastTickTime
 public float get_TickFrequency()
@@ -18302,7 +17400,6 @@ public void set_TickFrequency(float value)
 public float get_LastTickTime()
 public void set_LastTickTime(float value)
 public void Tick(IHTNAgent npc, float deltaTime, float time)
-private bool <Tick>m__0(BaseEntity entity)
 }
 public Rust.Ai.HTN.ScientistAStar.Sensors.CoverPointsInRangeSensor : object {
 private float <TickFrequency>k__BackingField
@@ -18735,7 +17832,6 @@ public List`1<AnimalInfo> AnimalsInRange
 public Vector3 BodyPosition
 public BaseNpcMemory BaseMemory
 public CoverPoint ClosestCover
-public void .ctor(HTNPlayer body, ScientistJunkpileDomain domain)
 public PlanResultType get_PlanResult()
 public void set_PlanResult(PlanResultType value)
 public PlanStateType get_PlanState()
@@ -18783,6 +17879,7 @@ public CoverPoint get_ClosestCover()
 public void ReserveCoverPoint(CoverPoint coverPoint)
 public void StartDomainDecomposition()
 public void ResetState()
+public void .ctor(HTNPlayer body, ScientistJunkpileDomain domain)
 public void Dispose()
 public bool IsBodyAlive()
 public void IncrementFact(Facts fact, int value, bool invokeChangedEvent, bool setAsDirty, bool checkValueDiff)
@@ -18945,8 +18042,8 @@ public Vector3 CachedCoverDestination
 public float CachedCoverDestinationTime
 public List`1<BasePlayer> MarkedEnemies
 public BaseNpcDefinition Definition
-public void .ctor(ScientistJunkpileContext context)
 public BaseNpcDefinition get_Definition()
+public void .ctor(ScientistJunkpileContext context)
 public void ResetState()
 protected void OnSetPrimaryKnownEnemyPlayer(EnemyPlayerInfo& info)
 public void MarkEnemy(BasePlayer player)
@@ -18989,7 +18086,6 @@ public BaseNpc[] QueryResults
 public int QueryResultCount
 private float <TickFrequency>k__BackingField
 private float <LastTickTime>k__BackingField
-private Func`2<BaseEntity, bool> <>f__am$cache0
 public float TickFrequency
 public float LastTickTime
 public float get_TickFrequency()
@@ -18997,7 +18093,6 @@ public void set_TickFrequency(float value)
 public float get_LastTickTime()
 public void set_LastTickTime(float value)
 public void Tick(IHTNAgent npc, float deltaTime, float time)
-private bool <Tick>m__0(BaseEntity entity)
 }
 public Rust.Ai.HTN.ScientistJunkpile.Sensors.CoverPointsInRangeSensor : object {
 private float <TickFrequency>k__BackingField
@@ -19093,7 +18188,6 @@ public BasePlayer[] PlayerQueryResults
 public int PlayerQueryResultCount
 private float <TickFrequency>k__BackingField
 private float <LastTickTime>k__BackingField
-private Func`2<BasePlayer, bool> <>f__am$cache0
 public float TickFrequency
 public float LastTickTime
 public float get_TickFrequency()
@@ -19101,7 +18195,6 @@ public void set_TickFrequency(float value)
 public float get_LastTickTime()
 public void set_LastTickTime(float value)
 public void Tick(IHTNAgent npc, float deltaTime, float time)
-private bool <Tick>m__0(BasePlayer player)
 }
 public Rust.Ai.HTN.Sensors.PlayersOutsideRangeSensor : object {
 private float <TickFrequency>k__BackingField
@@ -19475,7 +18568,6 @@ public bool ProvidesCoverFromDirection(CoverPoint cp, Vector3 directionTowardCov
 public Rust.Ai.ScanForEntities : BaseAction {
 public BaseEntity[] Results
 public int forgetTime
-private Func`2<BaseEntity, bool> <>f__mg$cache0
 public void DoExecute(BaseContext c)
 private bool WithinVisionCone(IAIAgent agent, BaseEntity other)
 private bool AiCaresAbout(BaseEntity ent)
@@ -19544,7 +18636,6 @@ public SensationType Explosion
 }
 public Rust.Ai.Sense : object {
 private BaseEntity[] query
-private Func`2<BaseEntity, bool> <>f__mg$cache0
 public void Stimulate(Sensation sensation)
 private bool IsAbleToBeStimulated(BaseEntity ent)
 }
@@ -19740,6 +18831,9 @@ internal bool HasAchievements
 internal bool get_IsOfficialServer()
 internal bool get_HasAchievements()
 }
+public Rust.GC : MonoBehaviour {
+public void Collect()
+}
 public Rust.Generic : object {
 private Scene _batchingScene
 public Scene BatchingScene
@@ -19825,6 +18919,38 @@ public float m_flEmissionRate
 private void Start()
 private void Update()
 }
+public SantaSleigh : BaseEntity {
+public GameObjectRef prefabDrop
+public SpawnFilter filter
+public Transform dropOrigin
+public float altitudeAboveTerrain
+public float desiredAltitude
+public Light bigLight
+public SoundPlayer hohoho
+public float hohohospacing
+public float hohoho_additional_spacing
+private Vector3 startPos
+private Vector3 endPos
+private float secondsToTake
+private float secondsTaken
+private bool dropped
+private Vector3 dropPosition
+public Vector3 swimScale
+public Vector3 swimSpeed
+private float swimRandom
+public float appliedSwimScale
+public float appliedSwimRotation
+private string path
+public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+public bool PhysicsDriven()
+public void InitDropPosition(Vector3 newDropPosition)
+public void ServerInit()
+public void SendHoHoHo()
+public Vector3 RandomDropPosition()
+public void UpdateDropPosition(Vector3 newDropPosition)
+private void FixedUpdate()
+public void drop(Arg arg)
+}
 public SavePause : MonoBehaviour {
 private bool tracked
 protected void OnEnable()
@@ -19836,12 +18962,6 @@ public bool timedSave
 public int timedSavePause
 public DateTime SaveCreatedTime
 private MemoryStream SaveBuffer
-private Func`2<BaseNetworkable, bool> <>f__am$cache0
-private Func`2<BaseNetworkable, BaseEntity> <>f__am$cache1
-private Func`2<BaseNetworkable, bool> <>f__am$cache2
-private Func`2<BaseNetworkable, StabilityEntity> <>f__am$cache3
-private Func`2<BaseNetworkable, bool> <>f__am$cache4
-private Func`2<BaseNetworkable, BuildingBlock> <>f__am$cache5
 public IEnumerator Save(string strFilename, bool AndWait)
 private void Start()
 private IEnumerator SaveRegularly()
@@ -19853,12 +18973,6 @@ public void GetSaveCache()
 public void InitializeEntityLinks()
 public void InitializeEntitySupports()
 public void InitializeEntityConditionals()
-private bool <InitializeEntityLinks>m__0(BaseNetworkable x)
-private BaseEntity <InitializeEntityLinks>m__1(BaseNetworkable x)
-private bool <InitializeEntitySupports>m__2(BaseNetworkable x)
-private StabilityEntity <InitializeEntitySupports>m__3(BaseNetworkable x)
-private bool <InitializeEntityConditionals>m__4(BaseNetworkable x)
-private BuildingBlock <InitializeEntityConditionals>m__5(BaseNetworkable x)
 }
 public ScaleByIntensity : MonoBehaviour {
 public Vector3 initialScale
@@ -20168,8 +19282,13 @@ public void Cycle()
 public void UpdateNavMeshCarver(Building building, Int32& ticks, int i)
 public UInt32 NewBuildingID()
 public void LoadBuildingID(UInt32 id)
+protected Building CreateBuilding(UInt32 id)
+protected void DisposeBuilding(Building& building)
 }
 public ServerConsole : SingletonComponent`1<ServerConsole> {
+private ConsoleWindow console
+private ConsoleInput input
+private float nextUpdate
 private DateTime currentGameTime
 private int currentPlayerCount
 private int maxPlayerCount
@@ -20180,6 +19299,8 @@ private void OnDisable()
 private void OnInputText(string obj)
 public void PrintColoured(Object[] objects)
 private void HandleLog(string message, string stackTrace, LogType type)
+private void Update()
+private void UpdateStatus()
 private DateTime get_currentGameTime()
 private int get_currentPlayerCount()
 private int get_maxPlayerCount()
@@ -20225,7 +19346,6 @@ private Dictionary`2<UInt32, int> unconnectedQueries
 private Stopwatch queriesPerSeconTimer
 private int NumQueriesLastSecond
 private MemoryStream queryBuffer
-private Action`1<object> <>f__mg$cache0
 public int AvailableSlots
 private string AssemblyHash
 public bool Restarting
@@ -20270,7 +19390,6 @@ private void OnPlayerTick(Message packet)
 private void OnPlayerVoice(Message packet)
 private void OnGiveUserInformation(Message packet)
 public bool OnUnconnectedMessage(int type, Read read, UInt32 ip, int port)
-private bool <CreateImportantEntity`1>m__0(BaseNetworkable x)
 }
 public ServerPerformance : BaseMonoBehaviour {
 public ulong deaths
@@ -20278,20 +19397,11 @@ public ulong spawns
 public ulong position_changes
 private string fileName
 private int lastFrame
-private Func`2<Collider, bool> <>f__am$cache0
-private Func`2<Collider, bool> <>f__am$cache1
-private Func`2<IGrouping`2<string, Object>, int> <>f__mg$cache0
-private Func`2<Object, string> <>f__am$cache2
-private Func`2<Object, Object> <>f__am$cache3
 private void Start()
 private void WriteLine()
 public void DoReport()
 public string WorkoutPrefabName(GameObject obj)
 public void ComponentReport(string filename, string Title, Object[] objects)
-private bool <DoReport>m__0(Collider x)
-private bool <DoReport>m__1(Collider x)
-private string <ComponentReport>m__2(Object x)
-private Object <ComponentReport>m__3(Object x)
 }
 public ServerProjectile : EntityComponent`1<BaseEntity> {
 public Vector3 initialVelocity
@@ -20301,6 +19411,7 @@ public float speed
 public float scanRange
 public Vector3 swimScale
 public Vector3 swimSpeed
+public float radius
 private float swimRandom
 public Vector3 _currentVelocity
 private void Update()
@@ -20319,7 +19430,6 @@ public Storage Get(ulong id)
 }
 public ServerUsers : object {
 private Dictionary`2<ulong, User> users
-private Func`2<KeyValuePair`2<ulong, User>, User> <>f__am$cache0
 public void Remove(ulong uid)
 public void Set(ulong uid, UserGroup group, string username, string notes)
 public User Get(ulong uid)
@@ -20330,17 +19440,12 @@ public void Load()
 public void Save()
 public string BanListString(bool bHeader)
 public string BanListStringEx()
-private User <GetAll>m__0(KeyValuePair`2<ulong, User> x)
 }
 public SEScreenSpaceShadows : MonoBehaviour {
 private CommandBuffer blendShadowsCommandBuffer
 private CommandBuffer renderShadowsCommandBuffer
 private Camera attachedCamera
 public Light sun
-private Material material
-private object initChecker
-private bool sunInitialized
-private int temporalJitterCounter
 public float blendStrength
 public float accumulation
 public float lengthFade
@@ -20354,20 +19459,6 @@ public bool leverageTemporalAA
 public bool bilateralBlur
 public int blurPasses
 public float blurDepthTolerance
-private bool previousBilateralBlurSetting
-private int previousBlurPassesSetting
-private Texture2D noBlendTex
-private void AddCommandBufferClean(Light light, CommandBuffer commandBuffer, LightEvent lightEvent)
-private void AddCommandBufferClean(Camera camera, CommandBuffer commandBuffer, CameraEvent cameraEvent)
-private void RemoveCommandBuffer(Light light, CommandBuffer commandBuffer, LightEvent lightEvent)
-private void RemoveCommandBuffer(Camera camera, CommandBuffer commandBuffer, CameraEvent cameraEvent)
-private void RemoveCommandBuffers()
-public bool GetCompatibleRenderPath()
-private void Init()
-private void OnEnable()
-private void OnDisable()
-private void OnPreRender()
-private void OnPostRender()
 }
 public SharpenAndVignetteOverlay : ImageEffectLayer {
 public CC_SharpenAndVignette sharpenAndVignette
@@ -20465,13 +19556,13 @@ public T[] Array
 public int Count
 public int Capacity
 public T Item
-public void .ctor(int capacity)
 public T[] get_Array()
 public int get_Count()
 public int get_Capacity()
 public void set_Capacity(int value)
 public T get_Item(int index)
 public void set_Item(int index, T value)
+public void .ctor(int capacity)
 public void Add(T item)
 public void Clear()
 public bool Contains(T item)
@@ -20481,6 +19572,10 @@ public void EnsureCapacity(int min)
 public SingleSpawn : SpawnGroup {
 public bool WantsInitialSpawn()
 public void FillDelay(float delay)
+}
+public SirenLight : IOEntity {
+public GameObject lightObj
+public float speed
 }
 public SkeletonProperties : ScriptableObject {
 public GameObject boneReference
@@ -20505,12 +19600,8 @@ public MeshColliderInfo colliderInfo
 }
 public SkinnedMeshRendererCache : object {
 public Dictionary`2<Mesh, RigInfo> dictionary
-private Func`2<Transform, string> <>f__am$cache0
-private Func`2<Transform, Matrix4x4> <>f__am$cache1
 public void Add(Mesh mesh, RigInfo info)
 public RigInfo Get(SkinnedMeshRenderer renderer)
-private string <Get>m__0(Transform x)
-private Matrix4x4 <Get>m__1(Transform x)
 }
 public SkinnedMeshRendererInfo : ComponentInfo`1<SkinnedMeshRenderer> {
 public ShadowCastingMode shadows
@@ -20539,7 +19630,7 @@ public float meshNumber
 public float hairNumber
 public int skinType
 public SkinSetCollection SkinCollection
-private OptimizeAnimator optimizeAnimator
+private ArticulatedOccludee articulatedOccludee
 private LODGroup lodGroup
 private List`1<Renderer> renderers
 private List`1<Animator> animators
@@ -20591,7 +19682,7 @@ public void RPC_MakePublic(RPCMessage msg)
 public void RPC_MakeBed(RPCMessage msg)
 public void Load(LoadInfo info)
 public bool CanPickup(BasePlayer player)
-private bool <DoServerDestroy>m__0(SleepingBag x)
+private bool <DoServerDestroy>b__20_0(SleepingBag x)
 }
 public SleepingBagButton : MonoBehaviour {
 public GameObject timerInfo
@@ -20711,6 +19802,13 @@ public void Explode()
 public void CheckForWater()
 public void FinishUp()
 public void DestroyShared()
+}
+public SnowMachine : FogMachine {
+public AdaptMeshToTerrain snowMesh
+public TriggerTemperature tempTrigger
+public bool MotionModeEnabled()
+public void EnableFogField()
+public void FinishFogging()
 }
 public Socket_Base : PrefabAttribute {
 public bool male
@@ -21023,7 +20121,6 @@ private bool fillOnSpawn
 public BaseSpawnPoint[] spawnPoints
 private List`1<SpawnPointInstance> spawnInstances
 private LocalClock spawnClock
-private Func`2<SpawnEntry, int> <>f__am$cache0
 public int currentPopulation
 public int get_currentPopulation()
 public bool WantsInitialSpawn()
@@ -21043,7 +20140,6 @@ protected void PostSpawnProcess(BaseEntity entity, BaseSpawnPoint spawnPoint)
 protected string GetPrefab()
 protected BaseSpawnPoint GetSpawnPoint(Vector3& pos, Quaternion& rot)
 protected void OnDrawGizmos()
-private int <GetPrefab>m__0(SpawnEntry x)
 }
 public SpawnHandler : SingletonComponent`1<SpawnHandler> {
 public float TickInterval
@@ -21127,7 +20223,6 @@ public SpawnFilter Filter
 public Prefab`1[] Prefabs
 private Int32[] numToSpawn
 private int sumToSpawn
-private Func`2<GameObjectRef, string> <>f__am$cache0
 public float TargetDensity
 public float get_TargetDensity()
 public bool Initialize()
@@ -21136,7 +20231,6 @@ public Prefab`1<Spawnable> GetRandomPrefab()
 public float GetCurrentSpawnRate()
 public float GetCurrentSpawnDensity()
 public float GetMaximumSpawnDensity()
-private string <Initialize>m__0(GameObjectRef x)
 }
 public SphereEntity : BaseEntity {
 public float currentRadius
@@ -21256,6 +20350,7 @@ private float lastToggleTime
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 public bool PlayerInRange(BasePlayer ply)
 public void SetHidden(bool isHidden)
+public void DisableNetworking()
 public void Decay()
 public void ServerInit()
 public void ToggleHidden()
@@ -21520,6 +20615,7 @@ public BaseEntity parachute
 public void ServerInit()
 public void PostServerLoad()
 public void RemoveParachute()
+public void MakeLootable()
 private void OnCollisionEnter(Collision collision)
 }
 public SupplySignal : TimedExplosive {
@@ -21588,6 +20684,9 @@ protected void Update()
 private long MB(long bytes)
 private long MB(ulong bytes)
 private int KM2(float meters)
+}
+public TargetTrigger : TriggerBase {
+internal GameObject InterestedInObject(GameObject obj)
 }
 public TeamMemberElement : MonoBehaviour {
 public Text nameText
@@ -21853,6 +20952,7 @@ public void GenerateTextures(bool heightTexture, bool normalTexture)
 public void ApplyTextures()
 public float GetHeight(Vector3 worldPos)
 public float GetHeight(float normX, float normZ)
+public float GetHeightFast(float normX, float normZ)
 public float GetHeight(int x, int z)
 public float GetHeight01(Vector3 worldPos)
 public float GetHeight01(float normX, float normZ)
@@ -22197,6 +21297,7 @@ public bool GetTopology(float normX, float normZ, int mask)
 public bool GetTopology(int x, int z, int mask)
 public int GetTopology(Vector3 worldPos)
 public int GetTopology(float normX, float normZ)
+public int GetTopologyFast(float normX, float normZ)
 public int GetTopology(int x, int z)
 public void SetTopology(Vector3 worldPos, int mask)
 public void SetTopology(float normX, float normZ, int mask)
@@ -22226,12 +21327,14 @@ public void GenerateTextures()
 public void ApplyTextures()
 public float GetHeight(Vector3 worldPos)
 public float GetHeight(float normX, float normZ)
+public float GetHeightFast(float normX, float normZ)
 public float GetHeight(int x, int z)
 public float GetHeight01(Vector3 worldPos)
 public float GetHeight01(float normX, float normZ)
 public float GetHeight01(int x, int z)
 public Vector3 GetNormal(Vector3 worldPos)
 public Vector3 GetNormal(float normX, float normZ)
+public Vector3 GetNormalFast(float normX, float normZ)
 public Vector3 GetNormal(int x, int z)
 public float GetSlope(Vector3 worldPos)
 public float GetSlope(float normX, float normZ)
@@ -22392,21 +21495,17 @@ public string ToShortString(TimeSpan timeSpan)
 public Timing : ValueType {
 private Stopwatch sw
 private string name
-public void .ctor(string name)
 public Timing Start(string name)
 public void End()
+public void .ctor(string name)
 }
 public ToggleGroupCookie : MonoBehaviour {
-private Func`2<Toggle, bool> <>f__am$cache0
-private Func`2<Toggle, bool> <>f__am$cache1
 public ToggleGroup group
 public ToggleGroup get_group()
 private void OnEnable()
 private void OnDisable()
 private void SetupListeners()
 private void OnToggleChanged(bool b)
-private bool <OnEnable>m__0(Toggle x)
-private bool <OnToggleChanged>m__1(Toggle x)
 }
 public ToggleLayer : MonoBehaviour {
 public Toggle toggleControl
@@ -22461,8 +21560,6 @@ public void Clear()
 public Segment Query(float time, float interpolation, float extrapolation, float smoothing)
 }
 public TransformUtil : object {
-private Func`2<RaycastHit, float> <>f__am$cache0
-private Func`2<Transform, bool> <>f__am$cache1
 public bool GetGroundInfo(Vector3 startPos, RaycastHit& hit, Transform ignoreTransform)
 public bool GetGroundInfo(Vector3 startPos, RaycastHit& hit, float range, Transform ignoreTransform)
 public bool GetGroundInfo(Vector3 startPos, RaycastHit& hitOut, float range, LayerMask mask, Transform ignoreTransform)
@@ -22473,8 +21570,6 @@ public bool GetGroundInfoTerrainOnly(Vector3 startPos, Vector3& pos, Vector3& no
 public bool GetGroundInfoTerrainOnly(Vector3 startPos, Vector3& pos, Vector3& normal, float range)
 public bool GetGroundInfoTerrainOnly(Vector3 startPos, Vector3& pos, Vector3& normal, float range, LayerMask mask)
 public Transform[] GetRootObjects()
-private float <GetGroundInfo>m__0(RaycastHit h)
-private bool <GetRootObjects>m__1(Transform x)
 }
 public Translate : object {
 public string TranslateMouseButton(string mouseButton)
@@ -22668,6 +21763,7 @@ public float GetSafeLevel(Vector3 pos)
 public TriggerTemperature : TriggerBase {
 public float Temperature
 public float triggerSize
+public float minSize
 private void OnValidate()
 public float WorkoutTemperature(Vector3 position, float oldTemperature)
 internal GameObject InterestedInObject(GameObject obj)
@@ -22716,13 +21812,11 @@ public TweakUIMultiSelect : MonoBehaviour {
 public ToggleGroup toggleGroup
 public string convarName
 internal Command conVar
-private Func`2<Toggle, bool> <>f__am$cache0
 protected void Awake()
 protected void OnEnable()
 public void OnChanged()
 private void UpdateToggleGroup()
 private void UpdateConVar()
-private bool <UpdateConVar>m__0(Toggle x)
 }
 public TweakUISlider : MonoBehaviour {
 public Slider sliderControl
@@ -22818,8 +21912,10 @@ public HudElement Hunger
 public HudElement Thirst
 public HudElement Health
 public HudElement PendingHealth
+public HudElement VehicleHealth
 public RawImage compassStrip
 public CanvasGroup compassGroup
+public RectTransform vitalsRect
 }
 public UIIntegerEntry : MonoBehaviour {
 public InputField textEntry
@@ -23190,7 +22286,6 @@ public void CenterOnPosition(Vector2 pos)
 public void LayoutComplete()
 public void GraphicUpdateComplete()
 private Transform UnityEngine.UI.ICanvasElement.get_transform()
-private bool UnityEngine.UI.ICanvasElement.IsDestroyed()
 }
 public UnityEngine.UIEx : object {
 public Vector2 Unpivot(RectTransform rect, Vector2 localPos)
@@ -23211,76 +22306,6 @@ private List`1<RenderTexture> m_TemporaryRTs
 public RenderTexture GetTemporaryRenderTexture(int width, int height, int depthBuffer, RenderTextureFormat format, FilterMode filterMode)
 public void ReleaseTemporaryRenderTexture(RenderTexture rt)
 public void ReleaseAllTemporaryRenderTextures()
-}
-public UnityStandardAssets.CinematicEffects.TonemappingColorGrading : MonoBehaviour {
-private EyeAdaptationSettings m_EyeAdaptation
-private TonemappingSettings m_Tonemapping
-private ColorGradingSettings m_ColorGrading
-private LUTSettings m_Lut
-private Texture2D m_IdentityLut
-private RenderTexture m_InternalLut
-private Texture2D m_CurveTexture
-private Texture2D m_TonemapperCurve
-private float m_TonemapperCurveRange
-private Shader m_Shader
-private Material m_Material
-private bool <validRenderTextureFormat>k__BackingField
-private bool <validUserLutSize>k__BackingField
-private bool m_Dirty
-private bool m_TonemapperDirty
-private RenderTexture m_SmallAdaptiveRt
-private RenderTextureFormat m_AdaptiveRtFormat
-private RenderTexture[] rts
-public EyeAdaptationSettings eyeAdaptation
-public TonemappingSettings tonemapping
-public ColorGradingSettings colorGrading
-public LUTSettings lut
-private Texture2D identityLut
-private RenderTexture internalLutRt
-private Texture2D curveTexture
-private Texture2D tonemapperCurve
-public Shader shader
-public Material material
-public bool isGammaColorSpace
-public int lutSize
-public bool validRenderTextureFormat
-public bool validUserLutSize
-public EyeAdaptationSettings get_eyeAdaptation()
-public void set_eyeAdaptation(EyeAdaptationSettings value)
-public TonemappingSettings get_tonemapping()
-public void set_tonemapping(TonemappingSettings value)
-public ColorGradingSettings get_colorGrading()
-public void set_colorGrading(ColorGradingSettings value)
-public LUTSettings get_lut()
-public void set_lut(LUTSettings value)
-private Texture2D get_identityLut()
-private RenderTexture get_internalLutRt()
-private Texture2D get_curveTexture()
-private Texture2D get_tonemapperCurve()
-public Shader get_shader()
-public Material get_material()
-public bool get_isGammaColorSpace()
-public int get_lutSize()
-public bool get_validRenderTextureFormat()
-private void set_validRenderTextureFormat(bool value)
-public bool get_validUserLutSize()
-private void set_validUserLutSize(bool value)
-public void SetDirty()
-public void SetTonemapperDirty()
-private void OnEnable()
-private void OnDisable()
-private void OnValidate()
-private Texture2D GenerateIdentityLut(int dim)
-private float StandardIlluminantY(float x)
-private Vector3 CIExyToLMS(float x, float y)
-private Vector3 GetWhiteBalance()
-private Color NormalizeColor(Color c)
-private void GenerateLiftGammaGain(Color& lift, Color& gamma, Color& gain)
-private void GenCurveTexture()
-private bool CheckUserLut()
-private bool CheckSmallAdaptiveRt()
-public void OnRenderImage(RenderTexture source, RenderTexture destination)
-public Texture2D BakeLUT()
 }
 public UnityStandardAssets.ImageEffects.ScopeEffect : PostEffectsBase {
 public Material overlayMaterial
@@ -23385,11 +22410,6 @@ private int vend_sellOrderID
 private int vend_numberOfTransactions
 public bool transactionActive
 private VendingMachineMapMarker myMarker
-private Func`2<Item, int> <>f__am$cache0
-private Func`2<Item, int> <>f__am$cache1
-private Func`2<Item, int> <>f__am$cache2
-private Func`2<Item, bool> <>f__am$cache3
-private Func`2<Item, int> <>f__am$cache4
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 public void Load(LoadInfo info)
 public void Save(SaveInfo info)
@@ -23435,11 +22455,6 @@ public bool IsVending()
 public bool PlayerBehind(BasePlayer player)
 public bool PlayerInfront(BasePlayer player)
 public bool CanPlayerAdmin(BasePlayer player)
-private int <RefreshSellOrderStockLevel>m__0(Item x)
-private int <RefreshSellOrderStockLevel>m__1(Item x)
-private int <DoTransaction>m__2(Item x)
-private bool <DoTransaction>m__3(Item x)
-private int <DoTransaction>m__4(Item x)
 }
 public VendingMachineMapMarker : MapMarker {
 public string markerShopName
@@ -23562,6 +22577,10 @@ public void Colliders(Vector3 position, float radius, List`1<T> list, int layerM
 public void Components(Vector3 position, float radius, List`1<T> list, int layerMask, QueryTriggerInteraction triggerInteraction)
 public void Entities(Vector3 position, float radius, List`1<T> list, int layerMask, QueryTriggerInteraction triggerInteraction)
 public void EntityComponents(Vector3 position, float radius, List`1<T> list, int layerMask, QueryTriggerInteraction triggerInteraction)
+public void Colliders(OBB bounds, List`1<T> list, int layerMask, QueryTriggerInteraction triggerInteraction)
+public void Components(OBB bounds, List`1<T> list, int layerMask, QueryTriggerInteraction triggerInteraction)
+public void Entities(OBB bounds, List`1<T> list, int layerMask, QueryTriggerInteraction triggerInteraction)
+public void EntityComponents(OBB bounds, List`1<T> list, int layerMask, QueryTriggerInteraction triggerInteraction)
 }
 public VisualizeTexelDensity : MonoBehaviour {
 public Shader shader
@@ -24116,6 +23135,7 @@ public float Factor(Bounds bounds)
 public bool Test(Vector3 pos)
 public float GetWaterDepth(Vector3 pos)
 public float GetOverallWaterDepth(Vector3 pos)
+public WaterInfo GetBuoyancyWaterInfo(Vector3 pos, float normX, float normZ)
 public WaterInfo GetWaterInfo(Vector3 pos)
 public WaterInfo GetWaterInfo(Bounds bounds)
 }
@@ -24143,8 +23163,6 @@ private Mesh CreateSortedCenterPatch(int resolution, float sizeInWorld, bool bor
 public WaterOverlay : ImageEffectLayer {
 public bool goggles
 public EffectParams gogglesParams
-public void Awake()
-protected void Update()
 }
 public WaterPurifier : LiquidContainer {
 public GameObjectRef storagePrefab
@@ -24312,7 +23330,6 @@ public float trappedEffectRepeatRate
 public float trapSuccessRate
 public List`1<ItemDefinition> ignoreBait
 public List`1<WildlifeWeight> targetWildlife
-private Func`2<WildlifeWeight, int> <>f__am$cache0
 public void SetTrapActive(bool trapOn)
 public int GetBaitCalories()
 public void DestroyRandomFoodItem()
@@ -24327,7 +23344,6 @@ public bool OnStartBeingLooted(BasePlayer baseEntity)
 public TrappableWildlife GetRandomWildlife()
 public bool HasCatch()
 public bool IsTrapActive()
-private int <GetRandomWildlife>m__0(WildlifeWeight x)
 }
 public Windows.ConsoleInput : object {
 private Action`1<string> OnInputText
@@ -24346,6 +23362,19 @@ internal void OnBackspace()
 internal void OnEscape()
 internal void OnEnter()
 public void Update()
+}
+public Windows.ConsoleWindow : object {
+private TextWriter oldOutput
+private int STD_INPUT_HANDLE
+private int STD_OUTPUT_HANDLE
+public void Initialize()
+public void Shutdown()
+public void SetTitle(string strName)
+private bool AttachConsole(UInt32 dwProcessId)
+private bool AllocConsole()
+private bool FreeConsole()
+private IntPtr GetStdHandle(int nStdHandle)
+private bool SetConsoleTitleA(string lpConsoleTitle)
 }
 public WindZoneExManager : MonoBehaviour {
 public float maxAccumMain
@@ -24369,6 +23398,7 @@ public bool HasPendingPlug()
 public bool PendingPlugIsInput()
 public bool PendingPlugIsOutput()
 public bool CanPlayerUseWires(BasePlayer player)
+public bool PendingPlugRoot()
 public void TryClear(RPCMessage msg)
 public void MakeConnection(RPCMessage msg)
 public void SetPlugged(RPCMessage msg)
@@ -24434,9 +23464,6 @@ private string <Url>k__BackingField
 private bool <Procedural>k__BackingField
 private bool <Cached>k__BackingField
 private WorldSerialization <Serialization>k__BackingField
-private Converter`2<Vector3, VectorData> <>f__am$cache0
-private Converter`2<VectorData, Vector3> <>f__am$cache1
-private Func`2<PathData, PathList> <>f__mg$cache0
 public UInt32 Seed
 public UInt32 Salt
 public UInt32 Size
@@ -24498,8 +23525,6 @@ private void Status(Action`1<string> statusFunction, string status, object obj1)
 private void Status(Action`1<string> statusFunction, string status, object obj1, object obj2)
 private void Status(Action`1<string> statusFunction, string status, object obj1, object obj2, object obj3)
 private void Status(Action`1<string> statusFunction, string status, Object[] objs)
-private VectorData <PathListToPathData>m__0(Vector3 item)
-private Vector3 <PathDataToPathList>m__1(VectorData item)
 }
 public WorldItem : BaseEntity {
 public bool allowPickup

@@ -107,6 +107,7 @@ private Connection <connection>k__BackingField
 public Group group
 public Subscriber subscriber
 public NetworkHandler handler
+private bool updateSubscriptions
 internal Server sv
 internal Client cl
 public Connection connection
@@ -122,7 +123,8 @@ public void CloseSubscriber()
 public bool UpdateGroups(Vector3 position)
 public bool SwitchGroup(Group newGroup)
 internal void OnGroupTransition(Group oldGroup)
-internal void UpdateSubscriptions()
+internal void OnSubscriptionChange()
+public bool UpdateSubscriptions(int removeLimit, int addLimit)
 }
 public Network.NetworkHandler {
 public void OnNetworkSubscribersEnter(List`1<Connection> connections)
@@ -256,8 +258,8 @@ public Bounds bounds
 public ListHashSet`1<Networkable> networkables
 public List`1<Connection> subscribers
 public bool isGlobal
-public void .ctor(Manager m, UInt32 id)
 public bool get_isGlobal()
+public void .ctor(Manager m, UInt32 id)
 public void Dispose()
 public void Join(Networkable nw)
 public void Leave(Networkable nw)
@@ -269,8 +271,8 @@ public string ToString()
 public Network.Visibility.Manager : object {
 private Dictionary`2<UInt32, Group> groups
 internal Provider provider
-public void .ctor(Provider p)
 public void Dispose()
+public void .ctor(Provider p)
 public Group TryGet(UInt32 ID)
 public Group Get(UInt32 ID)
 public Subscriber CreateSubscriber(Connection connection)

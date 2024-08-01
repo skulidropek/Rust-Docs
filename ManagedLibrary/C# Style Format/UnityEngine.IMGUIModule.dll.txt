@@ -1,47 +1,20 @@
-internal UnityEngine.BorderParameters : ValueType {
-public float leftWidth
-public float topWidth
-public float rightWidth
-public float bottomWidth
-public float topLeftRadius
-public float topRightRadius
-public float bottomRightRadius
-public float bottomLeftRadius
-public void SetWidth(float top, float right, float bottom, float left)
-public void SetWidth(float allBorders)
-public void SetRadius(float topLeft, float topRight, float bottomRight, float bottomLeft)
-public void SetRadius(float radius)
-public Vector4 GetWidths()
-public Vector4 GetRadiuses()
-}
-internal UnityEngine.CursorPositionStylePainterParameters : ValueType {
-public Rect rect
-public string text
-public Font font
-public int fontSize
-public FontStyle fontStyle
-public TextAnchor anchor
-public float wordWrapWidth
-public bool richText
-public int cursorIndex
-}
 public UnityEngine.Event : object {
 internal IntPtr m_Ptr
 private Event s_Current
 private Event s_MasterEvent
 private Dictionary`2<string, int> <>f__switch$map0
 public EventType rawType
-public EventType type
+public Vector2 mousePosition
+public Vector2 delta
 public int button
 public EventModifiers modifiers
 public float pressure
 public int clickCount
 public char character
-public string commandName
 public KeyCode keyCode
 public int displayIndex
-public Vector2 mousePosition
-public Vector2 delta
+public EventType type
+public string commandName
 public Ray mouseRay
 public bool shift
 public bool control
@@ -56,22 +29,11 @@ public bool isMouse
 public bool isScrollWheel
 public void .ctor(int displayIndex)
 public void .ctor(Event other)
-private void .ctor(IntPtr ptr)
-private void Init(int displayIndex)
-private void Cleanup()
-private void InitCopy(Event other)
-private void InitPtr(IntPtr ptr)
-internal void CopyFromPtr(IntPtr ptr)
 public EventType get_rawType()
-public EventType get_type()
-public void set_type(EventType value)
-public EventType GetTypeForControl(int controlID)
-private void Internal_SetMousePosition(Vector2 value)
-private void INTERNAL_CALL_Internal_SetMousePosition(Event self, Vector2& value)
-private void Internal_GetMousePosition(Vector2& value)
-private void Internal_SetMouseDelta(Vector2 value)
-private void INTERNAL_CALL_Internal_SetMouseDelta(Event self, Vector2& value)
-private void Internal_GetMouseDelta(Vector2& value)
+public Vector2 get_mousePosition()
+public void set_mousePosition(Vector2 value)
+public Vector2 get_delta()
+public void set_delta(Vector2 value)
 public int get_button()
 public void set_button(int value)
 public EventModifiers get_modifiers()
@@ -82,22 +44,27 @@ public int get_clickCount()
 public void set_clickCount(int value)
 public char get_character()
 public void set_character(char value)
-public string get_commandName()
-public void set_commandName(string value)
 public KeyCode get_keyCode()
 public void set_keyCode(KeyCode value)
-private void Internal_SetNativeEvent(IntPtr ptr)
 public int get_displayIndex()
 public void set_displayIndex(int value)
+public EventType get_type()
+public void set_type(EventType value)
+public string get_commandName()
+public void set_commandName(string value)
 private void Internal_Use()
+private IntPtr Internal_Create(int displayIndex)
+private void Internal_Destroy(IntPtr ptr)
+private IntPtr Internal_Copy(IntPtr otherPtr)
+public EventType GetTypeForControl(int controlID)
+internal void CopyFromPtr(IntPtr ptr)
 public bool PopEvent(Event outEvent)
 public int GetEventCount()
+private void Internal_SetNativeEvent(IntPtr ptr)
+internal void Internal_MakeMasterEventCurrent(int displayIndex)
 protected void Finalize()
 internal void CleanupRoots()
-public Vector2 get_mousePosition()
-public void set_mousePosition(Vector2 value)
-public Vector2 get_delta()
-public void set_delta(Vector2 value)
+internal void CopyFrom(Event e)
 public Ray get_mouseRay()
 public void set_mouseRay(Ray value)
 public bool get_shift()
@@ -115,7 +82,6 @@ public void set_numeric(bool value)
 public bool get_functionKey()
 public Event get_current()
 public void set_current(Event value)
-private void Internal_MakeMasterEventCurrent(int displayIndex)
 public bool get_isKey()
 public bool get_isMouse()
 public bool get_isScrollWheel()
@@ -124,6 +90,10 @@ public int GetHashCode()
 public bool Equals(object obj)
 public string ToString()
 public void Use()
+private void get_mousePosition_Injected(Vector2& ret)
+private void set_mousePosition_Injected(Vector2& value)
+private void get_delta_Injected(Vector2& ret)
+private void set_delta_Injected(Vector2& value)
 }
 internal UnityEngine.EventCommandNames : object {
 public string Cut
@@ -213,6 +183,7 @@ private float s_ScrollStepSize
 private int s_ScrollControlId
 private int s_HotTextField
 private int s_BoxHash
+private int s_ButonHash
 private int s_RepeatButtonHash
 private int s_ToggleHash
 private int s_ButtonGridHash
@@ -230,10 +201,10 @@ public Color contentColor
 public bool changed
 public bool enabled
 public int depth
+internal bool usePageScrollbars
 internal Material blendMaterial
 internal Material blitMaterial
 internal Material roundedRectMaterial
-internal bool usePageScrollbars
 internal int scrollTroughSide
 internal DateTime nextScrollStepTime
 public GUISkin skin
@@ -243,52 +214,40 @@ protected string mouseTooltip
 protected Rect tooltipRect
 public Color get_color()
 public void set_color(Color value)
-private void INTERNAL_get_color(Color& value)
-private void INTERNAL_set_color(Color& value)
 public Color get_backgroundColor()
 public void set_backgroundColor(Color value)
-private void INTERNAL_get_backgroundColor(Color& value)
-private void INTERNAL_set_backgroundColor(Color& value)
 public Color get_contentColor()
 public void set_contentColor(Color value)
-private void INTERNAL_get_contentColor(Color& value)
-private void INTERNAL_set_contentColor(Color& value)
 public bool get_changed()
 public void set_changed(bool value)
 public bool get_enabled()
 public void set_enabled(bool value)
-private string Internal_GetTooltip()
-private void Internal_SetTooltip(string value)
-private string Internal_GetMouseTooltip()
 public int get_depth()
 public void set_depth(int value)
-private void DoLabel(Rect position, GUIContent content, IntPtr style)
-private void INTERNAL_CALL_DoLabel(Rect& position, GUIContent content, IntPtr style)
-private void InitializeGUIClipTexture()
+internal bool get_usePageScrollbars()
 internal Material get_blendMaterial()
 internal Material get_blitMaterial()
 internal Material get_roundedRectMaterial()
-private bool DoButton(Rect position, GUIContent content, IntPtr style)
-private bool INTERNAL_CALL_DoButton(Rect& position, GUIContent content, IntPtr style)
+private void GrabMouseControl(int id)
+private bool HasMouseControl(int id)
+private void ReleaseMouseControl()
 public void SetNextControlName(string name)
 public string GetNameOfFocusedControl()
 public void FocusControl(string name)
-internal bool DoToggle(Rect position, int id, bool value, GUIContent content, IntPtr style)
-private bool INTERNAL_CALL_DoToggle(Rect& position, int id, bool value, GUIContent content, IntPtr style)
-internal bool get_usePageScrollbars()
 internal void InternalRepaintEditorWindow()
-private Rect Internal_DoModalWindow(int id, int instanceID, Rect clientRect, WindowFunction func, GUIContent content, GUIStyle style, GUISkin skin)
-private void INTERNAL_CALL_Internal_DoModalWindow(int id, int instanceID, Rect& clientRect, WindowFunction func, GUIContent content, GUIStyle style, GUISkin skin, Rect& value)
-private Rect Internal_DoWindow(int id, int instanceID, Rect clientRect, WindowFunction func, GUIContent title, GUIStyle style, GUISkin skin, bool forceRectOnLayout)
-private void INTERNAL_CALL_Internal_DoWindow(int id, int instanceID, Rect& clientRect, WindowFunction func, GUIContent title, GUIStyle style, GUISkin skin, bool forceRectOnLayout, Rect& value)
+private string Internal_GetTooltip()
+private void Internal_SetTooltip(string value)
+private string Internal_GetMouseTooltip()
+private Rect Internal_DoModalWindow(int id, int instanceID, Rect clientRect, WindowFunction func, GUIContent content, GUIStyle style, object skin)
+private Rect Internal_DoWindow(int id, int instanceID, Rect clientRect, WindowFunction func, GUIContent title, GUIStyle style, object skin, bool forceRectOnLayout)
 public void DragWindow(Rect position)
-private void INTERNAL_CALL_DragWindow(Rect& position)
 public void BringWindowToFront(int windowID)
 public void BringWindowToBack(int windowID)
 public void FocusWindow(int windowID)
 public void UnfocusWindow()
 private void Internal_BeginWindows()
 private void Internal_EndWindows()
+internal string Internal_Concatenate(GUIContent first, GUIContent second)
 internal int get_scrollTroughSide()
 internal void set_scrollTroughSide(int value)
 internal DateTime get_nextScrollStepTime()
@@ -352,7 +311,6 @@ public string TextArea(Rect position, string text)
 public string TextArea(Rect position, string text, int maxLength)
 public string TextArea(Rect position, string text, GUIStyle style)
 public string TextArea(Rect position, string text, int maxLength, GUIStyle style)
-private string TextArea(Rect position, GUIContent content, int maxLength, GUIStyle style)
 internal void DoTextField(Rect position, int id, GUIContent content, bool multiline, int maxLength, GUIStyle style)
 internal void DoTextField(Rect position, int id, GUIContent content, bool multiline, int maxLength, GUIStyle style, string secureText)
 internal void DoTextField(Rect position, int id, GUIContent content, bool multiline, int maxLength, GUIStyle style, string secureText, char maskChar)
@@ -381,6 +339,10 @@ public int SelectionGrid(Rect position, int selected, Texture[] images, int xCou
 public int SelectionGrid(Rect position, int selected, GUIContent[] contents, int xCount, GUIStyle style)
 internal void FindStyles(GUIStyle& style, GUIStyle& firstStyle, GUIStyle& midStyle, GUIStyle& lastStyle, string first, string mid, string last)
 internal int CalcTotalHorizSpacing(int xCount, GUIStyle style, GUIStyle firstStyle, GUIStyle midStyle, GUIStyle lastStyle)
+private bool DoControl(Rect position, int id, bool on, GUIContent content, GUIStyle style)
+private void DoLabel(Rect position, GUIContent content, GUIStyle style)
+internal bool DoToggle(Rect position, int id, bool value, GUIContent content, GUIStyle style)
+internal bool DoButton(Rect position, int id, GUIContent content, GUIStyle style)
 private int DoButtonGrid(Rect position, int selected, GUIContent[] contents, String[] controlNames, int xCount, GUIStyle style, GUIStyle firstStyle, GUIStyle midStyle, GUIStyle lastStyle, ToolbarButtonSize buttonSize)
 private Rect[] CalcMouseRects(Rect position, GUIContent[] contents, int xCount, float elemWidth, float elemHeight, GUIStyle style, GUIStyle firstStyle, GUIStyle midStyle, GUIStyle lastStyle, bool addBorders, ToolbarButtonSize buttonSize)
 public float HorizontalSlider(Rect position, float value, float leftValue, float rightValue)
@@ -436,6 +398,15 @@ internal void CallWindowDelegate(WindowFunction func, int id, int instanceID, GU
 public void DragWindow()
 internal void BeginWindows(int skinMode, int editorWindowInstanceID)
 internal void EndWindows()
+private void get_color_Injected(Color& ret)
+private void set_color_Injected(Color& value)
+private void get_backgroundColor_Injected(Color& ret)
+private void set_backgroundColor_Injected(Color& value)
+private void get_contentColor_Injected(Color& ret)
+private void set_contentColor_Injected(Color& value)
+private void Internal_DoModalWindow_Injected(int id, int instanceID, Rect& clientRect, WindowFunction func, GUIContent content, GUIStyle style, object skin, Rect& ret)
+private void Internal_DoWindow_Injected(int id, int instanceID, Rect& clientRect, WindowFunction func, GUIContent title, GUIStyle style, object skin, bool forceRectOnLayout, Rect& ret)
+private void DragWindow_Injected(Rect& position)
 }
 internal UnityEngine.GUIAspectSizer : GUILayoutEntry {
 private float aspect
@@ -443,45 +414,31 @@ public void .ctor(float aspect, GUILayoutOption[] options)
 public void CalcHeight()
 }
 internal UnityEngine.GUIClip : object {
-public bool enabled
-public Rect topmostRect
-public Rect visibleRect
+internal bool enabled
+internal Rect visibleRect
+internal Rect topmostRect
+internal bool get_enabled()
+internal Rect get_visibleRect()
+internal Rect get_topmostRect()
 internal void Internal_Push(Rect screenRect, Vector2 scrollOffset, Vector2 renderOffset, bool resetOffset)
-private void INTERNAL_CALL_Internal_Push(Rect& screenRect, Vector2& scrollOffset, Vector2& renderOffset, bool resetOffset)
 internal void Internal_Pop()
 internal int Internal_GetCount()
 internal Rect GetTopRect()
-private void INTERNAL_CALL_GetTopRect(Rect& value)
-public bool get_enabled()
-private void Unclip_Vector2(Vector2& pos)
-private void INTERNAL_CALL_Unclip_Vector2(Vector2& pos)
-public Rect get_topmostRect()
-private void INTERNAL_get_topmostRect(Rect& value)
-private void Unclip_Rect(Rect& rect)
-private void INTERNAL_CALL_Unclip_Rect(Rect& rect)
-private void Clip_Vector2(Vector2& absolutePos)
-private void INTERNAL_CALL_Clip_Vector2(Vector2& absolutePos)
-private void Internal_Clip_Rect(Rect& absoluteRect)
-private void INTERNAL_CALL_Internal_Clip_Rect(Rect& absoluteRect)
-private void UnclipToWindow_Vector2(Vector2& pos)
-private void INTERNAL_CALL_UnclipToWindow_Vector2(Vector2& pos)
-private void UnclipToWindow_Rect(Rect& rect)
-private void INTERNAL_CALL_UnclipToWindow_Rect(Rect& rect)
-private void ClipToWindow_Vector2(Vector2& absolutePos)
-private void INTERNAL_CALL_ClipToWindow_Vector2(Vector2& absolutePos)
-private void ClipToWindow_Rect(Rect& absoluteRect)
-private void INTERNAL_CALL_ClipToWindow_Rect(Rect& absoluteRect)
+private Vector2 Unclip_Vector2(Vector2 pos)
+private Rect Unclip_Rect(Rect rect)
+private Vector2 Clip_Vector2(Vector2 absolutePos)
+private Rect Internal_Clip_Rect(Rect absoluteRect)
+private Vector2 UnclipToWindow_Vector2(Vector2 pos)
+private Rect UnclipToWindow_Rect(Rect rect)
+private Vector2 ClipToWindow_Vector2(Vector2 absolutePos)
+private Rect ClipToWindow_Rect(Rect absoluteRect)
+private Vector2 Internal_GetAbsoluteMousePosition()
 internal void Reapply()
 internal Matrix4x4 GetMatrix()
-private void INTERNAL_CALL_GetMatrix(Matrix4x4& value)
 internal void SetMatrix(Matrix4x4 m)
-private void INTERNAL_CALL_SetMatrix(Matrix4x4& m)
+internal Matrix4x4 GetParentMatrix()
 internal void Internal_PushParentClip(Matrix4x4 objectTransform, Rect clipRect)
-private void INTERNAL_CALL_Internal_PushParentClip(Matrix4x4& objectTransform, Rect& clipRect)
 internal void Internal_PopParentClip()
-public Rect get_visibleRect()
-private void INTERNAL_get_visibleRect(Rect& value)
-private void Internal_GetAbsoluteMousePosition(Vector2& output)
 internal void Push(Rect screenRect, Vector2 scrollOffset, Vector2 renderOffset, bool resetOffset)
 internal void Pop()
 public Vector2 Unclip(Vector2 pos)
@@ -493,6 +450,23 @@ public Rect UnclipToWindow(Rect rect)
 public Vector2 ClipToWindow(Vector2 absolutePos)
 public Rect ClipToWindow(Rect absoluteRect)
 public Vector2 GetAbsoluteMousePosition()
+private void get_visibleRect_Injected(Rect& ret)
+private void get_topmostRect_Injected(Rect& ret)
+private void Internal_Push_Injected(Rect& screenRect, Vector2& scrollOffset, Vector2& renderOffset, bool resetOffset)
+private void GetTopRect_Injected(Rect& ret)
+private void Unclip_Vector2_Injected(Vector2& pos, Vector2& ret)
+private void Unclip_Rect_Injected(Rect& rect, Rect& ret)
+private void Clip_Vector2_Injected(Vector2& absolutePos, Vector2& ret)
+private void Internal_Clip_Rect_Injected(Rect& absoluteRect, Rect& ret)
+private void UnclipToWindow_Vector2_Injected(Vector2& pos, Vector2& ret)
+private void UnclipToWindow_Rect_Injected(Rect& rect, Rect& ret)
+private void ClipToWindow_Vector2_Injected(Vector2& absolutePos, Vector2& ret)
+private void ClipToWindow_Rect_Injected(Rect& absoluteRect, Rect& ret)
+private void Internal_GetAbsoluteMousePosition_Injected(Vector2& ret)
+private void GetMatrix_Injected(Matrix4x4& ret)
+private void SetMatrix_Injected(Matrix4x4& m)
+private void GetParentMatrix_Injected(Matrix4x4& ret)
+private void Internal_PushParentClip_Injected(Matrix4x4& objectTransform, Rect& clipRect)
 }
 public UnityEngine.GUIContent : object {
 private string m_Text
@@ -683,6 +657,7 @@ public float maxHeight
 public Rect rect
 public int stretchWidth
 public int stretchHeight
+public bool consideredForMargin
 private GUIStyle m_Style
 internal Rect kDummyRect
 protected int indent
@@ -749,11 +724,8 @@ private GUIStyle s_SpaceStyle
 internal GUILayoutGroup topLevel
 internal GUIStyle spaceStyle
 private Rect Internal_GetWindowRect(int windowID)
-private void INTERNAL_CALL_Internal_GetWindowRect(int windowID, Rect& value)
 private void Internal_MoveWindow(int windowID, Rect r)
-private void INTERNAL_CALL_Internal_MoveWindow(int windowID, Rect& r)
 internal Rect GetWindowsBounds()
-private void INTERNAL_CALL_GetWindowsBounds(Rect& value)
 internal void CleanupRoots()
 internal LayoutCache SelectIDList(int instanceID, bool isWindow)
 internal void Begin(int instanceID)
@@ -792,6 +764,9 @@ public Rect GetAspectRect(float aspect, GUILayoutOption[] options)
 public Rect GetAspectRect(float aspect, GUIStyle style, GUILayoutOption[] options)
 private Rect DoGetAspectRect(float aspect, GUILayoutOption[] options)
 internal GUIStyle get_spaceStyle()
+private void Internal_GetWindowRect_Injected(int windowID, Rect& ret)
+private void Internal_MoveWindow_Injected(int windowID, Rect& r)
+private void GetWindowsBounds_Injected(Rect& ret)
 }
 internal UnityEngine.GUIScrollGroup : GUILayoutGroup {
 public float calcMinWidth
@@ -961,16 +936,15 @@ private RectOffset m_Border
 private RectOffset m_Padding
 private RectOffset m_Margin
 private RectOffset m_Overflow
-private Font m_FontInternal
 internal bool showKeyboardFocus
 private GUIStyle s_None
 public string name
+public Font font
 public ImagePosition imagePosition
 public TextAnchor alignment
 public bool wordWrap
 public TextClipping clipping
 public Vector2 contentOffset
-internal Vector2 Internal_clipOffset
 public float fixedWidth
 public float fixedHeight
 public bool stretchWidth
@@ -978,6 +952,8 @@ public bool stretchHeight
 public int fontSize
 public FontStyle fontStyle
 public bool richText
+public Vector2 clipOffset
+internal Vector2 Internal_clipOffset
 public GUIStyleState normal
 public GUIStyleState hover
 public GUIStyleState active
@@ -990,23 +966,14 @@ public RectOffset border
 public RectOffset margin
 public RectOffset padding
 public RectOffset overflow
-public Vector2 clipOffset
-public Font font
 public float lineHeight
 public GUIStyle none
 public bool isHeightDependantOnWidth
 public void .ctor(GUIStyle other)
-private void Init()
-private void InitCopy(GUIStyle other)
-private void Cleanup()
 public string get_name()
 public void set_name(string value)
-private IntPtr GetStyleStatePtr(int idx)
-private void INTERNAL_CALL_GetStyleStatePtr(GUIStyle self, int idx, IntPtr& value)
-private void AssignStyleState(int idx, IntPtr srcStyleState)
-private IntPtr GetRectOffsetPtr(int idx)
-private void INTERNAL_CALL_GetRectOffsetPtr(GUIStyle self, int idx, IntPtr& value)
-private void AssignRectOffset(int idx, IntPtr srcRectOffset)
+public Font get_font()
+public void set_font(Font value)
 public ImagePosition get_imagePosition()
 public void set_imagePosition(ImagePosition value)
 public TextAnchor get_alignment()
@@ -1017,12 +984,6 @@ public TextClipping get_clipping()
 public void set_clipping(TextClipping value)
 public Vector2 get_contentOffset()
 public void set_contentOffset(Vector2 value)
-private void INTERNAL_get_contentOffset(Vector2& value)
-private void INTERNAL_set_contentOffset(Vector2& value)
-internal Vector2 get_Internal_clipOffset()
-internal void set_Internal_clipOffset(Vector2 value)
-private void INTERNAL_get_Internal_clipOffset(Vector2& value)
-private void INTERNAL_set_Internal_clipOffset(Vector2& value)
 public float get_fixedWidth()
 public void set_fixedWidth(float value)
 public float get_fixedHeight()
@@ -1031,38 +992,38 @@ public bool get_stretchWidth()
 public void set_stretchWidth(bool value)
 public bool get_stretchHeight()
 public void set_stretchHeight(bool value)
-private float Internal_GetLineHeight(IntPtr target)
-private void SetFontInternal(Font value)
-private Font GetFontInternalDuringLoadingThread()
-private Font GetFontInternal()
 public int get_fontSize()
 public void set_fontSize(int value)
 public FontStyle get_fontStyle()
 public void set_fontStyle(FontStyle value)
 public bool get_richText()
 public void set_richText(bool value)
-private void Internal_Draw(GUIContent content, Internal_DrawArguments& arguments)
-private void Internal_Draw2(IntPtr style, Rect position, GUIContent content, int controlID, bool on)
-private void INTERNAL_CALL_Internal_Draw2(IntPtr style, Rect& position, GUIContent content, int controlID, bool on)
+public Vector2 get_clipOffset()
+public void set_clipOffset(Vector2 value)
+internal Vector2 get_Internal_clipOffset()
+internal void set_Internal_clipOffset(Vector2 value)
+private IntPtr Internal_Create(GUIStyle self)
+private IntPtr Internal_Copy(GUIStyle self, GUIStyle other)
+private void Internal_Destroy(IntPtr self)
+private IntPtr GetStyleStatePtr(int idx)
+private void AssignStyleState(int idx, IntPtr srcStyleState)
+private IntPtr GetRectOffsetPtr(int idx)
+private void AssignRectOffset(int idx, IntPtr srcRectOffset)
+private float Internal_GetLineHeight(IntPtr target)
+private void Internal_Draw(Rect screenRect, GUIContent content, bool isHover, bool isActive, bool on, bool hasKeyboardFocus)
+private void Internal_Draw2(Rect position, GUIContent content, int controlID, bool on)
+private void Internal_DrawCursor(Rect position, GUIContent content, int pos, Color cursorColor)
+private void Internal_DrawWithTextSelection(Rect screenRect, GUIContent content, bool isHover, bool isActive, bool on, bool hasKeyboardFocus, bool drawSelectionAsComposition, int cursorFirst, int cursorLast, Color cursorColor, Color selectionColor)
+internal Vector2 Internal_GetCursorPixelPosition(Rect position, GUIContent content, int cursorStringIndex)
+internal int Internal_GetCursorStringIndex(Rect position, GUIContent content, Vector2 cursorPixelPosition)
+internal int Internal_GetNumCharactersThatFitWithinWidth(string text, float width)
+internal Vector2 Internal_CalcSize(GUIContent content)
+internal Vector2 Internal_CalcSizeWithConstraints(GUIContent content, Vector2 maxSize)
+private float Internal_CalcHeight(GUIContent content, float width)
+private Vector2 Internal_CalcMinMaxWidth(GUIContent content)
 internal void SetMouseTooltip(string tooltip, Rect screenRect)
-private void INTERNAL_CALL_SetMouseTooltip(string tooltip, Rect& screenRect)
-private void Internal_DrawPrefixLabel(IntPtr style, Rect position, GUIContent content, int controlID, bool on)
-private void INTERNAL_CALL_Internal_DrawPrefixLabel(IntPtr style, Rect& position, GUIContent content, int controlID, bool on)
 private float Internal_GetCursorFlashOffset()
-private void Internal_DrawCursor(IntPtr target, Rect position, GUIContent content, int pos, Color cursorColor)
-private void INTERNAL_CALL_Internal_DrawCursor(IntPtr target, Rect& position, GUIContent content, int pos, Color& cursorColor)
-private void Internal_DrawWithTextSelection(GUIContent content, Internal_DrawWithTextSelectionArguments& arguments)
 internal void SetDefaultFont(Font font)
-internal void Internal_GetCursorPixelPosition(IntPtr target, Rect position, GUIContent content, int cursorStringIndex, Vector2& ret)
-private void INTERNAL_CALL_Internal_GetCursorPixelPosition(IntPtr target, Rect& position, GUIContent content, int cursorStringIndex, Vector2& ret)
-internal int Internal_GetCursorStringIndex(IntPtr target, Rect position, GUIContent content, Vector2 cursorPixelPosition)
-private int INTERNAL_CALL_Internal_GetCursorStringIndex(IntPtr target, Rect& position, GUIContent content, Vector2& cursorPixelPosition)
-internal int Internal_GetNumCharactersThatFitWithinWidth(IntPtr target, string text, float width)
-internal void Internal_CalcSize(IntPtr target, GUIContent content, Vector2& ret)
-internal void Internal_CalcSizeWithConstraints(IntPtr target, GUIContent content, Vector2 maxSize, Vector2& ret)
-private void INTERNAL_CALL_Internal_CalcSizeWithConstraints(IntPtr target, GUIContent content, Vector2& maxSize, Vector2& ret)
-private float Internal_CalcHeight(IntPtr target, GUIContent content, float width)
-private void Internal_CalcMinMaxWidth(IntPtr target, GUIContent content, Single& minWidth, Single& maxWidth)
 protected void Finalize()
 internal void CleanupRoots()
 internal void InternalOnAfterDeserialize()
@@ -1090,19 +1051,16 @@ public RectOffset get_padding()
 public void set_padding(RectOffset value)
 public RectOffset get_overflow()
 public void set_overflow(RectOffset value)
-public Vector2 get_clipOffset()
-public void set_clipOffset(Vector2 value)
-public Font get_font()
-public void set_font(Font value)
 public float get_lineHeight()
-private void Internal_Draw(IntPtr target, Rect position, GUIContent content, bool isHover, bool isActive, bool on, bool hasKeyboardFocus)
 public void Draw(Rect position, bool isHover, bool isActive, bool on, bool hasKeyboardFocus)
 public void Draw(Rect position, string text, bool isHover, bool isActive, bool on, bool hasKeyboardFocus)
 public void Draw(Rect position, Texture image, bool isHover, bool isActive, bool on, bool hasKeyboardFocus)
 public void Draw(Rect position, GUIContent content, bool isHover, bool isActive, bool on, bool hasKeyboardFocus)
 public void Draw(Rect position, GUIContent content, int controlID)
 public void Draw(Rect position, GUIContent content, int controlID, bool on)
-public void DrawCursor(Rect position, GUIContent content, int controlID, int Character)
+private void Draw(Rect position, GUIContent content, int controlId, bool isHover, bool isActive, bool on, bool hasKeyboardFocus)
+public void DrawCursor(Rect position, GUIContent content, int controlID, int character)
+internal void DrawWithTextSelection(Rect position, GUIContent content, bool isActive, bool hasKeyboardFocus, int firstSelectedCharacter, int lastSelectedCharacter, bool drawSelectionAsComposition, Color selectionColor)
 internal void DrawWithTextSelection(Rect position, GUIContent content, bool isActive, bool hasKeyboardFocus, int firstSelectedCharacter, int lastSelectedCharacter, bool drawSelectionAsComposition)
 internal void DrawWithTextSelection(Rect position, GUIContent content, int controlID, int firstSelectedCharacter, int lastSelectedCharacter, bool drawSelectionAsComposition)
 public void DrawWithTextSelection(Rect position, GUIContent content, int controlID, int firstSelectedCharacter, int lastSelectedCharacter)
@@ -1118,28 +1076,40 @@ public float CalcHeight(GUIContent content, float width)
 public bool get_isHeightDependantOnWidth()
 public void CalcMinMaxWidth(GUIContent content, Single& minWidth, Single& maxWidth)
 public string ToString()
+private void get_contentOffset_Injected(Vector2& ret)
+private void set_contentOffset_Injected(Vector2& value)
+private void get_clipOffset_Injected(Vector2& ret)
+private void set_clipOffset_Injected(Vector2& value)
+private void get_Internal_clipOffset_Injected(Vector2& ret)
+private void set_Internal_clipOffset_Injected(Vector2& value)
+private void Internal_Draw_Injected(Rect& screenRect, GUIContent content, bool isHover, bool isActive, bool on, bool hasKeyboardFocus)
+private void Internal_Draw2_Injected(Rect& position, GUIContent content, int controlID, bool on)
+private void Internal_DrawCursor_Injected(Rect& position, GUIContent content, int pos, Color& cursorColor)
+private void Internal_DrawWithTextSelection_Injected(Rect& screenRect, GUIContent content, bool isHover, bool isActive, bool on, bool hasKeyboardFocus, bool drawSelectionAsComposition, int cursorFirst, int cursorLast, Color& cursorColor, Color& selectionColor)
+private void Internal_GetCursorPixelPosition_Injected(Rect& position, GUIContent content, int cursorStringIndex, Vector2& ret)
+private int Internal_GetCursorStringIndex_Injected(Rect& position, GUIContent content, Vector2& cursorPixelPosition)
+private void Internal_CalcSize_Injected(GUIContent content, Vector2& ret)
+private void Internal_CalcSizeWithConstraints_Injected(GUIContent content, Vector2& maxSize, Vector2& ret)
+private void Internal_CalcMinMaxWidth_Injected(GUIContent content, Vector2& ret)
+private void SetMouseTooltip_Injected(string tooltip, Rect& screenRect)
 }
 public UnityEngine.GUIStyleState : object {
 internal IntPtr m_Ptr
 private GUIStyle m_SourceStyle
-private Texture2D m_Background
-public Color textColor
 public Texture2D background
+public Color textColor
 private void .ctor(GUIStyle sourceStyle, IntPtr source)
-private void Init()
-private void Cleanup()
-private void SetBackgroundInternal(Texture2D value)
-private Texture2D GetBackgroundInternalFromDeserialization()
-private Texture2D GetBackgroundInternal()
+public Texture2D get_background()
+public void set_background(Texture2D value)
 public Color get_textColor()
 public void set_textColor(Color value)
-private void INTERNAL_get_textColor(Color& value)
-private void INTERNAL_set_textColor(Color& value)
+private IntPtr Init()
+private void Cleanup()
 internal GUIStyleState ProduceGUIStyleStateFromDeserialization(GUIStyle sourceStyle, IntPtr source)
 internal GUIStyleState GetGUIStyleState(GUIStyle sourceStyle, IntPtr source)
 protected void Finalize()
-public Texture2D get_background()
-public void set_background(Texture2D value)
+private void get_textColor_Injected(Color& ret)
+private void set_textColor_Injected(Color& value)
 }
 public UnityEngine.GUITargetAttribute : Attribute {
 internal int displayMask
@@ -1156,61 +1126,61 @@ internal Action releaseCapture
 internal Func`3<int, IntPtr, bool> processEvent
 internal Action cleanupRoots
 internal Func`2<Exception, bool> endContainerGUIFromException
+internal Action enabledStateChanged
 private bool <guiIsExiting>k__BackingField
-internal Vector2 s_EditorScreenPointOffset
-public string systemCopyBuffer
-internal bool mouseUsed
 public bool hasModalWindow
+internal float pixelsPerPoint
+internal int guiDepth
+internal Vector2 s_EditorScreenPointOffset
+internal bool mouseUsed
 internal bool textFieldInput
 internal bool manualTex2SRGBEnabled
-internal float pixelsPerPoint
+public string systemCopyBuffer
 internal bool guiIsExiting
 public int hotControl
 public int keyboardControl
-private float Internal_GetPixelsPerPoint()
-public int GetControlID(int hint, FocusType focus)
-private int Internal_GetNextControlID2(int hint, FocusType focusType, Rect rect)
-private int INTERNAL_CALL_Internal_GetNextControlID2(int hint, FocusType focusType, Rect& rect)
-internal int GetPermanentControlID()
-private int Internal_GetHotControl()
-private void Internal_SetHotControl(int value)
-internal void UpdateUndoName()
-internal bool GetChanged()
-internal void SetChanged(bool changed)
-private int Internal_GetKeyboardControl()
-private void Internal_SetKeyboardControl(int value)
-internal void SetDidGUIWindowsEatLastEvent(bool value)
-public string get_systemCopyBuffer()
-public void set_systemCopyBuffer(string value)
-private GUISkin Internal_GetDefaultSkin(int skinMode)
-private Object Internal_GetBuiltinSkin(int skin)
-private void Internal_ExitGUI()
-internal int Internal_GetGUIDepth()
+public bool get_hasModalWindow()
+internal float get_pixelsPerPoint()
+internal int get_guiDepth()
+internal Vector2 get_s_EditorScreenPointOffset()
+internal void set_s_EditorScreenPointOffset(Vector2 value)
 internal bool get_mouseUsed()
 internal void set_mouseUsed(bool value)
-public bool get_hasModalWindow()
 internal bool get_textFieldInput()
 internal void set_textFieldInput(bool value)
 internal bool get_manualTex2SRGBEnabled()
 internal void set_manualTex2SRGBEnabled(bool value)
+public string get_systemCopyBuffer()
+public void set_systemCopyBuffer(string value)
+public int GetControlID(int hint, FocusType focusType, Rect rect)
+internal void BeginContainerFromOwner(ScriptableObject owner)
+internal void BeginContainer(ObjectGUIState objectGUIState)
+internal void Internal_EndContainer()
+internal int GetPermanentControlID()
 internal int CheckForTabEvent(Event evt)
 internal void SetKeyboardControlToFirstControlId()
 internal void SetKeyboardControlToLastControlId()
 internal bool HasFocusableControls()
-internal Rect Internal_AlignRectToDevice(Rect rect, Matrix4x4 transform)
-private void INTERNAL_CALL_Internal_AlignRectToDevice(Rect& rect, Matrix4x4& transform, Rect& value)
+public Rect AlignRectToDevice(Rect rect, Int32& widthInPixels, Int32& heightInPixels)
 internal Vector3 Internal_MultiplyPoint(Vector3 point, Matrix4x4 transform)
-private void INTERNAL_CALL_Internal_MultiplyPoint(Vector3& point, Matrix4x4& transform, Vector3& value)
-internal float Internal_Roundf(float f)
-internal void BeginContainerFromOwner(ScriptableObject owner)
-internal void BeginContainer(ObjectGUIState objectGUIState)
-internal void Internal_EndContainer()
-internal float get_pixelsPerPoint()
+internal bool GetChanged()
+internal void SetChanged(bool changed)
+internal void SetDidGUIWindowsEatLastEvent(bool value)
+private int Internal_GetHotControl()
+private int Internal_GetKeyboardControl()
+private void Internal_SetHotControl(int value)
+private void Internal_SetKeyboardControl(int value)
+private object Internal_GetDefaultSkin(int skinMode)
+private Object Internal_GetBuiltinSkin(int skin)
+private void Internal_ExitGUI()
+private Vector2 InternalWindowToScreenPoint(Vector2 windowPoint)
+private Vector2 InternalScreenToWindowPoint(Vector2 screenPoint)
+private void MarkGUIChanged()
 public int GetControlID(FocusType focus)
 public int GetControlID(GUIContent contents, FocusType focus)
 public int GetControlID(FocusType focus, Rect position)
-public int GetControlID(int hint, FocusType focus, Rect position)
 public int GetControlID(GUIContent contents, FocusType focus, Rect position)
+public int GetControlID(int hint, FocusType focus)
 public object GetStateObject(Type t, int controlID)
 public object QueryStateObject(Type t, int controlID)
 internal bool get_guiIsExiting()
@@ -1242,6 +1212,14 @@ public Vector2 ScreenToGUIPoint(Vector2 screenPoint)
 public Rect ScreenToGUIRect(Rect screenRect)
 public void RotateAroundPivot(float angle, Vector2 pivotPoint)
 public void ScaleAroundPivot(Vector2 scale, Vector2 pivotPoint)
+public Rect AlignRectToDevice(Rect rect)
+private void get_s_EditorScreenPointOffset_Injected(Vector2& ret)
+private void set_s_EditorScreenPointOffset_Injected(Vector2& value)
+private int GetControlID_Injected(int hint, FocusType focusType, Rect& rect)
+private void AlignRectToDevice_Injected(Rect& rect, Int32& widthInPixels, Int32& heightInPixels, Rect& ret)
+private void Internal_MultiplyPoint_Injected(Vector3& point, Matrix4x4& transform, Vector3& ret)
+private void InternalWindowToScreenPoint_Injected(Vector2& windowPoint, Vector2& ret)
+private void InternalScreenToWindowPoint_Injected(Vector2& screenPoint, Vector2& ret)
 }
 internal UnityEngine.GUIWordWrapSizer : GUILayoutEntry {
 private GUIContent m_Content
@@ -1258,50 +1236,6 @@ public ImagePosition ImageAbove
 public ImagePosition ImageOnly
 public ImagePosition TextOnly
 }
-internal UnityEngine.Internal_DrawArguments : ValueType {
-public IntPtr target
-public Rect position
-public int isHover
-public int isActive
-public int on
-public int hasKeyboardFocus
-}
-internal UnityEngine.Internal_DrawWithTextSelectionArguments : ValueType {
-public IntPtr target
-public Rect position
-public int firstPos
-public int lastPos
-public Color cursorColor
-public Color selectionColor
-public int isHover
-public int isActive
-public int on
-public int hasKeyboardFocus
-public int drawSelectionAsComposition
-}
-internal UnityEngine.IStylePainter {
-public Rect currentWorldClip
-public Vector2 mousePosition
-public Matrix4x4 currentTransform
-public Event repaintEvent
-public float opacity
-public void DrawRect(RectStylePainterParameters painterParams)
-public void DrawTexture(TextureStylePainterParameters painterParams)
-public void DrawText(TextStylePainterParameters painterParams)
-public Vector2 GetCursorPosition(CursorPositionStylePainterParameters painterParams)
-public Rect get_currentWorldClip()
-public void set_currentWorldClip(Rect value)
-public Vector2 get_mousePosition()
-public void set_mousePosition(Vector2 value)
-public Matrix4x4 get_currentTransform()
-public void set_currentTransform(Matrix4x4 value)
-public Event get_repaintEvent()
-public void set_repaintEvent(Event value)
-public float get_opacity()
-public void set_opacity(float value)
-public float ComputeTextWidth(TextStylePainterParameters painterParams)
-public float ComputeTextHeight(TextStylePainterParameters painterParams)
-}
 internal UnityEngine.ObjectGUIState : object {
 internal IntPtr m_Ptr
 public void Dispose()
@@ -1315,11 +1249,6 @@ public int value__
 public PlatformSelection Native
 public PlatformSelection Mac
 public PlatformSelection Windows
-}
-internal UnityEngine.RectStylePainterParameters : ValueType {
-public Rect rect
-public Color color
-public BorderParameters border
 }
 public UnityEngine.ScaleMode : Enum {
 public int value__
@@ -1379,47 +1308,6 @@ internal UnityEngine.SliderState : object {
 public float dragStartPos
 public float dragStartValue
 public bool isDragging
-}
-internal UnityEngine.StylePainter : object {
-internal IntPtr m_Ptr
-private Matrix4x4 <currentTransform>k__BackingField
-private Vector2 <mousePosition>k__BackingField
-private Rect <currentWorldClip>k__BackingField
-private Event <repaintEvent>k__BackingField
-private Color m_OpacityColor
-public Matrix4x4 currentTransform
-public Vector2 mousePosition
-public Rect currentWorldClip
-public Event repaintEvent
-public float opacity
-public void .ctor(Vector2 pos)
-private void Init()
-internal void DrawRect_Internal(Rect screenRect, Color color, Vector4 borderWidths, Vector4 borderRadiuses)
-private void INTERNAL_CALL_DrawRect_Internal(StylePainter self, Rect& screenRect, Color& color, Vector4& borderWidths, Vector4& borderRadiuses)
-internal void DrawTexture_Internal(Rect screenRect, Texture texture, Rect sourceRect, Color color, Vector4 borderWidths, Vector4 borderRadiuses, int leftBorder, int topBorder, int rightBorder, int bottomBorder, bool usePremultiplyAlpha)
-private void INTERNAL_CALL_DrawTexture_Internal(StylePainter self, Rect& screenRect, Texture texture, Rect& sourceRect, Color& color, Vector4& borderWidths, Vector4& borderRadiuses, int leftBorder, int topBorder, int rightBorder, int bottomBorder, bool usePremultiplyAlpha)
-internal void DrawText_Internal(Rect screenRect, string text, Font font, int fontSize, FontStyle fontStyle, Color fontColor, TextAnchor anchor, bool wordWrap, float wordWrapWidth, bool richText, TextClipping textClipping)
-private void INTERNAL_CALL_DrawText_Internal(StylePainter self, Rect& screenRect, string text, Font font, int fontSize, FontStyle fontStyle, Color& fontColor, TextAnchor anchor, bool wordWrap, float wordWrapWidth, bool richText, TextClipping textClipping)
-public float ComputeTextWidth_Internal(string text, float width, bool wordWrap, Font font, int fontSize, FontStyle fontStyle, TextAnchor anchor, bool richText)
-public float ComputeTextHeight_Internal(string text, float width, bool wordWrap, Font font, int fontSize, FontStyle fontStyle, TextAnchor anchor, bool richText)
-public Vector2 GetCursorPosition_Internal(string text, Font font, int fontSize, FontStyle fontStyle, TextAnchor anchor, float wordWrapWidth, bool richText, Rect screenRect, int cursorPosition)
-private void INTERNAL_CALL_GetCursorPosition_Internal(StylePainter self, string text, Font font, int fontSize, FontStyle fontStyle, TextAnchor anchor, float wordWrapWidth, bool richText, Rect& screenRect, int cursorPosition, Vector2& value)
-public void DrawRect(RectStylePainterParameters painterParams)
-public void DrawTexture(TextureStylePainterParameters painterParams)
-public void DrawText(TextStylePainterParameters painterParams)
-public Vector2 GetCursorPosition(CursorPositionStylePainterParameters painterParams)
-public float ComputeTextWidth(TextStylePainterParameters painterParams)
-public float ComputeTextHeight(TextStylePainterParameters painterParams)
-public Matrix4x4 get_currentTransform()
-public void set_currentTransform(Matrix4x4 value)
-public Vector2 get_mousePosition()
-public void set_mousePosition(Vector2 value)
-public Rect get_currentWorldClip()
-public void set_currentWorldClip(Rect value)
-public Event get_repaintEvent()
-public void set_repaintEvent(Event value)
-public float get_opacity()
-public void set_opacity(float value)
 }
 public UnityEngine.TextClipping : Enum {
 public int value__
@@ -1566,30 +1454,4 @@ private void EnsureValidCodePointIndex(Int32& index)
 private bool IsValidCodePointIndex(int index)
 private int PreviousCodePointIndex(int index)
 private int NextCodePointIndex(int index)
-}
-internal UnityEngine.TextStylePainterParameters : ValueType {
-public Rect rect
-public string text
-public Font font
-public int fontSize
-public FontStyle fontStyle
-public Color fontColor
-public TextAnchor anchor
-public bool wordWrap
-public float wordWrapWidth
-public bool richText
-public TextClipping clipping
-}
-internal UnityEngine.TextureStylePainterParameters : ValueType {
-public Rect rect
-public Rect uv
-public Color color
-public Texture texture
-public ScaleMode scaleMode
-public BorderParameters border
-public int sliceLeft
-public int sliceTop
-public int sliceRight
-public int sliceBottom
-public bool usePremultiplyAlpha
 }

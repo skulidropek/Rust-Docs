@@ -146,6 +146,10 @@ public CryptographicProviderType SttIss
 public CryptographicProviderType SttMer
 public CryptographicProviderType SttRoot
 }
+public System.Messaging.Cursor : object {
+public void Close()
+public void Dispose()
+}
 public System.Messaging.DefaultPropertiesToSend : object {
 public AcknowledgeTypes AcknowledgeType
 public MessageQueue AdministrationQueue
@@ -265,6 +269,9 @@ public HashAlgorithm Md4
 public HashAlgorithm Md5
 public HashAlgorithm None
 public HashAlgorithm Sha
+public HashAlgorithm Sha256
+public HashAlgorithm Sha384
+public HashAlgorithm Sha512
 }
 public System.Messaging.IMessageFormatter {
 public bool CanRead(Message message)
@@ -320,6 +327,8 @@ public bool UseEncryption
 public bool UseJournalQueue
 public bool UseTracing
 internal IMessage DelegateMessage
+public long LookupId
+public SecurityContext SecurityContext
 public void .ctor(object body)
 public void .ctor(object body, IMessageFormatter formatter)
 internal void .ctor(IMessage delegateMessage, object body, IMessageFormatter formatter)
@@ -398,6 +407,9 @@ public bool get_UseTracing()
 public void set_UseTracing(bool value)
 internal IMessage get_DelegateMessage()
 internal IMessage CreateMessage()
+public long get_LookupId()
+public SecurityContext get_SecurityContext()
+public void set_SecurityContext(SecurityContext value)
 }
 public System.Messaging.MessageEnumerator : MarshalByRefObject {
 private IMessageEnumerator delegateEnumerator
@@ -422,6 +434,14 @@ public Message RemoveCurrent(TimeSpan timeout, MessageQueueTransaction transacti
 public Message RemoveCurrent(TimeSpan timeout, MessageQueueTransactionType transactionType)
 public void Reset()
 protected void Finalize()
+}
+public System.Messaging.MessageLookupAction : Enum {
+public int value__
+public MessageLookupAction Current
+public MessageLookupAction First
+public MessageLookupAction Last
+public MessageLookupAction Next
+public MessageLookupAction Previous
 }
 public System.Messaging.MessagePriority : Enum {
 public int value__
@@ -521,6 +541,7 @@ public bool UseDeadLetterQueue
 public bool UseEncryption
 public bool UseJournalQueue
 public bool UseTracing
+public bool LookupId
 public bool get_AcknowledgeType()
 public void set_AcknowledgeType(bool value)
 public bool get_Acknowledgment()
@@ -610,6 +631,9 @@ public void set_UseTracing(bool value)
 public void ClearAll()
 public void SetAll()
 public void SetDefaults()
+public bool get_LookupId()
+public void set_LookupId(bool value)
+public object Clone()
 }
 public System.Messaging.MessageQueue : Component {
 public long InfiniteQueueSize
@@ -646,6 +670,8 @@ public bool Transactional
 public bool UseJournalQueue
 public IntPtr WriteHandle
 internal IMessageQueue DelegateQueue
+public QueueAccessMode AccessMode
+public string MulticastAddress
 public void .ctor(string path)
 public void .ctor(string path, bool sharedModeDenyReceive)
 public void .ctor(string path, QueueAccessMode accessMode)
@@ -772,6 +798,23 @@ private IMessageQueue GetMessageQueue(string path)
 private IMessageQueue GetMessageQueue()
 private IMessageQueue CreateMessageQueue(QueueReference qRef, bool transactional)
 private bool Exists(QueueReference qRef)
+public void .ctor(string path, bool sharedModeDenyReceive, bool enableCache)
+public void .ctor(string path, bool sharedModeDenyReceive, bool enableCache, QueueAccessMode accessMode)
+public QueueAccessMode get_AccessMode()
+public string get_MulticastAddress()
+public void set_MulticastAddress(string value)
+public IAsyncResult BeginPeek(TimeSpan timeout, Cursor cursor, PeekAction action, object state, AsyncCallback callback)
+public IAsyncResult BeginReceive(TimeSpan timeout, Cursor cursor, object state, AsyncCallback callback)
+public Cursor CreateCursor()
+public SecurityContext GetSecurityContext()
+public Message Peek(TimeSpan timeout, Cursor cursor, PeekAction action)
+public Message PeekByLookupId(long lookupId)
+public Message PeekByLookupId(MessageLookupAction action, long lookupId)
+public Message Receive(TimeSpan timeout, Cursor cursor, MessageQueueTransaction transaction)
+public Message Receive(TimeSpan timeout, Cursor cursor, MessageQueueTransactionType transactionType)
+public Message ReceiveByLookupId(long lookupId)
+public Message ReceiveByLookupId(MessageLookupAction action, long lookupId, MessageQueueTransaction transaction)
+public Message ReceiveByLookupId(MessageLookupAction action, long lookupId, MessageQueueTransactionType transactionType)
 }
 public System.Messaging.MessageQueueAccessControlEntry : AccessControlEntry {
 public MessageQueueAccessRights MessageQueueAccessRights
@@ -967,6 +1010,7 @@ public MessageQueueErrorCode UnsupportedOperation
 public MessageQueueErrorCode UserBufferTooSmall
 public MessageQueueErrorCode WksCantServeClient
 public MessageQueueErrorCode WriteNotAllowed
+public MessageQueueErrorCode MessageNotFound
 }
 public System.Messaging.MessageQueueException : ExternalException {
 private MessageQueueErrorCode _messageQueueErrorCode
@@ -993,6 +1037,7 @@ public AccessControlList Permissions
 public bool Transactional
 public UninstallAction UninstallAction
 public bool UseJournalQueue
+public string MulticastAddress
 public void .ctor(MessageQueue componentToCopy)
 public bool get_Authenticate()
 public void set_Authenticate(bool value)
@@ -1024,6 +1069,8 @@ public void Install(IDictionary stateSaver)
 public bool IsEquivalentInstaller(ComponentInstaller otherInstaller)
 public void Rollback(IDictionary savedState)
 public void Uninstall(IDictionary savedState)
+public string get_MulticastAddress()
+public void set_MulticastAddress(string value)
 }
 public System.Messaging.MessageQueuePermission : CodeAccessPermission {
 private int version
@@ -1165,6 +1212,11 @@ public string Description
 public void .ctor(string description)
 public string get_Description()
 }
+public System.Messaging.PeekAction : Enum {
+public int value__
+public PeekAction Current
+public PeekAction Next
+}
 public System.Messaging.PeekCompletedEventArgs : EventArgs {
 private MessageQueue _sender
 private IAsyncResult _result
@@ -1207,6 +1259,9 @@ public void .ctor(object object, IntPtr method)
 public void Invoke(object sender, ReceiveCompletedEventArgs e)
 public IAsyncResult BeginInvoke(object sender, ReceiveCompletedEventArgs e, AsyncCallback callback, object object)
 public void EndInvoke(IAsyncResult result)
+}
+public System.Messaging.SecurityContext : object {
+public void Dispose()
 }
 public System.Messaging.StandardAccessRights : Enum {
 public int value__
@@ -1290,4 +1345,7 @@ private string comment
 public string Comment
 public void .ctor(string comment)
 public string get_Comment()
+}
+internal Unity.ThrowStub : ObjectDisposedException {
+public void ThrowNotSupportedException()
 }

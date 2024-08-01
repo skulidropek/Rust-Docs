@@ -78,7 +78,6 @@ public AnimationBlendMode Blend
 public AnimationBlendMode Additive
 }
 public UnityEngine.AnimationClip : Motion {
-public AnimationEvent[] events
 public float length
 internal float startTime
 internal float stopTime
@@ -88,13 +87,12 @@ public Bounds localBounds
 public bool legacy
 public bool humanMotion
 public bool empty
+public bool hasGenericRootTransform
+public bool hasMotionFloatCurves
+public bool hasMotionCurves
+public bool hasRootCurves
 internal bool hasRootMotion
-public void AddEvent(AnimationEvent evt)
-internal void AddEventInternal(object evt)
-public AnimationEvent[] get_events()
-public void set_events(AnimationEvent[] value)
-internal void SetEventsInternal(Array value)
-internal Array GetEventsInternal()
+public AnimationEvent[] events
 private void Internal_CreateAnimationClip(AnimationClip self)
 public void SampleAnimation(GameObject go, float time)
 internal void SampleAnimation(GameObject go, AnimationClip clip, float inTime, WrapMode wrapMode)
@@ -114,7 +112,17 @@ public bool get_legacy()
 public void set_legacy(bool value)
 public bool get_humanMotion()
 public bool get_empty()
+public bool get_hasGenericRootTransform()
+public bool get_hasMotionFloatCurves()
+public bool get_hasMotionCurves()
+public bool get_hasRootCurves()
 internal bool get_hasRootMotion()
+public void AddEvent(AnimationEvent evt)
+internal void AddEventInternal(object evt)
+public AnimationEvent[] get_events()
+public void set_events(AnimationEvent[] value)
+internal void SetEventsInternal(Array value)
+internal Array GetEventsInternal()
 private void get_localBounds_Injected(Bounds& ret)
 private void set_localBounds_Injected(Bounds& value)
 }
@@ -301,7 +309,10 @@ private bool CreateHandleInternal_Injected(PlayableGraph& graph, PlayableHandle&
 }
 public UnityEngine.Animations.AnimationMixerPlayable : ValueType {
 private PlayableHandle m_Handle
+private AnimationMixerPlayable m_NullPlayable
+public AnimationMixerPlayable Null
 internal void .ctor(PlayableHandle handle)
+public AnimationMixerPlayable get_Null()
 public AnimationMixerPlayable Create(PlayableGraph graph, int inputCount, bool normalizeWeights)
 private PlayableHandle CreateHandle(PlayableGraph graph, int inputCount, bool normalizeWeights)
 public PlayableHandle GetHandle()
@@ -313,14 +324,21 @@ private bool CreateHandleInternal_Injected(PlayableGraph& graph, int inputCount,
 }
 internal UnityEngine.Animations.AnimationMotionXToDeltaPlayable : ValueType {
 private PlayableHandle m_Handle
+private AnimationMotionXToDeltaPlayable m_NullPlayable
+public AnimationMotionXToDeltaPlayable Null
 private void .ctor(PlayableHandle handle)
+public AnimationMotionXToDeltaPlayable get_Null()
 public AnimationMotionXToDeltaPlayable Create(PlayableGraph graph)
 private PlayableHandle CreateHandle(PlayableGraph graph)
 public PlayableHandle GetHandle()
 public Playable op_Implicit(AnimationMotionXToDeltaPlayable playable)
 public AnimationMotionXToDeltaPlayable op_Explicit(Playable playable)
 public bool Equals(AnimationMotionXToDeltaPlayable other)
+public bool IsAbsoluteMotion()
+public void SetAbsoluteMotion(bool value)
 private bool CreateHandleInternal(PlayableGraph graph, PlayableHandle& handle)
+private bool IsAbsoluteMotionInternal(PlayableHandle& handle)
+private void SetAbsoluteMotionInternal(PlayableHandle& handle, bool value)
 private bool CreateHandleInternal_Injected(PlayableGraph& graph, PlayableHandle& handle)
 }
 internal UnityEngine.Animations.AnimationOffsetPlayable : ValueType {
@@ -350,6 +368,11 @@ private void SetPositionInternal_Injected(PlayableHandle& handle, Vector3& value
 private void GetRotationInternal_Injected(PlayableHandle& handle, Quaternion& ret)
 private void SetRotationInternal_Injected(PlayableHandle& handle, Quaternion& value)
 }
+public UnityEngine.Animations.AnimationPlayableBinding : object {
+private CreateOutputMethod <>f__mg$cache0
+public PlayableBinding Create(string name, Object key)
+private PlayableOutput CreateAnimationOutput(PlayableGraph graph, string name)
+}
 public UnityEngine.Animations.AnimationPlayableExtensions : object {
 public void SetAnimatedProperties(U playable, AnimationClip clip)
 internal void SetAnimatedPropertiesInternal(PlayableHandle& playable, AnimationClip animatedProperties)
@@ -376,6 +399,48 @@ public Animator GetTarget()
 public void SetTarget(Animator value)
 private Animator InternalGetTarget(PlayableOutputHandle& handle)
 private void InternalSetTarget(PlayableOutputHandle& handle, Animator target)
+}
+internal UnityEngine.Animations.AnimationPosePlayable : ValueType {
+private PlayableHandle m_Handle
+private AnimationPosePlayable m_NullPlayable
+public AnimationPosePlayable Null
+internal void .ctor(PlayableHandle handle)
+public AnimationPosePlayable get_Null()
+public AnimationPosePlayable Create(PlayableGraph graph)
+private PlayableHandle CreateHandle(PlayableGraph graph)
+public PlayableHandle GetHandle()
+public Playable op_Implicit(AnimationPosePlayable playable)
+public AnimationPosePlayable op_Explicit(Playable playable)
+public bool Equals(AnimationPosePlayable other)
+public bool GetMustReadPreviousPose()
+public void SetMustReadPreviousPose(bool value)
+public bool GetReadDefaultPose()
+public void SetReadDefaultPose(bool value)
+public bool GetApplyFootIK()
+public void SetApplyFootIK(bool value)
+private bool CreateHandleInternal(PlayableGraph graph, PlayableHandle& handle)
+private bool GetMustReadPreviousPoseInternal(PlayableHandle& handle)
+private void SetMustReadPreviousPoseInternal(PlayableHandle& handle, bool value)
+private bool GetReadDefaultPoseInternal(PlayableHandle& handle)
+private void SetReadDefaultPoseInternal(PlayableHandle& handle, bool value)
+private bool GetApplyFootIKInternal(PlayableHandle& handle)
+private void SetApplyFootIKInternal(PlayableHandle& handle, bool value)
+private bool CreateHandleInternal_Injected(PlayableGraph& graph, PlayableHandle& handle)
+}
+internal UnityEngine.Animations.AnimationRemoveScalePlayable : ValueType {
+private PlayableHandle m_Handle
+private AnimationRemoveScalePlayable m_NullPlayable
+public AnimationRemoveScalePlayable Null
+internal void .ctor(PlayableHandle handle)
+public AnimationRemoveScalePlayable get_Null()
+public AnimationRemoveScalePlayable Create(PlayableGraph graph, int inputCount)
+private PlayableHandle CreateHandle(PlayableGraph graph, int inputCount)
+public PlayableHandle GetHandle()
+public Playable op_Implicit(AnimationRemoveScalePlayable playable)
+public AnimationRemoveScalePlayable op_Explicit(Playable playable)
+public bool Equals(AnimationRemoveScalePlayable other)
+private bool CreateHandleInternal(PlayableGraph graph, PlayableHandle& handle)
+private bool CreateHandleInternal_Injected(PlayableGraph& graph, PlayableHandle& handle)
 }
 public UnityEngine.Animations.AnimatorControllerPlayable : ValueType {
 private PlayableHandle m_Handle
@@ -533,6 +598,54 @@ public ConstraintSource GetSource(int index)
 public void SetSource(int index, ConstraintSource source)
 public void GetSources(List`1<ConstraintSource> sources)
 public void SetSources(List`1<ConstraintSource> sources)
+}
+public UnityEngine.Animations.LookAtConstraint : Behaviour {
+public float weight
+public float roll
+public bool constraintActive
+public bool locked
+public Vector3 rotationAtRest
+public Vector3 rotationOffset
+public Transform worldUpObject
+public bool useUpObject
+public int sourceCount
+private void Internal_Create(LookAtConstraint self)
+public float get_weight()
+public void set_weight(float value)
+public float get_roll()
+public void set_roll(float value)
+public bool get_constraintActive()
+public void set_constraintActive(bool value)
+public bool get_locked()
+public void set_locked(bool value)
+public Vector3 get_rotationAtRest()
+public void set_rotationAtRest(Vector3 value)
+public Vector3 get_rotationOffset()
+public void set_rotationOffset(Vector3 value)
+public Transform get_worldUpObject()
+public void set_worldUpObject(Transform value)
+public bool get_useUpObject()
+public void set_useUpObject(bool value)
+public int get_sourceCount()
+private int GetSourceCountInternal(LookAtConstraint self)
+public void GetSources(List`1<ConstraintSource> sources)
+public void SetSources(List`1<ConstraintSource> sources)
+private void SetSourcesInternal(LookAtConstraint self, List`1<ConstraintSource> sources)
+public int AddSource(ConstraintSource source)
+public void RemoveSource(int index)
+private void RemoveSourceInternal(int index)
+public ConstraintSource GetSource(int index)
+private ConstraintSource GetSourceInternal(int index)
+public void SetSource(int index, ConstraintSource source)
+private void SetSourceInternal(int index, ConstraintSource source)
+private void ValidateSourceIndex(int index)
+private void get_rotationAtRest_Injected(Vector3& ret)
+private void set_rotationAtRest_Injected(Vector3& value)
+private void get_rotationOffset_Injected(Vector3& ret)
+private void set_rotationOffset_Injected(Vector3& value)
+private int AddSource_Injected(ConstraintSource& source)
+private void GetSourceInternal_Injected(int index, ConstraintSource& ret)
+private void SetSourceInternal_Injected(int index, ConstraintSource& source)
 }
 public UnityEngine.Animations.ParentConstraint : Behaviour {
 public float weight
@@ -955,6 +1068,7 @@ public void CrossFadeInFixedTime(int stateHashName, float fixedTransitionDuratio
 public void CrossFadeInFixedTime(int stateHashName, float fixedTransitionDuration, int layer)
 public void CrossFadeInFixedTime(int stateHashName, float fixedTransitionDuration)
 public void CrossFadeInFixedTime(int stateHashName, float fixedTransitionDuration, int layer, float fixedTimeOffset, float normalizedTransitionTime)
+public void WriteDefaultValues()
 public void CrossFade(string stateName, float normalizedTransitionDuration, int layer, float normalizedTimeOffset)
 public void CrossFade(string stateName, float normalizedTransitionDuration, int layer)
 public void CrossFade(string stateName, float normalizedTransitionDuration)
@@ -1242,18 +1356,18 @@ public UnityEngine.AnimatorUtility : object {
 public void OptimizeTransformHierarchy(GameObject go, String[] exposedTransforms)
 public void DeoptimizeTransformHierarchy(GameObject go)
 }
-internal UnityEngine.ArmDoF : Enum {
+public UnityEngine.ArmDof : Enum {
 public int value__
-public ArmDoF ShoulderDownUp
-public ArmDoF ShoulderFrontBack
-public ArmDoF ArmDownUp
-public ArmDoF ArmFrontBack
-public ArmDoF ArmRollInOut
-public ArmDoF ForeArmCloseOpen
-public ArmDoF ForeArmRollInOut
-public ArmDoF HandDownUp
-public ArmDoF HandInOut
-public ArmDoF LastArmDoF
+public ArmDof ShoulderDownUp
+public ArmDof ShoulderFrontBack
+public ArmDof ArmDownUp
+public ArmDof ArmFrontBack
+public ArmDof ArmRollInOut
+public ArmDof ForeArmCloseOpen
+public ArmDof ForeArmRollInOut
+public ArmDof HandDownUp
+public ArmDof HandInOut
+public ArmDof LastArmDof
 }
 public UnityEngine.Avatar : Object {
 public bool isValid
@@ -1349,67 +1463,536 @@ public AvatarTarget RightFoot
 public AvatarTarget LeftHand
 public AvatarTarget RightHand
 }
-internal UnityEngine.BodyDoF : Enum {
+public UnityEngine.BodyDof : Enum {
 public int value__
-public BodyDoF SpineFrontBack
-public BodyDoF SpineLeftRight
-public BodyDoF SpineRollLeftRight
-public BodyDoF ChestFrontBack
-public BodyDoF ChestLeftRight
-public BodyDoF ChestRollLeftRight
-public BodyDoF UpperChestFrontBack
-public BodyDoF UpperChestLeftRight
-public BodyDoF UpperChestRollLeftRight
-public BodyDoF LastBodyDoF
+public BodyDof SpineFrontBack
+public BodyDof SpineLeftRight
+public BodyDof SpineRollLeftRight
+public BodyDof ChestFrontBack
+public BodyDof ChestLeftRight
+public BodyDof ChestRollLeftRight
+public BodyDof UpperChestFrontBack
+public BodyDof UpperChestLeftRight
+public BodyDof UpperChestRollLeftRight
+public BodyDof LastBodyDof
 }
-internal UnityEngine.DoF : Enum {
+internal UnityEngine.Dof : Enum {
 public int value__
-public DoF BodyDoFStart
-public DoF HeadDoFStart
-public DoF LeftLegDoFStart
-public DoF RightLegDoFStart
-public DoF LeftArmDoFStart
-public DoF RightArmDoFStart
-public DoF LeftThumbDoFStart
-public DoF LeftIndexDoFStart
-public DoF LeftMiddleDoFStart
-public DoF LeftRingDoFStart
-public DoF LeftLittleDoFStart
-public DoF RightThumbDoFStart
-public DoF RightIndexDoFStart
-public DoF RightMiddleDoFStart
-public DoF RightRingDoFStart
-public DoF RightLittleDoFStart
-public DoF LastDoF
+public Dof BodyDofStart
+public Dof HeadDofStart
+public Dof LeftLegDofStart
+public Dof RightLegDofStart
+public Dof LeftArmDofStart
+public Dof RightArmDofStart
+public Dof LeftThumbDofStart
+public Dof LeftIndexDofStart
+public Dof LeftMiddleDofStart
+public Dof LeftRingDofStart
+public Dof LeftLittleDofStart
+public Dof RightThumbDofStart
+public Dof RightIndexDofStart
+public Dof RightMiddleDofStart
+public Dof RightRingDofStart
+public Dof RightLittleDofStart
+public Dof LastDof
 }
 public UnityEngine.DurationUnit : Enum {
 public int value__
 public DurationUnit Fixed
 public DurationUnit Normalized
 }
-internal UnityEngine.FingerDoF : Enum {
-public int value__
-public FingerDoF ProximalDownUp
-public FingerDoF ProximalInOut
-public FingerDoF IntermediateCloseOpen
-public FingerDoF DistalCloseOpen
-public FingerDoF LastFingerDoF
+public UnityEngine.Experimental.Animations.AnimationHumanStream : ValueType {
+private IntPtr stream
+public bool isValid
+public float humanScale
+public float leftFootHeight
+public float rightFootHeight
+public Vector3 bodyLocalPosition
+public Quaternion bodyLocalRotation
+public Vector3 bodyPosition
+public Quaternion bodyRotation
+public Vector3 leftFootVelocity
+public Vector3 rightFootVelocity
+public bool get_isValid()
+private void ThrowIfInvalid()
+public float get_humanScale()
+public float get_leftFootHeight()
+public float get_rightFootHeight()
+public Vector3 get_bodyLocalPosition()
+public void set_bodyLocalPosition(Vector3 value)
+public Quaternion get_bodyLocalRotation()
+public void set_bodyLocalRotation(Quaternion value)
+public Vector3 get_bodyPosition()
+public void set_bodyPosition(Vector3 value)
+public Quaternion get_bodyRotation()
+public void set_bodyRotation(Quaternion value)
+public float GetMuscle(MuscleHandle muscle)
+public void SetMuscle(MuscleHandle muscle, float value)
+public Vector3 get_leftFootVelocity()
+public Vector3 get_rightFootVelocity()
+public void ResetToStancePose()
+public Vector3 GetGoalPositionFromPose(AvatarIKGoal index)
+public Quaternion GetGoalRotationFromPose(AvatarIKGoal index)
+public Vector3 GetGoalLocalPosition(AvatarIKGoal index)
+public void SetGoalLocalPosition(AvatarIKGoal index, Vector3 pos)
+public Quaternion GetGoalLocalRotation(AvatarIKGoal index)
+public void SetGoalLocalRotation(AvatarIKGoal index, Quaternion rot)
+public Vector3 GetGoalPosition(AvatarIKGoal index)
+public void SetGoalPosition(AvatarIKGoal index, Vector3 pos)
+public Quaternion GetGoalRotation(AvatarIKGoal index)
+public void SetGoalRotation(AvatarIKGoal index, Quaternion rot)
+public void SetGoalWeightPosition(AvatarIKGoal index, float value)
+public void SetGoalWeightRotation(AvatarIKGoal index, float value)
+public float GetGoalWeightPosition(AvatarIKGoal index)
+public float GetGoalWeightRotation(AvatarIKGoal index)
+public Vector3 GetHintPosition(AvatarIKHint index)
+public void SetHintPosition(AvatarIKHint index, Vector3 pos)
+public void SetHintWeightPosition(AvatarIKHint index, float value)
+public float GetHintWeightPosition(AvatarIKHint index)
+public void SetLookAtPosition(Vector3 lookAtPosition)
+public void SetLookAtClampWeight(float weight)
+public void SetLookAtBodyWeight(float weight)
+public void SetLookAtHeadWeight(float weight)
+public void SetLookAtEyesWeight(float weight)
+public void SolveIK()
+private float GetHumanScale()
+private float GetFootHeight(bool left)
+private void InternalResetToStancePose()
+private Vector3 InternalGetGoalPositionFromPose(AvatarIKGoal index)
+private Quaternion InternalGetGoalRotationFromPose(AvatarIKGoal index)
+private Vector3 InternalGetBodyLocalPosition()
+private void InternalSetBodyLocalPosition(Vector3 value)
+private Quaternion InternalGetBodyLocalRotation()
+private void InternalSetBodyLocalRotation(Quaternion value)
+private Vector3 InternalGetBodyPosition()
+private void InternalSetBodyPosition(Vector3 value)
+private Quaternion InternalGetBodyRotation()
+private void InternalSetBodyRotation(Quaternion value)
+private float InternalGetMuscle(MuscleHandle muscle)
+private void InternalSetMuscle(MuscleHandle muscle, float value)
+private Vector3 GetLeftFootVelocity()
+private Vector3 GetRightFootVelocity()
+private Vector3 InternalGetGoalLocalPosition(AvatarIKGoal index)
+private void InternalSetGoalLocalPosition(AvatarIKGoal index, Vector3 pos)
+private Quaternion InternalGetGoalLocalRotation(AvatarIKGoal index)
+private void InternalSetGoalLocalRotation(AvatarIKGoal index, Quaternion rot)
+private Vector3 InternalGetGoalPosition(AvatarIKGoal index)
+private void InternalSetGoalPosition(AvatarIKGoal index, Vector3 pos)
+private Quaternion InternalGetGoalRotation(AvatarIKGoal index)
+private void InternalSetGoalRotation(AvatarIKGoal index, Quaternion rot)
+private void InternalSetGoalWeightPosition(AvatarIKGoal index, float value)
+private void InternalSetGoalWeightRotation(AvatarIKGoal index, float value)
+private float InternalGetGoalWeightPosition(AvatarIKGoal index)
+private float InternalGetGoalWeightRotation(AvatarIKGoal index)
+private Vector3 InternalGetHintPosition(AvatarIKHint index)
+private void InternalSetHintPosition(AvatarIKHint index, Vector3 pos)
+private void InternalSetHintWeightPosition(AvatarIKHint index, float value)
+private float InternalGetHintWeightPosition(AvatarIKHint index)
+private void InternalSetLookAtPosition(Vector3 lookAtPosition)
+private void InternalSetLookAtClampWeight(float weight)
+private void InternalSetLookAtBodyWeight(float weight)
+private void InternalSetLookAtHeadWeight(float weight)
+private void InternalSetLookAtEyesWeight(float weight)
+private void InternalSolveIK()
+private float GetHumanScale_Injected(AnimationHumanStream& _unity_self)
+private float GetFootHeight_Injected(AnimationHumanStream& _unity_self, bool left)
+private void InternalResetToStancePose_Injected(AnimationHumanStream& _unity_self)
+private void InternalGetGoalPositionFromPose_Injected(AnimationHumanStream& _unity_self, AvatarIKGoal index, Vector3& ret)
+private void InternalGetGoalRotationFromPose_Injected(AnimationHumanStream& _unity_self, AvatarIKGoal index, Quaternion& ret)
+private void InternalGetBodyLocalPosition_Injected(AnimationHumanStream& _unity_self, Vector3& ret)
+private void InternalSetBodyLocalPosition_Injected(AnimationHumanStream& _unity_self, Vector3& value)
+private void InternalGetBodyLocalRotation_Injected(AnimationHumanStream& _unity_self, Quaternion& ret)
+private void InternalSetBodyLocalRotation_Injected(AnimationHumanStream& _unity_self, Quaternion& value)
+private void InternalGetBodyPosition_Injected(AnimationHumanStream& _unity_self, Vector3& ret)
+private void InternalSetBodyPosition_Injected(AnimationHumanStream& _unity_self, Vector3& value)
+private void InternalGetBodyRotation_Injected(AnimationHumanStream& _unity_self, Quaternion& ret)
+private void InternalSetBodyRotation_Injected(AnimationHumanStream& _unity_self, Quaternion& value)
+private float InternalGetMuscle_Injected(AnimationHumanStream& _unity_self, MuscleHandle& muscle)
+private void InternalSetMuscle_Injected(AnimationHumanStream& _unity_self, MuscleHandle& muscle, float value)
+private void GetLeftFootVelocity_Injected(AnimationHumanStream& _unity_self, Vector3& ret)
+private void GetRightFootVelocity_Injected(AnimationHumanStream& _unity_self, Vector3& ret)
+private void InternalGetGoalLocalPosition_Injected(AnimationHumanStream& _unity_self, AvatarIKGoal index, Vector3& ret)
+private void InternalSetGoalLocalPosition_Injected(AnimationHumanStream& _unity_self, AvatarIKGoal index, Vector3& pos)
+private void InternalGetGoalLocalRotation_Injected(AnimationHumanStream& _unity_self, AvatarIKGoal index, Quaternion& ret)
+private void InternalSetGoalLocalRotation_Injected(AnimationHumanStream& _unity_self, AvatarIKGoal index, Quaternion& rot)
+private void InternalGetGoalPosition_Injected(AnimationHumanStream& _unity_self, AvatarIKGoal index, Vector3& ret)
+private void InternalSetGoalPosition_Injected(AnimationHumanStream& _unity_self, AvatarIKGoal index, Vector3& pos)
+private void InternalGetGoalRotation_Injected(AnimationHumanStream& _unity_self, AvatarIKGoal index, Quaternion& ret)
+private void InternalSetGoalRotation_Injected(AnimationHumanStream& _unity_self, AvatarIKGoal index, Quaternion& rot)
+private void InternalSetGoalWeightPosition_Injected(AnimationHumanStream& _unity_self, AvatarIKGoal index, float value)
+private void InternalSetGoalWeightRotation_Injected(AnimationHumanStream& _unity_self, AvatarIKGoal index, float value)
+private float InternalGetGoalWeightPosition_Injected(AnimationHumanStream& _unity_self, AvatarIKGoal index)
+private float InternalGetGoalWeightRotation_Injected(AnimationHumanStream& _unity_self, AvatarIKGoal index)
+private void InternalGetHintPosition_Injected(AnimationHumanStream& _unity_self, AvatarIKHint index, Vector3& ret)
+private void InternalSetHintPosition_Injected(AnimationHumanStream& _unity_self, AvatarIKHint index, Vector3& pos)
+private void InternalSetHintWeightPosition_Injected(AnimationHumanStream& _unity_self, AvatarIKHint index, float value)
+private float InternalGetHintWeightPosition_Injected(AnimationHumanStream& _unity_self, AvatarIKHint index)
+private void InternalSetLookAtPosition_Injected(AnimationHumanStream& _unity_self, Vector3& lookAtPosition)
+private void InternalSetLookAtClampWeight_Injected(AnimationHumanStream& _unity_self, float weight)
+private void InternalSetLookAtBodyWeight_Injected(AnimationHumanStream& _unity_self, float weight)
+private void InternalSetLookAtHeadWeight_Injected(AnimationHumanStream& _unity_self, float weight)
+private void InternalSetLookAtEyesWeight_Injected(AnimationHumanStream& _unity_self, float weight)
+private void InternalSolveIK_Injected(AnimationHumanStream& _unity_self)
 }
-internal UnityEngine.HeadDoF : Enum {
+public UnityEngine.Experimental.Animations.AnimationScriptPlayable : ValueType {
+private PlayableHandle m_Handle
+private AnimationScriptPlayable m_NullPlayable
+public AnimationScriptPlayable Null
+internal void .ctor(PlayableHandle handle)
+public AnimationScriptPlayable get_Null()
+public AnimationScriptPlayable Create(PlayableGraph graph, T jobData, int inputCount)
+private PlayableHandle CreateHandle(PlayableGraph graph, int inputCount)
+public PlayableHandle GetHandle()
+private void CheckJobTypeValidity()
+public T GetJobData()
+public void SetJobData(T jobData)
+public Playable op_Implicit(AnimationScriptPlayable playable)
+public AnimationScriptPlayable op_Explicit(Playable playable)
+public bool Equals(AnimationScriptPlayable other)
+public void SetProcessInputs(bool value)
+public bool GetProcessInputs()
+private bool CreateHandleInternal(PlayableGraph graph, PlayableHandle& handle, IntPtr jobReflectionData)
+private void SetProcessInputsInternal(PlayableHandle handle, bool value)
+private bool GetProcessInputsInternal(PlayableHandle handle)
+private bool CreateHandleInternal_Injected(PlayableGraph& graph, PlayableHandle& handle, IntPtr jobReflectionData)
+private void SetProcessInputsInternal_Injected(PlayableHandle& handle, bool value)
+private bool GetProcessInputsInternal_Injected(PlayableHandle& handle)
+}
+public UnityEngine.Experimental.Animations.AnimationStream : ValueType {
+private UInt32 m_AnimatorBindingsVersion
+private IntPtr constant
+private IntPtr input
+private IntPtr output
+private IntPtr workspace
+private IntPtr inputStreamAccessor
+private IntPtr animationHandleBinder
+internal int InvalidIndex
+internal UInt32 animatorBindingsVersion
+public bool isValid
+public float deltaTime
+public Vector3 velocity
+public Vector3 angularVelocity
+public Vector3 rootMotionPosition
+public Quaternion rootMotionRotation
+public bool isHumanStream
+public int inputStreamCount
+internal UInt32 get_animatorBindingsVersion()
+public bool get_isValid()
+internal void CheckIsValid()
+public float get_deltaTime()
+public Vector3 get_velocity()
+public void set_velocity(Vector3 value)
+public Vector3 get_angularVelocity()
+public void set_angularVelocity(Vector3 value)
+public Vector3 get_rootMotionPosition()
+public Quaternion get_rootMotionRotation()
+public bool get_isHumanStream()
+public AnimationHumanStream AsHuman()
+public int get_inputStreamCount()
+public AnimationStream GetInputStream(int index)
+private void ReadSceneTransforms()
+private void WriteSceneTransforms()
+private float GetDeltaTime()
+private bool GetIsHumanStream()
+private Vector3 GetVelocity()
+private void SetVelocity(Vector3 velocity)
+private Vector3 GetAngularVelocity()
+private void SetAngularVelocity(Vector3 velocity)
+private Vector3 GetRootMotionPosition()
+private Quaternion GetRootMotionRotation()
+private int GetInputStreamCount()
+private AnimationStream InternalGetInputStream(int index)
+private AnimationHumanStream GetHumanStream()
+private void InternalReadSceneTransforms()
+private void InternalWriteSceneTransforms()
+private float GetDeltaTime_Injected(AnimationStream& _unity_self)
+private bool GetIsHumanStream_Injected(AnimationStream& _unity_self)
+private void GetVelocity_Injected(AnimationStream& _unity_self, Vector3& ret)
+private void SetVelocity_Injected(AnimationStream& _unity_self, Vector3& velocity)
+private void GetAngularVelocity_Injected(AnimationStream& _unity_self, Vector3& ret)
+private void SetAngularVelocity_Injected(AnimationStream& _unity_self, Vector3& velocity)
+private void GetRootMotionPosition_Injected(AnimationStream& _unity_self, Vector3& ret)
+private void GetRootMotionRotation_Injected(AnimationStream& _unity_self, Quaternion& ret)
+private int GetInputStreamCount_Injected(AnimationStream& _unity_self)
+private void InternalGetInputStream_Injected(AnimationStream& _unity_self, int index, AnimationStream& ret)
+private void GetHumanStream_Injected(AnimationStream& _unity_self, AnimationHumanStream& ret)
+private void InternalReadSceneTransforms_Injected(AnimationStream& _unity_self)
+private void InternalWriteSceneTransforms_Injected(AnimationStream& _unity_self)
+}
+internal UnityEngine.Experimental.Animations.AnimatorBindingsVersion : Enum {
 public int value__
-public HeadDoF NeckFrontBack
-public HeadDoF NeckLeftRight
-public HeadDoF NeckRollLeftRight
-public HeadDoF HeadFrontBack
-public HeadDoF HeadLeftRight
-public HeadDoF HeadRollLeftRight
-public HeadDoF LeftEyeDownUp
-public HeadDoF LeftEyeInOut
-public HeadDoF RightEyeDownUp
-public HeadDoF RightEyeInOut
-public HeadDoF JawDownUp
-public HeadDoF JawLeftRight
-public HeadDoF LastHeadDoF
+public AnimatorBindingsVersion kInvalidNotNative
+public AnimatorBindingsVersion kInvalidUnresolved
+public AnimatorBindingsVersion kValidMinVersion
+}
+public UnityEngine.Experimental.Animations.AnimatorJobExtensions : object {
+public TransformStreamHandle BindStreamTransform(Animator animator, Transform transform)
+public PropertyStreamHandle BindStreamProperty(Animator animator, Transform transform, Type type, string property)
+public PropertyStreamHandle BindStreamProperty(Animator animator, Transform transform, Type type, string property, bool isObjectReference)
+public TransformSceneHandle BindSceneTransform(Animator animator, Transform transform)
+public PropertySceneHandle BindSceneProperty(Animator animator, Transform transform, Type type, string property)
+public PropertySceneHandle BindSceneProperty(Animator animator, Transform transform, Type type, string property, bool isObjectReference)
+public bool OpenAnimationStream(Animator animator, AnimationStream& stream)
+public void CloseAnimationStream(Animator animator, AnimationStream& stream)
+public void ResolveAllStreamHandles(Animator animator)
+public void ResolveAllSceneHandles(Animator animator)
+private void InternalBindStreamTransform(Animator animator, Transform transform, TransformStreamHandle& transformStreamHandle)
+private void InternalBindStreamProperty(Animator animator, Transform transform, Type type, string property, bool isObjectReference, PropertyStreamHandle& propertyStreamHandle)
+private void InternalBindSceneTransform(Animator animator, Transform transform, TransformSceneHandle& transformSceneHandle)
+private void InternalBindSceneProperty(Animator animator, Transform transform, Type type, string property, bool isObjectReference, PropertySceneHandle& propertySceneHandle)
+private bool InternalOpenAnimationStream(Animator animator, AnimationStream& stream)
+private void InternalCloseAnimationStream(Animator animator, AnimationStream& stream)
+private void InternalResolveAllStreamHandles(Animator animator)
+private void InternalResolveAllSceneHandles(Animator animator)
+}
+internal UnityEngine.Experimental.Animations.BindType : Enum {
+public int value__
+public BindType Unbound
+public BindType Float
+public BindType Bool
+public BindType GameObjectActive
+public BindType ObjectReference
+public BindType Int
+public BindType DiscreetInt
+}
+public UnityEngine.Experimental.Animations.IAnimationJob {
+public void ProcessAnimation(AnimationStream stream)
+public void ProcessRootMotion(AnimationStream stream)
+}
+public UnityEngine.Experimental.Animations.IAnimationJobPlayable {
+public T GetJobData()
+public void SetJobData(T jobData)
+}
+public UnityEngine.Experimental.Animations.MuscleHandle : ValueType {
+private HumanPartDof <humanPartDof>k__BackingField
+private int <dof>k__BackingField
+public HumanPartDof humanPartDof
+public int dof
+public string name
+public int muscleHandleCount
+public void .ctor(BodyDof bodyDof)
+public void .ctor(HeadDof headDof)
+public void .ctor(HumanPartDof partDof, LegDof legDof)
+public void .ctor(HumanPartDof partDof, ArmDof armDof)
+public void .ctor(HumanPartDof partDof, FingerDof fingerDof)
+public HumanPartDof get_humanPartDof()
+private void set_humanPartDof(HumanPartDof value)
+public int get_dof()
+private void set_dof(int value)
+public string get_name()
+public int get_muscleHandleCount()
+public void GetMuscleHandles(MuscleHandle[] muscleHandles)
+private string GetName()
+private int GetMuscleHandleCount()
+private string GetName_Injected(MuscleHandle& _unity_self)
+}
+internal UnityEngine.Experimental.Animations.ProcessAnimationJobStruct`1 : ValueType {
+private IntPtr jobReflectionData
+private ExecuteJobFunction<T> <>f__mg$cache0
+private ExecuteJobFunction<T> <>f__mg$cache1
+public IntPtr GetJobReflectionData()
+public void ExecuteProcessAnimation(T& data, IntPtr animationStreamPtr, IntPtr unusedPtr, JobRanges& ranges, int jobIndex)
+public void ExecuteProcessRootMotion(T& data, IntPtr animationStreamPtr, IntPtr unusedPtr, JobRanges& ranges, int jobIndex)
+}
+public UnityEngine.Experimental.Animations.PropertySceneHandle : ValueType {
+private UInt32 valid
+private int handleIndex
+private bool createdByNative
+private bool hasHandleIndex
+public bool IsValid(AnimationStream stream)
+private bool IsValidInternal(AnimationStream& stream)
+private bool get_createdByNative()
+private bool get_hasHandleIndex()
+public void Resolve(AnimationStream stream)
+public bool IsResolved(AnimationStream stream)
+private void CheckIsValid(AnimationStream& stream)
+public float GetFloat(AnimationStream stream)
+public void SetFloat(AnimationStream stream, float value)
+public int GetInt(AnimationStream stream)
+public void SetInt(AnimationStream stream, int value)
+public bool GetBool(AnimationStream stream)
+public void SetBool(AnimationStream stream, bool value)
+private bool HasValidTransform(AnimationStream& stream)
+private bool IsBound(AnimationStream& stream)
+private void ResolveInternal(AnimationStream& stream)
+private float GetFloatInternal(AnimationStream& stream)
+private void SetFloatInternal(AnimationStream& stream, float value)
+private int GetIntInternal(AnimationStream& stream)
+private void SetIntInternal(AnimationStream& stream, int value)
+private bool GetBoolInternal(AnimationStream& stream)
+private void SetBoolInternal(AnimationStream& stream, bool value)
+private bool HasValidTransform_Injected(PropertySceneHandle& _unity_self, AnimationStream& stream)
+private bool IsBound_Injected(PropertySceneHandle& _unity_self, AnimationStream& stream)
+private void ResolveInternal_Injected(PropertySceneHandle& _unity_self, AnimationStream& stream)
+private float GetFloatInternal_Injected(PropertySceneHandle& _unity_self, AnimationStream& stream)
+private void SetFloatInternal_Injected(PropertySceneHandle& _unity_self, AnimationStream& stream, float value)
+private int GetIntInternal_Injected(PropertySceneHandle& _unity_self, AnimationStream& stream)
+private void SetIntInternal_Injected(PropertySceneHandle& _unity_self, AnimationStream& stream, int value)
+private bool GetBoolInternal_Injected(PropertySceneHandle& _unity_self, AnimationStream& stream)
+private void SetBoolInternal_Injected(PropertySceneHandle& _unity_self, AnimationStream& stream, bool value)
+}
+public UnityEngine.Experimental.Animations.PropertyStreamHandle : ValueType {
+private UInt32 m_AnimatorBindingsVersion
+private int handleIndex
+private int valueArrayIndex
+private int bindType
+private bool createdByNative
+private bool hasHandleIndex
+private bool hasValueArrayIndex
+private bool hasBindType
+internal UInt32 animatorBindingsVersion
+public bool IsValid(AnimationStream stream)
+private bool IsValidInternal(AnimationStream& stream)
+private bool get_createdByNative()
+private bool IsSameVersionAsStream(AnimationStream& stream)
+private bool get_hasHandleIndex()
+private bool get_hasValueArrayIndex()
+private bool get_hasBindType()
+private void set_animatorBindingsVersion(UInt32 value)
+internal UInt32 get_animatorBindingsVersion()
+public void Resolve(AnimationStream stream)
+public bool IsResolved(AnimationStream stream)
+private bool IsResolvedInternal(AnimationStream& stream)
+private void CheckIsValidAndResolve(AnimationStream& stream)
+public float GetFloat(AnimationStream stream)
+public void SetFloat(AnimationStream stream, float value)
+public int GetInt(AnimationStream stream)
+public void SetInt(AnimationStream stream, int value)
+public bool GetBool(AnimationStream stream)
+public void SetBool(AnimationStream stream, bool value)
+private void ResolveInternal(AnimationStream& stream)
+private float GetFloatInternal(AnimationStream& stream)
+private void SetFloatInternal(AnimationStream& stream, float value)
+private int GetIntInternal(AnimationStream& stream)
+private void SetIntInternal(AnimationStream& stream, int value)
+private bool GetBoolInternal(AnimationStream& stream)
+private void SetBoolInternal(AnimationStream& stream, bool value)
+private void ResolveInternal_Injected(PropertyStreamHandle& _unity_self, AnimationStream& stream)
+private float GetFloatInternal_Injected(PropertyStreamHandle& _unity_self, AnimationStream& stream)
+private void SetFloatInternal_Injected(PropertyStreamHandle& _unity_self, AnimationStream& stream, float value)
+private int GetIntInternal_Injected(PropertyStreamHandle& _unity_self, AnimationStream& stream)
+private void SetIntInternal_Injected(PropertyStreamHandle& _unity_self, AnimationStream& stream, int value)
+private bool GetBoolInternal_Injected(PropertyStreamHandle& _unity_self, AnimationStream& stream)
+private void SetBoolInternal_Injected(PropertyStreamHandle& _unity_self, AnimationStream& stream, bool value)
+}
+public UnityEngine.Experimental.Animations.TransformSceneHandle : ValueType {
+private UInt32 valid
+private int transformSceneHandleDefinitionIndex
+private bool createdByNative
+private bool hasTransformSceneHandleDefinitionIndex
+public bool IsValid(AnimationStream stream)
+private bool get_createdByNative()
+private bool get_hasTransformSceneHandleDefinitionIndex()
+private void CheckIsValid(AnimationStream& stream)
+public Vector3 GetPosition(AnimationStream stream)
+public void SetPosition(AnimationStream stream, Vector3 position)
+public Vector3 GetLocalPosition(AnimationStream stream)
+public void SetLocalPosition(AnimationStream stream, Vector3 position)
+public Quaternion GetRotation(AnimationStream stream)
+public void SetRotation(AnimationStream stream, Quaternion rotation)
+public Quaternion GetLocalRotation(AnimationStream stream)
+public void SetLocalRotation(AnimationStream stream, Quaternion rotation)
+public Vector3 GetLocalScale(AnimationStream stream)
+public void SetLocalScale(AnimationStream stream, Vector3 scale)
+private bool HasValidTransform(AnimationStream& stream)
+private Vector3 GetPositionInternal(AnimationStream& stream)
+private void SetPositionInternal(AnimationStream& stream, Vector3 position)
+private Vector3 GetLocalPositionInternal(AnimationStream& stream)
+private void SetLocalPositionInternal(AnimationStream& stream, Vector3 position)
+private Quaternion GetRotationInternal(AnimationStream& stream)
+private void SetRotationInternal(AnimationStream& stream, Quaternion rotation)
+private Quaternion GetLocalRotationInternal(AnimationStream& stream)
+private void SetLocalRotationInternal(AnimationStream& stream, Quaternion rotation)
+private Vector3 GetLocalScaleInternal(AnimationStream& stream)
+private void SetLocalScaleInternal(AnimationStream& stream, Vector3 scale)
+private bool HasValidTransform_Injected(TransformSceneHandle& _unity_self, AnimationStream& stream)
+private void GetPositionInternal_Injected(TransformSceneHandle& _unity_self, AnimationStream& stream, Vector3& ret)
+private void SetPositionInternal_Injected(TransformSceneHandle& _unity_self, AnimationStream& stream, Vector3& position)
+private void GetLocalPositionInternal_Injected(TransformSceneHandle& _unity_self, AnimationStream& stream, Vector3& ret)
+private void SetLocalPositionInternal_Injected(TransformSceneHandle& _unity_self, AnimationStream& stream, Vector3& position)
+private void GetRotationInternal_Injected(TransformSceneHandle& _unity_self, AnimationStream& stream, Quaternion& ret)
+private void SetRotationInternal_Injected(TransformSceneHandle& _unity_self, AnimationStream& stream, Quaternion& rotation)
+private void GetLocalRotationInternal_Injected(TransformSceneHandle& _unity_self, AnimationStream& stream, Quaternion& ret)
+private void SetLocalRotationInternal_Injected(TransformSceneHandle& _unity_self, AnimationStream& stream, Quaternion& rotation)
+private void GetLocalScaleInternal_Injected(TransformSceneHandle& _unity_self, AnimationStream& stream, Vector3& ret)
+private void SetLocalScaleInternal_Injected(TransformSceneHandle& _unity_self, AnimationStream& stream, Vector3& scale)
+}
+public UnityEngine.Experimental.Animations.TransformStreamHandle : ValueType {
+private UInt32 m_AnimatorBindingsVersion
+private int handleIndex
+private int skeletonIndex
+private bool createdByNative
+private bool hasHandleIndex
+private bool hasSkeletonIndex
+internal UInt32 animatorBindingsVersion
+public bool IsValid(AnimationStream stream)
+private bool IsValidInternal(AnimationStream& stream)
+private bool get_createdByNative()
+private bool IsSameVersionAsStream(AnimationStream& stream)
+private bool get_hasHandleIndex()
+private bool get_hasSkeletonIndex()
+private void set_animatorBindingsVersion(UInt32 value)
+internal UInt32 get_animatorBindingsVersion()
+public void Resolve(AnimationStream stream)
+public bool IsResolved(AnimationStream stream)
+private bool IsResolvedInternal(AnimationStream& stream)
+private void CheckIsValidAndResolve(AnimationStream& stream)
+public Vector3 GetPosition(AnimationStream stream)
+public void SetPosition(AnimationStream stream, Vector3 position)
+public Quaternion GetRotation(AnimationStream stream)
+public void SetRotation(AnimationStream stream, Quaternion rotation)
+public Vector3 GetLocalPosition(AnimationStream stream)
+public void SetLocalPosition(AnimationStream stream, Vector3 position)
+public Quaternion GetLocalRotation(AnimationStream stream)
+public void SetLocalRotation(AnimationStream stream, Quaternion rotation)
+public Vector3 GetLocalScale(AnimationStream stream)
+public void SetLocalScale(AnimationStream stream, Vector3 scale)
+private void ResolveInternal(AnimationStream& stream)
+private Vector3 GetPositionInternal(AnimationStream& stream)
+private void SetPositionInternal(AnimationStream& stream, Vector3 position)
+private Quaternion GetRotationInternal(AnimationStream& stream)
+private void SetRotationInternal(AnimationStream& stream, Quaternion rotation)
+private Vector3 GetLocalPositionInternal(AnimationStream& stream)
+private void SetLocalPositionInternal(AnimationStream& stream, Vector3 position)
+private Quaternion GetLocalRotationInternal(AnimationStream& stream)
+private void SetLocalRotationInternal(AnimationStream& stream, Quaternion rotation)
+private Vector3 GetLocalScaleInternal(AnimationStream& stream)
+private void SetLocalScaleInternal(AnimationStream& stream, Vector3 scale)
+private void ResolveInternal_Injected(TransformStreamHandle& _unity_self, AnimationStream& stream)
+private void GetPositionInternal_Injected(TransformStreamHandle& _unity_self, AnimationStream& stream, Vector3& ret)
+private void SetPositionInternal_Injected(TransformStreamHandle& _unity_self, AnimationStream& stream, Vector3& position)
+private void GetRotationInternal_Injected(TransformStreamHandle& _unity_self, AnimationStream& stream, Quaternion& ret)
+private void SetRotationInternal_Injected(TransformStreamHandle& _unity_self, AnimationStream& stream, Quaternion& rotation)
+private void GetLocalPositionInternal_Injected(TransformStreamHandle& _unity_self, AnimationStream& stream, Vector3& ret)
+private void SetLocalPositionInternal_Injected(TransformStreamHandle& _unity_self, AnimationStream& stream, Vector3& position)
+private void GetLocalRotationInternal_Injected(TransformStreamHandle& _unity_self, AnimationStream& stream, Quaternion& ret)
+private void SetLocalRotationInternal_Injected(TransformStreamHandle& _unity_self, AnimationStream& stream, Quaternion& rotation)
+private void GetLocalScaleInternal_Injected(TransformStreamHandle& _unity_self, AnimationStream& stream, Vector3& ret)
+private void SetLocalScaleInternal_Injected(TransformStreamHandle& _unity_self, AnimationStream& stream, Vector3& scale)
+}
+public UnityEngine.FingerDof : Enum {
+public int value__
+public FingerDof ProximalDownUp
+public FingerDof ProximalInOut
+public FingerDof IntermediateCloseOpen
+public FingerDof DistalCloseOpen
+public FingerDof LastFingerDof
+}
+public UnityEngine.HeadDof : Enum {
+public int value__
+public HeadDof NeckFrontBack
+public HeadDof NeckLeftRight
+public HeadDof NeckRollLeftRight
+public HeadDof HeadFrontBack
+public HeadDof HeadLeftRight
+public HeadDof HeadRollLeftRight
+public HeadDof LeftEyeDownUp
+public HeadDof LeftEyeInOut
+public HeadDof RightEyeDownUp
+public HeadDof RightEyeInOut
+public HeadDof JawDownUp
+public HeadDof JawLeftRight
+public HeadDof LastHeadDof
 }
 public UnityEngine.HumanBodyBones : Enum {
 public int value__
@@ -1492,7 +2075,6 @@ internal float m_ArmStretch
 internal float m_LegStretch
 internal float m_FeetSpacing
 internal string m_RootMotionBoneName
-internal Quaternion m_RootMotionBoneRotation
 internal bool m_HasTranslationDoF
 internal bool m_HasExtraRoot
 internal bool m_SkeletonHasParents
@@ -1553,6 +2135,26 @@ public HumanParameter ArmStretch
 public HumanParameter LegStretch
 public HumanParameter FeetSpacing
 }
+public UnityEngine.HumanPartDof : Enum {
+public int value__
+public HumanPartDof Body
+public HumanPartDof Head
+public HumanPartDof LeftLeg
+public HumanPartDof RightLeg
+public HumanPartDof LeftArm
+public HumanPartDof RightArm
+public HumanPartDof LeftThumb
+public HumanPartDof LeftIndex
+public HumanPartDof LeftMiddle
+public HumanPartDof LeftRing
+public HumanPartDof LeftLittle
+public HumanPartDof RightThumb
+public HumanPartDof RightIndex
+public HumanPartDof RightMiddle
+public HumanPartDof RightRing
+public HumanPartDof RightLittle
+public HumanPartDof LastHumanPartDof
+}
 public UnityEngine.HumanPose : ValueType {
 public Vector3 bodyPosition
 public Quaternion bodyRotation
@@ -1589,24 +2191,27 @@ private int Internal_BoneFromMuscle(int i)
 public bool RequiredBone(int i)
 private bool Internal_RequiredBone(int i)
 public int get_RequiredBoneCount()
-internal bool HasCollider(Avatar avatar, int i)
-private bool Internal_HasCollider(Avatar avatar, int i)
 public float GetMuscleDefaultMin(int i)
 public float GetMuscleDefaultMax(int i)
+public float GetBoneDefaultHierarchyMass(int i)
 public int GetParentBone(int i)
+private float Internal_GetBoneHierarchyMass(int i)
 private int Internal_GetParent(int i)
 }
-internal UnityEngine.LegDoF : Enum {
+public UnityEngine.IAnimationClipSource {
+public void GetAnimationClips(List`1<AnimationClip> results)
+}
+public UnityEngine.LegDof : Enum {
 public int value__
-public LegDoF UpperLegFrontBack
-public LegDoF UpperLegInOut
-public LegDoF UpperLegRollInOut
-public LegDoF LegCloseOpen
-public LegDoF LegRollInOut
-public LegDoF FootCloseOpen
-public LegDoF FootInOut
-public LegDoF ToesUpDown
-public LegDoF LastLegDoF
+public LegDof UpperLegFrontBack
+public LegDof UpperLegInOut
+public LegDof UpperLegRollInOut
+public LegDof LegCloseOpen
+public LegDof LegRollInOut
+public LegDof FootCloseOpen
+public LegDof FootInOut
+public LegDof ToesUpDown
+public LegDof LastLegDof
 }
 public UnityEngine.MatchTargetWeightMask : ValueType {
 private Vector3 m_PositionXYZWeight

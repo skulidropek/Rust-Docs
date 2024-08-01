@@ -1,135 +1,48 @@
-public UnityEngineInternal.Input.NativeClickEvent : ValueType {
-public NativeInputEvent baseEvent
-public bool isPressed
-public int controlIndex
-public int clickCount
-public NativeClickEvent Press(int deviceId, double time, int controlIndex, int clickCount)
-public NativeClickEvent Release(int deviceId, double time, int controlIndex, int clickCount)
-}
-public UnityEngineInternal.Input.NativeDeviceDiscoveredCallback : MulticastDelegate {
-public void .ctor(object object, IntPtr method)
-public void Invoke(NativeInputDeviceInfo deviceInfo)
-public IAsyncResult BeginInvoke(NativeInputDeviceInfo deviceInfo, AsyncCallback callback, object object)
-public void EndInvoke(IAsyncResult result)
-}
-public UnityEngineInternal.Input.NativeEventCallback : MulticastDelegate {
-public void .ctor(object object, IntPtr method)
-public void Invoke(int eventCount, IntPtr eventData)
-public IAsyncResult BeginInvoke(int eventCount, IntPtr eventData, AsyncCallback callback, object object)
-public void EndInvoke(IAsyncResult result)
-}
-public UnityEngineInternal.Input.NativeGenericEvent : ValueType {
-public NativeInputEvent baseEvent
-public int controlIndex
-public int rawValue
-public double scaledValue
-public NativeGenericEvent Value(int deviceId, double time, int controlIndex, int rawValue, double scaledValue)
-}
-public UnityEngineInternal.Input.NativeInputDeviceInfo : ValueType {
-public int deviceId
-public string deviceDescriptor
-}
 public UnityEngineInternal.Input.NativeInputEvent : ValueType {
 public NativeInputEventType type
-public int sizeInBytes
-public int deviceId
+public ushort sizeInBytes
+public ushort deviceId
+public int eventId
 public double time
 public void .ctor(NativeInputEventType type, int sizeInBytes, int deviceId, double time)
 }
 public UnityEngineInternal.Input.NativeInputEventType : Enum {
 public int value__
-public NativeInputEventType DeviceConnected
-public NativeInputEventType DeviceDisconnected
-public NativeInputEventType Generic
-public NativeInputEventType KeyDown
-public NativeInputEventType KeyUp
-public NativeInputEventType PointerDown
-public NativeInputEventType PointerMove
-public NativeInputEventType PointerUp
-public NativeInputEventType PointerCancelled
-public NativeInputEventType Click
+public NativeInputEventType DeviceRemoved
+public NativeInputEventType DeviceConfigChanged
 public NativeInputEventType Text
-public NativeInputEventType Tracking
+public NativeInputEventType State
+public NativeInputEventType Delta
 }
 public UnityEngineInternal.Input.NativeInputSystem : object {
-public NativeUpdateCallback onUpdate
-public NativeEventCallback onEvents
-private NativeDeviceDiscoveredCallback s_OnDeviceDiscoveredCallback
-public double zeroEventTime
-public bool hasDeviceDiscoveredCallback
-public void add_onDeviceDiscovered(NativeDeviceDiscoveredCallback value)
-public void remove_onDeviceDiscovered(NativeDeviceDiscoveredCallback value)
-internal void NotifyUpdate(NativeInputUpdateType updateType)
-internal void NotifyEvents(int eventCount, IntPtr eventData)
-internal void NotifyDeviceDiscovered(NativeInputDeviceInfo deviceInfo)
-public double get_zeroEventTime()
-public void set_hasDeviceDiscoveredCallback(bool value)
-public void SendInput(TInputEvent inputEvent)
-public void SendInput(IntPtr inputEvent)
-public bool SendOutput(int deviceId, int type, TOutputEvent outputEvent)
-public bool SendOutput(int deviceId, int type, int sizeInBytes, IntPtr data)
-public string GetDeviceConfiguration(int deviceId)
-public string GetControlConfiguration(int deviceId, int controlIndex)
+public Action`3<NativeInputUpdateType, int, IntPtr> onUpdate
+public Action`1<NativeInputUpdateType> onBeforeUpdate
+private Action`2<int, string> s_OnDeviceDiscoveredCallback
+public Action`2<int, string> onDeviceDiscovered
+internal bool hasDeviceDiscoveredCallback
+public double currentTime
+public double currentTimeOffsetToRealtimeSinceStartup
+public Action`2<int, string> get_onDeviceDiscovered()
+public void set_onDeviceDiscovered(Action`2<int, string> value)
+internal void NotifyBeforeUpdate(NativeInputUpdateType updateType)
+internal void NotifyUpdate(NativeInputUpdateType updateType, int eventCount, IntPtr eventData)
+internal void NotifyDeviceDiscovered(int deviceId, string deviceDescriptor)
+internal void set_hasDeviceDiscoveredCallback(bool value)
+public double get_currentTime()
+public double get_currentTimeOffsetToRealtimeSinceStartup()
+public int AllocateDeviceId()
+public void QueueInputEvent(TInputEvent& inputEvent)
+public void QueueInputEvent(IntPtr inputEvent)
+public long IOCTL(int deviceId, int code, IntPtr data, int sizeInBytes)
 public void SetPollingFrequency(float hertz)
-private void SetPollingFrequencyInternal(float hertz)
-private void SendEvents()
-private void Update(NativeInputUpdateType updateType)
-private int ReportNewInputDevice(string descriptor)
-private void ReportInputDeviceDisconnect(int nativeDeviceId)
-private void ReportInputDeviceReconnect(int nativeDeviceId)
+public void Update(NativeInputUpdateType updateType)
+public void SetUpdateMask(NativeInputUpdateType mask)
 }
 public UnityEngineInternal.Input.NativeInputUpdateType : Enum {
 public int value__
-public NativeInputUpdateType BeginFixed
-public NativeInputUpdateType EndFixed
-public NativeInputUpdateType BeginDynamic
-public NativeInputUpdateType EndDynamic
-public NativeInputUpdateType BeginBeforeRender
-public NativeInputUpdateType EndBeforeRender
-public NativeInputUpdateType BeginEditor
-public NativeInputUpdateType EndEditor
-}
-public UnityEngineInternal.Input.NativeKeyEvent : ValueType {
-public NativeInputEvent baseEvent
-public KeyCode key
-public NativeKeyEvent Down(int deviceId, double time, KeyCode key)
-public NativeKeyEvent Up(int deviceId, double time, KeyCode key)
-}
-public UnityEngineInternal.Input.NativePointerEvent : ValueType {
-public NativeInputEvent baseEvent
-public int pointerId
-public Vector3 position
-public Vector3 delta
-public float pressure
-public float twist
-public Vector2 tilt
-public Vector3 radius
-public int displayIndex
-public NativePointerEvent Down(int deviceId, double time, int pointerId, Vector3 position, Vector3 delta, float pressure, float twist, Vector2 tilt, Vector3 radius, int displayIndex)
-public NativePointerEvent Move(int deviceId, double time, int pointerId, Vector3 position, Vector3 delta, float pressure, float twist, Vector2 tilt, Vector3 radius, int displayIndex)
-public NativePointerEvent Up(int deviceId, double time, int pointerId, Vector3 position, Vector3 delta, float pressure, float twist, Vector2 tilt, Vector3 radius, int displayIndex)
-public NativePointerEvent Cancelled(int deviceId, double time, int pointerId, Vector3 position, Vector3 delta, float pressure, float twist, Vector2 tilt, Vector3 radius, int displayIndex)
-}
-public UnityEngineInternal.Input.NativeTextEvent : ValueType {
-public NativeInputEvent baseEvent
-public int utf32Character
-public NativeTextEvent Character(int deviceId, double time, int utf32)
-}
-public UnityEngineInternal.Input.NativeTrackingEvent : ValueType {
-public NativeInputEvent baseEvent
-public int nodeId
-public Flags availableFields
-public Vector3 localPosition
-public Quaternion localRotation
-public Vector3 velocity
-public Vector3 angularVelocity
-public Vector3 acceleration
-public Vector3 angularAcceleration
-public NativeTrackingEvent Create(int deviceId, double time, int nodeId, Vector3 position, Quaternion rotation)
-}
-public UnityEngineInternal.Input.NativeUpdateCallback : MulticastDelegate {
-public void .ctor(object object, IntPtr method)
-public void Invoke(NativeInputUpdateType updateType)
-public IAsyncResult BeginInvoke(NativeInputUpdateType updateType, AsyncCallback callback, object object)
-public void EndInvoke(IAsyncResult result)
+public NativeInputUpdateType Dynamic
+public NativeInputUpdateType Fixed
+public NativeInputUpdateType BeforeRender
+public NativeInputUpdateType Editor
+public NativeInputUpdateType IgnoreFocus
 }

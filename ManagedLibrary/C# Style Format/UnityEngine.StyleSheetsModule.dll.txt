@@ -3,6 +3,8 @@ private int m_Specificity
 private StyleRule <rule>k__BackingField
 private StyleSelector[] m_Selectors
 internal int ruleIndex
+internal StyleComplexSelector nextInTable
+internal int orderInStyleSheet
 private Func`2<StyleSelector, string> <>f__am$cache0
 public int specificity
 public StyleRule rule
@@ -62,8 +64,10 @@ public StyleSelectorType get_type()
 internal void set_type(StyleSelectorType value)
 public string ToString()
 public StyleSelectorPart CreateClass(string className)
+public StyleSelectorPart CreatePseudoClass(string className)
 public StyleSelectorPart CreateId(string Id)
 public StyleSelectorPart CreateType(Type t)
+public StyleSelectorPart CreateType(string typeName)
 public StyleSelectorPart CreatePredicate(object predicate)
 public StyleSelectorPart CreateWildCard()
 }
@@ -90,6 +94,10 @@ private StyleComplexSelector[] m_ComplexSelectors
 internal Single[] floats
 internal Color[] colors
 internal String[] strings
+internal Object[] assets
+internal Dictionary`2<string, StyleComplexSelector> orderedNameSelectors
+internal Dictionary`2<string, StyleComplexSelector> orderedTypeSelectors
+internal Dictionary`2<string, StyleComplexSelector> orderedClassSelectors
 public StyleRule[] rules
 public StyleComplexSelector[] complexSelectors
 public StyleRule[] get_rules()
@@ -111,6 +119,8 @@ public string ReadEnum(StyleValueHandle handle)
 public bool TryReadEnum(StyleValueHandle[] handles, int index, String& value)
 public string ReadResourcePath(StyleValueHandle handle)
 public bool TryReadResourcePath(StyleValueHandle[] handles, int index, String& value)
+public Object ReadAssetReference(StyleValueHandle handle)
+public bool TryReadAssetReference(StyleValueHandle[] handles, int index, Object& value)
 }
 internal UnityEngine.StyleSheets.StyleValueHandle : ValueType {
 private StyleValueType m_ValueType
@@ -135,6 +145,7 @@ public StyleValueType Keyword
 public StyleValueType Float
 public StyleValueType Color
 public StyleValueType ResourcePath
+public StyleValueType AssetReference
 public StyleValueType Enum
 public StyleValueType String
 }

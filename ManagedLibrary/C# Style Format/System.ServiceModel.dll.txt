@@ -2529,6 +2529,61 @@ public AspNetCompatibilityRequirementsMode NotAllowed
 public AspNetCompatibilityRequirementsMode Allowed
 public AspNetCompatibilityRequirementsMode Required
 }
+public System.ServiceModel.Activation.Configuration.DiagnosticSection : ConfigurationSection {
+public bool PerformanceCountersEnabled
+public bool get_PerformanceCountersEnabled()
+public void set_PerformanceCountersEnabled(bool value)
+}
+public System.ServiceModel.Activation.Configuration.NetPipeSection : ConfigurationSection {
+public SecurityIdentifierElementCollection AllowAccounts
+public int MaxPendingAccepts
+public int MaxPendingConnections
+public TimeSpan ReceiveTimeout
+public SecurityIdentifierElementCollection get_AllowAccounts()
+public int get_MaxPendingAccepts()
+public void set_MaxPendingAccepts(int value)
+public int get_MaxPendingConnections()
+public void set_MaxPendingConnections(int value)
+public TimeSpan get_ReceiveTimeout()
+public void set_ReceiveTimeout(TimeSpan value)
+}
+public System.ServiceModel.Activation.Configuration.NetTcpSection : ConfigurationSection {
+public SecurityIdentifierElementCollection AllowAccounts
+public int ListenBacklog
+public int MaxPendingAccepts
+public int MaxPendingConnections
+public TimeSpan ReceiveTimeout
+public bool TeredoEnabled
+public SecurityIdentifierElementCollection get_AllowAccounts()
+public int get_ListenBacklog()
+public void set_ListenBacklog(int value)
+public int get_MaxPendingAccepts()
+public void set_MaxPendingAccepts(int value)
+public int get_MaxPendingConnections()
+public void set_MaxPendingConnections(int value)
+public TimeSpan get_ReceiveTimeout()
+public void set_ReceiveTimeout(TimeSpan value)
+public bool get_TeredoEnabled()
+public void set_TeredoEnabled(bool value)
+}
+public System.ServiceModel.Activation.Configuration.SecurityIdentifierElement : ConfigurationElement {
+public SecurityIdentifier SecurityIdentifier
+public void .ctor(SecurityIdentifier sid)
+public SecurityIdentifier get_SecurityIdentifier()
+public void set_SecurityIdentifier(SecurityIdentifier value)
+}
+public System.ServiceModel.Activation.Configuration.SecurityIdentifierElementCollection : ServiceModelConfigurationElementCollection`1<SecurityIdentifierElement> {
+protected object GetElementKey(ConfigurationElement element)
+}
+public System.ServiceModel.Activation.Configuration.ServiceModelActivationSectionGroup : ConfigurationSectionGroup {
+public DiagnosticSection Diagnostics
+public NetPipeSection NetPipe
+public NetTcpSection NetTcp
+public DiagnosticSection get_Diagnostics()
+public NetPipeSection get_NetPipe()
+public NetTcpSection get_NetTcp()
+public ServiceModelActivationSectionGroup GetSectionGroup(Configuration config)
+}
 public System.ServiceModel.Activation.HostedTransportConfiguration : object {
 public Uri[] GetBaseAddresses(string virtualPath)
 }
@@ -2538,11 +2593,15 @@ public ServiceHostBase CreateServiceHost(string constructorString, Uri[] baseAdd
 public System.ServiceModel.Activation.VirtualPathExtension : object {
 private string <VirtualPath>k__BackingField
 public string VirtualPath
+public string ApplicationVirtualPath
+public string SiteName
 internal void .ctor(string virtualPath)
 public void Attach(ServiceHostBase owner)
 public void Detach(ServiceHostBase owner)
 public string get_VirtualPath()
 private void set_VirtualPath(string value)
+public string get_ApplicationVirtualPath()
+public string get_SiteName()
 }
 public System.ServiceModel.AddressAccessDeniedException : CommunicationException {
 public void .ctor(string message)
@@ -2579,6 +2638,7 @@ private BasicHttpSecurity security
 public WSMessageEncoding MessageEncoding
 public string Scheme
 public BasicHttpSecurity Security
+public bool EnableHttpCookieContainer
 public void .ctor(string configurationName)
 public void .ctor(BasicHttpSecurityMode securityMode)
 public WSMessageEncoding get_MessageEncoding()
@@ -2590,6 +2650,17 @@ public BindingElementCollection CreateBindingElements()
 private SecurityBindingElement CreateSecurityBindingElement()
 private MessageEncodingBindingElement BuildMessageEncodingBindingElement()
 private TransportBindingElement GetTransport()
+public bool get_EnableHttpCookieContainer()
+public void set_EnableHttpCookieContainer(bool value)
+public bool ShouldSerializeEnableHttpCookieContainer()
+public bool ShouldSerializeSecurity()
+}
+public System.ServiceModel.BasicHttpContextBinding : BasicHttpBinding {
+public bool ContextManagementEnabled
+public void .ctor(BasicHttpSecurityMode securityMode)
+public void .ctor(string configName)
+public bool get_ContextManagementEnabled()
+public void set_ContextManagementEnabled(bool value)
 }
 public System.ServiceModel.BasicHttpMessageCredentialType : Enum {
 public int value__
@@ -2605,6 +2676,8 @@ public SecurityAlgorithmSuite get_AlgorithmSuite()
 public void set_AlgorithmSuite(SecurityAlgorithmSuite value)
 public BasicHttpMessageCredentialType get_ClientCredentialType()
 public void set_ClientCredentialType(BasicHttpMessageCredentialType value)
+public bool ShouldSerializeAlgorithmSuite()
+public bool ShouldSerializeClientCredentialType()
 }
 public System.ServiceModel.BasicHttpsBinding : HttpBindingBase {
 private WSMessageEncoding message_encoding
@@ -2623,6 +2696,7 @@ public BindingElementCollection CreateBindingElements()
 private SecurityBindingElement CreateSecurityBindingElement()
 private MessageEncodingBindingElement BuildMessageEncodingBindingElement()
 private TransportBindingElement GetTransport()
+public bool ShouldSerializeSecurity()
 }
 public System.ServiceModel.BasicHttpSecurity : object {
 private BasicHttpMessageSecurity message
@@ -2638,6 +2712,8 @@ public BasicHttpSecurityMode get_Mode()
 public void set_Mode(BasicHttpSecurityMode value)
 public HttpTransportSecurity get_Transport()
 public void set_Transport(HttpTransportSecurity value)
+public bool ShouldSerializeMessage()
+public bool ShouldSerializeTransport()
 }
 public System.ServiceModel.BasicHttpSecurityMode : Enum {
 public int value__
@@ -2660,11 +2736,20 @@ public BasicHttpsSecurityMode get_Mode()
 public void set_Mode(BasicHttpsSecurityMode value)
 public HttpTransportSecurity get_Transport()
 public void set_Transport(HttpTransportSecurity value)
+public void set_Message(BasicHttpMessageSecurity value)
+public bool ShouldSerializeMessage()
+public bool ShouldSerializeTransport()
 }
 public System.ServiceModel.BasicHttpsSecurityMode : Enum {
 public int value__
 public BasicHttpsSecurityMode Transport
 public BasicHttpsSecurityMode TransportWithMessageCredential
+}
+public System.ServiceModel.CacheSetting : Enum {
+public int value__
+public CacheSetting AlwaysOff
+public CacheSetting AlwaysOn
+public CacheSetting Default
 }
 public System.ServiceModel.CallbackBehaviorAttribute : Attribute {
 private bool <AutomaticSessionShutdown>k__BackingField
@@ -2768,6 +2853,15 @@ public TChannel CreateChannel(Binding binding, EndpointAddress endpointAddress, 
 public TChannel CreateChannel(EndpointAddress address, Uri via)
 protected TChannel CreateChannel(string endpointConfigurationName)
 protected ServiceEndpoint CreateDescription()
+public TChannel CreateChannelWithActAsToken(SecurityToken actAsToken)
+public TChannel CreateChannelWithActAsToken(SecurityToken actAsToken, EndpointAddress address)
+public TChannel CreateChannelWithActAsToken(SecurityToken actAsToken, EndpointAddress address, Uri via)
+public TChannel CreateChannelWithIssuedToken(SecurityToken issuedToken)
+public TChannel CreateChannelWithIssuedToken(SecurityToken issuedToken, EndpointAddress address)
+public TChannel CreateChannelWithIssuedToken(SecurityToken issuedToken, EndpointAddress address, Uri via)
+public TChannel CreateChannelWithOnBehalfOfToken(SecurityToken onBehalfOf)
+public TChannel CreateChannelWithOnBehalfOfToken(SecurityToken onBehalfOf, EndpointAddress address)
+public TChannel CreateChannelWithOnBehalfOfToken(SecurityToken onBehalfOf, EndpointAddress address, Uri via)
 }
 public System.ServiceModel.Channels.AddressHeader : object {
 public string Name
@@ -2820,6 +2914,16 @@ internal string get_Namespace()
 internal string get_FaultNamespace()
 internal string get_ActionNotSupported()
 public string ToString()
+}
+public System.ServiceModel.Channels.ApplicationContainerSettings : object {
+public int CurrentSession
+public int ServiceSession
+public string PackageFullName
+public int SessionId
+public string get_PackageFullName()
+public void set_PackageFullName(string value)
+public int get_SessionId()
+public void set_SessionId(int value)
 }
 public System.ServiceModel.Channels.AsymmetricSecurityBindingElement : SecurityBindingElement {
 private MessageProtectionOrder msg_protection_order
@@ -2934,6 +3038,8 @@ private void System.ServiceModel.Description.IWsdlExportExtension.ExportEndpoint
 private void System.ServiceModel.Description.IPolicyExportExtension.ExportPolicy(MetadataExporter exporter, PolicyConversionContext context)
 public CompressionFormat get_CompressionFormat()
 public void set_CompressionFormat(CompressionFormat value)
+public bool ShouldSerializeMessageVersion()
+public bool ShouldSerializeReaderQuotas()
 }
 public System.ServiceModel.Channels.Binding : object {
 private string name
@@ -2984,6 +3090,8 @@ public bool CanBuildChannelListener(BindingParameterCollection parameters)
 public BindingElementCollection CreateBindingElements()
 public T GetProperty(BindingParameterCollection parameters)
 private void Initialize()
+public bool ShouldSerializeName()
+public bool ShouldSerializeNamespace()
 }
 public System.ServiceModel.Channels.BindingContext : object {
 private CustomBinding binding
@@ -3055,6 +3163,8 @@ public BodyWriter CreateBufferedCopy(int maxBufferSize)
 public void WriteBodyContents(XmlDictionaryWriter writer)
 protected BodyWriter OnCreateBufferedCopy(int maxBufferSize)
 protected void OnWriteBodyContents(XmlDictionaryWriter writer)
+public IAsyncResult BeginWriteBodyContents(XmlDictionaryWriter writer, AsyncCallback callback, object state)
+public void EndWriteBodyContents(IAsyncResult result)
 }
 public System.ServiceModel.Channels.BufferManager : object {
 public void Clear()
@@ -3075,6 +3185,26 @@ public CompilerResults Compile(string language, string key, string source, strin
 public Type CompileAndGetType(ServiceHostParser parser, string key, CacheItemRemovedCallback removed_callback)
 private bool AcquireCompilationTicket(string key, Object& ticket)
 private void ReleaseCompilationTicket(string key)
+}
+public System.ServiceModel.Channels.CallbackContextMessageProperty : object {
+public EndpointAddress CallbackAddress
+public IDictionary`2<string, string> Context
+public string Name
+public void .ctor(IDictionary`2<string, string> context)
+public void .ctor(EndpointAddress callbackAddress)
+public void .ctor(EndpointAddress listenAddress, IDictionary`2<string, string> context)
+public void .ctor(string listenAddress, IDictionary`2<string, string> context)
+public void .ctor(Uri listenAddress, IDictionary`2<string, string> context)
+public EndpointAddress get_CallbackAddress()
+public IDictionary`2<string, string> get_Context()
+public string get_Name()
+public void AddOrReplaceInMessage(Message message)
+public void AddOrReplaceInMessageProperties(MessageProperties properties)
+public EndpointAddress CreateCallbackAddress(Uri listenAddress)
+public IMessageProperty CreateCopy()
+public void GetListenAddressAndContext(EndpointAddress& listenAddress, IDictionary`2& context)
+public bool TryGet(Message message, CallbackContextMessageProperty& contextMessageProperty)
+public bool TryGet(MessageProperties properties, CallbackContextMessageProperty& contextMessageProperty)
 }
 public System.ServiceModel.Channels.ChannelBase : CommunicationObject {
 private ChannelManagerBase manager
@@ -3218,6 +3348,11 @@ public void set_LeaseTimeout(TimeSpan value)
 public int get_MaxOutboundChannelsPerEndpoint()
 public void set_MaxOutboundChannelsPerEndpoint(int value)
 }
+public System.ServiceModel.Channels.ClientWebSocketFactory : object {
+public string WebSocketVersion
+public string get_WebSocketVersion()
+public WebSocket CreateWebSocket(Stream connection, WebSocketTransportSettings settings)
+}
 public System.ServiceModel.Channels.CommunicationObject : object {
 private object mutex
 private CommunicationState state
@@ -3319,6 +3454,7 @@ public IChannelFactory`1<TChannel> BuildChannelFactory(BindingContext context)
 public IChannelListener`1<TChannel> BuildChannelListener(BindingContext context)
 public BindingElement Clone()
 public T GetProperty(BindingContext context)
+private void System.ServiceModel.Description.IPolicyExportExtension.ExportPolicy(MetadataExporter exporter, PolicyConversionContext context)
 }
 public System.ServiceModel.Channels.CompositeDuplexBindingElementImporter : object {
 private void System.ServiceModel.Description.IPolicyImportExtension.ImportPolicy(MetadataImporter importer, PolicyConversionContext context)
@@ -3369,6 +3505,8 @@ public T GetProperty(BindingContext context)
 private void System.ServiceModel.Description.IWsdlExportExtension.ExportContract(WsdlExporter exporter, WsdlContractConversionContext context)
 private void System.ServiceModel.Description.IWsdlExportExtension.ExportEndpoint(WsdlExporter exporter, WsdlEndpointConversionContext context)
 private void System.ServiceModel.Description.IPolicyExportExtension.ExportPolicy(MetadataExporter exporter, PolicyConversionContext context)
+public bool ShouldSerializeMaxPendingAccepts()
+public bool ShouldSerializeMaxPendingConnections()
 }
 internal System.ServiceModel.Channels.ContentType : object {
 private string mediaType
@@ -3381,6 +3519,119 @@ private void Parse(string pair)
 public string get_MediaType()
 public void set_MediaType(string value)
 public Dictionary`2<string, string> get_Parameters()
+}
+public System.ServiceModel.Channels.ContextBindingElement : BindingElement {
+public Uri ClientCallbackAddress
+public ContextExchangeMechanism ContextExchangeMechanism
+public bool ContextManagementEnabled
+public ProtectionLevel ProtectionLevel
+public void .ctor(ProtectionLevel protectionLevel)
+public void .ctor(ProtectionLevel protectionLevel, ContextExchangeMechanism contextExchangeMechanism)
+public void .ctor(ProtectionLevel protectionLevel, ContextExchangeMechanism contextExchangeMechanism, Uri clientCallbackAddress)
+public void .ctor(ProtectionLevel protectionLevel, ContextExchangeMechanism contextExchangeMechanism, Uri clientCallbackAddress, bool contextManagementEnabled)
+public Uri get_ClientCallbackAddress()
+public void set_ClientCallbackAddress(Uri value)
+public ContextExchangeMechanism get_ContextExchangeMechanism()
+public void set_ContextExchangeMechanism(ContextExchangeMechanism value)
+public bool get_ContextManagementEnabled()
+public void set_ContextManagementEnabled(bool value)
+public ProtectionLevel get_ProtectionLevel()
+public void set_ProtectionLevel(ProtectionLevel value)
+public BindingElement Clone()
+public void ExportPolicy(MetadataExporter exporter, PolicyConversionContext context)
+public T GetProperty(BindingContext context)
+}
+public System.ServiceModel.Channels.ContextBindingElementImporter : object {
+public void BeforeImport(ServiceDescriptionCollection wsdlDocuments, XmlSchemaSet xmlSchemas, ICollection`1<XmlElement> policy)
+public void ImportContract(WsdlImporter importer, WsdlContractConversionContext context)
+public void ImportEndpoint(WsdlImporter importer, WsdlEndpointConversionContext context)
+public void ImportPolicy(MetadataImporter importer, PolicyConversionContext context)
+}
+public System.ServiceModel.Channels.ContextExchangeMechanism : Enum {
+public int value__
+public ContextExchangeMechanism ContextSoapHeader
+public ContextExchangeMechanism HttpCookie
+}
+public System.ServiceModel.Channels.ContextMessageProperty : object {
+public IDictionary`2<string, string> Context
+public string Name
+public void .ctor(IDictionary`2<string, string> context)
+public IDictionary`2<string, string> get_Context()
+public string get_Name()
+public void AddOrReplaceInMessage(Message message)
+public void AddOrReplaceInMessageProperties(MessageProperties properties)
+public IMessageProperty CreateCopy()
+public bool TryCreateFromHttpCookieHeader(string httpCookieHeader, ContextMessageProperty& context)
+public bool TryGet(Message message, ContextMessageProperty& contextMessageProperty)
+public bool TryGet(MessageProperties properties, ContextMessageProperty& contextMessageProperty)
+}
+public System.ServiceModel.Channels.CorrelationCallbackMessageProperty : object {
+public bool IsFullyDefined
+public string Name
+public IEnumerable`1<string> NeededData
+public bool get_IsFullyDefined()
+public string get_Name()
+public IEnumerable`1<string> get_NeededData()
+public void AddData(string name, Func`1<string> value)
+public IAsyncResult BeginFinalizeCorrelation(Message message, TimeSpan timeout, AsyncCallback callback, object state)
+public IMessageProperty CreateCopy()
+public Message EndFinalizeCorrelation(IAsyncResult result)
+public Message FinalizeCorrelation(Message message, TimeSpan timeout)
+public bool TryGet(Message message, CorrelationCallbackMessageProperty& property)
+public bool TryGet(MessageProperties properties, CorrelationCallbackMessageProperty& property)
+}
+public System.ServiceModel.Channels.CorrelationDataDescription : object {
+public bool IsDefault
+public bool IsOptional
+public bool KnownBeforeSend
+public string Name
+public bool ReceiveValue
+public bool SendValue
+public bool get_IsDefault()
+public bool get_IsOptional()
+public bool get_KnownBeforeSend()
+public string get_Name()
+public bool get_ReceiveValue()
+public bool get_SendValue()
+}
+public System.ServiceModel.Channels.CorrelationDataMessageProperty : object {
+public string Name
+public string get_Name()
+public void Add(string name, Func`1<string> dataProvider)
+public void AddData(Message message, string name, Func`1<string> dataProvider)
+public IMessageProperty CreateCopy()
+public bool Remove(string name)
+public bool TryGet(Message message, CorrelationDataMessageProperty& property)
+public bool TryGet(MessageProperties properties, CorrelationDataMessageProperty& property)
+public bool TryGetValue(string name, String& value)
+}
+public System.ServiceModel.Channels.CorrelationKey : InstanceKey {
+public IDictionary`2<string, string> KeyData
+public string KeyString
+public string Name
+public XNamespace Provider
+public XName ScopeName
+public void .ctor(IDictionary`2<string, string> keyData, XName scopeName, XNamespace provider)
+public IDictionary`2<string, string> get_KeyData()
+public string get_KeyString()
+public string get_Name()
+public void set_Name(string value)
+public XNamespace get_Provider()
+public XName get_ScopeName()
+}
+public System.ServiceModel.Channels.CorrelationMessageProperty : object {
+public ReadOnlyCollection`1<InstanceKey> AdditionalKeys
+public InstanceKey CorrelationKey
+public string Name
+public ReadOnlyCollection`1<InstanceKey> TransientCorrelations
+public void .ctor(InstanceKey correlationKey, IEnumerable`1<InstanceKey> additionalKeys)
+public void .ctor(InstanceKey correlationKey, IEnumerable`1<InstanceKey> additionalKeys, IEnumerable`1<InstanceKey> transientCorrelations)
+public ReadOnlyCollection`1<InstanceKey> get_AdditionalKeys()
+public InstanceKey get_CorrelationKey()
+public string get_Name()
+public ReadOnlyCollection`1<InstanceKey> get_TransientCorrelations()
+public bool TryGet(Message message, CorrelationMessageProperty& property)
+public bool TryGet(MessageProperties properties, CorrelationMessageProperty& property)
 }
 public System.ServiceModel.Channels.CustomBinding : Binding {
 private string default_ns
@@ -3898,6 +4149,17 @@ public void .ctor(HttpCookieContainerManager original)
 public CookieContainer get_CookieContainer()
 public void set_CookieContainer(CookieContainer value)
 }
+public System.ServiceModel.Channels.HttpMessageHandlerFactory : object {
+public void .ctor(Func`1<IEnumerable`1<DelegatingHandler>> handlers)
+public void .ctor(Type[] handlers)
+public HttpMessageHandler Create(HttpMessageHandler innerChannel)
+}
+public System.ServiceModel.Channels.HttpMessageSettings : object {
+public bool HttpMessagesSupported
+public bool get_HttpMessagesSupported()
+public void set_HttpMessagesSupported(bool value)
+public bool Equals(HttpMessageSettings other)
+}
 internal System.ServiceModel.Channels.HttpRequestChannel : RequestChannelBase {
 private HttpChannelFactory`1<IRequestChannel> source
 private List`1<WebRequest> web_requests
@@ -3916,6 +4178,10 @@ protected void OnEndClose(IAsyncResult result)
 protected void OnOpen(TimeSpan timeout)
 protected IAsyncResult OnBeginOpen(TimeSpan timeout, AsyncCallback callback, object state)
 protected void OnEndOpen(IAsyncResult result)
+}
+public System.ServiceModel.Channels.HttpRequestMessageExtensionMethods : object {
+public IPrincipal GetUserPrincipal(HttpRequestMessage httpRequestMessage)
+public void SetUserPrincipal(HttpRequestMessage httpRequestMessage, IPrincipal user)
 }
 public System.ServiceModel.Channels.HttpRequestMessageProperty : object {
 private WebHeaderCollection headers
@@ -3947,6 +4213,7 @@ public WebHeaderCollection Headers
 public HttpStatusCode StatusCode
 public string StatusDescription
 public bool SuppressEntityBody
+public bool SuppressPreamble
 public string get_Name()
 public WebHeaderCollection get_Headers()
 public HttpStatusCode get_StatusCode()
@@ -3956,6 +4223,8 @@ public void set_StatusDescription(string value)
 public bool get_SuppressEntityBody()
 public void set_SuppressEntityBody(bool value)
 private IMessageProperty System.ServiceModel.Channels.IMessageProperty.CreateCopy()
+public bool get_SuppressPreamble()
+public void set_SuppressPreamble(bool value)
 }
 internal System.ServiceModel.Channels.HttpsBindingProperties : HttpBindingProperties {
 private HttpsTransportBindingElement source
@@ -4021,6 +4290,9 @@ public bool UseDefaultWebProxy
 public object LegacyExtendedProtectionPolicy
 public ExtendedProtectionPolicy ExtendedProtectionPolicy
 public WebSocketTransportSettings WebSocketSettings
+public int MaxPendingAccepts
+public HttpMessageHandlerFactory MessageHandlerFactory
+public TimeSpan RequestInitializationTimeout
 protected void .ctor(HttpTransportBindingElement elementToBeCloned)
 public AuthenticationSchemes get_AuthenticationScheme()
 public void set_AuthenticationScheme(AuthenticationSchemes value)
@@ -4065,6 +4337,18 @@ private void System.ServiceModel.Description.IPolicyExportExtension.ExportPolicy
 private XmlElement CreateTransportBinding(XmlElement transportToken)
 private void System.ServiceModel.Description.IWsdlExportExtension.ExportContract(WsdlExporter exporter, WsdlContractConversionContext context)
 private void System.ServiceModel.Description.IWsdlExportExtension.ExportEndpoint(WsdlExporter exporter, WsdlEndpointConversionContext context)
+public int get_MaxPendingAccepts()
+public void set_MaxPendingAccepts(int value)
+public HttpMessageHandlerFactory get_MessageHandlerFactory()
+public void set_MessageHandlerFactory(HttpMessageHandlerFactory value)
+public TimeSpan get_RequestInitializationTimeout()
+public void set_RequestInitializationTimeout(TimeSpan value)
+public bool ShouldSerializeExtendedProtectionPolicy()
+public bool ShouldSerializeMessageHandlerFactory()
+public bool ShouldSerializeWebSocketSettings()
+}
+public System.ServiceModel.Channels.IAnonymousUriPrefixMatcher {
+public void Register(Uri anonymousUriPrefix)
 }
 public System.ServiceModel.Channels.IBindingDeliveryCapabilities {
 public bool AssuresOrderedDelivery
@@ -4104,6 +4388,17 @@ public TChannel AcceptChannel(TimeSpan timeout)
 public IAsyncResult BeginAcceptChannel(AsyncCallback callback, object state)
 public IAsyncResult BeginAcceptChannel(TimeSpan timeout, AsyncCallback callback, object state)
 public TChannel EndAcceptChannel(IAsyncResult result)
+}
+public System.ServiceModel.Channels.IContextManager {
+public bool Enabled
+public bool get_Enabled()
+public void set_Enabled(bool value)
+public IDictionary`2<string, string> GetContext()
+public void SetContext(IDictionary`2<string, string> context)
+}
+public System.ServiceModel.Channels.ICorrelationDataSource {
+public ICollection`1<CorrelationDataDescription> DataSources
+public ICollection`1<CorrelationDataDescription> get_DataSources()
 }
 public System.ServiceModel.Channels.IDuplexSession {
 public IAsyncResult BeginCloseOutputSession(AsyncCallback callback, object state)
@@ -4229,6 +4524,13 @@ public PeerTransportBindingElement get_Source()
 public PeerResolver get_Resolver()
 public MessageEncoder get_MessageEncoder()
 }
+public System.ServiceModel.Channels.IReceiveContextSettings {
+public bool Enabled
+public TimeSpan ValidityDuration
+public bool get_Enabled()
+public void set_Enabled(bool value)
+public TimeSpan get_ValidityDuration()
+}
 public System.ServiceModel.Channels.IReplyChannel {
 public EndpointAddress LocalAddress
 public EndpointAddress get_LocalAddress()
@@ -4281,6 +4583,13 @@ public bool get_TransactedReceiveEnabled()
 }
 public System.ServiceModel.Channels.ITransportTokenAssertionProvider {
 public XmlElement GetTransportTokenAssertion()
+}
+public System.ServiceModel.Channels.IWebSocketCloseDetails {
+public Nullable`1<WebSocketCloseStatus> InputCloseStatus
+public string InputCloseStatusDescription
+public Nullable`1<WebSocketCloseStatus> get_InputCloseStatus()
+public string get_InputCloseStatusDescription()
+public void SetOutputCloseStatus(WebSocketCloseStatus closeStatus, string closeStatusDescription)
 }
 internal System.ServiceModel.Channels.LayeredCommunicationObject : object {
 private ICommunicationObject inner
@@ -4411,6 +4720,7 @@ public bool ReconnectTransportOnFailure
 public int ReplayCacheSize
 public TimeSpan SessionKeyRenewalInterval
 public TimeSpan SessionKeyRolloverInterval
+public NonceCache NonceCache
 public TimeSpan get_MaxClockSkew()
 public void set_MaxClockSkew(TimeSpan value)
 public TimeSpan get_ReplayWindow()
@@ -4436,6 +4746,8 @@ public void set_SessionKeyRenewalInterval(TimeSpan value)
 public TimeSpan get_SessionKeyRolloverInterval()
 public void set_SessionKeyRolloverInterval(TimeSpan value)
 public LocalClientSecuritySettings Clone()
+public NonceCache get_NonceCache()
+public void set_NonceCache(NonceCache value)
 }
 public System.ServiceModel.Channels.LocalServiceSecuritySettings : object {
 private bool detect_replays
@@ -4469,6 +4781,7 @@ public TimeSpan ReplayWindow
 public TimeSpan SessionKeyRenewalInterval
 public TimeSpan SessionKeyRolloverInterval
 public TimeSpan TimestampValidityDuration
+public NonceCache NonceCache
 public bool get_DetectReplays()
 public void set_DetectReplays(bool value)
 public TimeSpan get_InactivityTimeout()
@@ -4498,6 +4811,8 @@ public void set_SessionKeyRolloverInterval(TimeSpan value)
 public TimeSpan get_TimestampValidityDuration()
 public void set_TimestampValidityDuration(TimeSpan value)
 public LocalServiceSecuritySettings Clone()
+public NonceCache get_NonceCache()
+public void set_NonceCache(NonceCache value)
 }
 public System.ServiceModel.Channels.Message : object {
 private bool disposed
@@ -4560,6 +4875,10 @@ public Message CreateMessage(XmlReader envelopeReader, int maxSizeOfHeaders, Mes
 public Message CreateMessage(MessageVersion version, string action, BodyWriter body)
 public Message CreateMessage(MessageVersion version, string action)
 public Message CreateMessage(XmlDictionaryReader envelopeReader, int maxSizeOfHeaders, MessageVersion version)
+public IAsyncResult BeginWriteBodyContents(XmlDictionaryWriter writer, AsyncCallback callback, object state)
+public IAsyncResult BeginWriteMessage(XmlDictionaryWriter writer, AsyncCallback callback, object state)
+public void EndWriteBodyContents(IAsyncResult result)
+public void EndWriteMessage(IAsyncResult result)
 }
 public System.ServiceModel.Channels.MessageBuffer : object {
 private XPathNavigator nav_cache
@@ -4594,6 +4913,8 @@ public ArraySegment`1<byte> WriteMessage(Message message, int maxMessageSize, Bu
 public ArraySegment`1<byte> WriteMessage(Message message, int maxMessageSize, BufferManager bufferManager, int messageOffset)
 public string ToString()
 internal void VerifyMessageVersion(Message message)
+public IAsyncResult BeginWriteMessage(Message message, Stream stream, AsyncCallback callback, object state)
+public void EndWriteMessage(IAsyncResult result)
 }
 public System.ServiceModel.Channels.MessageEncoderFactory : object {
 public MessageEncoder Encoder
@@ -4623,6 +4944,7 @@ public FaultCode Code
 public bool HasDetail
 public string Node
 public FaultReason Reason
+public bool IsMustUnderstandFault
 public MessageFault CreateFault(Message message, int maxBufferSize)
 private MessageFault CreateFault11(Message message, int maxBufferSize)
 private MessageFault CreateFault12(Message message, int maxBufferSize)
@@ -4651,6 +4973,8 @@ protected XmlDictionaryReader OnGetReaderAtDetailContents()
 protected void OnWriteDetail(XmlDictionaryWriter writer, EnvelopeVersion version)
 protected void OnWriteStartDetail(XmlDictionaryWriter writer, EnvelopeVersion version)
 protected void OnWriteDetailContents(XmlDictionaryWriter writer)
+public bool get_IsMustUnderstandFault()
+public bool WasHeaderNotUnderstood(MessageHeaders headers, string name, string ns)
 }
 internal System.ServiceModel.Channels.MessageFaultBodyWriter : BodyWriter {
 private MessageFault fault
@@ -4920,6 +5244,8 @@ public TimeSpan TimeToLive
 public bool TransactedReceiveEnabled
 public bool UseMsmqTracing
 public bool UseSourceJournal
+public bool ReceiveContextEnabled
+public TimeSpan ValidityDuration
 public Uri get_CustomDeadLetterQueue()
 public void set_CustomDeadLetterQueue(Uri value)
 public DeadLetterQueue get_DeadLetterQueue()
@@ -4948,6 +5274,10 @@ public T GetProperty(BindingContext context)
 private void System.ServiceModel.Description.IPolicyExportExtension.ExportPolicy(MetadataExporter exporter, PolicyConversionContext context)
 private void System.ServiceModel.Description.IWsdlExportExtension.ExportContract(WsdlExporter exporter, WsdlContractConversionContext context)
 private void System.ServiceModel.Description.IWsdlExportExtension.ExportEndpoint(WsdlExporter exporter, WsdlEndpointConversionContext endpointContext)
+public bool get_ReceiveContextEnabled()
+public void set_ReceiveContextEnabled(bool value)
+public TimeSpan get_ValidityDuration()
+public void set_ValidityDuration(TimeSpan value)
 }
 internal System.ServiceModel.Channels.MsmqChannelFactory`1 : ChannelFactoryBase`1<TChannel> {
 private MsmqTransportBindingElement source
@@ -5128,6 +5458,9 @@ protected void OnImportPolicy(XmlElement assertion, MessageVersion messageVersio
 private void System.ServiceModel.Description.IWsdlExportExtension.ExportContract(WsdlExporter exporter, WsdlContractConversionContext context)
 private void System.ServiceModel.Description.IWsdlExportExtension.ExportEndpoint(WsdlExporter exporter, WsdlEndpointConversionContext context)
 public void ExportPolicy(MetadataExporter exporter, PolicyConversionContext context)
+public bool ShouldSerializeMessageVersion()
+public bool ShouldSerializeReaderQuotas()
+public bool ShouldSerializeWriteEncoding()
 }
 internal System.ServiceModel.Channels.NamedPipeChannelFactory`1 : TransportChannelFactoryBase`1<TChannel> {
 private NamedPipeTransportBindingElement source
@@ -5190,10 +5523,16 @@ protected void OnOpen(TimeSpan timeout)
 private void CreateClient(TimeSpan timeout)
 public Message Request(Message input, TimeSpan timeout)
 }
+public System.ServiceModel.Channels.NamedPipeSettings : object {
+public ApplicationContainerSettings ApplicationContainerSettings
+public ApplicationContainerSettings get_ApplicationContainerSettings()
+}
 public System.ServiceModel.Channels.NamedPipeTransportBindingElement : ConnectionOrientedTransportBindingElement {
 private NamedPipeConnectionPoolSettings pool
 public NamedPipeConnectionPoolSettings ConnectionPoolSettings
 public string Scheme
+public Collection`1<SecurityIdentifier> AllowedSecurityIdentifiers
+public NamedPipeSettings PipeSettings
 protected void .ctor(NamedPipeTransportBindingElement elementToBeCloned)
 public NamedPipeConnectionPoolSettings get_ConnectionPoolSettings()
 public string get_Scheme()
@@ -5201,6 +5540,8 @@ public IChannelFactory`1<TChannel> BuildChannelFactory(BindingContext context)
 public IChannelListener`1<TChannel> BuildChannelListener(BindingContext context)
 public BindingElement Clone()
 public T GetProperty(BindingContext context)
+public Collection`1<SecurityIdentifier> get_AllowedSecurityIdentifiers()
+public NamedPipeSettings get_PipeSettings()
 }
 internal System.ServiceModel.Channels.NetTcp.TcpBinaryFrameManager : object {
 public byte VersionRecord
@@ -5374,6 +5715,8 @@ public Message Request(Message input, TimeSpan timeout)
 public System.ServiceModel.Channels.OneWayBindingElement : BindingElement {
 private ChannelPoolSettings pool
 public ChannelPoolSettings ChannelPoolSettings
+public int MaxAcceptedChannels
+public bool PacketRoutable
 private void .ctor(OneWayBindingElement other)
 public ChannelPoolSettings get_ChannelPoolSettings()
 public IChannelFactory`1<TChannel> BuildChannelFactory(BindingContext context)
@@ -5382,6 +5725,13 @@ public bool CanBuildChannelFactory(BindingContext context)
 public bool CanBuildChannelListener(BindingContext context)
 public BindingElement Clone()
 public T GetProperty(BindingContext context)
+public void set_ChannelPoolSettings(ChannelPoolSettings value)
+public int get_MaxAcceptedChannels()
+public void set_MaxAcceptedChannels(int value)
+public bool get_PacketRoutable()
+public void set_PacketRoutable(bool value)
+public bool ShouldSerializeChannelPoolSettings()
+private void System.ServiceModel.Description.IPolicyExportExtension.ExportPolicy(MetadataExporter exporter, PolicyConversionContext context)
 }
 public System.ServiceModel.Channels.OneWayBindingElementImporter : object {
 private void System.ServiceModel.Description.IPolicyImportExtension.ImportPolicy(MetadataImporter importer, PolicyConversionContext context)
@@ -5622,6 +5972,97 @@ public BindingElement Clone()
 public T GetProperty(BindingContext context)
 private void System.ServiceModel.Description.IPolicyExportExtension.ExportPolicy(MetadataExporter exporter, PolicyConversionContext context)
 }
+public System.ServiceModel.Channels.PrivacyNoticeBindingElementImporter : object {
+private void System.ServiceModel.Description.IPolicyImportExtension.ImportPolicy(MetadataImporter importer, PolicyConversionContext policyContext)
+}
+public System.ServiceModel.Channels.ReceiveContext : object {
+public string Name
+public ReceiveContextState State
+public ReceiveContextState get_State()
+public void add_Faulted(EventHandler value)
+public void remove_Faulted(EventHandler value)
+public void Abandon(Exception exception, TimeSpan timeout)
+public void Abandon(TimeSpan timeout)
+public IAsyncResult BeginAbandon(Exception exception, TimeSpan timeout, AsyncCallback callback, object state)
+public IAsyncResult BeginAbandon(TimeSpan timeout, AsyncCallback callback, object state)
+public IAsyncResult BeginComplete(TimeSpan timeout, AsyncCallback callback, object state)
+public void Complete(TimeSpan timeout)
+public void EndAbandon(IAsyncResult result)
+public void EndComplete(IAsyncResult result)
+public bool TryGet(Message message, ReceiveContext& property)
+public bool TryGet(MessageProperties properties, ReceiveContext& property)
+}
+public System.ServiceModel.Channels.ReceiveContextState : Enum {
+public int value__
+public ReceiveContextState Abandoned
+public ReceiveContextState Abandoning
+public ReceiveContextState Completed
+public ReceiveContextState Completing
+public ReceiveContextState Faulted
+public ReceiveContextState Received
+}
+public System.ServiceModel.Channels.RedirectionDuration : object {
+public string Namespace
+public RedirectionDuration Permanent
+public RedirectionDuration Temporary
+public string Value
+public string get_Namespace()
+public RedirectionDuration get_Permanent()
+public RedirectionDuration get_Temporary()
+public string get_Value()
+public RedirectionDuration Create(string duration, string ns)
+public bool op_Equality(RedirectionDuration left, RedirectionDuration right)
+public bool op_Inequality(RedirectionDuration left, RedirectionDuration right)
+}
+public System.ServiceModel.Channels.RedirectionException : CommunicationException {
+public RedirectionDuration Duration
+public IEnumerable`1<RedirectionLocation> Locations
+public RedirectionScope Scope
+public RedirectionType Type
+public void .ctor(RedirectionType type, RedirectionDuration duration, RedirectionScope scope, Exception innerException, RedirectionLocation[] locations)
+public void .ctor(RedirectionType type, RedirectionDuration duration, RedirectionScope scope, RedirectionLocation[] locations)
+public void .ctor(string message, RedirectionType type, RedirectionDuration duration, RedirectionScope scope, Exception innerException, RedirectionLocation[] locations)
+public void .ctor(string message, RedirectionType type, RedirectionDuration duration, RedirectionScope scope, RedirectionLocation[] locations)
+public RedirectionDuration get_Duration()
+public IEnumerable`1<RedirectionLocation> get_Locations()
+public RedirectionScope get_Scope()
+public RedirectionType get_Type()
+}
+public System.ServiceModel.Channels.RedirectionLocation : object {
+public Uri Address
+public void .ctor(Uri address)
+public Uri get_Address()
+}
+public System.ServiceModel.Channels.RedirectionScope : object {
+public RedirectionScope Endpoint
+public RedirectionScope Message
+public string Namespace
+public RedirectionScope Session
+public string Value
+public RedirectionScope get_Endpoint()
+public RedirectionScope get_Message()
+public string get_Namespace()
+public RedirectionScope get_Session()
+public string get_Value()
+public RedirectionScope Create(string scope, string ns)
+public bool op_Equality(RedirectionScope left, RedirectionScope right)
+public bool op_Inequality(RedirectionScope left, RedirectionScope right)
+}
+public System.ServiceModel.Channels.RedirectionType : object {
+public RedirectionType Cache
+public string Namespace
+public RedirectionType Resource
+public RedirectionType UseIntermediary
+public string Value
+public RedirectionType get_Cache()
+public string get_Namespace()
+public RedirectionType get_Resource()
+public RedirectionType get_UseIntermediary()
+public string get_Value()
+public RedirectionType Create(string type, string ns)
+public bool op_Equality(RedirectionType left, RedirectionType right)
+public bool op_Inequality(RedirectionType left, RedirectionType right)
+}
 public System.ServiceModel.Channels.ReliableSessionBindingElement : BindingElement {
 private TimeSpan <AcknowledgementInterval>k__BackingField
 private bool <FlowControlEnabled>k__BackingField
@@ -5758,6 +6199,10 @@ public void Reply(Message message)
 public void Reply(Message message, TimeSpan timeout)
 protected void Dispose(bool disposing)
 private void System.IDisposable.Dispose()
+}
+public System.ServiceModel.Channels.RetryException : CommunicationException {
+public void .ctor(string message)
+public void .ctor(string message, Exception innerException)
 }
 internal System.ServiceModel.Channels.Security.AsymmetricSecurityCapabilities : SecurityCapabilities {
 private AsymmetricSecurityBindingElement element
@@ -6308,6 +6753,9 @@ public LocalServiceSecuritySettings LocalServiceSettings
 public IDictionary`2<string, SupportingTokenParameters> OperationSupportingTokenParameters
 public SupportingTokenParameters OptionalEndpointSupportingTokenParameters
 public IDictionary`2<string, SupportingTokenParameters> OptionalOperationSupportingTokenParameters
+public bool AllowInsecureTransport
+public bool EnableUnsecuredResponse
+public bool ProtectTokens
 internal void .ctor(SecurityBindingElement other)
 public bool get_IncludeTimestamp()
 public void set_IncludeTimestamp(bool value)
@@ -6366,6 +6814,12 @@ public SecurityBindingElement CreateSecureConversationBindingElement(SecurityBin
 public SecurityBindingElement CreateSecureConversationBindingElement(SecurityBindingElement bootstrapSecurity, bool requireCancellation, ChannelProtectionRequirements bootstrapProtectionRequirements)
 public TransportSecurityBindingElement CreateUserNameOverTransportBindingElement()
 protected void SetIssuerBindingContextIfRequired(SecurityTokenParameters parameters, BindingContext issuerBindingContext)
+public bool get_AllowInsecureTransport()
+public void set_AllowInsecureTransport(bool value)
+public bool get_EnableUnsecuredResponse()
+public void set_EnableUnsecuredResponse(bool value)
+public bool get_ProtectTokens()
+public void set_ProtectTokens(bool value)
 }
 public System.ServiceModel.Channels.SecurityBindingElementImporter : object {
 public int MaxPolicyRedirections
@@ -6422,6 +6876,11 @@ public void Parse()
 private void ParseDirective(string line)
 private StringDictionary Split(string line)
 }
+public System.ServiceModel.Channels.SessionOpenNotification : object {
+public bool IsEnabled
+public bool get_IsEnabled()
+public void UpdateMessageProperties(MessageProperties inboundMessageProperties)
+}
 internal System.ServiceModel.Channels.SimpleFaultConverter : FaultConverter {
 private Dictionary`2<Type, string> map
 private MessageVersion version
@@ -6463,6 +6922,7 @@ public bool CanBuildChannelListener(BindingContext context)
 public BindingElement Clone()
 public T GetProperty(BindingContext context)
 private void System.ServiceModel.Description.IPolicyExportExtension.ExportPolicy(MetadataExporter exporter, PolicyConversionContext context)
+public bool ShouldSerializeIdentityVerifier()
 }
 internal System.ServiceModel.Channels.SslStreamSecurityUpgradeAcceptor : StreamSecurityUpgradeAcceptor {
 private SslStreamSecurityUpgradeProvider source
@@ -6536,6 +6996,7 @@ protected internal TimeSpan get_DefaultCloseTimeout()
 protected internal TimeSpan get_DefaultOpenTimeout()
 public StreamUpgradeAcceptor CreateUpgradeAcceptor()
 public StreamUpgradeInitiator CreateUpgradeInitiator(EndpointAddress remoteAddress, Uri via)
+public T GetProperty()
 }
 public System.ServiceModel.Channels.SupportedAddressingMode : Enum {
 public int value__
@@ -6638,6 +7099,7 @@ public int ListenBacklog
 public bool PortSharingEnabled
 public string Scheme
 public bool TeredoEnabled
+public ExtendedProtectionPolicy ExtendedProtectionPolicy
 protected void .ctor(TcpTransportBindingElement elementToBeCloned)
 public TcpConnectionPoolSettings get_ConnectionPoolSettings()
 public int get_ListenBacklog()
@@ -6651,6 +7113,10 @@ public IChannelFactory`1<TChannel> BuildChannelFactory(BindingContext context)
 public IChannelListener`1<TChannel> BuildChannelListener(BindingContext context)
 public BindingElement Clone()
 public T GetProperty(BindingContext context)
+public ExtendedProtectionPolicy get_ExtendedProtectionPolicy()
+public void set_ExtendedProtectionPolicy(ExtendedProtectionPolicy value)
+public bool ShouldSerializeExtendedProtectionPolicy()
+public bool ShouldSerializeListenBacklog()
 }
 internal System.ServiceModel.Channels.TextMessageEncoder : MessageEncoder {
 private Encoding encoding
@@ -6712,6 +7178,8 @@ protected void OnImportPolicy(XmlElement assertion, MessageVersion messageVersio
 private void System.ServiceModel.Description.IWsdlExportExtension.ExportContract(WsdlExporter exporter, WsdlContractConversionContext context)
 private void System.ServiceModel.Description.IWsdlExportExtension.ExportEndpoint(WsdlExporter exporter, WsdlEndpointConversionContext context)
 private void System.ServiceModel.Description.IPolicyExportExtension.ExportPolicy(MetadataExporter exporter, PolicyConversionContext context)
+public bool ShouldSerializeReaderQuotas()
+public bool ShouldSerializeWriteEncoding()
 }
 internal System.ServiceModel.Channels.TransactionChannelFactory`1 : ChannelFactoryBase`1<TChannel> {
 private IChannelFactory`1<TChannel> inner_factory
@@ -6750,6 +7218,7 @@ protected TChannel OnEndAcceptChannel(IAsyncResult result)
 public System.ServiceModel.Channels.TransactionFlowBindingElement : BindingElement {
 private TransactionProtocol protocol
 public TransactionProtocol TransactionProtocol
+public bool AllowWildcardAction
 public void .ctor(TransactionProtocol transactionProtocol)
 public TransactionProtocol get_TransactionProtocol()
 public BindingElement Clone()
@@ -6758,6 +7227,11 @@ public bool CanBuildChannelFactory(BindingContext context)
 public bool CanBuildChannelListener(BindingContext context)
 public IChannelFactory`1<TChannel> BuildChannelFactory(BindingContext context)
 public IChannelListener`1<TChannel> BuildChannelListener(BindingContext context)
+public bool get_AllowWildcardAction()
+public void set_AllowWildcardAction(bool value)
+public void set_TransactionProtocol(TransactionProtocol value)
+public bool ShouldSerializeTransactionProtocol()
+private void System.ServiceModel.Description.IPolicyExportExtension.ExportPolicy(MetadataExporter exporter, PolicyConversionContext context)
 }
 public System.ServiceModel.Channels.TransactionFlowBindingElementImporter : object {
 public XmlElement GetAssertion(XmlDocument doc, TransactionFlowOption option, string prefix, string name, string ns)
@@ -6856,6 +7330,21 @@ public BindingElement Clone()
 public T GetProperty(BindingContext context)
 private void System.ServiceModel.Description.IPolicyExportExtension.ExportPolicy(MetadataExporter exporter, PolicyConversionContext context)
 }
+public System.ServiceModel.Channels.UseManagedPresentationBindingElementImporter : object {
+private void System.ServiceModel.Description.IPolicyImportExtension.ImportPolicy(MetadataImporter importer, PolicyConversionContext policyContext)
+}
+public System.ServiceModel.Channels.WebSocketMessageProperty : object {
+public string Name
+public WebSocketMessageType MessageType
+public ReadOnlyDictionary`2<string, object> OpeningHandshakeProperties
+public string SubProtocol
+public WebSocketContext WebSocketContext
+public WebSocketMessageType get_MessageType()
+public void set_MessageType(WebSocketMessageType value)
+public ReadOnlyDictionary`2<string, object> get_OpeningHandshakeProperties()
+public string get_SubProtocol()
+public WebSocketContext get_WebSocketContext()
+}
 public System.ServiceModel.Channels.WebSocketTransportSettings : object {
 public string BinaryEncoderTransferModeHeader
 public string BinaryMessageReceivedAction
@@ -6926,6 +7415,13 @@ private bool System.ServiceModel.Channels.ISecurityCapabilities.get_SupportsClie
 private bool System.ServiceModel.Channels.ISecurityCapabilities.get_SupportsServerAuthentication()
 private void System.ServiceModel.Description.IPolicyExportExtension.ExportPolicy(MetadataExporter exporter, PolicyConversionContext context)
 public XmlElement GetTransportTokenAssertion()
+public StreamUpgradeProvider BuildClientStreamUpgradeProvider(BindingContext context)
+public StreamUpgradeProvider BuildServerStreamUpgradeProvider(BindingContext context)
+}
+public System.ServiceModel.Channels.WrappedOptions : object {
+public bool WrappedFlag
+public bool get_WrappedFlag()
+public void set_WrappedFlag(bool value)
 }
 internal System.ServiceModel.Channels.XmlObjectSerializerBodyWriter : BodyWriter {
 private object body
@@ -6976,6 +7472,20 @@ private void ReadHeaders()
 private void ReadBodyStart()
 protected void OnWriteStartBody(XmlDictionaryWriter writer)
 }
+public System.ServiceModel.Channels.XmlSerializerImportOptions : object {
+public string ClrNamespace
+public CodeCompileUnit CodeCompileUnit
+public CodeDomProvider CodeProvider
+public WebReferenceOptions WebReferenceOptions
+public void .ctor(CodeCompileUnit codeCompileUnit)
+public string get_ClrNamespace()
+public void set_ClrNamespace(string value)
+public CodeCompileUnit get_CodeCompileUnit()
+public CodeDomProvider get_CodeProvider()
+public void set_CodeProvider(CodeDomProvider value)
+public WebReferenceOptions get_WebReferenceOptions()
+public void set_WebReferenceOptions(WebReferenceOptions value)
+}
 internal System.ServiceModel.Channels.XPathMessageBuffer : MessageBuffer {
 private IXPathNavigable source
 private MessageVersion version
@@ -7004,6 +7514,7 @@ public ServiceEndpoint Endpoint
 public IClientChannel InnerChannel
 protected TChannel Channel
 public CommunicationState State
+public CacheSetting CacheSetting
 protected void .ctor(string endpointConfigurationName)
 protected void .ctor(Binding binding, EndpointAddress remoteAddress)
 protected void .ctor(string endpointConfigurationName, EndpointAddress remoteAddress)
@@ -7053,6 +7564,8 @@ private void System.ServiceModel.ICommunicationObject.add_Closed(EventHandler va
 private void System.ServiceModel.ICommunicationObject.remove_Closed(EventHandler value)
 private void System.ServiceModel.ICommunicationObject.add_Faulted(EventHandler value)
 private void System.ServiceModel.ICommunicationObject.remove_Faulted(EventHandler value)
+public CacheSetting get_CacheSetting()
+public void set_CacheSetting(CacheSetting value)
 }
 public System.ServiceModel.ClientCredentialsSecurityTokenManager : SecurityTokenManager {
 private ClientCredentials credentials
@@ -7089,6 +7602,32 @@ private bool CanCastTo(Type type)
 public bool CanCastTo(Type t, object o)
 public IMessage Invoke(IMessage inputMessage)
 private IMessage DoInvoke(IMessage inputMessage)
+}
+public System.ServiceModel.ComIntegration.DllHostInitializer : object {
+public void Shutdown()
+public void Startup(object punkProcessControl)
+}
+public System.ServiceModel.ComIntegration.IChannelCredentials {
+public void SetClientCertificateFromFile(string fileName, string password, string keyStorageFlags)
+public void SetClientCertificateFromStore(string storeLocation, string storeName, string findType, object findValue)
+public void SetClientCertificateFromStoreByName(string subjectName, string storeLocation, string storeName)
+public void SetDefaultServiceCertificateFromFile(string fileName, string password, string keyStorageFlags)
+public void SetDefaultServiceCertificateFromStore(string storeLocation, string storeName, string findType, object findValue)
+public void SetDefaultServiceCertificateFromStoreByName(string subjectName, string storeLocation, string storeName)
+public void SetIssuedToken(string localIssuerAddres, string localIssuerBindingType, string localIssuerBinding)
+public void SetServiceCertificateAuthentication(string storeLocation, string revocationMode, string certificationValidationMode)
+public void SetUserNameCredential(string userName, string password)
+public void SetWindowsCredential(string domain, string userName, string password, int impersonationLevel, bool allowNtlm)
+}
+public System.ServiceModel.ComIntegration.PersistStreamTypeWrapper : object {
+public ExtensionDataObject ExtensionData
+public ExtensionDataObject get_ExtensionData()
+public void set_ExtensionData(ExtensionDataObject value)
+public void GetObject(T& obj)
+public void SetObject(T obj)
+}
+public System.ServiceModel.ComIntegration.WasHostedComPlusFactory : ServiceHostFactoryBase {
+public ServiceHostBase CreateServiceHost(string constructorString, Uri[] baseAddresses)
 }
 public System.ServiceModel.CommunicationException : SystemException {
 public void .ctor(string message)
@@ -7144,6 +7683,14 @@ protected bool ThrowOnDuplicate
 protected bool get_ThrowOnDuplicate()
 protected ConfigurationElement CreateNewElement()
 protected object GetElementKey(ConfigurationElement element)
+}
+public System.ServiceModel.Configuration.ApplicationContainerSettingsElement : ServiceModelConfigurationElement {
+public string PackageFullName
+public int SessionId
+public string get_PackageFullName()
+public void set_PackageFullName(string value)
+public int get_SessionId()
+public void set_SessionId(int value)
 }
 public System.ServiceModel.Configuration.AuthenticationMode : Enum {
 public int value__
@@ -7225,6 +7772,12 @@ public BasicHttpSecurityElement get_Security()
 protected void OnApplyConfiguration(Binding binding)
 protected internal void InitializeFrom(Binding binding)
 }
+public System.ServiceModel.Configuration.BasicHttpContextBindingElement : BasicHttpBindingElement {
+public bool ContextManagementEnabled
+public void .ctor(string name)
+public bool get_ContextManagementEnabled()
+public void set_ContextManagementEnabled(bool value)
+}
 public System.ServiceModel.Configuration.BasicHttpMessageSecurityElement : ConfigurationElement {
 public SecurityAlgorithmSuite AlgorithmSuite
 public BasicHttpMessageCredentialType ClientCredentialType
@@ -7294,6 +7847,7 @@ public int MaxSessionSize
 public int MaxWritePoolSize
 protected ConfigurationPropertyCollection Properties
 public XmlDictionaryReaderQuotasElement ReaderQuotas
+public CompressionFormat CompressionFormat
 public Type get_BindingElementType()
 public int get_MaxReadPoolSize()
 public void set_MaxReadPoolSize(int value)
@@ -7307,6 +7861,8 @@ protected internal BindingElement CreateBindingElement()
 public void ApplyConfiguration(BindingElement bindingElement)
 public void CopyFrom(ServiceModelExtensionElement from)
 protected internal void InitializeFrom(BindingElement bindingElement)
+public CompressionFormat get_CompressionFormat()
+public void set_CompressionFormat(CompressionFormat value)
 }
 public System.ServiceModel.Configuration.BindingCollectionElement : ConfigurationElement {
 private string _name
@@ -7345,6 +7901,10 @@ public WSDualHttpBindingCollectionElement WSDualHttpBinding
 public WSFederationHttpBindingCollectionElement WSFederationHttpBinding
 public WSHttpBindingCollectionElement WSHttpBinding
 public BindingCollectionElement Item
+public NetHttpBindingCollectionElement NetHttpBinding
+public NetHttpsBindingCollectionElement NetHttpsBinding
+public WS2007FederationHttpBindingCollectionElement WS2007FederationHttpBinding
+public WS2007HttpBindingCollectionElement WS2007HttpBinding
 public BasicHttpBindingCollectionElement get_BasicHttpBinding()
 public BasicHttpsBindingCollectionElement get_BasicHttpsBinding()
 public List`1<BindingCollectionElement> get_BindingCollections()
@@ -7360,6 +7920,10 @@ public WSFederationHttpBindingCollectionElement get_WSFederationHttpBinding()
 public WSHttpBindingCollectionElement get_WSHttpBinding()
 public BindingsSection GetSection(Configuration config)
 public BindingCollectionElement get_Item(string binding)
+public NetHttpBindingCollectionElement get_NetHttpBinding()
+public NetHttpsBindingCollectionElement get_NetHttpsBinding()
+public WS2007FederationHttpBindingCollectionElement get_WS2007FederationHttpBinding()
+public WS2007HttpBindingCollectionElement get_WS2007HttpBinding()
 }
 public System.ServiceModel.Configuration.CallbackDebugElement : BehaviorExtensionElement {
 public Type BehaviorType
@@ -7457,6 +8021,7 @@ public void set_EndpointConfiguration(string value)
 public string get_Kind()
 public void set_Kind(string value)
 protected ConfigurationPropertyCollection get_Properties()
+public void .ctor(EndpointAddress address, string contractType)
 }
 public System.ServiceModel.Configuration.ChannelEndpointElementCollection : ServiceModelEnhancedConfigurationElementCollection`1<ChannelEndpointElement> {
 protected object GetElementKey(ConfigurationElement element)
@@ -7493,6 +8058,10 @@ public System.ServiceModel.Configuration.ClaimTypeElementCollection : ServiceMod
 private ConfigurationPropertyCollection properties
 protected object GetElementKey(ConfigurationElement element)
 }
+public System.ServiceModel.Configuration.ClearBehaviorElement : BehaviorExtensionElement {
+public Type BehaviorType
+public Type get_BehaviorType()
+}
 public System.ServiceModel.Configuration.ClientCredentialsElement : BehaviorExtensionElement {
 private ConfigurationPropertyCollection _properties
 public Type BehaviorType
@@ -7505,6 +8074,7 @@ public X509RecipientCertificateClientElement ServiceCertificate
 public bool SupportInteractive
 public string Type
 public WindowsClientElement Windows
+public bool UseIdentityConfiguration
 public Type get_BehaviorType()
 public X509InitiatorCertificateClientElement get_ClientCertificate()
 public HttpDigestClientElement get_HttpDigest()
@@ -7520,6 +8090,8 @@ public WindowsClientElement get_Windows()
 protected internal object CreateBehavior()
 protected internal void ApplyConfiguration(ClientCredentials behavior)
 private object CreateInstance(string typeName)
+public bool get_UseIdentityConfiguration()
+public void set_UseIdentityConfiguration(bool value)
 }
 public System.ServiceModel.Configuration.ClientSection : ConfigurationSection {
 private Type[] _defaultPolicyImporters
@@ -7572,6 +8144,7 @@ protected ConfigurationPropertyCollection get_Properties()
 public bool get_RequiresSession()
 public void set_RequiresSession(bool value)
 public ComUdtElementCollection get_UserDefinedTypes()
+public void .ctor(string contractType)
 }
 public System.ServiceModel.Configuration.ComContractElementCollection : ServiceModelEnhancedConfigurationElementCollection`1<ComContractElement> {
 private ConfigurationPropertyCollection properties
@@ -7593,6 +8166,7 @@ protected ConfigurationPropertyCollection Properties
 public string get_ExposedMethod()
 public void set_ExposedMethod(string value)
 protected ConfigurationPropertyCollection get_Properties()
+public void .ctor(string method)
 }
 public System.ServiceModel.Configuration.ComMethodElementCollection : ServiceModelEnhancedConfigurationElementCollection`1<ComMethodElement> {
 private ConfigurationPropertyCollection properties
@@ -7611,9 +8185,13 @@ public CommonServiceBehaviorElement get_ServiceBehaviors()
 }
 public System.ServiceModel.Configuration.CommonEndpointBehaviorElement : ServiceModelExtensionCollectionElement`1<BehaviorExtensionElement> {
 private ConfigurationPropertyCollection properties
+public void Add(BehaviorExtensionElement element)
+public bool CanAdd(BehaviorExtensionElement element)
 }
 public System.ServiceModel.Configuration.CommonServiceBehaviorElement : ServiceModelExtensionCollectionElement`1<BehaviorExtensionElement> {
 private ConfigurationPropertyCollection properties
+public void Add(BehaviorExtensionElement element)
+public bool CanAdd(BehaviorExtensionElement element)
 }
 public System.ServiceModel.Configuration.ComPersistableTypeElement : ConfigurationElement {
 private ConfigurationPropertyCollection properties
@@ -7627,6 +8205,7 @@ public void set_ID(string value)
 public string get_Name()
 public void set_Name(string value)
 protected ConfigurationPropertyCollection get_Properties()
+public void .ctor(string ID)
 }
 public System.ServiceModel.Configuration.ComPersistableTypeElementCollection : ServiceModelEnhancedConfigurationElementCollection`1<ComPersistableTypeElement> {
 private ConfigurationPropertyCollection properties
@@ -7662,10 +8241,17 @@ public string get_TypeLibID()
 public void set_TypeLibID(string value)
 public string get_TypeLibVersion()
 public void set_TypeLibVersion(string value)
+public void .ctor(string typeDefID)
 }
 public System.ServiceModel.Configuration.ComUdtElementCollection : ServiceModelEnhancedConfigurationElementCollection`1<ComUdtElement> {
 private ConfigurationPropertyCollection properties
 protected object GetElementKey(ConfigurationElement element)
+}
+public System.ServiceModel.Configuration.ConfigurationChannelFactory`1 : ChannelFactory`1<TChannel> {
+public void .ctor(string endpointConfigurationName, Configuration configuration, EndpointAddress remoteAddress)
+}
+public System.ServiceModel.Configuration.ConfigurationDuplexChannelFactory`1 : DuplexChannelFactory`1<TChannel> {
+public void .ctor(object callbackObject, string endpointConfigurationName, EndpointAddress remoteAddress, Configuration configuration)
 }
 internal System.ServiceModel.Configuration.ConfigUtil : object {
 private List`1<Assembly> cached_assemblies
@@ -7738,6 +8324,22 @@ public void ApplyConfiguration(BindingElement bindingElement)
 public void CopyFrom(ServiceModelExtensionElement from)
 protected internal void InitializeFrom(BindingElement bindingElement)
 }
+public System.ServiceModel.Configuration.ContextBindingElementExtensionElement : BindingElementExtensionElement {
+public Type BindingElementType
+public Uri ClientCallbackAddress
+public ContextExchangeMechanism ContextExchangeMechanism
+public bool ContextManagementEnabled
+public ProtectionLevel ProtectionLevel
+public Type get_BindingElementType()
+public Uri get_ClientCallbackAddress()
+public void set_ClientCallbackAddress(Uri value)
+public ContextExchangeMechanism get_ContextExchangeMechanism()
+public void set_ContextExchangeMechanism(ContextExchangeMechanism value)
+public bool get_ContextManagementEnabled()
+public void set_ContextManagementEnabled(bool value)
+public ProtectionLevel get_ProtectionLevel()
+public void set_ProtectionLevel(ProtectionLevel value)
+}
 public System.ServiceModel.Configuration.CustomBindingCollectionElement : BindingCollectionElement {
 public CustomBindingElementCollection Bindings
 public ReadOnlyCollection`1<IBindingConfigurationElement> ConfiguredBindings
@@ -7792,6 +8394,26 @@ public void set_MaxItemsInObjectGraph(int value)
 protected ConfigurationPropertyCollection get_Properties()
 protected internal object CreateBehavior()
 }
+public System.ServiceModel.Configuration.DefaultPortElement : ConfigurationElement {
+public int Port
+public string Scheme
+public void .ctor(DefaultPortElement other)
+public int get_Port()
+public void set_Port(int value)
+public string get_Scheme()
+public void set_Scheme(string value)
+}
+public System.ServiceModel.Configuration.DefaultPortElementCollection : ServiceModelEnhancedConfigurationElementCollection`1<DefaultPortElement> {
+protected object GetElementKey(ConfigurationElement element)
+}
+public System.ServiceModel.Configuration.DelegatingHandlerElement : ConfigurationElement {
+public string Type
+public string get_Type()
+public void set_Type(string value)
+}
+public System.ServiceModel.Configuration.DelegatingHandlerElementCollection : ServiceModelConfigurationElementCollection`1<DelegatingHandlerElement> {
+protected object GetElementKey(ConfigurationElement element)
+}
 public System.ServiceModel.Configuration.DiagnosticSection : ConfigurationSection {
 private ConfigurationPropertyCollection properties
 private ConfigurationProperty end_to_end_tracing
@@ -7818,6 +8440,16 @@ public void set_PerformanceCounterEnabled(bool value)
 protected ConfigurationPropertyCollection get_Properties()
 public bool get_WmiProviderEnabled()
 public void set_WmiProviderEnabled(bool value)
+}
+public System.ServiceModel.Configuration.DispatcherSynchronizationElement : BehaviorExtensionElement {
+public bool AsynchronousSendEnabled
+public Type BehaviorType
+public int MaxPendingReceives
+public bool get_AsynchronousSendEnabled()
+public void set_AsynchronousSendEnabled(bool value)
+public Type get_BehaviorType()
+public int get_MaxPendingReceives()
+public void set_MaxPendingReceives(int value)
 }
 public System.ServiceModel.Configuration.DnsElement : ConfigurationElement {
 private ConfigurationPropertyCollection properties
@@ -7847,6 +8479,7 @@ public void set_Address(Uri value)
 public AddressHeaderCollectionElement get_Headers()
 public IdentityElement get_Identity()
 protected ConfigurationPropertyCollection get_Properties()
+public void InitializeFrom(EndpointAddress endpointAddress)
 }
 public System.ServiceModel.Configuration.EndpointBehaviorElement : NamedServiceModelExtensionCollectionElement`1<BehaviorExtensionElement> {
 public void .ctor(string name)
@@ -8034,6 +8667,14 @@ protected ConfigurationPropertyCollection Properties
 public TokenImpersonationLevel get_ImpersonationLevel()
 public void set_ImpersonationLevel(TokenImpersonationLevel value)
 protected ConfigurationPropertyCollection get_Properties()
+public void Copy(HttpDigestClientElement from)
+}
+public System.ServiceModel.Configuration.HttpMessageHandlerFactoryElement : ConfigurationElement {
+public DelegatingHandlerElementCollection Handlers
+public string Type
+public DelegatingHandlerElementCollection get_Handlers()
+public string get_Type()
+public void set_Type(string value)
 }
 public System.ServiceModel.Configuration.HttpsTransportElement : HttpTransportElement {
 private ConfigurationPropertyCollection _properties
@@ -8067,6 +8708,10 @@ public string Realm
 public TransferMode TransferMode
 public bool UnsafeConnectionNtlmAuthentication
 public bool UseDefaultWebProxy
+public int MaxPendingAccepts
+public HttpMessageHandlerFactoryElement MessageHandlerFactory
+public TimeSpan RequestInitializationTimeout
+public WebSocketTransportSettingsElement WebSocketSettings
 public bool get_AllowCookies()
 public void set_AllowCookies(bool value)
 public AuthenticationSchemes get_AuthenticationScheme()
@@ -8101,6 +8746,14 @@ public void ApplyConfiguration(BindingElement bindingElement)
 public void CopyFrom(ServiceModelExtensionElement from)
 protected TransportBindingElement CreateDefaultBindingElement()
 protected internal void InitializeFrom(BindingElement bindingElement)
+public int get_MaxPendingAccepts()
+public void set_MaxPendingAccepts(int value)
+public HttpMessageHandlerFactoryElement get_MessageHandlerFactory()
+public void set_MessageHandlerFactory(HttpMessageHandlerFactoryElement value)
+public TimeSpan get_RequestInitializationTimeout()
+public void set_RequestInitializationTimeout(TimeSpan value)
+public WebSocketTransportSettingsElement get_WebSocketSettings()
+public void set_WebSocketSettings(WebSocketTransportSettingsElement value)
 }
 public System.ServiceModel.Configuration.HttpTransportSecurityElement : ConfigurationElement {
 private ConfigurationPropertyCollection properties
@@ -8113,6 +8766,7 @@ public ExtendedProtectionPolicyElement extendedProtectionPolicy
 protected ConfigurationPropertyCollection Properties
 public HttpProxyCredentialType ProxyCredentialType
 public string Realm
+public ExtendedProtectionPolicyElement ExtendedProtectionPolicy
 public HttpClientCredentialType get_ClientCredentialType()
 public void set_ClientCredentialType(HttpClientCredentialType value)
 public ExtendedProtectionPolicyElement get_extendedProtectionPolicy()
@@ -8123,6 +8777,7 @@ public void set_ProxyCredentialType(HttpProxyCredentialType value)
 public string get_Realm()
 public void set_Realm(string value)
 internal void ApplyConfiguration(HttpTransportSecurity security)
+public ExtendedProtectionPolicyElement get_ExtendedProtectionPolicy()
 }
 public System.ServiceModel.Configuration.IBindingConfigurationElement {
 public TimeSpan CloseTimeout
@@ -8206,6 +8861,7 @@ public void set_LocalIssuerChannelBehaviors(string value)
 public TimeSpan get_MaxIssuedTokenCachingTime()
 public void set_MaxIssuedTokenCachingTime(TimeSpan value)
 protected ConfigurationPropertyCollection get_Properties()
+public void Copy(IssuedTokenClientElement from)
 }
 public System.ServiceModel.Configuration.IssuedTokenParametersElement : ConfigurationElement {
 public XmlElementElementCollection AdditionalRequestParameters
@@ -8216,6 +8872,8 @@ public int KeySize
 public SecurityKeyType KeyType
 protected ConfigurationPropertyCollection Properties
 public string TokenType
+public MessageSecurityVersion DefaultMessageSecurityVersion
+public bool UseStrTransform
 public XmlElementElementCollection get_AdditionalRequestParameters()
 public ClaimTypeElementCollection get_ClaimTypeRequirements()
 public IssuedTokenParametersEndpointAddressElement get_Issuer()
@@ -8227,6 +8885,10 @@ public void set_KeyType(SecurityKeyType value)
 protected ConfigurationPropertyCollection get_Properties()
 public string get_TokenType()
 public void set_TokenType(string value)
+public MessageSecurityVersion get_DefaultMessageSecurityVersion()
+public void set_DefaultMessageSecurityVersion(MessageSecurityVersion value)
+public bool get_UseStrTransform()
+public void set_UseStrTransform(bool value)
 }
 public System.ServiceModel.Configuration.IssuedTokenParametersEndpointAddressElement : EndpointAddressElementBase {
 private ConfigurationPropertyCollection _properties
@@ -8267,6 +8929,7 @@ public X509RevocationMode get_RevocationMode()
 public void set_RevocationMode(X509RevocationMode value)
 public StoreLocation get_TrustedStoreLocation()
 public void set_TrustedStoreLocation(StoreLocation value)
+public void Copy(IssuedTokenServiceElement from)
 }
 public System.ServiceModel.Configuration.LocalClientSecuritySettingsElement : ConfigurationElement {
 private ConfigurationPropertyCollection properties
@@ -8535,6 +9198,8 @@ public TimeSpan RetryCycleDelay
 public TimeSpan TimeToLive
 public bool UseMsmqTracing
 public bool UseSourceJournal
+public bool ReceiveContextEnabled
+public TimeSpan ValidityDuration
 public Uri get_CustomDeadLetterQueue()
 public void set_CustomDeadLetterQueue(Uri value)
 public DeadLetterQueue get_DeadLetterQueue()
@@ -8560,6 +9225,11 @@ public bool get_UseMsmqTracing()
 public void set_UseMsmqTracing(bool value)
 public bool get_UseSourceJournal()
 public void set_UseSourceJournal(bool value)
+public bool get_ReceiveContextEnabled()
+public void set_ReceiveContextEnabled(bool value)
+public TimeSpan get_ValidityDuration()
+public void set_ValidityDuration(TimeSpan value)
+protected void OnApplyConfiguration(Binding binding)
 }
 public System.ServiceModel.Configuration.MsmqElementBase : TransportElement {
 private ConfigurationPropertyCollection _properties
@@ -8576,6 +9246,8 @@ public TimeSpan RetryCycleDelay
 public TimeSpan TimeToLive
 public bool UseMsmqTracing
 public bool UseSourceJournal
+public bool ReceiveContextEnabled
+public TimeSpan ValidityDuration
 public Uri get_CustomDeadLetterQueue()
 public void set_CustomDeadLetterQueue(Uri value)
 public DeadLetterQueue get_DeadLetterQueue()
@@ -8603,6 +9275,10 @@ public void set_UseSourceJournal(bool value)
 public void ApplyConfiguration(BindingElement bindingElement)
 public void CopyFrom(ServiceModelExtensionElement from)
 protected internal void InitializeFrom(BindingElement bindingElement)
+public bool get_ReceiveContextEnabled()
+public void set_ReceiveContextEnabled(bool value)
+public TimeSpan get_ValidityDuration()
+public void set_ValidityDuration(TimeSpan value)
 }
 public System.ServiceModel.Configuration.MsmqIntegrationBindingCollectionElement : StandardBindingCollectionElement`2<MsmqIntegrationBinding, MsmqIntegrationBindingElement> {
 private ConfigurationPropertyCollection properties
@@ -8622,6 +9298,7 @@ public MsmqIntegrationSecurityElement get_Security()
 public MsmqMessageSerializationFormat get_SerializationFormat()
 public void set_SerializationFormat(MsmqMessageSerializationFormat value)
 protected void OnApplyConfiguration(Binding binding)
+public void .ctor(string name)
 }
 public System.ServiceModel.Configuration.MsmqIntegrationElement : MsmqElementBase {
 private ConfigurationPropertyCollection _properties
@@ -8750,11 +9427,17 @@ public int get_MaxOutboundConnectionsPerEndpoint()
 public void set_MaxOutboundConnectionsPerEndpoint(int value)
 protected ConfigurationPropertyCollection get_Properties()
 }
+public System.ServiceModel.Configuration.NamedPipeSettingsElement : ServiceModelConfigurationElement {
+public ApplicationContainerSettingsElement ApplicationContainerSettings
+public ApplicationContainerSettingsElement get_ApplicationContainerSettings()
+public void set_ApplicationContainerSettings(ApplicationContainerSettingsElement value)
+}
 public System.ServiceModel.Configuration.NamedPipeTransportElement : ConnectionOrientedTransportElement {
 private ConfigurationPropertyCollection _properties
 public Type BindingElementType
 public NamedPipeConnectionPoolSettingsElement ConnectionPoolSettings
 protected ConfigurationPropertyCollection Properties
+public NamedPipeSettingsElement PipeSettings
 public Type get_BindingElementType()
 public NamedPipeConnectionPoolSettingsElement get_ConnectionPoolSettings()
 public void set_ConnectionPoolSettings(NamedPipeConnectionPoolSettingsElement value)
@@ -8763,6 +9446,8 @@ public void ApplyConfiguration(BindingElement bindingElement)
 public void CopyFrom(ServiceModelExtensionElement from)
 protected TransportBindingElement CreateDefaultBindingElement()
 protected internal void InitializeFrom(BindingElement bindingElement)
+public NamedPipeSettingsElement get_PipeSettings()
+public void set_PipeSettings(NamedPipeSettingsElement value)
 }
 public System.ServiceModel.Configuration.NamedPipeTransportSecurityElement : ConfigurationElement {
 private ConfigurationPropertyCollection properties
@@ -8781,6 +9466,44 @@ protected ConfigurationPropertyCollection Properties
 public string get_Name()
 public void set_Name(string value)
 protected ConfigurationPropertyCollection get_Properties()
+}
+public System.ServiceModel.Configuration.NetHttpBindingElement : HttpBindingBaseElement {
+protected Type BindingElementType
+public NetHttpMessageEncoding MessageEncoding
+public StandardBindingOptionalReliableSessionElement ReliableSession
+public BasicHttpSecurityElement Security
+public NetHttpWebSocketTransportSettingsElement WebSocketSettings
+public void .ctor(string name)
+protected Type get_BindingElementType()
+public NetHttpMessageEncoding get_MessageEncoding()
+public void set_MessageEncoding(NetHttpMessageEncoding value)
+public StandardBindingOptionalReliableSessionElement get_ReliableSession()
+public BasicHttpSecurityElement get_Security()
+public NetHttpWebSocketTransportSettingsElement get_WebSocketSettings()
+public void set_WebSocketSettings(NetHttpWebSocketTransportSettingsElement value)
+}
+public System.ServiceModel.Configuration.NetHttpsBindingElement : HttpBindingBaseElement {
+protected Type BindingElementType
+public NetHttpMessageEncoding MessageEncoding
+public StandardBindingOptionalReliableSessionElement ReliableSession
+public BasicHttpsSecurityElement Security
+public NetHttpWebSocketTransportSettingsElement WebSocketSettings
+public void .ctor(string name)
+protected Type get_BindingElementType()
+public NetHttpMessageEncoding get_MessageEncoding()
+public void set_MessageEncoding(NetHttpMessageEncoding value)
+public StandardBindingOptionalReliableSessionElement get_ReliableSession()
+public BasicHttpsSecurityElement get_Security()
+public NetHttpWebSocketTransportSettingsElement get_WebSocketSettings()
+public void set_WebSocketSettings(NetHttpWebSocketTransportSettingsElement value)
+}
+public System.ServiceModel.Configuration.NetHttpWebSocketTransportSettingsElement : WebSocketTransportSettingsElement {
+public string SubProtocol
+public WebSocketTransportUsage TransportUsage
+public string get_SubProtocol()
+public void set_SubProtocol(string value)
+public WebSocketTransportUsage get_TransportUsage()
+public void set_TransportUsage(WebSocketTransportUsage value)
 }
 public System.ServiceModel.Configuration.NetMsmqBindingCollectionElement : StandardBindingCollectionElement`2<NetMsmqBinding, NetMsmqBindingElement> {
 private ConfigurationPropertyCollection properties
@@ -8811,6 +9534,7 @@ public NetMsmqSecurityElement get_Security()
 public bool get_UseActiveDirectory()
 public void set_UseActiveDirectory(bool value)
 protected void OnApplyConfiguration(Binding binding)
+public void .ctor(string name)
 }
 public System.ServiceModel.Configuration.NetMsmqSecurityElement : ConfigurationElement {
 private ConfigurationPropertyCollection properties
@@ -8958,6 +9682,18 @@ public TransferMode get_TransferMode()
 public void set_TransferMode(TransferMode value)
 protected void OnApplyConfiguration(Binding binding)
 }
+public System.ServiceModel.Configuration.NetTcpContextBindingElement : NetTcpBindingElement {
+public Uri ClientCallbackAddress
+public bool ContextManagementEnabled
+public ProtectionLevel ContextProtectionLevel
+public void .ctor(string name)
+public Uri get_ClientCallbackAddress()
+public void set_ClientCallbackAddress(Uri value)
+public bool get_ContextManagementEnabled()
+public void set_ContextManagementEnabled(bool value)
+public ProtectionLevel get_ContextProtectionLevel()
+public void set_ContextProtectionLevel(ProtectionLevel value)
+}
 public System.ServiceModel.Configuration.NetTcpSecurityElement : ConfigurationElement {
 private ConfigurationPropertyCollection properties
 private ConfigurationProperty message
@@ -9008,6 +9744,7 @@ public X509PeerCertificateElement get_Certificate()
 public X509PeerCertificateAuthenticationElement get_MessageSenderAuthentication()
 public X509PeerCertificateAuthenticationElement get_PeerAuthentication()
 protected ConfigurationPropertyCollection get_Properties()
+public void Copy(PeerCredentialElement from)
 }
 public System.ServiceModel.Configuration.PeerCustomResolverElement : ConfigurationElement {
 private ConfigurationPropertyCollection properties
@@ -9202,6 +9939,13 @@ public void ApplyConfiguration(BindingElement bindingElement)
 public void CopyFrom(ServiceModelExtensionElement from)
 protected internal void InitializeFrom(BindingElement bindingElement)
 }
+public System.ServiceModel.Configuration.RemoveBehaviorElement : BehaviorExtensionElement {
+public Type BehaviorType
+public string Name
+public Type get_BehaviorType()
+public string get_Name()
+public void set_Name(string value)
+}
 public System.ServiceModel.Configuration.RsaElement : ConfigurationElement {
 private ConfigurationPropertyCollection properties
 private ConfigurationProperty value
@@ -9219,6 +9963,7 @@ public string SecurityStateEncoderType
 protected ConfigurationPropertyCollection get_Properties()
 public string get_SecurityStateEncoderType()
 public void set_SecurityStateEncoderType(string value)
+public void Copy(SecureConversationServiceElement from)
 }
 internal System.ServiceModel.Configuration.SecurityAlgorithmSuiteConverter : TypeConverter {
 public bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
@@ -9231,6 +9976,8 @@ protected ConfigurationPropertyCollection Properties
 public SecurityElementBase SecureConversationBootstrap
 protected ConfigurationPropertyCollection get_Properties()
 public SecurityElementBase get_SecureConversationBootstrap()
+protected void AddBindingTemplates(Dictionary`2<AuthenticationMode, SecurityBindingElement> bindingTemplates)
+protected void InitializeNestedTokenParameterSettings(SecurityTokenParameters sp, bool initializeNestedBindings)
 }
 public System.ServiceModel.Configuration.SecurityElementBase : BindingElementExtensionElement {
 private ConfigurationPropertyCollection _properties
@@ -9250,6 +9997,10 @@ public bool RequireDerivedKeys
 public bool RequireSecurityContextCancellation
 public bool RequireSignatureConfirmation
 public SecurityHeaderLayout SecurityHeaderLayout
+public bool AllowInsecureTransport
+public bool CanRenewSecurityContextToken
+public bool EnableUnsecuredResponse
+public bool ProtectTokens
 public bool get_AllowSerializedSigningTokenOnReply()
 public void set_AllowSerializedSigningTokenOnReply(bool value)
 public AuthenticationMode get_AuthenticationMode()
@@ -9278,6 +10029,41 @@ public void set_RequireSignatureConfirmation(bool value)
 public SecurityHeaderLayout get_SecurityHeaderLayout()
 public void set_SecurityHeaderLayout(SecurityHeaderLayout value)
 protected internal BindingElement CreateBindingElement()
+public bool get_AllowInsecureTransport()
+public void set_AllowInsecureTransport(bool value)
+public bool get_CanRenewSecurityContextToken()
+public void set_CanRenewSecurityContextToken(bool value)
+public bool get_EnableUnsecuredResponse()
+public void set_EnableUnsecuredResponse(bool value)
+public bool get_ProtectTokens()
+public void set_ProtectTokens(bool value)
+}
+public System.ServiceModel.Configuration.ServiceActivationElement : ConfigurationElement {
+public string Factory
+public string RelativeAddress
+public string Service
+public void .ctor(string relativeAddress)
+public void .ctor(string relativeAddress, string service)
+public void .ctor(string relativeAddress, string service, string factory)
+public string get_Factory()
+public void set_Factory(string value)
+public string get_RelativeAddress()
+public void set_RelativeAddress(string value)
+public string get_Service()
+public void set_Service(string value)
+}
+public System.ServiceModel.Configuration.ServiceActivationElementCollection : ServiceModelConfigurationElementCollection`1<ServiceActivationElement> {
+protected object GetElementKey(ConfigurationElement element)
+}
+public System.ServiceModel.Configuration.ServiceAuthenticationElement : BehaviorExtensionElement {
+public AuthenticationSchemes AuthenticationSchemes
+public Type BehaviorType
+public string ServiceAuthenticationManagerType
+public AuthenticationSchemes get_AuthenticationSchemes()
+public void set_AuthenticationSchemes(AuthenticationSchemes value)
+public Type get_BehaviorType()
+public string get_ServiceAuthenticationManagerType()
+public void set_ServiceAuthenticationManagerType(string value)
 }
 public System.ServiceModel.Configuration.ServiceAuthorizationElement : BehaviorExtensionElement {
 public AuthorizationPolicyTypeElementCollection AuthorizationPolicies
@@ -9287,6 +10073,7 @@ public PrincipalPermissionMode PrincipalPermissionMode
 protected ConfigurationPropertyCollection Properties
 public string RoleProviderName
 public string ServiceAuthorizationManagerType
+public bool ImpersonateOnSerializingReply
 public AuthorizationPolicyTypeElementCollection get_AuthorizationPolicies()
 public Type get_BehaviorType()
 public bool get_ImpersonateCallerForAllOperations()
@@ -9300,6 +10087,8 @@ public string get_ServiceAuthorizationManagerType()
 public void set_ServiceAuthorizationManagerType(string value)
 protected internal object CreateBehavior()
 public void CopyFrom(ServiceModelExtensionElement from)
+public bool get_ImpersonateOnSerializingReply()
+public void set_ImpersonateOnSerializingReply(bool value)
 }
 public System.ServiceModel.Configuration.ServiceBehaviorElement : NamedServiceModelExtensionCollectionElement`1<BehaviorExtensionElement> {
 public void .ctor(string name)
@@ -9326,6 +10115,8 @@ public X509RecipientCertificateServiceElement ServiceCertificate
 public string Type
 public UserNameServiceElement UserNameAuthentication
 public WindowsServiceElement WindowsAuthentication
+public string IdentityConfiguration
+public bool UseIdentityConfiguration
 public Type get_BehaviorType()
 public X509InitiatorCertificateServiceElement get_ClientCertificate()
 public IssuedTokenServiceElement get_IssuedTokenAuthentication()
@@ -9341,6 +10132,10 @@ protected internal object CreateBehavior()
 protected internal void ApplyConfiguration(ServiceCredentials behavior)
 private X509Certificate2 GetCertificate(StoreLocation storeLocation, StoreName storeName, X509FindType findType, object findValue)
 private object CreateInstance(string typeName)
+public string get_IdentityConfiguration()
+public void set_IdentityConfiguration(string value)
+public bool get_UseIdentityConfiguration()
+public void set_UseIdentityConfiguration(bool value)
 }
 public System.ServiceModel.Configuration.ServiceDebugElement : BehaviorExtensionElement {
 public Type BehaviorType
@@ -9394,6 +10189,7 @@ public HostElement get_Host()
 public string get_Name()
 public void set_Name(string value)
 protected ConfigurationPropertyCollection get_Properties()
+public void .ctor(string serviceName)
 }
 public System.ServiceModel.Configuration.ServiceElementCollection : ServiceModelEnhancedConfigurationElementCollection`1<ServiceElement> {
 protected object GetElementKey(ConfigurationElement element)
@@ -9460,6 +10256,7 @@ public void set_ListenUriMode(ListenUriMode value)
 public string get_Name()
 public void set_Name(string value)
 protected ConfigurationPropertyCollection get_Properties()
+public void .ctor(Uri address, string contractType)
 }
 public System.ServiceModel.Configuration.ServiceEndpointElementCollection : ServiceModelEnhancedConfigurationElementCollection`1<ServiceEndpointElement> {
 protected object GetElementKey(ConfigurationElement element)
@@ -9474,12 +10271,22 @@ public bool AspNetCompatibilityEnabled
 public int MinFreeMemoryPercentageToActivateService
 protected ConfigurationPropertyCollection Properties
 public TransportConfigurationTypeElementCollection TransportConfigurationTypes
+public BaseAddressPrefixFilterElementCollection BaseAddressPrefixFilters
+public bool CloseIdleServicesAtLowMemory
+public bool MultipleSiteBindingsEnabled
+public ServiceActivationElementCollection ServiceActivations
 public bool get_AspNetCompatibilityEnabled()
 public void set_AspNetCompatibilityEnabled(bool value)
 public int get_MinFreeMemoryPercentageToActivateService()
 public void set_MinFreeMemoryPercentageToActivateService(int value)
 protected ConfigurationPropertyCollection get_Properties()
 public TransportConfigurationTypeElementCollection get_TransportConfigurationTypes()
+public BaseAddressPrefixFilterElementCollection get_BaseAddressPrefixFilters()
+public bool get_CloseIdleServicesAtLowMemory()
+public void set_CloseIdleServicesAtLowMemory(bool value)
+public bool get_MultipleSiteBindingsEnabled()
+public void set_MultipleSiteBindingsEnabled(bool value)
+public ServiceActivationElementCollection get_ServiceActivations()
 }
 public System.ServiceModel.Configuration.ServiceMetadataEndpointElement : StandardEndpointElement {
 private ConfigurationPropertyCollection properties
@@ -9611,6 +10418,7 @@ public ServiceHostingEnvironmentSection ServiceHostingEnvironment
 public ServicesSection Services
 public ProtocolMappingSection ProtocolMapping
 public StandardEndpointsSection StandardEndpoints
+public ComContractsSection ComContracts
 public ServiceModelSectionGroup GetSectionGroup(Configuration config)
 public BehaviorsSection get_Behaviors()
 public BindingsSection get_Bindings()
@@ -9622,6 +10430,7 @@ public ServiceHostingEnvironmentSection get_ServiceHostingEnvironment()
 public ServicesSection get_Services()
 public ProtocolMappingSection get_ProtocolMapping()
 public StandardEndpointsSection get_StandardEndpoints()
+public ComContractsSection get_ComContracts()
 }
 public System.ServiceModel.Configuration.ServicePrincipalNameElement : ConfigurationElement {
 private ConfigurationPropertyCollection properties
@@ -9687,11 +10496,13 @@ public System.ServiceModel.Configuration.SslStreamSecurityElement : BindingEleme
 public Type BindingElementType
 protected ConfigurationPropertyCollection Properties
 public bool RequireClientCertificate
+public SslProtocols SslProtocols
 public Type get_BindingElementType()
 protected ConfigurationPropertyCollection get_Properties()
 public bool get_RequireClientCertificate()
 public void set_RequireClientCertificate(bool value)
 protected internal BindingElement CreateBindingElement()
+public SslProtocols get_SslProtocols()
 }
 public System.ServiceModel.Configuration.StandardBindingCollectionElement`2 : BindingCollectionElement {
 private ConfigurationPropertyCollection _properties
@@ -9746,6 +10557,7 @@ public bool get_Enabled()
 public void set_Enabled(bool value)
 protected ConfigurationPropertyCollection get_Properties()
 public void ApplyConfiguration(OptionalReliableSession optionalReliableSession)
+public void InitializeFrom(OptionalReliableSession optionalReliableSession)
 }
 public System.ServiceModel.Configuration.StandardBindingReliableSessionElement : ConfigurationElement {
 private ConfigurationPropertyCollection properties
@@ -9761,6 +10573,7 @@ public bool get_Ordered()
 public void set_Ordered(bool value)
 protected ConfigurationPropertyCollection get_Properties()
 public void ApplyConfiguration(ReliableSession reliableSession)
+public void InitializeFrom(ReliableSession reliableSession)
 }
 public System.ServiceModel.Configuration.StandardEndpointCollectionElement`2 : EndpointCollectionElement {
 private ConfigurationPropertyCollection properties
@@ -9854,6 +10667,7 @@ public int ListenBacklog
 public bool PortSharingEnabled
 protected ConfigurationPropertyCollection Properties
 public bool TeredoEnabled
+public ExtendedProtectionPolicyElement ExtendedProtectionPolicy
 public Type get_BindingElementType()
 public TcpConnectionPoolSettingsElement get_ConnectionPoolSettings()
 public void set_ConnectionPoolSettings(TcpConnectionPoolSettingsElement value)
@@ -9868,6 +10682,7 @@ public void ApplyConfiguration(BindingElement bindingElement)
 public void CopyFrom(ServiceModelExtensionElement from)
 protected TransportBindingElement CreateDefaultBindingElement()
 protected internal void InitializeFrom(BindingElement bindingElement)
+public ExtendedProtectionPolicyElement get_ExtendedProtectionPolicy()
 }
 public System.ServiceModel.Configuration.TcpTransportSecurityElement : ConfigurationElement {
 private ConfigurationPropertyCollection properties
@@ -9876,11 +10691,15 @@ private ConfigurationProperty protection_level
 public TcpClientCredentialType ClientCredentialType
 protected ConfigurationPropertyCollection Properties
 public ProtectionLevel ProtectionLevel
+public ExtendedProtectionPolicyElement ExtendedProtectionPolicy
+public SslProtocols SslProtocols
 public TcpClientCredentialType get_ClientCredentialType()
 public void set_ClientCredentialType(TcpClientCredentialType value)
 protected ConfigurationPropertyCollection get_Properties()
 public ProtectionLevel get_ProtectionLevel()
 public void set_ProtectionLevel(ProtectionLevel value)
+public ExtendedProtectionPolicyElement get_ExtendedProtectionPolicy()
+public SslProtocols get_SslProtocols()
 }
 public System.ServiceModel.Configuration.TextMessageEncodingElement : BindingElementExtensionElement {
 public Type BindingElementType
@@ -9921,11 +10740,14 @@ private ConfigurationPropertyCollection _properties
 public Type BindingElementType
 protected ConfigurationPropertyCollection Properties
 public TransactionProtocol TransactionProtocol
+public bool AllowWildcardAction
 public Type get_BindingElementType()
 protected ConfigurationPropertyCollection get_Properties()
 public TransactionProtocol get_TransactionProtocol()
 public void set_TransactionProtocol(TransactionProtocol value)
 protected internal BindingElement CreateBindingElement()
+public bool get_AllowWildcardAction()
+public void set_AllowWildcardAction(bool value)
 }
 internal System.ServiceModel.Configuration.TransactionProtocolConverter : TypeConverter {
 private TransactionProtocolConverter _instance
@@ -9946,6 +10768,8 @@ public void set_Name(string value)
 protected ConfigurationPropertyCollection get_Properties()
 public string get_TransportConfigurationType()
 public void set_TransportConfigurationType(string value)
+public void .ctor(string name)
+public void .ctor(string name, string transportConfigurationTypeName)
 }
 public System.ServiceModel.Configuration.TransportConfigurationTypeElementCollection : ServiceModelConfigurationElementCollection`1<TransportConfigurationTypeElement> {
 private ConfigurationPropertyCollection properties
@@ -9975,6 +10799,12 @@ public Type BindingElementType
 public Type get_BindingElementType()
 protected internal BindingElement CreateBindingElement()
 }
+public System.ServiceModel.Configuration.UseRequestHeadersForMetadataAddressElement : BehaviorExtensionElement {
+public Type BehaviorType
+public DefaultPortElementCollection DefaultPorts
+public Type get_BehaviorType()
+public DefaultPortElementCollection get_DefaultPorts()
+}
 public System.ServiceModel.Configuration.UserNameServiceElement : ConfigurationElement {
 public TimeSpan CachedLogonTokenLifetime
 public bool CacheLogonTokens
@@ -9999,6 +10829,7 @@ public void set_MembershipProviderName(string value)
 protected ConfigurationPropertyCollection get_Properties()
 public UserNamePasswordValidationMode get_UserNamePasswordValidationMode()
 public void set_UserNamePasswordValidationMode(UserNamePasswordValidationMode value)
+public void Copy(UserNameServiceElement from)
 }
 public System.ServiceModel.Configuration.UserPrincipalNameElement : ConfigurationElement {
 private ConfigurationPropertyCollection properties
@@ -10008,6 +10839,28 @@ public string Value
 protected ConfigurationPropertyCollection get_Properties()
 public string get_Value()
 public void set_Value(string value)
+}
+public System.ServiceModel.Configuration.WebSocketTransportSettingsElement : ServiceModelConfigurationElement {
+public bool CreateNotificationOnConnection
+public bool DisablePayloadMasking
+public TimeSpan KeepAliveInterval
+public int MaxPendingConnections
+public string SubProtocol
+public WebSocketTransportUsage TransportUsage
+public bool get_CreateNotificationOnConnection()
+public void set_CreateNotificationOnConnection(bool value)
+public bool get_DisablePayloadMasking()
+public void set_DisablePayloadMasking(bool value)
+public TimeSpan get_KeepAliveInterval()
+public void set_KeepAliveInterval(TimeSpan value)
+public int get_MaxPendingConnections()
+public void set_MaxPendingConnections(int value)
+public string get_SubProtocol()
+public void set_SubProtocol(string value)
+public WebSocketTransportUsage get_TransportUsage()
+public void set_TransportUsage(WebSocketTransportUsage value)
+public void ApplyConfiguration(WebSocketTransportSettings settings)
+public void InitializeFrom(WebSocketTransportSettings settings)
 }
 public System.ServiceModel.Configuration.WindowsClientElement : ConfigurationElement {
 private ConfigurationPropertyCollection properties
@@ -10021,6 +10874,7 @@ public void set_AllowedImpersonationLevel(TokenImpersonationLevel value)
 public bool get_AllowNtlm()
 public void set_AllowNtlm(bool value)
 protected ConfigurationPropertyCollection get_Properties()
+public void Copy(WindowsClientElement from)
 }
 public System.ServiceModel.Configuration.WindowsServiceElement : ConfigurationElement {
 private ConfigurationPropertyCollection properties
@@ -10034,6 +10888,7 @@ public void set_AllowAnonymousLogons(bool value)
 public bool get_IncludeWindowsGroups()
 public void set_IncludeWindowsGroups(bool value)
 protected ConfigurationPropertyCollection get_Properties()
+public void Copy(WindowsServiceElement from)
 }
 public System.ServiceModel.Configuration.WindowsStreamSecurityElement : BindingElementExtensionElement {
 public Type BindingElementType
@@ -10044,6 +10899,12 @@ protected ConfigurationPropertyCollection get_Properties()
 public ProtectionLevel get_ProtectionLevel()
 public void set_ProtectionLevel(ProtectionLevel value)
 protected internal BindingElement CreateBindingElement()
+}
+public System.ServiceModel.Configuration.WS2007FederationHttpBindingElement : WSFederationHttpBindingElement {
+public void .ctor(string name)
+}
+public System.ServiceModel.Configuration.WS2007HttpBindingElement : WSHttpBindingElement {
+public void .ctor(string name)
 }
 public System.ServiceModel.Configuration.WsdlImporterElement : ConfigurationElement {
 private ConfigurationPropertyCollection properties
@@ -10119,6 +10980,7 @@ public void set_TransactionFlow(bool value)
 public bool get_UseDefaultWebProxy()
 public void set_UseDefaultWebProxy(bool value)
 protected void OnApplyConfiguration(Binding binding)
+public void .ctor(string name)
 }
 public System.ServiceModel.Configuration.WSDualHttpSecurityElement : ConfigurationElement {
 private ConfigurationPropertyCollection properties
@@ -10151,6 +11013,7 @@ public void set_PrivacyNoticeVersion(int value)
 protected ConfigurationPropertyCollection get_Properties()
 public WSFederationHttpSecurityElement get_Security()
 protected void OnApplyConfiguration(Binding binding)
+public void .ctor(string name)
 }
 public System.ServiceModel.Configuration.WSFederationHttpSecurityElement : ConfigurationElement {
 private ConfigurationPropertyCollection properties
@@ -10220,6 +11083,18 @@ protected ConfigurationPropertyCollection get_Properties()
 public WSHttpSecurityElement get_Security()
 protected void OnApplyConfiguration(Binding binding)
 }
+public System.ServiceModel.Configuration.WSHttpContextBindingElement : WSHttpBindingElement {
+public Uri ClientCallbackAddress
+public bool ContextManagementEnabled
+public ProtectionLevel ContextProtectionLevel
+public void .ctor(string name)
+public Uri get_ClientCallbackAddress()
+public void set_ClientCallbackAddress(Uri value)
+public bool get_ContextManagementEnabled()
+public void set_ContextManagementEnabled(bool value)
+public ProtectionLevel get_ContextProtectionLevel()
+public void set_ContextProtectionLevel(ProtectionLevel value)
+}
 public System.ServiceModel.Configuration.WSHttpSecurityElement : ConfigurationElement {
 private ConfigurationPropertyCollection properties
 private ConfigurationProperty message
@@ -10244,6 +11119,7 @@ public HttpClientCredentialType ClientCredentialType
 protected ConfigurationPropertyCollection Properties
 public HttpProxyCredentialType ProxyCredentialType
 public string Realm
+public ExtendedProtectionPolicyElement ExtendedProtectionPolicy
 public HttpClientCredentialType get_ClientCredentialType()
 public void set_ClientCredentialType(HttpClientCredentialType value)
 protected ConfigurationPropertyCollection get_Properties()
@@ -10251,6 +11127,7 @@ public HttpProxyCredentialType get_ProxyCredentialType()
 public void set_ProxyCredentialType(HttpProxyCredentialType value)
 public string get_Realm()
 public void set_Realm(string value)
+public ExtendedProtectionPolicyElement get_ExtendedProtectionPolicy()
 }
 public System.ServiceModel.Configuration.X509CertificateTrustedIssuerElement : ConfigurationElement {
 public string FindValue
@@ -10267,6 +11144,7 @@ public StoreName get_StoreName()
 public void set_StoreName(StoreName value)
 public X509FindType get_X509FindType()
 public void set_X509FindType(X509FindType value)
+public void Copy(X509CertificateTrustedIssuerElement from)
 }
 public System.ServiceModel.Configuration.X509CertificateTrustedIssuerElementCollection : ServiceModelConfigurationElementCollection`1<X509CertificateTrustedIssuerElement> {
 protected object GetElementKey(ConfigurationElement element)
@@ -10299,6 +11177,7 @@ public X509RevocationMode get_RevocationMode()
 public void set_RevocationMode(X509RevocationMode value)
 public StoreLocation get_TrustedStoreLocation()
 public void set_TrustedStoreLocation(StoreLocation value)
+public void Copy(X509ClientCertificateAuthenticationElement from)
 }
 public System.ServiceModel.Configuration.X509ClientCertificateCredentialsElement : ConfigurationElement {
 private ConfigurationPropertyCollection properties
@@ -10320,6 +11199,7 @@ public StoreName get_StoreName()
 public void set_StoreName(StoreName value)
 public X509FindType get_X509FindType()
 public void set_X509FindType(X509FindType value)
+public void Copy(X509ClientCertificateCredentialsElement from)
 }
 public System.ServiceModel.Configuration.X509DefaultServiceCertificateElement : ConfigurationElement {
 private ConfigurationPropertyCollection properties
@@ -10341,6 +11221,7 @@ public StoreName get_StoreName()
 public void set_StoreName(StoreName value)
 public X509FindType get_X509FindType()
 public void set_X509FindType(X509FindType value)
+public void Copy(X509DefaultServiceCertificateElement from)
 }
 public System.ServiceModel.Configuration.X509InitiatorCertificateClientElement : ConfigurationElement {
 private ConfigurationPropertyCollection properties
@@ -10362,6 +11243,7 @@ public StoreName get_StoreName()
 public void set_StoreName(StoreName value)
 public X509FindType get_X509FindType()
 public void set_X509FindType(X509FindType value)
+public void Copy(X509InitiatorCertificateClientElement from)
 }
 public System.ServiceModel.Configuration.X509InitiatorCertificateServiceElement : ConfigurationElement {
 private ConfigurationPropertyCollection properties
@@ -10373,6 +11255,7 @@ protected ConfigurationPropertyCollection Properties
 public X509ClientCertificateAuthenticationElement get_Authentication()
 public X509ClientCertificateCredentialsElement get_Certificate()
 protected ConfigurationPropertyCollection get_Properties()
+public void Copy(X509InitiatorCertificateServiceElement from)
 }
 public System.ServiceModel.Configuration.X509PeerCertificateAuthenticationElement : ConfigurationElement {
 private ConfigurationPropertyCollection properties
@@ -10394,6 +11277,7 @@ public X509RevocationMode get_RevocationMode()
 public void set_RevocationMode(X509RevocationMode value)
 public StoreLocation get_TrustedStoreLocation()
 public void set_TrustedStoreLocation(StoreLocation value)
+public void Copy(X509PeerCertificateAuthenticationElement from)
 }
 public System.ServiceModel.Configuration.X509PeerCertificateElement : ConfigurationElement {
 private ConfigurationPropertyCollection properties
@@ -10415,6 +11299,7 @@ public StoreName get_StoreName()
 public void set_StoreName(StoreName value)
 public X509FindType get_X509FindType()
 public void set_X509FindType(X509FindType value)
+public void Copy(X509PeerCertificateElement from)
 }
 public System.ServiceModel.Configuration.X509RecipientCertificateClientElement : ConfigurationElement {
 private ConfigurationPropertyCollection properties
@@ -10425,10 +11310,13 @@ public X509ServiceCertificateAuthenticationElement Authentication
 public X509DefaultServiceCertificateElement DefaultCertificate
 protected ConfigurationPropertyCollection Properties
 public X509ScopedServiceCertificateElementCollection ScopedCertificates
+public X509ServiceCertificateAuthenticationElement SslCertificateAuthentication
 public X509ServiceCertificateAuthenticationElement get_Authentication()
 public X509DefaultServiceCertificateElement get_DefaultCertificate()
 protected ConfigurationPropertyCollection get_Properties()
 public X509ScopedServiceCertificateElementCollection get_ScopedCertificates()
+public X509ServiceCertificateAuthenticationElement get_SslCertificateAuthentication()
+public void Copy(X509RecipientCertificateClientElement from)
 }
 public System.ServiceModel.Configuration.X509RecipientCertificateServiceElement : ConfigurationElement {
 private ConfigurationPropertyCollection properties
@@ -10450,6 +11338,7 @@ public StoreName get_StoreName()
 public void set_StoreName(StoreName value)
 public X509FindType get_X509FindType()
 public void set_X509FindType(X509FindType value)
+public void Copy(X509RecipientCertificateServiceElement from)
 }
 public System.ServiceModel.Configuration.X509ScopedServiceCertificateElement : ConfigurationElement {
 public string FindValue
@@ -10469,6 +11358,7 @@ public Uri get_TargetUri()
 public void set_TargetUri(Uri value)
 public X509FindType get_X509FindType()
 public void set_X509FindType(X509FindType value)
+public void Copy(X509ScopedServiceCertificateElement from)
 }
 public System.ServiceModel.Configuration.X509ScopedServiceCertificateElementCollection : ServiceModelConfigurationElementCollection`1<X509ScopedServiceCertificateElement> {
 protected object GetElementKey(ConfigurationElement element)
@@ -10493,6 +11383,7 @@ public X509RevocationMode get_RevocationMode()
 public void set_RevocationMode(X509RevocationMode value)
 public StoreLocation get_TrustedStoreLocation()
 public void set_TrustedStoreLocation(StoreLocation value)
+public void Copy(X509ServiceCertificateAuthenticationElement from)
 }
 public System.ServiceModel.Configuration.XmlDictionaryReaderQuotasElement : ConfigurationElement {
 private ConfigurationPropertyCollection properties
@@ -10534,6 +11425,7 @@ public void set_XmlElement(XmlElement value)
 protected void DeserializeElement(XmlReader reader, bool serializeCollectionKey)
 protected void PostDeserialize()
 protected bool SerializeToXmlElement(XmlWriter writer, string elementName)
+public void Copy(XmlElementElement source)
 }
 public System.ServiceModel.Configuration.XmlElementElementCollection : ServiceModelConfigurationElementCollection`1<XmlElementElement> {
 protected object GetElementKey(ConfigurationElement element)
@@ -10552,8 +11444,13 @@ protected ConfigurationPropertyCollection get_Properties()
 public System.ServiceModel.Configuration.XPathMessageFilterElementCollection : ServiceModelConfigurationElementCollection`1<XPathMessageFilterElement> {
 private ConfigurationPropertyCollection properties
 protected ConfigurationPropertyCollection Properties
+public object Item
 protected object GetElementKey(ConfigurationElement element)
 protected ConfigurationPropertyCollection get_Properties()
+public void set_Item(object key, XPathMessageFilterElement value)
+}
+public System.ServiceModel.Configuration.XPathMessageFilterElementComparer : object {
+private int System.Collections.IComparer.Compare(object x, object y)
 }
 internal System.ServiceModel.Constants : object {
 public string Soap11
@@ -10702,6 +11599,8 @@ public IssuedTokenClientCredential IssuedToken
 public PeerCredential Peer
 public bool SupportInteractive
 public UserNamePasswordClientCredential UserName
+public SecurityTokenHandlerCollectionManager SecurityTokenHandlerCollectionManager
+public bool UseIdentityConfiguration
 protected void .ctor(ClientCredentials other)
 public X509CertificateInitiatorClientCredential get_ClientCertificate()
 public HttpDigestClientCredential get_HttpDigest()
@@ -10720,6 +11619,10 @@ private void System.ServiceModel.Description.IEndpointBehavior.ApplyDispatchBeha
 private void System.ServiceModel.Description.IEndpointBehavior.AddBindingParameters(ServiceEndpoint endpoint, BindingParameterCollection parameters)
 public void ApplyClientBehavior(ServiceEndpoint serviceEndpoint, ClientRuntime behavior)
 private void System.ServiceModel.Description.IEndpointBehavior.Validate(ServiceEndpoint endpoint)
+public SecurityTokenHandlerCollectionManager get_SecurityTokenHandlerCollectionManager()
+public void set_SecurityTokenHandlerCollectionManager(SecurityTokenHandlerCollectionManager value)
+public bool get_UseIdentityConfiguration()
+public void set_UseIdentityConfiguration(bool value)
 }
 public System.ServiceModel.Description.ClientViaBehavior : object {
 private Uri uri
@@ -10781,6 +11684,7 @@ public Collection`1<ContractDescription> GetInheritedContracts()
 internal ClientRuntime CreateClientRuntime(object callbackDispatchRuntime)
 internal void FillClientOperations(ClientRuntime proxy, bool isCallback)
 private void PopulateClientOperation(ClientRuntime proxy, OperationDescription od, bool isCallback)
+public bool ShouldSerializeProtectionLevel()
 }
 internal System.ServiceModel.Description.ContractDescriptionGenerator : object {
 private List`1<GetOperationContractAttributeExtender> getOperationContractAttributeExtenders
@@ -10888,6 +11792,19 @@ public object FromMessage(Message message)
 public Message ToMessage(object typedMessage)
 public Message ToMessage(object typedMessage, MessageVersion version)
 }
+public System.ServiceModel.Description.DispatcherSynchronizationBehavior : object {
+public bool AsynchronousSendEnabled
+public int MaxPendingReceives
+public void .ctor(bool asynchronousSendEnabled, int maxPendingReceives)
+public bool get_AsynchronousSendEnabled()
+public void set_AsynchronousSendEnabled(bool value)
+public int get_MaxPendingReceives()
+public void set_MaxPendingReceives(int value)
+private void System.ServiceModel.Description.IEndpointBehavior.AddBindingParameters(ServiceEndpoint serviceEndpoint, BindingParameterCollection parameters)
+private void System.ServiceModel.Description.IEndpointBehavior.ApplyClientBehavior(ServiceEndpoint serviceEndpoint, ClientRuntime behavior)
+private void System.ServiceModel.Description.IEndpointBehavior.ApplyDispatchBehavior(ServiceEndpoint serviceEndpoint, EndpointDispatcher endpointDispatcher)
+private void System.ServiceModel.Description.IEndpointBehavior.Validate(ServiceEndpoint serviceEndpoint)
+}
 public System.ServiceModel.Description.FaultDescription : object {
 private string action
 private string name
@@ -10912,6 +11829,7 @@ public void set_Namespace(string value)
 public bool get_HasProtectionLevel()
 public ProtectionLevel get_ProtectionLevel()
 public void set_ProtectionLevel(ProtectionLevel value)
+public bool ShouldSerializeProtectionLevel()
 }
 public System.ServiceModel.Description.FaultDescriptionCollection : Collection`1<FaultDescription> {
 public FaultDescription Find(string action)
@@ -11081,6 +11999,7 @@ internal bool get_IsTypedMessage()
 internal bool get_IsUntypedMessage()
 internal bool get_IsVoid()
 private bool IsOfType(Type t)
+public bool ShouldSerializeProtectionLevel()
 }
 public System.ServiceModel.Description.MessageDescriptionCollection : Collection`1<MessageDescription> {
 public MessageDescription Find(string action)
@@ -11243,6 +12162,10 @@ public IAsyncResult BeginGetMetadata(AsyncCallback callback, object asyncState)
 public IAsyncResult BeginGetMetadata(EndpointAddress address, AsyncCallback callback, object asyncState)
 public IAsyncResult BeginGetMetadata(Uri address, MetadataExchangeClientMode mode, AsyncCallback callback, object asyncState)
 private MetadataSet <BeginGetMetadata>b__40_0()
+public Task`1<MetadataSet> GetMetadataAsync()
+public Task`1<MetadataSet> GetMetadataAsync(EndpointAddress address)
+public Task`1<MetadataSet> GetMetadataAsync(EndpointAddress address, Uri via)
+public Task`1<MetadataSet> GetMetadataAsync(Uri address, MetadataExchangeClientMode mode)
 }
 public System.ServiceModel.Description.MetadataExchangeClientMode : Enum {
 public int value__
@@ -11253,6 +12176,7 @@ public System.ServiceModel.Description.MetadataExporter : object {
 private Collection`1<MetadataConversionError> errors
 public Collection`1<MetadataConversionError> Errors
 public Dictionary`2<object, object> State
+public PolicyVersion PolicyVersion
 public Collection`1<MetadataConversionError> get_Errors()
 public Dictionary`2<object, object> get_State()
 public void ExportContract(ContractDescription contract)
@@ -11261,6 +12185,8 @@ public MetadataSet GetGeneratedMetadata()
 protected internal PolicyConversionContext ExportPolicy(ServiceEndpoint endpoint)
 internal MetadataConversionError AddError(string message, Object[] args)
 internal MetadataConversionError AddWarning(string message, Object[] args)
+public PolicyVersion get_PolicyVersion()
+public void set_PolicyVersion(PolicyVersion value)
 }
 public System.ServiceModel.Description.MetadataImporter : object {
 private KeyedByTypeCollection`1<IPolicyImportExtension> policy_extensions
@@ -11280,6 +12206,12 @@ public ServiceEndpointCollection ImportAllEndpoints()
 internal T GetState()
 internal MetadataConversionError AddError(string message, Object[] args)
 internal MetadataConversionError AddWarning(string message, Object[] args)
+}
+public System.ServiceModel.Description.MetadataImporterQuotas : object {
+public MetadataImporterQuotas Defaults
+public MetadataImporterQuotas Max
+public MetadataImporterQuotas get_Defaults()
+public MetadataImporterQuotas get_Max()
 }
 public System.ServiceModel.Description.MetadataLocation : object {
 private string location
@@ -11350,6 +12282,7 @@ public Collection`1<XmlAttribute> get_Attributes()
 internal XmlSerializer get_Serializer()
 public MetadataSection CreateFromSchema(XmlSchema schema)
 public MetadataSection CreateFromServiceDescription(ServiceDescription serviceDescription)
+public MetadataSection CreateFromPolicy(XmlElement policy, string identifier)
 }
 internal System.ServiceModel.Description.MetadataSectionReaderBase : XmlSerializationReader {
 public object ReadRoot_MetadataSection()
@@ -11430,6 +12363,8 @@ public CodeMemberMethod SyncMethod
 public CodeMemberMethod BeginMethod
 public CodeMemberMethod EndMethod
 public bool IsAsync
+public bool IsTask
+public CodeMemberMethod TaskMethod
 public void .ctor(ServiceContractGenerator serviceContractGenerator, ServiceContractGenerationContext contract, OperationDescription operation, CodeTypeDeclaration declaringType, CodeMemberMethod method)
 public void .ctor(ServiceContractGenerator serviceContractGenerator, ServiceContractGenerationContext contract, OperationDescription operation, CodeTypeDeclaration declaringType, CodeMemberMethod syncMethod, CodeMemberMethod beginMethod, CodeMemberMethod endMethod)
 public ServiceContractGenerator get_ServiceContractGenerator()
@@ -11440,6 +12375,10 @@ public CodeMemberMethod get_SyncMethod()
 public CodeMemberMethod get_BeginMethod()
 public CodeMemberMethod get_EndMethod()
 public bool get_IsAsync()
+public void .ctor(ServiceContractGenerator serviceContractGenerator, ServiceContractGenerationContext contract, OperationDescription operation, CodeTypeDeclaration declaringType, CodeMemberMethod syncMethod, CodeMemberMethod taskMethod)
+public void .ctor(ServiceContractGenerator serviceContractGenerator, ServiceContractGenerationContext contract, OperationDescription operation, CodeTypeDeclaration declaringType, CodeMemberMethod syncMethod, CodeMemberMethod beginMethod, CodeMemberMethod endMethod, CodeMemberMethod taskMethod)
+public bool get_IsTask()
+public CodeMemberMethod get_TaskMethod()
 }
 public System.ServiceModel.Description.OperationDescription : object {
 private MethodInfo begin_method
@@ -11514,12 +12453,16 @@ internal XmlName get_XmlName()
 private void set_XmlName(XmlName value)
 internal object get_FormatterBehavior()
 internal void set_FormatterBehavior(object value)
+public bool ShouldSerializeProtectionLevel()
 }
 public System.ServiceModel.Description.OperationDescriptionCollection : Collection`1<OperationDescription> {
 public OperationDescription Find(string name)
 public Collection`1<OperationDescription> FindAll(string name)
 protected void InsertItem(int index, OperationDescription item)
 protected void SetItem(int index, OperationDescription item)
+}
+public System.ServiceModel.Description.ParameterXPathQueryGenerator : object {
+public string CreateFromDataContractSerializer(XName serviceContractName, string operationName, string parameterName, bool isReply, Type type, MemberInfo[] pathToMember, XmlNamespaceManager& namespaces)
 }
 public System.ServiceModel.Description.PolicyAssertionCollection : Collection`1<XmlElement> {
 public void .ctor(IEnumerable`1<XmlElement> elements)
@@ -11566,6 +12509,20 @@ public PrincipalPermissionMode None
 public PrincipalPermissionMode UseWindowsGroups
 public PrincipalPermissionMode UseAspNetRoles
 public PrincipalPermissionMode Custom
+public PrincipalPermissionMode Always
+}
+public System.ServiceModel.Description.ServiceAuthenticationBehavior : object {
+public AuthenticationSchemes AuthenticationSchemes
+public ServiceAuthenticationManager ServiceAuthenticationManager
+public AuthenticationSchemes get_AuthenticationSchemes()
+public void set_AuthenticationSchemes(AuthenticationSchemes value)
+public ServiceAuthenticationManager get_ServiceAuthenticationManager()
+public void set_ServiceAuthenticationManager(ServiceAuthenticationManager value)
+public bool ShouldSerializeAuthenticationSchemes()
+public bool ShouldSerializeServiceAuthenticationManager()
+private void System.ServiceModel.Description.IServiceBehavior.AddBindingParameters(ServiceDescription description, ServiceHostBase serviceHostBase, Collection`1<ServiceEndpoint> endpoints, BindingParameterCollection parameters)
+private void System.ServiceModel.Description.IServiceBehavior.ApplyDispatchBehavior(ServiceDescription description, ServiceHostBase serviceHostBase)
+private void System.ServiceModel.Description.IServiceBehavior.Validate(ServiceDescription description, ServiceHostBase serviceHostBase)
 }
 public System.ServiceModel.Description.ServiceAuthorizationBehavior : object {
 private bool impersonate
@@ -11578,6 +12535,7 @@ public bool ImpersonateCallerForAllOperations
 public PrincipalPermissionMode PrincipalPermissionMode
 public RoleProvider RoleProvider
 public ServiceAuthorizationManager ServiceAuthorizationManager
+public bool ImpersonateOnSerializingReply
 public ReadOnlyCollection`1<IAuthorizationPolicy> get_ExternalAuthorizationPolicies()
 public void set_ExternalAuthorizationPolicies(ReadOnlyCollection`1<IAuthorizationPolicy> value)
 public bool get_ImpersonateCallerForAllOperations()
@@ -11591,6 +12549,10 @@ public void set_ServiceAuthorizationManager(ServiceAuthorizationManager value)
 private void System.ServiceModel.Description.IServiceBehavior.AddBindingParameters(ServiceDescription description, ServiceHostBase serviceHostBase, Collection`1<ServiceEndpoint> endpoints, BindingParameterCollection parameters)
 private void System.ServiceModel.Description.IServiceBehavior.ApplyDispatchBehavior(ServiceDescription description, ServiceHostBase serviceHostBase)
 private void System.ServiceModel.Description.IServiceBehavior.Validate(ServiceDescription description, ServiceHostBase serviceHostBase)
+public bool get_ImpersonateOnSerializingReply()
+public void set_ImpersonateOnSerializingReply(bool value)
+public bool ShouldSerializeExternalAuthorizationPolicies()
+public bool ShouldSerializeServiceAuthorizationManager()
 }
 public System.ServiceModel.Description.ServiceContractGenerationContext : object {
 private ServiceContractGenerator generator
@@ -11620,6 +12582,7 @@ public ServiceContractGenerationOptions InternalTypes
 public ServiceContractGenerationOptions ClientClass
 public ServiceContractGenerationOptions TypedMessages
 public ServiceContractGenerationOptions EventBasedAsynchronousMethods
+public ServiceContractGenerationOptions TaskBasedAsynchronousMethod
 }
 public System.ServiceModel.Description.ServiceContractGenerator : object {
 private CodeCompileUnit ccu
@@ -11695,6 +12658,9 @@ public SecureConversationServiceCredential SecureConversationAuthentication
 public X509CertificateRecipientServiceCredential ServiceCertificate
 public UserNamePasswordServiceCredential UserNameAuthentication
 public WindowsServiceCredential WindowsAuthentication
+public ExceptionMapper ExceptionMapper
+public IdentityConfiguration IdentityConfiguration
+public bool UseIdentityConfiguration
 protected void .ctor(ServiceCredentials other)
 public X509CertificateInitiatorServiceCredential get_ClientCertificate()
 public IssuedTokenServiceCredential get_IssuedTokenAuthentication()
@@ -11709,6 +12675,12 @@ public SecurityTokenManager CreateSecurityTokenManager()
 private void System.ServiceModel.Description.IServiceBehavior.AddBindingParameters(ServiceDescription description, ServiceHostBase serviceHostBase, Collection`1<ServiceEndpoint> endpoints, BindingParameterCollection parameters)
 private void System.ServiceModel.Description.IServiceBehavior.ApplyDispatchBehavior(ServiceDescription description, ServiceHostBase serviceHostBase)
 private void System.ServiceModel.Description.IServiceBehavior.Validate(ServiceDescription description, ServiceHostBase serviceHostBase)
+public ExceptionMapper get_ExceptionMapper()
+public void set_ExceptionMapper(ExceptionMapper value)
+public IdentityConfiguration get_IdentityConfiguration()
+public void set_IdentityConfiguration(IdentityConfiguration value)
+public bool get_UseIdentityConfiguration()
+public void set_UseIdentityConfiguration(bool value)
 }
 public System.ServiceModel.Description.ServiceDebugBehavior : object {
 private bool <IncludeExceptionDetailInFaults>k__BackingField
@@ -11859,6 +12831,16 @@ private void System.ServiceModel.Description.IServiceBehavior.AddBindingParamete
 private void System.ServiceModel.Description.IServiceBehavior.ApplyDispatchBehavior(ServiceDescription description, ServiceHostBase serviceHostBase)
 private void System.ServiceModel.Description.IServiceBehavior.Validate(ServiceDescription description, ServiceHostBase serviceHostBase)
 }
+public System.ServiceModel.Description.ServiceMetadataContractBehavior : object {
+public bool MetadataGenerationDisabled
+public void .ctor(bool metadataGenerationDisabled)
+public bool get_MetadataGenerationDisabled()
+public void set_MetadataGenerationDisabled(bool value)
+private void System.ServiceModel.Description.IContractBehavior.AddBindingParameters(ContractDescription description, ServiceEndpoint endpoint, BindingParameterCollection parameters)
+private void System.ServiceModel.Description.IContractBehavior.ApplyClientBehavior(ContractDescription description, ServiceEndpoint endpoint, ClientRuntime proxy)
+private void System.ServiceModel.Description.IContractBehavior.ApplyDispatchBehavior(ContractDescription description, ServiceEndpoint endpoint, DispatchRuntime dispatch)
+private void System.ServiceModel.Description.IContractBehavior.Validate(ContractDescription description, ServiceEndpoint endpoint)
+}
 public System.ServiceModel.Description.ServiceMetadataEndpoint : ServiceEndpoint {
 public void .ctor(EndpointAddress address)
 public void .ctor(Binding binding, EndpointAddress address)
@@ -11872,6 +12854,7 @@ private HttpGetWsdl instance
 internal HttpGetWsdl Instance
 public MetadataSet Metadata
 internal ServiceHostBase Owner
+public ServiceDescription SingleWsdl
 internal HttpGetWsdl get_Instance()
 public MetadataSet get_Metadata()
 internal ServiceHostBase get_Owner()
@@ -11879,6 +12862,7 @@ internal ServiceMetadataExtension EnsureServiceMetadataExtension(ServiceHostBase
 internal void EnsureChannelDispatcher(bool isMex, string scheme, Uri uri, Binding binding)
 private void System.ServiceModel.IExtension<System.ServiceModel.ServiceHostBase>.Attach(ServiceHostBase owner)
 private void System.ServiceModel.IExtension<System.ServiceModel.ServiceHostBase>.Detach(ServiceHostBase owner)
+public ServiceDescription get_SingleWsdl()
 }
 public System.ServiceModel.Description.ServiceSecurityAuditBehavior : object {
 private AuditLogLocation audit_log_loc
@@ -11958,6 +12942,13 @@ public Message ToMessage(object typedMessage)
 public Message ToMessage(object typedMessage, MessageVersion version)
 private MessageDescriptionCollection MessageContractToMessagesDescription(Type src, string defaultNamespace, string action)
 }
+public System.ServiceModel.Description.UseRequestHeadersForMetadataAddressBehavior : object {
+public IDictionary`2<string, int> DefaultPortsByScheme
+public IDictionary`2<string, int> get_DefaultPortsByScheme()
+private void System.ServiceModel.Description.IServiceBehavior.AddBindingParameters(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase, Collection`1<ServiceEndpoint> endpoints, BindingParameterCollection bindingParameters)
+private void System.ServiceModel.Description.IServiceBehavior.ApplyDispatchBehavior(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase)
+private void System.ServiceModel.Description.IServiceBehavior.Validate(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase)
+}
 internal System.ServiceModel.Description.WsaEndpointReference : object {
 public string Address
 }
@@ -11973,6 +12964,8 @@ public MessageDescription GetMessageDescription(OperationMessage operationMessag
 public Operation GetOperation(OperationDescription operation)
 public OperationDescription GetOperationDescription(Operation operation)
 public OperationMessage GetOperationMessage(MessageDescription message)
+public FaultDescription GetFaultDescription(OperationFault operationFault)
+public OperationFault GetOperationFault(FaultDescription fault)
 }
 public System.ServiceModel.Description.WsdlEndpointConversionContext : object {
 private WsdlContractConversionContext context
@@ -11992,6 +12985,8 @@ public MessageBinding GetMessageBinding(MessageDescription message)
 public MessageDescription GetMessageDescription(MessageBinding messageBinding)
 public OperationBinding GetOperationBinding(OperationDescription operation)
 public OperationDescription GetOperationDescription(OperationBinding operationBinding)
+public FaultBinding GetFaultBinding(FaultDescription fault)
+public FaultDescription GetFaultDescription(FaultBinding faultBinding)
 }
 public System.ServiceModel.Description.WsdlExporter : MetadataExporter {
 private MetadataSet metadata
@@ -12071,6 +13066,7 @@ private void ImportEndpoints(ServiceEndpointCollection coll, Binding binding)
 public ServiceEndpointCollection ImportEndpoints(Binding wsdlBinding)
 public ServiceEndpointCollection ImportEndpoints(PortType wsdlPortType)
 public ServiceEndpointCollection ImportEndpoints(Service wsdlService)
+public void .ctor(MetadataSet metadata, IEnumerable`1<IPolicyImportExtension> policyImportExtensions, IEnumerable`1<IWsdlImportExtension> wsdlImportExtensions, MetadataImporterQuotas quotas)
 }
 internal System.ServiceModel.Description.WspAppliesTo : object {
 public WsaEndpointReference EndpointReference
@@ -12313,6 +13309,7 @@ public int value__
 public PerformanceCounterScope Off
 public PerformanceCounterScope ServiceOnly
 public PerformanceCounterScope All
+public PerformanceCounterScope Default
 }
 public System.ServiceModel.Dispatcher.ActionMessageFilter : MessageFilter {
 private ReadOnlyCollection`1<string> actions
@@ -12454,6 +13451,10 @@ public bool IncludeExceptionDetailInFaults
 public ServiceThrottle ServiceThrottle
 public IsolationLevel TransactionIsolationLevel
 public TimeSpan TransactionTimeout
+public bool AsynchronousTransactedAcceptEnabled
+public int MaxPendingReceives
+public bool ReceiveContextEnabled
+public bool SendAsynchronously
 public void .ctor(IChannelListener listener)
 public void .ctor(IChannelListener listener, string bindingName)
 public void .ctor(IChannelListener listener, string bindingName, IDefaultCommunicationTimeouts timeouts)
@@ -12500,6 +13501,14 @@ protected void OnOpen(TimeSpan timeout)
 protected void OnOpening()
 protected void OnOpened()
 private void StartLoop()
+public bool get_AsynchronousTransactedAcceptEnabled()
+public void set_AsynchronousTransactedAcceptEnabled(bool value)
+public int get_MaxPendingReceives()
+public void set_MaxPendingReceives(int value)
+public bool get_ReceiveContextEnabled()
+public void set_ReceiveContextEnabled(bool value)
+public bool get_SendAsynchronously()
+public void set_SendAsynchronously(bool value)
 }
 public System.ServiceModel.Dispatcher.ChannelDispatcherBase : CommunicationObject {
 private bool <IsMex>k__BackingField
@@ -12589,6 +13598,10 @@ public void set_TaskMethod(MethodInfo value)
 public Type get_TaskTResult()
 public void set_TaskTResult(Type value)
 }
+public System.ServiceModel.Dispatcher.ClientOperationCompatBase : object {
+public IList`1<IParameterInspector> ParameterInspectors
+public IList`1<IParameterInspector> get_ParameterInspectors()
+}
 public System.ServiceModel.Dispatcher.ClientRuntime : object {
 private SynchronizedCollection`1<IChannelInitializer> channel_initializers
 private SynchronizedCollection`1<IInteractiveChannelInitializer> interactive_channel_initializers
@@ -12650,6 +13663,12 @@ public void set_Via(Uri value)
 public ClientOperation get_UnhandledClientOperation()
 public bool get_MessageVersionNoneFaultsEnabled()
 public void set_MessageVersionNoneFaultsEnabled(bool value)
+}
+public System.ServiceModel.Dispatcher.ClientRuntimeCompatBase : object {
+public IList`1<IClientMessageInspector> MessageInspectors
+public KeyedCollection`2<string, ClientOperation> Operations
+public IList`1<IClientMessageInspector> get_MessageInspectors()
+public KeyedCollection`2<string, ClientOperation> get_Operations()
 }
 internal System.ServiceModel.Dispatcher.DataContractMessagesFormatter : BaseMessagesFormatter {
 private DataContractFormatAttribute attr
@@ -12737,6 +13756,7 @@ public bool IsOneWay
 public string Name
 public DispatchRuntime Parent
 public bool SerializeReply
+public bool IsInsideTransactedReceiveScope
 public void .ctor(DispatchRuntime parent, string name, string action)
 public void .ctor(DispatchRuntime parent, string name, string action, string replyAction)
 public string get_Action()
@@ -12770,6 +13790,8 @@ public DispatchRuntime get_Parent()
 public bool get_SerializeReply()
 public void set_SerializeReply(bool value)
 private void ThrowIfOpened()
+public bool get_IsInsideTransactedReceiveScope()
+public void set_IsInsideTransactedReceiveScope(bool value)
 }
 public System.ServiceModel.Dispatcher.DispatchRuntime : object {
 private DispatchOperationCollection operations
@@ -12829,6 +13851,10 @@ public bool TransactionAutoCompleteOnSessionClose
 public Type Type
 public bool ValidateMustUnderstand
 public DispatchOperation UnhandledDispatchOperation
+public bool EnsureOrderedDispatch
+public bool ImpersonateOnSerializingReply
+public bool PreserveMessage
+public ServiceAuthenticationManager ServiceAuthenticationManager
 internal void .ctor(EndpointDispatcher dispatcher, ClientRuntime callbackClientRuntime)
 public AuditLogLocation get_SecurityAuditLogLocation()
 public void set_SecurityAuditLogLocation(AuditLogLocation value)
@@ -12886,6 +13912,14 @@ public bool get_ValidateMustUnderstand()
 public void set_ValidateMustUnderstand(bool value)
 public DispatchOperation get_UnhandledDispatchOperation()
 public void set_UnhandledDispatchOperation(DispatchOperation value)
+public bool get_EnsureOrderedDispatch()
+public void set_EnsureOrderedDispatch(bool value)
+public bool get_ImpersonateOnSerializingReply()
+public void set_ImpersonateOnSerializingReply(bool value)
+public bool get_PreserveMessage()
+public void set_PreserveMessage(bool value)
+public ServiceAuthenticationManager get_ServiceAuthenticationManager()
+public void set_ServiceAuthenticationManager(ServiceAuthenticationManager value)
 }
 public System.ServiceModel.Dispatcher.EndpointAddressMessageFilter : MessageFilter {
 private EndpointAddress address
@@ -12972,6 +14006,7 @@ private void set_IsSystemEndpoint(bool value)
 internal void InitializeServiceEndpoint(bool isCallback, Type serviceType, ServiceEndpoint se)
 private void PopulateDispatchOperation(DispatchRuntime db, OperationDescription od)
 private MessageFilter GetContractFilter(ContractDescription cd, bool isCallback)
+public void .ctor(EndpointAddress address, string contractName, string contractNamespace, bool isSystemEndpoint)
 }
 internal System.ServiceModel.Dispatcher.ErrorProcessingHandler : BaseRequestProcessorHandler {
 private IDuplexChannel duplex
@@ -13281,6 +14316,41 @@ public void set_EventsHandler(UserEventsHandler value)
 public void Reply(IDuplexChannel channel, bool useTimeout)
 public void Reply(bool useTimeout)
 }
+public System.ServiceModel.Dispatcher.MessageQuery : object {
+public MessageQueryCollection CreateMessageQueryCollection()
+public TResult Evaluate(Message message)
+public TResult Evaluate(MessageBuffer buffer)
+}
+public System.ServiceModel.Dispatcher.MessageQueryCollection : Collection`1<MessageQuery> {
+public IEnumerable`1<KeyValuePair`2<MessageQuery, TResult>> Evaluate(Message message)
+public IEnumerable`1<KeyValuePair`2<MessageQuery, TResult>> Evaluate(MessageBuffer buffer)
+}
+public System.ServiceModel.Dispatcher.MessageQueryTable`1 : object {
+public int Count
+public bool IsReadOnly
+public TItem Item
+public ICollection`1<MessageQuery> Keys
+public ICollection`1<TItem> Values
+public int get_Count()
+public bool get_IsReadOnly()
+public TItem get_Item(MessageQuery key)
+public void set_Item(MessageQuery key, TItem value)
+public ICollection`1<MessageQuery> get_Keys()
+public ICollection`1<TItem> get_Values()
+public void Add(KeyValuePair`2<MessageQuery, TItem> item)
+public void Add(MessageQuery key, TItem value)
+public void Clear()
+public bool Contains(KeyValuePair`2<MessageQuery, TItem> item)
+public bool ContainsKey(MessageQuery key)
+public void CopyTo(KeyValuePair`2[] array, int arrayIndex)
+public IEnumerable`1<KeyValuePair`2<MessageQuery, TResult>> Evaluate(Message message)
+public IEnumerable`1<KeyValuePair`2<MessageQuery, TResult>> Evaluate(MessageBuffer buffer)
+public IEnumerator`1<KeyValuePair`2<MessageQuery, TItem>> GetEnumerator()
+public bool Remove(KeyValuePair`2<MessageQuery, TItem> item)
+public bool Remove(MessageQuery key)
+private IEnumerator System.Collections.IEnumerable.GetEnumerator()
+public bool TryGetValue(MessageQuery key, TItem& value)
+}
 internal System.ServiceModel.Dispatcher.MetadataExchange : object {
 private ServiceMetadataBehavior beh
 public void .ctor(ServiceMetadataBehavior beh)
@@ -13520,10 +14590,25 @@ public bool Remove(MessageFilter filter)
 public void TrimToSize()
 public bool TryGetValue(MessageFilter filter, TFilterData& data)
 }
+public System.ServiceModel.Dispatcher.XPathMessageQueryCollection : MessageQueryCollection {
+public IEnumerable`1<KeyValuePair`2<MessageQuery, TResult>> Evaluate(Message message)
+public IEnumerable`1<KeyValuePair`2<MessageQuery, TResult>> Evaluate(MessageBuffer buffer)
+protected void InsertItem(int index, MessageQuery item)
+protected void SetItem(int index, MessageQuery item)
+}
 public System.ServiceModel.Dispatcher.XPathNavigatorException : XPathException {
 public void .ctor(string message)
 public void .ctor(string message, Exception innerException)
 protected void .ctor(SerializationInfo info, StreamingContext context)
+}
+public System.ServiceModel.Dispatcher.XPathResult : object {
+public XPathResultType ResultType
+public XPathResultType get_ResultType()
+public void Dispose()
+public bool GetResultAsBoolean()
+public XPathNodeIterator GetResultAsNodeset()
+public double GetResultAsNumber()
+public string GetResultAsString()
 }
 internal System.ServiceModel.DispatcherBuilder : object {
 private ServiceHostBase host
@@ -13769,6 +14854,11 @@ public string get_Type()
 public void set_Type(string value)
 public string ToString()
 }
+public System.ServiceModel.ExceptionMapper : object {
+public FaultException FromException(Exception ex)
+public FaultException FromException(Exception ex, string soapNamespace, string trustNamespace)
+public bool HandleSecurityTokenProcessingException(Exception ex)
+}
 public System.ServiceModel.ExtensionCollection`1 : SynchronizedCollection`1<IExtension`1<T>> {
 private T owner
 private bool System.Collections.Generic.ICollection<System.ServiceModel.IExtension<T>>.IsReadOnly
@@ -13873,6 +14963,11 @@ public void GetObjectData(SerializationInfo info, StreamingContext context)
 public string ToString()
 public TDetail get_Detail()
 }
+public System.ServiceModel.FaultImportOptions : object {
+public bool UseMessageFormat
+public bool get_UseMessageFormat()
+public void set_UseMessageFormat(bool value)
+}
 public System.ServiceModel.FaultReason : object {
 private List`1<FaultReasonText> trans
 private SynchronizedReadOnlyCollection`1<FaultReasonText> public_trans
@@ -13936,6 +15031,12 @@ public bool get_NegotiateServiceCredential()
 public void set_NegotiateServiceCredential(bool value)
 public Collection`1<ClaimTypeRequirement> get_ClaimTypeRequirements()
 public Collection`1<XmlElement> get_TokenRequestParameters()
+public bool ShouldSerializeAlgorithmSuite()
+public bool ShouldSerializeClaimTypeRequirements()
+public bool ShouldSerializeEstablishSecurityContext()
+public bool ShouldSerializeIssuedKeyType()
+public bool ShouldSerializeNegotiateServiceCredential()
+public bool ShouldSerializeTokenRequestParameters()
 }
 public System.ServiceModel.HostNameComparisonMode : Enum {
 public int value__
@@ -14000,6 +15101,8 @@ public bool get_UseDefaultWebProxy()
 public void set_UseDefaultWebProxy(bool value)
 public BindingElementCollection CreateBindingElements()
 private bool System.ServiceModel.Channels.IBindingRuntimePreferences.get_ReceiveSynchronously()
+public bool ShouldSerializeReaderQuotas()
+public bool ShouldSerializeTextEncoding()
 }
 public System.ServiceModel.HttpClientCredentialType : Enum {
 public int value__
@@ -14036,6 +15139,10 @@ public string get_Realm()
 public void set_Realm(string value)
 public ExtendedProtectionPolicy get_ExtendedProtectionPolicy()
 public void set_ExtendedProtectionPolicy(ExtendedProtectionPolicy value)
+public bool ShouldSerializeClientCredentialType()
+public bool ShouldSerializeExtendedProtectionPolicy()
+public bool ShouldSerializeProxyCredentialType()
+public bool ShouldSerializeRealm()
 }
 public System.ServiceModel.IClientChannel {
 public bool AllowInitializationUI
@@ -14383,6 +15490,9 @@ public void set_ClientCredentialType(MessageCredentialType value)
 public bool get_NegotiateServiceCredential()
 public void set_NegotiateServiceCredential(bool value)
 protected bool IsSecureConversationEnabled()
+public bool ShouldSerializeAlgorithmSuite()
+public bool ShouldSerializeClientCredentialType()
+public bool ShouldSerializeNegotiateServiceCredential()
 }
 public System.ServiceModel.MessageSecurityOverMsmq : object {
 private SecurityAlgorithmSuite suite
@@ -14683,6 +15793,8 @@ public string Scheme
 public bool UseMsmqTracing
 public bool UseSourceJournal
 private bool System.ServiceModel.Channels.IBindingRuntimePreferences.ReceiveSynchronously
+public bool ReceiveContextEnabled
+public TimeSpan ValidityDuration
 public Uri get_CustomDeadLetterQueue()
 public void set_CustomDeadLetterQueue(Uri value)
 public DeadLetterQueue get_DeadLetterQueue()
@@ -14709,6 +15821,10 @@ public void set_UseMsmqTracing(bool value)
 public bool get_UseSourceJournal()
 public void set_UseSourceJournal(bool value)
 private bool System.ServiceModel.Channels.IBindingRuntimePreferences.get_ReceiveSynchronously()
+public bool get_ReceiveContextEnabled()
+public void set_ReceiveContextEnabled(bool value)
+public TimeSpan get_ValidityDuration()
+public void set_ValidityDuration(TimeSpan value)
 }
 public System.ServiceModel.MsmqEncryptionAlgorithm : Enum {
 public int value__
@@ -14732,6 +15848,8 @@ public MsmqIntegrationSecurity get_Security()
 public MsmqMessageSerializationFormat get_SerializationFormat()
 public void set_SerializationFormat(MsmqMessageSerializationFormat value)
 public BindingElementCollection CreateBindingElements()
+public void set_Security(MsmqIntegrationSecurity value)
+public bool ShouldSerializeSecurity()
 }
 public System.ServiceModel.MsmqIntegration.MsmqIntegrationBindingElement : MsmqBindingElementBase {
 private MsmqMessageSerializationFormat format
@@ -14841,6 +15959,7 @@ public MsmqTransportSecurity Transport
 public MsmqIntegrationSecurityMode get_Mode()
 public void set_Mode(MsmqIntegrationSecurityMode value)
 public MsmqTransportSecurity get_Transport()
+public void set_Transport(MsmqTransportSecurity value)
 }
 public System.ServiceModel.MsmqIntegration.MsmqIntegrationSecurityMode : Enum {
 public int value__
@@ -14909,9 +16028,11 @@ public MsmqMessageSerializationFormat ByteArray
 public MsmqMessageSerializationFormat Stream
 }
 public System.ServiceModel.MsmqPoisonMessageException : PoisonMessageException {
+public long MessageLookupId
 public void .ctor(string message)
 public void .ctor(string message, Exception innerException)
 protected void .ctor(SerializationInfo info, StreamingContext context)
+public long get_MessageLookupId()
 }
 public System.ServiceModel.MsmqSecureHashAlgorithm : Enum {
 public int value__
@@ -15025,6 +16146,9 @@ public void set_ReaderQuotas(XmlDictionaryReaderQuotas value)
 public bool get_UseActiveDirectory()
 public void set_UseActiveDirectory(bool value)
 public BindingElementCollection CreateBindingElements()
+public void set_Security(NetMsmqSecurity value)
+public bool ShouldSerializeReaderQuotas()
+public bool ShouldSerializeSecurity()
 }
 public System.ServiceModel.NetMsmqSecurity : object {
 private NetMsmqSecurityMode mode
@@ -15038,6 +16162,8 @@ public MessageSecurityOverMsmq get_Message()
 public NetMsmqSecurityMode get_Mode()
 public void set_Mode(NetMsmqSecurityMode value)
 public MsmqTransportSecurity get_Transport()
+public void set_Message(MessageSecurityOverMsmq value)
+public void set_Transport(MsmqTransportSecurity value)
 }
 public System.ServiceModel.NetMsmqSecurityMode : Enum {
 public int value__
@@ -15093,6 +16219,11 @@ public TransferMode get_TransferMode()
 public void set_TransferMode(TransferMode value)
 public BindingElementCollection CreateBindingElements()
 private bool System.ServiceModel.Channels.IBindingRuntimePreferences.get_ReceiveSynchronously()
+public void set_Security(NetNamedPipeSecurity value)
+public bool ShouldSerializeMaxConnections()
+public bool ShouldSerializeReaderQuotas()
+public bool ShouldSerializeSecurity()
+public bool ShouldSerializeTransactionProtocol()
 }
 public System.ServiceModel.NetNamedPipeSecurity : object {
 private NetNamedPipeSecurityMode <Mode>k__BackingField
@@ -15103,6 +16234,7 @@ public NetNamedPipeSecurityMode get_Mode()
 public void set_Mode(NetNamedPipeSecurityMode value)
 public NamedPipeTransportSecurity get_Transport()
 private void set_Transport(NamedPipeTransportSecurity value)
+public bool ShouldSerializeTransport()
 }
 public System.ServiceModel.NetNamedPipeSecurityMode : Enum {
 public int value__
@@ -15143,6 +16275,9 @@ public PeerSecuritySettings get_Security()
 public EnvelopeVersion get_EnvelopeVersion()
 public BindingElementCollection CreateBindingElements()
 private bool System.ServiceModel.Channels.IBindingRuntimePreferences.get_ReceiveSynchronously()
+public void set_Security(PeerSecuritySettings value)
+public bool ShouldSerializeReaderQuotas()
+public bool ShouldSerializeSecurity()
 }
 public System.ServiceModel.NetTcpBinding : Binding {
 private int max_conn
@@ -15204,6 +16339,27 @@ private BindingElement GetTransport()
 private SecurityBindingElement CreateMessageSecurity()
 private BindingElement CreateTransportSecurity()
 private bool System.ServiceModel.Channels.IBindingRuntimePreferences.get_ReceiveSynchronously()
+public void set_ReliableSession(OptionalReliableSession value)
+public bool ShouldSerializeListenBacklog()
+public bool ShouldSerializeMaxConnections()
+public bool ShouldSerializeReaderQuotas()
+public bool ShouldSerializeReliableSession()
+public bool ShouldSerializeSecurity()
+public bool ShouldSerializeTransactionProtocol()
+}
+public System.ServiceModel.NetTcpContextBinding : NetTcpBinding {
+public Uri ClientCallbackAddress
+public bool ContextManagementEnabled
+public ProtectionLevel ContextProtectionLevel
+public void .ctor(SecurityMode securityMode)
+public void .ctor(SecurityMode securityMode, bool reliableSessionEnabled)
+public void .ctor(string configName)
+public Uri get_ClientCallbackAddress()
+public void set_ClientCallbackAddress(Uri value)
+public bool get_ContextManagementEnabled()
+public void set_ContextManagementEnabled(bool value)
+public ProtectionLevel get_ContextProtectionLevel()
+public void set_ContextProtectionLevel(ProtectionLevel value)
 }
 public System.ServiceModel.NetTcpSecurity : object {
 private MessageSecurityOverTcp message
@@ -15282,6 +16438,7 @@ public string SessionId
 public ServiceSecurityContext ServiceSecurityContext
 public ICollection`1<SupportingTokenSpecification> SupportingTokens
 internal Message IncomingMessage
+public ClaimsPrincipal ClaimsPrincipal
 public OperationContext get_Current()
 public void set_Current(OperationContext value)
 public void .ctor(IContextChannel channel)
@@ -15312,6 +16469,7 @@ public T GetCallbackChannel()
 public void SetTransactionComplete()
 internal Message get_IncomingMessage()
 internal void set_IncomingMessage(Message value)
+public ClaimsPrincipal get_ClaimsPrincipal()
 }
 public System.ServiceModel.OperationContextScope : object {
 private OperationContext previous
@@ -15373,6 +16531,20 @@ public bool Enabled
 public void .ctor(ReliableSessionBindingElement reliableSessionBindingElement)
 public bool get_Enabled()
 public void set_Enabled(bool value)
+}
+public System.ServiceModel.PeerHopCountAttribute : object {
+public string Actor
+public bool MustUnderstand
+public string Name
+public string Namespace
+public ProtectionLevel ProtectionLevel
+public bool Relay
+public string get_Actor()
+public bool get_MustUnderstand()
+public string get_Name()
+public string get_Namespace()
+public ProtectionLevel get_ProtectionLevel()
+public bool get_Relay()
 }
 public System.ServiceModel.PeerMessageOrigination : Enum {
 public int value__
@@ -15979,6 +17151,8 @@ public void set_Mode(SecurityMode value)
 public PeerTransportSecuritySettings get_Transport()
 private void set_Transport(PeerTransportSecuritySettings value)
 internal void CopyTo(PeerSecuritySettings other)
+public bool ShouldSerializeMode()
+public bool ShouldSerializeTransport()
 }
 public System.ServiceModel.PeerTransportCredentialType : Enum {
 public int value__
@@ -16017,6 +17191,15 @@ public System.ServiceModel.QuotaExceededException : SystemException {
 public void .ctor(string message)
 public void .ctor(string message, Exception innerException)
 protected void .ctor(SerializationInfo info, StreamingContext context)
+}
+public System.ServiceModel.ReceiveContextEnabledAttribute : Attribute {
+public bool ManualControl
+public bool get_ManualControl()
+public void set_ManualControl(bool value)
+public void AddBindingParameters(OperationDescription operationDescription, BindingParameterCollection bindingParameters)
+public void ApplyClientBehavior(OperationDescription operationDescription, ClientOperation clientOperation)
+public void ApplyDispatchBehavior(OperationDescription operationDescription, DispatchOperation dispatchOperation)
+public void Validate(OperationDescription operationDescription)
 }
 public System.ServiceModel.ReceiveErrorHandling : Enum {
 public int value__
@@ -16060,6 +17243,78 @@ public void .ctor(Claim identity)
 public void .ctor(string publicKey)
 public void .ctor(X509Certificate2 certificate)
 }
+public System.ServiceModel.Security.Basic128SecurityAlgorithmSuite : SecurityAlgorithmSuite {
+public string DefaultAsymmetricKeyWrapAlgorithm
+public string DefaultAsymmetricSignatureAlgorithm
+public string DefaultCanonicalizationAlgorithm
+public string DefaultDigestAlgorithm
+public string DefaultEncryptionAlgorithm
+public int DefaultEncryptionKeyDerivationLength
+public int DefaultSignatureKeyDerivationLength
+public int DefaultSymmetricKeyLength
+public string DefaultSymmetricKeyWrapAlgorithm
+public string DefaultSymmetricSignatureAlgorithm
+public string get_DefaultAsymmetricKeyWrapAlgorithm()
+public string get_DefaultAsymmetricSignatureAlgorithm()
+public string get_DefaultCanonicalizationAlgorithm()
+public string get_DefaultDigestAlgorithm()
+public string get_DefaultEncryptionAlgorithm()
+public int get_DefaultEncryptionKeyDerivationLength()
+public int get_DefaultSignatureKeyDerivationLength()
+public int get_DefaultSymmetricKeyLength()
+public string get_DefaultSymmetricKeyWrapAlgorithm()
+public string get_DefaultSymmetricSignatureAlgorithm()
+public bool IsAsymmetricKeyLengthSupported(int length)
+public bool IsSymmetricKeyLengthSupported(int length)
+}
+public System.ServiceModel.Security.Basic192SecurityAlgorithmSuite : SecurityAlgorithmSuite {
+public string DefaultAsymmetricKeyWrapAlgorithm
+public string DefaultAsymmetricSignatureAlgorithm
+public string DefaultCanonicalizationAlgorithm
+public string DefaultDigestAlgorithm
+public string DefaultEncryptionAlgorithm
+public int DefaultEncryptionKeyDerivationLength
+public int DefaultSignatureKeyDerivationLength
+public int DefaultSymmetricKeyLength
+public string DefaultSymmetricKeyWrapAlgorithm
+public string DefaultSymmetricSignatureAlgorithm
+public string get_DefaultAsymmetricKeyWrapAlgorithm()
+public string get_DefaultAsymmetricSignatureAlgorithm()
+public string get_DefaultCanonicalizationAlgorithm()
+public string get_DefaultDigestAlgorithm()
+public string get_DefaultEncryptionAlgorithm()
+public int get_DefaultEncryptionKeyDerivationLength()
+public int get_DefaultSignatureKeyDerivationLength()
+public int get_DefaultSymmetricKeyLength()
+public string get_DefaultSymmetricKeyWrapAlgorithm()
+public string get_DefaultSymmetricSignatureAlgorithm()
+public bool IsAsymmetricKeyLengthSupported(int length)
+public bool IsSymmetricKeyLengthSupported(int length)
+}
+public System.ServiceModel.Security.Basic256SecurityAlgorithmSuite : SecurityAlgorithmSuite {
+public string DefaultAsymmetricKeyWrapAlgorithm
+public string DefaultAsymmetricSignatureAlgorithm
+public string DefaultCanonicalizationAlgorithm
+public string DefaultDigestAlgorithm
+public string DefaultEncryptionAlgorithm
+public int DefaultEncryptionKeyDerivationLength
+public int DefaultSignatureKeyDerivationLength
+public int DefaultSymmetricKeyLength
+public string DefaultSymmetricKeyWrapAlgorithm
+public string DefaultSymmetricSignatureAlgorithm
+public string get_DefaultAsymmetricKeyWrapAlgorithm()
+public string get_DefaultAsymmetricSignatureAlgorithm()
+public string get_DefaultCanonicalizationAlgorithm()
+public string get_DefaultDigestAlgorithm()
+public string get_DefaultEncryptionAlgorithm()
+public int get_DefaultEncryptionKeyDerivationLength()
+public int get_DefaultSignatureKeyDerivationLength()
+public int get_DefaultSymmetricKeyLength()
+public string get_DefaultSymmetricKeyWrapAlgorithm()
+public string get_DefaultSymmetricSignatureAlgorithm()
+public bool IsAsymmetricKeyLengthSupported(int length)
+public bool IsSymmetricKeyLengthSupported(int length)
+}
 public System.ServiceModel.Security.BasicSecurityProfileVersion : object {
 private BasicSecurityProfileVersion impl
 public BasicSecurityProfileVersion BasicSecurityProfile10
@@ -16102,6 +17357,29 @@ public string ToString()
 protected internal Byte[] DecodeSecurityState(Byte[] data)
 protected internal Byte[] EncodeSecurityState(Byte[] data)
 }
+public System.ServiceModel.Security.DispatchContext : object {
+public ClaimsPrincipal Principal
+public string RequestAction
+public WSTrustMessage RequestMessage
+public string ResponseAction
+public RequestSecurityTokenResponse ResponseMessage
+public SecurityTokenService SecurityTokenService
+public string TrustNamespace
+public ClaimsPrincipal get_Principal()
+public void set_Principal(ClaimsPrincipal value)
+public string get_RequestAction()
+public void set_RequestAction(string value)
+public WSTrustMessage get_RequestMessage()
+public void set_RequestMessage(WSTrustMessage value)
+public string get_ResponseAction()
+public void set_ResponseAction(string value)
+public RequestSecurityTokenResponse get_ResponseMessage()
+public void set_ResponseMessage(RequestSecurityTokenResponse value)
+public SecurityTokenService get_SecurityTokenService()
+public void set_SecurityTokenService(SecurityTokenService value)
+public string get_TrustNamespace()
+public void set_TrustNamespace(string value)
+}
 public System.ServiceModel.Security.ExpiredSecurityTokenException : MessageSecurityException {
 public void .ctor(string message)
 public void .ctor(string message, Exception innerException)
@@ -16126,6 +17404,15 @@ public bool TryGetIdentity(EndpointAddress reference, EndpointIdentity& identity
 }
 public System.ServiceModel.Security.IEndpointIdentityProvider {
 public EndpointIdentity GetIdentityOfSelf(SecurityTokenRequirement tokenRequirement)
+}
+public System.ServiceModel.Security.ImpersonateOnSerializingReplyMessageProperty : object {
+public string Name
+public string get_Name()
+public IMessageProperty CreateCopy()
+public void StartImpersonation(IDisposable& impersonationContext, IPrincipal& originalPrincipal, Boolean& isThreadPrincipalSet)
+public void StopImpersonation(IDisposable impersonationContext, IPrincipal originalPrincipal, bool isThreadPrincipalSet)
+public bool TryGet(Message message, ImpersonateOnSerializingReplyMessageProperty& property)
+public bool TryGet(MessageProperties properties, ImpersonateOnSerializingReplyMessageProperty& property)
 }
 public System.ServiceModel.Security.InfocardInteractiveChannelInitializer : object {
 private Binding binding
@@ -16215,6 +17502,91 @@ public void set_SamlSerializer(SamlSerializer value)
 public StoreLocation get_TrustedStoreLocation()
 public void set_TrustedStoreLocation(StoreLocation value)
 }
+public System.ServiceModel.Security.IWSTrust13AsyncContract {
+public IAsyncResult BeginTrust13Cancel(Message request, AsyncCallback callback, object state)
+public IAsyncResult BeginTrust13CancelResponse(Message request, AsyncCallback callback, object state)
+public IAsyncResult BeginTrust13Issue(Message request, AsyncCallback callback, object state)
+public IAsyncResult BeginTrust13IssueResponse(Message request, AsyncCallback callback, object state)
+public IAsyncResult BeginTrust13Renew(Message request, AsyncCallback callback, object state)
+public IAsyncResult BeginTrust13RenewResponse(Message request, AsyncCallback callback, object state)
+public IAsyncResult BeginTrust13Validate(Message request, AsyncCallback callback, object state)
+public IAsyncResult BeginTrust13ValidateResponse(Message request, AsyncCallback callback, object state)
+public Message EndTrust13Cancel(IAsyncResult ar)
+public Message EndTrust13CancelResponse(IAsyncResult ar)
+public Message EndTrust13Issue(IAsyncResult ar)
+public Message EndTrust13IssueResponse(IAsyncResult ar)
+public Message EndTrust13Renew(IAsyncResult ar)
+public Message EndTrust13RenewResponse(IAsyncResult ar)
+public Message EndTrust13Validate(IAsyncResult ar)
+public Message EndTrust13ValidateResponse(IAsyncResult ar)
+}
+public System.ServiceModel.Security.IWSTrust13SyncContract {
+public Message ProcessTrust13Cancel(Message message)
+public Message ProcessTrust13CancelResponse(Message message)
+public Message ProcessTrust13Issue(Message message)
+public Message ProcessTrust13IssueResponse(Message message)
+public Message ProcessTrust13Renew(Message message)
+public Message ProcessTrust13RenewResponse(Message message)
+public Message ProcessTrust13Validate(Message message)
+public Message ProcessTrust13ValidateResponse(Message message)
+}
+public System.ServiceModel.Security.IWSTrustChannelContract {
+public IAsyncResult BeginCancel(RequestSecurityToken request, AsyncCallback callback, object state)
+public IAsyncResult BeginIssue(RequestSecurityToken request, AsyncCallback callback, object asyncState)
+public IAsyncResult BeginRenew(RequestSecurityToken request, AsyncCallback callback, object state)
+public IAsyncResult BeginValidate(RequestSecurityToken request, AsyncCallback callback, object state)
+public RequestSecurityTokenResponse Cancel(RequestSecurityToken request)
+public void EndCancel(IAsyncResult result, RequestSecurityTokenResponse& response)
+public SecurityToken EndIssue(IAsyncResult result, RequestSecurityTokenResponse& response)
+public void EndRenew(IAsyncResult result, RequestSecurityTokenResponse& response)
+public void EndValidate(IAsyncResult result, RequestSecurityTokenResponse& response)
+public SecurityToken Issue(RequestSecurityToken request)
+public SecurityToken Issue(RequestSecurityToken request, RequestSecurityTokenResponse& response)
+public RequestSecurityTokenResponse Renew(RequestSecurityToken request)
+public RequestSecurityTokenResponse Validate(RequestSecurityToken request)
+}
+public System.ServiceModel.Security.IWSTrustContract {
+public IAsyncResult BeginCancel(Message message, AsyncCallback callback, object asyncState)
+public IAsyncResult BeginIssue(Message message, AsyncCallback callback, object asyncState)
+public IAsyncResult BeginRenew(Message message, AsyncCallback callback, object asyncState)
+public IAsyncResult BeginValidate(Message message, AsyncCallback callback, object asyncState)
+public Message Cancel(Message message)
+public Message EndCancel(IAsyncResult asyncResult)
+public Message EndIssue(IAsyncResult asyncResult)
+public Message EndRenew(IAsyncResult asyncResult)
+public Message EndValidate(IAsyncResult asyncResult)
+public Message Issue(Message message)
+public Message Renew(Message message)
+public Message Validate(Message message)
+}
+public System.ServiceModel.Security.IWSTrustFeb2005AsyncContract {
+public IAsyncResult BeginTrustFeb2005Cancel(Message request, AsyncCallback callback, object state)
+public IAsyncResult BeginTrustFeb2005CancelResponse(Message request, AsyncCallback callback, object state)
+public IAsyncResult BeginTrustFeb2005Issue(Message request, AsyncCallback callback, object state)
+public IAsyncResult BeginTrustFeb2005IssueResponse(Message request, AsyncCallback callback, object state)
+public IAsyncResult BeginTrustFeb2005Renew(Message request, AsyncCallback callback, object state)
+public IAsyncResult BeginTrustFeb2005RenewResponse(Message request, AsyncCallback callback, object state)
+public IAsyncResult BeginTrustFeb2005Validate(Message request, AsyncCallback callback, object state)
+public IAsyncResult BeginTrustFeb2005ValidateResponse(Message request, AsyncCallback callback, object state)
+public Message EndTrustFeb2005Cancel(IAsyncResult ar)
+public Message EndTrustFeb2005CancelResponse(IAsyncResult ar)
+public Message EndTrustFeb2005Issue(IAsyncResult ar)
+public Message EndTrustFeb2005IssueResponse(IAsyncResult ar)
+public Message EndTrustFeb2005Renew(IAsyncResult ar)
+public Message EndTrustFeb2005RenewResponse(IAsyncResult ar)
+public Message EndTrustFeb2005Validate(IAsyncResult ar)
+public Message EndTrustFeb2005ValidateResponse(IAsyncResult ar)
+}
+public System.ServiceModel.Security.IWSTrustFeb2005SyncContract {
+public Message ProcessTrustFeb2005Cancel(Message message)
+public Message ProcessTrustFeb2005CancelResponse(Message message)
+public Message ProcessTrustFeb2005Issue(Message message)
+public Message ProcessTrustFeb2005IssueResponse(Message message)
+public Message ProcessTrustFeb2005Renew(Message message)
+public Message ProcessTrustFeb2005RenewResponse(Message message)
+public Message ProcessTrustFeb2005Validate(Message message)
+public Message ProcessTrustFeb2005ValidateResponse(Message message)
+}
 public System.ServiceModel.Security.MessagePartSpecification : object {
 private XmlQualifiedName[] empty
 private MessagePartSpecification no_parts
@@ -16247,6 +17619,16 @@ public void .ctor(string message)
 public void .ctor(string message, Exception innerException)
 protected void .ctor(SerializationInfo info, StreamingContext context)
 public void GetObjectData(SerializationInfo info, StreamingContext ctx)
+}
+public System.ServiceModel.Security.NonceCache : object {
+public int CacheSize
+public TimeSpan CachingTimeSpan
+public int get_CacheSize()
+public void set_CacheSize(int value)
+public TimeSpan get_CachingTimeSpan()
+public void set_CachingTimeSpan(TimeSpan value)
+public bool CheckNonce(Byte[] nonce)
+public bool TryAddNonce(Byte[] nonce)
 }
 public System.ServiceModel.Security.PeerCredential : object {
 private X509Certificate2 cert
@@ -16435,6 +17817,7 @@ public SecurityTokenSpecification RecipientToken
 public SecurityTokenSpecification TransportToken
 public string SenderIdPrefix
 public ServiceSecurityContext ServiceSecurityContext
+public Collection`1<SupportingTokenSpecification> OutgoingSupportingTokens
 public bool get_HasIncomingSupportingTokens()
 public ReadOnlyCollection`1<IAuthorizationPolicy> get_ExternalAuthorizationPolicies()
 public void set_ExternalAuthorizationPolicies(ReadOnlyCollection`1<IAuthorizationPolicy> value)
@@ -16454,6 +17837,7 @@ public void set_ServiceSecurityContext(ServiceSecurityContext value)
 public IMessageProperty CreateCopy()
 public void Dispose()
 public SecurityMessageProperty GetOrCreate(Message message)
+public Collection`1<SupportingTokenSpecification> get_OutgoingSupportingTokens()
 }
 public System.ServiceModel.Security.SecurityNegotiationException : CommunicationException {
 public void .ctor(string message)
@@ -16525,6 +17909,10 @@ private SecurityTokenProvider CreateSecureConversationProvider(SecurityTokenRequ
 private IssuedSecurityTokenProvider CreateIssuedTokenProvider(SecurityTokenRequirement requirement)
 public SecurityTokenSerializer CreateSecurityTokenSerializer(SecurityTokenVersion version)
 protected internal bool IsIssuedSecurityTokenRequirement(SecurityTokenRequirement requirement)
+}
+public System.ServiceModel.Security.SimpleSecurityTokenProvider : SecurityTokenProvider {
+public void .ctor(SecurityToken token, SecurityTokenRequirement tokenRequirement)
+protected SecurityToken GetTokenCore(TimeSpan timeout)
 }
 internal System.ServiceModel.Security.SpnegoCommunicationObject : ProviderCommunicationObject {
 private SpnegoSecurityTokenProvider owner
@@ -16611,6 +17999,7 @@ private SecurityTokenAttachmentMode mode
 public SecurityTokenAttachmentMode SecurityTokenAttachmentMode
 public void .ctor(SecurityToken token, ReadOnlyCollection`1<IAuthorizationPolicy> tokenPolicies, SecurityTokenAttachmentMode attachmentMode)
 public SecurityTokenAttachmentMode get_SecurityTokenAttachmentMode()
+public void .ctor(SecurityToken token, ReadOnlyCollection`1<IAuthorizationPolicy> tokenPolicies, SecurityTokenAttachmentMode attachmentMode, SecurityTokenParameters tokenParameters)
 }
 internal System.ServiceModel.Security.Tokens.AuthenticatorCommunicationObject : CommunicationObject {
 private Binding issuer_binding
@@ -16769,6 +18158,10 @@ public void set_IssuedSecurityTokenHandler(IssuedSecurityTokenHandler value)
 public RenewedSecurityTokenHandler get_RenewedSecurityTokenHandler()
 public void set_RenewedSecurityTokenHandler(RenewedSecurityTokenHandler value)
 }
+public System.ServiceModel.Security.Tokens.ILogonTokenCacheManager {
+public void FlushLogonTokenCache()
+public bool RemoveCachedLogonToken(string username)
+}
 public System.ServiceModel.Security.Tokens.InitiatorServiceModelSecurityTokenRequirement : ServiceModelSecurityTokenRequirement {
 public EndpointAddress TargetAddress
 public Uri Via
@@ -16815,6 +18208,8 @@ public string TokenType
 protected bool SupportsClientAuthentication
 protected bool SupportsClientWindowsIdentity
 protected bool SupportsServerAuthentication
+public MessageSecurityVersion DefaultMessageSecurityVersion
+public bool UseStrTransform
 public void .ctor(string tokenType)
 public void .ctor(string tokenType, EndpointAddress issuerAddress)
 public void .ctor(string tokenType, EndpointAddress issuerAddress, Binding issuerBinding)
@@ -16842,6 +18237,10 @@ protected SecurityTokenParameters CloneCore()
 protected SecurityKeyIdentifierClause CreateKeyIdentifierClause(SecurityToken token, SecurityTokenReferenceStyle referenceStyle)
 public Collection`1<XmlElement> CreateRequestParameters(MessageSecurityVersion messageSecurityVersion, SecurityTokenSerializer securityTokenSerializer)
 protected internal void InitializeSecurityTokenRequirement(SecurityTokenRequirement requirement)
+public MessageSecurityVersion get_DefaultMessageSecurityVersion()
+public void set_DefaultMessageSecurityVersion(MessageSecurityVersion value)
+public bool get_UseStrTransform()
+public void set_UseStrTransform(bool value)
 }
 public System.ServiceModel.Security.Tokens.IssuedSecurityTokenProvider : SecurityTokenProvider {
 private IssuedTokenCommunicationObject comm
@@ -17040,6 +18439,7 @@ protected bool HasAsymmetricKey
 protected bool SupportsClientAuthentication
 protected bool SupportsClientWindowsIdentity
 protected bool SupportsServerAuthentication
+public bool CanRenewSession
 public void .ctor(SecurityBindingElement bootstrapSecurityBindingElement)
 public void .ctor(SecurityBindingElement bootstrapSecurityBindingElement, bool requireCancellation)
 public void .ctor(SecurityBindingElement bootstrapSecurityBindingElement, bool requireCancellation, ChannelProtectionRequirements bootstrapProtectionRequirements)
@@ -17057,6 +18457,9 @@ protected SecurityTokenParameters CloneCore()
 protected SecurityKeyIdentifierClause CreateKeyIdentifierClause(SecurityToken token, SecurityTokenReferenceStyle referenceStyle)
 protected internal void InitializeSecurityTokenRequirement(SecurityTokenRequirement requirement)
 public string ToString()
+public void .ctor(SecurityBindingElement bootstrapSecurityBindingElement, bool requireCancellation, bool canRenewSession, ChannelProtectionRequirements bootstrapProtectionRequirements)
+public bool get_CanRenewSession()
+public void set_CanRenewSession(bool value)
 }
 public System.ServiceModel.Security.Tokens.SecurityContextSecurityToken : SecurityToken {
 private string id
@@ -17080,6 +18483,8 @@ public DateTime ValidTo
 public string Id
 public ReadOnlyCollection`1<SecurityKey> SecurityKeys
 internal Byte[] Cookie
+public SecurityMessageProperty BootstrapMessageProperty
+public bool IsCookieMode
 public SecurityContextSecurityToken CreateCookieSecurityContextToken(UniqueId contextId, string id, Byte[] key, DateTime validFrom, DateTime validTo, ReadOnlyCollection`1<IAuthorizationPolicy> authorizationPolicies, SecurityStateEncoder securityStateEncoder)
 public SecurityContextSecurityToken CreateCookieSecurityContextToken(UniqueId contextId, string id, Byte[] key, DateTime validFrom, DateTime validTo, UniqueId keyGeneration, DateTime keyEffectiveTime, DateTime keyExpirationTime, ReadOnlyCollection`1<IAuthorizationPolicy> authorizationPolicies, SecurityStateEncoder securityStateEncoder)
 public void .ctor(UniqueId contextId, Byte[] key, DateTime validFrom, DateTime validTo)
@@ -17101,6 +18506,10 @@ public bool CanCreateKeyIdentifierClause()
 public T CreateKeyIdentifierClause()
 public bool MatchesKeyIdentifierClause(SecurityKeyIdentifierClause keyIdentifierClause)
 public string ToString()
+public SecurityMessageProperty get_BootstrapMessageProperty()
+public void set_BootstrapMessageProperty(SecurityMessageProperty value)
+public bool get_IsCookieMode()
+public void Dispose()
 }
 public System.ServiceModel.Security.Tokens.SecurityContextSecurityTokenAuthenticator : SecurityTokenAuthenticator {
 protected bool CanValidateTokenCore(SecurityToken token)
@@ -17112,6 +18521,7 @@ private bool allow_removal
 private Dictionary`2<UniqueId, Dictionary`2<UniqueId, SecurityContextSecurityToken>> cache
 public bool RemoveOldestTokensOnCacheFull
 public int SecurityContextTokenCacheCapacity
+public TimeSpan ClockSkew
 public void .ctor(int securityContextCacheCapacity, bool removeOldestTokensOnCacheFull)
 public bool get_RemoveOldestTokensOnCacheFull()
 public int get_SecurityContextTokenCacheCapacity()
@@ -17126,6 +18536,8 @@ public void UpdateContextCachingTime(SecurityContextSecurityToken context, DateT
 protected bool TryResolveSecurityKeyCore(SecurityKeyIdentifierClause keyIdentifierClause, SecurityKey& key)
 protected bool TryResolveTokenCore(SecurityKeyIdentifier keyIdentifier, SecurityToken& token)
 protected bool TryResolveTokenCore(SecurityKeyIdentifierClause keyIdentifierClause, SecurityToken& token)
+public void .ctor(int securityContextCacheCapacity, bool removeOldestTokensOnCacheFull, TimeSpan clockSkew)
+public TimeSpan get_ClockSkew()
 }
 public System.ServiceModel.Security.Tokens.SecurityTokenInclusionMode : Enum {
 public int value__
@@ -17218,6 +18630,7 @@ public SecurityBindingElement SecureConversationSecurityBindingElement
 public SecurityAlgorithmSuite SecurityAlgorithmSuite
 public SecurityBindingElement SecurityBindingElement
 public string TransportScheme
+public string PreferSslCertificateAuthenticatorProperty
 public string get_AuditLogLocationProperty()
 public string get_ChannelParametersCollectionProperty()
 public string get_DuplexClientLocalAddressProperty()
@@ -17261,6 +18674,7 @@ public void set_SecurityBindingElement(SecurityBindingElement value)
 public string get_TransportScheme()
 public void set_TransportScheme(string value)
 internal string Dump()
+public string get_PreferSslCertificateAuthenticatorProperty()
 }
 public System.ServiceModel.Security.Tokens.ServiceModelSecurityTokenTypes : object {
 public string AnonymousSslnego
@@ -17419,12 +18833,22 @@ public DateTime ValidFrom
 public DateTime ValidTo
 public string Id
 public ReadOnlyCollection`1<SecurityKey> SecurityKeys
+public bool AllowNtlm
+public bool AllowUnauthenticatedCallers
+public bool ExtractGroupsForWindowsAccounts
+public TokenImpersonationLevel ImpersonationLevel
+public NetworkCredential NetworkCredential
 public void .ctor(NetworkCredential networkCredential, bool extractGroupsForWindowsAccounts, bool allowUnauthenticatedCallers)
 public void .ctor(TokenImpersonationLevel impersonationLevel, bool allowNtlm, NetworkCredential networkCredential)
 public DateTime get_ValidFrom()
 public DateTime get_ValidTo()
 public string get_Id()
 public ReadOnlyCollection`1<SecurityKey> get_SecurityKeys()
+public bool get_AllowNtlm()
+public bool get_AllowUnauthenticatedCallers()
+public bool get_ExtractGroupsForWindowsAccounts()
+public TokenImpersonationLevel get_ImpersonationLevel()
+public NetworkCredential get_NetworkCredential()
 }
 public System.ServiceModel.Security.Tokens.SspiSecurityTokenParameters : SecurityTokenParameters {
 private bool cancel
@@ -17569,6 +18993,30 @@ protected SecurityTokenParameters CloneCore()
 protected SecurityKeyIdentifierClause CreateKeyIdentifierClause(SecurityToken token, SecurityTokenReferenceStyle referenceStyle)
 protected internal void InitializeSecurityTokenRequirement(SecurityTokenRequirement requirement)
 public string ToString()
+}
+public System.ServiceModel.Security.TripleDesSecurityAlgorithmSuite : SecurityAlgorithmSuite {
+public string DefaultAsymmetricKeyWrapAlgorithm
+public string DefaultAsymmetricSignatureAlgorithm
+public string DefaultCanonicalizationAlgorithm
+public string DefaultDigestAlgorithm
+public string DefaultEncryptionAlgorithm
+public int DefaultEncryptionKeyDerivationLength
+public int DefaultSignatureKeyDerivationLength
+public int DefaultSymmetricKeyLength
+public string DefaultSymmetricKeyWrapAlgorithm
+public string DefaultSymmetricSignatureAlgorithm
+public string get_DefaultAsymmetricKeyWrapAlgorithm()
+public string get_DefaultAsymmetricSignatureAlgorithm()
+public string get_DefaultCanonicalizationAlgorithm()
+public string get_DefaultDigestAlgorithm()
+public string get_DefaultEncryptionAlgorithm()
+public int get_DefaultEncryptionKeyDerivationLength()
+public int get_DefaultSignatureKeyDerivationLength()
+public int get_DefaultSymmetricKeyLength()
+public string get_DefaultSymmetricKeyWrapAlgorithm()
+public string get_DefaultSymmetricSignatureAlgorithm()
+public bool IsAsymmetricKeyLengthSupported(int length)
+public bool IsSymmetricKeyLengthSupported(int length)
 }
 public System.ServiceModel.Security.TrustVersion : object {
 private TrustVersion <Default>k__BackingField
@@ -17736,6 +19184,186 @@ private void WriteBinarySecretSecurityToken(XmlWriter w, BinarySecretSecurityTok
 private void WriteDerivedKeySecurityToken(XmlWriter w, DerivedKeySecurityToken token)
 private void WriteWrappedKeySecurityToken(XmlWriter w, WrappedKeySecurityToken token)
 private void WriteSecurityContextSecurityToken(XmlWriter w, SecurityContextSecurityToken token)
+public void .ctor(SecurityVersion securityVersion, TrustVersion trustVersion, SecureConversationVersion secureConversationVersion, bool emitBspRequiredAttributes, SamlSerializer samlSerializer, SecurityStateEncoder securityStateEncoder, IEnumerable`1<Type> knownTypes)
+public void .ctor(SecurityVersion securityVersion, TrustVersion trustVersion, SecureConversationVersion secureConversationVersion, bool emitBspRequiredAttributes, SamlSerializer samlSerializer, SecurityStateEncoder securityStateEncoder, IEnumerable`1<Type> knownTypes, int maximumKeyDerivationOffset, int maximumKeyDerivationLabelLength, int maximumKeyDerivationNonceLength)
+public bool TryCreateKeyIdentifierClauseFromTokenXml(XmlElement element, SecurityTokenReferenceStyle tokenReferenceStyle, SecurityKeyIdentifierClause& securityKeyIdentifierClause)
+}
+public System.ServiceModel.Security.WSTrustChannel : object {
+public IChannel Channel
+public WSTrustChannelFactory ChannelFactory
+public IWSTrustChannelContract Contract
+public CommunicationState State
+public TrustVersion TrustVersion
+public WSTrustRequestSerializer WSTrustRequestSerializer
+public WSTrustResponseSerializer WSTrustResponseSerializer
+public WSTrustSerializationContext WSTrustSerializationContext
+public void .ctor(WSTrustChannelFactory factory, IWSTrustChannelContract inner, TrustVersion trustVersion, WSTrustSerializationContext context, WSTrustRequestSerializer requestSerializer, WSTrustResponseSerializer responseSerializer)
+public IChannel get_Channel()
+public WSTrustChannelFactory get_ChannelFactory()
+public IWSTrustChannelContract get_Contract()
+public CommunicationState get_State()
+public TrustVersion get_TrustVersion()
+public WSTrustRequestSerializer get_WSTrustRequestSerializer()
+public WSTrustResponseSerializer get_WSTrustResponseSerializer()
+public WSTrustSerializationContext get_WSTrustSerializationContext()
+public void add_Closed(EventHandler value)
+public void remove_Closed(EventHandler value)
+public void add_Closing(EventHandler value)
+public void remove_Closing(EventHandler value)
+public void add_Faulted(EventHandler value)
+public void remove_Faulted(EventHandler value)
+public void add_Opened(EventHandler value)
+public void remove_Opened(EventHandler value)
+public void add_Opening(EventHandler value)
+public void remove_Opening(EventHandler value)
+public void Abort()
+public IAsyncResult BeginCancel(RequestSecurityToken rst, AsyncCallback callback, object state)
+public IAsyncResult BeginCancel(Message message, AsyncCallback callback, object asyncState)
+public IAsyncResult BeginClose(AsyncCallback callback, object state)
+public IAsyncResult BeginClose(TimeSpan timeout, AsyncCallback callback, object state)
+public IAsyncResult BeginIssue(RequestSecurityToken rst, AsyncCallback callback, object asyncState)
+public IAsyncResult BeginIssue(Message message, AsyncCallback callback, object asyncState)
+public IAsyncResult BeginOpen(AsyncCallback callback, object state)
+public IAsyncResult BeginOpen(TimeSpan timeout, AsyncCallback callback, object state)
+public IAsyncResult BeginRenew(RequestSecurityToken rst, AsyncCallback callback, object state)
+public IAsyncResult BeginRenew(Message message, AsyncCallback callback, object asyncState)
+public IAsyncResult BeginValidate(RequestSecurityToken rst, AsyncCallback callback, object state)
+public IAsyncResult BeginValidate(Message message, AsyncCallback callback, object asyncState)
+public RequestSecurityTokenResponse Cancel(RequestSecurityToken rst)
+public Message Cancel(Message message)
+public void Close()
+public void Close(TimeSpan timeout)
+public Message EndCancel(IAsyncResult asyncResult)
+public void EndCancel(IAsyncResult result, RequestSecurityTokenResponse& rstr)
+public void EndClose(IAsyncResult result)
+public Message EndIssue(IAsyncResult asyncResult)
+public SecurityToken EndIssue(IAsyncResult result, RequestSecurityTokenResponse& rstr)
+public void EndOpen(IAsyncResult result)
+public Message EndRenew(IAsyncResult asyncResult)
+public void EndRenew(IAsyncResult result, RequestSecurityTokenResponse& rstr)
+public Message EndValidate(IAsyncResult asyncResult)
+public void EndValidate(IAsyncResult result, RequestSecurityTokenResponse& rstr)
+public T GetProperty()
+public SecurityToken GetTokenFromResponse(RequestSecurityToken request, RequestSecurityTokenResponse response)
+public SecurityToken Issue(RequestSecurityToken rst)
+public SecurityToken Issue(RequestSecurityToken rst, RequestSecurityTokenResponse& rstr)
+public Message Issue(Message message)
+public void Open()
+public void Open(TimeSpan timeout)
+public RequestSecurityTokenResponse Renew(RequestSecurityToken rst)
+public Message Renew(Message message)
+public RequestSecurityTokenResponse Validate(RequestSecurityToken rst)
+public Message Validate(Message message)
+}
+public System.ServiceModel.Security.WSTrustChannelFactory : ChannelFactory`1<IWSTrustChannelContract> {
+public SecurityTokenHandlerCollectionManager SecurityTokenHandlerCollectionManager
+public SecurityTokenResolver SecurityTokenResolver
+public TrustVersion TrustVersion
+public SecurityTokenResolver UseKeyTokenResolver
+public WSTrustRequestSerializer WSTrustRequestSerializer
+public WSTrustResponseSerializer WSTrustResponseSerializer
+public void .ctor(Binding binding)
+public void .ctor(Binding binding, EndpointAddress remoteAddress)
+public void .ctor(Binding binding, string remoteAddress)
+public void .ctor(ServiceEndpoint endpoint)
+public void .ctor(string endpointConfigurationName)
+public void .ctor(string endpointConfigurationName, EndpointAddress remoteAddress)
+public SecurityTokenHandlerCollectionManager get_SecurityTokenHandlerCollectionManager()
+public void set_SecurityTokenHandlerCollectionManager(SecurityTokenHandlerCollectionManager value)
+public SecurityTokenResolver get_SecurityTokenResolver()
+public void set_SecurityTokenResolver(SecurityTokenResolver value)
+public TrustVersion get_TrustVersion()
+public void set_TrustVersion(TrustVersion value)
+public SecurityTokenResolver get_UseKeyTokenResolver()
+public void set_UseKeyTokenResolver(SecurityTokenResolver value)
+public WSTrustRequestSerializer get_WSTrustRequestSerializer()
+public void set_WSTrustRequestSerializer(WSTrustRequestSerializer value)
+public WSTrustResponseSerializer get_WSTrustResponseSerializer()
+public void set_WSTrustResponseSerializer(WSTrustResponseSerializer value)
+}
+public System.ServiceModel.Security.WSTrustRequestBodyWriter : BodyWriter {
+public void .ctor(RequestSecurityToken requestSecurityToken, WSTrustRequestSerializer serializer, WSTrustSerializationContext serializationContext)
+protected void OnWriteBodyContents(XmlDictionaryWriter writer)
+}
+public System.ServiceModel.Security.WSTrustRequestProcessingErrorEventArgs : EventArgs {
+public Exception Exception
+public string RequestType
+public void .ctor(string requestType, Exception exception)
+public Exception get_Exception()
+public string get_RequestType()
+}
+public System.ServiceModel.Security.WSTrustResponseBodyWriter : BodyWriter {
+public void .ctor(RequestSecurityTokenResponse requestSecurityTokenResponse, WSTrustResponseSerializer serializer, WSTrustSerializationContext context)
+protected void OnWriteBodyContents(XmlDictionaryWriter writer)
+}
+public System.ServiceModel.Security.WSTrustServiceContract : object {
+public SecurityTokenServiceConfiguration SecurityTokenServiceConfiguration
+public void .ctor(SecurityTokenServiceConfiguration securityTokenServiceConfiguration)
+public SecurityTokenServiceConfiguration get_SecurityTokenServiceConfiguration()
+public void add_RequestFailed(EventHandler`1<WSTrustRequestProcessingErrorEventArgs> value)
+public void remove_RequestFailed(EventHandler`1<WSTrustRequestProcessingErrorEventArgs> value)
+public void AddBindingParameters(ContractDescription contractDescription, ServiceEndpoint endpoint, BindingParameterCollection bindingParameters)
+public void ApplyClientBehavior(ContractDescription contractDescription, ServiceEndpoint endpoint, ClientRuntime clientRuntime)
+public void ApplyDispatchBehavior(ContractDescription contractDescription, ServiceEndpoint endpoint, DispatchRuntime dispatchRuntime)
+public IAsyncResult BeginTrust13Cancel(Message request, AsyncCallback callback, object state)
+public IAsyncResult BeginTrust13CancelResponse(Message request, AsyncCallback callback, object state)
+public IAsyncResult BeginTrust13Issue(Message request, AsyncCallback callback, object state)
+public IAsyncResult BeginTrust13IssueResponse(Message request, AsyncCallback callback, object state)
+public IAsyncResult BeginTrust13Renew(Message request, AsyncCallback callback, object state)
+public IAsyncResult BeginTrust13RenewResponse(Message request, AsyncCallback callback, object state)
+public IAsyncResult BeginTrust13Validate(Message request, AsyncCallback callback, object state)
+public IAsyncResult BeginTrust13ValidateResponse(Message request, AsyncCallback callback, object state)
+public IAsyncResult BeginTrustFeb2005Cancel(Message request, AsyncCallback callback, object state)
+public IAsyncResult BeginTrustFeb2005CancelResponse(Message request, AsyncCallback callback, object state)
+public IAsyncResult BeginTrustFeb2005Issue(Message request, AsyncCallback callback, object state)
+public IAsyncResult BeginTrustFeb2005IssueResponse(Message request, AsyncCallback callback, object state)
+public IAsyncResult BeginTrustFeb2005Renew(Message request, AsyncCallback callback, object state)
+public IAsyncResult BeginTrustFeb2005RenewResponse(Message request, AsyncCallback callback, object state)
+public IAsyncResult BeginTrustFeb2005Validate(Message request, AsyncCallback callback, object state)
+public IAsyncResult BeginTrustFeb2005ValidateResponse(Message request, AsyncCallback callback, object state)
+public Message EndTrust13Cancel(IAsyncResult ar)
+public Message EndTrust13CancelResponse(IAsyncResult ar)
+public Message EndTrust13Issue(IAsyncResult ar)
+public Message EndTrust13IssueResponse(IAsyncResult ar)
+public Message EndTrust13Renew(IAsyncResult ar)
+public Message EndTrust13RenewResponse(IAsyncResult ar)
+public Message EndTrust13Validate(IAsyncResult ar)
+public Message EndTrust13ValidateResponse(IAsyncResult ar)
+public Message EndTrustFeb2005Cancel(IAsyncResult ar)
+public Message EndTrustFeb2005CancelResponse(IAsyncResult ar)
+public Message EndTrustFeb2005Issue(IAsyncResult ar)
+public Message EndTrustFeb2005IssueResponse(IAsyncResult ar)
+public Message EndTrustFeb2005Renew(IAsyncResult ar)
+public Message EndTrustFeb2005RenewResponse(IAsyncResult ar)
+public Message EndTrustFeb2005Validate(IAsyncResult ar)
+public Message EndTrustFeb2005ValidateResponse(IAsyncResult ar)
+public void ExportContract(WsdlExporter exporter, WsdlContractConversionContext context)
+public void ExportEndpoint(WsdlExporter exporter, WsdlEndpointConversionContext context)
+public Message ProcessTrust13Cancel(Message message)
+public Message ProcessTrust13CancelResponse(Message message)
+public Message ProcessTrust13Issue(Message message)
+public Message ProcessTrust13IssueResponse(Message message)
+public Message ProcessTrust13Renew(Message message)
+public Message ProcessTrust13RenewResponse(Message message)
+public Message ProcessTrust13Validate(Message message)
+public Message ProcessTrust13ValidateResponse(Message message)
+public Message ProcessTrustFeb2005Cancel(Message message)
+public Message ProcessTrustFeb2005CancelResponse(Message message)
+public Message ProcessTrustFeb2005Issue(Message message)
+public Message ProcessTrustFeb2005IssueResponse(Message message)
+public Message ProcessTrustFeb2005Renew(Message message)
+public Message ProcessTrustFeb2005RenewResponse(Message message)
+public Message ProcessTrustFeb2005Validate(Message message)
+public Message ProcessTrustFeb2005ValidateResponse(Message message)
+public void Validate(ContractDescription contractDescription, ServiceEndpoint endpoint)
+}
+public System.ServiceModel.Security.WSTrustServiceHost : ServiceHost {
+public SecurityTokenServiceConfiguration SecurityTokenServiceConfiguration
+public WSTrustServiceContract ServiceContract
+public void .ctor(SecurityTokenServiceConfiguration securityTokenServiceConfiguration, Uri[] baseAddresses)
+public void .ctor(WSTrustServiceContract serviceContract, Uri[] baseAddresses)
+public SecurityTokenServiceConfiguration get_SecurityTokenServiceConfiguration()
+public WSTrustServiceContract get_ServiceContract()
 }
 public System.ServiceModel.Security.X509CertificateInitiatorClientCredential : object {
 private X509Certificate2 certificate
@@ -17873,6 +19501,9 @@ public void .ctor(string message)
 public void .ctor(string message, Exception innerException)
 protected void .ctor(SerializationInfo info, StreamingContext context)
 }
+public System.ServiceModel.ServiceAuthenticationManager : object {
+public ReadOnlyCollection`1<IAuthorizationPolicy> Authenticate(ReadOnlyCollection`1<IAuthorizationPolicy> authPolicy, Uri listenUri, Message& message)
+}
 public System.ServiceModel.ServiceAuthorizationManager : object {
 public bool CheckAccess(OperationContext operationContext)
 public bool CheckAccess(OperationContext operationContext, Message& message)
@@ -17913,6 +19544,7 @@ public IsolationLevel TransactionIsolationLevel
 public bool TransactionAutoCompleteOnSessionClose
 public string TransactionTimeout
 public bool ValidateMustUnderstand
+public bool EnsureOrderedDispatch
 public string get_Name()
 public void set_Name(string value)
 public string get_Namespace()
@@ -17952,6 +19584,46 @@ private void System.ServiceModel.Description.IServiceBehavior.ApplyDispatchBehav
 private InstanceContext CreateSingletonInstanceContext(ServiceHostBase host)
 private IInstanceContextProvider CreateInstanceContextProvider(ServiceHostBase host, DispatchRuntime runtime)
 private void System.ServiceModel.Description.IServiceBehavior.Validate(ServiceDescription description, ServiceHostBase serviceHostBase)
+public bool get_EnsureOrderedDispatch()
+public void set_EnsureOrderedDispatch(bool value)
+public bool ShouldSerializeConfigurationName()
+public bool ShouldSerializeReleaseServiceInstanceOnTransactionComplete()
+public bool ShouldSerializeTransactionAutoCompleteOnSessionClose()
+public bool ShouldSerializeTransactionIsolationLevel()
+public bool ShouldSerializeTransactionTimeout()
+}
+public System.ServiceModel.ServiceConfiguration : object {
+public ServiceAuthenticationBehavior Authentication
+public ServiceAuthorizationBehavior Authorization
+public ReadOnlyCollection`1<Uri> BaseAddresses
+public TimeSpan CloseTimeout
+public ServiceCredentials Credentials
+public ServiceDescription Description
+public IdentityConfiguration IdentityConfiguration
+public TimeSpan OpenTimeout
+public bool UseIdentityConfiguration
+public ServiceAuthenticationBehavior get_Authentication()
+public ServiceAuthorizationBehavior get_Authorization()
+public ReadOnlyCollection`1<Uri> get_BaseAddresses()
+public TimeSpan get_CloseTimeout()
+public void set_CloseTimeout(TimeSpan value)
+public ServiceCredentials get_Credentials()
+public ServiceDescription get_Description()
+public IdentityConfiguration get_IdentityConfiguration()
+public void set_IdentityConfiguration(IdentityConfiguration value)
+public TimeSpan get_OpenTimeout()
+public void set_OpenTimeout(TimeSpan value)
+public bool get_UseIdentityConfiguration()
+public void set_UseIdentityConfiguration(bool value)
+public void AddServiceEndpoint(ServiceEndpoint endpoint)
+public ServiceEndpoint AddServiceEndpoint(Type contractType, Binding binding, string address)
+public ServiceEndpoint AddServiceEndpoint(Type contractType, Binding binding, string address, Uri listenUri)
+public ServiceEndpoint AddServiceEndpoint(Type contractType, Binding binding, Uri address)
+public ServiceEndpoint AddServiceEndpoint(Type contractType, Binding binding, Uri address, Uri listenUri)
+public Collection`1<ServiceEndpoint> EnableProtocol(Binding protocol)
+public void LoadFromConfiguration()
+public void LoadFromConfiguration(Configuration configuration)
+public void SetEndpointAddress(ServiceEndpoint endpoint, string relativeAddress)
 }
 public System.ServiceModel.ServiceContractAttribute : Attribute {
 private Type callback_contract
@@ -18034,6 +19706,7 @@ protected internal TimeSpan DefaultOpenTimeout
 public TimeSpan CloseTimeout
 public TimeSpan OpenTimeout
 public int ManualFlowControlLimit
+public ServiceAuthenticationBehavior Authentication
 public void add_UnknownMessageReceived(EventHandler`1<UnknownMessageReceivedEventArgs> value)
 public void remove_UnknownMessageReceived(EventHandler`1<UnknownMessageReceivedEventArgs> value)
 internal void OnUnknownMessageReceived(Message message)
@@ -18085,6 +19758,10 @@ protected void OnOpened()
 protected void ReleasePerformanceCounters()
 private void System.IDisposable.Dispose()
 private bool <ValidateDescription>b__67_0(ServiceEndpoint e)
+public ServiceAuthenticationBehavior get_Authentication()
+public ReadOnlyCollection`1<ServiceEndpoint> AddDefaultEndpoints()
+public int IncrementManualFlowControlLimit(int incrementBy)
+public void SetEndpointAddress(ServiceEndpoint endpoint, string relativeAddress)
 }
 public System.ServiceModel.ServiceKnownTypeAttribute : Attribute {
 private string method
@@ -19051,12 +20728,16 @@ private ProtectionLevel <ProtectionLevel>k__BackingField
 public TcpClientCredentialType ClientCredentialType
 public ProtectionLevel ProtectionLevel
 public SslProtocols SslProtocols
+public ExtendedProtectionPolicy ExtendedProtectionPolicy
 public TcpClientCredentialType get_ClientCredentialType()
 public void set_ClientCredentialType(TcpClientCredentialType value)
 public ProtectionLevel get_ProtectionLevel()
 public void set_ProtectionLevel(ProtectionLevel value)
 public SslProtocols get_SslProtocols()
 public void set_SslProtocols(SslProtocols value)
+public ExtendedProtectionPolicy get_ExtendedProtectionPolicy()
+public void set_ExtendedProtectionPolicy(ExtendedProtectionPolicy value)
+public bool ShouldSerializeExtendedProtectionPolicy()
 }
 public System.ServiceModel.TransactionFlowAttribute : Attribute {
 private TransactionFlowOption <Transactions>k__BackingField
@@ -19081,9 +20762,11 @@ private TransactionProtocol oletx
 public TransactionProtocol Default
 public TransactionProtocol OleTransactions
 public TransactionProtocol WSAtomicTransactionOctober2004
+public TransactionProtocol WSAtomicTransaction11
 public TransactionProtocol get_Default()
 public TransactionProtocol get_OleTransactions()
 public TransactionProtocol get_WSAtomicTransactionOctober2004()
+public TransactionProtocol get_WSAtomicTransaction11()
 }
 public System.ServiceModel.TransferMode : Enum {
 public int value__
@@ -19180,6 +20863,12 @@ public bool get_UseDefaultWebProxy()
 public void set_UseDefaultWebProxy(bool value)
 public BindingElementCollection CreateBindingElements()
 private bool System.ServiceModel.Channels.IBindingRuntimePreferences.get_ReceiveSynchronously()
+public void set_ReliableSession(ReliableSession value)
+public void set_Security(WSDualHttpSecurity value)
+public bool ShouldSerializeReaderQuotas()
+public bool ShouldSerializeReliableSession()
+public bool ShouldSerializeSecurity()
+public bool ShouldSerializeTextEncoding()
 }
 public System.ServiceModel.WSDualHttpSecurity : object {
 private WSDualHttpSecurityMode mode
@@ -19190,6 +20879,9 @@ internal void .ctor(WSDualHttpSecurityMode mode)
 public MessageSecurityOverHttp get_Message()
 public WSDualHttpSecurityMode get_Mode()
 public void set_Mode(WSDualHttpSecurityMode value)
+public void set_Message(MessageSecurityOverHttp value)
+public bool ShouldSerializeMessage()
+public bool ShouldSerializeMode()
 }
 public System.ServiceModel.WSDualHttpSecurityMode : Enum {
 public int value__
@@ -19218,6 +20910,8 @@ public WSFederationHttpSecurity get_Security()
 public BindingElementCollection CreateBindingElements()
 protected SecurityBindingElement CreateMessageSecurity()
 protected TransportBindingElement GetTransport()
+public void set_Security(WSFederationHttpSecurity value)
+public bool ShouldSerializeSecurity()
 }
 public System.ServiceModel.WSFederationHttpSecurity : object {
 private WSFederationHttpSecurityMode mode
@@ -19228,6 +20922,9 @@ internal void .ctor(WSFederationHttpSecurityMode mode)
 public FederatedMessageSecurityOverHttp get_Message()
 public WSFederationHttpSecurityMode get_Mode()
 public void set_Mode(WSFederationHttpSecurityMode value)
+public void set_Message(FederatedMessageSecurityOverHttp value)
+public bool ShouldSerializeMessage()
+public bool ShouldSerializeMode()
 }
 public System.ServiceModel.WSFederationHttpSecurityMode : Enum {
 public int value__
@@ -19249,6 +20946,8 @@ public WSHttpSecurity get_Security()
 public BindingElementCollection CreateBindingElements()
 protected SecurityBindingElement CreateMessageSecurity()
 protected TransportBindingElement GetTransport()
+public void set_Security(WSHttpSecurity value)
+public bool ShouldSerializeSecurity()
 }
 public System.ServiceModel.WSHttpBindingBase : Binding {
 private bool bypass_proxy_on_local
@@ -19308,6 +21007,24 @@ public BindingElementCollection CreateBindingElements()
 protected SecurityBindingElement CreateMessageSecurity()
 protected TransportBindingElement GetTransport()
 private bool System.ServiceModel.Channels.IBindingRuntimePreferences.get_ReceiveSynchronously()
+public void set_ReliableSession(OptionalReliableSession value)
+public bool ShouldSerializeReaderQuotas()
+public bool ShouldSerializeReliableSession()
+public bool ShouldSerializeTextEncoding()
+}
+public System.ServiceModel.WSHttpContextBinding : WSHttpBinding {
+public Uri ClientCallbackAddress
+public bool ContextManagementEnabled
+public ProtectionLevel ContextProtectionLevel
+public void .ctor(SecurityMode securityMode)
+public void .ctor(SecurityMode securityMode, bool reliableSessionEnabled)
+public void .ctor(string configName)
+public Uri get_ClientCallbackAddress()
+public void set_ClientCallbackAddress(Uri value)
+public bool get_ContextManagementEnabled()
+public void set_ContextManagementEnabled(bool value)
+public ProtectionLevel get_ContextProtectionLevel()
+public void set_ContextProtectionLevel(ProtectionLevel value)
 }
 public System.ServiceModel.WSHttpSecurity : object {
 private SecurityMode mode
@@ -19321,6 +21038,11 @@ public NonDualMessageSecurityOverHttp get_Message()
 public SecurityMode get_Mode()
 public void set_Mode(SecurityMode value)
 public HttpTransportSecurity get_Transport()
+public void set_Message(NonDualMessageSecurityOverHttp value)
+public void set_Transport(HttpTransportSecurity value)
+public bool ShouldSerializeMessage()
+public bool ShouldSerializeMode()
+public bool ShouldSerializeTransport()
 }
 public System.ServiceModel.WSMessageEncoding : Enum {
 public int value__
@@ -19336,6 +21058,12 @@ public void .ctor(X509Certificate2 certificate)
 public void .ctor(X509Certificate2 primaryCertificate, X509Certificate2Collection supportingCertificates)
 public X509Certificate2Collection get_Certificates()
 }
+public System.ServiceModel.XamlIntegration.XPathMessageContextMarkupExtension : MarkupExtension {
+public Dictionary`2<string, string> Namespaces
+public void .ctor(XPathMessageContext context)
+public Dictionary`2<string, string> get_Namespaces()
+public object ProvideValue(IServiceProvider serviceProvider)
+}
 public System.ServiceModel.XmlSerializerFormatAttribute : Attribute {
 private OperationFormatStyle <Style>k__BackingField
 private OperationFormatUse <Use>k__BackingField
@@ -19349,6 +21077,20 @@ public OperationFormatUse get_Use()
 public void set_Use(OperationFormatUse value)
 public bool get_SupportFaults()
 public void set_SupportFaults(bool value)
+}
+public System.ServiceModel.XPathMessageQuery : MessageQuery {
+public string Expression
+public XmlNamespaceManager Namespaces
+public void .ctor(string expression)
+public void .ctor(string expression, XmlNamespaceManager namespaces)
+public void .ctor(string expression, XsltContext context)
+public string get_Expression()
+public void set_Expression(string value)
+public XmlNamespaceManager get_Namespaces()
+public void set_Namespaces(XmlNamespaceManager value)
+public MessageQueryCollection CreateMessageQueryCollection()
+public TResult Evaluate(Message message)
+public TResult Evaluate(MessageBuffer buffer)
 }
 public System.UriTemplate : object {
 private ReadOnlyCollection`1<string> empty_strings
@@ -19438,6 +21180,7 @@ private IList`1<KeyValuePair`2<UriTemplate, object>> key_value_pairs
 public Uri BaseAddress
 public bool IsReadOnly
 public IList`1<KeyValuePair`2<UriTemplate, object>> KeyValuePairs
+public Uri OriginalBaseAddress
 public void .ctor(Uri baseAddress)
 public void .ctor(IEnumerable`1<KeyValuePair`2<UriTemplate, object>> keyValuePairs)
 public void .ctor(Uri baseAddress, IEnumerable`1<KeyValuePair`2<UriTemplate, object>> keyValuePairs)
@@ -19449,4 +21192,8 @@ public IList`1<KeyValuePair`2<UriTemplate, object>> get_KeyValuePairs()
 public void MakeReadOnly(bool allowDuplicateEquivalentUriTemplates)
 public Collection`1<UriTemplateMatch> Match(Uri uri)
 public UriTemplateMatch MatchSingle(Uri uri)
+public Uri get_OriginalBaseAddress()
+}
+internal Unity.ThrowStub : ObjectDisposedException {
+public void ThrowNotSupportedException()
 }

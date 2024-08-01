@@ -217,6 +217,23 @@ public int value__
 public DataProtectionScope CurrentUser
 public DataProtectionScope LocalMachine
 }
+public System.Security.Cryptography.DataProtector : object {
+public DataProtector Create(string providerClass, string applicationName, string primaryPurpose, String[] specificPurposes)
+public bool IsReprotectRequired(Byte[] encryptedData)
+public Byte[] Protect(Byte[] userData)
+public Byte[] Unprotect(Byte[] encryptedData)
+}
+public System.Security.Cryptography.DpapiDataProtector : DataProtector {
+protected bool PrependHashedPurposeToPlaintext
+public DataProtectionScope Scope
+public void .ctor(string appName, string primaryPurpose, String[] specificPurpose)
+protected bool get_PrependHashedPurposeToPlaintext()
+public DataProtectionScope get_Scope()
+public void set_Scope(DataProtectionScope value)
+public bool IsReprotectRequired(Byte[] encryptedData)
+protected Byte[] ProviderProtect(Byte[] userData)
+protected Byte[] ProviderUnprotect(Byte[] encryptedData)
+}
 public System.Security.Cryptography.MemoryProtectionScope : Enum {
 public int value__
 public MemoryProtectionScope SameProcess
@@ -1573,6 +1590,8 @@ public AsymmetricAlgorithm SigningKey
 public string SigningKeyName
 public XmlResolver Resolver
 internal bool ResolverSet
+public Collection`1<string> SafeCanonicalizationMethods
+public Func`2<SignedXml, bool> SignatureFormatValidator
 public void .ctor(XmlDocument document)
 public void .ctor(XmlElement elem)
 public EncryptedXml get_EncryptedXml()
@@ -1618,6 +1637,9 @@ private XmlElement GetSingleReferenceTarget(XmlDocument document, string idAttri
 protected AsymmetricAlgorithm GetPublicKey()
 public XmlElement GetXml()
 public void LoadXml(XmlElement value)
+public Collection`1<string> get_SafeCanonicalizationMethods()
+public Func`2<SignedXml, bool> get_SignatureFormatValidator()
+public void set_SignatureFormatValidator(Func`2<SignedXml, bool> value)
 }
 internal System.Security.Cryptography.Xml.SignedXmlDebugLog : object {
 private string NullString
@@ -2022,4 +2044,7 @@ internal PermissionState CheckPermissionState(PermissionState state, bool allowU
 internal int CheckSecurityElement(SecurityElement se, string parameterName, int minimumVersion, int maximumVersion)
 internal bool IsUnrestricted(SecurityElement se)
 internal void ThrowInvalidPermission(IPermission target, Type expected)
+}
+internal Unity.ThrowStub : ObjectDisposedException {
+public void ThrowNotSupportedException()
 }

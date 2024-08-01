@@ -3259,6 +3259,7 @@ public string BaseDirectory
 public string RelativeSearchPath
 public bool ShadowCopyFiles
 public string DynamicDirectory
+public Evidence Evidence
 public void GetTypeInfoCount(UInt32& pcTInfo)
 public void GetTypeInfo(UInt32 iTInfo, UInt32 lcid, IntPtr ppTInfo)
 public void GetIDsOfNames(Guid& riid, IntPtr rgszNames, UInt32 cNames, UInt32 lcid, IntPtr rgDispId)
@@ -3322,6 +3323,10 @@ public void SetData(string name, object data)
 public object GetData(string name)
 public void DoCallBack(CrossAppDomainDelegate theDelegate)
 public string get_DynamicDirectory()
+public Evidence get_Evidence()
+public void SetAppDomainPolicy(PolicyLevel domainPolicy)
+public void SetPrincipalPolicy(PrincipalPolicy policy)
+public void SetThreadPrincipal(IPrincipal principal)
 }
 public System.AccessViolationException : SystemException {
 private IntPtr _ip
@@ -3391,6 +3396,8 @@ private ContextForm _form
 private bool _disposed
 public ContextForm Form
 public ApplicationIdentity Identity
+public Byte[] ApplicationManifestBytes
+public Byte[] DeploymentManifestBytes
 private void .ctor(ApplicationIdentity identity)
 protected void Finalize()
 public ContextForm get_Form()
@@ -3400,6 +3407,8 @@ public ActivationContext CreatePartialActivationContext(ApplicationIdentity iden
 public void Dispose()
 private void Dispose(bool disposing)
 private void System.Runtime.Serialization.ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+public Byte[] get_ApplicationManifestBytes()
+public Byte[] get_DeploymentManifestBytes()
 }
 public System.Activator : object {
 internal int LookupMask
@@ -3817,6 +3826,10 @@ public AppDomainInitializer AppDomainInitializer
 public String[] AppDomainInitializerArguments
 public ApplicationTrust ApplicationTrust
 public bool DisallowApplicationBaseProbing
+public string AppDomainManagerAssembly
+public string AppDomainManagerType
+public String[] PartialTrustVisibleAssemblies
+public bool SandboxInterop
 internal void .ctor(AppDomainSetup setup)
 public void .ctor(ActivationArguments activationArguments)
 public void .ctor(ActivationContext activationContext)
@@ -3866,6 +3879,15 @@ public void SetConfigurationBytes(Byte[] value)
 private void DeserializeNonPrimitives()
 internal void SerializeNonPrimitives()
 public void SetCompatibilitySwitches(IEnumerable`1<string> switches)
+public string get_AppDomainManagerAssembly()
+public void set_AppDomainManagerAssembly(string value)
+public string get_AppDomainManagerType()
+public void set_AppDomainManagerType(string value)
+public String[] get_PartialTrustVisibleAssemblies()
+public void set_PartialTrustVisibleAssemblies(String[] value)
+public bool get_SandboxInterop()
+public void set_SandboxInterop(bool value)
+public void SetNativeFunction(string functionName, int functionVersion, IntPtr functionPointer)
 }
 public System.AppDomainUnloadedException : SystemException {
 public void .ctor(string message)
@@ -7122,7 +7144,7 @@ public string get_StandardName()
 public DaylightTime GetDaylightChanges(int year)
 public TimeSpan GetUtcOffset(DateTime dateTime)
 public bool IsDaylightSavingTime(DateTime dateTime)
-public bool GetTimeZoneData(int year, Int64[]& data, String[]& names)
+public bool GetTimeZoneData(int year, Int64[]& data, String[]& names, Boolean& daylight_inverted)
 }
 public System.DataMisalignedException : SystemException {
 public void .ctor(string message)
@@ -8567,6 +8589,10 @@ public void DisableEvents(EventSource eventSource)
 protected internal void OnEventSourceCreated(EventSource eventSource)
 protected internal void OnEventWritten(EventWrittenEventArgs eventData)
 public void Dispose()
+public void add_EventSourceCreated(EventHandler`1<EventSourceCreatedEventArgs> value)
+public void remove_EventSourceCreated(EventHandler`1<EventSourceCreatedEventArgs> value)
+public void add_EventWritten(EventHandler`1<EventWrittenEventArgs> value)
+public void remove_EventWritten(EventHandler`1<EventWrittenEventArgs> value)
 }
 public System.Diagnostics.Tracing.EventManifestOptions : Enum {
 public int value__
@@ -8670,6 +8696,10 @@ public string get_LocalizationResources()
 public void set_LocalizationResources(string value)
 public string get_Name()
 public void set_Name(string value)
+}
+public System.Diagnostics.Tracing.EventSourceCreatedEventArgs : EventArgs {
+public EventSource EventSource
+public EventSource get_EventSource()
 }
 public System.Diagnostics.Tracing.EventSourceException : Exception {
 public void .ctor(string message)
@@ -9656,27 +9686,18 @@ internal char LOW_SURROGATE_START
 internal char LOW_SURROGATE_END
 internal int UNICODE_CATEGORY_OFFSET
 internal int BIDI_CATEGORY_OFFSET
-private bool s_initialized
-private UInt16* s_pCategoryLevel1Index
-private Byte* s_pCategoriesValue
-private UInt16* s_pNumericLevel1Index
-private Byte* s_pNumericValues
-private DigitValues* s_pDigitValues
-internal string UNICODE_INFO_FILE_NAME
 internal int UNICODE_PLANE01_START
-private int EndianSwap(int value)
-private UInt32 EndianSwap(UInt32 value)
-private ushort EndianSwap(ushort value)
-private double EndianSwap(double value)
-private bool InitTable()
+private UInt16[] s_pCategoryLevel1Index
+private Byte[] s_pCategoriesValue
+private UInt16[] s_pNumericLevel1Index
+private Byte[] s_pNumericValues
+private UInt16[] s_pDigitValues
 internal int InternalConvertToUtf32(string s, int index)
 internal int InternalConvertToUtf32(string s, int index, Int32& charLength)
 internal bool IsWhiteSpace(string s, int index)
 internal bool IsWhiteSpace(char c)
 internal double InternalGetNumericValue(int ch)
-internal DigitValues* InternalGetDigitValues(int ch)
-internal sbyte InternalGetDecimalDigitValue(int ch)
-internal sbyte InternalGetDigitValue(int ch)
+internal ushort InternalGetDigitValues(int ch)
 public double GetNumericValue(char ch)
 public double GetNumericValue(string s, int index)
 public int GetDecimalDigitValue(char ch)
@@ -9687,7 +9708,6 @@ public UnicodeCategory GetUnicodeCategory(char ch)
 public UnicodeCategory GetUnicodeCategory(string s, int index)
 internal UnicodeCategory InternalGetUnicodeCategory(int ch)
 internal byte InternalGetCategoryValue(int ch, int offset)
-internal BidiCategory GetBidiCategory(string s, int index)
 internal UnicodeCategory InternalGetUnicodeCategory(string value, int index)
 internal UnicodeCategory InternalGetUnicodeCategory(string str, int index, Int32& charLength)
 internal bool IsCombiningCategory(UnicodeCategory uc)
@@ -10616,6 +10636,9 @@ public FORMATFLAGS UseDigitPrefixInTokens
 }
 internal System.Globalization.GlobalizationAssembly : object {
 internal Byte* GetGlobalizationResourceBytePtr(Assembly assembly, string tableName)
+}
+public System.Globalization.GlobalizationExtensions : object {
+public StringComparer GetStringComparer(CompareInfo compareInfo, CompareOptions options)
 }
 public System.Globalization.GregorianCalendar : Calendar {
 public int ADEra
@@ -20681,6 +20704,15 @@ public void .ctor(Consistency consistencyGuarantee, Cer cer)
 public Consistency get_ConsistencyGuarantee()
 public Cer get_Cer()
 }
+public System.Runtime.DesignerServices.WindowsRuntimeDesignerContext : object {
+public string Name
+public void .ctor(IEnumerable`1<string> paths, string name)
+public string get_Name()
+public Assembly GetAssembly(string assemblyName)
+public Type GetType(string typeName)
+public void InitializeSharedContext(IEnumerable`1<string> paths)
+public void SetIterationContext(WindowsRuntimeDesignerContext context)
+}
 public System.Runtime.ExceptionServices.ExceptionDispatchInfo : object {
 private Exception m_Exception
 private object m_stackTrace
@@ -22504,7 +22536,7 @@ public void .ctor(int lcid)
 public int get_Value()
 }
 public System.Runtime.InteropServices.LIBFLAGS : Enum {
-public int value__
+public short value__
 public LIBFLAGS LIBFLAG_FRESTRICTED
 public LIBFLAGS LIBFLAG_FCONTROL
 public LIBFLAGS LIBFLAG_FHIDDEN
@@ -23124,6 +23156,7 @@ public TypeLibImporterFlags ImportAsX86
 public TypeLibImporterFlags ReflectionOnlyLoading
 public TypeLibImporterFlags SerializableValueClasses
 public TypeLibImporterFlags NoDefineVersionResource
+public TypeLibImporterFlags ImportAsArm
 }
 public System.Runtime.InteropServices.TypeLibTypeAttribute : Attribute {
 internal TypeLibTypeFlags _val
@@ -23585,6 +23618,10 @@ public System.Runtime.MemoryFailPoint : CriticalFinalizerObject {
 public void .ctor(int sizeInMegabytes)
 protected void Finalize()
 public void Dispose()
+}
+public System.Runtime.ProfileOptimization : object {
+public void SetProfileRoot(string directoryPath)
+public void StartProfile(string profile)
 }
 public System.Runtime.Remoting.ActivatedClientTypeEntry : TypeEntry {
 private string applicationUrl
@@ -32098,6 +32135,10 @@ public ApplicationTrust DetermineApplicationTrust(Evidence applicationEvidence, 
 public Evidence ProvideAppDomainEvidence(Evidence inputEvidence)
 public Evidence ProvideAssemblyEvidence(Assembly loadedAssembly, Evidence inputEvidence)
 public PermissionSet ResolvePolicy(Evidence evidence)
+public EvidenceBase GenerateAppDomainEvidence(Type evidenceType)
+public EvidenceBase GenerateAssemblyEvidence(Type evidenceType, Assembly assembly)
+public Type[] GetHostSuppliedAppDomainEvidenceTypes()
+public Type[] GetHostSuppliedAssemblyEvidenceTypes(Assembly assembly)
 }
 public System.Security.HostSecurityManagerOptions : Enum {
 public int value__
@@ -33514,6 +33555,10 @@ public void Merge(Evidence evidence)
 public void RemoveType(Type t)
 private bool IsAuthenticodePresent(Assembly a)
 internal Evidence GetDefaultHostEvidence(Assembly a)
+public void AddAssemblyEvidence(T evidence)
+public void AddHostEvidence(T evidence)
+public T GetAssemblyEvidence()
+public T GetHostEvidence()
 }
 public System.Security.Policy.EvidenceBase : object {
 public EvidenceBase Clone()
@@ -33575,6 +33620,7 @@ internal Byte[] _md5
 internal Byte[] _sha1
 public Byte[] MD5
 public Byte[] SHA1
+public Byte[] SHA256
 public void .ctor(Assembly assembly)
 internal void .ctor(SerializationInfo info, StreamingContext context)
 public Byte[] get_MD5()
@@ -33588,6 +33634,8 @@ private int System.Security.Policy.IBuiltInEvidence.InitFromBuffer(Char[] buffer
 private int System.Security.Policy.IBuiltInEvidence.OutputToBuffer(Char[] buffer, int position, bool verbose)
 public Hash CreateMD5(Byte[] md5)
 public Hash CreateSHA1(Byte[] sha1)
+public Byte[] get_SHA256()
+public Hash CreateSHA256(Byte[] sha256)
 }
 public System.Security.Policy.HashMembershipCondition : object {
 private int version
@@ -34326,6 +34374,8 @@ public TokenImpersonationLevel ImpersonationLevel
 public SecurityIdentifier Owner
 public SecurityIdentifier User
 public SafeAccessTokenHandle AccessToken
+public IEnumerable`1<Claim> DeviceClaims
+public IEnumerable`1<Claim> UserClaims
 public void .ctor(IntPtr userToken)
 public void .ctor(IntPtr userToken, string type)
 public void .ctor(IntPtr userToken, string type, WindowsAccountType acctType)
@@ -34365,6 +34415,8 @@ internal String[] _GetRoles(IntPtr token)
 internal IntPtr GetCurrentToken()
 private string GetTokenName(IntPtr token)
 private IntPtr GetUserToken(string username)
+public IEnumerable`1<Claim> get_DeviceClaims()
+public IEnumerable`1<Claim> get_UserClaims()
 }
 public System.Security.Principal.WindowsImpersonationContext : object {
 private IntPtr _token
@@ -34383,6 +34435,8 @@ private WindowsIdentity _identity
 private String[] m_roles
 public IIdentity Identity
 private IntPtr Token
+public IEnumerable`1<Claim> DeviceClaims
+public IEnumerable`1<Claim> UserClaims
 public void .ctor(WindowsIdentity ntIdentity)
 public IIdentity get_Identity()
 public bool IsInRole(int rid)
@@ -34392,6 +34446,16 @@ public bool IsInRole(SecurityIdentifier sid)
 private IntPtr get_Token()
 private bool IsMemberOfGroupId(IntPtr user, IntPtr group)
 private bool IsMemberOfGroupName(IntPtr user, string group)
+public IEnumerable`1<Claim> get_DeviceClaims()
+public IEnumerable`1<Claim> get_UserClaims()
+}
+public System.Security.ReadOnlyPermissionSet : PermissionSet {
+public void .ctor(SecurityElement permissionSetXml)
+protected IPermission AddPermissionImpl(IPermission perm)
+protected IEnumerator GetEnumeratorImpl()
+protected IPermission GetPermissionImpl(Type permClass)
+protected IPermission RemovePermissionImpl(Type permClass)
+protected IPermission SetPermissionImpl(IPermission perm)
 }
 internal System.Security.RuntimeDeclSecurityActions : ValueType {
 public RuntimeDeclSecurityEntry cas
@@ -39745,7 +39809,7 @@ private DateTime DeserializeDate(StringBuilder& input)
 private DateTime DeserializeTime(StringBuilder& input)
 private string EscapeForSerialization(string unescaped)
 private string SerializeTransitionTime(TransitionTime transition)
-private AdjustmentRule CreateAdjustmentRule(int year, Int64[]& data, String[]& names, string standardNameCurrentYear, string daylightNameCurrentYear)
+private List`1<AdjustmentRule> CreateAdjustmentRule(int year, Int64[]& data, String[]& names, string standardNameCurrentYear, string daylightNameCurrentYear)
 private TimeZoneInfo CreateLocalUnity()
 internal UInt32 EnumDynamicTimeZoneInformation(UInt32 dwIndex, DYNAMIC_TIME_ZONE_INFORMATION& lpTimeZoneInformation)
 internal UInt32 GetDynamicTimeZoneInformation(DYNAMIC_TIME_ZONE_INFORMATION& pTimeZoneInformation)
@@ -41262,6 +41326,9 @@ private bool ReadConsoleInput(IntPtr handle, InputRecord& record, int length, In
 private Coord GetLargestConsoleWindowSize(IntPtr handle)
 private bool ReadConsoleOutput(IntPtr handle, Void* buffer, Coord bsize, Coord bpos, SmallRect& region)
 private bool WriteConsoleOutput(IntPtr handle, CharInfo[] buffer, Coord bsize, Coord bpos, SmallRect& region)
+}
+internal Unity.ThrowStub : ObjectDisposedException {
+public void ThrowNotSupportedException()
 }
 internal XamMac.CoreFoundation.CFHelpers : object {
 internal string CoreFoundationLibrary

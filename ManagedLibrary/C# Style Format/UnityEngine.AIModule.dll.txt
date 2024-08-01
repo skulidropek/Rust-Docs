@@ -1,8 +1,10 @@
 public UnityEngine.AI.NavMesh : object {
-public int AllAreas
 public OnNavMeshPreUpdate onPreUpdate
+public int AllAreas
 public float avoidancePredictionTime
 public int pathfindingIterationsPerFrame
+public void RemoveAllNavMeshData()
+private void Internal_CallOnNavMeshPreUpdate()
 public bool Raycast(Vector3 sourcePosition, Vector3 targetPosition, NavMeshHit& hit, int areaMask)
 private bool INTERNAL_CALL_Raycast(Vector3& sourcePosition, Vector3& targetPosition, NavMeshHit& hit, int areaMask)
 public bool CalculatePath(Vector3 sourcePosition, Vector3 targetPosition, int areaMask, NavMeshPath path)
@@ -71,8 +73,6 @@ public int GetSettingsCount()
 public NavMeshBuildSettings GetSettingsByIndex(int index)
 private void INTERNAL_CALL_GetSettingsByIndex(int index, NavMeshBuildSettings& value)
 public string GetSettingsNameFromID(int agentTypeID)
-public void RemoveAllNavMeshData()
-private void Internal_CallOnNavMeshPreUpdate()
 }
 public UnityEngine.AI.NavMeshAgent : Behaviour {
 public Vector3 destination
@@ -231,15 +231,15 @@ public UnityEngine.AI.NavMeshBuilder : object {
 public void CollectSources(Bounds includedWorldBounds, int includedLayerMask, NavMeshCollectGeometry geometry, int defaultArea, List`1<NavMeshBuildMarkup> markups, List`1<NavMeshBuildSource> results)
 public void CollectSources(Transform root, int includedLayerMask, NavMeshCollectGeometry geometry, int defaultArea, List`1<NavMeshBuildMarkup> markups, List`1<NavMeshBuildSource> results)
 private NavMeshBuildSource[] CollectSourcesInternal(int includedLayerMask, Bounds includedWorldBounds, Transform root, bool useBounds, NavMeshCollectGeometry geometry, int defaultArea, NavMeshBuildMarkup[] markups)
-private NavMeshBuildSource[] INTERNAL_CALL_CollectSourcesInternal(int includedLayerMask, Bounds& includedWorldBounds, Transform root, bool useBounds, NavMeshCollectGeometry geometry, int defaultArea, NavMeshBuildMarkup[] markups)
 public NavMeshData BuildNavMeshData(NavMeshBuildSettings buildSettings, List`1<NavMeshBuildSource> sources, Bounds localBounds, Vector3 position, Quaternion rotation)
 public bool UpdateNavMeshData(NavMeshData data, NavMeshBuildSettings buildSettings, List`1<NavMeshBuildSource> sources, Bounds localBounds)
 private bool UpdateNavMeshDataListInternal(NavMeshData data, NavMeshBuildSettings buildSettings, object sources, Bounds localBounds)
-private bool INTERNAL_CALL_UpdateNavMeshDataListInternal(NavMeshData data, NavMeshBuildSettings& buildSettings, object sources, Bounds& localBounds)
 public AsyncOperation UpdateNavMeshDataAsync(NavMeshData data, NavMeshBuildSettings buildSettings, List`1<NavMeshBuildSource> sources, Bounds localBounds)
 public void Cancel(NavMeshData data)
 private AsyncOperation UpdateNavMeshDataAsyncListInternal(NavMeshData data, NavMeshBuildSettings buildSettings, object sources, Bounds localBounds)
-private AsyncOperation INTERNAL_CALL_UpdateNavMeshDataAsyncListInternal(NavMeshData data, NavMeshBuildSettings& buildSettings, object sources, Bounds& localBounds)
+private NavMeshBuildSource[] CollectSourcesInternal_Injected(int includedLayerMask, Bounds& includedWorldBounds, Transform root, bool useBounds, NavMeshCollectGeometry geometry, int defaultArea, NavMeshBuildMarkup[] markups)
+private bool UpdateNavMeshDataListInternal_Injected(NavMeshData data, NavMeshBuildSettings& buildSettings, object sources, Bounds& localBounds)
+private AsyncOperation UpdateNavMeshDataAsyncListInternal_Injected(NavMeshData data, NavMeshBuildSettings& buildSettings, object sources, Bounds& localBounds)
 }
 public UnityEngine.AI.NavMeshBuildMarkup : ValueType {
 private int m_OverrideArea
@@ -310,7 +310,7 @@ public NavMeshBuildDebugSettings get_debug()
 public void set_debug(NavMeshBuildDebugSettings value)
 public String[] ValidationReport(Bounds buildBounds)
 private String[] InternalValidationReport(NavMeshBuildSettings buildSettings, Bounds buildBounds)
-private String[] INTERNAL_CALL_InternalValidationReport(NavMeshBuildSettings& buildSettings, Bounds& buildBounds)
+private String[] InternalValidationReport_Injected(NavMeshBuildSettings& buildSettings, Bounds& buildBounds)
 }
 public UnityEngine.AI.NavMeshBuildSource : ValueType {
 private Matrix4x4 m_Transform
@@ -615,8 +615,6 @@ public NavMeshPolyTypes OffMeshConnection
 }
 public UnityEngine.Experimental.AI.NavMeshQuery : ValueType {
 internal IntPtr m_NavMeshQuery
-private Allocator m_Allocator
-private string k_NoBufferAllocatedErrorMessage
 public void .ctor(NavMeshWorld world, Allocator allocator, int pathNodePoolSize)
 public void Dispose()
 private IntPtr Create(NavMeshWorld world, int nodePoolSize)
@@ -653,6 +651,9 @@ private Matrix4x4 PolygonWorldToLocalMatrix(IntPtr navMeshQuery, PolygonId polyg
 public Matrix4x4 PolygonWorldToLocalMatrix(PolygonId polygon)
 private NavMeshPolyTypes GetPolygonType(IntPtr navMeshQuery, PolygonId polygon)
 public NavMeshPolyTypes GetPolygonType(PolygonId polygon)
+private PathQueryStatus Raycast(IntPtr navMeshQuery, NavMeshLocation start, Vector3 targetPosition, int areaMask, Void* costs, NavMeshHit& hit, Void* path, Int32& pathCount, int maxPath)
+public PathQueryStatus Raycast(NavMeshHit& hit, NavMeshLocation start, Vector3 targetPosition, int areaMask, NativeArray`1<float> costs)
+public PathQueryStatus Raycast(NavMeshHit& hit, NativeSlice`1<PolygonId> path, Int32& pathCount, NavMeshLocation start, Vector3 targetPosition, int areaMask, NativeArray`1<float> costs)
 private IntPtr Create_Injected(NavMeshWorld& world, int nodePoolSize)
 private PathQueryStatus BeginFindPath_Injected(IntPtr navMeshQuery, NavMeshLocation& start, NavMeshLocation& end, int areaMask, Void* costs)
 private bool IsValidPolygon_Injected(IntPtr navMeshQuery, PolygonId& polygon)
@@ -665,6 +666,7 @@ private bool GetPortalPoints_Injected(IntPtr navMeshQuery, PolygonId& polygon, P
 private void PolygonLocalToWorldMatrix_Injected(IntPtr navMeshQuery, PolygonId& polygon, Matrix4x4& ret)
 private void PolygonWorldToLocalMatrix_Injected(IntPtr navMeshQuery, PolygonId& polygon, Matrix4x4& ret)
 private NavMeshPolyTypes GetPolygonType_Injected(IntPtr navMeshQuery, PolygonId& polygon)
+private PathQueryStatus Raycast_Injected(IntPtr navMeshQuery, NavMeshLocation& start, Vector3& targetPosition, int areaMask, Void* costs, NavMeshHit& hit, Void* path, Int32& pathCount, int maxPath)
 }
 public UnityEngine.Experimental.AI.NavMeshWorld : ValueType {
 internal IntPtr world

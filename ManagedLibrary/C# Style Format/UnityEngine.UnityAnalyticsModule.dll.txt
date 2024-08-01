@@ -1,9 +1,37 @@
 public UnityEngine.Analytics.Analytics : object {
-private UnityAnalyticsHandler s_UnityAnalyticsHandler
+public bool initializeOnStartup
+private bool initializeOnStartupInternal
+private bool enabledInternal
+private bool playerOptedOutInternal
+private bool limitUserTrackingInternal
+private bool deviceStatsEnabledInternal
+public bool playerOptedOut
 public bool limitUserTracking
 public bool deviceStatsEnabled
 public bool enabled
-internal UnityAnalyticsHandler GetUnityAnalyticsHandler()
+public bool get_initializeOnStartup()
+public void set_initializeOnStartup(bool value)
+public AnalyticsResult ResumeInitialization()
+private AnalyticsResult ResumeInitializationInternal()
+private bool get_initializeOnStartupInternal()
+private void set_initializeOnStartupInternal(bool value)
+private bool IsInitialized()
+private bool get_enabledInternal()
+private void set_enabledInternal(bool value)
+private bool get_playerOptedOutInternal()
+private bool get_limitUserTrackingInternal()
+private void set_limitUserTrackingInternal(bool value)
+private bool get_deviceStatsEnabledInternal()
+private void set_deviceStatsEnabledInternal(bool value)
+private bool FlushArchivedEvents()
+private AnalyticsResult Transaction(string productId, double amount, string currency, string receiptPurchaseData, string signature, bool usingIAPService)
+private AnalyticsResult SendCustomEventName(string customEventName)
+private AnalyticsResult SendCustomEvent(CustomEventData eventData)
+internal AnalyticsResult RegisterEventWithLimit(string eventName, int maxEventPerHour, int maxItems, string vendorKey, int ver, string prefix, string assemblyInfo, bool notifyServer)
+internal AnalyticsResult RegisterEventsWithLimit(String[] eventName, int maxEventPerHour, int maxItems, string vendorKey, int ver, string prefix, string assemblyInfo, bool notifyServer)
+internal AnalyticsResult SendEventWithLimit(string eventName, object parameters, int ver, string prefix)
+internal bool QueueEvent(string eventName, object parameters, int ver, string prefix)
+public bool get_playerOptedOut()
 public bool get_limitUserTracking()
 public void set_limitUserTracking(bool value)
 public bool get_deviceStatsEnabled()
@@ -14,6 +42,7 @@ public AnalyticsResult FlushEvents()
 public AnalyticsResult SetUserId(string userId)
 public AnalyticsResult SetUserGender(Gender gender)
 public AnalyticsResult SetUserBirthYear(int birthYear)
+private AnalyticsResult SendUserInfoEvent(object param)
 public AnalyticsResult Transaction(string productId, decimal amount, string currency)
 public AnalyticsResult Transaction(string productId, decimal amount, string currency, string receiptPurchaseData, string signature)
 public AnalyticsResult Transaction(string productId, decimal amount, string currency, string receiptPurchaseData, string signature, bool usingIAPService)
@@ -35,6 +64,39 @@ public AnalyticsResult SizeLimitReached
 public AnalyticsResult TooManyRequests
 public AnalyticsResult InvalidData
 public AnalyticsResult UnsupportedPlatform
+}
+public UnityEngine.Analytics.AnalyticsSessionInfo : object {
+private SessionStateChanged sessionStateChanged
+public AnalyticsSessionState sessionState
+public long sessionId
+public long sessionCount
+public long sessionElapsedTime
+public bool sessionFirstRun
+public string userId
+public void add_sessionStateChanged(SessionStateChanged value)
+public void remove_sessionStateChanged(SessionStateChanged value)
+internal void CallSessionStateChanged(AnalyticsSessionState sessionState, long sessionId, long sessionElapsedTime, bool sessionChanged)
+public AnalyticsSessionState get_sessionState()
+public long get_sessionId()
+public long get_sessionCount()
+public long get_sessionElapsedTime()
+public bool get_sessionFirstRun()
+public string get_userId()
+}
+public UnityEngine.Analytics.AnalyticsSessionState : Enum {
+public int value__
+public AnalyticsSessionState kSessionStopped
+public AnalyticsSessionState kSessionStarted
+public AnalyticsSessionState kSessionPaused
+public AnalyticsSessionState kSessionResumed
+}
+internal UnityEngine.Analytics.ContinuousEvent : object {
+public void RegisterCollector(string collectorName, Func`1<T> del)
+public void SetEventHistogramThresholds(string eventName, int count, T[] data)
+private void RegisterCollector_Internal(string type, string collectorName, object collector)
+private void SetEventHistogramThresholds_Internal(string type, string eventName, int count, object data)
+public void EnableEvent(string eventName, bool enabled)
+public void ConfigureEvent(string eventName, string collectorName, float interval, float period, bool enabled, bool custom)
 }
 internal UnityEngine.Analytics.CustomEventData : object {
 internal IntPtr m_Ptr
@@ -59,30 +121,71 @@ public Gender Male
 public Gender Female
 public Gender Unknown
 }
-internal UnityEngine.Analytics.UnityAnalyticsHandler : object {
+public UnityEngine.RemoteConfigSettings : object {
 internal IntPtr m_Ptr
-public bool limitUserTracking
-public bool deviceStatsEnabled
-public bool enabled
+private Action`1<bool> Updated
+public void .ctor(string configKey)
+public void add_Updated(Action`1<bool> value)
+public void remove_Updated(Action`1<bool> value)
 protected void Finalize()
 private void Destroy()
 public void Dispose()
-public bool IsInitialized()
-internal IntPtr Internal_Create(UnityAnalyticsHandler u)
+internal IntPtr Internal_Create(RemoteConfigSettings rcs, string configKey)
 internal void Internal_Destroy(IntPtr ptr)
-public bool get_limitUserTracking()
-public void set_limitUserTracking(bool value)
-public bool get_deviceStatsEnabled()
-public void set_deviceStatsEnabled(bool value)
-public bool get_enabled()
-public void set_enabled(bool value)
-public bool FlushEvents()
-public AnalyticsResult SetUserId(string userId)
-public AnalyticsResult SetUserGender(Gender gender)
-public AnalyticsResult SetUserBirthYear(int birthYear)
-public AnalyticsResult Transaction(string productId, double amount, string currency, string receiptPurchaseData, string signature, bool usingIAPService)
-public AnalyticsResult SendCustomEventName(string customEventName)
-public AnalyticsResult SendCustomEvent(CustomEventData eventData)
-public AnalyticsResult RegisterEvent(string eventName, int maxEventPerHour, int maxItems, string vendorKey, int ver, string prefix, string assemblyInfo)
-public AnalyticsResult SendEvent(string eventName, object parameters, int ver, string prefix)
+internal void RemoteConfigSettingsUpdated(RemoteConfigSettings rcs, bool wasLastUpdatedFromServer)
+public bool QueueConfig(string name, object param, int ver, string prefix)
+public bool SendDeviceInfoInConfigRequest()
+public void ForceUpdate()
+public bool WasLastUpdatedFromServer()
+public int GetInt(string key)
+public int GetInt(string key, int defaultValue)
+public long GetLong(string key)
+public long GetLong(string key, long defaultValue)
+public float GetFloat(string key)
+public float GetFloat(string key, float defaultValue)
+public string GetString(string key)
+public string GetString(string key, string defaultValue)
+public bool GetBool(string key)
+public bool GetBool(string key, bool defaultValue)
+public bool HasKey(string key)
+public int GetCount()
+public String[] GetKeys()
+internal void UseSafeLock()
+internal void ReleaseSafeLock()
+internal IntPtr GetSafeTopMap()
+internal IntPtr GetSafeMap(IntPtr m, string key)
+internal long GetSafeNumber(IntPtr m, string key, long defaultValue)
+internal float GetSafeFloat(IntPtr m, string key, float defaultValue)
+internal bool GetSafeBool(IntPtr m, string key, bool defaultValue)
+internal string GetSafeStringValue(IntPtr m, string key, string defaultValue)
+}
+public UnityEngine.RemoteSettings : object {
+private UpdatedEventHandler Updated
+private Action BeforeFetchFromServer
+private Action`3<bool, bool, int> Completed
+public void add_Updated(UpdatedEventHandler value)
+public void remove_Updated(UpdatedEventHandler value)
+public void add_BeforeFetchFromServer(Action value)
+public void remove_BeforeFetchFromServer(Action value)
+public void add_Completed(Action`3<bool, bool, int> value)
+public void remove_Completed(Action`3<bool, bool, int> value)
+internal void RemoteSettingsUpdated(bool wasLastUpdatedFromServer)
+internal void RemoteSettingsBeforeFetchFromServer()
+internal void RemoteSettingsUpdateCompleted(bool wasLastUpdatedFromServer, bool settingsChanged, int response)
+public void CallOnUpdate()
+public void ForceUpdate()
+public bool WasLastUpdatedFromServer()
+public int GetInt(string key)
+public int GetInt(string key, int defaultValue)
+public long GetLong(string key)
+public long GetLong(string key, long defaultValue)
+public float GetFloat(string key)
+public float GetFloat(string key, float defaultValue)
+public string GetString(string key)
+public string GetString(string key, string defaultValue)
+public bool GetBool(string key)
+public bool GetBool(string key, bool defaultValue)
+public bool HasKey(string key)
+public int GetCount()
+public String[] GetKeys()
 }

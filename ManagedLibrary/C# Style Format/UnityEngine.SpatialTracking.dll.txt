@@ -1,12 +1,34 @@
+public UnityEngine.Experimental.XR.Interaction.BaseArmModel : BasePoseProvider {
+private TrackedPose m_HeadPoseSource
+private TrackedPose m_PoseSource
+public TrackedPose headPoseSource
+public TrackedPose poseSource
+public TrackedPose get_headPoseSource()
+internal void set_headPoseSource(TrackedPose value)
+public TrackedPose get_poseSource()
+internal void set_poseSource(TrackedPose value)
+protected bool TryGetTrackingDataFromSource(TrackedPose poseSource, Pose& resultPose)
+}
+public UnityEngine.Experimental.XR.Interaction.BasePoseProvider : MonoBehaviour {
+public bool TryGetPoseFromProvider(Pose& output)
+}
+public UnityEngine.SpatialTracking.PoseDataSource : object {
+private List`1<XRNodeState> nodeStates
+internal bool TryGetNodePoseData(XRNode node, Pose& resultPose)
+public bool TryGetDataFromSource(TrackedPose poseSource, Pose& resultPose)
+private bool TryGetTangoPose(Pose& pose)
+}
 public UnityEngine.SpatialTracking.TrackedPoseDriver : MonoBehaviour {
 private DeviceType m_Device
 private TrackedPose m_PoseSource
+private BasePoseProvider m_PoseProviderComponent
 private TrackingType m_TrackingType
 private UpdateType m_UpdateType
 private bool m_UseRelativeTransform
 protected Pose m_OriginPose
 public DeviceType deviceType
 public TrackedPose poseSource
+public BasePoseProvider poseProviderComponent
 public TrackingType trackingType
 public UpdateType updateType
 public bool UseRelativeTransform
@@ -16,8 +38,9 @@ internal void set_deviceType(DeviceType value)
 public TrackedPose get_poseSource()
 internal void set_poseSource(TrackedPose value)
 public bool SetPoseSource(DeviceType deviceType, TrackedPose pose)
-private bool TryGetTangoPose(CoordinateFrame frame, Pose& pose)
-private bool GetDataFromSource(DeviceType device, TrackedPose poseSource, Pose& resultPose)
+public BasePoseProvider get_poseProviderComponent()
+public void set_poseProviderComponent(BasePoseProvider value)
+private bool TryGetPoseData(DeviceType device, TrackedPose poseSource, Pose& resultPose)
 public TrackingType get_trackingType()
 public void set_trackingType(TrackingType value)
 public UpdateType get_updateType()

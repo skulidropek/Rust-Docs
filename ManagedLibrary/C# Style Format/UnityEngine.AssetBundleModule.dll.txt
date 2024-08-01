@@ -1,38 +1,41 @@
 public UnityEngine.AssetBundle : Object {
 public Object mainAsset
 public bool isStreamedSceneAssetBundle
+public Object get_mainAsset()
+internal Object returnMainAsset(AssetBundle bundle)
 public void UnloadAllAssetBundles(bool unloadAllObjects)
+internal AssetBundle[] GetAllLoadedAssetBundles_Native()
 public IEnumerable`1<AssetBundle> GetAllLoadedAssetBundles()
-internal AssetBundle[] GetAllLoadedAssetBundles_Internal()
-public AssetBundleCreateRequest LoadFromFileAsync(string path, UInt32 crc, ulong offset)
-public AssetBundleCreateRequest LoadFromFileAsync(string path, UInt32 crc)
+internal AssetBundleCreateRequest LoadFromFileAsync_Internal(string path, UInt32 crc, ulong offset)
 public AssetBundleCreateRequest LoadFromFileAsync(string path)
-public AssetBundle LoadFromFile(string path, UInt32 crc, ulong offset)
-public AssetBundle LoadFromFile(string path, UInt32 crc)
+public AssetBundleCreateRequest LoadFromFileAsync(string path, UInt32 crc)
+public AssetBundleCreateRequest LoadFromFileAsync(string path, UInt32 crc, ulong offset)
+internal AssetBundle LoadFromFile_Internal(string path, UInt32 crc, ulong offset)
 public AssetBundle LoadFromFile(string path)
-public AssetBundleCreateRequest LoadFromMemoryAsync(Byte[] binary, UInt32 crc)
+public AssetBundle LoadFromFile(string path, UInt32 crc)
+public AssetBundle LoadFromFile(string path, UInt32 crc, ulong offset)
+internal AssetBundleCreateRequest LoadFromMemoryAsync_Internal(Byte[] binary, UInt32 crc)
 public AssetBundleCreateRequest LoadFromMemoryAsync(Byte[] binary)
-public AssetBundle LoadFromMemory(Byte[] binary, UInt32 crc)
+public AssetBundleCreateRequest LoadFromMemoryAsync(Byte[] binary, UInt32 crc)
+internal AssetBundle LoadFromMemory_Internal(Byte[] binary, UInt32 crc)
 public AssetBundle LoadFromMemory(Byte[] binary)
+public AssetBundle LoadFromMemory(Byte[] binary, UInt32 crc)
 internal void ValidateLoadFromStream(Stream stream)
+public AssetBundleCreateRequest LoadFromStreamAsync(Stream stream, UInt32 crc, UInt32 managedReadBufferSize)
 public AssetBundleCreateRequest LoadFromStreamAsync(Stream stream, UInt32 crc)
 public AssetBundleCreateRequest LoadFromStreamAsync(Stream stream)
-public AssetBundleCreateRequest LoadFromStreamAsync(Stream stream, UInt32 crc, UInt32 managedReadBufferSize)
+public AssetBundle LoadFromStream(Stream stream, UInt32 crc, UInt32 managedReadBufferSize)
 public AssetBundle LoadFromStream(Stream stream, UInt32 crc)
 public AssetBundle LoadFromStream(Stream stream)
-public AssetBundle LoadFromStream(Stream stream, UInt32 crc, UInt32 managedReadBufferSize)
 internal AssetBundleCreateRequest LoadFromStreamAsyncInternal(Stream stream, UInt32 crc, UInt32 managedReadBufferSize)
-internal AssetBundleCreateRequest LoadFromStreamAsyncInternal(Stream stream, UInt32 crc)
 internal AssetBundle LoadFromStreamInternal(Stream stream, UInt32 crc, UInt32 managedReadBufferSize)
-internal AssetBundle LoadFromStreamInternal(Stream stream, UInt32 crc)
-public Object get_mainAsset()
 public bool get_isStreamedSceneAssetBundle()
 public bool Contains(string name)
 public Object Load(string name)
-public T Load(string name)
-public Object Load(string name, Type type)
-public AssetBundleRequest LoadAsync(string name, Type type)
-public Object[] LoadAll(Type type)
+public Object Load(string name)
+private Object Load(string name, Type type)
+private AssetBundleRequest LoadAsync(string name, Type type)
+private Object[] LoadAll(Type type)
 public Object[] LoadAll()
 public T[] LoadAll()
 public Object LoadAsset(string name)
@@ -42,39 +45,72 @@ private Object LoadAsset_Internal(string name, Type type)
 public AssetBundleRequest LoadAssetAsync(string name)
 public AssetBundleRequest LoadAssetAsync(string name)
 public AssetBundleRequest LoadAssetAsync(string name, Type type)
-private AssetBundleRequest LoadAssetAsync_Internal(string name, Type type)
 public Object[] LoadAssetWithSubAssets(string name)
 internal T[] ConvertObjects(Object[] rawObjects)
 public T[] LoadAssetWithSubAssets(string name)
 public Object[] LoadAssetWithSubAssets(string name, Type type)
-internal Object[] LoadAssetWithSubAssets_Internal(string name, Type type)
 public AssetBundleRequest LoadAssetWithSubAssetsAsync(string name)
 public AssetBundleRequest LoadAssetWithSubAssetsAsync(string name)
 public AssetBundleRequest LoadAssetWithSubAssetsAsync(string name, Type type)
-private AssetBundleRequest LoadAssetWithSubAssetsAsync_Internal(string name, Type type)
 public Object[] LoadAllAssets()
 public T[] LoadAllAssets()
 public Object[] LoadAllAssets(Type type)
 public AssetBundleRequest LoadAllAssetsAsync()
 public AssetBundleRequest LoadAllAssetsAsync()
 public AssetBundleRequest LoadAllAssetsAsync(Type type)
-public void Unload(bool unloadAllLoadedObjects)
 public String[] AllAssetNames()
+private AssetBundleRequest LoadAssetAsync_Internal(string name, Type type)
+public void Unload(bool unloadAllLoadedObjects)
 public String[] GetAllAssetNames()
 public String[] GetAllScenePaths()
+internal Object[] LoadAssetWithSubAssets_Internal(string name, Type type)
+private AssetBundleRequest LoadAssetWithSubAssetsAsync_Internal(string name, Type type)
+public AssetBundleRecompressOperation RecompressAssetBundleAsync(string inputPath, string outputPath, BuildCompression method, UInt32 expectedCRC, ThreadPriority priority)
+internal AssetBundleRecompressOperation RecompressAssetBundleAsync_Internal(string inputPath, string outputPath, BuildCompression method, UInt32 expectedCRC, ThreadPriority priority)
+private AssetBundleRecompressOperation RecompressAssetBundleAsync_Internal_Injected(string inputPath, string outputPath, BuildCompression& method, UInt32 expectedCRC, ThreadPriority priority)
 }
 public UnityEngine.AssetBundleCreateRequest : AsyncOperation {
 public AssetBundle assetBundle
 public AssetBundle get_assetBundle()
+private void SetEnableCompatibilityChecks(bool set)
 internal void DisableCompatibilityChecks()
+}
+public UnityEngine.AssetBundleLoadResult : Enum {
+public int value__
+public AssetBundleLoadResult Success
+public AssetBundleLoadResult Cancelled
+public AssetBundleLoadResult NotMatchingCrc
+public AssetBundleLoadResult FailedCache
+public AssetBundleLoadResult NotValidAssetBundle
+public AssetBundleLoadResult NoSerializedData
+public AssetBundleLoadResult NotCompatible
+public AssetBundleLoadResult AlreadyLoaded
+public AssetBundleLoadResult FailedRead
+public AssetBundleLoadResult FailedDecompression
+public AssetBundleLoadResult FailedWrite
+public AssetBundleLoadResult FailedDeleteRecompressionTarget
+public AssetBundleLoadResult RecompressionTargetIsLoaded
+public AssetBundleLoadResult RecompressionTargetExistsButNotArchive
 }
 public UnityEngine.AssetBundleManifest : Object {
 public String[] GetAllAssetBundles()
 public String[] GetAllAssetBundlesWithVariant()
 public Hash128 GetAssetBundleHash(string assetBundleName)
-private void INTERNAL_CALL_GetAssetBundleHash(AssetBundleManifest self, string assetBundleName, Hash128& value)
 public String[] GetDirectDependencies(string assetBundleName)
 public String[] GetAllDependencies(string assetBundleName)
+private void GetAssetBundleHash_Injected(string assetBundleName, Hash128& ret)
+}
+public UnityEngine.AssetBundleRecompressOperation : AsyncOperation {
+public string humanReadableResult
+public string inputPath
+public string outputPath
+public AssetBundleLoadResult result
+public bool success
+public string get_humanReadableResult()
+public string get_inputPath()
+public string get_outputPath()
+public AssetBundleLoadResult get_result()
+public bool get_success()
 }
 public UnityEngine.AssetBundleRequest : AsyncOperation {
 public Object asset
@@ -82,6 +118,42 @@ public Object[] allAssets
 public Object get_asset()
 public Object[] get_allAssets()
 }
-internal UnityEngine.AssetBundleUtility : object {
-internal void PatchAssetBundles(AssetBundle[] bundles, String[] filenames)
+public UnityEngine.BuildCompression : ValueType {
+public BuildCompression Uncompressed
+public BuildCompression LZ4
+public BuildCompression LZMA
+public BuildCompression UncompressedRuntime
+public BuildCompression LZ4Runtime
+private CompressionType _compression
+private CompressionLevel _level
+private UInt32 _blockSize
+public CompressionType compression
+public CompressionLevel level
+public UInt32 blockSize
+private void .ctor(CompressionType in_compression, CompressionLevel in_level, UInt32 in_blockSize)
+public CompressionType get_compression()
+private void set_compression(CompressionType value)
+public CompressionLevel get_level()
+private void set_level(CompressionLevel value)
+public UInt32 get_blockSize()
+private void set_blockSize(UInt32 value)
+}
+public UnityEngine.CompressionLevel : Enum {
+public int value__
+public CompressionLevel None
+public CompressionLevel Fastest
+public CompressionLevel Fast
+public CompressionLevel Normal
+public CompressionLevel High
+public CompressionLevel Maximum
+}
+public UnityEngine.CompressionType : Enum {
+public int value__
+public CompressionType None
+public CompressionType Lzma
+public CompressionType Lz4
+public CompressionType Lz4HC
+}
+public UnityEngine.Experimental.AssetBundlePatching.AssetBundleUtility : object {
+public void PatchAssetBundles(AssetBundle[] bundles, String[] filenames)
 }

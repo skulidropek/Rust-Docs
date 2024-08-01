@@ -45,6 +45,28 @@ internal Locale : object {
 public string GetText(string msg)
 public string GetText(string fmt, Object[] args)
 }
+public System.DirectoryServices.ActiveDirectory.ActiveDirectoryInterSiteTransport : object {
+public bool BridgeAllSiteLinks
+public bool IgnoreReplicationSchedule
+public ReadOnlySiteLinkBridgeCollection SiteLinkBridges
+public ReadOnlySiteLinkCollection SiteLinks
+public ActiveDirectoryTransportType TransportType
+public bool get_BridgeAllSiteLinks()
+public void set_BridgeAllSiteLinks(bool value)
+public bool get_IgnoreReplicationSchedule()
+public void set_IgnoreReplicationSchedule(bool value)
+public ReadOnlySiteLinkBridgeCollection get_SiteLinkBridges()
+public ReadOnlySiteLinkCollection get_SiteLinks()
+public ActiveDirectoryTransportType get_TransportType()
+public void Dispose()
+public ActiveDirectoryInterSiteTransport FindByTransportType(DirectoryContext context, ActiveDirectoryTransportType transport)
+public DirectoryEntry GetDirectoryEntry()
+public void Save()
+}
+public System.DirectoryServices.ActiveDirectory.ActiveDirectoryObjectExistsException : Exception {
+public void .ctor(string message)
+public void .ctor(string message, Exception inner)
+}
 public System.DirectoryServices.ActiveDirectory.ActiveDirectoryObjectNotFoundException : Exception {
 public string Name
 public Type Type
@@ -503,6 +525,67 @@ public int value__
 public ActiveDirectoryTransportType Rpc
 public ActiveDirectoryTransportType Smtp
 }
+public System.DirectoryServices.ActiveDirectory.AdamInstance : DirectoryServer {
+public ConfigurationSet ConfigurationSet
+public string DefaultPartition
+public string HostName
+public ReplicationConnectionCollection InboundConnections
+public string IPAddress
+public int LdapPort
+public ReplicationConnectionCollection OutboundConnections
+public AdamRoleCollection Roles
+public string SiteName
+public int SslPort
+public SyncUpdateCallback SyncFromAllServersCallback
+public ConfigurationSet get_ConfigurationSet()
+public string get_DefaultPartition()
+public void set_DefaultPartition(string value)
+public string get_HostName()
+public ReplicationConnectionCollection get_InboundConnections()
+public string get_IPAddress()
+public int get_LdapPort()
+public ReplicationConnectionCollection get_OutboundConnections()
+public AdamRoleCollection get_Roles()
+public string get_SiteName()
+public int get_SslPort()
+public SyncUpdateCallback get_SyncFromAllServersCallback()
+public void set_SyncFromAllServersCallback(SyncUpdateCallback value)
+public void CheckReplicationConsistency()
+public AdamInstanceCollection FindAll(DirectoryContext context, string partitionName)
+public AdamInstance FindOne(DirectoryContext context, string partitionName)
+public AdamInstance GetAdamInstance(DirectoryContext context)
+public ReplicationNeighborCollection GetAllReplicationNeighbors()
+public ReplicationFailureCollection GetReplicationConnectionFailures()
+public ReplicationCursorCollection GetReplicationCursors(string partition)
+public ActiveDirectoryReplicationMetadata GetReplicationMetadata(string objectPath)
+public ReplicationNeighborCollection GetReplicationNeighbors(string partition)
+public ReplicationOperationInformation GetReplicationOperationInformation()
+public void Save()
+public void SeizeRoleOwnership(AdamRole role)
+public void SyncReplicaFromAllServers(string partition, SyncFromAllServersOptions options)
+public void SyncReplicaFromServer(string partition, string sourceServer)
+public void TransferRoleOwnership(AdamRole role)
+public void TriggerSyncReplicaFromNeighbors(string partition)
+}
+public System.DirectoryServices.ActiveDirectory.AdamInstanceCollection : ReadOnlyCollectionBase {
+public AdamInstance Item
+public AdamInstance get_Item(int index)
+public bool Contains(AdamInstance adamInstance)
+public void CopyTo(AdamInstance[] adamInstances, int index)
+public int IndexOf(AdamInstance adamInstance)
+}
+public System.DirectoryServices.ActiveDirectory.AdamRole : Enum {
+public int value__
+public AdamRole NamingRole
+public AdamRole SchemaRole
+}
+public System.DirectoryServices.ActiveDirectory.AdamRoleCollection : ReadOnlyCollectionBase {
+public AdamRole Item
+public AdamRole get_Item(int index)
+public bool Contains(AdamRole role)
+public void CopyTo(AdamRole[] roles, int index)
+public int IndexOf(AdamRole role)
+}
 public System.DirectoryServices.ActiveDirectory.ApplicationPartition : ActiveDirectoryPartition {
 public DirectoryServerCollection DirectoryServers
 public string SecurityReferenceDomain
@@ -555,6 +638,33 @@ public AttributeMetadata get_Item(int index)
 public bool Contains(AttributeMetadata metadata)
 public int IndexOf(AttributeMetadata metadata)
 public void CopyTo(AttributeMetadata[] metadata, int index)
+}
+public System.DirectoryServices.ActiveDirectory.ConfigurationSet : object {
+public AdamInstanceCollection AdamInstances
+public ApplicationPartitionCollection ApplicationPartitions
+public string Name
+public AdamInstance NamingRoleOwner
+public ActiveDirectorySchema Schema
+public AdamInstance SchemaRoleOwner
+public ReadOnlySiteCollection Sites
+public AdamInstanceCollection get_AdamInstances()
+public ApplicationPartitionCollection get_ApplicationPartitions()
+public string get_Name()
+public AdamInstance get_NamingRoleOwner()
+public ActiveDirectorySchema get_Schema()
+public AdamInstance get_SchemaRoleOwner()
+public ReadOnlySiteCollection get_Sites()
+public void Dispose()
+public AdamInstance FindAdamInstance()
+public AdamInstance FindAdamInstance(string partitionName)
+public AdamInstance FindAdamInstance(string partitionName, string siteName)
+public AdamInstanceCollection FindAllAdamInstances()
+public AdamInstanceCollection FindAllAdamInstances(string partitionName)
+public AdamInstanceCollection FindAllAdamInstances(string partitionName, string siteName)
+public ConfigurationSet GetConfigurationSet(DirectoryContext context)
+public DirectoryEntry GetDirectoryEntry()
+public ReplicationSecurityLevel GetSecurityLevel()
+public void SetSecurityLevel(ReplicationSecurityLevel securityLevel)
 }
 public System.DirectoryServices.ActiveDirectory.DirectoryContext : object {
 public string Name
@@ -637,6 +747,7 @@ public Domain Parent
 public DomainController PdcRoleOwner
 public DomainController RidRoleOwner
 public DomainController InfrastructureRoleOwner
+public int DomainModeLevel
 public Forest get_Forest()
 public DomainControllerCollection get_DomainControllers()
 public DomainCollection get_Children()
@@ -674,6 +785,8 @@ public void UpdateLocalSideOfTrustRelationship(string targetDomainName, TrustDir
 public void UpdateTrustRelationship(Domain targetDomain, TrustDirection newTrustDirection)
 public void RepairTrustRelationship(Domain targetDomain)
 public Domain GetCurrentDomain()
+public int get_DomainModeLevel()
+public void RaiseDomainFunctionalityLevel(int domainMode)
 }
 public System.DirectoryServices.ActiveDirectory.DomainCollection : ReadOnlyCollectionBase {
 public Domain Item
@@ -753,6 +866,9 @@ public DomainMode Windows2003InterimDomain
 public DomainMode Windows2003Domain
 public DomainMode Windows2008Domain
 public DomainMode Windows2008R2Domain
+public DomainMode Unknown
+public DomainMode Windows2012R2Domain
+public DomainMode Windows8Domain
 }
 public System.DirectoryServices.ActiveDirectory.Forest : object {
 public string Name
@@ -765,6 +881,7 @@ public Domain RootDomain
 public ActiveDirectorySchema Schema
 public DomainController SchemaRoleOwner
 public DomainController NamingRoleOwner
+public int ForestModeLevel
 public string get_Name()
 public ReadOnlySiteCollection get_Sites()
 public DomainCollection get_Domains()
@@ -805,6 +922,8 @@ public void UpdateLocalSideOfTrustRelationship(string targetForestName, TrustDir
 public void UpdateTrustRelationship(Forest targetForest, TrustDirection newTrustDirection)
 public void RepairTrustRelationship(Forest targetForest)
 public Forest GetCurrentForest()
+public int get_ForestModeLevel()
+public void RaiseForestFunctionalityLevel(int forestMode)
 }
 public System.DirectoryServices.ActiveDirectory.ForestMode : Enum {
 public int value__
@@ -813,6 +932,9 @@ public ForestMode Windows2003InterimForest
 public ForestMode Windows2003Forest
 public ForestMode Windows2008Forest
 public ForestMode Windows2008R2Forest
+public ForestMode Unknown
+public ForestMode Windows2012R2Forest
+public ForestMode Windows8Forest
 }
 public System.DirectoryServices.ActiveDirectory.ForestTrustCollisionException : ActiveDirectoryOperationException {
 public ForestTrustRelationshipCollisionCollection Collisions
@@ -1390,6 +1512,34 @@ public AuthenticationTypes SecureSocketsLayer
 public AuthenticationTypes ServerBind
 public AuthenticationTypes Signing
 }
+public System.DirectoryServices.CreateChildAccessRule : ActiveDirectoryAccessRule {
+public void .ctor(IdentityReference identity, AccessControlType type)
+public void .ctor(IdentityReference identity, AccessControlType type, ActiveDirectorySecurityInheritance inheritanceType)
+public void .ctor(IdentityReference identity, AccessControlType type, ActiveDirectorySecurityInheritance inheritanceType, Guid inheritedObjectType)
+public void .ctor(IdentityReference identity, AccessControlType type, Guid childType)
+public void .ctor(IdentityReference identity, AccessControlType type, Guid childType, ActiveDirectorySecurityInheritance inheritanceType)
+public void .ctor(IdentityReference identity, AccessControlType type, Guid childType, ActiveDirectorySecurityInheritance inheritanceType, Guid inheritedObjectType)
+}
+public System.DirectoryServices.DeleteChildAccessRule : ActiveDirectoryAccessRule {
+public void .ctor(IdentityReference identity, AccessControlType type)
+public void .ctor(IdentityReference identity, AccessControlType type, ActiveDirectorySecurityInheritance inheritanceType)
+public void .ctor(IdentityReference identity, AccessControlType type, ActiveDirectorySecurityInheritance inheritanceType, Guid inheritedObjectType)
+public void .ctor(IdentityReference identity, AccessControlType type, Guid childType)
+public void .ctor(IdentityReference identity, AccessControlType type, Guid childType, ActiveDirectorySecurityInheritance inheritanceType)
+public void .ctor(IdentityReference identity, AccessControlType type, Guid childType, ActiveDirectorySecurityInheritance inheritanceType, Guid inheritedObjectType)
+}
+public System.DirectoryServices.DeleteTreeAccessRule : ActiveDirectoryAccessRule {
+public void .ctor(IdentityReference identity, AccessControlType type)
+public void .ctor(IdentityReference identity, AccessControlType type, ActiveDirectorySecurityInheritance inheritanceType)
+public void .ctor(IdentityReference identity, AccessControlType type, ActiveDirectorySecurityInheritance inheritanceType, Guid inheritedObjectType)
+}
+public System.DirectoryServices.DereferenceAlias : Enum {
+public int value__
+public DereferenceAlias Always
+public DereferenceAlias FindingBaseObject
+public DereferenceAlias InSearching
+public DereferenceAlias Never
+}
 public System.DirectoryServices.DirectoryEntries : object {
 private LdapConnection _Conn
 private string _Bpath
@@ -1572,6 +1722,14 @@ public TimeSpan ServerPageTimeLimit
 public TimeSpan ServerTimeLimit
 public int SizeLimit
 public SortOption Sort
+public bool Asynchronous
+public string AttributeScopeQuery
+public DereferenceAlias DerefAlias
+public DirectorySynchronization DirectorySynchronization
+public ExtendedDN ExtendedDN
+public SecurityMasks SecurityMasks
+public bool Tombstone
+public DirectoryVirtualListView VirtualListView
 internal SearchResultCollection get_SrchColl()
 private void InitBlock()
 public bool get_CacheResults()
@@ -1611,6 +1769,22 @@ public SearchResultCollection FindAll()
 private void DoSearch()
 protected void Dispose(bool disposing)
 private void ClearCachedResults()
+public bool get_Asynchronous()
+public void set_Asynchronous(bool value)
+public string get_AttributeScopeQuery()
+public void set_AttributeScopeQuery(string value)
+public DereferenceAlias get_DerefAlias()
+public void set_DerefAlias(DereferenceAlias value)
+public DirectorySynchronization get_DirectorySynchronization()
+public void set_DirectorySynchronization(DirectorySynchronization value)
+public ExtendedDN get_ExtendedDN()
+public void set_ExtendedDN(ExtendedDN value)
+public SecurityMasks get_SecurityMasks()
+public void set_SecurityMasks(SecurityMasks value)
+public bool get_Tombstone()
+public void set_Tombstone(bool value)
+public DirectoryVirtualListView get_VirtualListView()
+public void set_VirtualListView(DirectoryVirtualListView value)
 }
 public System.DirectoryServices.DirectoryServicesCOMException : COMException {
 public int ExtendedError
@@ -2006,4 +2180,7 @@ private string comment
 public string Comment
 public void .ctor(string comment)
 public string get_Comment()
+}
+internal Unity.ThrowStub : ObjectDisposedException {
+public void ThrowNotSupportedException()
 }

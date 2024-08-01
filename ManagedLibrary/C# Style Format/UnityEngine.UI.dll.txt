@@ -702,7 +702,6 @@ protected float m_FallbackScreenDPI
 protected float m_DefaultSpriteDPI
 protected float m_DynamicPixelsPerUnit
 private Canvas m_Canvas
-private float m_PrevScaleFactor
 private float m_PrevReferencePixelsPerUnit
 public ScaleMode uiScaleMode
 public float referencePixelsPerUnit
@@ -1343,10 +1342,15 @@ private float m_FillAmount
 private bool m_FillClockwise
 private int m_FillOrigin
 private float m_AlphaHitTestMinimumThreshold
+private bool m_Tracked
+private bool m_UseSpriteMesh
 private Vector2[] s_VertScratch
 private Vector2[] s_UVScratch
 private Vector3[] s_Xy
 private Vector3[] s_Uv
+private List`1<Image> m_TrackedTexturelessImages
+private bool s_Initialized
+private Action`1<SpriteAtlas> <>f__mg$cache0
 public Sprite sprite
 public Sprite overrideSprite
 private Sprite activeSprite
@@ -1359,6 +1363,7 @@ public bool fillClockwise
 public int fillOrigin
 public float eventAlphaThreshold
 public float alphaHitTestMinimumThreshold
+public bool useSpriteMesh
 public Material defaultETC1GraphicMaterial
 public Texture mainTexture
 public bool hasBorder
@@ -1394,6 +1399,8 @@ public float get_eventAlphaThreshold()
 public void set_eventAlphaThreshold(float value)
 public float get_alphaHitTestMinimumThreshold()
 public void set_alphaHitTestMinimumThreshold(float value)
+public bool get_useSpriteMesh()
+public void set_useSpriteMesh(bool value)
 public Material get_defaultETC1GraphicMaterial()
 public Texture get_mainTexture()
 public bool get_hasBorder()
@@ -1402,11 +1409,16 @@ public Material get_material()
 public void set_material(Material value)
 public void OnBeforeSerialize()
 public void OnAfterDeserialize()
+private void PreserveSpriteAspectRatio(Rect& rect, Vector2 spriteSize)
 private Vector4 GetDrawingDimensions(bool shouldPreserveAspect)
 public void SetNativeSize()
 protected void OnPopulateMesh(VertexHelper toFill)
+private void TrackSprite()
+protected void OnEnable()
+protected void OnDisable()
 protected void UpdateMaterial()
 private void GenerateSimpleSprite(VertexHelper vh, bool lPreserveAspect)
+private void GenerateSprite(VertexHelper vh, bool lPreserveAspect)
 private void GenerateSlicedSprite(VertexHelper toFill)
 private void GenerateTiledSprite(VertexHelper toFill)
 private void AddQuad(VertexHelper vertexHelper, Vector3[] quadPositions, Color32 color, Vector3[] quadUVs)
@@ -1426,6 +1438,9 @@ public float get_flexibleHeight()
 public int get_layoutPriority()
 public bool IsRaycastLocationValid(Vector2 screenPoint, Camera eventCamera)
 private Vector2 MapCoordinate(Vector2 local, Rect rect)
+private void RebuildImage(SpriteAtlas spriteAtlas)
+private void TrackImage(Image g)
+private void UnTrackImage(Image g)
 }
 public UnityEngine.UI.IMask {
 public RectTransform rectTransform
@@ -1488,6 +1503,7 @@ private Coroutine m_DragCoroutine
 private string m_OriginalText
 private bool m_WasCanceled
 private bool m_HasDoneFocusTransition
+private WaitForSecondsRealtime m_WaitForSecondsRealtime
 private string kEmailSpecialCharacters
 private Event m_ProcessingEvent
 private int k_MaxTextLength
@@ -2596,16 +2612,18 @@ private List`1<Vector4> m_Tangents
 private List`1<int> m_Indices
 private Vector4 s_DefaultTangent
 private Vector3 s_DefaultNormal
+private bool m_ListsInitalized
 public int currentVertCount
 public int currentIndexCount
 public void .ctor(Mesh m)
+private void InitializeListIfRequired()
+public void Dispose()
 public void Clear()
 public int get_currentVertCount()
 public int get_currentIndexCount()
 public void PopulateUIVertex(UIVertex& vertex, int i)
 public void SetUIVertex(UIVertex vertex, int i)
 public void FillMesh(Mesh mesh)
-public void Dispose()
 public void AddVert(Vector3 position, Color32 color, Vector2 uv0, Vector2 uv1, Vector3 normal, Vector4 tangent)
 public void AddVert(Vector3 position, Color32 color, Vector2 uv0)
 public void AddVert(UIVertex v)

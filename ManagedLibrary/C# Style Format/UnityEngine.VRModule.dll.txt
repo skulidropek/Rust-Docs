@@ -3,13 +3,14 @@ public bool visible
 public bool configured
 public bool TryGetDimensions(Vector3& dimensionsOut)
 public bool TryGetDimensions(Vector3& dimensionsOut, Type boundaryType)
-private bool TryGetDimensionsInternal(Vector3& dimensionsOut, int boundaryType)
-public bool TryGetGeometry(List`1<Vector3> geometry)
-public bool TryGetGeometry(List`1<Vector3> geometry, Type boundaryType)
-private bool TryGetGeometryInternal(object geometryOut, int boundaryType)
+private bool TryGetDimensionsInternal(Vector3& dimensionsOut, Type boundaryType)
 public bool get_visible()
 public void set_visible(bool value)
 public bool get_configured()
+public bool TryGetGeometry(List`1<Vector3> geometry)
+public bool TryGetGeometry(List`1<Vector3> geometry, Type boundaryType)
+private bool TryGetGeometryScriptingInternal(List`1<Vector3> geometry, Type boundaryType)
+private Vector3[] TryGetGeometryArrayInternal(Type boundaryType)
 }
 public UnityEngine.Internal.VR.VRTestMock : object {
 public void Reset()
@@ -159,41 +160,18 @@ public bool TryGetDroppedFrameCount(Int32& droppedFrameCount)
 public bool TryGetFramePresentCount(Int32& framePresentCount)
 public float get_gpuTimeLastFrame()
 }
-internal UnityEngine.XR.AvailableTrackingData : Enum {
+public UnityEngine.XR.GameViewRenderMode : Enum {
 public int value__
-public AvailableTrackingData None
-public AvailableTrackingData PositionAvailable
-public AvailableTrackingData RotationAvailable
-public AvailableTrackingData VelocityAvailable
-public AvailableTrackingData AngularVelocityAvailable
-public AvailableTrackingData AccelerationAvailable
-public AvailableTrackingData AngularAccelerationAvailable
+public GameViewRenderMode LeftEye
+public GameViewRenderMode RightEye
+public GameViewRenderMode BothEyes
+public GameViewRenderMode OcclusionMesh
 }
-public UnityEngine.XR.InputTracking : object {
-private Action`1<XRNodeState> trackingAcquired
-private Action`1<XRNodeState> trackingLost
-private Action`1<XRNodeState> nodeAdded
-private Action`1<XRNodeState> nodeRemoved
-public bool disablePositionalTracking
-public Vector3 GetLocalPosition(XRNode node)
-private void INTERNAL_CALL_GetLocalPosition(XRNode node, Vector3& value)
-public Quaternion GetLocalRotation(XRNode node)
-private void INTERNAL_CALL_GetLocalRotation(XRNode node, Quaternion& value)
-public void Recenter()
-public string GetNodeName(ulong uniqueID)
-private void GetNodeStatesInternal(object nodeStates)
-public void GetNodeStates(List`1<XRNodeState> nodeStates)
-public bool get_disablePositionalTracking()
-public void set_disablePositionalTracking(bool value)
-public void add_trackingAcquired(Action`1<XRNodeState> value)
-public void remove_trackingAcquired(Action`1<XRNodeState> value)
-public void add_trackingLost(Action`1<XRNodeState> value)
-public void remove_trackingLost(Action`1<XRNodeState> value)
-public void add_nodeAdded(Action`1<XRNodeState> value)
-public void remove_nodeAdded(Action`1<XRNodeState> value)
-public void add_nodeRemoved(Action`1<XRNodeState> value)
-public void remove_nodeRemoved(Action`1<XRNodeState> value)
-private void InvokeTrackingEvent(TrackingStateEventType eventType, XRNode nodeType, long uniqueID, bool tracked)
+public UnityEngine.XR.TrackingOriginMode : Enum {
+public int value__
+public TrackingOriginMode Device
+public TrackingOriginMode Floor
+public TrackingOriginMode Unknown
 }
 public UnityEngine.XR.TrackingSpaceType : Enum {
 public int value__
@@ -207,120 +185,205 @@ public UserPresenceState NotPresent
 public UserPresenceState Present
 public UserPresenceState Unknown
 }
+internal UnityEngine.XR.WSA.EmulationMode : Enum {
+public int value__
+public EmulationMode None
+public EmulationMode RemoteDevice
+public EmulationMode Simulated
+}
+internal UnityEngine.XR.WSA.GestureHand : Enum {
+public int value__
+public GestureHand Left
+public GestureHand Right
+}
+internal UnityEngine.XR.WSA.HolographicAutomation : object {
+private SimulatedBody s_Body
+private SimulatedHead s_Head
+private SimulatedHand s_LeftHand
+private SimulatedHand s_RightHand
+public SimulatedBody simulatedBody
+public SimulatedHead simulatedHead
+public SimulatedHand simulatedLeftHand
+public SimulatedHand simulatedRightHand
+internal void Initialize()
+internal void Shutdown()
+internal void LoadRoom(string id)
+internal void SetEmulationMode(EmulationMode mode)
+internal void SetGestureHand(GestureHand hand)
+internal void Reset()
+internal void PerformGesture(GestureHand hand, SimulatedGesture gesture)
+internal Vector3 GetBodyPosition()
+internal void SetBodyPosition(Vector3 position)
+internal float GetBodyRotation()
+internal void SetBodyRotation(float degrees)
+internal float GetBodyHeight()
+internal void SetBodyHeight(float degrees)
+internal Vector3 GetHeadRotation()
+internal void SetHeadRotation(Vector3 degrees)
+internal float GetHeadDiameter()
+internal void SetHeadDiameter(float degrees)
+internal Vector3 GetHandPosition(GestureHand hand)
+internal void SetHandPosition(GestureHand hand, Vector3 position)
+internal bool GetHandActivated(GestureHand hand)
+internal void SetHandActivated(GestureHand hand, bool activated)
+internal bool GetHandVisible(GestureHand hand)
+internal void EnsureHandVisible(GestureHand hand)
+public SimulatedBody get_simulatedBody()
+public SimulatedHead get_simulatedHead()
+public SimulatedHand get_simulatedLeftHand()
+public SimulatedHand get_simulatedRightHand()
+private void GetBodyPosition_Injected(Vector3& ret)
+private void SetBodyPosition_Injected(Vector3& position)
+private void GetHeadRotation_Injected(Vector3& ret)
+private void SetHeadRotation_Injected(Vector3& degrees)
+private void GetHandPosition_Injected(GestureHand hand, Vector3& ret)
+private void SetHandPosition_Injected(GestureHand hand, Vector3& position)
+}
+internal UnityEngine.XR.WSA.HolographicEmulationHelper : object {
+internal EmulationMode GetEmulationMode()
+}
+internal UnityEngine.XR.WSA.HolographicEmulationHelpers : object {
+public float k_DefaultBodyHeight
+public float k_DefaultHeadDiameter
+public float k_ForwardOffset
+public Vector3 CalcExpectedCameraPosition(SimulatedHead head, SimulatedBody body)
+}
+public UnityEngine.XR.WSA.HolographicRemoting : object {
+public HolographicStreamerConnectionState ConnectionState
+public HolographicStreamerConnectionState get_ConnectionState()
+public void Connect(string clientName, int maxBitRate)
+public void Disconnect()
+}
 public UnityEngine.XR.WSA.HolographicSettings : object {
+public bool IsDisplayOpaque
 public bool IsContentProtectionEnabled
 public HolographicReprojectionMode ReprojectionMode
 public bool IsLatentFramePresentation
+public void SetFocusPointForFrame(Vector3 position)
+public void SetFocusPointForFrame(Vector3 position, Vector3 normal)
+public void SetFocusPointForFrame(Vector3 position, Vector3 normal, Vector3 velocity)
+private void InternalSetFocusPointForFrameP(Vector3 position)
+private void InternalSetFocusPointForFramePN(Vector3 position, Vector3 normal)
+private void InternalSetFocusPointForFramePNV(Vector3 position, Vector3 normal, Vector3 velocity)
+public bool get_IsDisplayOpaque()
 public bool get_IsContentProtectionEnabled()
 public void set_IsContentProtectionEnabled(bool value)
 public HolographicReprojectionMode get_ReprojectionMode()
 public void set_ReprojectionMode(HolographicReprojectionMode value)
 public void ActivateLatentFramePresentation(bool activated)
 public bool get_IsLatentFramePresentation()
+private void InternalSetFocusPointForFrameP_Injected(Vector3& position)
+private void InternalSetFocusPointForFramePN_Injected(Vector3& position, Vector3& normal)
+private void InternalSetFocusPointForFramePNV_Injected(Vector3& position, Vector3& normal, Vector3& velocity)
 }
-public UnityEngine.XR.WSA.PositionalLocatorState : Enum {
+public UnityEngine.XR.WSA.HolographicStreamerConnectionFailureReason : Enum {
 public int value__
-public PositionalLocatorState Unavailable
-public PositionalLocatorState OrientationOnly
-public PositionalLocatorState Activating
-public PositionalLocatorState Active
-public PositionalLocatorState Inhibited
+public HolographicStreamerConnectionFailureReason None
+public HolographicStreamerConnectionFailureReason Unknown
+public HolographicStreamerConnectionFailureReason Unreachable
+public HolographicStreamerConnectionFailureReason HandshakeFailed
+public HolographicStreamerConnectionFailureReason ProtocolVersionMismatch
+public HolographicStreamerConnectionFailureReason ConnectionLost
 }
-public UnityEngine.XR.WSA.WorldManager : object {
-public bool IsLatentFramePresentation
-public bool get_IsLatentFramePresentation()
-public void ActivateLatentFramePresentation(bool activated)
+public UnityEngine.XR.WSA.HolographicStreamerConnectionState : Enum {
+public int value__
+public HolographicStreamerConnectionState Disconnected
+public HolographicStreamerConnectionState Connecting
+public HolographicStreamerConnectionState Connected
+}
+internal UnityEngine.XR.WSA.PerceptionRemoting : object {
+internal void Connect(string clientName)
+internal void Disconnect()
+internal HolographicStreamerConnectionFailureReason CheckForDisconnect()
+internal HolographicStreamerConnectionState GetConnectionState()
+internal void SetEnableAudio(bool enable)
+internal void SetEnableVideo(bool enable)
+internal void SetVideoEncodingParameters(int maxBitRate)
+}
+internal UnityEngine.XR.WSA.SimulatedBody : object {
+public Vector3 position
+public float rotation
+public float height
+public Vector3 get_position()
+public void set_position(Vector3 value)
+public float get_rotation()
+public void set_rotation(float value)
+public float get_height()
+public void set_height(float value)
+}
+internal UnityEngine.XR.WSA.SimulatedGesture : Enum {
+public int value__
+public SimulatedGesture FingerPressed
+public SimulatedGesture FingerReleased
+}
+internal UnityEngine.XR.WSA.SimulatedHand : object {
+public GestureHand m_Hand
+public Vector3 position
+public bool activated
+public bool visible
+internal void .ctor(GestureHand hand)
+public Vector3 get_position()
+public void set_position(Vector3 value)
+public bool get_activated()
+public void set_activated(bool value)
+public bool get_visible()
+public void EnsureVisible()
+public void PerformGesture(SimulatedGesture gesture)
+}
+internal UnityEngine.XR.WSA.SimulatedHead : object {
+public float diameter
+public Vector3 eulerAngles
+public float get_diameter()
+public void set_diameter(float value)
+public Vector3 get_eulerAngles()
+public void set_eulerAngles(Vector3 value)
 }
 public UnityEngine.XR.XRDevice : object {
+private Action`1<string> deviceLoaded
 public bool isPresent
 public UserPresenceState userPresence
 public string family
 public string model
 public float refreshRate
 public float fovZoomFactor
+public TrackingOriginMode trackingOriginMode
 public bool get_isPresent()
 public UserPresenceState get_userPresence()
 public string get_family()
 public string get_model()
 public float get_refreshRate()
+public IntPtr GetNativePtr()
 public TrackingSpaceType GetTrackingSpaceType()
 public bool SetTrackingSpaceType(TrackingSpaceType trackingSpaceType)
-public IntPtr GetNativePtr()
-private void INTERNAL_CALL_GetNativePtr(IntPtr& value)
 public void DisableAutoXRCameraTracking(Camera camera, bool disabled)
-private void DisableAutoXRCameraTrackingInternal(Camera camera, bool disabled)
 public float get_fovZoomFactor()
 public void set_fovZoomFactor(float value)
-}
-public UnityEngine.XR.XRNode : Enum {
-public int value__
-public XRNode LeftEye
-public XRNode RightEye
-public XRNode CenterEye
-public XRNode Head
-public XRNode LeftHand
-public XRNode RightHand
-public XRNode GameController
-public XRNode TrackingReference
-public XRNode HardwareTracker
-}
-public UnityEngine.XR.XRNodeState : ValueType {
-private XRNode m_Type
-private AvailableTrackingData m_AvailableFields
-private Vector3 m_Position
-private Quaternion m_Rotation
-private Vector3 m_Velocity
-private Vector3 m_AngularVelocity
-private Vector3 m_Acceleration
-private Vector3 m_AngularAcceleration
-private int m_Tracked
-private ulong m_UniqueID
-public ulong uniqueID
-public XRNode nodeType
-public bool tracked
-public Vector3 position
-public Quaternion rotation
-public Vector3 velocity
-public Vector3 angularVelocity
-public Vector3 acceleration
-public Vector3 angularAcceleration
-public ulong get_uniqueID()
-public void set_uniqueID(ulong value)
-public XRNode get_nodeType()
-public void set_nodeType(XRNode value)
-public bool get_tracked()
-public void set_tracked(bool value)
-public void set_position(Vector3 value)
-public void set_rotation(Quaternion value)
-public void set_velocity(Vector3 value)
-public void set_angularVelocity(Vector3 value)
-public void set_acceleration(Vector3 value)
-public void set_angularAcceleration(Vector3 value)
-public bool TryGetPosition(Vector3& position)
-public bool TryGetRotation(Quaternion& rotation)
-public bool TryGetVelocity(Vector3& velocity)
-public bool TryGetAngularVelocity(Vector3& angularVelocity)
-public bool TryGetAcceleration(Vector3& acceleration)
-public bool TryGetAngularAcceleration(Vector3& angularAcceleration)
-private bool TryGet(T inValue, AvailableTrackingData availabilityFlag, T& outValue)
+public TrackingOriginMode get_trackingOriginMode()
+public void add_deviceLoaded(Action`1<string> value)
+public void remove_deviceLoaded(Action`1<string> value)
+private void InvokeDeviceLoaded(string loadedDeviceName)
 }
 public UnityEngine.XR.XRSettings : object {
 public bool enabled
+public GameViewRenderMode gameViewRenderMode
 public bool isDeviceActive
 public bool showDeviceView
 public float renderScale
 public float eyeTextureResolutionScale
 public int eyeTextureWidth
 public int eyeTextureHeight
-internal float renderViewportScaleInternal
 public RenderTextureDescriptor eyeTextureDesc
 public float renderViewportScale
+internal float renderViewportScaleInternal
 public float occlusionMaskScale
 public bool useOcclusionMesh
 public string loadedDeviceName
 public String[] supportedDevices
+public StereoRenderingMode stereoRenderingMode
 public bool get_enabled()
 public void set_enabled(bool value)
+public GameViewRenderMode get_gameViewRenderMode()
+public void set_gameViewRenderMode(GameViewRenderMode value)
 public bool get_isDeviceActive()
 public bool get_showDeviceView()
 public void set_showDeviceView(bool value)
@@ -330,12 +393,11 @@ public float get_eyeTextureResolutionScale()
 public void set_eyeTextureResolutionScale(float value)
 public int get_eyeTextureWidth()
 public int get_eyeTextureHeight()
-internal float get_renderViewportScaleInternal()
-internal void set_renderViewportScaleInternal(float value)
 public RenderTextureDescriptor get_eyeTextureDesc()
-private void INTERNAL_get_eyeTextureDesc(RenderTextureDescriptor& value)
 public float get_renderViewportScale()
 public void set_renderViewportScale(float value)
+internal float get_renderViewportScaleInternal()
+internal void set_renderViewportScaleInternal(float value)
 public float get_occlusionMaskScale()
 public void set_occlusionMaskScale(float value)
 public bool get_useOcclusionMesh()
@@ -344,6 +406,8 @@ public string get_loadedDeviceName()
 public void LoadDeviceByName(string deviceName)
 public void LoadDeviceByName(String[] prioritizedDeviceNameList)
 public String[] get_supportedDevices()
+public StereoRenderingMode get_stereoRenderingMode()
+private void get_eyeTextureDesc_Injected(RenderTextureDescriptor& ret)
 }
 public UnityEngine.XR.XRStats : object {
 public float gpuTimeLastFrame

@@ -201,6 +201,9 @@ public bool NamespaceDeclared
 public ConfigurationSectionGroup RootSectionGroup
 public ConfigurationSectionGroupCollection SectionGroups
 public ConfigurationSectionCollection Sections
+public Func`2<string, string> AssemblyStringTransformer
+public FrameworkName TargetFramework
+public Func`2<string, string> TypeStringTransformer
 internal void add_SaveStart(ConfigurationSaveEventHandler value)
 internal void remove_SaveStart(ConfigurationSaveEventHandler value)
 internal void add_SaveEnd(ConfigurationSaveEventHandler value)
@@ -252,6 +255,12 @@ private bool Load()
 private void ReadConfigFile(XmlReader reader, string fileName)
 internal void ReadData(XmlReader reader, bool allowOverride)
 private void ThrowException(string text, XmlReader reader)
+public Func`2<string, string> get_AssemblyStringTransformer()
+public void set_AssemblyStringTransformer(Func`2<string, string> value)
+public FrameworkName get_TargetFramework()
+public void set_TargetFramework(FrameworkName value)
+public Func`2<string, string> get_TypeStringTransformer()
+public void set_TypeStringTransformer(Func`2<string, string> value)
 }
 public System.Configuration.ConfigurationAllowDefinition : Enum {
 public int value__
@@ -266,6 +275,19 @@ public ConfigurationAllowExeDefinition MachineOnly
 public ConfigurationAllowExeDefinition MachineToApplication
 public ConfigurationAllowExeDefinition MachineToLocalUser
 public ConfigurationAllowExeDefinition MachineToRoamingUser
+}
+public System.Configuration.ConfigurationBuilder : ProviderBase {
+public ConfigurationSection ProcessConfigurationSection(ConfigurationSection configSection)
+public XmlNode ProcessRawXml(XmlNode rawXml)
+}
+public System.Configuration.ConfigurationBuilderSettings : ConfigurationElement {
+public ProviderSettingsCollection Builders
+public ProviderSettingsCollection get_Builders()
+}
+public System.Configuration.ConfigurationBuildersSection : ConfigurationSection {
+public ProviderSettingsCollection Builders
+public ProviderSettingsCollection get_Builders()
+public ConfigurationBuilder GetBuilderFromName(string builderName)
 }
 public System.Configuration.ConfigurationCollectionAttribute : Attribute {
 private string addItemName
@@ -324,6 +346,7 @@ protected internal object Item
 protected internal object Item
 protected internal ConfigurationPropertyCollection Properties
 internal bool IsElementPresent
+public Configuration CurrentConfiguration
 internal Configuration get_Configuration()
 internal void set_Configuration(Configuration value)
 internal void InitFromProperty(PropertyInformation propertyInfo)
@@ -373,6 +396,7 @@ private void ValidateValue(ConfigurationProperty p, string value)
 internal bool HasValue(ConfigurationElement parent, PropertyInformation prop, ConfigurationSaveMode mode)
 internal bool HasValues(ConfigurationElement parent, ConfigurationSaveMode mode)
 internal void PrepareSave(ConfigurationElement parent, ConfigurationSaveMode mode)
+public Configuration get_CurrentConfiguration()
 }
 public System.Configuration.ConfigurationElementCollection : ConfigurationElement {
 private ArrayList list
@@ -587,6 +611,7 @@ public void RefreshSection(string sectionName)
 public NameValueCollection get_AppSettings()
 public ConnectionStringSettingsCollection get_ConnectionStrings()
 internal IInternalConfigSystem ChangeConfigurationSystem(IInternalConfigSystem newSystem)
+public Configuration OpenMappedExeConfiguration(ExeConfigurationFileMap fileMap, ConfigurationUserLevel userLevel, bool preLoad)
 }
 public System.Configuration.ConfigurationPermission : CodeAccessPermission {
 private bool unrestricted
@@ -624,6 +649,9 @@ public Type Type
 public ConfigurationValidatorBase Validator
 internal bool IsElement
 internal ConfigurationCollectionAttribute CollectionAttribute
+public bool IsAssemblyStringTransformationRequired
+public bool IsTypeStringTransformationRequired
+public bool IsVersionCheckRequired
 public void .ctor(string name, Type type)
 public void .ctor(string name, Type type, object defaultValue)
 public void .ctor(string name, Type type, object defaultValue, ConfigurationPropertyOptions options)
@@ -644,6 +672,9 @@ internal bool get_IsElement()
 internal ConfigurationCollectionAttribute get_CollectionAttribute()
 internal void set_CollectionAttribute(ConfigurationCollectionAttribute value)
 internal void Validate(object value)
+public bool get_IsAssemblyStringTransformationRequired()
+public bool get_IsTypeStringTransformationRequired()
+public bool get_IsVersionCheckRequired()
 }
 public System.Configuration.ConfigurationPropertyAttribute : Attribute {
 private string name
@@ -987,6 +1018,7 @@ public void set_LocalUserConfigFilename(string value)
 public string get_RoamingUserConfigFilename()
 public void set_RoamingUserConfigFilename(string value)
 public object Clone()
+public void .ctor(string machineConfigFileName)
 }
 internal System.Configuration.ExeConfigurationHost : InternalConfigurationHost {
 private ExeConfigurationFileMap map
@@ -1115,6 +1147,8 @@ public bool get_SupportsChangeNotifications()
 public bool get_SupportsLocation()
 public bool get_SupportsPath()
 public bool get_SupportsRefresh()
+public ConfigurationSection ProcessConfigurationSection(ConfigurationSection configSection, ConfigurationBuilder builder)
+public XmlNode ProcessRawXml(XmlNode rawXml, ConfigurationBuilder builder)
 }
 public System.Configuration.Internal.IConfigErrorInfo {
 public string Filename
@@ -1252,6 +1286,10 @@ public bool SupportsUserConfig
 public object GetSection(string configKey)
 public void RefreshConfig(string sectionName)
 public bool get_SupportsUserConfig()
+}
+public System.Configuration.Internal.IInternalConfigurationBuilderHost {
+public ConfigurationSection ProcessConfigurationSection(ConfigurationSection configSection, ConfigurationBuilder builder)
+public XmlNode ProcessRawXml(XmlNode rawXml, ConfigurationBuilder builder)
 }
 public System.Configuration.Internal.InternalConfigEventArgs : EventArgs {
 private string configPath
@@ -1453,6 +1491,12 @@ public string get_Name()
 public string get_Value()
 public void set_Value(string value)
 protected internal ConfigurationPropertyCollection get_Properties()
+}
+public System.Configuration.OverrideMode : Enum {
+public int value__
+public OverrideMode Allow
+public OverrideMode Deny
+public OverrideMode Inherit
 }
 public System.Configuration.PositiveTimeSpanValidator : ConfigurationValidatorBase {
 public bool CanValidate(Type type)
@@ -1671,6 +1715,7 @@ public string KeyContainerName
 public RSAParameters RsaPublicKey
 public bool UseMachineContainer
 public bool UseOAEP
+public bool UseFIPS
 private RSACryptoServiceProvider GetProvider()
 public XmlNode Decrypt(XmlNode encryptedNode)
 public XmlNode Encrypt(XmlNode node)
@@ -1684,6 +1729,7 @@ public string get_KeyContainerName()
 public RSAParameters get_RsaPublicKey()
 public bool get_UseMachineContainer()
 public bool get_UseOAEP()
+public bool get_UseFIPS()
 }
 internal System.Configuration.SectionGroupInfo : ConfigInfo {
 private bool modified
@@ -1769,6 +1815,10 @@ public bool RequirePermission
 public bool RestartOnExternalChanges
 public string SectionName
 public string Type
+public ConfigurationBuilder ConfigurationBuilder
+public OverrideMode OverrideMode
+public OverrideMode OverrideModeDefault
+public OverrideMode OverrideModeEffective
 internal string get_ConfigFilePath()
 internal void set_ConfigFilePath(string value)
 public ConfigurationAllowDefinition get_AllowDefinition()
@@ -1808,6 +1858,12 @@ public void RevertToParent()
 public void UnprotectSection()
 public void SetRawXml(string rawXml)
 internal void SetName(string name)
+public ConfigurationBuilder get_ConfigurationBuilder()
+public OverrideMode get_OverrideMode()
+public void set_OverrideMode(OverrideMode value)
+public OverrideMode get_OverrideModeDefault()
+public void set_OverrideModeDefault(OverrideMode value)
+public OverrideMode get_OverrideModeEffective()
 }
 public System.Configuration.StringValidator : ConfigurationValidatorBase {
 private Char[] invalidCharacters
@@ -1935,4 +1991,7 @@ private string comment
 public string Comment
 public void .ctor(string comment)
 public string get_Comment()
+}
+internal Unity.ThrowStub : ObjectDisposedException {
+public void ThrowNotSupportedException()
 }

@@ -14,24 +14,42 @@ public Component get_colliderComponent()
 private Component InstanceIDToColliderComponent(int instanceID)
 }
 public UnityEngine.ParticlePhysicsExtensions : object {
+public int GetCollisionEvents(ParticleSystem ps, GameObject go, ParticleCollisionEvent[] collisionEvents)
 public int GetSafeCollisionEventSize(ParticleSystem ps)
 public int GetCollisionEvents(ParticleSystem ps, GameObject go, List`1<ParticleCollisionEvent> collisionEvents)
 public int GetSafeTriggerParticlesSize(ParticleSystem ps, ParticleSystemTriggerEventType type)
 public int GetTriggerParticles(ParticleSystem ps, ParticleSystemTriggerEventType type, List`1<Particle> particles)
 public void SetTriggerParticles(ParticleSystem ps, ParticleSystemTriggerEventType type, List`1<Particle> particles, int offset, int count)
 public void SetTriggerParticles(ParticleSystem ps, ParticleSystemTriggerEventType type, List`1<Particle> particles)
-public int GetCollisionEvents(ParticleSystem ps, GameObject go, ParticleCollisionEvent[] collisionEvents)
 }
 public UnityEngine.ParticleSystem : Component {
+public float startDelay
+public bool loop
+public bool playOnAwake
+public float duration
+public float playbackSpeed
+public bool enableEmission
+public float emissionRate
+public float startSpeed
+public float startSize
+public Color startColor
+public float startRotation
+public Vector3 startRotation3D
+public float startLifetime
+public float gravityModifier
+public int maxParticles
+public ParticleSystemSimulationSpace simulationSpace
+public ParticleSystemScalingMode scalingMode
+public bool automaticCullingEnabled
 public bool isPlaying
 public bool isEmitting
 public bool isStopped
 public bool isPaused
-public float time
 public int particleCount
+public float time
 public UInt32 randomSeed
 public bool useAutoRandomSeed
-public bool automaticCullingEnabled
+public bool proceduralSimulationSupported
 public MainModule main
 public EmissionModule emission
 public ShapeModule shape
@@ -54,87 +72,6 @@ public TextureSheetAnimationModule textureSheetAnimation
 public LightsModule lights
 public TrailModule trails
 public CustomDataModule customData
-public float startDelay
-public bool loop
-public bool playOnAwake
-public float duration
-public float playbackSpeed
-public bool enableEmission
-public float emissionRate
-public float startSpeed
-public float startSize
-public Color startColor
-public float startRotation
-public Vector3 startRotation3D
-public float startLifetime
-public float gravityModifier
-public int maxParticles
-public ParticleSystemSimulationSpace simulationSpace
-public ParticleSystemScalingMode scalingMode
-public bool get_isPlaying()
-public bool get_isEmitting()
-public bool get_isStopped()
-public bool get_isPaused()
-public float get_time()
-public void set_time(float value)
-public int get_particleCount()
-public UInt32 get_randomSeed()
-public void set_randomSeed(UInt32 value)
-public bool get_useAutoRandomSeed()
-public void set_useAutoRandomSeed(bool value)
-public bool get_automaticCullingEnabled()
-public MainModule get_main()
-public EmissionModule get_emission()
-public ShapeModule get_shape()
-public VelocityOverLifetimeModule get_velocityOverLifetime()
-public LimitVelocityOverLifetimeModule get_limitVelocityOverLifetime()
-public InheritVelocityModule get_inheritVelocity()
-public ForceOverLifetimeModule get_forceOverLifetime()
-public ColorOverLifetimeModule get_colorOverLifetime()
-public ColorBySpeedModule get_colorBySpeed()
-public SizeOverLifetimeModule get_sizeOverLifetime()
-public SizeBySpeedModule get_sizeBySpeed()
-public RotationOverLifetimeModule get_rotationOverLifetime()
-public RotationBySpeedModule get_rotationBySpeed()
-public ExternalForcesModule get_externalForces()
-public NoiseModule get_noise()
-public CollisionModule get_collision()
-public TriggerModule get_trigger()
-public SubEmittersModule get_subEmitters()
-public TextureSheetAnimationModule get_textureSheetAnimation()
-public LightsModule get_lights()
-public TrailModule get_trails()
-public CustomDataModule get_customData()
-public void SetParticles(Particle[] particles, int size)
-public int GetParticles(Particle[] particles)
-public void SetCustomParticleData(List`1<Vector4> customData, ParticleSystemCustomData streamIndex)
-public int GetCustomParticleData(List`1<Vector4> customData, ParticleSystemCustomData streamIndex)
-internal void SetCustomParticleDataInternal(object customData, int streamIndex)
-internal int GetCustomParticleDataInternal(object customData, int streamIndex)
-public void Simulate(float t, bool withChildren, bool restart, bool fixedTimeStep)
-public void Simulate(float t, bool withChildren, bool restart)
-public void Simulate(float t, bool withChildren)
-public void Simulate(float t)
-public void Play(bool withChildren)
-public void Play()
-public void Pause(bool withChildren)
-public void Pause()
-public void Stop(bool withChildren, ParticleSystemStopBehavior stopBehavior)
-public void Stop(bool withChildren)
-public void Stop()
-public void Clear(bool withChildren)
-public void Clear()
-public bool IsAlive(bool withChildren)
-public bool IsAlive()
-public void Emit(int count)
-private void INTERNAL_CALL_Emit(ParticleSystem self, int count)
-private void Internal_EmitOld(Particle& particle)
-public void Emit(EmitParams emitParams, int count)
-private void Internal_Emit(EmitParams& emitParams, int count)
-public void TriggerSubEmitter(int subEmitterIndex)
-public void TriggerSubEmitter(int subEmitterIndex, Particle& particle)
-public void TriggerSubEmitter(int subEmitterIndex, List`1<Particle> particles)
-internal void Internal_TriggerSubEmitter(int subEmitterIndex, object particles)
 public void Emit(Vector3 position, Vector3 velocity, float size, float lifetime, Color32 color)
 public void Emit(Particle particle)
 public float get_startDelay()
@@ -170,11 +107,92 @@ public ParticleSystemSimulationSpace get_simulationSpace()
 public void set_simulationSpace(ParticleSystemSimulationSpace value)
 public ParticleSystemScalingMode get_scalingMode()
 public void set_scalingMode(ParticleSystemScalingMode value)
+public bool get_automaticCullingEnabled()
+public bool get_isPlaying()
+public bool get_isEmitting()
+public bool get_isStopped()
+public bool get_isPaused()
+public int get_particleCount()
+public float get_time()
+public void set_time(float value)
+public UInt32 get_randomSeed()
+public void set_randomSeed(UInt32 value)
+public bool get_useAutoRandomSeed()
+public void set_useAutoRandomSeed(bool value)
+public bool get_proceduralSimulationSupported()
+internal float GetParticleCurrentSize(Particle& particle)
+internal Vector3 GetParticleCurrentSize3D(Particle& particle)
+internal Color32 GetParticleCurrentColor(Particle& particle)
+public MainModule get_main()
+public EmissionModule get_emission()
+public ShapeModule get_shape()
+public VelocityOverLifetimeModule get_velocityOverLifetime()
+public LimitVelocityOverLifetimeModule get_limitVelocityOverLifetime()
+public InheritVelocityModule get_inheritVelocity()
+public ForceOverLifetimeModule get_forceOverLifetime()
+public ColorOverLifetimeModule get_colorOverLifetime()
+public ColorBySpeedModule get_colorBySpeed()
+public SizeOverLifetimeModule get_sizeOverLifetime()
+public SizeBySpeedModule get_sizeBySpeed()
+public RotationOverLifetimeModule get_rotationOverLifetime()
+public RotationBySpeedModule get_rotationBySpeed()
+public ExternalForcesModule get_externalForces()
+public NoiseModule get_noise()
+public CollisionModule get_collision()
+public TriggerModule get_trigger()
+public SubEmittersModule get_subEmitters()
+public TextureSheetAnimationModule get_textureSheetAnimation()
+public LightsModule get_lights()
+public TrailModule get_trails()
+public CustomDataModule get_customData()
+public void SetParticles(Particle[] particles, int size, int offset)
+public void SetParticles(Particle[] particles, int size)
+public void SetParticles(Particle[] particles)
+public int GetParticles(Particle[] particles, int size, int offset)
+public int GetParticles(Particle[] particles, int size)
+public int GetParticles(Particle[] particles)
+public void Simulate(float t, bool withChildren, bool restart, bool fixedTimeStep)
+public void Simulate(float t, bool withChildren, bool restart)
+public void Simulate(float t, bool withChildren)
+public void Simulate(float t)
+public void Play(bool withChildren)
+public void Play()
+public void Pause(bool withChildren)
+public void Pause()
+public void Stop(bool withChildren, ParticleSystemStopBehavior stopBehavior)
+public void Stop(bool withChildren)
+public void Stop()
+public void Clear(bool withChildren)
+public void Clear()
+public bool IsAlive(bool withChildren)
+public bool IsAlive()
+public void Emit(int count)
+private void Emit_Internal(int count)
+public void Emit(EmitParams emitParams, int count)
+public void ResetPreMappedBufferMemory()
+public void SetCustomParticleData(List`1<Vector4> customData, ParticleSystemCustomData streamIndex)
+public int GetCustomParticleData(List`1<Vector4> customData, ParticleSystemCustomData streamIndex)
+internal void SetCustomParticleDataInternal(object customData, int streamIndex)
+internal int GetCustomParticleDataInternal(object customData, int streamIndex)
+private void Internal_EmitOld(Particle& particle)
+public void TriggerSubEmitter(int subEmitterIndex)
+public void TriggerSubEmitter(int subEmitterIndex, Particle& particle)
+public void TriggerSubEmitter(int subEmitterIndex, List`1<Particle> particles)
+internal void Internal_TriggerSubEmitter(int subEmitterIndex, object particles)
+private void GetParticleCurrentSize3D_Injected(Particle& particle, Vector3& ret)
+private void GetParticleCurrentColor_Injected(Particle& particle, Color32& ret)
+private void Emit_Injected(EmitParams& emitParams, int count)
 }
 public UnityEngine.ParticleSystemAnimationMode : Enum {
 public int value__
 public ParticleSystemAnimationMode Grid
 public ParticleSystemAnimationMode Sprites
+}
+public UnityEngine.ParticleSystemAnimationTimeMode : Enum {
+public int value__
+public ParticleSystemAnimationTimeMode Lifetime
+public ParticleSystemAnimationTimeMode Speed
+public ParticleSystemAnimationTimeMode FPS
 }
 public UnityEngine.ParticleSystemAnimationType : Enum {
 public int value__
@@ -196,6 +214,13 @@ public UnityEngine.ParticleSystemCollisionType : Enum {
 public int value__
 public ParticleSystemCollisionType Planes
 public ParticleSystemCollisionType World
+}
+public UnityEngine.ParticleSystemCullingMode : Enum {
+public int value__
+public ParticleSystemCullingMode Automatic
+public ParticleSystemCullingMode PauseAndCatchup
+public ParticleSystemCullingMode Pause
+public ParticleSystemCullingMode AlwaysSimulate
 }
 public UnityEngine.ParticleSystemCurveMode : Enum {
 public int value__
@@ -233,6 +258,94 @@ internal int GetCollisionEvents(ParticleSystem ps, GameObject go, object collisi
 internal int GetTriggerParticles(ParticleSystem ps, int type, object particles)
 internal void SetTriggerParticles(ParticleSystem ps, int type, object particles, int offset, int count)
 }
+public UnityEngine.ParticleSystemForceField : Component {
+public ParticleSystemForceFieldShape shape
+public float startRange
+public float endRange
+public float length
+public float gravityFocus
+public Vector2 rotationRandomness
+public bool multiplyDragByParticleSize
+public bool multiplyDragByParticleVelocity
+public Texture3D vectorField
+public MinMaxCurve directionX
+public MinMaxCurve directionY
+public MinMaxCurve directionZ
+public MinMaxCurve gravity
+public MinMaxCurve rotationSpeed
+public MinMaxCurve rotationAttraction
+public MinMaxCurve drag
+public MinMaxCurve vectorFieldSpeed
+public MinMaxCurve vectorFieldAttraction
+public ParticleSystemForceFieldShape get_shape()
+public void set_shape(ParticleSystemForceFieldShape value)
+public float get_startRange()
+public void set_startRange(float value)
+public float get_endRange()
+public void set_endRange(float value)
+public float get_length()
+public void set_length(float value)
+public float get_gravityFocus()
+public void set_gravityFocus(float value)
+public Vector2 get_rotationRandomness()
+public void set_rotationRandomness(Vector2 value)
+public bool get_multiplyDragByParticleSize()
+public void set_multiplyDragByParticleSize(bool value)
+public bool get_multiplyDragByParticleVelocity()
+public void set_multiplyDragByParticleVelocity(bool value)
+public Texture3D get_vectorField()
+public void set_vectorField(Texture3D value)
+public MinMaxCurve get_directionX()
+public void set_directionX(MinMaxCurve value)
+public MinMaxCurve get_directionY()
+public void set_directionY(MinMaxCurve value)
+public MinMaxCurve get_directionZ()
+public void set_directionZ(MinMaxCurve value)
+public MinMaxCurve get_gravity()
+public void set_gravity(MinMaxCurve value)
+public MinMaxCurve get_rotationSpeed()
+public void set_rotationSpeed(MinMaxCurve value)
+public MinMaxCurve get_rotationAttraction()
+public void set_rotationAttraction(MinMaxCurve value)
+public MinMaxCurve get_drag()
+public void set_drag(MinMaxCurve value)
+public MinMaxCurve get_vectorFieldSpeed()
+public void set_vectorFieldSpeed(MinMaxCurve value)
+public MinMaxCurve get_vectorFieldAttraction()
+public void set_vectorFieldAttraction(MinMaxCurve value)
+private void get_rotationRandomness_Injected(Vector2& ret)
+private void set_rotationRandomness_Injected(Vector2& value)
+private void get_directionX_Injected(MinMaxCurve& ret)
+private void set_directionX_Injected(MinMaxCurve& value)
+private void get_directionY_Injected(MinMaxCurve& ret)
+private void set_directionY_Injected(MinMaxCurve& value)
+private void get_directionZ_Injected(MinMaxCurve& ret)
+private void set_directionZ_Injected(MinMaxCurve& value)
+private void get_gravity_Injected(MinMaxCurve& ret)
+private void set_gravity_Injected(MinMaxCurve& value)
+private void get_rotationSpeed_Injected(MinMaxCurve& ret)
+private void set_rotationSpeed_Injected(MinMaxCurve& value)
+private void get_rotationAttraction_Injected(MinMaxCurve& ret)
+private void set_rotationAttraction_Injected(MinMaxCurve& value)
+private void get_drag_Injected(MinMaxCurve& ret)
+private void set_drag_Injected(MinMaxCurve& value)
+private void get_vectorFieldSpeed_Injected(MinMaxCurve& ret)
+private void set_vectorFieldSpeed_Injected(MinMaxCurve& value)
+private void get_vectorFieldAttraction_Injected(MinMaxCurve& ret)
+private void set_vectorFieldAttraction_Injected(MinMaxCurve& value)
+}
+public UnityEngine.ParticleSystemForceFieldShape : Enum {
+public int value__
+public ParticleSystemForceFieldShape Sphere
+public ParticleSystemForceFieldShape Hemisphere
+public ParticleSystemForceFieldShape Cylinder
+public ParticleSystemForceFieldShape Box
+}
+public UnityEngine.ParticleSystemGameObjectFilter : Enum {
+public int value__
+public ParticleSystemGameObjectFilter LayerMask
+public ParticleSystemGameObjectFilter List
+}
 public UnityEngine.ParticleSystemGradientMode : Enum {
 public int value__
 public ParticleSystemGradientMode Color
@@ -265,9 +378,6 @@ public ParticleSystemOverlapAction Kill
 public ParticleSystemOverlapAction Callback
 }
 public UnityEngine.ParticleSystemRenderer : Renderer {
-public Mesh mesh
-public int meshCount
-public int activeVertexStreamsCount
 public ParticleSystemRenderSpace alignment
 public ParticleSystemRenderMode renderMode
 public ParticleSystemSortMode sortMode
@@ -275,25 +385,19 @@ public float lengthScale
 public float velocityScale
 public float cameraVelocityScale
 public float normalDirection
+public float shadowBias
 public float sortingFudge
 public float minParticleSize
 public float maxParticleSize
 public Vector3 pivot
+public Vector3 flip
 public SpriteMaskInteraction maskInteraction
 public Material trailMaterial
 public bool enableGPUInstancing
-public Mesh get_mesh()
-public void set_mesh(Mesh value)
-public int get_meshCount()
-private int Internal_GetMeshCount()
-public int GetMeshes(Mesh[] meshes)
-public void SetMeshes(Mesh[] meshes)
-public void SetMeshes(Mesh[] meshes, int size)
-public int get_activeVertexStreamsCount()
-public void SetActiveVertexStreams(List`1<ParticleSystemVertexStream> streams)
-internal void SetActiveVertexStreamsInternal(object streams)
-public void GetActiveVertexStreams(List`1<ParticleSystemVertexStream> streams)
-internal void GetActiveVertexStreamsInternal(object streams)
+public bool allowRoll
+public Mesh mesh
+public int meshCount
+public int activeVertexStreamsCount
 public void EnableVertexStreams(ParticleSystemVertexStreams streams)
 public void DisableVertexStreams(ParticleSystemVertexStreams streams)
 public bool AreVertexStreamsEnabled(ParticleSystemVertexStreams streams)
@@ -314,6 +418,8 @@ public float get_cameraVelocityScale()
 public void set_cameraVelocityScale(float value)
 public float get_normalDirection()
 public void set_normalDirection(float value)
+public float get_shadowBias()
+public void set_shadowBias(float value)
 public float get_sortingFudge()
 public void set_sortingFudge(float value)
 public float get_minParticleSize()
@@ -322,14 +428,36 @@ public float get_maxParticleSize()
 public void set_maxParticleSize(float value)
 public Vector3 get_pivot()
 public void set_pivot(Vector3 value)
+public Vector3 get_flip()
+public void set_flip(Vector3 value)
 public SpriteMaskInteraction get_maskInteraction()
 public void set_maskInteraction(SpriteMaskInteraction value)
 public Material get_trailMaterial()
 public void set_trailMaterial(Material value)
 public bool get_enableGPUInstancing()
 public void set_enableGPUInstancing(bool value)
+public bool get_allowRoll()
+public void set_allowRoll(bool value)
+public void BakeMesh(Mesh mesh, bool useTransform)
+public void BakeMesh(Mesh mesh, Camera camera, bool useTransform)
+public void BakeTrailsMesh(Mesh mesh, bool useTransform)
+public void BakeTrailsMesh(Mesh mesh, Camera camera, bool useTransform)
+public Mesh get_mesh()
+public void set_mesh(Mesh value)
+public int get_meshCount()
+private int Internal_GetMeshCount()
+public int GetMeshes(Mesh[] meshes)
+public void SetMeshes(Mesh[] meshes)
+public void SetMeshes(Mesh[] meshes, int size)
+public int get_activeVertexStreamsCount()
+public void SetActiveVertexStreams(List`1<ParticleSystemVertexStream> streams)
+internal void SetActiveVertexStreamsInternal(object streams)
+public void GetActiveVertexStreams(List`1<ParticleSystemVertexStream> streams)
+internal void GetActiveVertexStreamsInternal(object streams)
 private void get_pivot_Injected(Vector3& ret)
 private void set_pivot_Injected(Vector3& value)
+private void get_flip_Injected(Vector3& ret)
+private void set_flip_Injected(Vector3& value)
 }
 public UnityEngine.ParticleSystemRenderMode : Enum {
 public int value__
@@ -347,6 +475,12 @@ public ParticleSystemRenderSpace World
 public ParticleSystemRenderSpace Local
 public ParticleSystemRenderSpace Facing
 public ParticleSystemRenderSpace Velocity
+}
+public UnityEngine.ParticleSystemRingBufferMode : Enum {
+public int value__
+public ParticleSystemRingBufferMode Disabled
+public ParticleSystemRingBufferMode PauseUntilReplaced
+public ParticleSystemRingBufferMode LoopUntilReplaced
 }
 public UnityEngine.ParticleSystemScalingMode : Enum {
 public int value__
@@ -389,6 +523,8 @@ public ParticleSystemShapeType BoxShell
 public ParticleSystemShapeType BoxEdge
 public ParticleSystemShapeType Donut
 public ParticleSystemShapeType Rectangle
+public ParticleSystemShapeType Sprite
+public ParticleSystemShapeType SpriteRenderer
 }
 public UnityEngine.ParticleSystemSimulationSpace : Enum {
 public int value__
@@ -423,6 +559,7 @@ public ParticleSystemSubEmitterProperties InheritColor
 public ParticleSystemSubEmitterProperties InheritSize
 public ParticleSystemSubEmitterProperties InheritRotation
 public ParticleSystemSubEmitterProperties InheritLifetime
+public ParticleSystemSubEmitterProperties InheritDuration
 }
 public UnityEngine.ParticleSystemSubEmitterType : Enum {
 public int value__

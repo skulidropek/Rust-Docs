@@ -77,9 +77,7 @@ public UInt32 get_pixelAspectRatioNumerator()
 public UInt32 get_pixelAspectRatioDenominator()
 public ushort get_audioTrackCount()
 public ushort GetAudioChannelCount(ushort audioTrackIdx)
-private ushort INTERNAL_CALL_GetAudioChannelCount(VideoClip self, ushort audioTrackIdx)
 public UInt32 GetAudioSampleRate(ushort audioTrackIdx)
-private UInt32 INTERNAL_CALL_GetAudioSampleRate(VideoClip self, ushort audioTrackIdx)
 public string GetAudioLanguage(ushort audioTrackIdx)
 }
 public UnityEngine.Video.VideoPlayer : Behaviour {
@@ -107,9 +105,11 @@ public bool isPrepared
 public bool waitForFirstFrame
 public bool playOnAwake
 public bool isPlaying
+public bool isPaused
 public bool canSetTime
 public double time
 public long frame
+public double clockTime
 public bool canStep
 public bool canSetPlaybackSpeed
 public float playbackSpeed
@@ -122,6 +122,11 @@ public bool canSetSkipOnDrop
 public bool skipOnDrop
 public ulong frameCount
 public float frameRate
+public double length
+public UInt32 width
+public UInt32 height
+public UInt32 pixelAspectRatioNumerator
+public UInt32 pixelAspectRatioDenominator
 public ushort audioTrackCount
 public ushort controlledAudioTrackMaxCount
 public ushort controlledAudioTrackCount
@@ -152,24 +157,22 @@ public Video3DLayout get_targetCamera3DLayout()
 public void set_targetCamera3DLayout(Video3DLayout value)
 public Texture get_texture()
 public void Prepare()
-private void INTERNAL_CALL_Prepare(VideoPlayer self)
 public bool get_isPrepared()
 public bool get_waitForFirstFrame()
 public void set_waitForFirstFrame(bool value)
 public bool get_playOnAwake()
 public void set_playOnAwake(bool value)
 public void Play()
-private void INTERNAL_CALL_Play(VideoPlayer self)
 public void Pause()
-private void INTERNAL_CALL_Pause(VideoPlayer self)
 public void Stop()
-private void INTERNAL_CALL_Stop(VideoPlayer self)
 public bool get_isPlaying()
+public bool get_isPaused()
 public bool get_canSetTime()
 public double get_time()
 public void set_time(double value)
 public long get_frame()
 public void set_frame(long value)
+public double get_clockTime()
 public bool get_canStep()
 public void StepForward()
 public bool get_canSetPlaybackSpeed()
@@ -189,31 +192,31 @@ public bool get_skipOnDrop()
 public void set_skipOnDrop(bool value)
 public ulong get_frameCount()
 public float get_frameRate()
+public double get_length()
+public UInt32 get_width()
+public UInt32 get_height()
+public UInt32 get_pixelAspectRatioNumerator()
+public UInt32 get_pixelAspectRatioDenominator()
 public ushort get_audioTrackCount()
 public string GetAudioLanguageCode(ushort trackIndex)
 public ushort GetAudioChannelCount(ushort trackIndex)
-private ushort INTERNAL_CALL_GetAudioChannelCount(VideoPlayer self, ushort trackIndex)
+public UInt32 GetAudioSampleRate(ushort trackIndex)
 public ushort get_controlledAudioTrackMaxCount()
 public ushort get_controlledAudioTrackCount()
 public void set_controlledAudioTrackCount(ushort value)
+private ushort GetControlledAudioTrackCount()
+private void SetControlledAudioTrackCount(ushort value)
 public void EnableAudioTrack(ushort trackIndex, bool enabled)
-private void INTERNAL_CALL_EnableAudioTrack(VideoPlayer self, ushort trackIndex, bool enabled)
 public bool IsAudioTrackEnabled(ushort trackIndex)
-private bool INTERNAL_CALL_IsAudioTrackEnabled(VideoPlayer self, ushort trackIndex)
 public VideoAudioOutputMode get_audioOutputMode()
 public void set_audioOutputMode(VideoAudioOutputMode value)
 public bool get_canSetDirectAudioVolume()
 public float GetDirectAudioVolume(ushort trackIndex)
-private float INTERNAL_CALL_GetDirectAudioVolume(VideoPlayer self, ushort trackIndex)
 public void SetDirectAudioVolume(ushort trackIndex, float volume)
-private void INTERNAL_CALL_SetDirectAudioVolume(VideoPlayer self, ushort trackIndex, float volume)
 public bool GetDirectAudioMute(ushort trackIndex)
-private bool INTERNAL_CALL_GetDirectAudioMute(VideoPlayer self, ushort trackIndex)
 public void SetDirectAudioMute(ushort trackIndex, bool mute)
-private void INTERNAL_CALL_SetDirectAudioMute(VideoPlayer self, ushort trackIndex, bool mute)
 public AudioSource GetTargetAudioSource(ushort trackIndex)
 public void SetTargetAudioSource(ushort trackIndex, AudioSource source)
-private void INTERNAL_CALL_SetTargetAudioSource(VideoPlayer self, ushort trackIndex, AudioSource source)
 public void add_prepareCompleted(EventHandler value)
 public void remove_prepareCompleted(EventHandler value)
 public void add_loopPointReached(EventHandler value)
@@ -264,4 +267,64 @@ public UnityEngine.Video.VideoTimeSource : Enum {
 public int value__
 public VideoTimeSource AudioDSPTimeSource
 public VideoTimeSource GameTimeSource
+}
+internal UnityEngineInternal.Video.VideoError : Enum {
+public int value__
+public VideoError NoErr
+public VideoError OutOfMemoryErr
+public VideoError CantReadFile
+public VideoError CantWriteFile
+public VideoError BadParams
+public VideoError NoData
+public VideoError BadPermissions
+public VideoError DeviceNotAvailable
+public VideoError ResourceNotAvailable
+public VideoError NetworkErr
+}
+internal UnityEngineInternal.Video.VideoPixelFormat : Enum {
+public int value__
+public VideoPixelFormat RGB
+public VideoPixelFormat RGBA
+public VideoPixelFormat YUV
+public VideoPixelFormat YUVA
+}
+internal UnityEngineInternal.Video.VideoPlayback : object {
+internal IntPtr m_Ptr
+public void StartPlayback()
+public void PausePlayback()
+public void StopPlayback()
+public VideoError GetStatus()
+public bool IsReady()
+public bool IsPlaying()
+public void Step()
+public bool CanStep()
+public UInt32 GetWidth()
+public UInt32 GetHeight()
+public float GetFrameRate()
+public float GetDuration()
+public ulong GetFrameCount()
+public UInt32 GetPixelAspectRatioNumerator()
+public UInt32 GetPixelAspectRatioDenominator()
+public VideoPixelFormat GetPixelFormat()
+public bool CanNotSkipOnDrop()
+public void SetSkipOnDrop(bool skipOnDrop)
+public bool GetTexture(Texture texture, Int64& outputFrameNum)
+public void SeekToFrame(long frameIndex, Callback seekCompletedCallback)
+public void SeekToTime(double secs, Callback seekCompletedCallback)
+public float GetPlaybackSpeed()
+public void SetPlaybackSpeed(float value)
+public bool GetLoop()
+public void SetLoop(bool value)
+}
+internal UnityEngineInternal.Video.VideoPlaybackMgr : object {
+internal IntPtr m_Ptr
+public ulong videoPlaybackCount
+public void Dispose()
+private IntPtr Internal_Create()
+private void Internal_Destroy(IntPtr ptr)
+public VideoPlayback CreateVideoPlayback(string fileName, MessageCallback errorCallback, Callback readyCallback, Callback reachedEndCallback)
+public void ReleaseVideoPlayback(VideoPlayback playback)
+public ulong get_videoPlaybackCount()
+public void Update()
+internal void ProcessOSMainLoopMessagesForTesting()
 }

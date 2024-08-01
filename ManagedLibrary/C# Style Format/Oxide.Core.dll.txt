@@ -372,16 +372,13 @@ public void ReloadExtension(string filename)
 public void LoadAllExtensions(string directory)
 public IEnumerable`1<Extension> GetAllExtensions()
 public bool IsExtensionPresent(string name)
-public bool IsExtensionPresent()
 public Extension GetExtension(string name)
-public T GetExtension()
 }
 public Oxide.Core.Interface : object {
 private OxideMod <Oxide>k__BackingField
 private NativeDebugCallback <DebugCallback>k__BackingField
 public OxideMod Oxide
 public NativeDebugCallback DebugCallback
-public OxideMod uMod
 public OxideMod get_Oxide()
 private void set_Oxide(OxideMod value)
 public NativeDebugCallback get_DebugCallback()
@@ -404,7 +401,6 @@ public object CallHook(string hook, object obj1, object obj2, object obj3, objec
 public object Call(string hook, Object[] args)
 public T Call(string hook, Object[] args)
 public OxideMod GetMod()
-public OxideMod get_uMod()
 }
 public Oxide.Core.Libraries.Covalence.CommandAlreadyExistsException : Exception {
 public void .ctor(string cmd)
@@ -881,7 +877,6 @@ public Oxide.Core.Logging.CompoundLogger : Logger {
 private HashSet`1<Logger> subloggers
 private List`1<LogMessage> messagecache
 private bool usecache
-private object Lock
 public void AddLogger(Logger logger)
 public void RemoveLogger(Logger logger)
 public void Shutdown()
@@ -1016,8 +1011,6 @@ public void .ctor(NativeDebugCallback debugCallback)
 public void Load()
 public T GetLibrary(string name)
 public IEnumerable`1<Extension> GetAllExtensions()
-public Extension GetExtension(string name)
-public T GetExtension()
 public IEnumerable`1<PluginLoader> GetPluginLoaders()
 public void LogDebug(string format, Object[] args)
 public void LogError(string format, Object[] args)
@@ -1188,13 +1181,9 @@ protected void LoadConfig()
 protected void LoadDefaultConfig()
 protected void SaveConfig()
 protected void LoadDefaultMessages()
-public void AddUniversalCommand(string command, string callback, string perm)
 public void AddCovalenceCommand(string command, string callback, string perm)
-public void AddUniversalCommand(String[] commands, string callback, string perm)
 public void AddCovalenceCommand(String[] commands, string callback, string perm)
-public void AddUniversalCommand(String[] commands, string callback, String[] perms)
 public void AddCovalenceCommand(String[] commands, string callback, String[] perms)
-protected void AddUniversalCommand(String[] commands, String[] perms, CommandCallback callback)
 protected void AddCovalenceCommand(String[] commands, String[] perms, CommandCallback callback)
 private void RegisterWithCovalence()
 private bool CovalenceCommandCallback(IPlayer caller, string cmd, String[] args)
@@ -1513,32 +1502,4 @@ public bool op_LessThan(VersionNumber a, VersionNumber b)
 public bool op_LessThanOrEqual(VersionNumber a, VersionNumber b)
 public bool Equals(object obj)
 public int GetHashCode()
-}
-public Oxide.Core.VersionNumberShortConverter : JsonConverter {
-private Char[] separators
-private Type vNumberType
-public void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-public object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-public bool CanConvert(Type objectType)
-private JsonSerializationException GenerateException(JsonReader reader, string format, Object[] args)
-private string ConvertToString(VersionNumber number)
-private VersionNumber ParseFromString(string strNumber)
-}
-public Oxide.Plugins.ExtensionMethods : object {
-public string Basename(string text, string extension)
-public bool Contains(T[] array, T value)
-public string Dirname(string text)
-public string Humanize(string name)
-public bool IsSteamId(string id)
-public bool IsSteamId(ulong id)
-public string Plaintext(string text)
-public string QuoteSafe(string text)
-public string Quote(string text)
-public T Sample(T[] array)
-public string Sanitize(string text)
-public string SentenceCase(string text)
-public string TitleCase(string text)
-public string Titleize(string text)
-public string ToSentence(IEnumerable`1<T> items)
-public string Truncate(string text, int max)
 }
