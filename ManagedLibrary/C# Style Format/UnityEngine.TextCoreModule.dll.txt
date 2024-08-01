@@ -22,6 +22,7 @@ public void .ctor(Vector2 min, Vector2 max)
 public string ToString()
 }
 public UnityEngine.TextCore.FaceInfo : ValueType {
+private int m_FaceIndex
 private string m_FamilyName
 private string m_StyleName
 private int m_PointSize
@@ -41,6 +42,7 @@ private float m_UnderlineThickness
 private float m_StrikethroughOffset
 private float m_StrikethroughThickness
 private float m_TabWidth
+internal int faceIndex
 public string familyName
 public string styleName
 public int pointSize
@@ -60,6 +62,8 @@ public float underlineThickness
 public float strikethroughOffset
 public float strikethroughThickness
 public float tabWidth
+internal int get_faceIndex()
+internal void set_faceIndex(int value)
 public string get_familyName()
 public void set_familyName(string value)
 public string get_styleName()
@@ -478,6 +482,7 @@ public string GetLinkText(TextInfo textInfo)
 public string GetLinkId()
 }
 public UnityEngine.TextCore.LowLevel.FontEngine : object {
+private String[] s_FontFaces
 private Glyph[] s_Glyphs
 private UInt32[] s_GlyphIndexes_MarshallingArray_A
 private UInt32[] s_GlyphIndexes_MarshallingArray_B
@@ -501,18 +506,31 @@ public FontEngineError LoadFontFace(string filePath)
 private int LoadFontFace_Internal(string filePath)
 public FontEngineError LoadFontFace(string filePath, int pointSize)
 private int LoadFontFace_With_Size_Internal(string filePath, int pointSize)
+public FontEngineError LoadFontFace(string filePath, int pointSize, int faceIndex)
+private int LoadFontFace_With_Size_And_FaceIndex_Internal(string filePath, int pointSize, int faceIndex)
 public FontEngineError LoadFontFace(Byte[] sourceFontFile)
 private int LoadFontFace_FromSourceFontFile_Internal(Byte[] sourceFontFile)
 public FontEngineError LoadFontFace(Byte[] sourceFontFile, int pointSize)
 private int LoadFontFace_With_Size_FromSourceFontFile_Internal(Byte[] sourceFontFile, int pointSize)
+public FontEngineError LoadFontFace(Byte[] sourceFontFile, int pointSize, int faceIndex)
+private int LoadFontFace_With_Size_And_FaceIndex_FromSourceFontFile_Internal(Byte[] sourceFontFile, int pointSize, int faceIndex)
 public FontEngineError LoadFontFace(Font font)
 private int LoadFontFace_FromFont_Internal(Font font)
 public FontEngineError LoadFontFace(Font font, int pointSize)
 private int LoadFontFace_With_Size_FromFont_Internal(Font font, int pointSize)
+public FontEngineError LoadFontFace(Font font, int pointSize, int faceIndex)
+private int LoadFontFace_With_Size_and_FaceIndex_FromFont_Internal(Font font, int pointSize, int faceIndex)
+public FontEngineError UnloadFontFace()
+private int UnloadFontFace_Internal()
+public FontEngineError UnloadAllFontFaces()
+private int UnloadAllFontFaces_Internal()
 public FontEngineError SetFaceSize(int pointSize)
 private int SetFaceSize_Internal(int pointSize)
 public FaceInfo GetFaceInfo()
 private int GetFaceInfo_Internal(FaceInfo& faceInfo)
+internal int GetFaceCount()
+public String[] GetFontFaces()
+private int GetFontFaces_Internal(String[] fontFaces)
 internal UInt32 GetGlyphIndex(UInt32 unicode)
 public bool TryGetGlyphIndex(UInt32 unicode, UInt32& glyphIndex)
 internal FontEngineError LoadGlyph(UInt32 unicode, GlyphLoadFlags flags)
@@ -580,7 +598,13 @@ internal UnityEngine.TextCore.LowLevel.FontEngineUtilities : ValueType {
 internal bool Approximately(float a, float b)
 internal int MaxValue(int a, int b, int c)
 }
-internal UnityEngine.TextCore.LowLevel.GlyphAdjustmentRecord : ValueType {
+public UnityEngine.TextCore.LowLevel.FontFeatureLookupFlags : Enum {
+public int value__
+public FontFeatureLookupFlags None
+public FontFeatureLookupFlags IgnoreLigatures
+public FontFeatureLookupFlags IgnoreSpacingAdjustments
+}
+public UnityEngine.TextCore.LowLevel.GlyphAdjustmentRecord : ValueType {
 private UInt32 m_GlyphIndex
 private GlyphValueRecord m_GlyphValueRecord
 public UInt32 glyphIndex
@@ -621,15 +645,19 @@ public GlyphPackingMode BestAreaFit
 public GlyphPackingMode BottomLeftRule
 public GlyphPackingMode ContactPointRule
 }
-internal UnityEngine.TextCore.LowLevel.GlyphPairAdjustmentRecord : ValueType {
+public UnityEngine.TextCore.LowLevel.GlyphPairAdjustmentRecord : ValueType {
 private GlyphAdjustmentRecord m_FirstAdjustmentRecord
 private GlyphAdjustmentRecord m_SecondAdjustmentRecord
+private FontFeatureLookupFlags m_FeatureLookupFlags
 public GlyphAdjustmentRecord firstAdjustmentRecord
 public GlyphAdjustmentRecord secondAdjustmentRecord
+public FontFeatureLookupFlags featureLookupFlags
 public GlyphAdjustmentRecord get_firstAdjustmentRecord()
 public void set_firstAdjustmentRecord(GlyphAdjustmentRecord value)
 public GlyphAdjustmentRecord get_secondAdjustmentRecord()
 public void set_secondAdjustmentRecord(GlyphAdjustmentRecord value)
+public FontFeatureLookupFlags get_featureLookupFlags()
+public void set_featureLookupFlags(FontFeatureLookupFlags value)
 public void .ctor(GlyphAdjustmentRecord firstAdjustmentRecord, GlyphAdjustmentRecord secondAdjustmentRecord)
 }
 internal UnityEngine.TextCore.LowLevel.GlyphRasterModes : Enum {
@@ -661,7 +689,7 @@ public GlyphRenderMode SDF32
 public GlyphRenderMode SDFAA_HINTED
 public GlyphRenderMode SDFAA
 }
-internal UnityEngine.TextCore.LowLevel.GlyphValueRecord : ValueType {
+public UnityEngine.TextCore.LowLevel.GlyphValueRecord : ValueType {
 private float m_XPlacement
 private float m_YPlacement
 private float m_XAdvance

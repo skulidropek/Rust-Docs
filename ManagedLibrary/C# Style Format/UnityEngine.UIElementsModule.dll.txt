@@ -5527,8 +5527,8 @@ private bool IsParentOrAncestorOf(VisualElement ve, VisualElement child)
 private ClipMethod DetermineSelfClipMethod(VisualElement ve)
 private bool NeedsTransformID(VisualElement ve)
 private bool TransformIDHasChanged(Alloc before, Alloc after)
-internal UIRStylePainter PaintElement(RenderChain renderChain, VisualElement ve, ChainBuilderStats& stats)
-private void ClosePaintElement(VisualElement ve, ClosingInfo closingInfo, UIRenderDevice device, ChainBuilderStats& stats)
+internal ClosingInfo PaintElement(RenderChain renderChain, VisualElement ve, ChainBuilderStats& stats)
+private void ClosePaintElement(VisualElement ve, ClosingInfo closingInfo, RenderChain renderChain, ChainBuilderStats& stats)
 private void UpdateOrAllocate(MeshHandle& data, int vertexCount, int indexCount, UIRenderDevice device, NativeSlice`1& verts, NativeSlice`1& indices, UInt16& indexOffset, ChainBuilderStats& stats)
 private void CopyTransformVertsPos(NativeSlice`1<Vertex> source, NativeSlice`1<Vertex> target, Matrix4x4 mat, Color32 xformClipPages, Color32 idsAddFlags, Color32 opacityPage)
 private void CopyTransformVertsPosAndVec(NativeSlice`1<Vertex> source, NativeSlice`1<Vertex> target, Matrix4x4 mat, Color32 xformClipPages, Color32 idsAddFlags, Color32 opacityPage)
@@ -5581,7 +5581,7 @@ private MeshWriteData AllocThroughDrawMesh(UInt32 vertexCount, UInt32 indexCount
 public void .ctor(RenderChain renderChain)
 public MeshGenerationContext get_meshGenerationContext()
 public VisualElement get_currentElement()
-public void set_currentElement(VisualElement value)
+private void set_currentElement(VisualElement value)
 public UIRenderDevice get_device()
 public List`1<Entry> get_entries()
 public ClosingInfo get_closingInfo()
@@ -5593,7 +5593,7 @@ protected bool get_disposed()
 private void set_disposed(bool value)
 public void Dispose()
 protected void Dispose(bool disposing)
-public void Begin()
+public void Begin(VisualElement ve)
 public void LandClipUnregisterMeshDrawCommand(RenderChainCommand cmd)
 public void LandClipRegisterMesh(NativeSlice`1<Vertex> vertices, NativeSlice`1<ushort> indices, int indexOffset)
 public MeshWriteData DrawMesh(int vertexCount, int indexCount, Texture texture, Material material, MeshFlags flags)
@@ -5655,9 +5655,6 @@ internal T poolNext
 internal UnityEngine.UIElements.UIR.MeshBuilder : object {
 private ProfilerMarker s_VectorGraphics9Slice
 private ProfilerMarker s_VectorGraphicsStretch
-private int k_MaxTextMeshVertices
-private int k_MaxTextMeshIndices
-private int k_MaxTextQuadCount
 private UInt16[] slicedQuadIndices
 private Single[] k_TexCoordSlicesX
 private Single[] k_TexCoordSlicesY
@@ -5668,6 +5665,7 @@ internal void MakeSolidRect(RectangleParams rectParams, float posZ, AllocMeshDat
 internal void MakeTexturedRect(RectangleParams rectParams, float posZ, AllocMeshData meshAlloc)
 private Vertex ConvertTextVertexToUIRVertex(MeshInfo info, int index, Vector2 offset)
 private Vertex ConvertTextVertexToUIRVertex(TextVertex textVertex, Vector2 offset)
+private int LimitTextVertices(int vertexCount, bool logTruncation)
 internal void MakeText(MeshInfo meshInfo, Vector2 offset, AllocMeshData meshAlloc)
 internal void MakeText(NativeArray`1<TextVertex> uiVertices, Vector2 offset, AllocMeshData meshAlloc)
 internal void UpdateText(NativeArray`1<TextVertex> uiVertices, Vector2 offset, Matrix4x4 transform, Color32 xformClipPages, Color32 idsFlags, Color32 opacityPageSVGSettingIndex, NativeSlice`1<Vertex> vertices)
@@ -5697,6 +5695,7 @@ private bool <disposed>k__BackingField
 public DataSet`1<Vertex> vertices
 public DataSet`1<ushort> indices
 public Page next
+public int framesEmpty
 protected bool disposed
 public bool isEmpty
 public void .ctor(UInt32 vertexMaxCount, UInt32 indexMaxCount, UInt32 maxQueuedFrameCount, bool mockPage)
@@ -5953,7 +5952,8 @@ public Vector4 v1
 public Vector4 v2
 }
 internal UnityEngine.UIElements.UIR.UIRenderDevice : object {
-private UInt32 k_MaxQueuedFrameCount
+internal UInt32 k_MaxQueuedFrameCount
+internal int k_PruneEmptyPageFrameCount
 private bool m_MockDevice
 private int m_LazyCreationDrawRangeRingSize
 private Shader m_DefaultMaterialShader
@@ -5969,7 +5969,6 @@ private UInt32[] m_Fences
 private NativeArray`1<DrawBufferRange> m_DrawRanges
 private int m_DrawRangeStart
 private UInt32 m_FrameIndex
-private bool m_FrameIndexIncremented
 private UInt32 m_NextUpdateID
 private DrawStatistics m_DrawStats
 private bool m_APIUsesStraightYCoordinateSystem
@@ -5995,16 +5994,19 @@ private ProfilerMarker s_MarkerBeforeDraw
 private Nullable`1<bool> s_VertexTexturingIsAvailable
 private string k_VertexTexturingIsAvailableTag
 private string k_VertexTexturingIsAvailableTrue
+private UInt32 <maxVerticesPerPage>k__BackingField
 private Texture2D s_WhiteTexel
 private Texture2D s_DefaultShaderInfoTexFloat
 private Texture2D s_DefaultShaderInfoTexARGB8
 private bool <disposed>k__BackingField
+internal UInt32 maxVerticesPerPage
 internal Texture2D whiteTexel
 internal Texture2D defaultShaderInfoTexFloat
 internal Texture2D defaultShaderInfoTexARGB8
 internal bool vertexTexturingIsAvailable
 protected bool disposed
 public Shader standardShader
+internal UInt32 get_maxVerticesPerPage()
 public void .ctor(Shader defaultMaterialShader, UInt32 initialVertexCapacity, UInt32 initialIndexCapacity, DrawingModes drawingMode, int drawRangeRingSize)
 protected void .ctor(UInt32 initialVertexCapacity, UInt32 initialIndexCapacity, DrawingModes drawingMode, int drawRangeRingSize)
 private void .ctor(Shader defaultMaterialShader, UInt32 initialVertexCapacity, UInt32 initialIndexCapacity, DrawingModes drawingMode, int drawRangeRingSize, bool mockDevice)
@@ -6035,17 +6037,18 @@ private void EvaluateChain(RenderChainCommand head, Rect viewport, Matrix4x4 pro
 private void KickRanges(NativeArray`1<DrawBufferRange> ranges, Int32& rangesReady, Int32& rangesStart, int rangesCount, Page curPage)
 public void DrawChain(RenderChainCommand head, Rect viewport, Matrix4x4 projection, PanelClearFlags clearFlags, Texture atlas, Texture gradientSettings, Texture shaderInfo, float pixelsPerPoint, NativeArray`1<Transform3x4> transforms, NativeArray`1<Vector4> clipRects, Exception& immediateException)
 public void AdvanceFrame()
+private void PruneUnusedPages()
 internal void PrepareForGfxDeviceRecreate()
 internal void WrapUpGfxDeviceRecreate()
 internal void FlushAllPendingDeviceDisposes()
 internal AllocationStatistics GatherAllocationStatistics()
 internal DrawStatistics GatherDrawStatistics()
-private void OnEngineUpdate()
 private void ProcessDeviceFreeQueue()
 private void OnEngineUpdateGlobal()
 private void OnFlushPendingResources()
 }
 internal UnityEngine.UIElements.UIR.UIRVEShaderInfoAllocator : ValueType {
+private RectInt k_FirstPixelRect
 private UIRAtlasManager m_Atlas
 private BitmapAllocator32 m_TransformAllocator
 private BitmapAllocator32 m_ClipRectAllocator
@@ -6282,7 +6285,7 @@ public bool IsReleased()
 public void Reset()
 public bool TryGetLocation(Texture2D image, RectInt& uvs)
 public bool AllocateRect(int width, int height, RectInt& uvs)
-public void EnqueueBlit(Texture image, int x, int y, bool addBorder, Color tint)
+public void EnqueueBlit(Texture image, RectInt srcRect, int x, int y, bool addBorder, Color tint)
 public bool IsTextureFormatSupported(TextureFormat format)
 private bool IsTextureValid(Texture2D image)
 public void Commit()

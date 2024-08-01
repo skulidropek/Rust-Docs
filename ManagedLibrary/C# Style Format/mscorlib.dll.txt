@@ -10089,6 +10089,7 @@ public System.Environment : object {
 private int mono_corlib_version
 private string nl
 private OperatingSystem os
+private PlatformID <Platform>k__BackingField
 internal bool IsWindows8OrAbove
 public string CommandLine
 public string CurrentDirectory
@@ -10097,7 +10098,7 @@ public int ExitCode
 public bool HasShutdownStarted
 public string MachineName
 public string NewLine
-private PlatformID Platform
+internal PlatformID Platform
 public OperatingSystem OSVersion
 public string StackTrace
 public string SystemDirectory
@@ -10134,7 +10135,7 @@ public bool get_HasShutdownStarted()
 public string get_MachineName()
 private string GetNewLine()
 public string get_NewLine()
-private PlatformID get_Platform()
+internal PlatformID get_Platform()
 internal string GetOSVersionString()
 public OperatingSystem get_OSVersion()
 internal Version CreateVersionFromString(string info)
@@ -40894,6 +40895,7 @@ internal void ClearCachedData()
 public System.TimeZoneInfo : object {
 internal UInt32 TIME_ZONE_ID_INVALID
 internal UInt32 ERROR_NO_MORE_ITEMS
+internal UInt32 ERROR_SUCCESS
 private TimeSpan baseUtcOffset
 private string daylightDisplayName
 private string displayName
@@ -41000,10 +41002,11 @@ private void System.Runtime.Serialization.ISerializable.GetObjectData(Serializat
 public ReadOnlyCollection`1<TimeZoneInfo> GetSystemTimeZones()
 public TimeSpan GetUtcOffset(DateTime dateTime)
 public TimeSpan GetUtcOffset(DateTimeOffset dateTimeOffset)
-private TimeSpan GetUtcOffset(DateTime dateTime, Boolean& isDST)
-private TimeSpan GetUtcOffsetHelper(DateTime dateTime, TimeZoneInfo tz, Boolean& isDST)
+private TimeSpan GetUtcOffset(DateTime dateTime, Boolean& isDST, bool forOffset)
+private TimeSpan GetUtcOffsetHelper(DateTime dateTime, TimeZoneInfo tz, Boolean& isDST, bool forOffset)
 public bool HasSameRules(TimeZoneInfo other)
 public bool IsAmbiguousTime(DateTime dateTime)
+private bool IsAmbiguousLocalDstFromUtc(DateTime dateTime)
 public bool IsAmbiguousTime(DateTimeOffset dateTimeOffset)
 private bool IsInDST(AdjustmentRule rule, DateTime dateTime)
 private bool IsInDSTForYear(AdjustmentRule rule, DateTime dateTime, int year)
@@ -41018,7 +41021,7 @@ public string ToString()
 private void .ctor(SerializationInfo info, StreamingContext context)
 private void .ctor(string id, TimeSpan baseUtcOffset, string displayName, string standardDisplayName, string daylightDisplayName, AdjustmentRule[] adjustmentRules, bool disableDaylightSavingTime)
 private AdjustmentRule GetApplicableRule(DateTime dateTime)
-private bool TryGetTransitionOffset(DateTime dateTime, TimeSpan& offset, Boolean& isDst)
+private bool TryGetTransitionOffset(DateTime dateTime, TimeSpan& offset, Boolean& isDst, bool forOffset)
 private DateTime TransitionPoint(TransitionTime transition, int year)
 private AdjustmentRule[] ValidateRules(List`1<AdjustmentRule> adjustmentRules)
 private TimeZoneInfo BuildFromStream(string id, Stream stream)

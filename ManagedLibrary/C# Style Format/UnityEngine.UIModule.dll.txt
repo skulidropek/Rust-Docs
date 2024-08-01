@@ -8,6 +8,7 @@ public AdditionalCanvasShaderChannels Normal
 public AdditionalCanvasShaderChannels Tangent
 }
 public UnityEngine.Canvas : Behaviour {
+private WillRenderCanvases preWillRenderCanvases
 private WillRenderCanvases willRenderCanvases
 public RenderMode renderMode
 public bool isRootCanvas
@@ -26,9 +27,12 @@ public int cachedSortingLayerValue
 public AdditionalCanvasShaderChannels additionalShaderChannels
 public string sortingLayerName
 public Canvas rootCanvas
+public Vector2 renderingDisplaySize
 public Camera worldCamera
 public float normalizedSortingGridSize
 public int sortingGridNormalizedSize
+public void add_preWillRenderCanvases(WillRenderCanvases value)
+public void remove_preWillRenderCanvases(WillRenderCanvases value)
 public void add_willRenderCanvases(WillRenderCanvases value)
 public void remove_willRenderCanvases(WillRenderCanvases value)
 public RenderMode get_renderMode()
@@ -60,6 +64,7 @@ public void set_additionalShaderChannels(AdditionalCanvasShaderChannels value)
 public string get_sortingLayerName()
 public void set_sortingLayerName(string value)
 public Canvas get_rootCanvas()
+public Vector2 get_renderingDisplaySize()
 public Camera get_worldCamera()
 public void set_worldCamera(Camera value)
 public float get_normalizedSortingGridSize()
@@ -70,8 +75,10 @@ public Material GetDefaultCanvasTextMaterial()
 public Material GetDefaultCanvasMaterial()
 public Material GetETC1SupportedCanvasMaterial()
 public void ForceUpdateCanvases()
+private void SendPreWillRenderCanvases()
 private void SendWillRenderCanvases()
 private void get_pixelRect_Injected(Rect& ret)
+private void get_renderingDisplaySize_Injected(Vector2& ret)
 }
 public UnityEngine.CanvasGroup : Behaviour {
 public float alpha
@@ -100,6 +107,7 @@ public bool hasRectClipping
 public int relativeDepth
 public bool cull
 public bool isMask
+public Vector2 clippingSoftness
 public bool get_hasPopInstruction()
 public void set_hasPopInstruction(bool value)
 public int get_materialCount()
@@ -119,6 +127,8 @@ public void set_isMask(bool value)
 public void SetColor(Color color)
 public Color GetColor()
 public void EnableRectClipping(Rect rect)
+public Vector2 get_clippingSoftness()
+public void set_clippingSoftness(Vector2 value)
 public void DisableRectClipping()
 public void SetMaterial(Material material, int index)
 public Material GetMaterial(int index)
@@ -147,6 +157,8 @@ private void CreateUIVertexStreamInternal(object verts, object positions, object
 private void SetColor_Injected(Color& color)
 private void GetColor_Injected(Color& ret)
 private void EnableRectClipping_Injected(Rect& rect)
+private void get_clippingSoftness_Injected(Vector2& ret)
+private void set_clippingSoftness_Injected(Vector2& value)
 }
 public UnityEngine.ICanvasRaycastFilter {
 public bool IsRaycastLocationValid(Vector2 sp, Camera eventCamera)
@@ -155,9 +167,10 @@ public UnityEngine.RectTransformUtility : object {
 private Vector3[] s_Corners
 public Vector2 PixelAdjustPoint(Vector2 point, Transform elementTransform, Canvas canvas)
 public Rect PixelAdjustRect(RectTransform rectTransform, Canvas canvas)
-private bool PointInRectangle(Vector2 screenPoint, RectTransform rect, Camera cam)
+private bool PointInRectangle(Vector2 screenPoint, RectTransform rect, Camera cam, Vector4 offset)
 public bool RectangleContainsScreenPoint(RectTransform rect, Vector2 screenPoint)
 public bool RectangleContainsScreenPoint(RectTransform rect, Vector2 screenPoint, Camera cam)
+public bool RectangleContainsScreenPoint(RectTransform rect, Vector2 screenPoint, Camera cam, Vector4 offset)
 public bool ScreenPointToWorldPointInRectangle(RectTransform rect, Vector2 screenPoint, Camera cam, Vector3& worldPoint)
 public bool ScreenPointToLocalPointInRectangle(RectTransform rect, Vector2 screenPoint, Camera cam, Vector2& localPoint)
 public Ray ScreenPointToRay(Camera cam, Vector2 screenPos)
@@ -169,7 +182,7 @@ public void FlipLayoutAxes(RectTransform rect, bool keepPositioning, bool recurs
 private Vector2 GetTransposed(Vector2 input)
 private void PixelAdjustPoint_Injected(Vector2& point, Transform elementTransform, Canvas canvas, Vector2& ret)
 private void PixelAdjustRect_Injected(RectTransform rectTransform, Canvas canvas, Rect& ret)
-private bool PointInRectangle_Injected(Vector2& screenPoint, RectTransform rect, Camera cam)
+private bool PointInRectangle_Injected(Vector2& screenPoint, RectTransform rect, Camera cam, Vector4& offset)
 }
 public UnityEngine.RenderMode : Enum {
 public int value__

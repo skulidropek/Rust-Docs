@@ -78,6 +78,7 @@ public UInt32 authLevel
 public UInt32 encryptionLevel
 public bool decryptIncoming
 public bool encryptOutgoing
+public bool trusted
 public bool rejected
 public string authStatus
 public Byte[] token
@@ -212,6 +213,7 @@ public double Double()
 public Vector3 Vector3()
 public Quaternion Quaternion()
 public Ray Ray()
+public Color Color()
 public int Read(Byte[] buffer, int offset, int count)
 public long get_Length()
 public long get_Position()
@@ -259,10 +261,12 @@ public void OnNetworkGroupChange()
 public void OnNetworkGroupLeave(Group group)
 public void OnNetworkGroupEnter(Group group)
 }
-public Network.NetWrite : Stream {
+public Network.NetWrite : MemoryStream {
 private MemoryStream buffer
 private BaseNetwork netwrite
-private MemoryStream stream
+private Byte[] data
+private int position
+private int length
 public bool CanSeek
 public bool CanRead
 public bool CanWrite
@@ -285,25 +289,20 @@ public void Bool(bool val)
 public void Float(float val)
 public void Double(double val)
 public void Bytes(Byte[] val)
-public void Write(Byte[] buffer, int offset, int count)
-public void WriteByte(byte value)
-public bool get_CanSeek()
-public long Seek(long offset, SeekOrigin origin)
-private Byte[] GetWriteBuffer()
-private long GetWriteOffset(long i)
-private void Write8(Union8 u)
-private void Write16(Union16 u)
-private void Write32(Union32 u)
-private void Write64(Union64 u)
 public void String(string val)
-public void Vector3(Vector3 obj)
-public void Quaternion(Quaternion obj)
-public void Ray(Ray obj)
+public void Vector3(Vector3& obj)
+public void Quaternion(Quaternion& obj)
+public void Ray(Ray& obj)
+public void Color(Color& obj)
 public void EntityID(UInt32 id)
 public void GroupID(UInt32 id)
 public void BytesWithSize(MemoryStream val)
 public void BytesWithSize(Byte[] b)
 public void BytesWithSize(Byte[] b, int length)
+private void Write(T& val)
+private void EnsureCapacity(int spaceRequired)
+public Byte[] GetBuffer()
+public bool get_CanSeek()
 public bool get_CanRead()
 public bool get_CanWrite()
 public long get_Length()
@@ -312,6 +311,9 @@ public void set_Position(long value)
 public void Flush()
 public int Read(Byte[] buffer, int offset, int count)
 public int ReadByte()
+public void Write(Byte[] buffer, int offset, int count)
+public void WriteByte(byte value)
+public long Seek(long offset, SeekOrigin origin)
 public void SetLength(long value)
 }
 public Network.Priority : Enum {
