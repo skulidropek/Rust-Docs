@@ -4,7 +4,6 @@ internal int MaximumTickRate
 private List`1<CapsuleParams> CapsuleParamsShared
 public Transform[] RootBones
 public bool SiblingConstraints
-public int StiffnessDepth
 public float LengthModifier
 public BurstClothMaterial Material
 public Vector3 Gravity
@@ -81,31 +80,55 @@ public BurstClothManager Get()
 public Facepunch.BurstCloth.BurstClothMaterial : ScriptableObject {
 private float _damping
 private AnimationCurve _dampingCurve
-private float _tightness
-private AnimationCurve _tightnessCurve
-private float _stiffness
-private AnimationCurve _stiffnessCurve
+private float _lengthWeight
+private AnimationCurve _lengthWeightCurve
+private float _shapeWeight
+private AnimationCurve _shapeWeightCurve
+private float _rotationConstraintWeight
+private AnimationCurve _rotationConstraintWeightCurve
+private float _siblingConstraintWeight
+private AnimationCurve _siblingConstraintWeightCurve
+private float _moveSpeed
+private AnimationCurve _moveSpeedCurve
 private BurstClothMaterial _defaultMaterial
 public float Damping
 public AnimationCurve DampingCurve
-public float Tightness
-public AnimationCurve TightnessCurve
-public float Stiffness
-public AnimationCurve StiffnessCurve
+public float LengthWeight
+public AnimationCurve LengthWeightCurve
+public float ShapeWeight
+public AnimationCurve ShapeWeightCurve
+public float RotationConstraintWeight
+public AnimationCurve RotationConstraintWeightCurve
+public float SiblingConstraintWeight
+public AnimationCurve SiblingConstraintWeightCurve
+public float MoveSpeed
+public AnimationCurve MoveSpeedCurve
 public BurstClothMaterial DefaultMaterial
 public float get_Damping()
 public void set_Damping(float value)
 public AnimationCurve get_DampingCurve()
-public float get_Tightness()
-public void set_Tightness(float value)
-public AnimationCurve get_TightnessCurve()
-public float get_Stiffness()
-public void set_Stiffness(float value)
-public AnimationCurve get_StiffnessCurve()
+public float get_LengthWeight()
+public void set_LengthWeight(float value)
+public AnimationCurve get_LengthWeightCurve()
+public float get_ShapeWeight()
+public void set_ShapeWeight(float value)
+public AnimationCurve get_ShapeWeightCurve()
+public float get_RotationConstraintWeight()
+public void set_RotationConstraintWeight(float value)
+public AnimationCurve get_RotationConstraintWeightCurve()
+public float get_SiblingConstraintWeight()
+public void set_SiblingConstraintWeight(float value)
+public AnimationCurve get_SiblingConstraintWeightCurve()
+public float get_MoveSpeed()
+public void set_MoveSpeed(float value)
+public AnimationCurve get_MoveSpeedCurve()
 public BurstClothMaterial get_DefaultMaterial()
 public float GetDamping(float t)
-public float GetTightness(float t)
-public float GetStiffness(float t)
+public float GetLengthWeight(float t)
+public float GetShapeWeight(float t)
+public float GetRotationConstraintWeight(float t)
+public float GetSiblingConstraintWeight(float t)
+public float GetMoveSpeed(float t)
 }
 public Facepunch.BurstCloth.BurstExtensions : object {
 public T& modreq(System.Runtime.InteropServices.InAttribute) GetReadonly(NativeArray`1<T> array, int index)
@@ -122,6 +145,7 @@ public int Depth
 public int Parent
 public int Child
 public float Length
+public float3 Normal
 public int LeftSibling
 public float3 LeftPosition
 public float LengthToLeft
@@ -129,12 +153,14 @@ public int RightSibling
 public float3 RightPosition
 public float LengthToRight
 public float3 LocalPosition
-public quaternion LocalRotation
 public float3 DirectionFromOrigin
-public float DampingInv
-public float Tightness
-public float Stiffness
 public float CollisionRadius
+public float DampingInv
+public float LengthWeight
+public float ShapeWeight
+public float RotationConstraintWeight
+public float SiblingConstraintWeight
+public float MoveSpeed
 public bool ConstrainRotateX
 public float2 RotateXConstraint
 public bool ConstrainRotateY
@@ -181,7 +207,6 @@ public int ConstraintIterationCount
 public float3 SimulationSpaceDelta
 public float3 OriginDelta
 public float3 Gravity
-public int StiffnessDepth
 public float LengthModifier
 public bool SiblingConstraints
 public bool EnableCollisions
@@ -193,8 +218,7 @@ public void Execute()
 private void AdjustSimulationSpace()
 private void MovePositions(BoneData& data, BoneState& oldState, BoneState& newState)
 private void ApplySpringConstraints(BoneData& data, BoneState& state, NativeArray`1& workBoneState, float dt)
-private void SpringConstraint(BoneData& pointA, BoneState& pointAState, BoneData& pointB, BoneState& pointBState, float targetLength, float2& lengthRange, float tightness, float dt)
-private void SpringConstraint(float3 targetPosition, BoneData& data, BoneState& state, float targetLength, float tightness, float dt)
+private float3 CalculateAnchorPosition(float3& from, float3& to, float2& lengthRange)
 private void ResolveCollisions(BoneData& data, BoneState& state)
 private void ApplyRotationConstraints(BoneData& data, BoneState& state)
 private quaternion ApplyAngleConstraint(BoneData& data, quaternion rotation, quaternion parentRotation)

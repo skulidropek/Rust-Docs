@@ -815,6 +815,7 @@ public AnimatedBuildingBlock : StabilityEntity {
 private bool animatorNeedsInitializing
 private bool animatorIsOpen
 private bool isAnimating
+private int Open
 public void ServerInit()
 public void PostServerLoad()
 public void OnFlagsChanged(Flags old, Flags next)
@@ -1182,24 +1183,24 @@ private GameObject damageSoundTarget
 private MeshRenderer monitorStaticRenderer
 private Material monitorStatic
 private Material monitorStaticSafeZone
-private GameObjectRef flareFireFX
-private GameObjectRef pilotFlare
-private Transform leftFlareLaunchPos
-private Transform rightFlareLaunchPos
-private float flareLaunchVel
+public GameObjectRef flareFireFX
+public GameObjectRef pilotFlare
+public Transform leftFlareLaunchPos
+public Transform rightFlareLaunchPos
+public float flareLaunchVel
 public Vector2 turretPitchClamp
 public Vector2 turretYawClamp
-protected Flags IN_GUNNER_VIEW_FLAG
-protected Flags IN_SAFE_ZONE_FLAG
+public Flags IN_GUNNER_VIEW_FLAG
+public Flags IN_SAFE_ZONE_FLAG
 protected int headingGaugeIndex
 protected int altGaugeIndex
 protected int altShakeIndex
-private EntityRef`1<AttackHelicopterTurret> turretInstance
-private EntityRef`1<AttackHelicopterRockets> rocketsInstance
-private GunnerInputState gunnerInputState
-private TimeSince timeSinceLastGunnerInput
-private TimeSince timeSinceFailedWeaponFireRPC
-private TimeSince timeSinceFailedFlareRPC
+public EntityRef`1<AttackHelicopterTurret> turretInstance
+public EntityRef`1<AttackHelicopterRockets> rocketsInstance
+public GunnerInputState gunnerInputState
+public TimeSince timeSinceLastGunnerInput
+public TimeSince timeSinceFailedWeaponFireRPC
+public TimeSince timeSinceFailedFlareRPC
 public bool HasSafeZoneFlag
 public bool GunnerIsInGunnerView
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
@@ -1212,15 +1213,15 @@ public AttackHelicopterTurret GetTurret()
 public AttackHelicopterRockets GetRockets()
 public void PilotInput(InputState inputState, BasePlayer player)
 public void PassengerInput(InputState inputState, BasePlayer player)
-private void WeaponFireFailed(int ammo, BasePlayer player)
-private void FlareFireFailed(BasePlayer player)
+public void WeaponFireFailed(int ammo, BasePlayer player)
+public void FlareFireFailed(BasePlayer player)
 public void VehicleFixedUpdate()
 public bool EnterTrigger(TriggerBase trigger)
 public void LeaveTrigger(TriggerBase trigger)
 public void PrePlayerDismount(BasePlayer player, BaseMountable seat)
 internal void DoServerDestroy()
 public void Save(SaveInfo info)
-private void MarkAllMountedPlayersAsHostile()
+public void MarkAllMountedPlayersAsHostile()
 public bool AdminFixUp(int tier)
 public bool TryFireFlare()
 public void LaunchFlare()
@@ -1267,44 +1268,44 @@ private bool <ItemFilter>g__IsValidRocket|28_0(<>c__DisplayClass28_0& )
 private bool <ItemFilter>g__IsValidFlare|28_1(<>c__DisplayClass28_0& )
 }
 public AttackHelicopterTurret : StorageContainer {
-private Transform turretSocket
-private Transform turretHorizontal
-private Transform turretVertical
+public Transform turretSocket
+public Transform turretHorizontal
+public Transform turretVertical
 public AttackHelicopter owner
 private GunStatus <GunState>k__BackingField
-private EntityRef`1<HeldEntity> attachedHeldEntity
+public EntityRef`1<HeldEntity> attachedHeldEntity
 public bool forceAcceptAmmo
-private float WEAPON_Z_OFFSET_SCALE
-private float muzzleYOffset
-private float lastSentX
-private float lastSentY
-private bool HasOwner
+public float WEAPON_Z_OFFSET_SCALE
+public float muzzleYOffset
+public float lastSentX
+public float lastSentY
+public bool HasOwner
 public GunStatus GunState
 public float GunXAngle
 public float GunYAngle
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
-private bool get_HasOwner()
+public bool get_HasOwner()
 public GunStatus get_GunState()
-private void set_GunState(GunStatus value)
+public void set_GunState(GunStatus value)
 public float get_GunXAngle()
 public float get_GunYAngle()
 public void Load(LoadInfo info)
-private void SetGunRotation(float xRot, float yRot)
+public void SetGunRotation(float xRot, float yRot)
 public HeldEntity GetAttachedHeldEntity()
 public void GetAmmoAmounts(Int32& clip, Int32& available)
 public Vector3 GetProjectedHitPos()
 public void ServerInit()
 public void Save(SaveInfo info)
 public BasePlayer ToPlayer()
-private bool CanAcceptItem(Item item, int targetSlot)
-private bool IsValidWeapon(Item item)
+public bool CanAcceptItem(Item item, int targetSlot)
+public bool IsValidWeapon(Item item)
 public bool InputTick(GunnerInputState input)
-private Vector3 ClampEyeAngle(Transform heliTransform, Vector3 eyeDir, Vector2 pitchRange, Vector2 yawRange)
+public Vector3 ClampEyeAngle(Transform heliTransform, Vector3 eyeDir, Vector2 pitchRange, Vector2 yawRange)
 public void OnItemAddedOrRemoved(Item item, bool added)
-private void UpdateAttachedWeapon()
-private bool TryReload()
-private bool TryFireWeapon()
-private void RefreshGunState()
+public void UpdateAttachedWeapon()
+public bool TryReload()
+public bool TryFireWeapon()
+public void RefreshGunState()
 }
 public AttackHeliDriverSeat : BaseVehicleSeat {
 private Sprite rocketCrosshair
@@ -1490,6 +1491,7 @@ public float nextIdleAimTime
 public Vector3 targetAimDir
 public float bulletDamage
 public RealTimeSinceEx timeSinceLastServerTick
+private HashSet`1<AutoTurret> nearbyTurrets
 public float nextForcedAimTime
 public Vector3 lastSentAimDir
 public Single[] visibilityOffsets
@@ -1616,7 +1618,7 @@ public void ScheduleForTargetScan()
 public bool HasInterference()
 private void UpdateInterference()
 private void UpdateInterferenceOnOthers()
-private void GetTurretsInInterferenceRange(List`1<AutoTurret> list)
+private void UpdateNearbyTurrets(bool created)
 public void TargetScan()
 public bool Ignore(BasePlayer player)
 public void ServerTick()
@@ -2389,6 +2391,7 @@ public void SendChildrenNetworkUpdateImmediate()
 public void SwitchParent(BaseEntity ent)
 public void OnParentChanging(BaseEntity oldParent, BaseEntity newParent)
 public BuildingPrivlidge GetBuildingPrivilege()
+public BuildingPrivlidge GetNearestBuildingPrivledge()
 public BuildingPrivlidge GetBuildingPrivilege(OBB obb)
 public void SV_RPCMessage(UInt32 nameID, Message message)
 public void ClientRPCPlayer(Connection sourceConnection, BasePlayer player, string funcName, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5)
@@ -2781,10 +2784,10 @@ public Vector3 damageTorque
 public float nextDamageTime
 public float nextEffectTime
 public float pendingImpactDamage
-protected bool autoHover
-protected bool ForceMovementHandling
-protected bool get_autoHover()
-private void set_autoHover(bool value)
+public bool autoHover
+public bool ForceMovementHandling
+public bool get_autoHover()
+public void set_autoHover(bool value)
 public float GetServiceCeiling()
 public float MaxVelocity()
 public void ServerInit()
@@ -2798,7 +2801,7 @@ public bool IsEnginePowered()
 public void VehicleFixedUpdate()
 public void LightToggle(BasePlayer player)
 public bool IsEngineOn()
-protected bool get_ForceMovementHandling()
+public bool get_ForceMovementHandling()
 protected void TryStartEngine(BasePlayer player)
 public void ClearDamageTorque()
 public void SetDamageTorque(Vector3 newTorque)
@@ -3192,6 +3195,7 @@ public bool ValidDismountPosition(BasePlayer player, Vector3 disPos)
 public BasePlayer GetMounted()
 public void MounteeTookDamage(BasePlayer mountee, HitInfo info)
 public void LightToggle(BasePlayer player)
+public void OnWeaponFired(BaseProjectile weapon)
 public bool CanSwapToThis(BasePlayer player)
 protected float get_PositionTickRate()
 public bool CanPickup(BasePlayer player)
@@ -4221,7 +4225,7 @@ public bool get_CurrentGestureIsFullBody()
 private bool get_InGestureCancelCooldown()
 public void Server_StartGesture(RPCMessage msg)
 public void Server_StartGesture(UInt32 gestureId)
-public void Server_StartGesture(GestureConfig toPlay)
+public void Server_StartGesture(GestureConfig toPlay, GestureStartSource startSource)
 private void TimeoutGestureServer()
 public void Server_CancelGesture()
 private void MonitorLoopingGesture()
@@ -4575,6 +4579,7 @@ public bool InSafeZone()
 public bool IsInNoRespawnZone()
 public bool IsOnATugboat()
 public void ServerCycle(float deltaTime)
+private bool ManuallyCheckSafezone()
 public bool OnStartBeingLooted(BasePlayer baseEntity)
 public Bounds GetBounds(bool ducked)
 public Bounds GetBounds()
@@ -4633,15 +4638,15 @@ public void SetActiveTelephone(PhoneController t)
 public bool get_HasActiveTelephone()
 public bool get_IsDesigningAI()
 public void ClearDesigningAIEntity()
-private bool <CountWaveTargets>g__CheckPlayer|96_0(BasePlayer player, <>c__DisplayClass96_0& )
-private bool <FindUnusedPointOfInterestColour>g__HasColour|126_0(int index)
-private ArraySegment`1<byte> <SaveSecondaryData>g__GetPoolableMugshotData|179_0(PlayerRelationshipInfo relationshipInfo)
-private void <SendRespawnOptions>g__CollectExternalAndSend|343_0()
-private void <SendRespawnOptions>g__SendToPlayer|343_1(List`1<SpawnOptions> spawnOptions, bool loading)
-internal float <CreateCorpse>g__GetFloatBasedOnUserID|373_0(ulong steamid, ulong seed)
-private bool <UpdateSpectateTarget>b__496_1(BaseNetworkable x)
-private bool <UpdateSpectateTarget>b__496_3(BasePlayer x)
-private bool <UpdateSpectateTarget>b__496_4(BasePlayer x)
+private bool <CountWaveTargets>g__CheckPlayer|97_0(BasePlayer player, <>c__DisplayClass97_0& )
+private bool <FindUnusedPointOfInterestColour>g__HasColour|127_0(int index)
+private ArraySegment`1<byte> <SaveSecondaryData>g__GetPoolableMugshotData|180_0(PlayerRelationshipInfo relationshipInfo)
+private void <SendRespawnOptions>g__CollectExternalAndSend|344_0()
+private void <SendRespawnOptions>g__SendToPlayer|344_1(List`1<SpawnOptions> spawnOptions, bool loading)
+internal float <CreateCorpse>g__GetFloatBasedOnUserID|374_0(ulong steamid, ulong seed)
+private bool <UpdateSpectateTarget>b__497_1(BaseNetworkable x)
+private bool <UpdateSpectateTarget>b__497_3(BasePlayer x)
+private bool <UpdateSpectateTarget>b__497_4(BasePlayer x)
 }
 public BasePortal : BaseCombatEntity {
 public bool isUsablePortal
@@ -4747,6 +4752,10 @@ public bool IsUsableByTurret
 protected bool CanRefundAmmo
 protected ItemDefinition PrimaryMagazineAmmo
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+protected bool TryReload(IAmmoContainer ammoSource, int desiredAmount, bool canRefundAmmo)
+public void SwitchAmmoTypesIfNeeded(IAmmoContainer ammoSource)
+public void SetAmmoCount(int newCount)
+public void ModifyAmmoCount(int amount)
 public RecoilProperties get_recoilProperties()
 public Vector3 GetInheritedVelocity(BasePlayer player, Vector3 direction)
 public float GetDamageScale(bool getMax)
@@ -4828,11 +4837,14 @@ public BaseRidableAnimal : BaseVehicle {
 public ItemDefinition onlyAllowedItem
 public ContentsType allowedContents
 public int maxStackSize
-public int numSlots
+public int numStorageSlots
+public int equipmentSlots
 public string lootPanelName
+public string storagePanelName
 public bool needsBuildingPrivilegeToUse
 public bool isLootable
-public ItemContainer inventory
+public ItemContainer storageInventory
+public ItemContainer equipmentInventory
 public Flags Flag_ForSale
 public Phrase SingleHorseTitle
 public Phrase SingleHorseDescription
@@ -4925,7 +4937,10 @@ public bool IsNpc
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 public bool IsForSale()
 public void ContainerServerInit()
-public void CreateInventory(bool giveUID)
+private void CreateInventories(bool giveUID)
+private void CreateEquipmentInventory(bool giveUID)
+private void CreateStorageInventory(bool giveUID)
+public ItemContainer CreateInventory(bool giveUID, int slots)
 public void SaveContainer(SaveInfo info)
 public void OnInventoryFirstCreated(ItemContainer container)
 public void OnInventoryDirty()
@@ -8686,6 +8701,7 @@ private Task SetupServerRegistration()
 private bool TryLoadServerRegistration(String& serverId, String& serverToken)
 private void SetServerRegistration(string responseJson)
 private Task CheckConnectivity()
+private Task`1<HttpResponseMessage> AutoRetry(Func`1<Task`1<HttpResponseMessage>> action)
 private void SetServerId(string serverId)
 private string GetServerIdPath()
 }
@@ -9500,6 +9516,7 @@ public int maxmessagesize
 public void pair(Arg arg)
 public void regeneratetoken(Arg arg)
 public void info(Arg arg)
+public void retry_initialize(Arg arg)
 public void resetlimiter(Arg arg)
 public void connections(Arg arg)
 public void appban(Arg arg)
@@ -9616,12 +9633,20 @@ public void heal(Arg arg)
 public void hurt(Arg arg)
 public void eat(Arg arg)
 public void drink(Arg arg)
+public void sethealth(Arg arg)
+public void setdamage(Arg arg)
+public void setfood(Arg arg)
+public void setwater(Arg arg)
+public void setradiation(Arg arg)
 private void AdjustHealth(BasePlayer player, float amount, string bone)
 private void AdjustCalories(BasePlayer player, float amount, float time)
 private void AdjustHydration(BasePlayer player, float amount, float time)
+private void AdjustRadiation(BasePlayer player, float amount, float time)
+private void setattribute(Arg arg, Type type)
+private BasePlayer GetUsePlayer(Arg arg, int playerArgument)
 public void ResetSleepingBagTimers(Arg arg)
 public void bench_io(Arg arg)
-internal void <bench_io>g__Connect|27_0(IOEntity InputIOEnt, IOEntity OutputIOEnt)
+internal void <bench_io>g__Connect|35_0(IOEntity InputIOEnt, IOEntity OutputIOEnt)
 }
 public ConVar.Decay : ConsoleSystem {
 public float outside_test_range
@@ -9677,7 +9702,7 @@ public void find_radius(Arg args)
 public void find_self(Arg args)
 public void debug_toggle(Arg args)
 public void nudge(Arg args)
-private EntitySpawnRequest GetSpawnEntityFromName(string name)
+public EntitySpawnRequest GetSpawnEntityFromName(string name)
 public string svspawn(string name, Vector3 pos, Vector3 dir)
 public string svspawnitem(string name, Vector3 pos)
 public string svspawngrid(string name, int width, int height, int spacing)
@@ -10072,6 +10097,7 @@ public void resetstate(Arg args)
 public void fillwater(Arg arg)
 public void reloadweapons(Arg arg)
 public void createskull(Arg arg)
+public string createTrophy(Arg arg)
 public void gesture_radius(Arg arg)
 public void stopgesture_radius(Arg arg)
 public void markhostile(Arg arg)
@@ -10123,6 +10149,7 @@ public void instanced_memory_usage(Arg arg)
 public void test_instancing_culling(Arg arg)
 public void instanced_renderers_debug(Arg arg)
 public void print_instanced_grid(Arg arg)
+public void expand_instancing(Arg arg)
 }
 public ConVar.Sentry : ConsoleSystem {
 public bool targetall
@@ -11602,12 +11629,14 @@ public bool canTakeKnocker
 public bool canNpcOpen
 public bool canHandOpen
 public bool isSecurityDoor
+public bool canReverseOpen
 public TriggerNotify[] vehiclePhysBoxes
 public bool checkPhysBoxesOnOpen
 public SoundDefinition vehicleCollisionSfx
 public GameObject[] ClosedColliderRoots
 private float openAnimLength
 private float closeAnimLength
+public Flags ReverseOpen
 private float decayResetTimeLast
 public NavMeshModifierVolume NavMeshVolumeAnimals
 public NavMeshModifierVolume NavMeshVolumeHumanoids
@@ -11621,6 +11650,7 @@ private Dictionary`2<BasePlayer, TimeSince> woundedCloses
 private float nextKnockTime
 private int openHash
 private int closeHash
+private int reverseOpenHash
 private bool HasVehiclePushBoxes
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 public void ResetState()
@@ -11632,7 +11662,10 @@ public void SetOpen(bool open, bool suppressBlockageChecks)
 public void SetLocked(bool locked)
 public bool GetPlayerLockPermission(BasePlayer player)
 public void SetNavMeshLinkEnabled(bool wantsOn)
-private void RPC_OpenDoor(RPCMessage rpc)
+protected void RPC_OpenDoor(RPCMessage rpc)
+private void DelayedDoorOpening()
+protected void OnPlayerOpenedDoor(BasePlayer p)
+protected bool ShouldDelayOpen(BasePlayer forPlayer, Single& delay)
 private void StartCheckingForBlockages(bool isOpening)
 private void StopCheckingForBlockages()
 private void RPC_CloseDoor(RPCMessage rpc)
@@ -11650,8 +11683,8 @@ public float BoundsPadding()
 public void OnObjects(TriggerNotify trigger)
 public void OnEmpty()
 public void OnFlagsChanged(Flags old, Flags next)
-private void <Server_NotifyWoundedOpen>b__46_0()
-private void <Server_NotifyWoundedClose>b__48_0()
+private void <Server_NotifyWoundedOpen>b__51_0()
+private void <Server_NotifyWoundedClose>b__53_0()
 }
 public DoorAnimEvents : MonoBehaviour {
 public GameObjectRef openStart
@@ -11850,9 +11883,11 @@ public void ServerInit()
 public float GetDespawnDuration()
 public void IdleDestroy()
 public void OnCollision(Collision collision, BaseEntity hitEntity)
+private void FellThroughTerrainInvoke()
+private void FellThroughTerrainInvoke2()
+private bool CheckFellThroughTerrain()
 public void OnDroppedOn(DroppedItem di)
 public void OnParentChanging(BaseEntity oldParent, BaseEntity newParent)
-private void SetCollisionForParent(BaseEntity parent)
 internal void OnParentRemoved()
 public void GoKinematic()
 protected bool TransformHasMoved()
@@ -12008,6 +12043,7 @@ public DungeonGridConnectionVariant WestVariant
 public DungeonGridConnectionVariant EastVariant
 public GameObjectRef[] AvoidNeighbours
 public MeshRenderer[] MapRenderers
+public bool Replaceable
 public bool ShouldAvoid(UInt32 id)
 protected void Awake()
 }
@@ -12295,7 +12331,7 @@ public float timeAlive
 public EggHuntEvent serverEvent
 public EggHuntEvent clientEvent
 public float durationSeconds
-private Dictionary`2<ulong, EggHunter> _eggHunters
+public Dictionary`2<ulong, EggHunter> _eggHunters
 public List`1<CollectableEasterEgg> _spawnedEggs
 public ItemAmount[] placementAwards
 public bool IsEventActive()
@@ -12473,7 +12509,8 @@ public bool WantsPower()
 public int ConsumptionAmount()
 public void ResetIOState()
 public int GetPassthroughAmount(int outputSlot)
-public void IOStateChanged(int inputAmount, int inputSlot)
+public int CalculateCurrentEnergy(int inputAmount, int inputSlot)
+public void UpdateHasPower(int inputAmount, int inputSlot)
 public void ServerInit()
 public void SetSwitch(bool wantsOn)
 public void SVSwitch(RPCMessage msg)
@@ -13436,7 +13473,7 @@ protected int GetAvailableInputsForPlayer(CardPlayerData pData)
 protected void SubEndGameplay()
 protected void SubEndRound()
 private int PayOut(CardPlayerData pData, int winnings)
-protected void HandlePlayerLeavingDuringTheirTurn(CardPlayerData pData)
+protected void HandlePlayerLeavingTable(CardPlayerData pData)
 protected void SubReceivedInputFromPlayer(CardPlayerData pData, int input, int value, bool countAsAction)
 private void DoInRoundPlayerInput(CardPlayerDataBlackjack pdBlackjack, BlackjackInputOption& selectedMove, Int32& selectedMoveValue)
 private void DoBettingPhasePlayerInput(CardPlayerDataBlackjack pdBlackjack, int value, bool countAsAction, BlackjackInputOption& selectedMove, Int32& selectedMoveValue)
@@ -13530,7 +13567,7 @@ protected void OnTurnTimeout(CardPlayerData playerData)
 protected void SubStartRound()
 protected void SubReceivedInputFromPlayer(CardPlayerData playerData, int input, int value, bool countAsAction)
 protected int GetAvailableInputsForPlayer(CardPlayerData playerData)
-protected void HandlePlayerLeavingDuringTheirTurn(CardPlayerData pData)
+protected void HandlePlayerLeavingTable(CardPlayerData pData)
 protected void SubEndRound()
 protected void SubEndGameplay()
 protected void EndCycle()
@@ -13759,7 +13796,7 @@ protected void StartNextCycle()
 protected bool ShouldEndCycle()
 protected void EndCycle()
 protected int GetAvailableInputsForPlayer(CardPlayerData playerData)
-protected void HandlePlayerLeavingDuringTheirTurn(CardPlayerData pData)
+protected void HandlePlayerLeavingTable(CardPlayerData pData)
 }
 public Facepunch.FPNativeList`1 : object {
 private NativeArray`1<T> _array
@@ -14201,6 +14238,21 @@ public ItemDefinition GetFish(Vector3 worldPos, WaterBody bodyType, ItemDefiniti
 public void CheckCatchAllAchievement(BasePlayer player)
 protected Type GetIndexedType()
 }
+public FishMount : StorageContainer {
+public Animator[] FishRoots
+public GameObjectRef FishInteractSound
+public float UseCooldown
+public Flags HasFish
+private int GetCurrentFishItemIndex
+public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+public void Save(SaveInfo info)
+private int get_GetCurrentFishItemIndex()
+public bool ItemFilter(Item item, int targetSlot)
+public void PostServerLoad()
+public void OnItemAddedOrRemoved(Item item, bool added)
+private void UseFish(RPCMessage msg)
+private void ClearBusy()
+}
 public FishNavigator : BaseNavigator {
 private BaseNpc <NPC>k__BackingField
 public BaseNpc NPC
@@ -14247,13 +14299,6 @@ private void Update()
 private void LateUpdate()
 private void OnDestroy()
 private void OnDrawGizmos()
-}
-internal FixAtlasMipLevelsState : Enum {
-public int value__
-public FixAtlasMipLevelsState Skipped
-public FixAtlasMipLevelsState Initializing
-public FixAtlasMipLevelsState Succeeded
-public FixAtlasMipLevelsState Failed
 }
 public FixedRateStepped : object {
 public float rate
@@ -15147,6 +15192,7 @@ public void SetupAI()
 public GenerateDungeonGrid : ProceduralComponent {
 public string TunnelFolder
 public string StationFolder
+public string UpwardsFolder
 public string TransitionFolder
 public string LinkFolder
 public InfrastructureType ConnectionType
@@ -15158,6 +15204,7 @@ private int MaxDepth
 public bool RunOnCache
 public bool get_RunOnCache()
 public void Process(UInt32 seed)
+private float GetDistanceToAboveGroundRail(Vector3 pos)
 }
 public GenerateHeight : ProceduralComponent {
 public void Native_GenerateHeight(Int16[] map, int res, Vector3 pos, Vector3 size, UInt32 seed, float lootAngle, float lootTier0, float lootTier1, float lootTier2, float biomeAngle, float biomeArid, float biomeTemperate, float biomeTundra, float biomeArctic)
@@ -15183,7 +15230,6 @@ private Quaternion rot90
 private int MaxDepth
 private PathList CreateSegment(int number, Vector3[] points)
 public void Process(UInt32 seed)
-public Point GetPathFinderPoint(Vector3 worldPos, int res)
 }
 public GenerateRailLayout : ProceduralComponent {
 public float Width
@@ -15198,6 +15244,7 @@ private Quaternion rot90
 private int MaxDepth
 private PathList CreateSegment(int number, Vector3[] points)
 public void Process(UInt32 seed)
+internal float <Process>g__DistanceToRail|13_0(Vector3 vec)
 }
 public GenerateRailMeshes : ProceduralComponent {
 public float NormalSmoothing
@@ -15238,7 +15285,6 @@ private Quaternion rotLeft
 private int MaxDepth
 private PathList CreateSegment(int number, Vector3[] points)
 public void Process(UInt32 seed)
-public Point GetPathFinderPoint(Vector3 worldPos, int res)
 }
 public GenerateRailTerrain : ProceduralComponent {
 public int SmoothenLoops
@@ -15416,6 +15462,18 @@ public SteamDLCItem dlcItem
 public SteamInventoryItem inventoryItem
 public bool IsOwnedBy(BasePlayer player)
 public bool CanBeUsedBy(BasePlayer player)
+}
+public GestureDoor : Door {
+public GestureConfig OpenGesture
+public GestureConfig KickGesture
+public float KickAnimationDelay
+public float PushAnimationDelay
+public float WeaponAdditiveDelay
+private bool wasKick
+public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+protected void OnPlayerOpenedDoor(BasePlayer p)
+protected bool ShouldDelayOpen(BasePlayer player, Single& delay)
+private void ServerKick(RPCMessage msg)
 }
 public GhostSheetSystemSpaceUpdater : MonoBehaviour {
 private EZSoftBone[] ezSoftBones
@@ -15686,12 +15744,12 @@ public Vector3 groundPosition
 public LayerMask layers
 public float radius
 public BaseEntity[] whitelist
-private int fails
+public int fails
 private void OnDrawGizmosSelected()
 public void PhysicsChanged(GameObject obj)
 public void PhysicsChanged(Vector3 origin, float radius, int layerMask)
-private void OnPhysicsNeighbourChanged()
-private bool OnGround()
+public void OnPhysicsNeighbourChanged()
+public bool OnGround()
 }
 public GrowableEntity : BaseCombatEntity {
 public PlantProperties Properties
@@ -16085,6 +16143,39 @@ public void SetIncludeOthers(RPCMessage msg)
 public bool ShouldIncludeAuthorized()
 public bool ShouldIncludeOthers()
 }
+public HeadDispenser : EntityComponent`1<BaseEntity> {
+public ItemDefinition HeadDef
+public GameObjectRef SourceEntity
+private bool hasDispensed
+private BaseEntity <overrideEntity>k__BackingField
+public BaseEntity overrideEntity
+public BaseEntity get_overrideEntity()
+public void set_overrideEntity(BaseEntity value)
+public void DispenseHead(HitInfo info, BaseCorpse corpse)
+}
+public HeadEntity : BaseEntity {
+public HeadData CurrentTrophyData
+private OccupationSlots HeadMask
+public void Save(SaveInfo info)
+public void SetupSourceId(UInt32 sourceID)
+public void SetupPlayerId(string playerName, ulong playerId)
+public void AssignClothing(ItemContainer container)
+public void AssignHorseBreed(int breed)
+private void InitTrophyData()
+public void Load(LoadInfo info)
+public GameObject GetHeadSource()
+}
+public HeadInformationPanel : ItemInformationPanel {
+public ItemDefinition HeadInfo
+public GameObject PlayerRoot
+public GameObject NPCRoot
+public GameObject HorseRoot
+public Image NPCImage
+public Text NPCText
+public Text PlayerNameText
+public Text PlayerIdText
+public Text HorseBreedText
+}
 public HealthBelowAIEvent : BaseAIEvent {
 private float <HealthFraction>k__BackingField
 private BaseCombatEntity combatEntity
@@ -16434,6 +16525,7 @@ public string Categorize()
 public HorseBreed : ScriptableObject {
 public Phrase breedName
 public Phrase breedDesc
+public Sprite trophyHeadSprite
 public Material[] materialOverrides
 public float maxHealth
 public float maxSpeed
@@ -16491,11 +16583,11 @@ public Color hostileColor
 public float requireDistanceToSafeZone
 }
 public HotAirBalloon : BaseCombatEntity {
-protected Flags Flag_HasFuel
-protected Flags Flag_Grounded
-protected Flags Flag_CanModifyEquipment
-protected Flags Flag_HalfInflated
-protected Flags Flag_FullInflated
+public Flags Flag_HasFuel
+public Flags Flag_Grounded
+public Flags Flag_CanModifyEquipment
+public Flags Flag_HalfInflated
+public Flags Flag_FullInflated
 public Flags Flag_OnlyOwnerEntry
 public Transform centerOfMass
 public Rigidbody myRigidbody
@@ -16527,14 +16619,14 @@ public Bounds collapsedBounds
 public Bounds raisedBounds
 public GameObject[] balloonColliders
 public float serviceCeiling
-private Vector3 lastFailedDecayPosition
+public Vector3 lastFailedDecayPosition
 public float currentBuoyancy
 public float lastBlastTime
 public float avgTerrainHeight
 public bool grounded
-private float spawnTime
-private float safeAreaRadius
-private Vector3 safeAreaOrigin
+public float spawnTime
+public float safeAreaRadius
+public Vector3 safeAreaOrigin
 public bool IsFullyInflated
 public bool Grounded
 public SamTargetType SAMTargetType
@@ -16567,7 +16659,7 @@ public void EngineSwitch(RPCMessage msg)
 public void ScheduleOff()
 public void UpdateIsGrounded()
 public void OnFlagsChanged(Flags old, Flags next)
-private void CheckGlobal(Flags flags)
+public void CheckGlobal(Flags flags)
 protected void FixedUpdate()
 public Vector3 GetLocalVelocityServer()
 public Quaternion GetAngularVelocityServer()
@@ -16693,6 +16785,29 @@ private void set_Value(float value)
 public void Init(AIEventData data, BaseEntity owner)
 public AIEventData ToProto()
 public void Execute(AIMemory memory, AIBrainSenses senses, StateStatus stateStatus)
+}
+public HuntingTrophy : StorageContainer {
+private HeadData CurrentTrophyData
+public PlayerModel Player
+public GameObject MaleRope
+public GameObject FemaleRope
+public Renderer[] HorseRenderers
+public Renderer[] HorseHairRenderers
+public UInt32 HORSE_PREFAB_ID
+public GameObject NameRoot
+public RustText NameText
+public TrophyRoot[] Trophies
+public HeadData TrophyData
+public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+public HeadData get_TrophyData()
+public bool ItemFilter(Item item, int targetSlot)
+private void ServerRequestSubmit()
+private void ServerRequestClear()
+public void Save(SaveInfo info)
+public bool CanSubmitHead(HeadEntity headEnt)
+public void Load(LoadInfo info)
+public void ResetState()
+private GameObject <CanSubmitHead>g__GetCurrentTrophyDataSource|18_0()
 }
 public HurtOverlay : MonoBehaviour {
 public PostProcessVolume postProcessVolume
@@ -17361,6 +17476,9 @@ public InspectorNameAttribute : PropertyAttribute {
 public string name
 public void .ctor(string name)
 }
+public InstancedCameraComponent : MonoBehaviour {
+public bool IsMirror
+}
 public InstancedEntityComponent : PrefabAttribute {
 public bool HideInsideNetworkRange
 protected Type GetIndexedType()
@@ -17436,7 +17554,7 @@ public Nullable`1<InstancedMeshData> TryGetMeshData(long virtualMeshId)
 public void SetMeshVisible(long virtualMeshId, bool visible)
 public void SetOverride(long virtualMeshId, MeshOverrideData newData)
 private CellId CreateCell(int sortingKey)
-private void ExpandData()
+public void ExpandData()
 private void RecycleCell(CellId cellId)
 private CellId GetCellId(int index)
 public void PrintMemoryUsage(StringBuilder builder)
@@ -17513,6 +17631,7 @@ public void OnDestroy()
 private void AllocateNativeMemory()
 private void FreeNativeMemory()
 public void AddDrawCall(InstancedMeshRenderer renderer, int submeshIndex, UInt32 indicies, UInt32 indiciesIndex, UInt32 vertexIndex, MultidrawMeshInfo multidraw)
+private bool NeedsToRebuildMaterialBlocks()
 private void RebuildAllMaterialBlocks()
 private void UpdateMaterialBlock(DrawCall drawCall)
 public void EnsureCapacity(int totalMeshCount)
@@ -17600,6 +17719,7 @@ private int Param_Length
 private int Param_DrawCalls
 private int Param_DrawCallCount
 private int Param_Multidraw_Enabled
+private int Param_FrustumCullingEnabled
 private GPUBuffer`1<UInt32> tempBuffer
 private GPUBuffer`1<UInt32> postCullMeshCounts
 public void Initialize()
@@ -17607,7 +17727,7 @@ public void OnDestroy()
 private void AllocateNativeMemory()
 private void FreeNativeMemory()
 public void SimpleCulling(CullingParameters options)
-private void CullingShader(ComputeShader shader, GPUBuffer`1<InstancedCullData> inputBuffer, int inputLength, GPUBuffer`1<UInt32> outputBuffer, GPUBuffer`1<RenderSlice> renderSlices, GPUBuffer`1<float4> frustumPlanes, int shadowCameras, Vector3 cameraPosition, float maxDistance, float distanceScale)
+private void CullingShader(ComputeShader shader, GPUBuffer`1<InstancedCullData> inputBuffer, int inputLength, GPUBuffer`1<UInt32> outputBuffer, GPUBuffer`1<RenderSlice> renderSlices, GPUBuffer`1<float4> frustumPlanes, int shadowCameras, Vector3 cameraPosition, float maxDistance, float distanceScale, bool frustumCulling)
 private void SimplePostCull(ComputeShader shader, GPUBuffer`1<UInt32> inputBuffer, GPUBuffer`1<UInt32> outputBuffer, GPUBuffer`1<RenderSlice> renderSlices, int sliceCount, GPUBuffer`1<UInt32> sliceCounts)
 private void WriteIndirectArgs(ComputeShader shader, GPUBuffer`1<UInt32> sliceCounts, GPUBuffer`1<RenderSlice> renderSlices, GPUBuffer`1<DrawCallJobData> drawCalls, int drawCallCount, GPUBuffer`1<UInt32> indirectArgs, GPUBuffer`1<UInt32> indirectExtraArgs)
 private void ClearBuffer(ComputeShader shader, GPUBuffer`1<UInt32> buffer)
@@ -18371,6 +18491,7 @@ public ulong skin
 public string name
 public string streamerName
 public string text
+private Nullable`1<int> <ammoCount>k__BackingField
 public float cookTimeLeft
 private Action`1<Item> OnDirty
 public Flag flags
@@ -18385,6 +18506,7 @@ public float maxConditionNormalized
 public float conditionNormalized
 public bool hasCondition
 public bool isBroken
+public Nullable`1<int> ammoCount
 public int despawnMultiplier
 public ItemDefinition blueprintTargetDef
 public int blueprintTarget
@@ -18406,6 +18528,8 @@ public void RepairCondition(float amount)
 public void DoRepair(float maxLossFraction)
 public ItemContainer GetRootContainer()
 public void OnBroken()
+public Nullable`1<int> get_ammoCount()
+public void set_ammoCount(Nullable`1<int> value)
 public string GetName(Nullable`1<bool> streamerModeOverride)
 public int get_despawnMultiplier()
 public ItemDefinition get_blueprintTargetDef()
@@ -18939,6 +19063,7 @@ public void OnRemovedFromWorld(Item item)
 public void UpdateParent(Item item)
 public void OnParentChanged(Item item)
 public BaseEntity GetEntityForParenting(Item item)
+public bool GetAssociatedEntity(Item item, T& result, bool isServer)
 public T GetAssociatedEntity(Item item, bool isServer)
 }
 public ItemModAssociatedEntityMobile : ItemModAssociatedEntity`1<MobileInventoryEntity> {
@@ -19126,6 +19251,8 @@ public float MaximumWaterDepth
 public FishingTag RequiredTag
 public float Chance
 public string SteamStatName
+public bool CanBeMounted
+public int FishMountIndex
 }
 public ItemModGiveOxygen : ItemMod {
 public AirSupplyType airType
@@ -19153,6 +19280,10 @@ public Phrase MenuOptionTitle
 public Phrase MenuOptionDesc
 public bool CanEquipToHAB(HotAirBalloon hab)
 public void ApplyToHAB(HotAirBalloon hab)
+}
+public ItemModHead : ItemModAssociatedEntity`1<HeadEntity> {
+protected bool AllowNullParenting
+protected bool get_AllowNullParenting()
 }
 public ItemModKeycard : ItemMod {
 public int accessLevel
@@ -19248,6 +19379,7 @@ public ItemModRepair : ItemMod {
 public float conditionLost
 public GameObjectRef successEffect
 public int workbenchLvlRequired
+public bool canUseRepairBench
 public bool HasCraftLevel(BasePlayer player)
 public void ServerCommand(Item item, string command, BasePlayer player)
 }
@@ -19979,13 +20111,8 @@ public void Spawn()
 }
 public LightCloneShadow : MonoBehaviour {
 public bool cloneShadowMap
-public string shaderPropNameMap
-public int cloneShadowMapDownscale
-public RenderTexture map
 public bool cloneShadowMask
-public string shaderPropNameMask
-public int cloneShadowMaskDownscale
-public RenderTexture mask
+public int shadowMaskDownscale
 }
 public LightEx : UpdateBehaviour {
 public bool alterColor
@@ -20486,7 +20613,7 @@ public bool get_blockBagDrop()
 public void set_blockBagDrop(bool value)
 public void ServerInit()
 internal void DoServerDestroy()
-public void TakeFrom(ItemContainer[] source)
+public void TakeFrom(BaseEntity fromEntity, ItemContainer[] source)
 public bool CanRemove()
 public bool CanLoot()
 public bool OnStartBeingLooted(BasePlayer baseEntity)
@@ -20586,7 +20713,6 @@ public Text maxSpeedText
 public Text staminaText
 public Text healthText
 public GameObject[] storageSlots
-public GameObject storageWindow
 }
 public LootPanelIndustrialCrafter : LootPanel {
 public GameObject CraftingRoot
@@ -20629,6 +20755,15 @@ public GameObject baseProtectedObj
 public Phrase protectedPrefix
 public Tooltip costToolTip
 public Phrase blocksPhrase
+}
+public LootPanelTrophyStand : LootPanel {
+public GameObject SubmitButton
+public GameObject NonMatchingTrophyButton
+public Text CountText
+public GameObject CountRoot
+public GameObject NameRoot
+public RustText NameText
+public GameObject ClearButton
 }
 public LootPanelVendingMachine : LootPanel {
 public GameObjectRef sellOrderPrefab
@@ -21642,6 +21777,7 @@ public float Fraction()
 public float InverseFraction()
 public void Add(float val)
 public void Subtract(float val)
+public void Set(float val)
 public void Increase(float fTarget)
 public void MoveTowards(float fTarget, float fRate)
 public bool HasChanged()
@@ -22502,18 +22638,17 @@ public ModularCar owner
 public Flags FLAG_CENTRAL_LOCKING
 public Flags FLAG_CODE_ENTRY_BLOCKED
 public float LOCK_DESTROY_HEALTH
-private List`1<ulong> <WhitelistPlayers>k__BackingField
+private List`1<ulong> whitelistPlayers
 private string <Code>k__BackingField
 private int wrongCodes
 private float lastWrongTime
 public bool HasALock
 public bool CentralLockingIsOn
-public List`1<ulong> WhitelistPlayers
+public IList`1<ulong> WhitelistPlayers
 public string Code
 public bool get_HasALock()
 public bool get_CentralLockingIsOn()
-public List`1<ulong> get_WhitelistPlayers()
-private void set_WhitelistPlayers(List`1<ulong> value)
+public IList`1<ulong> get_WhitelistPlayers()
 public void .ctor(ModularCar owner, bool isServer)
 public bool PlayerCanDestroyLock(BaseVehicleModule viaModule)
 public bool CodeEntryBlocked(BasePlayer player)
@@ -22533,6 +22668,8 @@ private void ClearCodeEntryBlocked()
 public void CheckEnableCentralLocking()
 public void ToggleCentralLocking()
 public void Save(SaveInfo info)
+public bool TryAddPlayer(ulong userID)
+public bool TryRemovePlayer(ulong userID)
 }
 public ModularCarCodeLockVisuals : MonoBehaviour {
 private GameObject lockedVisuals
@@ -22680,6 +22817,8 @@ public bool WithinUseDistance(BasePlayer player)
 public Monument : TerrainPlacement {
 public float Radius
 public float Fade
+public bool AutoCliffSplat
+public bool AutoCliffTopology
 protected void OnDrawGizmosSelected()
 protected void ApplyHeight(Matrix4x4 localToWorld, Matrix4x4 worldToLocal)
 protected void ApplySplat(Matrix4x4 localToWorld, Matrix4x4 worldToLocal)
@@ -22901,6 +23040,8 @@ private BaseMountable get_Mountable()
 }
 public Mountain : TerrainPlacement {
 public float Fade
+public bool AutoCliffSplat
+public bool AutoCliffTopology
 protected void OnDrawGizmosSelected()
 protected void ApplyHeight(Matrix4x4 localToWorld, Matrix4x4 worldToLocal)
 protected void ApplySplat(Matrix4x4 localToWorld, Matrix4x4 worldToLocal)
@@ -23084,7 +23225,7 @@ public ParticleSystem flameletParticle
 private void OnEnable()
 }
 public NameHelper : object {
-public string Get(ulong userId, string name, bool isClient)
+public string Get(ulong userId, string name, bool isClient, bool forceFriendly)
 public string Get(IPlayerInfo playerInfo, bool isClient)
 }
 public nametags : ConsoleSystem {
@@ -24348,6 +24489,7 @@ private Matrix4x4 prevViewProjMatrix
 private Matrix4x4 invViewProjMatrix
 private bool useNativePath
 private OcclusionCulling instance
+public bool Passthrough
 private GraphicsDeviceType[] supportedDeviceTypes
 private bool _enabled
 private bool _safeMode
@@ -24414,13 +24556,6 @@ private void PrepareAndDispatch()
 private void IssueRead()
 public void ResetTiming(SmartList bucket)
 public void ResetTiming()
-private bool FrustumCull(Vector4[] planes, Vector4 testSphere)
-private int ProcessOccludees_Safe(SimpleList`1<State> states, SmartList bucket, Color32[] results, SimpleList`1<int> changed, Vector4[] frustumPlanes, float time, UInt32 frame)
-private int ProcessOccludees_Fast(State[] states, Int32[] bucket, int bucketCount, Color32[] results, int resultCount, Int32[] changed, Int32& changedCount, Vector4[] frustumPlanes, float time, UInt32 frame)
-private int ProcessOccludees_Native(State& states, Int32& bucket, int bucketCount, Color32& results, int resultCount, Int32& changed, Int32& changedCount, Vector4& frustumPlanes, float time, UInt32 frame)
-private void ApplyVisibility_Safe(float time, UInt32 frame)
-private void ApplyVisibility_Fast(float time, UInt32 frame)
-private void ApplyVisibility_Native(float time, UInt32 frame)
 private void ProcessCallbacks(SimpleList`1<OccludeeState> occludees, SimpleList`1<State> states, SimpleList`1<int> changed)
 public void RetrieveAndApplyVisibility()
 public bool DebugFilterIsDynamic(int filter)
@@ -24448,6 +24583,14 @@ public Cell RegisterToGrid(OccludeeState occludee)
 public void UpdateInGrid(OccludeeState occludee)
 public void UnregisterFromGrid(OccludeeState occludee)
 public void UpdateGridBuffers()
+private bool FrustumCull(Vector4[] planes, Vector4 testSphere)
+private int ProcessOccludees_Safe(SimpleList`1<State> states, SmartList bucket, Color32[] results, SimpleList`1<int> changed, Vector4[] frustumPlanes, float time, UInt32 frame)
+private int ProcessOccludees_Fast(State[] states, Int32[] bucket, int bucketCount, Color32[] results, int resultCount, Int32[] changed, Int32& changedCount, Vector4[] frustumPlanes, float time, UInt32 frame)
+private int ProcessOccludees_Native(State& states, Int32& bucket, int bucketCount, Color32& results, int resultCount, Int32& changed, Int32& changedCount, Vector4& frustumPlanes, float time, UInt32 frame)
+private void ApplyVisibility_Safe(float time, UInt32 frame)
+private void ApplyVisibility_Fast(float time, UInt32 frame)
+private void ApplyVisibility_Native(float time, UInt32 frame)
+private void ApplyVisibility_Passthrough(float time, UInt32 frame)
 }
 public OceanSettings : ScriptableObject {
 public ComputeShader waveSpectrumCompute
@@ -24885,11 +25028,14 @@ public PathFinder : object {
 private Int32[0...,0...] costmap
 private Int32[0...,0...] visited
 private Point[] neighbors
+private bool diagonals
 private bool directional
 public Point PushPoint
 public int PushRadius
 public int PushDistance
 public int PushMultiplier
+public List`1<Point> PushPointsAdditional
+public HashSet`1<Point> BlockedPointsAdditional
 private Point[] mooreNeighbors
 private Point[] neumannNeighbors
 public void .ctor(Int32[0...,0...] costmap, bool diagonals, bool directional)
@@ -24905,11 +25051,12 @@ public bool IsWalkableWithNeighbours(Point point)
 public Node Reverse(Node start)
 public Node FindEnd(Node start)
 public int Cost(Point a)
-public int Cost(Point a, Node neighbour)
+public int Cost(Point a, Node prev)
 public int Heuristic(Point a)
 public int Heuristic(Point a, Point b)
 public int Heuristic(Point a, List`1<Point> b)
 public float Distance(Point a, Point b)
+public Point GetPoint(Vector3 worldPos, int res)
 }
 public PathInterestNode : MonoBehaviour {
 private float <NextVisitTime>k__BackingField
@@ -24964,6 +25111,8 @@ public Vector3 GetStartPoint()
 public Vector3 GetEndPoint()
 public Vector3 GetStartTangent()
 public Vector3 GetEndTangent()
+public Vector3 GetPointByIndex(int i)
+public Vector3 GetTangentByIndex(int i)
 public Vector3 GetPoint(float distance)
 public Vector3 GetTangent(float distance)
 public Vector3 GetPointCubicHermite(float distance)
@@ -25881,6 +26030,7 @@ private int IndividualCandidates
 private Quaternion rot90
 public void Process(UInt32 seed)
 private DistanceInfo GetDistanceInfo(List`1<SpawnInfo> spawns, Prefab`1<MonumentInfo> prefab, Vector3 monumentPos, Quaternion monumentRot, Vector3 monumentScale)
+private float GetDistanceToAboveGroundRail(Vector3 pos)
 }
 public PlaceMonumentsRoadside : ProceduralComponent {
 public SpawnFilter Filter
@@ -25918,6 +26068,16 @@ public BasicObject[] End
 public SideObject[] Side
 public PathObject[] Path
 public void Process(UInt32 seed)
+}
+public PlanarReflectionCamera : MonoBehaviour {
+public PlanarReflectionCamera instance
+public float updateRate
+public float nearClipPlane
+public float farClipPlane
+public Color fogColor
+public float fogDensity
+public Mesh waterPlaneMesh
+public Material waterPlaneMaterial
 }
 public Planner : HeldEntity {
 public BaseEntity[] buildableList
@@ -25957,6 +26117,7 @@ public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 public void ServerInit()
 public void OnItemAddedOrRemoved(Item item, bool added)
 public bool InventoryItemFilter(Item item, int targetSlot)
+public bool CanPickup(BasePlayer player)
 private bool ItemIsFertilizer(Item item)
 public void Save(SaveInfo info)
 public void Load(LoadInfo info)
@@ -25981,6 +26142,7 @@ public float GetArtificialLightExposure()
 private float CalculateArtificialLightExposure()
 public float GetPlantTemperature()
 private float CalculatePlantTemperature()
+private bool HasPlants()
 private void CalculateRainFactor()
 private float CalculateArtificialTemperature()
 public void OnPlantInserted(GrowableEntity entity, BasePlayer byPlayer)
@@ -26131,7 +26293,7 @@ public Quaternion GetAimRotation()
 }
 public PlayerHelicopter : BaseHelicopter {
 public Wheel[] wheels
-private Transform waterSample
+public Transform waterSample
 public PlayerHeliSounds playerHeliSounds
 private Transform joystickPositionLeft
 private Transform joystickPositionRight
@@ -26141,7 +26303,7 @@ private Transform passengerJoystickPositionRight
 protected Animator animator
 public float maxRotorSpeed
 public float timeUntilMaxRotorSpeed
-private float rotorBlurThreshold
+public float rotorBlurThreshold
 private Transform mainRotorBlurBone
 private Renderer mainRotorBlurMesh
 private Transform mainRotorBladesBone
@@ -26153,12 +26315,12 @@ private Renderer rearRotorBlurMesh
 public float motorForceConstant
 public float brakeForceConstant
 private GameObject preventBuildingObject
-private float maxPitchAnim
-private float maxRollAnim
-private float maxYawAnim
+public float maxPitchAnim
+public float maxRollAnim
+public float maxYawAnim
 public GameObjectRef fuelStoragePrefab
 public float fuelPerSec
-private float fuelGaugeMax
+public float fuelGaugeMax
 public float outsidedecayminutes
 public float insidedecayminutes
 public VehicleEngineController`1<PlayerHelicopter> engineController
@@ -26167,7 +26329,8 @@ protected Flags WHEEL_GROUNDED_RR
 protected Flags WHEEL_GROUNDED_FRONT
 protected Flags RADAR_WARNING_FLAG
 protected Flags RADAR_LOCK_FLAG
-private TimeSince timeSinceCachedFuelFraction
+protected Flags ENGINE_STARTING_FLAG
+public TimeSince timeSinceCachedFuelFraction
 public float cachedFuelFraction
 private float <cachedPitch>k__BackingField
 private float <cachedYaw>k__BackingField
@@ -26190,11 +26353,11 @@ public bool CanPushNow(BasePlayer pusher)
 public float InheritedVelocityScale()
 public bool InheritedVelocityDirection()
 public float get_cachedPitch()
-private void set_cachedPitch(float value)
+public void set_cachedPitch(float value)
 public float get_cachedYaw()
-private void set_cachedYaw(float value)
+public void set_cachedYaw(float value)
 public float get_cachedRoll()
-private void set_cachedRoll(float value)
+public void set_cachedRoll(float value)
 public void Load(LoadInfo info)
 public void OnFlagsChanged(Flags old, Flags next)
 public SamTargetType get_SAMTargetType()
@@ -26207,7 +26370,7 @@ public void PilotInput(InputState inputState, BasePlayer player)
 public bool Grounded()
 public void SetDefaultInputState()
 public void ApplyForceAtWheels()
-private void ApplyForceWithoutWheels()
+public void ApplyForceWithoutWheels()
 public void ApplyWheelForce(WheelCollider wheel, float gasScale, float brakeScale, float turning)
 public void MovementUpdate()
 public void ServerInit()
@@ -26220,13 +26383,13 @@ public void OnEngineStartFailed()
 public void VehicleFixedUpdate()
 public void UpdateNetwork()
 public void OnEntityMessage(BaseEntity from, string msg)
-private void ClearRadarLock()
-private void ClearRadarWarning()
+public void ClearRadarLock()
+public void ClearRadarWarning()
 public void UpdateCOM()
 public void Save(SaveInfo info)
 public void OnKilled(HitInfo info)
 public void DoPushAction(BasePlayer player)
-private void DisablePushing()
+public void DisablePushing()
 public bool IsValidHomingTarget()
 public void RPC_OpenFuel(RPCMessage msg)
 private void IEngineControllerUser.Invoke(Action action, float time)
@@ -26398,10 +26561,12 @@ private float DeltaCold()
 private float DeltaWet()
 public void UseHeart(float frate)
 public void SendChangesToClient()
+public void ApplyChange(Type type, float amount, float time)
 public bool CanConsume()
 public void MarkConsumption()
 public PlayerMetabolism Save()
 public void Load(PlayerMetabolism s)
+public void SetAttribute(Type type, float amount)
 public MetabolismAttribute FindAttribute(Type type)
 }
 public PlayerModel : ListComponent`1<PlayerModel> {
@@ -27855,6 +28020,18 @@ public void PlayAnim()
 public void StopAnim()
 private void ToggleAnim(bool toggle)
 }
+public ReflectionPlane : DecayEntity {
+private int _ColorTexID
+private int _DepthTexID
+private int _ReflectionLerpID
+public LayerMask layerMask
+public float nearClip
+public float farClip
+public Material reflectionMaterial
+public Renderer reflectionRenderer
+public float maxDistance
+public float fadeTime
+}
 public ReflectionProbeEx : MonoBehaviour {
 public ReflectionProbeRefreshMode refreshMode
 public bool timeSlicing
@@ -28247,7 +28424,7 @@ private Dictionary`2<GatherType, HashSet`1<int>> cachedResourceItemTypes
 public void Start()
 public void Initialize()
 private void CacheResourceTypeItems()
-public void DoGather(HitInfo info)
+public void DoGather(HitInfo info, BaseCorpse corpse)
 public void AssignFinishBonus(BasePlayer player, float fraction, AttackEntity weapon)
 public void OnAttacked(HitInfo info)
 private void GiveResources(BasePlayer entity, float gatherDamage, float destroyFraction, AttackEntity attackWeapon)
@@ -28470,7 +28647,6 @@ public Flags Flag_RoadsignArmor
 public Flags Flag_HasSingleSaddle
 public Flags Flag_HasDoubleSaddle
 public float equipmentSpeedMod
-public int numStorageSlots
 private int prevBreed
 private int prevSlots
 private Material[] breedAssignmentArray
@@ -28479,7 +28655,6 @@ public HitchTrough currentHitch
 public float totalDistance
 public float kmDistance
 public float tempDistanceTravelled
-public int numEquipmentSlots
 public float RealisticMass
 protected float PositionTickRate
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
@@ -28519,7 +28694,6 @@ public void OnClaimedWithToken(Item tokenItem)
 public void OnItemAddedOrRemoved(Item item, bool added)
 public void OnInventoryDirty()
 public bool CanAnimalAcceptItem(Item item, int targetSlot)
-public int GetStorageStartIndex()
 public void EquipmentUpdate()
 private void SetSeatCount(int count)
 public void DoNetworkUpdate()
@@ -28566,6 +28740,47 @@ public void ServerInit()
 public void OnCollision(Collision collision, BaseEntity hitEntity)
 public bool IsValidHomingTarget()
 internal void DoServerDestroy()
+}
+public RockingChair : BaseChair {
+public float Acceleration
+public float MaxRockingAngle
+public float MaxRockVelocity
+public bool ApplyVelocityBetweenSwings
+public float AppliedVelocity
+public float WeaponFireImpact
+public SoundDefinition creakForwardSoundDef
+public SoundDefinition creakBackwardSoundDef
+public float creakForwardAngle
+public float creakBackwardAngle
+public float creakVelocityThreshold
+public AnimationCurve creakGainCurve
+private float initLocalY
+private Vector3 initLocalRot
+private float velocity
+private float oppositePotentialVelocity
+private TimeSince timeSinceInput
+private float sineTime
+private float timeUntilStartSine
+private float t
+private float angle
+private Quaternion max
+private Quaternion min
+public void ServerInit()
+public void OnParentChanging(BaseEntity oldParent, BaseEntity newParent)
+private void SaveBaseLocalPos()
+public void Save(SaveInfo info)
+public void Load(LoadInfo info)
+public void PlayerServerInput(InputState inputState, BasePlayer player)
+public void OnWeaponFired(BaseProjectile weapon)
+public void OnPlayerDismounted(BasePlayer player)
+private void PreventClipping(bool hasInput)
+private void CalculateVelocity(Vector2 currentInput)
+private void ApplyVelocity(float delta, bool hasInput)
+private void ResetChair()
+private Vector2 GetInputVector(InputState inputState)
+private Vector2 ProcessInputVector(bool leftDown, bool rightDown, bool forwardDown, bool backDown)
+private float EaseOutCubic(float value)
+private float EaseOutCubicOvershoot(float value, float overshoot)
 }
 public RotateCameraAroundObject : MonoBehaviour {
 public GameObject m_goObjectToRotateAround
@@ -29923,9 +30138,12 @@ public ScarecrowNPC : NPCPlayer {
 private ScarecrowBrain <Brain>k__BackingField
 public float BaseAttackRate
 public LootSpawnSlot[] LootSpawnSlots
+public LootSpawnSlot[] bonusLootSlots
 public float NextBeanCanAllowedTime
 public bool BlockClothingOnCorpse
 public bool RoamAroundHomePoint
+public GameObjectRef soulReleaseEffect
+public bool wasSoulReleased
 public ScarecrowBrain Brain
 public FamilyEnum Family
 public float StartHealth()
@@ -30681,7 +30899,7 @@ public void Save()
 public string BanListString(bool bHeader)
 public string BanListStringEx()
 }
-public SEScreenSpaceShadows : MonoBehaviour {
+public SEScreenSpaceShadows : SingletonComponent`1<SEScreenSpaceShadows> {
 private CommandBuffer blendShadowsCommandBuffer
 private CommandBuffer renderShadowsCommandBuffer
 private Camera attachedCamera
@@ -31466,7 +31684,8 @@ public void ServerInit()
 public int ConsumptionAmount()
 public void ResetIOState()
 public int GetPassthroughAmount(int outputSlot)
-public void IOStateChanged(int inputAmount, int inputSlot)
+public int CalculateCurrentEnergy(int inputAmount, int inputSlot)
+public void UpdateHasPower(int inputAmount, int inputSlot)
 public void SetSwitch(bool wantsOn)
 public void ToggleSwitch(RPCMessage msg)
 public bool get_Value()
@@ -32241,12 +32460,14 @@ public bool get_BlockFluidDraining()
 public bool IsRootEntity()
 public void OnCircuitChanged(bool forceUpdate)
 }
-public SpookySpeaker : BaseCombatEntity {
+public SpookySpeaker : IOEntity {
 public SoundPlayer soundPlayer
 public float soundSpacing
 public float soundSpacingRand
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 public void PostServerLoad()
+public void UpdateHasPower(int inputAmount, int inputSlot)
+private void SetTargetState(bool state)
 public void SetWantsOn(RPCMessage msg)
 public void UpdateInvokes()
 public void SendPlaySound()
@@ -32580,6 +32801,7 @@ public bool IncludeLastAttacker
 public bool IncludeRecentlyPlayedWith
 public bool ShowTeamFirst
 public bool HideSteamIdsInStreamerMode
+public bool IncludeContacts
 public bool RefreshOnEnable
 public onFriendSelectedEvent onFriendSelected
 public Func`2<ulong, bool> shouldShowPlayer
@@ -33491,6 +33713,12 @@ protected Type GetIndexedType()
 public TerrainFilterEx : object {
 public bool ApplyTerrainFilters(Transform transform, TerrainFilter[] filters, Vector3 pos, Quaternion rot, Vector3 scale, SpawnFilter globalFilter)
 }
+public TerrainFilterGenerator : MonoBehaviour {
+public float PlacementRadius
+public float PlacementDistance
+public SpawnFilter Filter
+public bool CheckPlacementMap
+}
 public TerrainGenerator : SingletonComponent`1<TerrainGenerator> {
 public TerrainConfig config
 private float HeightMapRes
@@ -33786,7 +34014,6 @@ protected void OnDrawGizmos()
 }
 public TerrainPathConnect : MonoBehaviour {
 public InfrastructureType Type
-public Point GetPathFinderPoint(int res, Vector3 worldPos)
 public Point GetPathFinderPoint(int res)
 }
 public TerrainPhysics : TerrainExtension {
@@ -33904,7 +34131,6 @@ private Vector3[] shoreVectors
 public TerrainTexturing Instance
 public int ShoreMapSize
 public Vector3[] ShoreMap
-private void InitializeBasePyramid()
 private void ReleaseBasePyramid()
 private void UpdateBasePyramid()
 private void InitializeCoarseHeightSlope()
@@ -34051,7 +34277,6 @@ private void OnDisable()
 }
 internal TextureCacheState : Enum {
 public int value__
-public TextureCacheState Skipped
 public TextureCacheState Initializing
 public TextureCacheState Uncached
 public TextureCacheState CachedRaw
@@ -34635,12 +34860,37 @@ public Text timerText
 public CanvasGroup group
 public Color endingColor
 }
+public TorchDeployableLightSource : StorageContainer {
+public ItemDefinition[] AllowedTorches
+public Transform TorchRoot
+public Flags HasTorch
+public Flags UseBuiltInFx
+public ItemDefinition[] BuiltInFxItems
+private EntityRef`1<TorchWeapon> spawnedTorch
+private ItemDefinition spawnedTorchDef
+private Item CurrentTorch
+public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+public bool ItemFilter(Item item, int targetSlot)
+private bool ShouldUseBuiltInFx(ItemDefinition def)
+private void UpdateTorch()
+private void TickTorchDurability()
+public void PostServerLoad()
+public void OnItemAddedOrRemoved(Item item, bool added)
+private Item get_CurrentTorch()
+private void RequestTurnOnOff(RPCMessage msg)
+private void TryToggle(bool wantsOn)
+public bool WantsSplash(ItemDefinition splashType, int amount)
+public int DoSplash(ItemDefinition splashType, int amount)
+public void Ignite(Vector3 fromPos)
+public bool CanIgnite()
+}
 public TorchWeapon : BaseMelee {
-public float fuelTickAmount
+public float FuelTickAmount
 public AnimatorOverrideController LitHoldAnimationOverride
 public bool ExtinguishUnderwater
 public bool UseTurnOnOffAnimations
 public GameObjectRef litStrikeFX
+public Flags IsInHolder
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 public void GetAttackStats(HitInfo info)
 public float GetConditionLoss()
@@ -35120,6 +35370,35 @@ private GameObject bellObject
 private SoundDefinition bellRingDef
 private SoundPlayer brakeSound
 }
+public TrainSignal : BaseEntity {
+private bool testFX
+private VehicleLight redLight
+private VehicleLight yellowLight
+private VehicleLight greenLight
+private Flags Flag_Red
+private Flags Flag_Yellow
+private Flags Flag_Green
+private LightState lightState
+public TrainSignal nextSignal
+private TrainTrackSpline ourSpline
+private float ourSplineDist
+private List`1<SplineSection> ourSplines
+private LightState prevTargetLightState
+public float SplineDist
+public bool HasNextSignal
+public void OnFlagsChanged(Flags old, Flags next)
+private void SetLightState(LightState newState)
+public float get_SplineDist()
+public bool get_HasNextSignal()
+public void ServerInit()
+private void SetUpSignal()
+internal void DoServerDestroy()
+public void RefreshLightState()
+private bool HasOccupant()
+public bool IsForward()
+private void TestLights()
+private MoveResult ProcessSplineSection(MoveResult result, MoveRequest request, TrainTrackSpline spline, float splineLength)
+}
 public TrainTrackSpline : WorldSpline {
 public bool isStation
 public bool aboveGroundSpawn
@@ -35130,13 +35409,16 @@ public int straightestNextIndex
 public List`1<ConnectedTrackInfo> prevTracks
 public int straightestPrevIndex
 public HashSet`1<ITrainTrackUser> trackUsers
+public HashSet`1<TrainSignal> signals
 public bool HasNextTrack
 public bool HasPrevTrack
 public bool get_HasNextTrack()
 public bool get_HasPrevTrack()
 public void SetAll(Vector3[] points, Vector3[] tangents, TrainTrackSpline sourceSpline)
-public float GetSplineDistAfterMove(float prevSplineDist, Vector3 askerForward, float distMoved, TrackSelection trackSelection, TrainTrackSpline& onSpline, Boolean& atEndOfLine, TrainTrackSpline preferredAltA, TrainTrackSpline preferredAltB)
-public float GetSplineDistAfterMove(float prevSplineDist, float distMoved, TrackSelection trackSelection, bool facingForward, TrainTrackSpline& onSpline, Boolean& atEndOfLine, TrainTrackSpline preferredAltA, TrainTrackSpline preferredAltB)
+public MoveResult MoveAlongSpline(float prevSplineDist, Vector3 askerForward, float distMoved, TrackRequest tReq, SplineAction onSpline)
+private MoveResult MoveAlongSpline(MoveRequest request, bool facingForward, float prevDistMoved)
+private MoveResult MoveToNextSpline(MoveResult result, MoveRequest request, bool facingForward, float splineLength)
+private MoveResult MoveToPrevSpline(MoveResult result, MoveRequest request, bool facingForward)
 public float GetDistance(Vector3 position, float maxError, Single& minSplineDist)
 public float GetLength()
 public Vector3 GetPosition(float distance)
@@ -35144,6 +35426,8 @@ public Vector3 GetPositionAndTangent(float distance, Vector3 askerForward, Vecto
 public void AddTrackConnection(TrainTrackSpline track, TrackPosition p, TrackOrientation o)
 public void RegisterTrackUser(ITrainTrackUser user)
 public void DeregisterTrackUser(ITrainTrackUser user)
+public void RegisterSignal(TrainSignal signal)
+public void DeregisterSignal(TrainSignal signal)
 public bool IsForward(Vector3 askerForward, float askerSplineDist)
 public bool HasValidHazardWithin(TrainCar asker, float askerSplineDist, float minHazardDist, float maxHazardDist, TrackSelection trackSelection, float trackSpeed, TrainTrackSpline preferredAltA, TrainTrackSpline preferredAltB)
 public bool HasValidHazardWithin(ITrainTrackUser asker, Vector3 askerForward, float askerSplineDist, float minHazardDist, float maxHazardDist, TrackSelection trackSelection, bool movingForward, TrainTrackSpline preferredAltA, TrainTrackSpline preferredAltB)
@@ -35154,7 +35438,7 @@ public bool HasConnectedNextTrack(TrainTrackSpline tts)
 public bool HasConnectedPrevTrack(TrainTrackSpline tts)
 public Vector3 GetInitialVector(TrainTrackSpline track, TrackPosition p, TrackOrientation o)
 protected void OnDrawGizmosSelected()
-public ConnectedTrackInfo GetTrackSelection(List`1<ConnectedTrackInfo> trackOptions, int straightestIndex, TrackSelection trackSelection, bool nextTrack, bool trainForward, TrainTrackSpline preferredAltA, TrainTrackSpline preferredAltB)
+public ConnectedTrackInfo GetTrackSelection(List`1<ConnectedTrackInfo> trackOptions, int straightestIndex, bool nextTrack, bool trainForward, TrackRequest request)
 public bool TryFindTrackNear(Vector3 pos, float maxDist, TrainTrackSpline& splineResult, Single& distResult)
 }
 public TrainWagonLootData : ScriptableObject {
@@ -35527,8 +35811,10 @@ public bool parentMountedPlayers
 public bool parentSleepers
 public bool ParentNPCPlayers
 public bool overrideOtherTriggers
-public float parentMaxLocalY
+public bool checkForObjUnderFeet
 public int CLIP_CHECK_MASK
+protected Collider triggerCollider
+protected float triggerHeight
 private BasePlayer killPlayerTemp
 public GameObject InterestedInObject(GameObject obj)
 public void OnEntityEnter(BaseEntity ent)
@@ -35539,6 +35825,7 @@ protected void Unparent(BaseEntity ent)
 private void KillPlayerDelayed()
 private void OnTick()
 protected bool IsClipping(BaseEntity ent)
+private bool HasObjUnderFeet(BaseEntity ent)
 }
 public TriggerParentElevator : TriggerParentEnclosed {
 public bool AllowHorsesToBypassClippingChecks
@@ -36496,6 +36783,8 @@ private void Update()
 public uiPlayerPreview : SingletonComponent`1<uiPlayerPreview> {
 public Camera previewCamera
 public PlayerModel playermodel
+public GameObject wantedSnapshotEffectPosterRoot
+public GameObject wantedSnapshotEffectPolaroidRoot
 public SegmentMaskPositioning segmentMask
 }
 public UIPlayerPreviewControls : SingletonComponent`1<UIPlayerPreviewControls> {
@@ -39957,6 +40246,42 @@ private void recalculateMeshForFlow(Transform transform, Vector3[] currentVertic
 private Vector4[] calculateMeshTangents(Int32[] triangles, Vector3[] vertices, Vector2[] uv, Vector3[] normals)
 public Color VertexColorLerp(Color colorA, Color colorB, float value)
 }
+public WantedPoster : DecayEntity {
+private UInt32 imageCrc
+private ulong playerId
+private string playerName
+public MeshRenderer PhotoImage
+public RustText WantedName
+public GameObjectRef AssignDialog
+public Flags HasTarget
+public EffectMode EffectMode
+private List`1<ulong> <EditingHistory>k__BackingField
+public UInt32[] GetContentCRCs
+public UGCType ContentType
+public List`1<ulong> EditingHistory
+public BaseNetworkable UgcEntity
+public Vector2i TextureSize
+public int TextureCount
+public NetworkableId NetworkID
+public Type FileType
+public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+private void UpdatePoster(RPCMessage msg)
+private void ClearPlayer(RPCMessage msg)
+public void SetTextureCRCs(UInt32[] crcs)
+public UInt32[] get_GetContentCRCs()
+public void ClearContent()
+public UGCType get_ContentType()
+public List`1<ulong> get_EditingHistory()
+public BaseNetworkable get_UgcEntity()
+public void Save(SaveInfo info)
+public void Load(LoadInfo info)
+public bool CanUpdateSign(BasePlayer player)
+public Vector2i get_TextureSize()
+public int get_TextureCount()
+public UInt32[] GetTextureCRCs()
+public NetworkableId get_NetworkID()
+public Type get_FileType()
+}
 public WaterBall : BaseEntity {
 public ItemDefinition liquidType
 public int waterAmount
@@ -40319,6 +40644,7 @@ public WeaponRack : StorageContainer {
 public Phrase textLoadAmmos
 public RackType Type
 public float GridCellSize
+public bool SetGridCellSizeFromCollision
 public int Capacity
 public bool UseColliders
 public int GridCellCountX
@@ -40331,6 +40657,10 @@ public GameObjectRef LightPrefab
 public Transform[] LightPoints
 private WeaponRackSlot[] gridSlots
 private WeaponRackSlot[] gridCellSlotReferences
+public int ForceItemRotation
+public bool CreatePegs
+public SpecialRackType CustomRackType
+public Transform CustomCenter
 private HashSet`1<int> usedSlots
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 public void InitShared()
@@ -40506,6 +40836,10 @@ public LifeState TargetState
 public UnityEvent OnTargetState
 public UnityEvent OnTargetStateFailed
 }
+public WearableNotifyTrophyMounted : WearableNotify {
+public UnityEvent OnMounted
+public Renderer[] EmissionToggles
+}
 public WearableReplacementByRace : MonoBehaviour {
 public GameObjectRef[] replacements
 public GameObjectRef GetReplacement(int meshIndex)
@@ -40623,6 +40957,7 @@ public List`1<ItemDefinition> ignoreBait
 public List`1<WildlifeWeight> targetWildlife
 public void ResetState()
 public void SetTrapActive(bool trapOn)
+private int CalculateBaitCalories(Item bait)
 public int GetBaitCalories()
 public void DestroyRandomFoodItem()
 public void UseBaitCalories(int numToUse)
@@ -40634,6 +40969,8 @@ public bool HasBait()
 public void PlayerStoppedLooting(BasePlayer player)
 public bool OnStartBeingLooted(BasePlayer baseEntity)
 public TrappableWildlife GetRandomWildlife()
+public void ServerInit()
+private bool CanAcceptItem(Item item, int slot)
 public bool HasCatch()
 public bool IsTrapActive()
 }
@@ -40730,6 +41067,8 @@ public SoundDefinition clearSoundDef
 public GameObjectRef ioLine
 public IOType wireType
 public float RadialMenuHoldTime
+public float disconnectDelay
+public float clearDelay
 private float IndustrialWallOffset
 public Phrase Default
 public Phrase DefaultDesc
@@ -40769,7 +41108,7 @@ public void TryClear(RPCMessage msg)
 public void MakeConnection(RPCMessage msg)
 public void SetPlugged(RPCMessage msg)
 public void RequestClear(RPCMessage msg)
-public void AttemptClearSlot(BaseNetworkable clearEnt, BasePlayer ply, int clearIndex, bool isInput)
+public bool AttemptClearSlot(BaseNetworkable clearEnt, BasePlayer ply, int clearIndex, bool isInput)
 public void RequestChangeColor(RPCMessage msg)
 public WireColour IntToColour(int i)
 public bool ValidateLine(List`1<Vector3> lineList, IOEntity inputEntity, IOEntity outputEntity, BasePlayer byPlayer, int outputIndex)
@@ -41019,8 +41358,10 @@ public bool OverrideScale
 public Vector3 Scale
 public bool UseManualRenderBounds
 public Bounds ManualRenderBounds
+public List`1<CustomPosition> CustomPositions
 public WorldModelRackMountConfig GetForItemDef(ItemDefinition itemDef)
 public void ApplyTransformDefaults(Transform displayItem)
+public CustomPosition FindCustomRackPosition(SpecialRackType rackType)
 }
 public WorldNetworking : object {
 private int prefabsPerPacket
@@ -41047,6 +41388,7 @@ private Rect <TrySample>g__GetElementRect|10_1(Element element, <>c__DisplayClas
 }
 public WorldSetup : SingletonComponent`1<WorldSetup> {
 public bool AutomaticallySetup
+public bool BypassProceduralSpawn
 public GameObject terrain
 public GameObject decorPrefab
 public GameObject grassPrefab
