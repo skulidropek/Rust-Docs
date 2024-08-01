@@ -15,6 +15,7 @@ public AnimationCurve CollisionRadiusCurve
 public bool EnableSimulation
 public int TickRate
 public int MaxTicksPerFrame
+public int ConstraintIterationCount
 private List`1<Chain> _chains
 private List`1<BoneData> _boneDataOriginal
 private Vector3 _origin
@@ -50,6 +51,16 @@ private void BuildBoneToIndexMap(Dictionary`2<Transform, int> boneToIndex)
 protected CapsuleParams GetCapsuleParams(CapsuleCollider collider)
 protected void UpdateCachedMaterialData()
 }
+public Facepunch.BurstCloth.BurstClothConstraint : MonoBehaviour {
+public bool ConstrainRotateX
+public Vector2 RotateX
+public bool ConstrainRotateY
+public Vector2 RotateY
+public bool ConstrainRotateZ
+public Vector2 RotateZ
+public bool ConstrainLength
+public Vector2 Length
+}
 public Facepunch.BurstCloth.BurstClothCurveRectAttribute : PropertyAttribute {
 public Rect Rect
 public Color Color
@@ -67,39 +78,31 @@ public BurstClothManager Get()
 public Facepunch.BurstCloth.BurstClothMaterial : ScriptableObject {
 private float _damping
 private AnimationCurve _dampingCurve
+private float _tightness
+private AnimationCurve _tightnessCurve
 private float _stiffness
 private AnimationCurve _stiffnessCurve
-private float _resistance
-private AnimationCurve _resistanceCurve
-private float _slackness
-private AnimationCurve _slacknessCurve
 private BurstClothMaterial _defaultMaterial
 public float Damping
 public AnimationCurve DampingCurve
+public float Tightness
+public AnimationCurve TightnessCurve
 public float Stiffness
 public AnimationCurve StiffnessCurve
-public float Resistance
-public AnimationCurve ResistanceCurve
-public float Slackness
-public AnimationCurve SlacknessCurve
 public BurstClothMaterial DefaultMaterial
 public float get_Damping()
 public void set_Damping(float value)
 public AnimationCurve get_DampingCurve()
+public float get_Tightness()
+public void set_Tightness(float value)
+public AnimationCurve get_TightnessCurve()
 public float get_Stiffness()
 public void set_Stiffness(float value)
 public AnimationCurve get_StiffnessCurve()
-public float get_Resistance()
-public void set_Resistance(float value)
-public AnimationCurve get_ResistanceCurve()
-public float get_Slackness()
-public void set_Slackness(float value)
-public AnimationCurve get_SlacknessCurve()
 public BurstClothMaterial get_DefaultMaterial()
 public float GetDamping(float t)
+public float GetTightness(float t)
 public float GetStiffness(float t)
-public float GetResistance(float t)
-public float GetSlackness(float t)
 }
 internal Facepunch.BurstCloth.BurstExtensions : object {
 public T& modreq(System.Runtime.InteropServices.InAttribute) GetReadonly(NativeArray`1<T> array, int index)
@@ -125,16 +128,22 @@ public float LengthToRight
 public float3 LocalPosition
 public quaternion LocalRotation
 public float3 DirectionFromOrigin
-public float ResistanceInv
 public float DampingInv
+public float Tightness
 public float Stiffness
-public float Slackness
 public float CollisionRadius
+public bool ConstrainRotateX
+public float2 RotateXConstraint
+public bool ConstrainRotateY
+public float2 RotateYConstraint
+public bool ConstrainRotateZ
+public float2 RotateZConstraint
+public float2 LengthConstraint
 }
 internal Facepunch.BurstCloth.Jobs.BoneState : ValueType {
 public float3 Position
 public quaternion Rotation
-public float3 Velocity
+public float3 OldPosition
 }
 internal Facepunch.BurstCloth.Jobs.ColliderData : ValueType {
 public float Radius
@@ -148,6 +157,8 @@ public float3 PositionB
 internal Facepunch.BurstCloth.Jobs.InitializeBoneStateJob : ValueType {
 public NativeArray`1<BoneData> Data
 public NativeArray`1<BoneState> State
+public float DeltaTime
+public int IterationCount
 public void Execute(int index, TransformAccess transform)
 }
 internal Facepunch.BurstCloth.Jobs.InitializeColliderStateJob : ValueType {
@@ -163,6 +174,7 @@ public NativeArray`1<BoneState> BoneState
 public int TickRate
 public float DeltaTime
 public int IterationCount
+public int ConstraintIterationCount
 public float3 SimulationSpaceDelta
 public float3 Gravity
 public int StiffnessDepth
@@ -175,16 +187,26 @@ public float3 Up
 public float Radius
 public void Execute()
 private void AdjustSimulationSpace()
-private void MovePositions()
-private void ApplyPositionConstraints(NativeArray`1<float3> newPositions)
-private void ResolveCollisions()
-private void ApplyRotationConstraints()
+private void MovePositions(BoneData& data, BoneState& oldState, BoneState& newState)
+private void ApplySpringConstraints(BoneData& data, BoneState& state, NativeArray`1& workBoneState, float dt)
+private void SpringConstraint(BoneData& pointA, BoneState& pointAState, BoneData& pointB, BoneState& pointBState, float targetLength, float2& lengthRange, float tightness, float dt)
+private void SpringConstraint(float3 targetPosition, BoneData& data, BoneState& state, float targetLength, float tightness, float dt)
+private void ResolveCollisions(BoneData& data, BoneState& state)
+private void ApplyRotationConstraints(BoneData& data, BoneState& state)
+private quaternion ApplyAngleConstraint(BoneData& data, quaternion rotation, quaternion parentRotation)
 private float3 RayMarch(float3& origin, float3& direction, float radius, float maxDistance)
 private float Scene(float3& position)
 private float Union(float d1, float d2)
 private float Capsule(float3& p, float3& a, float3& b, float r)
 private float3 Slerp(float3 a, float3 b, float t)
 private quaternion FromToRotation(float3 from, float3 to)
+private float ClampAngle(float current, float min, float max)
+private float MoveTowardsAngle(float current, float target, float maxDelta)
+private float MoveTowards(float current, float target, float maxDelta)
+private float DeltaAngle(float current, float target)
+private float Repeat(float t, float length)
+private float3 ToEuler(quaternion q, RotationOrder order)
+private float3 EulerReorderBack(float3 euler, RotationOrder order)
 }
 internal Facepunch.BurstCloth.Jobs.UpdateTransformsJob : ValueType {
 public NativeArray`1<BoneData> Data

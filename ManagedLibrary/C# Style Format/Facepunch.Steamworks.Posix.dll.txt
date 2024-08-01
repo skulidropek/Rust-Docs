@@ -45,6 +45,7 @@ public AuthResponse AuthTicketCanceled
 public AuthResponse AuthTicketInvalidAlreadyUsed
 public AuthResponse AuthTicketInvalid
 public AuthResponse PublisherIssuedBan
+public AuthResponse AuthTicketNetworkIdentityFailure
 }
 public Steamworks.AuthTicket : object {
 public Byte[] Data
@@ -126,6 +127,7 @@ public CallbackType GameWebCallback
 public CallbackType StoreAuthURLResponse
 public CallbackType MarketEligibilityResponse
 public CallbackType DurationControl
+public CallbackType GetTicketForWebApiResponse
 public CallbackType GSClientApprove
 public CallbackType GSClientDeny
 public CallbackType GSClientKick
@@ -177,8 +179,8 @@ public CallbackType CheckFileSignature
 public CallbackType GamepadTextInputDismissed
 public CallbackType AppResumingFromSuspend
 public CallbackType FloatingGamepadTextInputDismissed
+public CallbackType FilterTextDictionaryChanged
 public CallbackType DlcInstalled
-public CallbackType RegisterActivationCodeResponse
 public CallbackType NewUrlLaunchParameters
 public CallbackType AppProofOfPurchaseKeyResponse
 public CallbackType FileDetailsResult
@@ -239,6 +241,7 @@ public CallbackType ScreenshotRequested
 public CallbackType SteamInputDeviceConnected
 public CallbackType SteamInputDeviceDisconnected
 public CallbackType SteamInputConfigurationLoaded
+public CallbackType SteamInputGamepadSlotChange
 public CallbackType SteamUGCQueryCompleted
 public CallbackType SteamUGCRequestUGCDetailsResult
 public CallbackType CreateItemResult
@@ -323,6 +326,7 @@ public CallbackType AvailableBeaconLocationsUpdated
 public CallbackType ActiveBeaconsUpdated
 public CallbackType SteamRemotePlaySessionConnected
 public CallbackType SteamRemotePlaySessionDisconnected
+public CallbackType SteamRemotePlayTogetherGuestInvite
 }
 internal Steamworks.CallbackTypeFactory : object {
 internal Dictionary`2<CallbackType, Type> All
@@ -862,6 +866,14 @@ public ControllerActionOrigin SteamDeck_Reserved17
 public ControllerActionOrigin SteamDeck_Reserved18
 public ControllerActionOrigin SteamDeck_Reserved19
 public ControllerActionOrigin SteamDeck_Reserved20
+public ControllerActionOrigin Switch_JoyConButton_N
+public ControllerActionOrigin Switch_JoyConButton_E
+public ControllerActionOrigin Switch_JoyConButton_S
+public ControllerActionOrigin Switch_JoyConButton_W
+public ControllerActionOrigin PS5_LeftGrip
+public ControllerActionOrigin PS5_RightGrip
+public ControllerActionOrigin PS5_LeftFn
+public ControllerActionOrigin PS5_RightFn
 public ControllerActionOrigin Count
 public ControllerActionOrigin MaximumPossibleValue
 }
@@ -1478,6 +1490,14 @@ public CallbackType CallbackType
 public int get_DataSize()
 public CallbackType get_CallbackType()
 }
+internal Steamworks.Data.FilterTextDictionaryChanged_t : ValueType {
+internal int Language
+public int _datasize
+public int DataSize
+public CallbackType CallbackType
+public int get_DataSize()
+public CallbackType get_CallbackType()
+}
 internal Steamworks.Data.FloatingGamepadTextInputDismissed_t : ValueType {
 public int _datasize
 public int DataSize
@@ -1599,6 +1619,8 @@ public CallbackType get_CallbackType()
 }
 internal Steamworks.Data.GameOverlayActivated_t : ValueType {
 internal byte Active
+internal bool UserInitiated
+internal AppId AppID
 public int _datasize
 public int DataSize
 public CallbackType CallbackType
@@ -1608,6 +1630,7 @@ public CallbackType get_CallbackType()
 internal Steamworks.Data.GamepadTextInputDismissed_t : ValueType {
 internal bool Submitted
 internal UInt32 SubmittedText
+internal AppId AppID
 public int _datasize
 public int DataSize
 public CallbackType CallbackType
@@ -1696,6 +1719,17 @@ public CallbackType get_CallbackType()
 internal Steamworks.Data.GetOPFSettingsResult_t : ValueType {
 internal Result Result
 internal AppId VideoAppID
+public int _datasize
+public int DataSize
+public CallbackType CallbackType
+public int get_DataSize()
+public CallbackType get_CallbackType()
+}
+internal Steamworks.Data.GetTicketForWebApiResponse_t : ValueType {
+internal UInt32 AuthTicket
+internal Result Result
+internal int Ticket
+internal Byte[] GubTicket
 public int _datasize
 public int DataSize
 public CallbackType CallbackType
@@ -2289,6 +2323,26 @@ public bool Equals(InputHandle_t p)
 public bool op_Equality(InputHandle_t a, InputHandle_t b)
 public bool op_Inequality(InputHandle_t a, InputHandle_t b)
 public int CompareTo(InputHandle_t other)
+}
+internal Steamworks.Data.InputMotionDataV2_t : ValueType {
+internal float DriftCorrectedQuatX
+internal float DriftCorrectedQuatY
+internal float DriftCorrectedQuatZ
+internal float DriftCorrectedQuatW
+internal float SensorFusionQuatX
+internal float SensorFusionQuatY
+internal float SensorFusionQuatZ
+internal float SensorFusionQuatW
+internal float DeferredSensorFusionQuatX
+internal float DeferredSensorFusionQuatY
+internal float DeferredSensorFusionQuatZ
+internal float DeferredSensorFusionQuatW
+internal float GravityX
+internal float GravityY
+internal float GravityZ
+internal float DegreesPerSecondX
+internal float DegreesPerSecondY
+internal float DegreesPerSecondZ
 }
 public Steamworks.Data.InventoryDefId : ValueType {
 public int Value
@@ -3033,15 +3087,6 @@ public bool op_Equality(PublishedFileUpdateHandle_t a, PublishedFileUpdateHandle
 public bool op_Inequality(PublishedFileUpdateHandle_t a, PublishedFileUpdateHandle_t b)
 public int CompareTo(PublishedFileUpdateHandle_t other)
 }
-internal Steamworks.Data.RegisterActivationCodeResponse_t : ValueType {
-internal RegisterActivationCodeResult Result
-internal UInt32 PackageRegistered
-public int _datasize
-public int DataSize
-public CallbackType CallbackType
-public int get_DataSize()
-public CallbackType get_CallbackType()
-}
 public Steamworks.Data.RemotePlaySession : ValueType {
 private UInt32 <Id>k__BackingField
 public UInt32 Id
@@ -3783,6 +3828,18 @@ public CallbackType CallbackType
 public int get_DataSize()
 public CallbackType get_CallbackType()
 }
+internal Steamworks.Data.SteamInputGamepadSlotChange_t : ValueType {
+internal AppId AppID
+internal ulong DeviceHandle
+internal InputType DeviceType
+internal int OldGamepadSlot
+internal int NewGamepadSlot
+public int _datasize
+public int DataSize
+public CallbackType CallbackType
+public int get_DataSize()
+public CallbackType get_CallbackType()
+}
 internal Steamworks.Data.SteamInventoryDefinitionUpdate_t : ValueType {
 public int _datasize
 public int DataSize
@@ -3998,6 +4055,15 @@ internal UInt32 SessionID
 public int _datasize
 public int DataSize
 public CallbackType CallbackType
+public int get_DataSize()
+public CallbackType get_CallbackType()
+}
+internal Steamworks.Data.SteamRemotePlayTogetherGuestInvite_t : ValueType {
+internal Byte[] ConnectURL
+public int _datasize
+public int DataSize
+public CallbackType CallbackType
+internal string ConnectURLUTF8()
 public int get_DataSize()
 public CallbackType get_CallbackType()
 }
@@ -4578,6 +4644,7 @@ public HTTPStatusCode Code303SeeOther
 public HTTPStatusCode Code304NotModified
 public HTTPStatusCode Code305UseProxy
 public HTTPStatusCode Code307TemporaryRedirect
+public HTTPStatusCode Code308PermanentRedirect
 public HTTPStatusCode Code400BadRequest
 public HTTPStatusCode Code401Unauthorized
 public HTTPStatusCode Code402PaymentRequired
@@ -4869,10 +4936,10 @@ public InputActionOrigin Switch_LeftGrip_Lower
 public InputActionOrigin Switch_LeftGrip_Upper
 public InputActionOrigin Switch_RightGrip_Lower
 public InputActionOrigin Switch_RightGrip_Upper
-public InputActionOrigin Switch_Reserved11
-public InputActionOrigin Switch_Reserved12
-public InputActionOrigin Switch_Reserved13
-public InputActionOrigin Switch_Reserved14
+public InputActionOrigin Switch_JoyConButton_N
+public InputActionOrigin Switch_JoyConButton_E
+public InputActionOrigin Switch_JoyConButton_S
+public InputActionOrigin Switch_JoyConButton_W
 public InputActionOrigin Switch_Reserved15
 public InputActionOrigin Switch_Reserved16
 public InputActionOrigin Switch_Reserved17
@@ -4934,10 +5001,10 @@ public InputActionOrigin PS5_Gyro_Pitch
 public InputActionOrigin PS5_Gyro_Yaw
 public InputActionOrigin PS5_Gyro_Roll
 public InputActionOrigin PS5_DPad_Move
-public InputActionOrigin PS5_Reserved1
-public InputActionOrigin PS5_Reserved2
-public InputActionOrigin PS5_Reserved3
-public InputActionOrigin PS5_Reserved4
+public InputActionOrigin PS5_LeftGrip
+public InputActionOrigin PS5_RightGrip
+public InputActionOrigin PS5_LeftFn
+public InputActionOrigin PS5_RightFn
 public InputActionOrigin PS5_Reserved5
 public InputActionOrigin PS5_Reserved6
 public InputActionOrigin PS5_Reserved7
@@ -5622,7 +5689,7 @@ internal GameSearchErrorCode_t EndGame(ulong ullUniqueGameID)
 }
 internal Steamworks.ISteamGameServer : SteamInterface {
 internal void .ctor(bool IsGameServer)
-internal IntPtr SteamAPI_SteamGameServer_v014()
+internal IntPtr SteamAPI_SteamGameServer_v015()
 public IntPtr GetServerInterfacePointer()
 private void _SetProduct(IntPtr self, string pszProduct)
 internal void SetProduct(string pszProduct)
@@ -5672,8 +5739,8 @@ private void _SetRegion(IntPtr self, string pszRegion)
 internal void SetRegion(string pszRegion)
 private void _SetAdvertiseServerActive(IntPtr self, bool bActive)
 internal void SetAdvertiseServerActive(bool bActive)
-private HAuthTicket _GetAuthSessionTicket(IntPtr self, IntPtr pTicket, int cbMaxTicket, UInt32& pcbTicket)
-internal HAuthTicket GetAuthSessionTicket(IntPtr pTicket, int cbMaxTicket, UInt32& pcbTicket)
+private HAuthTicket _GetAuthSessionTicket(IntPtr self, IntPtr pTicket, int cbMaxTicket, UInt32& pcbTicket, NetIdentity& pSnid)
+internal HAuthTicket GetAuthSessionTicket(IntPtr pTicket, int cbMaxTicket, UInt32& pcbTicket, NetIdentity& pSnid)
 private BeginAuthResult _BeginAuthSession(IntPtr self, IntPtr pAuthTicket, int cbAuthTicket, SteamId steamID)
 internal BeginAuthResult BeginAuthSession(IntPtr pAuthTicket, int cbAuthTicket, SteamId steamID)
 private void _EndAuthSession(IntPtr self, SteamId steamID)
@@ -6702,9 +6769,9 @@ internal ScreenshotHandle AddVRScreenshotToLibrary(VRScreenshotType eType, strin
 }
 internal Steamworks.ISteamUGC : SteamInterface {
 internal void .ctor(bool IsGameServer)
-internal IntPtr SteamAPI_SteamUGC_v016()
+internal IntPtr SteamAPI_SteamUGC_v017()
 public IntPtr GetUserInterfacePointer()
-internal IntPtr SteamAPI_SteamGameServerUGC_v016()
+internal IntPtr SteamAPI_SteamGameServerUGC_v017()
 public IntPtr GetServerInterfacePointer()
 private UGCQueryHandle_t _CreateQueryUserUGCRequest(IntPtr self, AccountID_t unAccountID, UserUGCList eListType, UgcType eMatchingUGCType, UserUGCListSortOrder eSortOrder, AppId nCreatorAppID, AppId nConsumerAppID, UInt32 unPage)
 internal UGCQueryHandle_t CreateQueryUserUGCRequest(AccountID_t unAccountID, UserUGCList eListType, UgcType eMatchingUGCType, UserUGCListSortOrder eSortOrder, AppId nCreatorAppID, AppId nConsumerAppID, UInt32 unPage)
@@ -6742,6 +6809,8 @@ private bool _GetQueryUGCKeyValueTag(IntPtr self, UGCQueryHandle_t handle, UInt3
 internal bool GetQueryUGCKeyValueTag(UGCQueryHandle_t handle, UInt32 index, UInt32 keyValueTagIndex, String& pchKey, String& pchValue)
 private bool _GetQueryUGCKeyValueTag(IntPtr self, UGCQueryHandle_t handle, UInt32 index, string pchKey, IntPtr pchValue, UInt32 cchValueSize)
 internal bool GetQueryUGCKeyValueTag(UGCQueryHandle_t handle, UInt32 index, string pchKey, String& pchValue)
+private UInt32 _GetQueryUGCContentDescriptors(IntPtr self, UGCQueryHandle_t handle, UInt32 index, UGCContentDescriptorID[] pvecDescriptors, UInt32 cMaxEntries)
+internal UInt32 GetQueryUGCContentDescriptors(UGCQueryHandle_t handle, UInt32 index, UGCContentDescriptorID[] pvecDescriptors, UInt32 cMaxEntries)
 private bool _ReleaseQueryUGCRequest(IntPtr self, UGCQueryHandle_t handle)
 internal bool ReleaseQueryUGCRequest(UGCQueryHandle_t handle)
 private bool _AddRequiredTag(IntPtr self, UGCQueryHandle_t handle, string pTagName)
@@ -6822,6 +6891,10 @@ private bool _UpdateItemPreviewVideo(IntPtr self, UGCUpdateHandle_t handle, UInt
 internal bool UpdateItemPreviewVideo(UGCUpdateHandle_t handle, UInt32 index, string pszVideoID)
 private bool _RemoveItemPreview(IntPtr self, UGCUpdateHandle_t handle, UInt32 index)
 internal bool RemoveItemPreview(UGCUpdateHandle_t handle, UInt32 index)
+private bool _AddContentDescriptor(IntPtr self, UGCUpdateHandle_t handle, UGCContentDescriptorID descid)
+internal bool AddContentDescriptor(UGCUpdateHandle_t handle, UGCContentDescriptorID descid)
+private bool _RemoveContentDescriptor(IntPtr self, UGCUpdateHandle_t handle, UGCContentDescriptorID descid)
+internal bool RemoveContentDescriptor(UGCUpdateHandle_t handle, UGCContentDescriptorID descid)
 private SteamAPICall_t _SubmitItemUpdate(IntPtr self, UGCUpdateHandle_t handle, string pchChangeNote)
 internal CallResult`1<SubmitItemUpdateResult_t> SubmitItemUpdate(UGCUpdateHandle_t handle, string pchChangeNote)
 private ItemUpdateStatus _GetItemUpdateProgress(IntPtr self, UGCUpdateHandle_t handle, UInt64& punBytesProcessed, UInt64& punBytesTotal)
@@ -6879,7 +6952,7 @@ internal CallResult`1<WorkshopEULAStatus_t> GetWorkshopEULAStatus()
 }
 internal Steamworks.ISteamUser : SteamInterface {
 internal void .ctor(bool IsGameServer)
-internal IntPtr SteamAPI_SteamUser_v021()
+internal IntPtr SteamAPI_SteamUser_v023()
 public IntPtr GetUserInterfacePointer()
 private HSteamUser _GetHSteamUser(IntPtr self)
 internal HSteamUser GetHSteamUser()
@@ -6907,8 +6980,10 @@ private VoiceResult _DecompressVoice(IntPtr self, IntPtr pCompressed, UInt32 cbC
 internal VoiceResult DecompressVoice(IntPtr pCompressed, UInt32 cbCompressed, IntPtr pDestBuffer, UInt32 cbDestBufferSize, UInt32& nBytesWritten, UInt32 nDesiredSampleRate)
 private UInt32 _GetVoiceOptimalSampleRate(IntPtr self)
 internal UInt32 GetVoiceOptimalSampleRate()
-private HAuthTicket _GetAuthSessionTicket(IntPtr self, IntPtr pTicket, int cbMaxTicket, UInt32& pcbTicket)
-internal HAuthTicket GetAuthSessionTicket(IntPtr pTicket, int cbMaxTicket, UInt32& pcbTicket)
+private HAuthTicket _GetAuthSessionTicket(IntPtr self, IntPtr pTicket, int cbMaxTicket, UInt32& pcbTicket, NetIdentity& pSteamNetworkingIdentity)
+internal HAuthTicket GetAuthSessionTicket(IntPtr pTicket, int cbMaxTicket, UInt32& pcbTicket, NetIdentity& pSteamNetworkingIdentity)
+private HAuthTicket _GetAuthTicketForWebApi(IntPtr self, string pchIdentity)
+internal HAuthTicket GetAuthTicketForWebApi(string pchIdentity)
 private BeginAuthResult _BeginAuthSession(IntPtr self, IntPtr pAuthTicket, int cbAuthTicket, SteamId steamID)
 internal BeginAuthResult BeginAuthSession(IntPtr pAuthTicket, int cbAuthTicket, SteamId steamID)
 private void _EndAuthSession(IntPtr self, SteamId steamID)
@@ -7414,6 +7489,7 @@ public NetIdentityType Force32bit
 }
 public Steamworks.NotificationPosition : Enum {
 public int value__
+public NotificationPosition Invalid
 public NotificationPosition TopLeft
 public NotificationPosition TopRight
 public NotificationPosition BottomLeft
@@ -7457,6 +7533,7 @@ public ParentalFeature ParentalSetup
 public ParentalFeature Library
 public ParentalFeature Test
 public ParentalFeature SiteLicense
+public ParentalFeature KioskMode
 public ParentalFeature Max
 }
 public Steamworks.PartyBeacon : ValueType {
@@ -7503,14 +7580,6 @@ public PlayerResult_t Abandoned
 public PlayerResult_t Kicked
 public PlayerResult_t Incomplete
 public PlayerResult_t Completed
-}
-internal Steamworks.RegisterActivationCodeResult : Enum {
-public int value__
-public RegisterActivationCodeResult ResultOK
-public RegisterActivationCodeResult ResultFail
-public RegisterActivationCodeResult ResultAlreadyRegistered
-public RegisterActivationCodeResult ResultTimeout
-public RegisterActivationCodeResult AlreadyOwned
 }
 public Steamworks.Relationship : Enum {
 public int value__
@@ -8664,6 +8733,7 @@ private Action OnClientGameServerDeny
 private Action OnLicensesUpdated
 private Action`3<SteamId, SteamId, AuthResponse> OnValidateAuthTicketResponse
 private Action`1<GetAuthSessionTicketResponse_t> OnGetAuthSessionTicketResponse
+private Action`1<GetTicketForWebApiResponse_t> OnGetTicketForWebApiResponse
 private Action`3<AppId, ulong, bool> OnMicroTxnAuthorizationResponse
 private Action`1<string> OnGameWebCallback
 private Action`1<DurationControl> OnDurationControl
@@ -8698,6 +8768,8 @@ public void add_OnValidateAuthTicketResponse(Action`3<SteamId, SteamId, AuthResp
 public void remove_OnValidateAuthTicketResponse(Action`3<SteamId, SteamId, AuthResponse> value)
 internal void add_OnGetAuthSessionTicketResponse(Action`1<GetAuthSessionTicketResponse_t> value)
 internal void remove_OnGetAuthSessionTicketResponse(Action`1<GetAuthSessionTicketResponse_t> value)
+internal void add_OnGetTicketForWebApiResponse(Action`1<GetTicketForWebApiResponse_t> value)
+internal void remove_OnGetTicketForWebApiResponse(Action`1<GetTicketForWebApiResponse_t> value)
 public void add_OnMicroTxnAuthorizationResponse(Action`3<AppId, ulong, bool> value)
 public void remove_OnMicroTxnAuthorizationResponse(Action`3<AppId, ulong, bool> value)
 public void add_OnGameWebCallback(Action`1<string> value)
@@ -8715,8 +8787,10 @@ public UInt32 get_OptimalSampleRate()
 public int DecompressVoice(Stream input, int length, Stream output)
 public int DecompressVoice(Byte[] from, Stream output)
 public int DecompressVoice(IntPtr from, int length, IntPtr to, int bufferSize)
-public AuthTicket GetAuthSessionTicket()
-public Task`1<AuthTicket> GetAuthSessionTicketAsync(double timeoutSeconds)
+public AuthTicket GetAuthSessionTicket(NetIdentity identity)
+public Task`1<AuthTicket> GetAuthSessionTicketAsync(NetIdentity identity, double timeoutSeconds)
+private AuthTicket GetAuthTicketForWebApi(string identity)
+public Task`1<AuthTicket> GetAuthTicketForWebApiAsync(string identity, double timeoutSeconds)
 public BeginAuthResult BeginAuthSession(Byte[] ticketData, SteamId steamid)
 public void EndAuthSession(SteamId steamid)
 public bool get_IsBehindNAT()
@@ -9215,6 +9289,14 @@ public bool VotedUp
 public bool VotedDown
 public bool VoteSkipped
 internal Nullable`1<UserItemVote> From(GetUserItemVoteResult_t result)
+}
+internal Steamworks.UGCContentDescriptorID : Enum {
+public int value__
+public UGCContentDescriptorID NudityOrSexualContent
+public UGCContentDescriptorID FrequentViolenceOrGore
+public UGCContentDescriptorID AdultOnlySexualContent
+public UGCContentDescriptorID GratuitousSexualContent
+public UGCContentDescriptorID AnyMatureContent
 }
 internal Steamworks.UGCQuery : Enum {
 public int value__
