@@ -1,0 +1,106 @@
+public AssetBundleBackend : FileSystemBackend {
+private AssetBundle rootBundle
+private AssetBundleManifest manifest
+private Dictionary`2<string, AssetBundle> bundles
+private Dictionary`2<string, AssetBundle> files
+private string assetPath
+private float <LoadProgress>k__BackingField
+public bool Enabled
+public float LoadProgress
+public bool get_Enabled()
+public float get_LoadProgress()
+private void set_LoadProgress(float value)
+public void Load(string assetRoot)
+private AssetBundle LoadBundle(string bundleName)
+public void BuildFileIndex()
+public void Dispose()
+public List`1<string> UnloadBundles(string partialName)
+protected T LoadAsset(string filePath)
+protected LoadAssetsResult LoadAssetsAsync(List`1<string> filePaths, int maxConcurrency, int priority)
+protected String[] LoadAssetList(string folder, string search)
+public T[] LoadAllFromBundle(string bundleName, string editorSearch)
+}
+internal AssetBundleLoadAssetsResult : LoadAssetsResult {
+private AssetBundle _bundle
+private List`1<string> _filePaths
+private int _maxConcurrency
+private int _priority
+private List`1<AssetBundleRequest> _requests
+private List`1<ValueTuple`2<string, AssetBundleRequest>> _pendingRequests
+private int _index
+public int TotalCount
+public bool keepWaiting
+public int get_TotalCount()
+internal void .ctor(AssetBundle bundle, List`1<string> filePaths, int maxConcurrency, int priority)
+public bool get_keepWaiting()
+private bool Update()
+public Dictionary`2<string, Object> GetResult()
+}
+public AssetPreloadResult : CustomYieldInstruction {
+private FileSystemBackend _backend
+private LoadAssetsResult _load
+private List`1<ValueTuple`2<string, Object>> _loaded
+private int _alreadyLoadedCount
+public int TotalCount
+public int CompletedCount
+public IReadOnlyList`1<ValueTuple`2<string, Object>> Results
+public bool keepWaiting
+internal void .ctor(FileSystemBackend backend, LoadAssetsResult load, List`1<ValueTuple`2<string, Object>> loaded)
+public int get_TotalCount()
+public int get_CompletedCount()
+public IReadOnlyList`1<ValueTuple`2<string, Object>> get_Results()
+public bool get_keepWaiting()
+private void OnAssetLoaded(string path, Object obj)
+}
+internal CompositeLoadAssetsResult : LoadAssetsResult {
+private List`1<LoadAssetsResult> _loads
+public int TotalCount
+public int CompletedCount
+public bool keepWaiting
+public void .ctor(List`1<LoadAssetsResult> loads)
+public int get_TotalCount()
+public int get_CompletedCount()
+protected void set_CompletedCount(int value)
+public bool get_keepWaiting()
+public Dictionary`2<string, Object> GetResult()
+private void AssetLoadedHandler(string assetPath, Object obj)
+}
+public FileSystem : object {
+public bool LogDebug
+public bool LogTime
+public FileSystemBackend Backend
+public GameObject[] LoadPrefabs(string folder)
+public GameObject LoadPrefab(string filePath)
+public String[] FindAll(string folder, string search)
+public T[] LoadAll(string folder, string search)
+public T[] LoadAllFromBundle(string bundleName, string editorSearch)
+public T Load(string filePath, bool complain)
+public AssetPreloadResult PreloadAssets(IEnumerable`1<string> filePaths, int maxConcurrency, int priority)
+}
+public FileSystemBackend : object {
+public bool isError
+public string loadingError
+public Dictionary`2<string, Object> cache
+public GameObject[] LoadPrefabs(string folder)
+public GameObject LoadPrefab(string filePath)
+public String[] FindAll(string folder, string search)
+public T[] LoadAll(string folder, string search)
+public T Load(string filePath)
+public AssetPreloadResult PreloadAssets(IEnumerable`1<string> filePaths, int maxConcurrency, int priority)
+protected void LoadError(string err)
+public List`1<string> UnloadBundles(string partialName)
+protected T LoadAsset(string filePath)
+protected LoadAssetsResult LoadAssetsAsync(List`1<string> filePaths, int maxConcurrency, int priority)
+protected String[] LoadAssetList(string folder, string search)
+public T[] LoadAllFromBundle(string bundleName, string editorSearch)
+}
+public LoadAssetsResult : CustomYieldInstruction {
+private int <CompletedCount>k__BackingField
+public AssetLoaded OnAssetLoaded
+public int TotalCount
+public int CompletedCount
+public int get_TotalCount()
+public int get_CompletedCount()
+protected void set_CompletedCount(int value)
+public Dictionary`2<string, Object> GetResult()
+}

@@ -1,0 +1,161 @@
+internal Cronos.CalendarHelper : object {
+private int DaysPerWeekCount
+private long TicksPerMillisecond
+private long TicksPerSecond
+private long TicksPerMinute
+private long TicksPerHour
+private long TicksPerDay
+private int DaysPerYear
+private int DaysPer4Years
+private int DaysPer100Years
+private int DaysPer400Years
+private Int32[] DaysToMonth365
+private Int32[] DaysToMonth366
+private Int32[] DaysInMonth
+public bool IsGreaterThan(int year1, int month1, int day1, int year2, int month2, int day2)
+public long DateTimeToTicks(int year, int month, int day, int hour, int minute, int second)
+public void FillDateTimeParts(long ticks, Int32& second, Int32& minute, Int32& hour, Int32& day, Int32& month, Int32& year)
+public DayOfWeek GetDayOfWeek(int year, int month, int day)
+public int GetDaysInMonth(int year, int month)
+public int MoveToNearestWeekDay(int year, int month, int day)
+public bool IsNthDayOfWeek(int day, int n)
+public bool IsLastDayOfWeek(int year, int month, int day)
+}
+public Cronos.CronExpression : object {
+private long NotFound
+private int MinNthDayOfWeek
+private int MaxNthDayOfWeek
+private int SundayBits
+private int MaxYear
+private TimeZoneInfo UtcTimeZone
+private CronExpression Yearly
+private CronExpression Weekly
+private CronExpression Monthly
+private CronExpression Daily
+private CronExpression Hourly
+private CronExpression Minutely
+private CronExpression Secondly
+private Int32[] DeBruijnPositions
+private long _second
+private long _minute
+private int _hour
+private int _dayOfMonth
+private short _month
+private byte _dayOfWeek
+private byte _nthDayOfWeek
+private byte _lastMonthOffset
+private CronExpressionFlag _flags
+public CronExpression Parse(string expression)
+public CronExpression Parse(string expression, CronFormat format)
+public Nullable`1<DateTime> GetNextOccurrence(DateTime fromUtc, bool inclusive)
+public IEnumerable`1<DateTime> GetOccurrences(DateTime fromUtc, DateTime toUtc, bool fromInclusive, bool toInclusive)
+public Nullable`1<DateTime> GetNextOccurrence(DateTime fromUtc, TimeZoneInfo zone, bool inclusive)
+public IEnumerable`1<DateTime> GetOccurrences(DateTime fromUtc, DateTime toUtc, TimeZoneInfo zone, bool fromInclusive, bool toInclusive)
+public Nullable`1<DateTimeOffset> GetNextOccurrence(DateTimeOffset from, TimeZoneInfo zone, bool inclusive)
+public IEnumerable`1<DateTimeOffset> GetOccurrences(DateTimeOffset from, DateTimeOffset to, TimeZoneInfo zone, bool fromInclusive, bool toInclusive)
+public string ToString()
+public bool Equals(CronExpression other)
+public bool Equals(object obj)
+public int GetHashCode()
+public bool op_Equality(CronExpression left, CronExpression right)
+public bool op_Inequality(CronExpression left, CronExpression right)
+private Nullable`1<DateTimeOffset> GetOccurrenceConsideringTimeZone(DateTimeOffset fromUtc, TimeZoneInfo zone, bool inclusive)
+private long FindOccurrence(long startTimeTicks, long endTimeTicks, bool startInclusive)
+private long FindOccurrence(long ticks, bool startInclusive)
+private bool Move(long fieldBits, Int32& fieldValue)
+private int GetLastDayOfMonth(int year, int month)
+private bool IsDayOfWeekMatch(int year, int month, int day)
+private int GetFirstSet(long value)
+private bool HasFlag(CronExpressionFlag value)
+private void SkipWhiteSpaces(Char*& pointer)
+private void ParseWhiteSpace(CronField prevField, Char*& pointer)
+private void ParseEndOfString(Char*& pointer)
+private CronExpression ParseMacro(Char*& pointer)
+private long ParseField(CronField field, Char*& pointer, CronExpressionFlag& flags)
+private long ParseDayOfMonth(Char*& pointer, CronExpressionFlag& flags, Byte& lastDayOffset)
+private long ParseDayOfWeek(Char*& pointer, CronExpressionFlag& flags, Byte& nthWeekDay)
+private long ParseStar(CronField field, Char*& pointer)
+private long ParseList(CronField field, Char*& pointer, CronExpressionFlag& flags)
+private long ParseRange(CronField field, Char*& pointer, int low, CronExpressionFlag& flags)
+private long ParseStep(CronField field, Char*& pointer, int low, int high)
+private long ParseLastDayOfMonth(CronField field, Char*& pointer, CronExpressionFlag& flags, Byte& lastMonthOffset)
+private long ParseNthWeekDay(CronField field, Char*& pointer, int dayOfWeek, CronExpressionFlag& flags, Byte& nthDayOfWeek)
+private long ParseLastWeekDay(int dayOfWeek, CronExpressionFlag& flags)
+private bool Accept(Char*& pointer, char character)
+private bool AcceptCharacter(Char*& pointer, char character)
+private int ParseNumber(CronField field, Char*& pointer, int low, int high)
+private int ParseValue(CronField field, Char*& pointer)
+private StringBuilder AppendFieldValue(StringBuilder expressionBuilder, CronField field, long fieldValue)
+private StringBuilder AppendDayOfMonth(StringBuilder expressionBuilder, int domValue)
+private void AppendDayOfWeek(StringBuilder expressionBuilder, int dowValue)
+private long GetBits(CronField field, int num1, int num2, int step)
+private long GetRangeBits(int low, int high, int step)
+private long GetReversedRangeBits(CronField field, int num1, int num2, int step)
+private long GetBit(int num1)
+private int GetNumber(Char*& pointer, Int32[] names)
+private void ThrowFormatException(CronField field, string format, Object[] args)
+private void ThrowFormatException(string format, Object[] args)
+private void ThrowFromShouldBeLessThanToException(string fromName, string toName)
+private void ThrowWrongDateTimeKindException(string paramName)
+private bool GetBit(long value, int index)
+private void SetBit(Int64& value, int index)
+private bool IsEndOfString(int code)
+private bool IsWhiteSpace(int code)
+private bool IsDigit(int code)
+private bool IsLetter(int code)
+private int GetNumeric(int code)
+private int ToUpper(int code)
+}
+internal Cronos.CronExpressionFlag : Enum {
+public byte value__
+public CronExpressionFlag DayOfMonthLast
+public CronExpressionFlag DayOfWeekLast
+public CronExpressionFlag Interval
+public CronExpressionFlag NearestWeekday
+public CronExpressionFlag NthDayOfWeek
+}
+internal Cronos.CronField : object {
+private String[] MonthNames
+private String[] DayOfWeekNames
+private Int32[] MonthNamesArray
+private Int32[] DayOfWeekNamesArray
+public CronField DaysOfWeek
+public CronField Months
+public CronField DaysOfMonth
+public CronField Hours
+public CronField Minutes
+public CronField Seconds
+public string Name
+public int First
+public int Last
+public Int32[] Names
+public bool CanDefineInterval
+public long AllBits
+private void .ctor(string name, int first, int last, Int32[] names, bool canDefineInterval)
+public string ToString()
+}
+public Cronos.CronFormat : Enum {
+public int value__
+public CronFormat Standard
+public CronFormat IncludeSeconds
+}
+public Cronos.CronFormatException : FormatException {
+public void .ctor(string message)
+internal void .ctor(CronField field, string message)
+}
+internal Cronos.DateTimeHelper : object {
+private TimeSpan OneSecond
+public DateTimeOffset FloorToSeconds(DateTimeOffset dateTimeOffset)
+public bool IsRound(DateTimeOffset dateTimeOffset)
+private long GetExtraTicks(long ticks)
+}
+internal Cronos.TimeZoneHelper : object {
+public bool IsAmbiguousTime(TimeZoneInfo zone, DateTime ambiguousTime)
+public TimeSpan GetDaylightOffset(TimeZoneInfo zone, DateTime ambiguousDateTime)
+public DateTimeOffset GetDaylightTimeStart(TimeZoneInfo zone, DateTime invalidDateTime)
+public DateTimeOffset GetStandardTimeStart(TimeZoneInfo zone, DateTime ambiguousTime, TimeSpan daylightOffset)
+public DateTimeOffset GetAmbiguousIntervalEnd(TimeZoneInfo zone, DateTime ambiguousTime)
+public DateTimeOffset GetDaylightTimeEnd(TimeZoneInfo zone, DateTime ambiguousTime, TimeSpan daylightOffset)
+private TimeSpan[] GetAmbiguousOffsets(TimeZoneInfo zone, DateTime ambiguousTime)
+private DateTime GetDstTransitionEndDateTime(TimeZoneInfo zone, DateTime ambiguousDateTime)
+}

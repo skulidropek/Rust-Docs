@@ -213,6 +213,7 @@ public float ClosestDistance(Ray ray, Vector3 position)
 }
 public Facepunch.Feedback : object {
 public Task`1<string> Report(Feedback feedback)
+public Task`1<string> ServerReport(string endpoint, ulong fromPlayer, string key, Feedback feedback)
 }
 public Facepunch.FrameRateCategory : Enum {
 public int value__
@@ -293,10 +294,11 @@ public Facepunch.Math.Epoch : object {
 private DateTime epoch
 public int Current
 public int get_Current()
-public DateTime ToDateTime(decimal unixTime)
+public DateTime ToDateTime(long unixTime)
 public int FromDateTime(DateTime time)
 }
 public Facepunch.Models.AppInfo : ValueType {
+private string <Image>k__BackingField
 public int Version
 public BuildInfo Build
 public string Name
@@ -315,6 +317,7 @@ public string LevelName
 public string LevelPos
 public string LevelRot
 public int MinutesPlayed
+public string Image
 public int get_Version()
 public BuildInfo get_Build()
 public string get_Name()
@@ -333,6 +336,8 @@ public string get_LevelName()
 public string get_LevelPos()
 public string get_LevelRot()
 public int get_MinutesPlayed()
+public string get_Image()
+public void set_Image(string value)
 }
 public Facepunch.Models.Auth : object {
 public string Type
@@ -373,6 +378,10 @@ public bool Running
 public bool Success
 public Entry[] Entries
 }
+public Facepunch.Models.FeaturesInfo : object {
+public bool ClientAnalytics
+public bool ServerAnalytics
+}
 public Facepunch.Models.Feedback : ValueType {
 public string Subject
 public string Message
@@ -380,6 +389,8 @@ public ReportType Type
 public string TargetReportType
 public string TargetId
 public string TargetName
+public string TargetEntity
+public List`1<ulong> UsersInRange
 public AppInfo AppInfo
 }
 public Facepunch.Models.Leaderboard.Add : object {
@@ -417,6 +428,7 @@ public DateTime Created
 public Facepunch.Models.Manifest : object {
 public NewsInfo News
 public ServersInfo Servers
+public FeaturesInfo Features
 public string ExceptionReportingUrl
 public string BenchmarkUrl
 public string AnalyticUrl
@@ -446,6 +458,9 @@ public ReportType Bug
 public ReportType Cheat
 public ReportType Abuse
 public ReportType Idea
+public ReportType OffensiveContent
+public ReportType FIRST
+public ReportType LAST
 }
 internal Facepunch.Mono : object {
 internal void FixHttpsValidation()
@@ -515,12 +530,14 @@ private string <platform>k__BackingField
 private string <event_id>k__BackingField
 private Dictionary`2<string, string> <tags>k__BackingField
 private StackTrace <stacktrace>k__BackingField
+private User <user>k__BackingField
 public string release
 public string message
 public string platform
 public string event_id
 public Dictionary`2<string, string> tags
 public StackTrace stacktrace
+public User user
 public string get_release()
 public void set_release(string value)
 public string get_message()
@@ -533,6 +550,8 @@ public Dictionary`2<string, string> get_tags()
 public void set_tags(Dictionary`2<string, string> value)
 public StackTrace get_stacktrace()
 public void set_stacktrace(StackTrace value)
+public User get_user()
+public void set_user(User value)
 }
 public Facepunch.SystemInformation : ValueType {
 public Hardware hardware
@@ -587,11 +606,13 @@ public RealTimeSince : ValueType {
 private float time
 public float op_Implicit(RealTimeSince ts)
 public RealTimeSince op_Implicit(float ts)
+public string ToString()
 }
 public RealTimeUntil : ValueType {
 private float time
 public float op_Implicit(RealTimeUntil ts)
 public RealTimeUntil op_Implicit(float ts)
+public string ToString()
 }
 public SceneField : object {
 private Object sceneAsset
@@ -604,11 +625,20 @@ public TimeSince : ValueType {
 private float time
 public float op_Implicit(TimeSince ts)
 public TimeSince op_Implicit(float ts)
+public string ToString()
 }
 public TimeUntil : ValueType {
 private float time
 public float op_Implicit(TimeUntil ts)
 public TimeUntil op_Implicit(float ts)
+public string ToString()
+}
+public TimeUntilWithDuration : ValueType {
+private float time
+public float Duration
+public float op_Implicit(TimeUntilWithDuration ts)
+public TimeUntilWithDuration op_Implicit(float ts)
+public string ToString()
 }
 public UnityEngine.WaitForSecondsRealtimeEx : CustomYieldInstruction {
 private bool _isInPool

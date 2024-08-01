@@ -1,8 +1,27 @@
 public HarmonyLoader : object {
+private string modPath
+private List`1<HarmonyMod> loadedMods
+private DefaultAssemblyResolver AssemblyResolver
+private Dictionary`2<string, Assembly> assemblyNames
+public IEnumerable`1<HarmonyModInfo> GetHarmonyMods()
 public void LoadHarmonyMods()
+public bool TryLoadMod(string dllName)
+public bool TryUnloadMod(string name)
+private void UnloadMod(HarmonyMod mod)
+private HarmonyMod GetMod(string name)
 private Assembly LoadAssembly(string assemblyPath)
 private bool IsKnownDependency(string assemblyName)
 private void ReportException(string harmonyId, Exception e)
 private void Log(string harmonyId, object message)
 private void LogError(string harmonyId, object message)
+private void LogError(object message)
+private void LogWarning(object message)
+}
+public HarmonyModInfo : ValueType {
+public string Name
+public string Version
+}
+public IHarmonyModHooks {
+public void OnLoaded(OnHarmonyModLoadedArgs args)
+public void OnUnloaded(OnHarmonyModUnloadedArgs args)
 }

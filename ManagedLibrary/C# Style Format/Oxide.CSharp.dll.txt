@@ -360,19 +360,14 @@ private List`1<Action`1<bool>> loadCallbacks
 private bool isPatching
 private bool isLoaded
 public bool IsBatch
-private IEnumerable`1<string> BlacklistedNamespaces
-private IEnumerable`1<string> WhitelistedNamespaces
 public bool get_IsBatch()
-private IEnumerable`1<string> get_BlacklistedNamespaces()
-private IEnumerable`1<string> get_WhitelistedNamespaces()
 public void .ctor(string name, CompilablePlugin[] plugins, Byte[] rawAssembly, float duration)
 public void LoadAssembly(Action`1<bool> callback)
-private void PatchAssembly(Action`1<Byte[]> callback)
+private void ValidateAssembly(Action`1<Byte[]> callback)
 public bool IsOutdated()
 private bool IsCompilerGenerated(TypeDefinition type)
-private bool IsNamespaceBlacklisted(string fullNamespace)
-private void <LoadAssembly>b__19_0(Byte[] rawAssembly)
-private bool <IsOutdated>b__21_0(CompilablePlugin pl)
+private void <LoadAssembly>b__15_0(Byte[] rawAssembly)
+private bool <IsOutdated>b__17_0(CompilablePlugin pl)
 }
 public Oxide.Plugins.ConsoleCommandAttribute : Attribute {
 private string <Command>k__BackingField
@@ -398,21 +393,17 @@ internal VersionNumber AssemblyVersion
 internal string AssemblyAuthors
 private FSWatcher <Watcher>k__BackingField
 private CSharpPluginLoader loader
-private bool <SandboxEnabled>k__BackingField
 public bool IsCoreExtension
 public string Name
 public string Author
 public VersionNumber Version
 public FSWatcher Watcher
-public bool SandboxEnabled
 public bool get_IsCoreExtension()
 public string get_Name()
 public string get_Author()
 public VersionNumber get_Version()
 public FSWatcher get_Watcher()
 private void set_Watcher(FSWatcher value)
-public bool get_SandboxEnabled()
-private void set_SandboxEnabled(bool value)
 public void .ctor(ExtensionManager manager)
 public void Load()
 public void LoadPluginWatchers(string pluginDirectory)
@@ -432,6 +423,7 @@ protected HashSet`1<PluginFieldInfo> onlinePlayerFields
 private Dictionary`2<string, FieldInfo> pluginReferenceFields
 private bool hookDispatchFallback
 private bool <HookedOnFrame>k__BackingField
+private object _logFileLock
 public bool HookedOnFrame
 public bool get_HookedOnFrame()
 private void set_HookedOnFrame(bool value)
@@ -446,7 +438,7 @@ private void base_OnPluginUnloaded(Plugin plugin)
 protected void Puts(string format, Object[] args)
 protected void PrintWarning(string format, Object[] args)
 protected void PrintError(string format, Object[] args)
-protected void LogToFile(string filename, string text, Plugin plugin, bool timeStamp)
+protected void LogToFile(string filename, string text, Plugin plugin, bool datedFilename, bool timestampPrefix)
 protected void NextFrame(Action callback)
 protected void NextTick(Action callback)
 protected void QueueWorkerThread(Action`1<object> callback)
@@ -492,6 +484,7 @@ public ICollection`1<TKey> Keys
 public ICollection`1<TValue> Values
 public int Count
 public bool IsReadOnly
+public void .ctor(IEqualityComparer`1<TKey> comparer)
 public TValue get_Item(TKey key)
 public void set_Item(TKey key, TValue value)
 public ICollection`1<TKey> get_Keys()

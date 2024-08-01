@@ -61,6 +61,42 @@ public string SHA1()
 public string ToString()
 private string BytesToString(Byte[] bytes)
 }
+public CircularBuffer.CircularBuffer`1 : object {
+private T[] _buffer
+private int _start
+private int _end
+private int _size
+public int Capacity
+public bool IsFull
+public bool IsEmpty
+public int Size
+public T Item
+public void .ctor(int capacity)
+public void .ctor(int capacity, T[] items)
+public int get_Capacity()
+public bool get_IsFull()
+public bool get_IsEmpty()
+public int get_Size()
+public T Front()
+public T Back()
+public T get_Item(int index)
+public void set_Item(int index, T value)
+public void PushBack(T item)
+public void PushFront(T item)
+public void PopBack()
+public void PopFront()
+public void Clear()
+public T[] ToArray()
+public IList`1<ArraySegment`1<T>> ToArraySegments()
+public IEnumerator`1<T> GetEnumerator()
+private IEnumerator System.Collections.IEnumerable.GetEnumerator()
+private void ThrowIfEmpty(string message)
+private void Increment(Int32& index)
+private void Decrement(Int32& index)
+private int InternalIndex(int index)
+private ArraySegment`1<T> ArrayOne()
+private ArraySegment`1<T> ArrayTwo()
+}
 public Deque`1 : object {
 private T[] buffer
 private int offset
@@ -91,6 +127,16 @@ public void PushBack(T value)
 public void PushFront(T value)
 public T PopBack()
 public T PopFront()
+}
+public Facepunch.ArrayPool`1 : object {
+private int count
+private ConcurrentQueue`1[] buffer
+public void .ctor(int maxSize)
+public ConcurrentQueue`1[] GetBuffer()
+public T[] Rent(int minSize)
+public void Return(T[] array)
+public int SizeToIndex(int size)
+public int IndexToSize(int index)
 }
 public Facepunch.ByteArrayStream : Stream {
 private Byte[] _data
@@ -152,9 +198,9 @@ public Dictionary`2<TKey, TValue> Clone(Dictionary`2<TKey, TValue> dict)
 public Facepunch.Extend.List : object {
 public void Compare(TListA a, TListB b, List`1<T> added, List`1<T> removed, List`1<T> remained)
 public void Compare(TListA a, TListB b, HashSet`1<TKey> added, HashSet`1<TKey> removed, HashSet`1<TKey> remained, Func`2<TItemA, TKey> selectorA, Func`2<TItemB, TKey> selectorB)
-public TItem FindWith(List`1<TItem> items, Func`2<TItem, TKey> selector, TKey search)
-public Nullable`1<TItem> TryFindWith(List`1<TItem> items, Func`2<TItem, TKey> selector, TKey search, IEqualityComparer`1<TItem> comparer)
-public int FindIndexWith(List`1<TItem> items, Func`2<TItem, TKey> selector, TKey search)
+public TItem FindWith(IReadOnlyCollection`1<TItem> items, Func`2<TItem, TKey> selector, TKey search, IEqualityComparer`1<TKey> comparer)
+public Nullable`1<TItem> TryFindWith(IReadOnlyCollection`1<TItem> items, Func`2<TItem, TKey> selector, TKey search, IEqualityComparer`1<TKey> comparer)
+public int FindIndexWith(IReadOnlyList`1<TItem> items, Func`2<TItem, TKey> selector, TKey search)
 internal void <Compare>g__InitializeWith|1_0(HashSet`1<TKey> set, HashSet`1<TKey> values)
 }
 public Facepunch.Extend.NumberExtensions : object {
@@ -174,6 +220,7 @@ public bool HasAttribute(MemberInfo method, Type attribute)
 public Facepunch.Extend.StringExtensions : object {
 private Regex regexSplitQuotes
 private Char[] spaceOrQuote
+private StringBuilder _quoteSafeBuilder
 private Char[] FilenameDelim
 private Char[] _badCharacters
 public string QuoteSafe(string str)
@@ -181,6 +228,7 @@ public String[] SplitQuotesStrings(string input, int maxCount)
 public decimal ToDecimal(string str, decimal Default)
 public float ToFloat(string str, float Default)
 public int ToInt(string str, int Default)
+public long ToLong(string str, long Default)
 public bool ToBool(string str)
 public string Truncate(string str, int maxLength, string appendage)
 public string TruncateFilename(string str, int maxLength, string appendage)
@@ -191,6 +239,7 @@ public string Base64Encode(string plainText)
 public string Base64Decode(string base64EncodedData)
 }
 public Facepunch.Pool : object {
+private object poolLock
 public Dictionary`2<Type, ICollection> directory
 public void FreeList(List`1& obj)
 public void FreeMemoryStream(MemoryStream& obj)
@@ -202,7 +251,8 @@ public List`1<T> GetList()
 public void ResizeBuffer(int size)
 public void FillBuffer(int count)
 public PoolCollection`1<T> FindCollection()
-public void Clear()
+public void Clear(string filter)
+private bool Contains(string haystack, string needle, CompareOptions options)
 }
 internal Facepunch.Pool`1 : object {
 public PoolCollection`1<T> Collection
@@ -272,6 +322,7 @@ public int Count
 public void .ctor(int capacity)
 public void Add(TKey key, TVal val)
 public bool Contains(TKey key)
+public bool ContainsKey(TKey key)
 public bool Remove(TKey key)
 public bool RemoveAt(int idx)
 private void Remove(int idx_remove, TKey key_remove)
@@ -388,6 +439,9 @@ private Node<T> GetNode(float x, float y, bool create)
 public void Add(T obj, float x, float y)
 public void Move(T obj, float x, float y)
 public bool Remove(T obj)
+}
+public StringBuilderExtensions : object {
+public StringBuilder QuoteSafe(StringBuilder builder, string value)
 }
 public Union16 : ValueType {
 public short i

@@ -1,24 +1,94 @@
 public Network.BaseNetwork : object {
-private NetRead <read>k__BackingField
-private NetWrite <write>k__BackingField
-public INetworkCryptocraphy cryptography
-public NetRead read
-public NetWrite write
-public NetRead get_read()
-private void set_read(NetRead value)
-public NetWrite get_write()
-private void set_write(NetWrite value)
-public void Send(SendInfo sendinfo, MemoryStream data)
-protected Message StartMessage(Type type, Connection connection)
+public ArrayPool`1<byte> ArrayPool
+public bool Multithreading
+protected object readLock
+protected object writeLock
+protected object decryptLock
+private Stopwatch stopwatch
+private ConcurrentQueue`1<NetRead> readQueue
+private ConcurrentQueue`1<NetWrite> writeQueue
+private ConcurrentQueue`1<NetRead> decryptQueue
+private int readQueueSizeInBytes
+private int writeQueueSizeInBytes
+private int decryptQueueSizeInBytes
+private AutoResetEvent mainThreadReset
+private AutoResetEvent readThreadReset
+private AutoResetEvent writeThreadReset
+private AutoResetEvent decryptThreadReset
+private Thread readThread
+private Thread writeThread
+private Thread decryptThread
+public INetworkCryptography cryptography
+protected int MaxReceiveTimeValue
+protected int MaxReadQueueLengthValue
+protected int MaxWriteQueueLengthValue
+protected int MaxDecryptQueueLengthValue
+protected int MaxReadQueueBytesValue
+protected int MaxWriteQueueBytesValue
+protected int MaxDecryptQueueBytesValue
+protected int MaxMainThreadWaitValue
+protected int MaxReadThreadWaitValue
+protected int MaxWriteThreadWaitValue
+protected int MaxDecryptThreadWaitValue
+public int ReadQueueLength
+public int WriteQueueLength
+public int DecryptQueueLength
+public int ReadQueueBytes
+public int WriteQueueBytes
+public int DecryptQueueBytes
+protected int get_MaxReceiveTimeValue()
+protected int get_MaxReadQueueLengthValue()
+protected int get_MaxWriteQueueLengthValue()
+protected int get_MaxDecryptQueueLengthValue()
+protected int get_MaxReadQueueBytesValue()
+protected int get_MaxWriteQueueBytesValue()
+protected int get_MaxDecryptQueueBytesValue()
+protected int get_MaxMainThreadWaitValue()
+protected int get_MaxReadThreadWaitValue()
+protected int get_MaxWriteThreadWaitValue()
+protected int get_MaxDecryptThreadWaitValue()
+public int get_ReadQueueLength()
+public int get_WriteQueueLength()
+public int get_DecryptQueueLength()
+public int get_ReadQueueBytes()
+public int get_WriteQueueBytes()
+public int get_DecryptQueueBytes()
+protected void MultithreadingInit()
+public bool IsConnected()
+protected bool Receive()
+public void EnqueueWrite(NetWrite write)
+public void EnqueueRead(NetRead read)
+public void EnqueueDecrypt(NetRead read)
+public void ProcessWrite(NetWrite write)
+public void ProcessRead(NetRead read)
+public void ProcessDecrypt(NetRead read)
+private void ReadThread()
+private void WriteThread()
+private void DecryptThread()
+private void ReadThreadCycle()
+private void WriteThreadCycle()
+private void DecryptThreadCycle()
+public void Cycle()
+public NetWrite StartWrite()
+protected Message StartMessage(Type type, NetRead read)
 public void Decrypt(Connection connection, NetRead read)
-public void Encrypt(Connection connection, MemoryStream& stream)
+public ArraySegment`1<byte> Encrypt(Connection connection, NetWrite write)
 public void Record(Connection connection, Stream stream)
 public string GetDebug(Connection connection)
 public ulong GetStat(Connection connection, StatTypeLong type)
 }
 public Network.Client : BaseNetwork {
-public float MaxReceiveTime
-public float MinReceiveFraction
+public int MaxReceiveTime
+public int MaxReadQueueLength
+public int MaxWriteQueueLength
+public int MaxDecryptQueueLength
+public int MaxReadQueueBytes
+public int MaxWriteQueueBytes
+public int MaxDecryptQueueBytes
+public int MaxMainThreadWait
+public int MaxReadThreadWait
+public int MaxWriteThreadWait
+public int MaxDecryptThreadWait
 private Connection <Connection>k__BackingField
 private bool <IsPlaying>k__BackingField
 public Manager visibility
@@ -29,6 +99,17 @@ private string <ServerName>k__BackingField
 private bool <IsOfficialServer>k__BackingField
 public Stats IncomingStats
 public IClientCallback callbackHandler
+protected int MaxReceiveTimeValue
+protected int MaxReadQueueLengthValue
+protected int MaxWriteQueueLengthValue
+protected int MaxDecryptQueueLengthValue
+protected int MaxReadQueueBytesValue
+protected int MaxWriteQueueBytesValue
+protected int MaxDecryptQueueBytesValue
+protected int MaxMainThreadWaitValue
+protected int MaxReadThreadWaitValue
+protected int MaxWriteThreadWaitValue
+protected int MaxDecryptThreadWaitValue
 public Connection Connection
 public bool IsPlaying
 public string ConnectedAddress
@@ -38,6 +119,17 @@ public bool IsOfficialServer
 public bool IsRecording
 public string RecordFilename
 public TimeSpan RecordTimeElapsed
+protected int get_MaxReceiveTimeValue()
+protected int get_MaxReadQueueLengthValue()
+protected int get_MaxWriteQueueLengthValue()
+protected int get_MaxDecryptQueueLengthValue()
+protected int get_MaxReadQueueBytesValue()
+protected int get_MaxWriteQueueBytesValue()
+protected int get_MaxDecryptQueueBytesValue()
+protected int get_MaxMainThreadWaitValue()
+protected int get_MaxReadThreadWaitValue()
+protected int get_MaxWriteThreadWaitValue()
+protected int get_MaxDecryptThreadWaitValue()
 public Connection get_Connection()
 protected void set_Connection(Connection value)
 public bool get_IsPlaying()
@@ -50,11 +142,10 @@ public void set_ServerName(string value)
 public bool get_IsOfficialServer()
 public void set_IsOfficialServer(bool value)
 public bool Connect(string strURL, int port)
-public void Cycle()
+public void Flush()
 public void Disconnect(string reason, bool sendReasonToServer)
-public bool IsConnected()
 protected void OnDisconnected(string str)
-public Networkable CreateNetworkable(UInt32 networkID, UInt32 networkGroup)
+public Networkable CreateNetworkable(NetworkableId networkID, UInt32 networkGroup)
 public void DestroyNetworkable(Networkable& networkable)
 public void SetupNetworkable(Networkable net)
 public int GetLastPing()
@@ -71,13 +162,12 @@ protected BinaryWriter recordWriter
 protected Stopwatch recordTime
 protected string recordFilename
 protected IDemoHeader recordHeader
+public int MaxClientInfoSize
 public State state
 public bool active
 public bool connected
 public UInt32 authLevel
 public UInt32 encryptionLevel
-public bool decryptIncoming
-public bool encryptOutgoing
 public bool trusted
 public bool rejected
 public string authStatus
@@ -108,6 +198,7 @@ public void StopRecording()
 public bool get_IsRecording()
 public void RecordPacket(byte packetId, IProto proto)
 public void RecordPacket(Stream stream)
+public string IPAddressWithoutPort()
 public void OnDisconnected()
 public bool get_isAuthenticated()
 public void ResetPacketsPerSecond()
@@ -121,6 +212,12 @@ public string ToString()
 public Network.Defines : object {
 public byte lowestUserPacket
 public int packetHeaderSize
+public int MinNetWriteBufferSize
+public int MaxNetWriteBufferSize
+public int MaxNetReadPacketSize
+public int MinNetReadBufferSize
+public int MaxNetReadBufferSize
+public int MaxServerPacketSize
 }
 public Network.DemoClient : Client {
 protected Reader demoFile
@@ -145,34 +242,32 @@ public long get_Length()
 public void set_Length(long value)
 public void Write(BinaryWriter writer)
 }
-public Network.INetworkCryptocraphy {
-public bool IsEnabledIncoming(Connection connection)
-public bool IsEnabledOutgoing(Connection connection)
-public MemoryStream EncryptCopy(Connection connection, MemoryStream stream, int offset)
-public MemoryStream DecryptCopy(Connection connection, MemoryStream stream, int offset)
-public void Encrypt(Connection connection, MemoryStream stream, int offset)
-public void Decrypt(Connection connection, MemoryStream stream, int offset)
+public Network.INetworkCryptography {
+public ArraySegment`1<byte> EncryptCopy(Connection connection, ArraySegment`1<byte> data)
+public ArraySegment`1<byte> DecryptCopy(Connection connection, ArraySegment`1<byte> data)
+public void Encrypt(Connection connection, ArraySegment`1& data)
+public void Decrypt(Connection connection, ArraySegment`1& data)
 }
 public Network.IServerCallback {
 public void OnNetworkMessage(Message message)
-public bool OnUnconnectedMessage(int type, NetRead read, UInt32 ip, int port)
 public void OnDisconnected(string reason, Connection connection)
 }
 public Network.Message : object {
+public Boolean[] EncryptionPerType
 public Type type
 public BaseNetwork peer
-public Connection connection
 public NetRead read
-public NetWrite write
-public NetRead get_read()
-public NetWrite get_write()
+public Connection connection
+public Connection get_connection()
 public void Clear()
 }
 public Network.NetRead : Stream {
-private MemoryStream _stream
 public Byte[] Data
-public long _length
-public long _position
+private int _length
+private int _position
+public ulong guid
+public string ipaddress
+public Connection connection
 private int bufferSize
 private Byte[] byteBuffer
 private Char[] charBuffer
@@ -182,23 +277,32 @@ public bool CanWrite
 public long Length
 public long Position
 public bool CanSeek
-public MemoryStream GetStreamForDecryption()
-public bool Start(IntPtr data, int length)
+public void EnterPool()
+public void LeavePool()
+public bool Start(ulong guid, string ipaddress, IntPtr data, int length)
+public bool Start(Connection connection, IntPtr data, int length)
+public bool Start(Connection connection, ulong guid, IntPtr data, int length)
+public bool Start(Connection connection, ulong guid, string ipaddress, IntPtr data, int length)
+private bool Init(IntPtr data, int length)
 public int get_Unread()
 public string String(int maxLength)
 public string StringMultiLine(int maxLength)
 private string StringInternal(int maxLength, bool allowNewLine)
 public string StringRaw(UInt32 maxLength)
 public bool TemporaryBytesWithSize(Byte[]& buffer, Int32& size)
-public UInt32 EntityID()
+public NetworkableId EntityID()
+public ItemContainerId ItemContainerID()
+public ItemId ItemID()
 public UInt32 GroupID()
 public int BytesWithSize(Byte[] buffer, UInt32 maxLength)
 public Byte[] BytesWithSize(UInt32 maxSize)
 public int ReadByte()
+private void EnsureCapacity(int spaceRequired)
 public bool get_CanRead()
 public bool get_CanWrite()
 public void SetLength(long value)
 public byte PacketID()
+public byte PeekPacketID()
 public bool Bit()
 public byte UInt8()
 public ushort UInt16()
@@ -221,12 +325,13 @@ public void set_Position(long value)
 public bool get_CanSeek()
 public long Seek(long offset, SeekOrigin origin)
 public T Read()
+public T Peek()
 public void Flush()
 public void Write(Byte[] buffer, int offset, int count)
 public void WriteByte(byte value)
 }
 public Network.Networkable : object {
-public UInt32 ID
+public NetworkableId ID
 private Connection <connection>k__BackingField
 public Group group
 public Group secondaryGroup
@@ -261,21 +366,27 @@ public void OnNetworkGroupChange()
 public void OnNetworkGroupLeave(Group group)
 public void OnNetworkGroupEnter(Group group)
 }
-public Network.NetWrite : MemoryStream {
-private MemoryStream buffer
-private BaseNetwork netwrite
-private Byte[] data
-private int position
-private int length
+public Network.NetWrite : Stream {
+private MemoryStream stringBuffer
+private BaseNetwork peer
+public Byte[] Data
+private int _position
+private int _length
+public SendMethod method
+public sbyte channel
+public Priority priority
+public List`1<Connection> connections
 public bool CanSeek
 public bool CanRead
 public bool CanWrite
 public long Length
 public long Position
-public void .ctor(BaseNetwork netwrite)
-public void Shutdown()
-public bool Start()
+public void EnterPool()
+public void LeavePool()
+public bool Start(BaseNetwork peer)
 public void Send(SendInfo info)
+public void SendImmediate(SendInfo info)
+public byte PeekPacketID()
 public void PacketID(Type val)
 public void UInt8(byte val)
 public void UInt16(ushort val)
@@ -294,14 +405,15 @@ public void Vector3(Vector3& obj)
 public void Quaternion(Quaternion& obj)
 public void Ray(Ray& obj)
 public void Color(Color& obj)
-public void EntityID(UInt32 id)
+public void EntityID(NetworkableId id)
+public void ItemContainerID(ItemContainerId id)
+public void ItemID(ItemId id)
 public void GroupID(UInt32 id)
 public void BytesWithSize(MemoryStream val)
 public void BytesWithSize(Byte[] b)
 public void BytesWithSize(Byte[] b, int length)
 private void Write(T& val)
 private void EnsureCapacity(int spaceRequired)
-public Byte[] GetBuffer()
 public bool get_CanSeek()
 public bool get_CanRead()
 public bool get_CanWrite()
@@ -338,9 +450,18 @@ public SendMethod Unreliable
 }
 public Network.Server : BaseNetwork {
 public ulong MaxPacketsPerSecond
-public int MaxPacketSize
 public int MaxConnectionsPerIP
-public float MaxReceiveTime
+public int MaxReceiveTime
+public int MaxReadQueueLength
+public int MaxWriteQueueLength
+public int MaxDecryptQueueLength
+public int MaxReadQueueBytes
+public int MaxWriteQueueBytes
+public int MaxDecryptQueueBytes
+public int MaxMainThreadWait
+public int MaxReadThreadWait
+public int MaxWriteThreadWait
+public int MaxDecryptThreadWait
 public string ip
 public int port
 public bool compressionEnabled
@@ -348,36 +469,55 @@ public bool logging
 public Manager visibility
 public IServerCallback callbackHandler
 public bool debug
-internal UInt32 lastValueGiven
+internal ulong lastValueGiven
 public List`1<Connection> connections
 private Dictionary`2<ulong, Connection> connectionByGUID
 private Dictionary`2<string, List`1<Connection>> connectionsByIP
+protected int MaxReceiveTimeValue
+protected int MaxReadQueueLengthValue
+protected int MaxWriteQueueLengthValue
+protected int MaxDecryptQueueLengthValue
+protected int MaxReadQueueBytesValue
+protected int MaxWriteQueueBytesValue
+protected int MaxDecryptQueueBytesValue
+protected int MaxMainThreadWaitValue
+protected int MaxReadThreadWaitValue
+protected int MaxWriteThreadWaitValue
+protected int MaxDecryptThreadWaitValue
 public string ProtocolId
-public bool AllowPassthroughMessages
-public bool IsConnected()
+protected int get_MaxReceiveTimeValue()
+protected int get_MaxReadQueueLengthValue()
+protected int get_MaxWriteQueueLengthValue()
+protected int get_MaxDecryptQueueLengthValue()
+protected int get_MaxReadQueueBytesValue()
+protected int get_MaxWriteQueueBytesValue()
+protected int get_MaxDecryptQueueBytesValue()
+protected int get_MaxMainThreadWaitValue()
+protected int get_MaxReadThreadWaitValue()
+protected int get_MaxWriteThreadWaitValue()
+protected int get_MaxDecryptThreadWaitValue()
 public string get_ProtocolId()
-public bool get_AllowPassthroughMessages()
 public void Reset()
 public bool Start()
 public void Stop(string shutdownMsg)
-public void Cycle()
+public void Flush(Connection cn)
 public void Disconnect(Connection cn)
 public void Kick(Connection cn, string message, bool logfile)
-public UInt32 TakeUID()
-public void ReturnUID(UInt32 uid)
-public void RegisterUID(UInt32 uid)
+public ulong GetLastUIDGiven()
+public ulong TakeUID()
+public void ReturnUID(ulong uid)
+public void RegisterUID(ulong uid)
 internal void ResetUIDs()
 public Networkable CreateNetworkable()
-public Networkable CreateNetworkable(UInt32 uid)
+public Networkable CreateNetworkable(NetworkableId uid)
 public void DestroyNetworkable(Networkable& networkable)
 protected void OnDisconnected(string strReason, Connection cn)
 protected Connection FindConnection(ulong guid)
-protected void OnNewConnection()
-private string IPAddressWithoutPort(string address)
+protected void OnNewConnection(ulong guid, string ipaddress)
 protected void OnNewConnection(Connection connection)
 protected void RemoveConnection(Connection connection)
+public bool LimitConnectionsPerIP()
 public int GetAveragePing(Connection connection)
-public void SendUnconnected(UInt32 netAddr, ushort netPort, Byte[] steamResponseBuffer, int packetSize)
 }
 public Network.Stats : object {
 public bool Enabled

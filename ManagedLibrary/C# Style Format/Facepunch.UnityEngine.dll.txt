@@ -24,6 +24,7 @@ public Facepunch.Extend.TransformEx : object {
 public Transform FindChildRecursive(Transform transform, string name)
 public T GetOrAddComponent(Transform transform)
 public void DestroyAllChildren(Transform transform, bool immediate)
+public float AngleToPos(Transform transform, Vector3 targetPos)
 }
 public Facepunch.Utility.Mesh : object {
 public void Export(Mesh mesh, string filename)
@@ -74,11 +75,16 @@ public void CancelInvoke(Behaviour sender, Action action)
 private void CreateInstance()
 }
 public InvokeHandlerBase`1 : SingletonComponent`1<T> {
+public bool performanceTracking
+public float maxTickTimeWarning
+private List`1<InvokeTiming<T>> performanceTimes
 protected ListDictionary`2<InvokeAction, float> curList
 protected ListHashSet`1<InvokeAction> addList
 protected ListHashSet`1<InvokeAction> delList
 protected int nullIndex
 protected int nullChecks
+private Stopwatch tickStopWatch
+private Stopwatch invokeStopWatch
 protected void LateUpdate()
 protected float GetTime()
 protected void DoTick()

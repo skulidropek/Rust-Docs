@@ -155,6 +155,8 @@ public CallbackType FriendsEnumerateFollowingList
 public CallbackType SetPersonaNameResponse
 public CallbackType UnreadChatMessagesChanged
 public CallbackType OverlayBrowserProtocolNavigation
+public CallbackType EquippedProfileItemsChanged
+public CallbackType EquippedProfileItems
 public CallbackType FavoritesListChanged
 public CallbackType LobbyInvite
 public CallbackType LobbyEnter
@@ -391,6 +393,29 @@ public bool get_Public()
 public bool get_Official()
 public Task`1<bool> RequestOfficerList()
 public IEnumerable`1<Friend> GetOfficers()
+}
+internal Steamworks.CommunityProfileItemProperty : Enum {
+public int value__
+public CommunityProfileItemProperty ImageSmall
+public CommunityProfileItemProperty ImageLarge
+public CommunityProfileItemProperty InternalName
+public CommunityProfileItemProperty Title
+public CommunityProfileItemProperty Description
+public CommunityProfileItemProperty AppID
+public CommunityProfileItemProperty TypeID
+public CommunityProfileItemProperty Class
+public CommunityProfileItemProperty MovieWebM
+public CommunityProfileItemProperty MovieMP4
+public CommunityProfileItemProperty MovieWebMSmall
+public CommunityProfileItemProperty MovieMP4Small
+}
+internal Steamworks.CommunityProfileItemType : Enum {
+public int value__
+public CommunityProfileItemType AnimatedAvatar
+public CommunityProfileItemType AvatarFrame
+public CommunityProfileItemType ProfileModifier
+public CommunityProfileItemType ProfileBackground
+public CommunityProfileItemType MiniProfileBackground
 }
 public Steamworks.ConnectionManager : object {
 private IConnectionManager <Interface>k__BackingField
@@ -1387,6 +1412,28 @@ public CallbackType get_CallbackType()
 internal Steamworks.Data.EndGameResultCallback_t : ValueType {
 internal Result Result
 internal ulong UllUniqueGameID
+public int _datasize
+public int DataSize
+public CallbackType CallbackType
+public int get_DataSize()
+public CallbackType get_CallbackType()
+}
+internal Steamworks.Data.EquippedProfileItems_t : ValueType {
+internal Result Result
+internal ulong SteamID
+internal bool HasAnimatedAvatar
+internal bool HasAvatarFrame
+internal bool HasProfileModifier
+internal bool HasProfileBackground
+internal bool HasMiniProfileBackground
+public int _datasize
+public int DataSize
+public CallbackType CallbackType
+public int get_DataSize()
+public CallbackType get_CallbackType()
+}
+internal Steamworks.Data.EquippedProfileItemsChanged_t : ValueType {
+internal ulong SteamID
 public int _datasize
 public int DataSize
 public CallbackType CallbackType
@@ -5224,6 +5271,8 @@ private bool _BIsSubscribedFromFamilySharing(IntPtr self)
 internal bool BIsSubscribedFromFamilySharing()
 private bool _BIsTimedTrial(IntPtr self, UInt32& punSecondsAllowed, UInt32& punSecondsPlayed)
 internal bool BIsTimedTrial(UInt32& punSecondsAllowed, UInt32& punSecondsPlayed)
+private bool _SetDlcContext(IntPtr self, AppId nAppID)
+internal bool SetDlcContext(AppId nAppID)
 }
 internal Steamworks.ISteamClient : SteamInterface {
 internal void .ctor(bool IsGameServer)
@@ -5529,6 +5578,14 @@ private bool _RegisterProtocolInOverlayBrowser(IntPtr self, string pchProtocol)
 internal bool RegisterProtocolInOverlayBrowser(string pchProtocol)
 private void _ActivateGameOverlayInviteDialogConnectString(IntPtr self, string pchConnectString)
 internal void ActivateGameOverlayInviteDialogConnectString(string pchConnectString)
+private SteamAPICall_t _RequestEquippedProfileItems(IntPtr self, SteamId steamID)
+internal CallResult`1<EquippedProfileItems_t> RequestEquippedProfileItems(SteamId steamID)
+private bool _BHasEquippedProfileItem(IntPtr self, SteamId steamID, CommunityProfileItemType itemType)
+internal bool BHasEquippedProfileItem(SteamId steamID, CommunityProfileItemType itemType)
+private Utf8StringPointer _GetProfileItemPropertyString(IntPtr self, SteamId steamID, CommunityProfileItemType itemType, CommunityProfileItemProperty prop)
+internal string GetProfileItemPropertyString(SteamId steamID, CommunityProfileItemType itemType, CommunityProfileItemProperty prop)
+private UInt32 _GetProfileItemPropertyUint(IntPtr self, SteamId steamID, CommunityProfileItemType itemType, CommunityProfileItemProperty prop)
+internal UInt32 GetProfileItemPropertyUint(SteamId steamID, CommunityProfileItemType itemType, CommunityProfileItemProperty prop)
 }
 internal Steamworks.ISteamGameSearch : SteamInterface {
 internal void .ctor(bool IsGameServer)
@@ -7246,6 +7303,10 @@ public NetConfig P2P_STUN_ServerList
 public NetConfig P2P_Transport_ICE_Enable
 public NetConfig P2P_Transport_ICE_Penalty
 public NetConfig P2P_Transport_SDR_Penalty
+public NetConfig P2P_TURN_ServerList
+public NetConfig P2P_TURN_UserList
+public NetConfig P2P_TURN_PassList
+public NetConfig P2P_Transport_ICE_Implementation
 public NetConfig SDRClient_ConsecutitivePingTimeoutsFailInitial
 public NetConfig SDRClient_ConsecutitivePingTimeoutsFail
 public NetConfig SDRClient_MinPingsBeforePingAccurate
@@ -7619,6 +7680,10 @@ public Result SteamRealmMismatch
 public Result InvalidSignature
 public Result ParseFailure
 public Result NoVerifiedPhone
+public Result InsufficientBattery
+public Result ChargerRequired
+public Result CachedCredentialInvalid
+public Result K_EResultPhoneNumberIsVOIP
 }
 public Steamworks.RoomEnter : Enum {
 public int value__
@@ -7770,7 +7835,7 @@ public SteamId AppOwner
 public int BuildId
 public string CommandLine
 internal ISteamApps get_Internal()
-internal void InitializeInterface(bool server)
+internal bool InitializeInterface(bool server)
 internal void InstallEvents()
 public void add_OnDlcInstalled(Action`1<AppId> value)
 public void remove_OnDlcInstalled(Action`1<AppId> value)
@@ -7804,7 +7869,7 @@ public string get_CommandLine()
 public bool IsTimedTrial(Int32& secondsAllowed, Int32& secondsPlayed)
 }
 public Steamworks.SteamClass : object {
-internal void InitializeInterface(bool server)
+internal bool InitializeInterface(bool server)
 internal void DestroyInterface(bool server)
 }
 public Steamworks.SteamClient : object {
@@ -7835,7 +7900,7 @@ internal void ValidCheck()
 }
 public Steamworks.SteamClientClass`1 : SteamClass {
 internal SteamInterface Interface
-internal void InitializeInterface(bool server)
+internal bool InitializeInterface(bool server)
 internal void SetInterface(bool server, SteamInterface iface)
 internal void DestroyInterface(bool server)
 }
@@ -7872,7 +7937,7 @@ private bool _listenForFriendsMessages
 internal ISteamFriends Internal
 public bool ListenForFriendsMessages
 internal ISteamFriends get_Internal()
-internal void InitializeInterface(bool server)
+internal bool InitializeInterface(bool server)
 internal void InstallEvents()
 public void add_OnChatMessage(Action`3<Friend, string, string> value)
 public void remove_OnChatMessage(Action`3<Friend, string, string> value)
@@ -7951,7 +8016,7 @@ internal Dictionary`2<string, InputActionSetHandle_t> ActionSets
 internal ISteamInput Internal
 public IEnumerable`1<Controller> Controllers
 internal ISteamInput get_Internal()
-internal void InitializeInterface(bool server)
+internal bool InitializeInterface(bool server)
 public void RunFrame()
 public IEnumerable`1<Controller> get_Controllers()
 public string GetDigitalActionGlyph(Controller controller, string action)
@@ -8019,7 +8084,7 @@ public string Currency
 public InventoryItem[] Items
 public InventoryDef[] Definitions
 internal ISteamInventory get_Internal()
-internal void InitializeInterface(bool server)
+internal bool InitializeInterface(bool server)
 internal void InstallEvents(bool server)
 private void InventoryUpdated(SteamInventoryFullUpdate_t x)
 public void add_OnInventoryUpdated(Action`1<InventoryResult> value)
@@ -8089,7 +8154,7 @@ internal ISteamMatchmaking Internal
 internal int MaxLobbyKeyLength
 public LobbyQuery LobbyList
 internal ISteamMatchmaking get_Internal()
-internal void InitializeInterface(bool server)
+internal bool InitializeInterface(bool server)
 internal int get_MaxLobbyKeyLength()
 internal void InstallEvents()
 private void OnLobbyChatMessageRecievedAPI(LobbyChatMsg_t callback)
@@ -8126,7 +8191,7 @@ public IEnumerable`1<ServerInfo> GetHistoryServers()
 internal Steamworks.SteamMatchmakingServers : SteamClientClass`1<SteamMatchmakingServers> {
 internal ISteamMatchmakingServers Internal
 internal ISteamMatchmakingServers get_Internal()
-internal void InitializeInterface(bool server)
+internal bool InitializeInterface(bool server)
 }
 public Steamworks.SteamMusic : SteamClientClass`1<SteamMusic> {
 private Action OnPlaybackChanged
@@ -8137,7 +8202,7 @@ public bool IsPlaying
 public MusicStatus Status
 public float Volume
 internal ISteamMusic get_Internal()
-internal void InitializeInterface(bool server)
+internal bool InitializeInterface(bool server)
 internal void InstallEvents()
 public void add_OnPlaybackChanged(Action value)
 public void remove_OnPlaybackChanged(Action value)
@@ -8158,7 +8223,7 @@ public Action`1<SteamId> OnP2PSessionRequest
 public Action`2<SteamId, P2PSessionError> OnP2PConnectionFailed
 internal ISteamNetworking Internal
 internal ISteamNetworking get_Internal()
-internal void InitializeInterface(bool server)
+internal bool InitializeInterface(bool server)
 internal void InstallEvents(bool server)
 public bool AcceptP2PSessionWithUser(SteamId user)
 public bool AllowP2PPacketRelay(bool allow)
@@ -8200,7 +8265,7 @@ internal ISteamNetworkingSockets Internal
 public NetIdentity Identity
 internal ISteamNetworkingSockets get_Internal()
 public NetIdentity get_Identity()
-internal void InitializeInterface(bool server)
+internal bool InitializeInterface(bool server)
 internal SocketManager GetSocketManager(UInt32 id)
 internal void SetSocketManager(UInt32 id, SocketManager manager)
 internal ConnectionManager GetConnectionManager(UInt32 id)
@@ -8242,6 +8307,9 @@ public float FakeRecvPacketLag
 public int ConnectionTimeout
 public int Timeout
 public int SendBufferSize
+public int SendRateMin
+public int SendRateMax
+public int NagleTime
 public int AllowWithoutAuth
 public int Unencrypted
 public int DebugLevelAckRTT
@@ -8252,7 +8320,7 @@ public int DebugLevelP2PRendezvous
 public int DebugLevelSDRRelayPings
 public NetDebugOutput DebugLevel
 internal ISteamNetworkingUtils get_Internal()
-internal void InitializeInterface(bool server)
+internal bool InitializeInterface(bool server)
 private void InstallCallbacks(bool server)
 public void add_OnDebugOutput(Action`2<NetDebugOutput, string> value)
 public void remove_OnDebugOutput(Action`2<NetDebugOutput, string> value)
@@ -8277,6 +8345,12 @@ public int get_Timeout()
 public void set_Timeout(int value)
 public int get_SendBufferSize()
 public void set_SendBufferSize(int value)
+public int get_SendRateMin()
+public void set_SendRateMin(int value)
+public int get_SendRateMax()
+public void set_SendRateMax(int value)
+public int get_NagleTime()
+public void set_NagleTime(int value)
 public int get_AllowWithoutAuth()
 public void set_AllowWithoutAuth(int value)
 public int get_Unencrypted()
@@ -8311,7 +8385,7 @@ internal ISteamParentalSettings Internal
 public bool IsParentalLockEnabled
 public bool IsParentalLockLocked
 internal ISteamParentalSettings get_Internal()
-internal void InitializeInterface(bool server)
+internal bool InitializeInterface(bool server)
 internal void InstallEvents(bool server)
 public void add_OnSettingsChanged(Action value)
 public void remove_OnSettingsChanged(Action value)
@@ -8329,7 +8403,7 @@ internal ISteamParties Internal
 public int ActiveBeaconCount
 public IEnumerable`1<PartyBeacon> ActiveBeacons
 internal ISteamParties get_Internal()
-internal void InitializeInterface(bool server)
+internal bool InitializeInterface(bool server)
 internal void InstallEvents(bool server)
 public void add_OnBeaconLocationsUpdated(Action value)
 public void remove_OnBeaconLocationsUpdated(Action value)
@@ -8358,7 +8432,7 @@ private Action`1<RemotePlaySession> OnSessionDisconnected
 internal ISteamRemotePlay Internal
 public int SessionCount
 internal ISteamRemotePlay get_Internal()
-internal void InitializeInterface(bool server)
+internal bool InitializeInterface(bool server)
 internal void InstallEvents(bool server)
 public void add_OnSessionConnected(Action`1<RemotePlaySession> value)
 public void remove_OnSessionConnected(Action`1<RemotePlaySession> value)
@@ -8379,7 +8453,7 @@ public bool IsCloudEnabledForApp
 public int FileCount
 public IEnumerable`1<string> Files
 internal ISteamRemoteStorage get_Internal()
-internal void InitializeInterface(bool server)
+internal bool InitializeInterface(bool server)
 public bool FileWrite(string filename, Byte[] data)
 public Byte[] FileRead(string filename)
 public bool FileExists(string filename)
@@ -8405,7 +8479,7 @@ private Action`1<Result> OnScreenshotFailed
 internal ISteamScreenshots Internal
 public bool Hooked
 internal ISteamScreenshots get_Internal()
-internal void InitializeInterface(bool server)
+internal bool InitializeInterface(bool server)
 internal void InstallEvents()
 public void add_OnScreenshotRequested(Action value)
 public void remove_OnScreenshotRequested(Action value)
@@ -8455,7 +8529,7 @@ public IPAddress PublicIp
 public bool AutomaticHeartbeats
 public bool AdvertiseServer
 internal ISteamGameServer get_Internal()
-internal void InitializeInterface(bool server)
+internal bool InitializeInterface(bool server)
 public bool get_IsValid()
 internal void InstallEvents()
 public void add_OnValidateAuthTicketResponse(Action`3<SteamId, SteamId, AuthResponse> value)
@@ -8513,7 +8587,7 @@ public UserHasLicenseForAppResult UserHasLicenseForApp(SteamId steamid, AppId ap
 }
 public Steamworks.SteamServerClass`1 : SteamClass {
 internal SteamInterface Interface
-internal void InitializeInterface(bool server)
+internal bool InitializeInterface(bool server)
 internal void SetInterface(bool server, SteamInterface iface)
 internal void DestroyInterface(bool server)
 }
@@ -8532,7 +8606,7 @@ public SteamServerInit WithQueryShareGamePort()
 public Steamworks.SteamServerStats : SteamServerClass`1<SteamServerStats> {
 internal ISteamGameServerStats Internal
 internal ISteamGameServerStats get_Internal()
-internal void InitializeInterface(bool server)
+internal bool InitializeInterface(bool server)
 public Task`1<Result> RequestUserStatsAsync(SteamId steamid)
 public bool SetInt(SteamId steamid, string name, int stat)
 public bool SetFloat(SteamId steamid, string name, float stat)
@@ -8548,7 +8622,7 @@ internal SteamInterface InterfaceClient
 internal SteamInterface InterfaceServer
 internal SteamInterface Interface
 internal SteamInterface get_Interface()
-internal void InitializeInterface(bool server)
+internal bool InitializeInterface(bool server)
 internal void SetInterface(bool server, SteamInterface iface)
 internal void DestroyInterface(bool server)
 }
@@ -8559,7 +8633,7 @@ private Action`2<AppId, PublishedFileId> OnItemUnsubscribed
 private Action`2<AppId, PublishedFileId> OnItemInstalled
 internal ISteamUGC Internal
 internal ISteamUGC get_Internal()
-internal void InitializeInterface(bool server)
+internal bool InitializeInterface(bool server)
 internal void InstallEvents(bool server)
 public void add_OnDownloadItemResult(Action`1<Result> value)
 public void remove_OnDownloadItemResult(Action`1<Result> value)
@@ -8608,7 +8682,7 @@ public bool IsTwoFactorEnabled
 public bool IsPhoneIdentifying
 public bool IsPhoneRequiringVerification
 internal ISteamUser get_Internal()
-internal void InitializeInterface(bool server)
+internal bool InitializeInterface(bool server)
 internal void InstallEvents()
 public void add_OnSteamServersConnected(Action value)
 public void remove_OnSteamServersConnected(Action value)
@@ -8667,7 +8741,7 @@ internal ISteamUserStats Internal
 public bool StatsRecieved
 public IEnumerable`1<Achievement> Achievements
 internal ISteamUserStats get_Internal()
-internal void InitializeInterface(bool server)
+internal bool InitializeInterface(bool server)
 public bool get_StatsRecieved()
 internal void set_StatsRecieved(bool value)
 internal void InstallEvents()
@@ -8721,7 +8795,7 @@ public bool VrHeadsetStreaming
 public bool IsSteamChinaLauncher
 public bool IsRunningOnSteamDeck
 internal ISteamUtils get_Internal()
-internal void InitializeInterface(bool server)
+internal bool InitializeInterface(bool server)
 internal void InstallEvents(bool server)
 private void SteamClosed()
 public void add_OnIpCountryChanged(Action value)
@@ -8767,7 +8841,7 @@ internal ISteamVideo Internal
 public bool IsBroadcasting
 public int NumViewers
 internal ISteamVideo get_Internal()
-internal void InitializeInterface(bool server)
+internal bool InitializeInterface(bool server)
 internal void InstallEvents()
 public bool get_IsBroadcasting()
 public int get_NumViewers()

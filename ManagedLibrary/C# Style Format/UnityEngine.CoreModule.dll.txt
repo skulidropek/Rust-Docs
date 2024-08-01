@@ -2383,7 +2383,6 @@ public void DrawRay(Vector3 start, Vector3 dir)
 public void DrawRay(Vector3 start, Vector3 dir, Color color, float duration, bool depthTest)
 public void Break()
 public void DebugBreak()
-public int ExtractStackTraceNoAlloc(Byte* buffer, int bufferMax, string projectFolder)
 public void Log(object message)
 public void Log(object message, Object context)
 public void LogFormat(string format, Object[] args)
@@ -4941,19 +4940,11 @@ private void get_originCustom_Injected(Vector3& ret)
 private void set_originCustom_Injected(Vector3& value)
 }
 public UnityEngine.LightProbes : Object {
-private Action tetrahedralizationCompleted
-private Action needsRetetrahedralization
 public Vector3[] positions
 public SphericalHarmonicsL2[] bakedProbes
 public int count
 public int cellCount
 public Single[] coefficients
-public void add_tetrahedralizationCompleted(Action value)
-public void remove_tetrahedralizationCompleted(Action value)
-private void Internal_CallTetrahedralizationCompletedFunction()
-public void add_needsRetetrahedralization(Action value)
-public void remove_needsRetetrahedralization(Action value)
-private void Internal_CallNeedsRetetrahedralizationFunction()
 public void Tetrahedralize()
 public void TetrahedralizeAsync()
 public void GetInterpolatedProbe(Vector3 position, Renderer renderer, SphericalHarmonicsL2& probe)
@@ -6906,7 +6897,7 @@ private void add_m_SaveScreenshotToDisk(Action`3<string, bool, DebugScreenCaptur
 private void remove_m_SaveScreenshotToDisk(Action`3<string, bool, DebugScreenCapture> value)
 public void add_createMetaData(Action`1<MetaData> value)
 public void remove_createMetaData(Action`1<MetaData> value)
-private void StartOperation(UInt32 captureFlag, bool requestScreenshot, string path, bool isRemote)
+private void StartOperation(UInt32 captureFlag, bool requestScreenshot, string path)
 public void TakeSnapshot(string path, Action`2<string, bool> finishCallback, CaptureFlags captureFlags)
 public void TakeSnapshot(string path, Action`2<string, bool> finishCallback, Action`3<string, bool, DebugScreenCapture> screenshotCallback, CaptureFlags captureFlags)
 public void TakeTempSnapshot(Action`2<string, bool> finishCallback, CaptureFlags captureFlags)
@@ -9293,7 +9284,7 @@ protected void OnValidate()
 protected void OnDisable()
 }
 public UnityEngine.Rendering.RenderPipelineManager : object {
-internal RenderPipelineAsset s_CurrentPipelineAsset
+private RenderPipelineAsset s_CurrentPipelineAsset
 private Camera[] s_Cameras
 private int s_CameraCapacity
 private RenderPipeline <currentPipeline>k__BackingField
@@ -9319,7 +9310,7 @@ internal void EndCameraRendering(ScriptableRenderContext context, Camera camera)
 internal void CleanupRenderPipeline()
 private void GetCameras(ScriptableRenderContext context)
 private void DoRenderLoop_Internal(RenderPipelineAsset pipe, IntPtr loopPtr)
-internal void PrepareRenderPipeline(RenderPipelineAsset pipelineAsset)
+private void PrepareRenderPipeline(RenderPipelineAsset pipelineAsset)
 }
 public UnityEngine.Rendering.RenderQueue : Enum {
 public int value__
@@ -10853,7 +10844,6 @@ public RuntimePlatform tvOS
 public RuntimePlatform Switch
 public RuntimePlatform Lumin
 public RuntimePlatform Stadia
-public RuntimePlatform CloudRendering
 }
 public UnityEngine.ScalableBufferManager : object {
 public float widthScaleFactor
@@ -10941,7 +10931,6 @@ public int GetHashCode()
 public bool Equals(object other)
 }
 public UnityEngine.SceneManagement.SceneManager : object {
-internal bool s_AllowLoadScene
 private UnityAction`2<Scene, LoadSceneMode> sceneLoaded
 private UnityAction`1<Scene> sceneUnloaded
 private UnityAction`2<Scene, Scene> activeSceneChanged
@@ -11003,13 +10992,9 @@ private void GetSceneAt_Injected(int index, Scene& ret)
 private void CreateScene_Injected(string sceneName, CreateSceneParameters& parameters, Scene& ret)
 private bool UnloadSceneInternal_Injected(Scene& scene, UnloadSceneOptions options)
 private AsyncOperation UnloadSceneAsyncInternal_Injected(Scene& scene, UnloadSceneOptions options)
+private AsyncOperation LoadSceneAsyncNameIndexInternal_Injected(string sceneName, int sceneBuildIndex, LoadSceneParameters& parameters, bool mustCompleteNextFrame)
 private void MergeScenes_Injected(Scene& sourceScene, Scene& destinationScene)
 private void MoveGameObjectToScene_Injected(GameObject go, Scene& scene)
-}
-internal UnityEngine.SceneManagement.SceneManagerAPIInternal : object {
-public AsyncOperation LoadSceneAsyncNameIndexInternal(string sceneName, int sceneBuildIndex, LoadSceneParameters parameters, bool mustCompleteNextFrame)
-public AsyncOperation UnloadSceneNameIndexInternal(string sceneName, int sceneBuildIndex, bool immediately, UnloadSceneOptions options, Boolean& outSuccess)
-private AsyncOperation LoadSceneAsyncNameIndexInternal_Injected(string sceneName, int sceneBuildIndex, LoadSceneParameters& parameters, bool mustCompleteNextFrame)
 }
 public UnityEngine.SceneManagement.SceneUtility : object {
 public string GetScenePathByBuildIndex(int buildIndex)
@@ -12199,7 +12184,6 @@ public Texture2D grayTexture
 public Texture2D linearGrayTexture
 public Texture2D normalTexture
 public bool isReadable
-internal bool isPreProcessed
 public bool streamingMipmaps
 public int streamingMipmapsPriority
 public int requestedMipmapLevel
@@ -12235,7 +12219,6 @@ private bool SetPixelDataImpl(IntPtr data, int mipLevel, int elementSize, int da
 private IntPtr GetWritableImageData(int frame)
 private long GetRawImageDataSize()
 private void GenerateAtlasImpl(Vector2[] sizes, int padding, int atlasSize, Rect[] rect)
-internal bool get_isPreProcessed()
 public bool get_streamingMipmaps()
 public int get_streamingMipmapsPriority()
 public int get_requestedMipmapLevel()

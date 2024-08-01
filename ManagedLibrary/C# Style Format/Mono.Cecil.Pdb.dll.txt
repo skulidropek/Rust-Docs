@@ -1,27 +1,3 @@
-public Microsoft.Cci.ILocalScope {
-public UInt32 Offset
-public UInt32 Length
-public UInt32 get_Offset()
-public UInt32 get_Length()
-}
-public Microsoft.Cci.IName {
-public int UniqueKey
-public int UniqueKeyIgnoringCase
-public string Value
-public int get_UniqueKey()
-public int get_UniqueKeyIgnoringCase()
-public string get_Value()
-}
-public Microsoft.Cci.INamespaceScope {
-public IEnumerable`1<IUsedNamespace> UsedNamespaces
-public IEnumerable`1<IUsedNamespace> get_UsedNamespaces()
-}
-public Microsoft.Cci.IUsedNamespace {
-public IName Alias
-public IName NamespaceName
-public IName get_Alias()
-public IName get_NamespaceName()
-}
 internal Microsoft.Cci.Pdb.AnnotationSym : ValueType {
 internal UInt32 off
 internal ushort seg
@@ -77,6 +53,7 @@ private int offset
 internal Byte[] Buffer
 internal int Position
 internal void .ctor(int capacity)
+internal void .ctor(Byte[] buffer)
 internal Byte[] get_Buffer()
 internal void FillBuffer(Stream stream, int capacity)
 internal void Append(Stream stream, int count)
@@ -701,6 +678,24 @@ internal ushort segCod
 internal ushort flags
 internal string name
 }
+internal Microsoft.Cci.Pdb.ILocalScope {
+public UInt32 Offset
+public UInt32 Length
+public UInt32 get_Offset()
+public UInt32 get_Length()
+}
+internal Microsoft.Cci.Pdb.IName {
+public int UniqueKey
+public int UniqueKeyIgnoringCase
+public string Value
+public int get_UniqueKey()
+public int get_UniqueKeyIgnoringCase()
+public string get_Value()
+}
+internal Microsoft.Cci.Pdb.INamespaceScope {
+public IEnumerable`1<IUsedNamespace> UsedNamespaces
+public IEnumerable`1<IUsedNamespace> get_UsedNamespaces()
+}
 internal Microsoft.Cci.Pdb.IntHashTable : object {
 private Int32[] primes
 private bucket[] buckets
@@ -720,6 +715,12 @@ private void rehash()
 private void rehash(int newsize)
 private void Insert(int key, object nvalue, bool add)
 private void putEntry(bucket[] newBuckets, int key, object nvalue, int hashcode)
+}
+internal Microsoft.Cci.Pdb.IUsedNamespace {
+public IName Alias
+public IName NamespaceName
+public IName get_Alias()
+public IName get_NamespaceName()
 }
 internal Microsoft.Cci.Pdb.LabelSym32 : ValueType {
 internal UInt32 off
@@ -1241,6 +1242,7 @@ internal Microsoft.Cci.Pdb.PdbConstant : object {
 internal string name
 internal UInt32 token
 internal object value
+internal void .ctor(string name, UInt32 token, object value)
 internal void .ctor(BitAccess bits)
 }
 internal Microsoft.Cci.Pdb.PdbDebugException : IOException {
@@ -1250,18 +1252,21 @@ internal Microsoft.Cci.Pdb.PdbException : IOException {
 internal void .ctor(string format, Object[] args)
 }
 internal Microsoft.Cci.Pdb.PdbFile : object {
-private void LoadGuidStream(BitAccess bits, Guid& doctype, Guid& language, Guid& vendor)
+private Guid BasicLanguageGuid
+public Guid SymDocumentType_Text
+private void LoadInjectedSourceInformation(BitAccess bits, Guid& doctype, Guid& language, Guid& vendor, Guid& checksumAlgo, Byte[]& checksum)
 private Dictionary`2<string, int> LoadNameIndex(BitAccess bits, Int32& age, Guid& guid)
 private IntHashTable LoadNameStream(BitAccess bits)
 private int FindFunction(PdbFunction[] funcs, ushort sec, UInt32 off)
-private void LoadManagedLines(PdbFunction[] funcs, IntHashTable names, BitAccess bits, MsfDirectory dir, Dictionary`2<string, int> nameIndex, PdbReader reader, UInt32 limit)
-private void LoadFuncsFromDbiModule(BitAccess bits, DbiModuleInfo info, IntHashTable names, ArrayList funcList, bool readStrings, MsfDirectory dir, Dictionary`2<string, int> nameIndex, PdbReader reader)
+private void LoadManagedLines(PdbFunction[] funcs, IntHashTable names, BitAccess bits, MsfDirectory dir, Dictionary`2<string, int> nameIndex, PdbReader reader, UInt32 limit, Dictionary`2<string, PdbSource> sourceCache)
+private void LoadFuncsFromDbiModule(BitAccess bits, DbiModuleInfo info, IntHashTable names, List`1<PdbFunction> funcList, bool readStrings, MsfDirectory dir, Dictionary`2<string, int> nameIndex, PdbReader reader, Dictionary`2<string, PdbSource> sourceCache)
 private void LoadDbiStream(BitAccess bits, DbiModuleInfo[]& modules, DbiDbgHdr& header, bool readStrings)
-internal PdbFunction[] LoadFunctions(Stream read, Dictionary`2& tokenToSourceMapping, String& sourceServerData, Int32& age, Guid& guid)
-private void LoadTokenToSourceInfo(BitAccess bits, DbiModuleInfo module, IntHashTable names, MsfDirectory dir, Dictionary`2<string, int> nameIndex, PdbReader reader, Dictionary`2<UInt32, PdbTokenLine> tokenToSourceMapping)
-private IntHashTable ReadSourceFileInfo(BitAccess bits, UInt32 limit, IntHashTable names, MsfDirectory dir, Dictionary`2<string, int> nameIndex, PdbReader reader)
+internal PdbInfo LoadFunctions(Stream read)
+private void LoadTokenToSourceInfo(BitAccess bits, DbiModuleInfo module, IntHashTable names, MsfDirectory dir, Dictionary`2<string, int> nameIndex, PdbReader reader, Dictionary`2<UInt32, PdbTokenLine> tokenToSourceMapping, Dictionary`2<string, PdbSource> sourceCache)
+private IntHashTable ReadSourceFileInfo(BitAccess bits, UInt32 limit, IntHashTable names, MsfDirectory dir, Dictionary`2<string, int> nameIndex, PdbReader reader, Dictionary`2<string, PdbSource> sourceCache)
 }
 internal Microsoft.Cci.Pdb.PdbFileHeader : object {
+private Byte[] windowsPdbMagic
 internal Byte[] magic
 internal int pageSize
 internal int freePageMap
@@ -1280,6 +1285,7 @@ internal UInt32 slotToken
 internal UInt32 tokenOfMethodWhoseUsingInfoAppliesToThisMethod
 internal UInt32 segment
 internal UInt32 address
+internal UInt32 length
 internal PdbScope[] scopes
 internal PdbSlot[] slots
 internal PdbConstant[] constants
@@ -1290,15 +1296,36 @@ internal IEnumerable`1<INamespaceScope> namespaceScopes
 internal string iteratorClass
 internal List`1<ILocalScope> iteratorScopes
 internal PdbSynchronizationInformation synchronizationInformation
+private bool visualBasicScopesAdjusted
 private string StripNamespace(string module)
+internal void AdjustVisualBasicScopes()
+private void AdjustVisualBasicScopes(PdbScope[] scopes)
 internal PdbFunction[] LoadManagedFunctions(BitAccess bits, UInt32 limit, bool readStrings)
 internal void CountScopesAndSlots(BitAccess bits, UInt32 limit, Int32& constants, Int32& scopes, Int32& slots, Int32& usedNamespaces)
 internal void .ctor(ManProcSym proc, BitAccess bits)
+internal void ReadMD2CustomMetadata(BitAccess bits)
 private void ReadCustomMetadata(BitAccess bits)
 private void ReadForwardIterator(BitAccess bits)
 private void ReadIteratorLocals(BitAccess bits)
 private void ReadForwardInfo(BitAccess bits)
 private void ReadUsingInfo(BitAccess bits)
+}
+internal Microsoft.Cci.Pdb.PdbInfo : object {
+public PdbFunction[] Functions
+public Dictionary`2<UInt32, PdbTokenLine> TokenToSourceMapping
+public string SourceServerData
+public int Age
+public Guid Guid
+public Byte[] SourceLinkData
+}
+internal Microsoft.Cci.Pdb.PdbIteratorScope : object {
+private UInt32 offset
+private UInt32 length
+public UInt32 Offset
+public UInt32 Length
+internal void .ctor(UInt32 offset, UInt32 length)
+public UInt32 get_Offset()
+public UInt32 get_Length()
 }
 internal Microsoft.Cci.Pdb.PdbLine : ValueType {
 internal UInt32 offset
@@ -1329,6 +1356,7 @@ internal String[] usedNamespaces
 internal UInt32 address
 internal UInt32 offset
 internal UInt32 length
+internal void .ctor(UInt32 address, UInt32 offset, UInt32 length, PdbSlot[] slots, PdbConstant[] constants, String[] usedNamespaces)
 internal void .ctor(UInt32 address, UInt32 length, PdbSlot[] slots, PdbConstant[] constants, String[] usedNamespaces)
 internal void .ctor(UInt32 funcOffset, BlockSym32 block, BitAccess bits, UInt32& typind)
 }
@@ -1337,6 +1365,7 @@ internal UInt32 slot
 internal UInt32 typeToken
 internal string name
 internal ushort flags
+internal void .ctor(UInt32 slot, UInt32 typeToken, string name, ushort flags)
 internal void .ctor(BitAccess bits)
 }
 internal Microsoft.Cci.Pdb.PdbSource : object {
@@ -1344,7 +1373,9 @@ internal string name
 internal Guid doctype
 internal Guid language
 internal Guid vendor
-internal void .ctor(string name, Guid doctype, Guid language, Guid vendor)
+internal Guid checksumAlgorithm
+internal Byte[] checksum
+internal void .ctor(string name, Guid doctype, Guid language, Guid vendor, Guid checksumAlgorithm, Byte[] checksum)
 }
 internal Microsoft.Cci.Pdb.PdbSynchronizationInformation : object {
 internal UInt32 kickoffMethodToken
@@ -1781,31 +1812,27 @@ internal ushort wExtra
 internal UInt32 rva
 internal UInt32 rvaTarget
 }
-internal Microsoft.Cci.PdbIteratorScope : object {
-private UInt32 offset
-private UInt32 length
-public UInt32 Offset
-public UInt32 Length
-internal void .ctor(UInt32 offset, UInt32 length)
-public UInt32 get_Offset()
-public UInt32 get_Length()
+internal Mono.Cecil.Pdb.CustomMetadataType : Enum {
+public byte value__
+public CustomMetadataType UsingInfo
+public CustomMetadataType ForwardInfo
+public CustomMetadataType IteratorScopes
+public CustomMetadataType ForwardIterator
 }
-internal Mono.Cecil.Pdb.GuidMapping : object {
-private Dictionary`2<Guid, DocumentLanguage> guid_language
-private Dictionary`2<DocumentLanguage, Guid> language_guid
-private Guid type_text
-private Guid hash_md5
-private Guid hash_sha1
-private Guid vendor_ms
-private void AddMapping(DocumentLanguage language, Guid guid)
-public DocumentType ToType(Guid guid)
-public Guid ToGuid(DocumentType type)
-public DocumentHashAlgorithm ToHashAlgorithm(Guid guid)
-public Guid ToGuid(DocumentHashAlgorithm hash_algo)
-public DocumentLanguage ToLanguage(Guid guid)
-public Guid ToGuid(DocumentLanguage language)
-public DocumentLanguageVendor ToVendor(Guid guid)
-public Guid ToGuid(DocumentLanguageVendor vendor)
+internal Mono.Cecil.Pdb.CustomMetadataWriter : object {
+private SymWriter sym_writer
+private MemoryStream stream
+private BinaryStreamWriter writer
+private int count
+private byte version
+public void .ctor(SymWriter sym_writer)
+public void WriteUsingInfo(ImportDebugInformation import_info)
+public void WriteForwardInfo(MetadataToken import_parent)
+public void WriteIteratorScopes(StateMachineScopeDebugInformation state_machine, MethodDebugInformation debug_info)
+public void WriteForwardIterator(TypeReference type)
+private void Write(CustomMetadataType type, Action write)
+public void WriteCustomMetadata()
+public void Dispose()
 }
 internal Mono.Cecil.Pdb.IMetaDataEmit {
 public void SetModuleProps(string szName)
@@ -1868,7 +1895,7 @@ public UInt32 EnumTypeRefs(UInt32& phEnum, UInt32[] rTypeRefs, UInt32 cMax)
 public UInt32 FindTypeDefByName(string szTypeDef, UInt32 tkEnclosingClass)
 public Guid GetScopeProps(StringBuilder szName, UInt32 cchName, UInt32& pchName)
 public UInt32 GetModuleFromScope()
-public UInt32 GetTypeDefProps(UInt32 td, IntPtr szTypeDef, UInt32 cchTypeDef, UInt32& pchTypeDef, IntPtr pdwTypeDefFlags)
+public UInt32 GetTypeDefProps(UInt32 td, Char* szTypeDef, UInt32 cchTypeDef, UInt32* pchTypeDef, UInt32* pdwTypeDefFlags, UInt32* ptkExtends)
 public UInt32 GetInterfaceImplProps(UInt32 iiImpl, UInt32& pClass)
 public UInt32 GetTypeRefProps(UInt32 tr, UInt32& ptkResolutionScope, StringBuilder szName, UInt32 cchName)
 public UInt32 ResolveTypeRef(UInt32 tr, Guid& riid, Object& ppIScope)
@@ -1886,7 +1913,7 @@ public UInt32 FindMember(UInt32 td, string szName, Byte[] pvSigBlob, UInt32 cbSi
 public UInt32 FindMethod(UInt32 td, string szName, Byte[] pvSigBlob, UInt32 cbSigBlob)
 public UInt32 FindField(UInt32 td, string szName, Byte[] pvSigBlob, UInt32 cbSigBlob)
 public UInt32 FindMemberRef(UInt32 td, string szName, Byte[] pvSigBlob, UInt32 cbSigBlob)
-public UInt32 GetMethodProps(UInt32 mb, UInt32& pClass, IntPtr szMethod, UInt32 cchMethod, UInt32& pchMethod, IntPtr pdwAttr, IntPtr ppvSigBlob, IntPtr pcbSigBlob, IntPtr pulCodeRVA)
+public UInt32 GetMethodProps(UInt32 mb, UInt32* pClass, Char* szMethod, UInt32 cchMethod, UInt32* pchMethod, UInt32* pdwAttr, IntPtr ppvSigBlob, IntPtr pcbSigBlob, UInt32* pulCodeRVA, UInt32* pdwImplFlags)
 public UInt32 GetMemberRefProps(UInt32 mr, UInt32& ptk, StringBuilder szMember, UInt32 cchMember, UInt32& pchMember, IntPtr& ppvSigBlob)
 public UInt32 EnumProperties(UInt32& phEnum, UInt32 td, IntPtr rProperties, UInt32 cMax)
 public UInt32 EnumEvents(UInt32& phEnum, UInt32 td, IntPtr rEvents, UInt32 cMax)
@@ -1918,14 +1945,18 @@ public UInt32 GetPropertyProps(UInt32 prop, UInt32& pClass, StringBuilder szProp
 public UInt32 GetParamProps(UInt32 tk, UInt32& pmd, UInt32& pulSequence, StringBuilder szName, UInt32 cchName, UInt32& pchName, UInt32& pdwAttr, UInt32& pdwCPlusTypeFlag, IntPtr& ppValue)
 public UInt32 GetCustomAttributeByName(UInt32 tkObj, string szName, IntPtr& ppData)
 public bool IsValidToken(UInt32 tk)
-public UInt32 GetNestedClassProps(UInt32 tdNestedClass)
+public UInt32 GetNestedClassProps(UInt32 tdNestedClass, UInt32* ptdEnclosingClass)
 public UInt32 GetNativeCallConvFromSig(IntPtr pvSig, UInt32 cbSig)
 public int IsGlobal(UInt32 pd)
 }
+internal Mono.Cecil.Pdb.ISymUnmanagedDocumentWriter {
+public void SetSource(UInt32 sourceSize, Byte[] source)
+public void SetCheckSum(Guid algorithmId, UInt32 checkSumSize, Byte[] checkSum)
+}
 internal Mono.Cecil.Pdb.ISymUnmanagedWriter2 {
 public void DefineDocument(string url, Guid& langauge, Guid& languageVendor, Guid& documentType, ISymUnmanagedDocumentWriter& pRetVal)
-public void SetUserEntryPoint(SymbolToken method)
-public void OpenMethod(SymbolToken method)
+public void SetUserEntryPoint(int methodToken)
+public void OpenMethod(int methodToken)
 public void CloseMethod()
 public void OpenScope(int startOffset, Int32& pRetVal)
 public void CloseScope(int endOffset)
@@ -1935,7 +1966,7 @@ public void DefineParameter_Placeholder()
 public void DefineField_Placeholder()
 public void DefineGlobalVariable_Placeholder()
 public void Close()
-public void SetSymAttribute_Placeholder()
+public void SetSymAttribute(UInt32 parent, string name, UInt32 data, IntPtr signature)
 public void OpenNamespace(string name)
 public void CloseNamespace()
 public void UsingNamespace(string fullName)
@@ -1947,12 +1978,16 @@ public void RemapToken_Placeholder()
 public void Initialize2_Placeholder()
 public void DefineConstant_Placeholder()
 public void Abort_Placeholder()
-public void DefineLocalVariable2(string name, int attributes, SymbolToken sigToken, int addrKind, int addr1, int addr2, int addr3, int startOffset, int endOffset)
+public void DefineLocalVariable2(string name, int attributes, int sigToken, int addrKind, int addr1, int addr2, int addr3, int startOffset, int endOffset)
+public void DefineGlobalVariable2_Placeholder()
+public void DefineConstant2(string name, object variant, int sigToken)
 }
 internal Mono.Cecil.Pdb.ModuleMetadata : object {
 private ModuleDefinition module
 private Dictionary`2<UInt32, TypeDefinition> types
 private Dictionary`2<UInt32, MethodDefinition> methods
+private UInt32 S_OK
+private UInt32 E_FAIL
 public void .ctor(ModuleDefinition module)
 private bool TryGetType(UInt32 token, TypeDefinition& type)
 private bool TryGetMethod(UInt32 token, MethodDefinition& method)
@@ -2016,9 +2051,7 @@ public UInt32 EnumTypeRefs(UInt32& phEnum, UInt32[] rTypeRefs, UInt32 cMax)
 public UInt32 FindTypeDefByName(string szTypeDef, UInt32 tkEnclosingClass)
 public Guid GetScopeProps(StringBuilder szName, UInt32 cchName, UInt32& pchName)
 public UInt32 GetModuleFromScope()
-public UInt32 GetTypeDefProps(UInt32 td, IntPtr szTypeDef, UInt32 cchTypeDef, UInt32& pchTypeDef, IntPtr pdwTypeDefFlags)
-private void WriteIntPtr(IntPtr ptr, UInt32 value)
-private void WriteString(string str, IntPtr buffer, UInt32 bufferSize, UInt32& chars)
+public UInt32 GetTypeDefProps(UInt32 td, Char* szTypeDef, UInt32 cchTypeDef, UInt32* pchTypeDef, UInt32* pdwTypeDefFlags, UInt32* ptkExtends)
 public UInt32 GetInterfaceImplProps(UInt32 iiImpl, UInt32& pClass)
 public UInt32 GetTypeRefProps(UInt32 tr, UInt32& ptkResolutionScope, StringBuilder szName, UInt32 cchName)
 public UInt32 ResolveTypeRef(UInt32 tr, Guid& riid, Object& ppIScope)
@@ -2036,7 +2069,8 @@ public UInt32 FindMember(UInt32 td, string szName, Byte[] pvSigBlob, UInt32 cbSi
 public UInt32 FindMethod(UInt32 td, string szName, Byte[] pvSigBlob, UInt32 cbSigBlob)
 public UInt32 FindField(UInt32 td, string szName, Byte[] pvSigBlob, UInt32 cbSigBlob)
 public UInt32 FindMemberRef(UInt32 td, string szName, Byte[] pvSigBlob, UInt32 cbSigBlob)
-public UInt32 GetMethodProps(UInt32 mb, UInt32& pClass, IntPtr szMethod, UInt32 cchMethod, UInt32& pchMethod, IntPtr pdwAttr, IntPtr ppvSigBlob, IntPtr pcbSigBlob, IntPtr pulCodeRVA)
+public UInt32 GetMethodProps(UInt32 mb, UInt32* pClass, Char* szMethod, UInt32 cchMethod, UInt32* pchMethod, UInt32* pdwAttr, IntPtr ppvSigBlob, IntPtr pcbSigBlob, UInt32* pulCodeRVA, UInt32* pdwImplFlags)
+private void WriteNameBuffer(string name, Char* buffer, UInt32 bufferLength, UInt32* actualLength)
 public UInt32 GetMemberRefProps(UInt32 mr, UInt32& ptk, StringBuilder szMember, UInt32 cchMember, UInt32& pchMember, IntPtr& ppvSigBlob)
 public UInt32 EnumProperties(UInt32& phEnum, UInt32 td, IntPtr rProperties, UInt32 cMax)
 public UInt32 EnumEvents(UInt32& phEnum, UInt32 td, IntPtr rEvents, UInt32 cMax)
@@ -2068,88 +2102,97 @@ public UInt32 GetPropertyProps(UInt32 prop, UInt32& pClass, StringBuilder szProp
 public UInt32 GetParamProps(UInt32 tk, UInt32& pmd, UInt32& pulSequence, StringBuilder szName, UInt32 cchName, UInt32& pchName, UInt32& pdwAttr, UInt32& pdwCPlusTypeFlag, IntPtr& ppValue)
 public UInt32 GetCustomAttributeByName(UInt32 tkObj, string szName, IntPtr& ppData)
 public bool IsValidToken(UInt32 tk)
-public UInt32 GetNestedClassProps(UInt32 tdNestedClass)
+public UInt32 GetNestedClassProps(UInt32 tdNestedClass, UInt32* ptdEnclosingClass)
 public UInt32 GetNativeCallConvFromSig(IntPtr pvSig, UInt32 cbSig)
 public int IsGlobal(UInt32 pd)
 }
-internal Mono.Cecil.Pdb.PdbHelper : object {
-public SymWriter CreateWriter(ModuleDefinition module, string pdb)
-public string GetPdbFileName(string assemblyFileName)
-}
-public Mono.Cecil.Pdb.PdbReader : object {
-private int age
-private Guid guid
-private Stream pdb_file
+public Mono.Cecil.Pdb.NativePdbReader : object {
+private Disposable`1<Stream> pdb_file
 private Dictionary`2<string, Document> documents
 private Dictionary`2<UInt32, PdbFunction> functions
-internal void .ctor(Stream file)
-public bool ProcessDebugHeader(ImageDebugDirectory directory, Byte[] header)
+private Dictionary`2<PdbScope, ImportDebugInformation> imports
+internal void .ctor(Disposable`1<Stream> file)
+public ISymbolWriterProvider GetWriterProvider()
+public bool ProcessDebugHeader(ImageDebugHeader header)
+private bool IsMatchingEntry(PdbInfo info, ImageDebugHeaderEntry entry)
 private int ReadInt32(Byte[] bytes, int start)
-private bool PopulateFunctions()
-public void Read(MethodBody body, InstructionMapper mapper)
-private void ReadScopeAndLocals(PdbScope[] scopes, Scope parent, MethodBody body, InstructionMapper mapper)
-private void CreateRootScope(MethodBody body)
-private void ReadScopeAndLocals(PdbScope scope, Scope parent, MethodBody body, InstructionMapper mapper)
-private void ReadSequencePoints(PdbFunction function, InstructionMapper mapper)
-private void ReadLines(PdbLines lines, InstructionMapper mapper)
-private void ReadLine(PdbLine line, Document document, InstructionMapper mapper)
+public MethodDebugInformation Read(MethodDefinition method)
+private Collection`1<ScopeDebugInformation> ReadScopeAndLocals(PdbScope[] scopes, MethodDebugInformation info)
+private ScopeDebugInformation ReadScopeAndLocals(PdbScope scope, MethodDebugInformation info)
+private bool AddScope(Collection`1<ScopeDebugInformation> scopes, ScopeDebugInformation scope)
+private ImportDebugInformation GetImport(UInt32 token, ModuleDefinition module)
+private ImportDebugInformation GetImport(PdbScope scope, ModuleDefinition module)
+private void ReadSequencePoints(PdbFunction function, MethodDebugInformation info)
+private void ReadLines(PdbLines lines, MethodDebugInformation info)
+private void ReadLine(PdbLine line, Document document, MethodDebugInformation info)
 private Document GetDocument(PdbSource source)
-public void Read(MethodSymbols symbols)
-private void ReadLocals(PdbScope[] scopes, MethodSymbols symbols)
-private void ReadLocals(PdbScope scope, MethodSymbols symbols)
-private void ReadSequencePoints(PdbFunction function, MethodSymbols symbols)
-private void ReadLines(PdbLines lines, MethodSymbols symbols)
 public void Dispose()
+}
+public Mono.Cecil.Pdb.NativePdbReaderProvider : object {
+public ISymbolReader GetSymbolReader(ModuleDefinition module, string fileName)
+public ISymbolReader GetSymbolReader(ModuleDefinition module, Stream symbolStream)
+}
+public Mono.Cecil.Pdb.NativePdbWriter : object {
+private ModuleDefinition module
+private MetadataBuilder metadata
+private SymWriter writer
+private Dictionary`2<string, SymDocumentWriter> documents
+private Dictionary`2<ImportDebugInformation, MetadataToken> import_info_to_parent
+internal void .ctor(ModuleDefinition module, SymWriter writer)
+public ISymbolReaderProvider GetReaderProvider()
+public ImageDebugHeader GetDebugHeader()
+public void Write(MethodDebugInformation info)
+private void DefineCustomMetadata(MethodDebugInformation info, MetadataToken import_parent)
+private void DefineAsyncCustomMetadata(MethodDebugInformation info)
+private void DefineScope(ScopeDebugInformation scope, MethodDebugInformation info, MetadataToken& import_parent)
+private void DefineSequencePoints(Collection`1<SequencePoint> sequence_points)
+private void DefineLocalVariable(VariableDebugInformation variable, int local_var_token, int start_offset, int end_offset)
+private void DefineConstant(ConstantDebugInformation constant)
+private SymDocumentWriter GetDocument(Document document)
+public void Dispose()
+}
+public Mono.Cecil.Pdb.NativePdbWriterProvider : object {
+public ISymbolWriter GetSymbolWriter(ModuleDefinition module, string fileName)
+private SymWriter CreateWriter(ModuleDefinition module, string pdb)
+public ISymbolWriter GetSymbolWriter(ModuleDefinition module, Stream symbolStream)
 }
 public Mono.Cecil.Pdb.PdbReaderProvider : object {
 public ISymbolReader GetSymbolReader(ModuleDefinition module, string fileName)
 public ISymbolReader GetSymbolReader(ModuleDefinition module, Stream symbolStream)
 }
-public Mono.Cecil.Pdb.PdbWriter : object {
-private ModuleDefinition module
-private SymWriter writer
-private Dictionary`2<string, SymDocumentWriter> documents
-internal void .ctor(ModuleDefinition module, SymWriter writer)
-public bool GetDebugHeader(ImageDebugDirectory& directory, Byte[]& header)
-public void Write(MethodBody body)
-private Collection`1<Instruction> CollectInstructions(MethodBody body)
-private void DefineVariables(MethodBody body, int start_offset, int end_offset)
-private void DefineSequencePoints(Collection`1<Instruction> instructions)
-private void CreateLocalVariable(VariableDefinition variable, SymbolToken local_var_token, int start_offset, int end_offset)
-private SymDocumentWriter GetDocument(Document document)
-public void Write(MethodSymbols symbols)
-private void DefineSequencePoints(MethodSymbols symbols)
-private void DefineVariables(MethodSymbols symbols, int start_offset, int end_offset)
-public void Dispose()
-}
 public Mono.Cecil.Pdb.PdbWriterProvider : object {
 public ISymbolWriter GetSymbolWriter(ModuleDefinition module, string fileName)
+private bool HasPortablePdbSymbols(ModuleDefinition module)
 public ISymbolWriter GetSymbolWriter(ModuleDefinition module, Stream symbolStream)
 }
 internal Mono.Cecil.Pdb.SymDocumentWriter : object {
-private ISymUnmanagedDocumentWriter m_unmanagedDocumentWriter
-public void .ctor(ISymUnmanagedDocumentWriter unmanagedDocumentWriter)
-public ISymUnmanagedDocumentWriter GetUnmanaged()
+private ISymUnmanagedDocumentWriter writer
+public ISymUnmanagedDocumentWriter Writer
+public ISymUnmanagedDocumentWriter get_Writer()
+public void .ctor(ISymUnmanagedDocumentWriter writer)
+public void SetSource(Byte[] source)
+public void SetCheckSum(Guid hashAlgo, Byte[] checkSum)
 }
 internal Mono.Cecil.Pdb.SymWriter : object {
 private Guid s_symUnmangedWriterIID
 private Guid s_CorSymWriter_SxS_ClassID
-private ISymUnmanagedWriter2 m_writer
+private ISymUnmanagedWriter2 writer
 private Collection`1<ISymUnmanagedDocumentWriter> documents
 private int CoCreateInstance(Guid& rclsid, object pUnkOuter, UInt32 dwClsContext, Guid& riid, Object& ppv)
 public Byte[] GetDebugInfo(ImageDebugDirectory& idd)
-public void DefineLocalVariable2(string name, FieldAttributes attributes, SymbolToken sigToken, SymAddressKind addrKind, int addr1, int addr2, int addr3, int startOffset, int endOffset)
+public void DefineLocalVariable2(string name, VariableAttributes attributes, int sigToken, int addr1, int addr2, int addr3, int startOffset, int endOffset)
+public void DefineConstant2(string name, object value, int sigToken)
 public void Close()
 public void CloseMethod()
 public void CloseNamespace()
 public void CloseScope(int endOffset)
 public SymDocumentWriter DefineDocument(string url, Guid language, Guid languageVendor, Guid documentType)
-public void DefineParameter(string name, ParameterAttributes attributes, int sequence, SymAddressKind addrKind, int addr1, int addr2, int addr3)
 public void DefineSequencePoints(SymDocumentWriter document, Int32[] offsets, Int32[] lines, Int32[] columns, Int32[] endLines, Int32[] endColumns)
 public void Initialize(object emitter, string filename, bool fFullBuild)
-public void SetUserEntryPoint(SymbolToken method)
-public void OpenMethod(SymbolToken method)
+public void SetUserEntryPoint(int methodToken)
+public void OpenMethod(int methodToken)
 public void OpenNamespace(string name)
 public int OpenScope(int startOffset)
 public void UsingNamespace(string fullName)
+public void DefineCustomMetadata(string name, Byte[] metadata)
 }

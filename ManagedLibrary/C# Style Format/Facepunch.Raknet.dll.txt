@@ -1,17 +1,16 @@
 public Facepunch.Network.Raknet.Client : Client {
 private Peer peer
-public Byte[] ReusableBytes
-private Stopwatch cycleTimer
 public bool IsConnected()
 public bool Connect(string strURL, int port)
-internal bool HandleRaknetPacket(byte type)
+internal bool HandleRaknetPacket(byte type, NetRead read)
 protected void HandleMessage()
-public void Cycle()
+public void ProcessRead(NetRead read)
+protected bool Receive()
 public void Disconnect(string reason, bool sendReasonToServer)
 public string GetDebug(Connection connection)
 public ulong GetStat(Connection connection, StatTypeLong type)
 public int GetLastPing()
-public void Send(SendInfo sendinfo, MemoryStream data)
+public void ProcessWrite(NetWrite write)
 }
 public Facepunch.Network.Raknet.Native : object {
 public IntPtr NET_Create()
@@ -108,23 +107,19 @@ public ulong GetStat(Connection connection, StatTypeLong type)
 public Facepunch.Network.Raknet.Server : Server {
 private Peer peer
 public string ProtocolId
-public bool AllowPassthroughMessages
 public string get_ProtocolId()
-public bool get_AllowPassthroughMessages()
 public bool IsConnected()
 public bool Start()
 public void Stop(string shutdownMsg)
 public void Disconnect(Connection cn)
 public void Kick(Connection cn, string message, bool logfile)
-internal bool HandleRaknetPacket(byte type, Connection connection)
-internal void UnconnectedPacket()
-internal void ConnectedPacket(Connection connection)
-public void Cycle()
-protected void OnNewConnection()
+internal bool HandleRaknetPacket(byte type, NetRead read)
+private void HandleMessage()
+public void ProcessRead(NetRead read)
+protected bool Receive()
 public string GetDebug(Connection connection)
 public int GetAveragePing(Connection connection)
 public ulong GetStat(Connection connection, StatTypeLong type)
-public void SendUnconnected(UInt32 netAddr, ushort netPort, Byte[] data, int size)
-public void Send(SendInfo sendinfo, MemoryStream data)
-private void Send(SendInfo sendinfo, MemoryStream data, Connection connection)
+public void ProcessWrite(NetWrite write)
+private void ProcessWrite(NetWrite write, Connection connection)
 }

@@ -18,7 +18,7 @@ public Dictionary`2<Type, Pool> storage
 public T Get()
 public void Free(Mesh& mesh)
 private Pool GetPool()
-public void Clear()
+public void Clear(string filter)
 }
 public Capsule : ValueType {
 public Vector3 position
@@ -178,6 +178,12 @@ public UInt32 Min(UInt32 i1, UInt32 i2)
 public UInt32 Max(UInt32 i1, UInt32 i2)
 public float fsel(float c, float x, float y)
 public float RemapValClamped(float val, float A, float B, float C, float D)
+public float Lerp(float from, float to, float speed, float deltaTime)
+public float Lerp(float from, float to, float speed)
+public Vector3 Lerp(Vector3 from, Vector3 to, float speed, float deltaTime)
+public Vector3 Lerp(Vector3 from, Vector3 to, float speed)
+public Quaternion Lerp(Quaternion from, Quaternion to, float speed, float deltaTime)
+public Quaternion Lerp(Quaternion from, Quaternion to, float speed)
 }
 public OBB : ValueType {
 public Quaternion rotation
@@ -204,6 +210,7 @@ public float Distance(OBB other)
 public float Distance(Vector3 position)
 public float SqrDistance(OBB other)
 public float SqrDistance(Vector3 position)
+public void DebugDraw(Color colour, float duration)
 }
 public ObjectWorkQueue`1 : object {
 protected Queue`1<T> queue
@@ -221,8 +228,28 @@ public int get_queueLength()
 public void Clear()
 public void RunQueue(double maximumMilliseconds)
 public void Add(T entity)
+public void AddNoContainsCheck(T entity)
 public bool Contains(T entity)
 protected void SortQueue()
+protected bool ShouldAdd(T entity)
+protected void RunJob(T entity)
+public string Info()
+}
+public PersistentObjectWorkQueue`1 : object {
+protected List`1<T> workList
+public string listName
+public long warnTime
+public double totalTime
+public double lastMS
+private int currentIndex
+private Stopwatch stopwatch
+public int listLength
+public int get_listLength()
+public void Clear()
+public void RunList(double maximumMilliseconds)
+public void Add(T entity)
+public void Remove(T entity)
+public bool Contains(T entity)
 protected bool ShouldAdd(T entity)
 protected void RunJob(T entity)
 public string Info()
@@ -322,11 +349,11 @@ public Func`2<string, GameObject> LoadPrefab
 public Func`2<string, GameObject> FindPrefab
 public Func`2<string, GameObject> CreatePrefab
 public Action OpenMainMenu
-private MonoBehaviour _runner
+private FacepunchBehaviour _runner
 private int <LaunchCountThisVersion>k__BackingField
-public MonoBehaviour Runner
+public FacepunchBehaviour Runner
 public int LaunchCountThisVersion
-public MonoBehaviour get_Runner()
+public FacepunchBehaviour get_Runner()
 public int get_LaunchCountThisVersion()
 private void set_LaunchCountThisVersion(int value)
 public void Init()
@@ -386,9 +413,11 @@ public int Craters
 public int GameTrace
 public int Trigger
 public int VehiclesDetailed
+public int Tree
 public int RainFall
 public int Deploy
 public int DefaultDeployVolumeCheck
+public int PreventBuilding
 public int BuildLineOfSightCheck
 public int ProjectileLineOfSightCheck
 public int ProjectileLineOfSightCheckTerrain
@@ -399,6 +428,7 @@ public int EyeLineOfSightCheckTerrain
 public int EntityLineOfSightCheck
 public int PlayerBuildings
 public int PlannerPlacement
+public int IndustrialPipeObstruction
 public int Solid
 public int StaticSolid
 public int VisCulling
@@ -420,6 +450,7 @@ public Vector3 PositionalTweak
 public float FieldOfView
 public Vector3 LookDirection
 public Vector3 UpDirection
+public GameObject[] HideDuringRender
 public void DebugAlign()
 public void PositionCamera(Camera cam)
 public void PreRender()
@@ -438,6 +469,7 @@ public int network
 public int save
 public int report
 public int persistance
+public int analytics_db
 public string printable
 public string get_printable()
 }
@@ -521,12 +553,15 @@ private List`1<Row> rows
 private List`1<Column> columns
 private StringBuilder builder
 private string text
-private bool dirty
+private string jsonText
+private Encoding utf8NoBom
 public void Clear()
 public void AddColumns(String[] values)
 public void AddColumn(string title)
 public void AddRow(String[] values)
+public string ToJson()
 public string ToString()
+private void MarkDirty()
 }
 public Triangle : ValueType {
 public Vector3 point0
@@ -542,6 +577,7 @@ public Vector3 get_Center()
 public Vector3 ClosestPoint(Vector3 pos)
 public float Distance(Vector3 pos)
 public float SqrDistance(Vector3 pos)
+public float Area()
 }
 public UnityEngine.MathEx : object {
 public float SnapTo(float val, float snapValue)
@@ -562,6 +598,8 @@ public string EscapeRichText(string str)
 public IEnumerable`1<string> SplitToLines(string input)
 public IEnumerable`1<string> SplitToChunks(string str, int chunkLength)
 public UInt32 ManifestHash(string str)
+public Byte[] Sha256(string str)
+public string HexString(Byte[] bytes)
 public bool StartsWithAny(string str, String[] values)
 }
 public UnityEngine.Vector2Ex : object {
