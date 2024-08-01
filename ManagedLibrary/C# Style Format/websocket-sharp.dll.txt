@@ -5,7 +5,9 @@ public ByteOrder Big
 }
 public WebSocketSharp.CloseEventArgs : EventArgs {
 private bool _clean
+private ushort _code
 private PayloadData _payloadData
+private string _reason
 internal PayloadData PayloadData
 public ushort Code
 public string Reason
@@ -53,9 +55,9 @@ public Exception get_Exception()
 public string get_Message()
 }
 public WebSocketSharp.Ext : object {
-private Byte[] _last
-private int _retry
 private string _tspecials
+private Byte[] _last
+private Func`2<string, bool> CS$<>9__CachedAnonymousMethodDelegate1
 private Byte[] compress(Byte[] data)
 private MemoryStream compress(Stream stream)
 private Byte[] compressToArray(Stream stream)
@@ -70,7 +72,6 @@ internal string CheckIfValidProtocols(String[] protocols)
 internal string CheckIfValidServicePath(string path)
 internal string CheckIfValidSessionID(string id)
 internal string CheckIfValidWaitTime(TimeSpan time)
-internal bool CheckWaitTime(TimeSpan time, String& message)
 internal void Close(HttpListenerResponse response, HttpStatusCode code)
 internal void CloseWithAuthChallenge(HttpListenerResponse response, string challenge)
 internal Byte[] Compress(Byte[] data, CompressionMethod method)
@@ -94,14 +95,9 @@ internal TcpListenerWebSocketContext GetWebSocketContext(TcpClient tcpClient, st
 internal Byte[] InternalToByteArray(ushort value, ByteOrder order)
 internal Byte[] InternalToByteArray(ulong value, ByteOrder order)
 internal bool IsCompressionExtension(string value, CompressionMethod method)
-internal bool IsControl(byte opcode)
-internal bool IsControl(Opcode opcode)
-internal bool IsData(byte opcode)
-internal bool IsData(Opcode opcode)
 internal bool IsPortNumber(int value)
 internal bool IsReserved(ushort code)
 internal bool IsReserved(CloseStatusCode code)
-internal bool IsSupported(byte opcode)
 internal bool IsText(string value)
 internal bool IsToken(string value)
 internal string Quote(string value)
@@ -160,6 +156,7 @@ public Uri ToUri(string uriString)
 public string UrlDecode(string value)
 public string UrlEncode(string value)
 public void WriteContent(HttpListenerResponse response, Byte[] content)
+private bool <CheckIfValidProtocols>b__0(string protocol)
 }
 internal WebSocketSharp.Fin : Enum {
 public byte value__
@@ -167,11 +164,11 @@ public Fin More
 public Fin Final
 }
 internal WebSocketSharp.HttpBase : object {
-private NameValueCollection _headers
 private int _headersMaxLength
+protected string CrLf
+private NameValueCollection _headers
 private Version _version
 internal Byte[] EntityBodyData
-protected string CrLf
 public string EntityBody
 public NameValueCollection Headers
 public Version ProtocolVersion
@@ -300,22 +297,20 @@ private string _data
 private bool _dataSet
 private Opcode _opcode
 private Byte[] _rawData
-internal Opcode Opcode
 public string Data
 public bool IsBinary
 public bool IsPing
 public bool IsText
-public bool IsClose
 public Byte[] RawData
+public Opcode Type
 internal void .ctor(WebSocketFrame frame)
 internal void .ctor(Opcode opcode, Byte[] rawData)
-internal Opcode get_Opcode()
 public string get_Data()
 public bool get_IsBinary()
 public bool get_IsPing()
 public bool get_IsText()
-public bool get_IsClose()
 public Byte[] get_RawData()
+public Opcode get_Type()
 }
 internal WebSocketSharp.Net.AuthenticationBase : object {
 private AuthenticationSchemes _scheme
@@ -354,6 +349,7 @@ internal string ToDigestString()
 }
 internal WebSocketSharp.Net.AuthenticationResponse : AuthenticationBase {
 private UInt32 _nonceCount
+private Func`2<string, bool> CS$<>9__CachedAnonymousMethodDelegate1
 internal UInt32 NonceCount
 public string Cnonce
 public string Nc
@@ -384,6 +380,7 @@ internal NameValueCollection ParseBasicCredentials(string value)
 internal string ToBasicString()
 internal string ToDigestString()
 public IIdentity ToIdentity()
+private bool <initAsDigest>b__0(string qop)
 }
 public WebSocketSharp.Net.AuthenticationSchemes : Enum {
 public int value__
@@ -603,32 +600,35 @@ public IPAddress Address
 public bool IsSecure
 public int Port
 public ServerSslConfiguration SslConfiguration
-internal void .ctor(IPEndPoint endpoint, bool secure, string certificateFolderPath, ServerSslConfiguration sslConfig, bool reuseAddress)
+internal void .ctor(IPAddress address, int port, bool reuseAddress, bool secure, string certificateFolderPath, ServerSslConfiguration sslConfig)
 public IPAddress get_Address()
 public bool get_IsSecure()
 public int get_Port()
 public ServerSslConfiguration get_SslConfiguration()
 private void addSpecial(List`1<HttpListenerPrefix> prefixes, HttpListenerPrefix prefix)
+private void checkIfRemove()
 private RSACryptoServiceProvider createRSAFromFile(string filename)
-private X509Certificate2 getCertificate(int port, string folderPath, X509Certificate2 defaultCertificate)
-private void leaveIfNoPrefix()
+private X509Certificate2 getCertificate(int port, string certificateFolderPath, X509Certificate2 defaultCertificate)
+private HttpListener matchFromList(string host, string path, List`1<HttpListenerPrefix> list, HttpListenerPrefix& prefix)
 private void onAccept(IAsyncResult asyncResult)
 private void processAccepted(Socket socket, EndPointListener listener)
 private bool removeSpecial(List`1<HttpListenerPrefix> prefixes, HttpListenerPrefix prefix)
-private HttpListener searchHttpListenerFromSpecial(string path, List`1<HttpListenerPrefix> prefixes)
-internal bool CertificateExists(int port, string folderPath)
+private HttpListener searchListener(Uri uri, HttpListenerPrefix& prefix)
+internal bool CertificateExists(int port, string certificateFolderPath)
 internal void RemoveConnection(HttpConnection connection)
-internal bool TrySearchHttpListener(Uri uri, HttpListener& listener)
 public void AddPrefix(HttpListenerPrefix prefix, HttpListener listener)
+public bool BindContext(HttpListenerContext context)
 public void Close()
 public void RemovePrefix(HttpListenerPrefix prefix, HttpListener listener)
+public void UnbindContext(HttpListenerContext context)
 }
 internal WebSocketSharp.Net.EndPointManager : object {
-private Dictionary`2<IPEndPoint, EndPointListener> _endpoints
+private Dictionary`2<IPAddress, Dictionary`2<int, EndPointListener>> _addressToEndpoints
 private void addPrefix(string uriPrefix, HttpListener listener)
 private IPAddress convertToIPAddress(string hostname)
+private EndPointListener getEndPointListener(HttpListenerPrefix prefix, HttpListener listener)
 private void removePrefix(string uriPrefix, HttpListener listener)
-internal bool RemoveEndPoint(IPEndPoint endpoint)
+internal void RemoveEndPoint(EndPointListener listener)
 public void AddListener(HttpListener listener)
 public void AddPrefix(string uriPrefix, HttpListener listener)
 public void RemoveListener(HttpListener listener)
@@ -641,10 +641,10 @@ internal void .ctor(string username, string password)
 public string get_Password()
 }
 internal WebSocketSharp.Net.HttpConnection : object {
-private Byte[] _buffer
 private int _bufferLength
+private Byte[] _buffer
 private HttpListenerContext _context
-private bool _contextRegistered
+private bool _contextBound
 private StringBuilder _currentLine
 private InputState _inputState
 private RequestStream _inputStream
@@ -653,6 +653,7 @@ private LineState _lineState
 private EndPointListener _listener
 private ResponseStream _outputStream
 private int _position
+private HttpListenerPrefix _prefix
 private MemoryStream _requestBuffer
 private int _reuses
 private bool _secure
@@ -660,11 +661,11 @@ private Socket _socket
 private Stream _stream
 private object _sync
 private int _timeout
-private Dictionary`2<int, bool> _timeoutCanceled
 private Timer _timer
 public bool IsClosed
 public bool IsSecure
 public IPEndPoint LocalEndPoint
+public HttpListenerPrefix Prefix
 public IPEndPoint RemoteEndPoint
 public int Reuses
 public Stream Stream
@@ -672,6 +673,8 @@ internal void .ctor(Socket socket, EndPointListener listener)
 public bool get_IsClosed()
 public bool get_IsSecure()
 public IPEndPoint get_LocalEndPoint()
+public HttpListenerPrefix get_Prefix()
+public void set_Prefix(HttpListenerPrefix value)
 public IPEndPoint get_RemoteEndPoint()
 public int get_Reuses()
 public Stream get_Stream()
@@ -686,7 +689,7 @@ private void onTimeout(object state)
 private bool processInput(Byte[] data, int length)
 private string readLineFrom(Byte[] buffer, int offset, int length, Int32& read)
 private void removeConnection()
-private void unregisterContext()
+private void unbind()
 internal void Close(bool force)
 public void BeginReadRequest()
 public void Close()
@@ -757,18 +760,18 @@ private List`1<HttpListenerContext> _ctxQueue
 private object _ctxQueueSync
 private Dictionary`2<HttpListenerContext, HttpListenerContext> _ctxRegistry
 private object _ctxRegistrySync
-private string _defaultRealm
+private Func`2<IIdentity, NetworkCredential> _credFinder
 private bool _disposed
 private bool _ignoreWriteExceptions
-private Boolean modreq(System.Runtime.CompilerServices.IsVolatile) _listening
+private bool _listening
 private Logger _logger
 private HttpListenerPrefixCollection _prefixes
 private string _realm
 private bool _reuseAddress
 private ServerSslConfiguration _sslConfig
-private Func`2<IIdentity, NetworkCredential> _userCredFinder
 private List`1<HttpListenerAsyncResult> _waitQueue
 private object _waitQueueSync
+private Func`2<IIdentity, NetworkCredential> CS$<>9__CachedAnonymousMethodDelegate1
 internal bool IsDisposed
 internal bool ReuseAddress
 public AuthenticationSchemes AuthenticationSchemes
@@ -806,21 +809,20 @@ public bool get_UnsafeConnectionNtlmAuthentication()
 public void set_UnsafeConnectionNtlmAuthentication(bool value)
 public Func`2<IIdentity, NetworkCredential> get_UserCredentialsFinder()
 public void set_UserCredentialsFinder(Func`2<IIdentity, NetworkCredential> value)
+private void cleanup(bool force)
 private void cleanupConnections()
-private void cleanupContextQueue(bool sendServiceUnavailable)
 private void cleanupContextRegistry()
-private void cleanupWaitQueue(Exception exception)
+private void cleanupWaitQueue()
 private void close(bool force)
-private HttpListenerAsyncResult getAsyncResultFromQueue()
 private HttpListenerContext getContextFromQueue()
-internal bool AddConnection(HttpConnection connection)
+private void sendServiceUnavailable()
+internal void AddConnection(HttpConnection connection)
+internal bool Authenticate(HttpListenerContext context)
 internal HttpListenerAsyncResult BeginGetContext(HttpListenerAsyncResult asyncResult)
 internal void CheckDisposed()
-internal string GetRealm()
-internal Func`2<IIdentity, NetworkCredential> GetUserCredentialsFinder()
-internal bool RegisterContext(HttpListenerContext context)
+internal void RegisterContext(HttpListenerContext context)
 internal void RemoveConnection(HttpConnection connection)
-internal AuthenticationSchemes SelectAuthenticationScheme(HttpListenerRequest request)
+internal AuthenticationSchemes SelectAuthenticationScheme(HttpListenerContext context)
 internal void UnregisterContext(HttpListenerContext context)
 public void Abort()
 public IAsyncResult BeginGetContext(AsyncCallback callback, object state)
@@ -830,6 +832,7 @@ public HttpListenerContext GetContext()
 public void Start()
 public void Stop()
 private void System.IDisposable.Dispose()
+private NetworkCredential <get_UserCredentialsFinder>b__0(IIdentity id)
 }
 internal WebSocketSharp.Net.HttpListenerAsyncResult : object {
 private AsyncCallback _callback
@@ -871,7 +874,6 @@ private HttpListener _listener
 private HttpListenerRequest _request
 private HttpListenerResponse _response
 private IPrincipal _user
-private HttpListenerWebSocketContext _websocketContext
 internal HttpConnection Connection
 internal string ErrorMessage
 internal int ErrorStatus
@@ -892,9 +894,7 @@ internal void set_Listener(HttpListener value)
 public HttpListenerRequest get_Request()
 public HttpListenerResponse get_Response()
 public IPrincipal get_User()
-internal bool Authenticate()
-internal bool Register()
-internal void Unregister()
+internal void set_User(IPrincipal value)
 public HttpListenerWebSocketContext AcceptWebSocket(string protocol)
 }
 public WebSocketSharp.Net.HttpListenerException : Win32Exception {
@@ -905,27 +905,28 @@ public void .ctor(int errorCode, string message)
 public int get_ErrorCode()
 }
 internal WebSocketSharp.Net.HttpListenerPrefix : object {
+private IPAddress[] _addresses
 private string _host
 private HttpListener _listener
 private string _original
 private string _path
-private string _port
-private string _prefix
+private ushort _port
 private bool _secure
+public IPAddress[] Addresses
 public string Host
 public bool IsSecure
 public HttpListener Listener
-public string Original
 public string Path
-public string Port
+public int Port
 internal void .ctor(string uriPrefix)
+public IPAddress[] get_Addresses()
+public void set_Addresses(IPAddress[] value)
 public string get_Host()
 public bool get_IsSecure()
 public HttpListener get_Listener()
 public void set_Listener(HttpListener value)
-public string get_Original()
 public string get_Path()
-public string get_Port()
+public int get_Port()
 private void parse(string uriPrefix)
 public void CheckPrefix(string uriPrefix)
 public bool Equals(object obj)
@@ -1287,7 +1288,7 @@ public bool get_CompletedSynchronously()
 public bool get_IsCompleted()
 internal void Complete()
 internal void Complete(Exception exception)
-private void <Complete>b__35_0(IAsyncResult ar)
+private void <Complete>b__0(IAsyncResult ar)
 }
 internal WebSocketSharp.Net.HttpUtility : object {
 private Dictionary`2<string, char> _entities
@@ -1366,13 +1367,13 @@ public WebSocketSharp.Net.NetworkCredential : object {
 private string _domain
 private string _password
 private String[] _roles
-private string _userName
+private string _username
 public string Domain
 public string Password
 public String[] Roles
 public string UserName
-public void .ctor(string userName, string password)
-public void .ctor(string userName, string password, string domain, String[] roles)
+public void .ctor(string username, string password)
+public void .ctor(string username, string password, string domain, String[] roles)
 public string get_Domain()
 internal void set_Domain(string value)
 public string get_Password()
@@ -1503,6 +1504,8 @@ private LocalCertificateSelectionCallback _certSelectionCallback
 private RemoteCertificateValidationCallback _certValidationCallback
 private bool _checkCertRevocation
 private SslProtocols _enabledProtocols
+private LocalCertificateSelectionCallback CS$<>9__CachedAnonymousMethodDelegate1
+private RemoteCertificateValidationCallback CS$<>9__CachedAnonymousMethodDelegate3
 protected LocalCertificateSelectionCallback CertificateSelectionCallback
 protected RemoteCertificateValidationCallback CertificateValidationCallback
 public bool CheckCertificateRevocation
@@ -1516,6 +1519,8 @@ public bool get_CheckCertificateRevocation()
 public void set_CheckCertificateRevocation(bool value)
 public SslProtocols get_EnabledSslProtocols()
 public void set_EnabledSslProtocols(SslProtocols value)
+private X509Certificate <get_CertificateSelectionCallback>b__0(object sender, string targetHost, X509CertificateCollection localCertificates, X509Certificate remoteCertificate, String[] acceptableIssuers)
+private bool <get_CertificateValidationCallback>b__2(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
 }
 public WebSocketSharp.Net.WebHeaderCollection : NameValueCollection {
 private Dictionary`2<string, HttpHeaderInfo> _headers
@@ -1646,6 +1651,7 @@ private TcpClient _tcpClient
 private Uri _uri
 private IPrincipal _user
 private WebSocket _websocket
+internal string HttpMethod
 internal Logger Log
 internal Stream Stream
 public CookieCollection CookieCollection
@@ -1666,6 +1672,7 @@ public IPrincipal User
 public IPEndPoint UserEndPoint
 public WebSocket WebSocket
 internal void .ctor(TcpClient tcpClient, string protocol, bool secure, ServerSslConfiguration sslConfig, Logger logger)
+internal string get_HttpMethod()
 internal Logger get_Log()
 internal Stream get_Stream()
 public CookieCollection get_CookieCollection()
@@ -1685,10 +1692,10 @@ public IPEndPoint get_ServerEndPoint()
 public IPrincipal get_User()
 public IPEndPoint get_UserEndPoint()
 public WebSocket get_WebSocket()
-internal bool Authenticate(AuthenticationSchemes scheme, string realm, Func`2<IIdentity, NetworkCredential> credentialsFinder)
 internal void Close()
 internal void Close(HttpStatusCode code)
 internal void SendAuthenticationChallenge(string challenge)
+internal void SetUser(IPrincipal value)
 public string ToString()
 }
 public WebSocketSharp.Net.WebSockets.WebSocketContext : object {
@@ -1737,30 +1744,21 @@ public Opcode Ping
 public Opcode Pong
 }
 internal WebSocketSharp.PayloadData : object {
-private ushort _code
-private bool _codeSet
 private Byte[] _data
 private long _extDataLength
 private long _length
-private string _reason
-private bool _reasonSet
 public PayloadData Empty
 public ulong MaxLength
-internal ushort Code
 internal long ExtensionDataLength
-internal bool HasReservedCode
-internal string Reason
+internal bool IncludesReservedCloseStatusCode
 public Byte[] ApplicationData
 public Byte[] ExtensionData
 public ulong Length
 internal void .ctor(Byte[] data)
 internal void .ctor(Byte[] data, long length)
-internal void .ctor(ushort code, string reason)
-internal ushort get_Code()
 internal long get_ExtensionDataLength()
 internal void set_ExtensionDataLength(long value)
-internal bool get_HasReservedCode()
-internal string get_Reason()
+internal bool get_IncludesReservedCloseStatusCode()
 public Byte[] get_ApplicationData()
 public Byte[] get_ExtensionData()
 public ulong get_Length()
@@ -1866,10 +1864,7 @@ public void remove_OnPut(EventHandler`1<HttpRequestEventArgs> value)
 public void add_OnTrace(EventHandler`1<HttpRequestEventArgs> value)
 public void remove_OnTrace(EventHandler`1<HttpRequestEventArgs> value)
 private void abort()
-private bool checkIfAvailable(bool ready, bool start, bool shutting, bool stop, String& message)
 private string checkIfCertificateExists()
-private string convertToString(IPAddress address)
-private string getHost(Uri uri)
 private void init(string hostname, IPAddress address, int port, bool secure)
 private void processRequest(HttpListenerContext context)
 private void processRequest(HttpListenerWebSocketContext context)
@@ -1885,6 +1880,7 @@ public void Start()
 public void Stop()
 public void Stop(ushort code, string reason)
 public void Stop(CloseStatusCode code, string reason)
+private TBehaviorWithNew <AddWebSocketService>b__3()
 }
 public WebSocketSharp.Server.IWebSocketSession {
 public WebSocketContext Context
@@ -1943,7 +1939,7 @@ public string get_Protocol()
 public void set_Protocol(string value)
 public DateTime get_StartTime()
 public WebSocketState get_State()
-private string checkHandshakeRequest(WebSocketContext context)
+private string checkIfValidConnectionRequest(WebSocketContext context)
 private void onClose(object sender, CloseEventArgs e)
 private void onError(object sender, ErrorEventArgs e)
 private void onMessage(object sender, MessageEventArgs e)
@@ -1965,7 +1961,7 @@ protected void SendAsync(Stream stream, int length, Action`1<bool> completed)
 public WebSocketSharp.Server.WebSocketServer : object {
 private IPAddress _address
 private AuthenticationSchemes _authSchemes
-private string _defaultRealm
+private Func`2<IIdentity, NetworkCredential> _credFinder
 private bool _dnsStyle
 private string _hostname
 private TcpListener _listener
@@ -1979,7 +1975,7 @@ private WebSocketServiceManager _services
 private ServerSslConfiguration _sslConfig
 private ServerState modreq(System.Runtime.CompilerServices.IsVolatile) _state
 private object _sync
-private Func`2<IIdentity, NetworkCredential> _userCredFinder
+private Func`2<IIdentity, NetworkCredential> CS$<>9__CachedAnonymousMethodDelegate1
 public IPAddress Address
 public AuthenticationSchemes AuthenticationSchemes
 public bool IsListening
@@ -2019,9 +2015,8 @@ public TimeSpan get_WaitTime()
 public void set_WaitTime(TimeSpan value)
 public WebSocketServiceManager get_WebSocketServices()
 private void abort()
-private bool checkIfAvailable(bool ready, bool start, bool shutting, bool stop, String& message)
+private bool authenticate(TcpListenerWebSocketContext context, AuthenticationSchemes scheme, string realm, Func`2<IIdentity, NetworkCredential> credentialsFinder)
 private string checkIfCertificateExists()
-private string getRealm()
 private void init(string hostname, IPAddress address, int port, bool secure)
 private void processRequest(TcpListenerWebSocketContext context)
 private void receiveRequest()
@@ -2035,6 +2030,8 @@ public void Start()
 public void Stop()
 public void Stop(ushort code, string reason)
 public void Stop(CloseStatusCode code, string reason)
+private NetworkCredential <get_UserCredentialsFinder>b__0(IIdentity identity)
+private TBehaviorWithNew <AddWebSocketService>b__8()
 }
 public WebSocketSharp.Server.WebSocketServiceHost : object {
 internal ServerState State
@@ -2118,7 +2115,7 @@ public void BroadcastAsync(Stream stream, int length, Action completed)
 public Dictionary`2<string, Dictionary`2<string, bool>> Broadping()
 public Dictionary`2<string, Dictionary`2<string, bool>> Broadping(string message)
 public bool TryGetServiceHost(string path, WebSocketServiceHost& host)
-private void <BroadcastAsync>b__38_1(Exception ex)
+private void <BroadcastAsync>b__7(Exception ex)
 }
 public WebSocketSharp.Server.WebSocketSessionManager : object {
 private Boolean modreq(System.Runtime.CompilerServices.IsVolatile) _clean
@@ -2184,10 +2181,12 @@ public void SendToAsync(string data, string id, Action`1<bool> completed)
 public void SendToAsync(Stream stream, int length, string id, Action`1<bool> completed)
 public void Sweep()
 public bool TryGetSession(string id, IWebSocketSession& session)
-private void <setSweepTimer>b__36_0(object sender, ElapsedEventArgs e)
-private void <BroadcastAsync>b__49_1(Exception ex)
+private void <setSweepTimer>b__12(object sender, ElapsedEventArgs e)
+private void <BroadcastAsync>b__14(Exception ex)
 }
 public WebSocketSharp.WebSocket : object {
+private string _guid
+private string _version
 private AuthenticationChallenge _authChallenge
 private string _base64Key
 private bool _client
@@ -2198,29 +2197,24 @@ private CookieCollection _cookies
 private NetworkCredential _credentials
 private bool _emitOnPing
 private bool _enableRedirection
-private AutoResetEvent _exitReceiving
 private string _extensions
-private bool _extensionsRequested
+private AutoResetEvent _exitReceiving
+private Opcode _fopcode
+private object _forConn
+private object _forEvent
 private object _forMessageEventQueue
 private object _forSend
-private object _forState
 private MemoryStream _fragmentsBuffer
-private bool _fragmentsCompressed
-private Opcode _fragmentsOpcode
-private string _guid
 private Func`2<WebSocketContext, string> _handshakeRequestChecker
 private bool _ignoreExtensions
 private bool _inContinuation
-private Boolean modreq(System.Runtime.CompilerServices.IsVolatile) _inMessage
 private Logger modreq(System.Runtime.CompilerServices.IsVolatile) _logger
-private Action`1<MessageEventArgs> _message
 private Queue`1<MessageEventArgs> _messageEventQueue
 private UInt32 _nonceCount
 private string _origin
 private bool _preAuth
 private string _protocol
 private String[] _protocols
-private bool _protocolsRequested
 private NetworkCredential _proxyCredentials
 private Uri _proxyUri
 private WebSocketState modreq(System.Runtime.CompilerServices.IsVolatile) _readyState
@@ -2230,7 +2224,6 @@ private ClientSslConfiguration _sslConfig
 private Stream _stream
 private TcpClient _tcpClient
 private Uri _uri
-private string _version
 private TimeSpan _waitTime
 internal Byte[] EmptyBytes
 internal int FragmentLength
@@ -2239,9 +2232,9 @@ private EventHandler`1<CloseEventArgs> OnClose
 private EventHandler`1<ErrorEventArgs> OnError
 private EventHandler`1<MessageEventArgs> OnMessage
 private EventHandler OnOpen
+private Func`2<WebSocketContext, string> CS$<>9__CachedAnonymousMethodDelegate1
 internal CookieCollection CookieCollection
 internal Func`2<WebSocketContext, string> CustomHandshakeRequestChecker
-internal bool HasMessage
 internal bool IgnoreExtensions
 internal bool IsConnected
 public CompressionMethod Compression
@@ -2265,7 +2258,6 @@ public void .ctor(string url, String[] protocols)
 internal CookieCollection get_CookieCollection()
 internal Func`2<WebSocketContext, string> get_CustomHandshakeRequestChecker()
 internal void set_CustomHandshakeRequestChecker(Func`2<WebSocketContext, string> value)
-internal bool get_HasMessage()
 internal bool get_IgnoreExtensions()
 internal void set_IgnoreExtensions(bool value)
 internal bool get_IsConnected()
@@ -2302,46 +2294,33 @@ public void add_OnOpen(EventHandler value)
 public void remove_OnOpen(EventHandler value)
 private bool accept()
 private bool acceptHandshake()
-private bool checkHandshakeRequest(WebSocketContext context, String& message)
-private bool checkHandshakeResponse(HttpResponse response, String& message)
-private bool checkIfAvailable(bool connecting, bool open, bool closing, bool closed, String& message)
-private bool checkIfAvailable(bool client, bool server, bool connecting, bool open, bool closing, bool closed, String& message)
-private bool checkParametersForSetCredentials(string username, string password, String& message)
-private bool checkParametersForSetProxy(string url, string username, string password, String& message)
-private bool checkReceivedFrame(WebSocketFrame frame, String& message)
-private void close(ushort code, string reason)
+private string checkIfAvailable(bool client, bool server, bool connecting, bool open, bool closing, bool closed)
+private string checkIfValidHandshakeRequest(WebSocketContext context)
+private string checkIfValidHandshakeResponse(HttpResponse response)
+private string checkIfValidReceivedFrame(WebSocketFrame frame)
 private void close(CloseEventArgs e, bool send, bool receive, bool received)
-private void closeAsync(ushort code, string reason)
 private void closeAsync(CloseEventArgs e, bool send, bool receive, bool received)
 private bool closeHandshake(Byte[] frameAsBytes, bool receive, bool received)
 private bool connect()
 private string createExtensions()
-private HttpResponse createHandshakeFailureResponse(HttpStatusCode code)
+private HttpResponse createHandshakeCloseResponse(HttpStatusCode code)
 private HttpRequest createHandshakeRequest()
 private HttpResponse createHandshakeResponse()
-private bool customCheckHandshakeRequest(WebSocketContext context, String& message)
 private MessageEventArgs dequeueFromMessageEventQueue()
 private bool doHandshake()
 private void enqueueToMessageEventQueue(MessageEventArgs e)
 private void error(string message, Exception exception)
-private void fatal(string message, Exception exception)
-private void fatal(string message, CloseStatusCode code)
 private void init()
-private void message()
-private void messagec(MessageEventArgs e)
-private void messages(MessageEventArgs e)
 private void open()
 private bool processCloseFrame(WebSocketFrame frame)
-private void processCookies(CookieCollection cookies)
 private bool processDataFrame(WebSocketFrame frame)
-private bool processFragmentFrame(WebSocketFrame frame)
+private void processException(Exception exception, string message)
+private bool processFragmentedFrame(WebSocketFrame frame)
 private bool processPingFrame(WebSocketFrame frame)
 private bool processPongFrame(WebSocketFrame frame)
 private bool processReceivedFrame(WebSocketFrame frame)
-private void processSecWebSocketExtensionsClientHeader(string value)
-private void processSecWebSocketExtensionsServerHeader(string value)
-private void processSecWebSocketProtocolHeader(IEnumerable`1<string> values)
-private bool processUnsupportedFrame(WebSocketFrame frame)
+private void processSecWebSocketExtensionsHeader(string value)
+private bool processUnsupportedFrame(WebSocketFrame frame, CloseStatusCode code, string reason)
 private void releaseClientResources()
 private void releaseCommonResources()
 private void releaseResources()
@@ -2359,15 +2338,13 @@ private void sendProxyConnectRequest()
 private void setClientStream()
 private void startReceiving()
 private bool validateSecWebSocketAcceptHeader(string value)
-private bool validateSecWebSocketExtensionsClientHeader(string value)
-private bool validateSecWebSocketExtensionsServerHeader(string value)
+private bool validateSecWebSocketExtensionsHeader(string value)
 private bool validateSecWebSocketKeyHeader(string value)
-private bool validateSecWebSocketProtocolClientHeader(string value)
-private bool validateSecWebSocketProtocolServerHeader(string value)
+private bool validateSecWebSocketProtocolHeader(string value)
 private bool validateSecWebSocketVersionClientHeader(string value)
 private bool validateSecWebSocketVersionServerHeader(string value)
-internal bool CheckParametersForClose(ushort code, string reason, bool client, String& message)
-internal bool CheckParametersForClose(CloseStatusCode code, string reason, bool client, String& message)
+internal string CheckCloseParameters(ushort code, string reason, bool client)
+internal string CheckCloseParameters(CloseStatusCode code, string reason, bool client)
 internal string CheckPingParameter(string message, Byte[]& bytes)
 internal string CheckSendParameter(Byte[] data)
 internal string CheckSendParameter(FileInfo file)
@@ -2409,10 +2386,9 @@ public void SetCookie(Cookie cookie)
 public void SetCredentials(string username, string password, bool preAuth)
 public void SetProxy(string url, string username, string password)
 private void System.IDisposable.Dispose()
-private void <open>b__143_0(IAsyncResult ar)
-private bool <processSecWebSocketProtocolHeader>b__153_0(string p)
-private void <startReceiving>b__170_2(Exception ex)
-private void <SendAsync>b__217_1(Exception ex)
+private string <get_CustomHandshakeRequestChecker>b__0(WebSocketContext context)
+private bool <acceptHandshake>b__b(string protocol)
+private void <SendAsync>b__24(Exception ex)
 }
 public WebSocketSharp.WebSocketException : Exception {
 private CloseStatusCode _code
@@ -2449,7 +2425,7 @@ public bool IsContinuation
 public bool IsControl
 public bool IsData
 public bool IsFinal
-public bool IsFragment
+public bool IsFragmented
 public bool IsMasked
 public bool IsPing
 public bool IsPong
@@ -2477,7 +2453,7 @@ public bool get_IsContinuation()
 public bool get_IsControl()
 public bool get_IsData()
 public bool get_IsFinal()
-public bool get_IsFragment()
+public bool get_IsFragmented()
 public bool get_IsMasked()
 public bool get_IsPing()
 public bool get_IsPong()
@@ -2493,6 +2469,8 @@ public Rsv get_Rsv2()
 public Rsv get_Rsv3()
 private Byte[] createMaskingKey()
 private string dump(WebSocketFrame frame)
+private bool isControl(Opcode opcode)
+private bool isData(Opcode opcode)
 private string print(WebSocketFrame frame)
 private WebSocketFrame processHeader(Byte[] header)
 private WebSocketFrame readExtendedPayloadLength(Stream stream, WebSocketFrame frame)

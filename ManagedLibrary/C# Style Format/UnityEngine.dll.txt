@@ -4018,6 +4018,7 @@ private int GetExpirationDelay(int handle)
 private void SetExpirationDelay(int handle, int expiration)
 private bool IsReadyInternal(int handle)
 private bool ClearCacheInternal(int handle)
+private bool ClearCacheExpirationInternal(int handle, int expiration)
 internal int get_handle()
 public bool get_valid()
 public bool get_readOnly()
@@ -4031,6 +4032,7 @@ public int get_expirationDelay()
 public void set_expirationDelay(int value)
 public bool get_ready()
 public bool ClearCache()
+public bool ClearCache(int expiration)
 public bool op_Equality(Cache lhs, Cache rhs)
 public bool op_Inequality(Cache lhs, Cache rhs)
 public int GetHashCode()
@@ -4067,6 +4069,8 @@ public Cache defaultCache
 public Cache currentCacheForWriting
 public bool enabled
 public bool ClearCache()
+public bool ClearCache(int expiration)
+private bool ClearCacheExpiration(int expiration)
 public int GetVersionFromCache(string url)
 public bool ClearCachedVersion(string assetBundleName, Hash128 hash)
 private bool INTERNAL_CALL_ClearCachedVersion(string assetBundleName, Hash128& hash)
@@ -6810,9 +6814,10 @@ protected bool AllowInvoke(Delegate delegate)
 public bool Find(object targetObj, MethodInfo method)
 }
 internal UnityEngine.Events.CachedInvokableCall`1 : InvokableCall`1<T> {
-private Object[] m_Arg1
+private T m_Arg1
 public void .ctor(Object target, MethodInfo theFunction, T argument)
 public void Invoke(Object[] args)
+public void Invoke(T arg0)
 }
 internal UnityEngine.Events.InvokableCall : BaseInvokableCall {
 private UnityAction Delegate
@@ -6821,6 +6826,7 @@ public void .ctor(UnityAction action)
 private void add_Delegate(UnityAction value)
 private void remove_Delegate(UnityAction value)
 public void Invoke(Object[] args)
+public void Invoke()
 public bool Find(object targetObj, MethodInfo method)
 }
 internal UnityEngine.Events.InvokableCall`1 : BaseInvokableCall {
@@ -6830,6 +6836,7 @@ public void .ctor(UnityAction`1<T1> action)
 protected void add_Delegate(UnityAction`1<T1> value)
 protected void remove_Delegate(UnityAction`1<T1> value)
 public void Invoke(Object[] args)
+public void Invoke(T1 args0)
 public bool Find(object targetObj, MethodInfo method)
 }
 internal UnityEngine.Events.InvokableCall`2 : BaseInvokableCall {
@@ -6839,6 +6846,7 @@ public void .ctor(UnityAction`2<T1, T2> action)
 protected void add_Delegate(UnityAction`2<T1, T2> value)
 protected void remove_Delegate(UnityAction`2<T1, T2> value)
 public void Invoke(Object[] args)
+public void Invoke(T1 args0, T2 args1)
 public bool Find(object targetObj, MethodInfo method)
 }
 internal UnityEngine.Events.InvokableCall`3 : BaseInvokableCall {
@@ -6848,6 +6856,7 @@ public void .ctor(UnityAction`3<T1, T2, T3> action)
 protected void add_Delegate(UnityAction`3<T1, T2, T3> value)
 protected void remove_Delegate(UnityAction`3<T1, T2, T3> value)
 public void Invoke(Object[] args)
+public void Invoke(T1 args0, T2 args1, T3 args2)
 public bool Find(object targetObj, MethodInfo method)
 }
 internal UnityEngine.Events.InvokableCall`4 : BaseInvokableCall {
@@ -6857,6 +6866,7 @@ public void .ctor(UnityAction`4<T1, T2, T3, T4> action)
 protected void add_Delegate(UnityAction`4<T1, T2, T3, T4> value)
 protected void remove_Delegate(UnityAction`4<T1, T2, T3, T4> value)
 public void Invoke(Object[] args)
+public void Invoke(T1 args0, T2 args1, T3 args2, T4 args3)
 public bool Find(object targetObj, MethodInfo method)
 }
 internal UnityEngine.Events.InvokableCallList : object {
@@ -6871,7 +6881,7 @@ public void AddListener(BaseInvokableCall call)
 public void RemoveListener(object targetObj, MethodInfo method)
 public void Clear()
 public void ClearPersistent()
-public void Invoke(Object[] parameters)
+public List`1<BaseInvokableCall> PrepareInvoke()
 }
 internal UnityEngine.Events.PersistentCall : object {
 private Object m_Target
@@ -7024,6 +7034,7 @@ protected void AddListener(object targetObj, MethodInfo method)
 internal void AddCall(BaseInvokableCall call)
 protected void RemoveListener(object targetObj, MethodInfo method)
 public void RemoveAllListeners()
+internal List`1<BaseInvokableCall> PrepareInvoke()
 protected void Invoke(Object[] parameters)
 public string ToString()
 public MethodInfo GetValidMethodInfo(object obj, string functionName, Type[] argumentTypes)

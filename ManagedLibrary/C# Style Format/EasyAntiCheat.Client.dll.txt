@@ -88,7 +88,7 @@ private UInt32 OnLoadProgress(UInt32 Progress, IntPtr CallbackParameter)
 private void OnLoadFinished(LoadResult Result, string Message, IntPtr CallbackParameter)
 private void RaiseCompleted(LoadResult Result, string Message)
 private void RaiseProgress(LoadProgressEventArgs eventArgs)
-private void <BeginLoad>b__0(object state)
+private void <BeginLoad>b__18_0(object state)
 }
 public EasyAntiCheat.Client.HostValidationResult : Enum {
 public int value__
@@ -116,6 +116,34 @@ public void SetMaxAllowedMessageLength(int MaxMessageLength)
 public void PushNetworkMessage(Byte[] MessageBuffer, int MessageLength)
 public void PollStatus()
 public void ValidateServerHost(UInt32 TimeoutMs)
+public IntPtr NetProtect()
+}
+internal EasyAntiCheat.Client.Hydra.NativeNetProtect : object {
+private string DllFileName
+private IntPtr Instance
+private UInt32 dotProtectMessage(IntPtr Instance, Byte[] Input, UInt32 InputLength, Byte[] Output, UInt32& OutputLength)
+private UInt32 dotProtectMessage_RawPtr(IntPtr Instance, IntPtr Input, UInt32 InputLength, IntPtr Output, UInt32& OutputLength)
+private UInt32 dotUnprotectMessage(IntPtr Instance, Byte[] Input, UInt32 InputLength, Byte[] Output, UInt32& OutputLength)
+private UInt32 dotUnprotectMessage_RawPtr(IntPtr Instance, IntPtr Input, UInt32 InputLength, IntPtr Output, UInt32& OutputLength)
+private UInt32 dotGetProtectMessageOutputLength(IntPtr Instance, UInt32 InputLength)
+public void SetInstance(IntPtr NetProtectInstance)
+public bool ProtectMessage(MemoryStream Input, MemoryStream Output)
+public bool ProtectMessage(MemoryStream Input, long InputOffset, MemoryStream Output, long OutputOffset)
+public bool UnprotectMessage(MemoryStream Input, MemoryStream Output)
+public bool UnprotectMessage(MemoryStream Input, long InputOffset, MemoryStream Output, long OutputOffset)
+}
+public EasyAntiCheat.Client.Hydra.NetProtect.INetProtect {
+public bool ProtectMessage(MemoryStream Input, MemoryStream Output)
+public bool ProtectMessage(MemoryStream Input, long InputOffset, MemoryStream Output, long OutputOffset)
+public bool UnprotectMessage(MemoryStream Source, MemoryStream Destination)
+public bool UnprotectMessage(MemoryStream Input, long InputOffset, MemoryStream Output, long OutputOffset)
+}
+internal EasyAntiCheat.Client.Hydra.NetProtect.NetProtect : object {
+public void .ctor(IntPtr Instance)
+public bool ProtectMessage(MemoryStream Input, MemoryStream Output)
+public bool ProtectMessage(MemoryStream Input, long InputOffset, MemoryStream Output, long OutputOffset)
+public bool UnprotectMessage(MemoryStream Input, MemoryStream Output)
+public bool UnprotectMessage(MemoryStream Input, long InputOffset, MemoryStream Output, long OutputOffset)
 }
 public EasyAntiCheat.Client.Hydra.Runtime : object {
 private CallbackProgress nogc_AntiCheatProgress
@@ -124,12 +152,14 @@ private bool initializeCalled
 private EventHandler`1<StateChangedEventArgs> onStateChanged
 private EventHandler`1<LoadCompletedEventArgs> onLoadCompleted
 private EventHandler`1<LoadProgressEventArgs> onProgress
+private NetProtect _NetProtect
 private bool <Initialized>k__BackingField
 private IntegrityDescriptor <Integrity>k__BackingField
 private HostValidationResult <HostValidation>k__BackingField
 public bool Initialized
 public IntegrityDescriptor Integrity
 public HostValidationResult HostValidation
+public INetProtect NetProtect
 public bool get_Initialized()
 private void set_Initialized(bool value)
 public IntegrityDescriptor get_Integrity()
@@ -145,6 +175,7 @@ public void SetMaxAllowedMessageLength(int MaxMessageLength)
 public void PushNetworkMessage(Byte[] MessageBuffer, int MessageLength)
 public void PollStatus()
 public void ValidateServerHost(UInt32 TimeoutMs)
+public INetProtect get_NetProtect()
 private UInt32 OnInternalProgress(UInt32 Progress, IntPtr CallbackParameter)
 private void OnInternalEvent(LoadResult Result, string Message, IntPtr CallbackParameter)
 private UInt32 OnIntegrityViolation(ClientIntegrityViolationType ViolationType, string ViolationCause, string DefaultMessage, IntPtr CallbackParameter)
@@ -301,6 +332,96 @@ private IntPtr Instance
 public void Dispose()
 public void StartGame(bool InstallService, string ExecutablePath, string LaunchParameters, LauncherProgress OnProgress, LauncherFinished OnFinished)
 public Process GetGameProcess()
+}
+internal EasyAntiCheat.Client.P2P.NativeClient : object {
+private string InterfaceVersion
+private INativeModule Module
+private IntPtr Instance
+private Byte[] StaticMsgBuf
+private CallbackProgress nogcOnProgress
+private CallbackFinished nogcOnFinished
+private LocalIntegrityCallback nogcOnLocalGameClientIntegrityViolation
+private RemoteIntegrityCallback OnRemotePeerClientIntegrityProc
+public bool IsStartedWithEasyAntiCheat()
+public bool IsUnity()
+public bool IsWindows()
+public bool Initialize(CallbackProgress OnProgress, CallbackFinished OnFinished, LocalIntegrityCallback OnLocalGameClientIntegrityViolation, RemoteIntegrityCallback OnRemotePeerClientIntegrityProc)
+public void Dispose()
+public void ResetState()
+public bool RegisterPeer(int ClientObject, string PlayerGUID, string PlayerIP, string PlayerName)
+public void UnregisterPeer(int ClientObject)
+public bool BeginSession(int RegisterTimeout, string LocalPlayerGUID, string PlatformName, Byte[] AuthTicket, int AuthTicketLength)
+public void EndSession()
+public bool PollForMessageToPeer(Int32& RecipientObject, Byte[]& MessageBuffer, Int32& MessageLength)
+public void ReceiveMessageFromPeer(int SenderObject, Byte[] MessageBuffer, UInt32 MessageLength)
+public void PollStatus()
+public void InitLocalization(string Language, string Country)
+}
+public EasyAntiCheat.Client.P2P.Runtime`1 : object {
+private CallbackProgress nogc_AntiCheatProgress
+private CallbackFinished nogc_AntiCheatEvent
+private LocalIntegrityCallback nogc_AntiCheatStateChanged
+private RemoteIntegrityCallback nogc_AntiCheatPeerIntegrity
+private bool initializeCalled
+private EventHandler`1<StateChangedEventArgs> onStateChanged
+private EventHandler`1<LoadCompletedEventArgs> onLoadCompleted
+private EventHandler`1<LoadProgressEventArgs> onProgress
+private EventHandler`1<PeerClientIntegrityProcArgs`1<TClient>> onPeerClientIntegrityProc
+internal IDictionary`2<TClient, int> clientMap
+internal IDictionary`2<int, TClient> invClientMap
+private int clientIDCtr
+private String[] PlatformsWithoutAuthTickets
+private bool <Initialized>k__BackingField
+private IntegrityDescriptor <Integrity>k__BackingField
+public bool Initialized
+public IntegrityDescriptor Integrity
+public bool get_Initialized()
+private void set_Initialized(bool value)
+public IntegrityDescriptor get_Integrity()
+private void set_Integrity(IntegrityDescriptor value)
+public bool IsActive()
+public void Dispose()
+public bool Initialize(EventHandler`1<StateChangedEventArgs> onStateChanged, EventHandler`1<LoadCompletedEventArgs> onCompleted, EventHandler`1<PeerClientIntegrityProcArgs`1<TClient>> onPeerClientIntegrityProc, EventHandler`1<LoadProgressEventArgs> onProgress)
+public void ResetState()
+public bool RegisterPeer(TClient ClientObject, string PlayerGUID)
+public bool RegisterPeer(TClient ClientObject, string PlayerGUID, string PlayerIP)
+public bool RegisterPeer(TClient ClientObject, string PlayerGUID, string PlayerIP, string PlayerName)
+public void UnregisterPeer(TClient ClientObject)
+public bool BeginSession(int RegisterTimeout, string LocalPlayerGUID, string PlatformName)
+public bool BeginSession(int RegisterTimeout, string LocalPlayerGUID, string PlatformName, Byte[] AuthTicket)
+public void EndSession()
+public bool PollForMessageToPeer(TClient& RecipientObject, Byte[]& MessageBuffer, Int32& MessageLength)
+public bool PollForMessageToPeer(TClient RecipientObject, Byte[]& MessageBuffer, Int32& MessageLength)
+public void ReceiveMessageFromPeer(TClient SenderObject, Byte[] MessageBuffer, int MessageLength)
+public void PollStatus()
+public void InitLocalization(string Language, string Country)
+private UInt32 OnInternalProgress(UInt32 Progress, IntPtr CallbackParameter)
+private void OnInternalFinish(LoadResult Result, string Message, IntPtr CallbackParameter)
+private UInt32 OnLocalGameClientIntegrityViolation(ClientIntegrityViolationType ViolationType, string ViolationCause, string DefaultMessage, IntPtr CallbackParameter)
+private bool OnRemoteGameClientIntegrityViolation(UIntPtr ClientID, PeerIntegrityStatus IntegrityStatus, string StatusCause, string DefaultMessage, IntPtr CallbackParameter)
+}
+public EasyAntiCheat.Client.PeerClientIntegrityProcArgs`1 : LoadEventArgs {
+private TClient <ClientObject>k__BackingField
+private PeerIntegrityStatus <Status>k__BackingField
+private string <StatusCause>k__BackingField
+public TClient ClientObject
+public PeerIntegrityStatus Status
+public string StatusCause
+internal void .ctor(TClient ClientObject, PeerIntegrityStatus IntegrityStatus, string StatusCause, string Message)
+public TClient get_ClientObject()
+private void set_ClientObject(TClient value)
+public PeerIntegrityStatus get_Status()
+private void set_Status(PeerIntegrityStatus value)
+public string get_StatusCause()
+private void set_StatusCause(string value)
+public string ToString()
+}
+public EasyAntiCheat.Client.PeerIntegrityStatus : Enum {
+public int value__
+public PeerIntegrityStatus PeerValidationCompleted
+public PeerIntegrityStatus PeerAntiCheatValidationFailed
+public PeerIntegrityStatus PeerAntiCheatHeartbeatRejected
+public PeerIntegrityStatus PeerAntiCheatClientBanned
 }
 internal EasyAntiCheat.Client.Properties.Resources : object {
 private ResourceManager resourceMan

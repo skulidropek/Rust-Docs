@@ -1,0 +1,601 @@
+public ObjectStream.ConnectionExceptionEventHandler`2 : MulticastDelegate {
+public void .ctor(object object, IntPtr method)
+public void Invoke(ObjectStreamConnection`2<TRead, TWrite> connection, Exception exception)
+public IAsyncResult BeginInvoke(ObjectStreamConnection`2<TRead, TWrite> connection, Exception exception, AsyncCallback callback, object object)
+public void EndInvoke(IAsyncResult result)
+}
+internal ObjectStream.ConnectionFactory : object {
+public ObjectStreamConnection`2<TRead, TWrite> CreateConnection(Stream inStream, Stream outStream)
+}
+public ObjectStream.ConnectionMessageEventHandler`2 : MulticastDelegate {
+public void .ctor(object object, IntPtr method)
+public void Invoke(ObjectStreamConnection`2<TRead, TWrite> connection, TRead message)
+public IAsyncResult BeginInvoke(ObjectStreamConnection`2<TRead, TWrite> connection, TRead message, AsyncCallback callback, object object)
+public void EndInvoke(IAsyncResult result)
+}
+internal ObjectStream.Data.CompilerData : object {
+private bool <LoadDefaultReferences>k__BackingField
+private string <OutputFile>k__BackingField
+private CompilerPlatform <Platform>k__BackingField
+private CompilerFile[] <ReferenceFiles>k__BackingField
+private string <SdkVersion>k__BackingField
+private CompilerFile[] <SourceFiles>k__BackingField
+private bool <StdLib>k__BackingField
+private CompilerTarget <Target>k__BackingField
+private CompilerLanguageVersion <Version>k__BackingField
+public bool LoadDefaultReferences
+public string OutputFile
+public CompilerPlatform Platform
+public CompilerFile[] ReferenceFiles
+public string SdkVersion
+public CompilerFile[] SourceFiles
+public bool StdLib
+public CompilerTarget Target
+public CompilerLanguageVersion Version
+public bool get_LoadDefaultReferences()
+public void set_LoadDefaultReferences(bool value)
+public string get_OutputFile()
+public void set_OutputFile(string value)
+public CompilerPlatform get_Platform()
+public void set_Platform(CompilerPlatform value)
+public CompilerFile[] get_ReferenceFiles()
+public void set_ReferenceFiles(CompilerFile[] value)
+public string get_SdkVersion()
+public void set_SdkVersion(string value)
+public CompilerFile[] get_SourceFiles()
+public void set_SourceFiles(CompilerFile[] value)
+public bool get_StdLib()
+public void set_StdLib(bool value)
+public CompilerTarget get_Target()
+public void set_Target(CompilerTarget value)
+public CompilerLanguageVersion get_Version()
+public void set_Version(CompilerLanguageVersion value)
+}
+internal ObjectStream.Data.CompilerFile : object {
+private string <Name>k__BackingField
+private Byte[] <Data>k__BackingField
+public string Name
+public Byte[] Data
+public string get_Name()
+public void set_Name(string value)
+public Byte[] get_Data()
+public void set_Data(Byte[] value)
+internal void .ctor(string name, Byte[] data)
+internal void .ctor(string directory, string name)
+internal void .ctor(string path)
+}
+internal ObjectStream.Data.CompilerLanguageVersion : Enum {
+public int value__
+public CompilerLanguageVersion ISO_1
+public CompilerLanguageVersion ISO_2
+public CompilerLanguageVersion V_3
+public CompilerLanguageVersion V_4
+public CompilerLanguageVersion V_5
+public CompilerLanguageVersion V_6
+public CompilerLanguageVersion Experimental
+public CompilerLanguageVersion Default
+}
+internal ObjectStream.Data.CompilerMessage : object {
+private object <Data>k__BackingField
+private object <ExtraData>k__BackingField
+private int <Id>k__BackingField
+private CompilerMessageType <Type>k__BackingField
+public object Data
+public object ExtraData
+public int Id
+public CompilerMessageType Type
+public object get_Data()
+public void set_Data(object value)
+public object get_ExtraData()
+public void set_ExtraData(object value)
+public int get_Id()
+public void set_Id(int value)
+public CompilerMessageType get_Type()
+public void set_Type(CompilerMessageType value)
+}
+internal ObjectStream.Data.CompilerMessageType : Enum {
+public int value__
+public CompilerMessageType Assembly
+public CompilerMessageType Compile
+public CompilerMessageType Error
+public CompilerMessageType Exit
+public CompilerMessageType Ready
+}
+internal ObjectStream.Data.CompilerPlatform : Enum {
+public int value__
+public CompilerPlatform AnyCPU
+public CompilerPlatform AnyCPU32Preferred
+public CompilerPlatform Arm
+public CompilerPlatform X86
+public CompilerPlatform X64
+public CompilerPlatform IA64
+}
+internal ObjectStream.Data.CompilerTarget : Enum {
+public int value__
+public CompilerTarget Library
+public CompilerTarget Exe
+public CompilerTarget Module
+public CompilerTarget WinExe
+}
+public ObjectStream.IO.BindChanger : SerializationBinder {
+public Type BindToType(string assemblyName, string typeName)
+}
+public ObjectStream.IO.ObjectStreamWrapper`1 : ObjectStreamWrapper`2<TReadWrite, TReadWrite> {
+public void .ctor(Stream inStream, Stream outStream)
+}
+public ObjectStream.IO.ObjectStreamWrapper`2 : object {
+private BinaryFormatter _binaryFormatter
+private Stream _inStream
+private Stream _outStream
+private bool _run
+public bool CanRead
+public bool CanWrite
+public void .ctor(Stream inStream, Stream outStream)
+public bool get_CanRead()
+public bool get_CanWrite()
+public void Close()
+public TRead ReadObject()
+private int ReadLength()
+private TRead ReadObject(int len)
+public void WriteObject(TWrite obj)
+private Byte[] Serialize(TWrite obj)
+private void WriteLength(int len)
+private void WriteObject(Byte[] data)
+private void Flush()
+}
+public ObjectStream.ObjectStreamClient`1 : ObjectStreamClient`2<TReadWrite, TReadWrite> {
+public void .ctor(Stream inStream, Stream outStream)
+}
+public ObjectStream.ObjectStreamClient`2 : object {
+private Stream _inStream
+private Stream _outStream
+private ObjectStreamConnection`2<TRead, TWrite> _connection
+private ConnectionMessageEventHandler`2<TRead, TWrite> Message
+private StreamExceptionEventHandler Error
+public void .ctor(Stream inStream, Stream outStream)
+public void add_Message(ConnectionMessageEventHandler`2<TRead, TWrite> value)
+public void remove_Message(ConnectionMessageEventHandler`2<TRead, TWrite> value)
+public void add_Error(StreamExceptionEventHandler value)
+public void remove_Error(StreamExceptionEventHandler value)
+public void Start()
+public void PushMessage(TWrite message)
+public void Stop()
+private void ListenSync()
+private void OnReceiveMessage(ObjectStreamConnection`2<TRead, TWrite> connection, TRead message)
+private void ConnectionOnError(ObjectStreamConnection`2<TRead, TWrite> connection, Exception exception)
+private void OnError(Exception exception)
+}
+internal ObjectStream.ObjectStreamClientFactory : object {
+public ObjectStreamWrapper`2<TRead, TWrite> Connect(Stream inStream, Stream outStream)
+}
+public ObjectStream.ObjectStreamConnection`2 : object {
+private ObjectStreamWrapper`2<TRead, TWrite> _streamWrapper
+private Queue`1<TWrite> _writeQueue
+private AutoResetEvent _writeSignal
+private ConnectionMessageEventHandler`2<TRead, TWrite> ReceiveMessage
+private ConnectionExceptionEventHandler`2<TRead, TWrite> Error
+internal void .ctor(Stream inStream, Stream outStream)
+public void add_ReceiveMessage(ConnectionMessageEventHandler`2<TRead, TWrite> value)
+public void remove_ReceiveMessage(ConnectionMessageEventHandler`2<TRead, TWrite> value)
+public void add_Error(ConnectionExceptionEventHandler`2<TRead, TWrite> value)
+public void remove_Error(ConnectionExceptionEventHandler`2<TRead, TWrite> value)
+public void Open()
+public void PushMessage(TWrite message)
+public void Close()
+private void CloseImpl()
+private void OnError(Exception exception)
+private void ReadStream()
+private void WriteStream()
+}
+public ObjectStream.StreamExceptionEventHandler : MulticastDelegate {
+public void .ctor(object object, IntPtr method)
+public void Invoke(Exception exception)
+public IAsyncResult BeginInvoke(Exception exception, AsyncCallback callback, object object)
+public void EndInvoke(IAsyncResult result)
+}
+internal ObjectStream.Threading.Worker : object {
+private WorkerExceptionEventHandler Error
+public void add_Error(WorkerExceptionEventHandler value)
+public void remove_Error(WorkerExceptionEventHandler value)
+public void DoWork(Action action)
+private void DoWorkImpl(object oAction)
+private void Fail(Exception exception)
+private void Callback(Action action)
+}
+internal ObjectStream.Threading.WorkerExceptionEventHandler : MulticastDelegate {
+public void .ctor(object object, IntPtr method)
+public void Invoke(Exception exception)
+public IAsyncResult BeginInvoke(Exception exception, AsyncCallback callback, object object)
+public void EndInvoke(IAsyncResult result)
+}
+internal ObjectStream.Threading.WorkerSucceededEventHandler : MulticastDelegate {
+public void .ctor(object object, IntPtr method)
+public void Invoke()
+public IAsyncResult BeginInvoke(AsyncCallback callback, object object)
+public void EndInvoke(IAsyncResult result)
+}
+public Oxide.Core.CSharp.DirectCallMethod : object {
+private ModuleDefinition module
+private TypeDefinition type
+private MethodDefinition method
+private MethodBody body
+private Instruction endInstruction
+private Dictionary`2<Instruction, Node> jumpToEdgePlaceholderTargets
+private List`1<Instruction> jumpToEndPlaceholders
+private Dictionary`2<string, MethodDefinition> hookMethods
+private MethodReference getLength
+private MethodReference getChars
+private MethodReference isNullOrEmpty
+private MethodReference stringEquals
+private string hook_attribute
+public void .ctor(ModuleDefinition module, TypeDefinition type)
+private bool IsHookMethod(MethodDefinition method)
+private void BuildNode(Node node, int edge_number)
+private void CallMethod(MethodDefinition method)
+private Instruction Return(bool value)
+private void JumpToEdge(Node node)
+private void JumpToEnd()
+private Instruction AddInstruction(OpCode opcode)
+private Instruction AddInstruction(OpCode opcode, Instruction instruction)
+private Instruction AddInstruction(OpCode opcode, MethodReference method_reference)
+private Instruction AddInstruction(OpCode opcode, TypeReference type_reference)
+private Instruction AddInstruction(OpCode opcode, int value)
+private Instruction AddInstruction(OpCode opcode, VariableDefinition value)
+private Instruction AddInstruction(Instruction instruction)
+public VariableDefinition AddVariable(TypeReference typeRef, string name)
+private Instruction Ldc_I4_n(int n)
+}
+public Oxide.Plugins.ChatCommandAttribute : Attribute {
+private string <Command>k__BackingField
+public string Command
+public string get_Command()
+private void set_Command(string value)
+public void .ctor(string command)
+}
+public Oxide.Plugins.CommandAttribute : Attribute {
+private String[] <Commands>k__BackingField
+public String[] Commands
+public String[] get_Commands()
+public void .ctor(String[] commands)
+}
+public Oxide.Plugins.CompilableFile : object {
+private Timer timer
+private object compileLock
+public CSharpExtension Extension
+public CSharpPluginLoader Loader
+public string Name
+public string Directory
+public string ScriptName
+public string ScriptPath
+public String[] ScriptLines
+public Encoding ScriptEncoding
+public HashSet`1<string> Requires
+public HashSet`1<string> References
+public HashSet`1<string> IncludePaths
+public string CompilerErrors
+public CompiledAssembly CompiledAssembly
+public DateTime LastModifiedAt
+public DateTime LastCachedScriptAt
+public DateTime LastCompiledAt
+public bool IsCompilationNeeded
+protected Action`1<CSharpPlugin> LoadCallback
+protected Action`1<bool> CompileCallback
+protected float CompilationQueuedAt
+private TimerInstance timeoutTimer
+public Byte[] ScriptSource
+public Byte[] get_ScriptSource()
+public void .ctor(CSharpExtension extension, CSharpPluginLoader loader, string directory, string name)
+internal void Compile(Action`1<bool> callback)
+internal void OnCompilationStarted()
+internal void OnCompilationSucceeded(CompiledAssembly compiledAssembly)
+internal void OnCompilationFailed()
+internal void OnCompilationTimeout()
+internal bool HasBeenModified()
+internal void CheckLastModificationTime()
+internal DateTime GetLastModificationTime()
+protected void OnLoadingStarted()
+protected void OnCompilationRequested()
+protected void InitFailed(string message)
+private void <OnCompilationStarted>b__27_0()
+}
+public Oxide.Plugins.CompilablePlugin : CompilableFile {
+private object compileLock
+public CompiledAssembly LastGoodAssembly
+public bool IsLoading
+public void .ctor(CSharpExtension extension, CSharpPluginLoader loader, string directory, string name)
+protected void OnLoadingStarted()
+protected void OnCompilationRequested()
+internal void LoadPlugin(Action`1<CSharpPlugin> callback)
+internal void OnCompilationStarted()
+protected void InitFailed(string message)
+}
+internal Oxide.Plugins.Compilation : object {
+public Compilation Current
+internal int id
+internal string name
+internal Action`1<Compilation> callback
+internal ConcurrentHashSet`1<CompilablePlugin> queuedPlugins
+internal HashSet`1<CompilablePlugin> plugins
+internal float startedAt
+internal float endedAt
+internal Hash`2<string, CompilerFile> references
+internal HashSet`1<string> referencedPlugins
+internal CompiledAssembly compiledAssembly
+private string includePath
+private String[] extensionNames
+private string gameExtensionName
+private string gameExtensionNamespace
+internal float duration
+internal float get_duration()
+internal void .ctor(int id, Action`1<Compilation> callback, CompilablePlugin[] plugins)
+internal void Started()
+internal void Completed(Byte[] rawAssembly)
+internal void Add(CompilablePlugin plugin)
+internal bool IncludesRequiredPlugin(string name)
+internal void Prepare(Action callback)
+private void PreparseScript(CompilablePlugin plugin)
+private void ResolveReferences(CompilablePlugin plugin)
+private void AddDependency(CompilablePlugin plugin)
+private void AddReference(CompilablePlugin plugin, string assemblyName)
+private void AddReference(CompilablePlugin plugin, AssemblyName reference)
+private bool CacheScriptLines(CompilablePlugin plugin)
+private void CacheModifiedScripts()
+private void RemovePlugin(CompilablePlugin plugin)
+private void <Completed>b__19_0()
+}
+public Oxide.Plugins.CompiledAssembly : object {
+public CompilablePlugin[] CompilablePlugins
+public String[] PluginNames
+public string Name
+public DateTime CompiledAt
+public Byte[] RawAssembly
+public Byte[] PatchedAssembly
+public float Duration
+public Assembly LoadedAssembly
+public bool IsLoading
+private List`1<Action`1<bool>> loadCallbacks
+private bool isPatching
+private bool isLoaded
+public bool IsBatch
+private IEnumerable`1<string> BlacklistedNamespaces
+private IEnumerable`1<string> WhitelistedNamespaces
+public bool get_IsBatch()
+private IEnumerable`1<string> get_BlacklistedNamespaces()
+private IEnumerable`1<string> get_WhitelistedNamespaces()
+public void .ctor(string name, CompilablePlugin[] plugins, Byte[] rawAssembly, float duration)
+public void LoadAssembly(Action`1<bool> callback)
+private void PatchAssembly(Action`1<Byte[]> callback)
+public bool IsOutdated()
+private bool IsCompilerGenerated(TypeDefinition type)
+private bool IsNamespaceBlacklisted(string fullNamespace)
+private void <LoadAssembly>b__19_0(Byte[] rawAssembly)
+private bool <IsOutdated>b__21_0(CompilablePlugin pl)
+}
+public Oxide.Plugins.ConsoleCommandAttribute : Attribute {
+private string <Command>k__BackingField
+public string Command
+public string get_Command()
+private void set_Command(string value)
+public void .ctor(string command)
+}
+public Oxide.Plugins.CovalencePlugin : CSharpPlugin {
+private Covalence covalence
+protected string game
+protected IPlayerManager players
+protected IServer server
+protected void Log(string format, Object[] args)
+protected void LogWarning(string format, Object[] args)
+protected void LogError(string format, Object[] args)
+public void HandleAddedToManager(PluginManager manager)
+}
+public Oxide.Plugins.CSharpExtension : Extension {
+internal Assembly Assembly
+internal AssemblyName AssemblyName
+internal VersionNumber AssemblyVersion
+internal string AssemblyAuthors
+private FSWatcher <Watcher>k__BackingField
+private CSharpPluginLoader loader
+public bool IsCoreExtension
+public string Name
+public string Author
+public VersionNumber Version
+public FSWatcher Watcher
+public bool get_IsCoreExtension()
+public string get_Name()
+public string get_Author()
+public VersionNumber get_Version()
+public FSWatcher get_Watcher()
+private void set_Watcher(FSWatcher value)
+public void .ctor(ExtensionManager manager)
+public void Load()
+public void LoadPluginWatchers(string pluginDirectory)
+public void OnModLoad()
+public void OnShutdown()
+private void OnFrame(float delta)
+}
+public Oxide.Plugins.CSharpPlugin : CSPlugin {
+public FSWatcher Watcher
+protected Covalence covalence
+protected Lang lang
+protected Plugins plugins
+protected Permission permission
+protected WebRequests webrequest
+protected PluginTimers timer
+protected HashSet`1<PluginFieldInfo> onlinePlayerFields
+private Dictionary`2<string, FieldInfo> pluginReferenceFields
+private bool hookDispatchFallback
+private bool <HookedOnFrame>k__BackingField
+public bool HookedOnFrame
+public bool get_HookedOnFrame()
+private void set_HookedOnFrame(bool value)
+public bool SetPluginInfo(string name, string path)
+public void HandleAddedToManager(PluginManager manager)
+public void HandleRemovedFromManager(PluginManager manager)
+public bool DirectCallHook(string name, Object& ret, Object[] args)
+protected object InvokeMethod(HookMethod method, Object[] args)
+public void SetFailState(string reason)
+private void base_OnPluginLoaded(Plugin plugin)
+private void base_OnPluginUnloaded(Plugin plugin)
+protected void Puts(string format, Object[] args)
+protected void PrintWarning(string format, Object[] args)
+protected void PrintError(string format, Object[] args)
+protected void LogToFile(string filename, string text, Plugin plugin, bool timeStamp)
+protected void NextFrame(Action callback)
+protected void NextTick(Action callback)
+protected void QueueWorkerThread(Action`1<object> callback)
+}
+public Oxide.Plugins.CSharpPluginLoader : PluginLoader {
+public String[] DefaultReferences
+public HashSet`1<string> PluginReferences
+public CSharpPluginLoader Instance
+private Dictionary`2<string, CompilablePlugin> plugins
+private CSharpExtension extension
+private List`1<CompilablePlugin> compilationQueue
+private PluginCompiler compiler
+public string FileExtension
+public CompilablePlugin GetCompilablePlugin(string directory, string name)
+public string get_FileExtension()
+public void .ctor(CSharpExtension extension)
+public void OnModLoaded()
+public IEnumerable`1<string> ScanDirectory(string directory)
+public Plugin Load(string directory, string name)
+public void Reload(string directory, string name)
+public void Unloading(Plugin pluginBase)
+public void Load(CompilablePlugin plugin)
+public void CompilationRequested(CompilablePlugin plugin)
+public void PluginLoadingStarted(CompilablePlugin plugin)
+private void PluginLoadingCompleted(CompilablePlugin plugin)
+private void CompileAssembly(CompilablePlugin[] plugins)
+public void OnShutdown()
+private IEnumerable`1<string> <>n__0(string directory)
+private void <CompilationRequested>b__17_0()
+private void <CompileAssembly>b__20_0(Compilation compilation)
+}
+public Oxide.Plugins.DescriptionAttribute : Attribute {
+private string <Description>k__BackingField
+public string Description
+public string get_Description()
+public void .ctor(string description)
+}
+public Oxide.Plugins.Hash`2 : object {
+private IDictionary`2<TKey, TValue> dictionary
+public TValue Item
+public ICollection`1<TKey> Keys
+public ICollection`1<TValue> Values
+public int Count
+public bool IsReadOnly
+public TValue get_Item(TKey key)
+public void set_Item(TKey key, TValue value)
+public ICollection`1<TKey> get_Keys()
+public ICollection`1<TValue> get_Values()
+public int get_Count()
+public bool get_IsReadOnly()
+public IEnumerator`1<KeyValuePair`2<TKey, TValue>> GetEnumerator()
+public bool ContainsKey(TKey key)
+public bool Contains(KeyValuePair`2<TKey, TValue> item)
+public void CopyTo(KeyValuePair`2[] array, int index)
+public bool TryGetValue(TKey key, TValue& value)
+public void Add(TKey key, TValue value)
+public void Add(KeyValuePair`2<TKey, TValue> item)
+public bool Remove(TKey key)
+public bool Remove(KeyValuePair`2<TKey, TValue> item)
+public void Clear()
+private IEnumerator System.Collections.IEnumerable.GetEnumerator()
+}
+public Oxide.Plugins.InfoAttribute : Attribute {
+private string <Title>k__BackingField
+private string <Author>k__BackingField
+private VersionNumber <Version>k__BackingField
+private int <ResourceId>k__BackingField
+public string Title
+public string Author
+public VersionNumber Version
+public int ResourceId
+public string get_Title()
+public string get_Author()
+public VersionNumber get_Version()
+private void set_Version(VersionNumber value)
+public int get_ResourceId()
+public void set_ResourceId(int value)
+public void .ctor(string Title, string Author, string Version)
+public void .ctor(string Title, string Author, double Version)
+private void SetVersion(string version)
+}
+public Oxide.Plugins.PermissionAttribute : Attribute {
+private String[] <Permission>k__BackingField
+public String[] Permission
+public String[] get_Permission()
+public void .ctor(string permission)
+}
+public Oxide.Plugins.PluginCompiler : object {
+public bool AutoShutdown
+public bool TraceRan
+public string FileName
+public string BinaryPath
+public string CompilerVersion
+private int downloadRetries
+private Process process
+private Regex fileErrorRegex
+private ObjectStreamClient`1<CompilerMessage> client
+private Hash`2<int, Compilation> compilations
+private Queue`1<CompilerMessage> messageQueue
+private Int32 modreq(System.Runtime.CompilerServices.IsVolatile) lastId
+private Boolean modreq(System.Runtime.CompilerServices.IsVolatile) ready
+private TimerInstance idleTimer
+public void CheckCompilerBinary()
+private void DependencyTrace()
+private void DownloadCompiler(WebResponse response, string remoteHash)
+private void UpdateCheck()
+private void SetCompilerVersion()
+internal void Compile(CompilablePlugin[] plugins, Action`1<Compilation> callback)
+public void Shutdown()
+private void EnqueueCompilation(Compilation compilation)
+private void OnMessage(ObjectStreamConnection`2<CompilerMessage, CompilerMessage> connection, CompilerMessage message)
+private void OnError(Exception exception)
+private bool CheckCompiler()
+private void OnProcessExited(object sender, EventArgs eventArgs)
+private void OnCompilerFailed(string reason)
+private void PurgeOldLogs()
+private string EscapePath(string path)
+private string GetHash(string filePath, HashAlgorithm algorithm)
+private void <OnMessage>b__23_0()
+private void <OnMessage>b__23_1()
+private void <OnMessage>b__23_2()
+private void <OnProcessExited>b__26_0()
+}
+public Oxide.Plugins.PluginLoadFailure : Exception {
+public void .ctor(string reason)
+}
+public Oxide.Plugins.PluginReferenceAttribute : Attribute {
+private string <Name>k__BackingField
+public string Name
+public string get_Name()
+public void .ctor(string name)
+}
+public Oxide.Plugins.PluginTimers : object {
+private Timer timer
+private Plugin plugin
+public void .ctor(Plugin plugin)
+public Timer Once(float seconds, Action callback)
+public Timer In(float seconds, Action callback)
+public Timer Every(float interval, Action callback)
+public Timer Repeat(float interval, int repeats, Action callback)
+public void Destroy(Timer& timer)
+}
+public Oxide.Plugins.Timer : object {
+private TimerInstance instance
+public int Repetitions
+public float Delay
+public Action Callback
+public bool Destroyed
+public Plugin Owner
+public void .ctor(TimerInstance instance)
+public int get_Repetitions()
+public float get_Delay()
+public Action get_Callback()
+public bool get_Destroyed()
+public Plugin get_Owner()
+public void Reset(float delay, int repetitions)
+public void Destroy()
+public void DestroyToPool()
+}

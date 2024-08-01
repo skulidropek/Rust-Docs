@@ -295,26 +295,31 @@ public Rust.Workshop.Skin : object {
 public bool Cache
 private string manifestName
 private Manifest manifest
+public Sprite sprite
 public Skinnable Skinnable
 public Material[] Materials
 public Material[] DefaultMaterials
-private bool <IsLoading>k__BackingField
-public bool IsLoading
+private bool <Loaded>k__BackingField
+private bool <IconLoaded>k__BackingField
+public Action OnLoaded
+public Action OnIconLoaded
+public bool Loaded
+public bool IconLoaded
 private void LoadManifestFromFile()
 public IEnumerator FromFolder(DirectoryInfo directory, LoadingBar loadingBar)
 private void UpdateTextureMetadata(Texture2D texture, string textureName, bool anisoFiltering, bool trilinearFiltering)
 internal void Apply(GameObject gameObject)
-public bool get_IsLoading()
-internal void set_IsLoading(bool value)
+public bool get_Loaded()
+internal void set_Loaded(bool value)
+public bool get_IconLoaded()
+internal void set_IconLoaded(bool value)
 public void Apply(GameObject obj, Skinnable skinnable, Material[] Materials)
 private bool IsSkinnable(string name)
 private bool CompareMaterials(Material a, Material b)
 internal void ReadDefaults()
 }
 public Rust.Workshop.WorkshopIconLoader : MonoBehaviour {
-private Dictionary`2<ulong, Sprite> Cache
-public Sprite Find(ulong workshopId)
-internal IEnumerator Load(Texture2D texture, ulong workshopId)
+public Sprite Find(ulong workshopId, Sprite placeholder, Action callback)
 }
 public Rust.Workshop.WorkshopInterface : MonoBehaviour {
 public GameObject item_position_a
@@ -481,15 +486,31 @@ protected WorkshopItemEditor get_Editor()
 }
 public Rust.Workshop.WorkshopSkin : MonoBehaviour {
 public bool AllowApply
+private WaitForSeconds waitForSeconds
+private ListDictionary`2<ulong, ListHashSet`1<WorkshopSkin>> RefreshQueue
+private Queue`1<ulong> ItemQueue
+private Queue`1<ulong> SkinQueue
 private ListDictionary`2<ulong, Item> ItemCache
 private ListDictionary`2<ulong, Skin> SkinCache
+private ulong WorkshopID
 private Action OnRefresh
+public int QueuedCount
+public int LoadedCount
 public string GetStatus()
-public int GetDownloadingSkinCount()
-public int GetProcessingSkinCount()
-public Coroutine Apply(GameObject gameobj, ulong WorkshopId, Action callback)
-private Coroutine StartApplySkin(ulong workshopId)
-private IEnumerator DownloadAndApplyWorkshopSkin(Skin skin, ulong workshopId)
+public int get_QueuedCount()
+public int get_LoadedCount()
+public Skin GetSkin(ulong workshopId)
+public Item GetItem(ulong workshopId)
+public void Apply(GameObject gameobj, ulong workshopId, Action callback)
+protected void OnDisable()
+private void Apply(ulong workshopId, Action callback)
+private void EnqueueSkinRefresh(ulong workshopId)
+private void LoadFromWorkshop(ulong workshopId)
+private void DequeueSkinRefresh(ulong workshopId)
+private IEnumerator ItemQueueCoroutine()
+private IEnumerator SkinQueueCoroutine()
+private IEnumerator LoadItem(ulong workshopId)
+private IEnumerator LoadSkin(ulong workshopId)
 private void ApplySkin(Skin skin)
 }
 public Rust.Workshop.WorkshopViewmodelControls : MonoBehaviour {

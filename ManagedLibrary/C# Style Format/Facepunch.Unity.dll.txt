@@ -2,7 +2,6 @@ public Facepunch.Analytics : object {
 private string <Uid>k__BackingField
 private string <SessionId>k__BackingField
 private string <ReportUrl>k__BackingField
-private AnalyticWebClient webClient
 private Stat Stats
 private DateTime <LastSend>k__BackingField
 private string <LastMessage>k__BackingField
@@ -13,7 +12,6 @@ internal string ReportUrl
 public DateTime LastSend
 public string LastMessage
 public string LastResponse
-internal void .ctor(string reportUrl)
 internal string get_Uid()
 internal void set_Uid(string value)
 internal string get_SessionId()
@@ -26,6 +24,7 @@ public string get_LastMessage()
 internal void set_LastMessage(string value)
 public string get_LastResponse()
 internal void set_LastResponse(string value)
+internal void .ctor(string reportUrl)
 internal void OnQuit()
 private void Send(string action, object obj, bool andWait)
 public IEnumerator KeepAlive()
@@ -33,7 +32,7 @@ private void SendSessionUpdate(bool andWait)
 public void ForceSendSessionUpdateDebug()
 public void RecordAdd(string category, string name, double val)
 public void RecordReplace(string category, string name, double val)
-private void <Analytics>m__0(object s, UploadValuesCompletedEventArgs e)
+public void RecordAverage(string category, string name, double val)
 }
 public Facepunch.Application : object {
 public Analytics Analytics
@@ -125,7 +124,6 @@ private string <PublicKey>k__BackingField
 private string <SecretKey>k__BackingField
 private string <Host>k__BackingField
 private string <ProjectId>k__BackingField
-private LogCallback <>f__mg$cache0
 public bool Disabled
 public string PublicKey
 public string SecretKey
@@ -159,7 +157,7 @@ public bool IsOpening
 public bool get_IsOpening()
 private void set_IsOpening(bool value)
 internal void Frame()
-public void Open()
+public bool Open(string section)
 }
 public Facepunch.FrameRateCategory : Enum {
 public int value__
@@ -170,6 +168,11 @@ public FrameRateCategory Average
 public FrameRateCategory Good
 public FrameRateCategory VeryGood
 public FrameRateCategory Count
+}
+public Facepunch.Leaderboard : object {
+public void Insert(string board, float score, bool OnlyIfLower, bool OnlyIfHigher, string extra, Action`1<string> result)
+public void GetRank(string board, string userid, bool desc, String[] friends, Action`1<Rank> result)
+public void GetPage(string board, string country, string city, int skip, int take, bool desc, String[] friends, Action`1<Entry[]> result)
 }
 public Facepunch.Manifest : object {
 private DateTime <LastDownloaded>k__BackingField
@@ -226,7 +229,8 @@ public string Sid
 public Int32[] Frames
 public int Mem
 public int Gc
-public Stat Stats
+public string StatText
+public string PerfText
 public int Version
 public int get_Version()
 }
@@ -275,7 +279,8 @@ public Facepunch.Models.Auth : object {
 public string Type
 public string Id
 public string Ticket
-public Auth Steam(Byte[] ticket, ulong steamId)
+public string Name
+public Auth Steam(Byte[] ticket, ulong steamId, string username)
 }
 public Facepunch.Models.Database.Add : object {
 public string Parent
@@ -304,6 +309,38 @@ public PlayerInfo[] Players
 public int Version
 public int get_Version()
 }
+public Facepunch.Models.Leaderboard.Add : object {
+public string Parent
+public float Score
+public string Extra
+public bool ReplaceIfHigher
+public bool ReplaceIfLower
+public Auth Auth
+public int Version
+public int get_Version()
+}
+public Facepunch.Models.Leaderboard.Entry : object {
+public int Rank
+public float Score
+public string UserId
+public string Name
+public string Country
+public string City
+public DateTime Created
+}
+public Facepunch.Models.Leaderboard.Rank : object {
+public float Score
+public int GlobalCount
+public int GlobalRank
+public string Country
+public int CountryCount
+public int CountryRank
+public string City
+public int CityCount
+public int CityRank
+public int FriendRank
+public DateTime Created
+}
 public Facepunch.Models.Manifest : object {
 public NewsInfo News
 public ServersInfo Servers
@@ -311,6 +348,7 @@ public string ExceptionReportingUrl
 public string BenchmarkUrl
 public string AnalyticUrl
 public string DatabaseUrl
+public string LeaderboardUrl
 public string FeedbackUrl
 public Administrator[] Administrators
 internal Manifest FromJson(string text)
@@ -326,9 +364,7 @@ public string get_Id()
 public void set_Id(string value)
 }
 internal Facepunch.Mono : object {
-private RemoteCertificateValidationCallback <>f__am$cache0
 internal void FixHttpsValidation()
-private bool <FixHttpsValidation>m__0(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
 }
 public Facepunch.Performance : object {
 private Stopwatch Stopwatch
@@ -438,4 +474,19 @@ public bool HasSwitch(string strName)
 public string GetSwitch(string strName, string strDefault)
 public int GetSwitchInt(string strName, int iDefault)
 public Dictionary`2<string, string> GetSwitches()
+}
+public Facepunch.WebUtil : object {
+public void Get(string url, Action`1<string> result)
+private IEnumerator DownloadStringCoroutine(WWW www, Action`1<string> result)
+internal void Post(string url, Dictionary`2<string, string> data, bool wait, Action`1<string> result)
+private IEnumerator PostValuesCoroutine(WWW www, Action`1<string> result)
+}
+internal Properties.Resources : object {
+private ResourceManager resourceMan
+private CultureInfo resourceCulture
+internal ResourceManager ResourceManager
+internal CultureInfo Culture
+internal ResourceManager get_ResourceManager()
+internal CultureInfo get_Culture()
+internal void set_Culture(CultureInfo value)
 }

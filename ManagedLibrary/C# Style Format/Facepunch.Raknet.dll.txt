@@ -39,6 +39,7 @@ private bool PlaybackPacket()
 }
 internal Facepunch.Network.Raknet.Defines : object {
 public byte lowestUserPacket
+public int packetHeaderSize
 }
 internal Facepunch.Network.Raknet.DemoPeer : Peer {
 public Byte[] Packet
@@ -54,7 +55,7 @@ public UInt32 get_incomingPort()
 public int get_incomingBits()
 public int get_incomingBitsUnread()
 public void SetReadPos(int bitsOffset)
-public bool ReadBytes(Byte* data, int length)
+protected bool Read(Byte* data, int length)
 public string GetStatisticsString(ulong guid)
 public int GetPingAverage(ulong guid)
 public int GetPingLast(ulong guid)
@@ -62,7 +63,7 @@ public int GetPingLowest(ulong guid)
 public RaknetStats GetStatistics(ulong guid)
 public ulong GetStat(Connection connection, StatTypeLong type)
 public void SendStart()
-protected void Write(Byte* data, int size)
+protected void Write(Byte* data, int length)
 public UInt32 SendBroadcast(Priority priority, SendMethod reliability, sbyte channel)
 public UInt32 SendTo(ulong guid, Priority priority, SendMethod reliability, sbyte channel)
 }
@@ -107,8 +108,6 @@ public byte CONNECTION_BANNED
 }
 internal Facepunch.Network.Raknet.Peer : object {
 private IntPtr ptr
-private Byte[] ReadBuffer
-private MemoryStream memoryStream
 private Byte[] ByteBuffer
 public ulong incomingGUID
 public UInt32 incomingAddressInt
@@ -131,37 +130,16 @@ public int get_incomingBitsUnread()
 public int get_incomingBytes()
 public int get_incomingBytesUnread()
 public void SetReadPos(int bitsOffset)
-public bool ReadBytes(Byte* data, int length)
-public int Read(Byte[] buffer, int offset, int length)
-public byte ReadUInt8()
-public bool ReadBit()
-public sbyte ReadInt8()
-public long ReadInt64()
-public int ReadInt32()
-public short ReadInt16()
-public ulong ReadUInt64()
-public UInt32 ReadUInt32()
-public ushort ReadUInt16()
-public float ReadFloat()
-public double ReadDouble()
+protected bool Read(Byte* data, int length)
+public int ReadBytes(Byte[] buffer, int offset, int length)
 public byte ReadByte()
 public IntPtr RawData()
-public MemoryStream ReadBytes(int length)
-private Byte* Read(int size, Byte* data)
+public int ReadBytes(MemoryStream memoryStream, int length)
 public void SendStart()
-public void WriteBool(bool val)
-public void WriteUInt16(ushort val)
-public void WriteUInt32(UInt32 val)
-public void WriteUInt64(ulong val)
-public void WriteInt8(sbyte val)
-public void WriteInt16(short val)
-public void WriteInt32(int val)
-public void WriteInt64(long val)
-public void WriteFloat(float val)
-public void WriteDouble(double val)
-public void WriteUInt8(byte val)
+public void WriteByte(byte val)
 public void WriteBytes(Byte[] val, int offset, int length)
 public void WriteBytes(Byte[] val)
+public void WriteBytes(MemoryStream stream)
 protected void Write(Byte* data, int size)
 public UInt32 SendBroadcast(Priority priority, SendMethod reliability, sbyte channel)
 public UInt32 SendTo(ulong guid, Priority priority, SendMethod reliability, sbyte channel)
@@ -198,17 +176,17 @@ public ulong GetStat(Connection connection, StatTypeLong type)
 public void SendUnconnected(UInt32 netAddr, ushort netPort, Byte[] data, int size)
 }
 internal Facepunch.Network.Raknet.StreamRead : Read {
+private NetworkPeer net
 private Peer peer
-public int length
-public int position
-public int unread
+private MemoryStream stream
 public long Length
 public long Position
-public void .ctor(Peer peer)
+public bool CanSeek
+public void .ctor(NetworkPeer net, Peer peer)
 public void Shutdown()
-public int get_length()
-public int get_position()
-public int get_unread()
+public bool Start()
+public bool Start(Connection connection)
+public byte PacketID()
 public bool Bit()
 public byte UInt8()
 public ushort UInt16()
@@ -221,13 +199,25 @@ public long Int64()
 public float Float()
 public double Double()
 public int Read(Byte[] buffer, int offset, int count)
+public int ReadByte()
 public long get_Length()
 public long get_Position()
 public void set_Position(long value)
+public bool get_CanSeek()
+public long Seek(long offset, SeekOrigin origin)
+private Byte[] GetReadBuffer()
+private long GetReadOffset(long i)
+private Union8 Read8()
+private Union16 Read16()
+private Union32 Read32()
+private Union64 Read64()
 }
 internal Facepunch.Network.Raknet.StreamWrite : Write {
+private NetworkPeer net
 private Peer peer
-public void .ctor(Peer peer)
+private MemoryStream stream
+public bool CanSeek
+public void .ctor(NetworkPeer net, Peer peer)
 public void Shutdown()
 public bool Start()
 public void Send(SendInfo info)
@@ -246,4 +236,12 @@ public void Double(double val)
 public void Bytes(Byte[] val)
 public void Write(Byte[] buffer, int offset, int count)
 public void WriteByte(byte value)
+public bool get_CanSeek()
+public long Seek(long offset, SeekOrigin origin)
+private Byte[] GetWriteBuffer()
+private long GetWriteOffset(long i)
+private void Write8(Union8 u)
+private void Write16(Union16 u)
+private void Write32(Union32 u)
+private void Write64(Union64 u)
 }

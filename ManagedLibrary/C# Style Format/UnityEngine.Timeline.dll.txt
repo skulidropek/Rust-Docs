@@ -12,7 +12,7 @@ private long m_Center
 private List`1<T> m_Children
 private IntervalNode`1<T> m_LeftNode
 private IntervalNode`1<T> m_RightNode
-public void .ctor(IEnumerable`1<T> items)
+public void .ctor(ICollection`1<T> items)
 public void Query(long time, int bitflag, List`1& results)
 }
 internal UnityEngine.IntervalTree`1 : object {
@@ -31,12 +31,12 @@ public void OnBehaviourPlay(Playable playable, FrameData info)
 public void OnBehaviourPause(Playable playable, FrameData info)
 public void ProcessFrame(Playable playable, FrameData info, object userData)
 public void OnGraphStart(Playable playable)
-public void OnGraphStop(Playable playable)
+public void OnPlayableDestroy(Playable playable)
 }
 internal UnityEngine.Timeline.ActivationMixerPlayable : PlayableBehaviour {
 private PostPlaybackState m_PostPlaybackState
 private bool m_BoundGameObjectInitialStateIsActive
-private GameObject <boundGameObject>k__BackingField
+private GameObject m_BoundGameObject
 public GameObject boundGameObject
 public PostPlaybackState postPlaybackState
 public GameObject get_boundGameObject()
@@ -44,8 +44,7 @@ public void set_boundGameObject(GameObject value)
 public ScriptPlayable`1<ActivationMixerPlayable> Create(PlayableGraph graph, int inputCount)
 public PostPlaybackState get_postPlaybackState()
 public void set_postPlaybackState(PostPlaybackState value)
-public void OnGraphStart(Playable playable)
-public void OnGraphStop(Playable playable)
+public void OnPlayableDestroy(Playable playable)
 public void ProcessFrame(Playable playable, FrameData info, object playerData)
 }
 internal UnityEngine.Timeline.ActivationPlayableAsset : PlayableAsset {
@@ -126,7 +125,6 @@ private MatchTargetFields m_MatchTargetFields
 private Vector3 m_Position
 private Quaternion m_Rotation
 private bool m_ApplyOffsets
-private Func`2<TrackAsset, bool> <>f__am$cache0
 public Vector3 position
 public Quaternion rotation
 public bool applyOffsets
@@ -175,7 +173,6 @@ internal void GetEvaluationTime(Double& outStart, Double& outDuration)
 internal void GetSequenceTime(Double& outStart, Double& outDuration)
 private void AssignAnimationClip(TimelineClip clip, AnimationClip animClip)
 public void GatherProperties(PlayableDirector director, IPropertyCollector driver)
-private bool <get_compilable>m__0(TrackAsset x)
 }
 public UnityEngine.Timeline.AudioPlayableAsset : PlayableAsset {
 private AudioClip m_Clip
@@ -253,10 +250,10 @@ private void SearchHiearchyAndConnectParticleSystem(IEnumerable`1<ParticleSystem
 private void SearchHierarchyAndConnectDirector(IEnumerable`1<PlayableDirector> directors, PlayableGraph graph, List`1<Playable> outplayables)
 private void SearchHierarchyAndConnectControlableScripts(IEnumerable`1<MonoBehaviour> controlableScripts, PlayableGraph graph, List`1<Playable> outplayables)
 private void ConnectMixerAndPlayable(PlayableGraph graph, Playable mixer, Playable playable, int portIndex)
-private IEnumerable`1<ParticleSystem> GetParticleSystems(GameObject gameObject)
-private IEnumerable`1<PlayableDirector> GetDirectors(GameObject gameObject)
+private IList`1<ParticleSystem> GetParticleSystems(GameObject gameObject)
+private IList`1<PlayableDirector> GetDirectors(GameObject gameObject)
 private IEnumerable`1<MonoBehaviour> GetControlableScripts(GameObject root)
-private void UpdateDurationAndLoopFlag(IEnumerable`1<PlayableDirector> directors, IEnumerable`1<ParticleSystem> particleSystems)
+private void UpdateDurationAndLoopFlag(IList`1<PlayableDirector> directors, IList`1<ParticleSystem> particleSystems)
 public void GatherProperties(PlayableDirector director, IPropertyCollector driver)
 }
 public UnityEngine.Timeline.DirectorControlPlayable : PlayableBehaviour {
@@ -314,9 +311,10 @@ public long GetNearestTick(double time)
 }
 public UnityEngine.Timeline.Extrapolation : object {
 public double kMinExtrapolationTime
-private Func`2<TimelineClip, double> <>f__am$cache0
+private Comparison`1<TimelineClip> <>f__am$cache0
 internal void CalculateExtrapolationTimes(TrackAsset asset)
-private double <CalculateExtrapolationTimes>m__0(TimelineClip x)
+private TimelineClip[] SortClipsByStartTime(TimelineClip[] clips)
+private int <SortClipsByStartTime>m__0(TimelineClip clip1, TimelineClip clip2)
 }
 public UnityEngine.Timeline.GroupTrack : TrackAsset {
 internal bool compilable
@@ -498,10 +496,7 @@ private EditorSettings m_EditorSettings
 public SequenceUpdateMode m_UpdateMode
 public string m_ParameterName
 public DurationMode m_DurationMode
-private Func`2<TrackAsset, IEnumerable`1<PlayableBinding>> <>f__am$cache0
-private Func`2<TrackAsset, bool> <>f__am$cache1
-private Predicate`1<TrackAsset> <>f__am$cache2
-private Func`2<TrackAsset, double> <>f__am$cache3
+private Predicate`1<TrackAsset> <>f__am$cache0
 public EditorSettings editorSettings
 public double duration
 public double fixedDuration
@@ -527,6 +522,7 @@ public TrackAsset GetRootTrack(int index)
 public IEnumerable`1<TrackAsset> GetRootTracks()
 public TrackAsset GetOutputTrack(int index)
 public IEnumerable`1<TrackAsset> GetOutputTracks()
+private void UpdateOutputTrackCache()
 public void OnEnable()
 internal int get_id()
 internal void set_id(int value)
@@ -552,10 +548,7 @@ public bool DeleteTrack(TrackAsset track)
 internal TrackAsset AllocateTrack(TrackAsset parent, string name, Type trackType)
 private void DeleteRecordingClip(TrackAsset track)
 private void DeleteRecordedAnimation(TimelineClip clip)
-private IEnumerable`1<PlayableBinding> <get_outputs>m__0(TrackAsset x)
-private bool <GetOutputTracks>m__1(TrackAsset t)
-private bool <OnEnable>m__2(TrackAsset t)
-private double <CalculateDuration>m__3(TrackAsset t)
+private bool <OnEnable>m__0(TrackAsset t)
 }
 public UnityEngine.Timeline.TimelineClip : object {
 public ClipCaps kDefaultClipCaps
@@ -732,9 +725,8 @@ private List`1<RuntimeClipBase> m_CurrentListOfActiveClips
 private int m_ActiveBit
 private List`1<ITimelineEvaluateCallback> m_EvaluateCallbacks
 private Dictionary`2<TrackAsset, ConnectionCache> m_PlayableCache
-private Func`2<TrackAsset, bool> <>f__am$cache0
-public ScriptPlayable`1<TimelinePlayable> Create(PlayableGraph graph, IList`1<TrackAsset> tracks, GameObject go, bool autoRebalance, bool createOutputs)
-public void Compile(PlayableGraph graph, Playable timelinePlayable, IList`1<TrackAsset> tracks, GameObject go, bool autoRebalance, bool createOutputs)
+public ScriptPlayable`1<TimelinePlayable> Create(PlayableGraph graph, IEnumerable`1<TrackAsset> tracks, GameObject go, bool autoRebalance, bool createOutputs)
+public void Compile(PlayableGraph graph, Playable timelinePlayable, IEnumerable`1<TrackAsset> tracks, GameObject go, bool autoRebalance, bool createOutputs)
 private void AllocateDefaultTracks(PlayableGraph graph, Playable timelinePlayable, IList`1<TrackAsset> tracks, GameObject go)
 private void CompileTrackList(PlayableGraph graph, Playable timelinePlayable, IEnumerable`1<TrackAsset> tracks, GameObject go, bool createOutputs)
 private void CreateTrackOutput(PlayableGraph graph, TrackAsset track, Playable playable, int port)
@@ -743,7 +735,6 @@ private Playable CreateTrackPlayable(PlayableGraph graph, Playable timelinePlaya
 public void PrepareFrame(Playable playable, FrameData info)
 private void Evaluate(Playable playable, FrameData frameData)
 private void CacheTrack(TrackAsset track, Playable playable, int port, Playable parent)
-private bool <Compile>m__0(TrackAsset t)
 }
 internal UnityEngine.Timeline.TimelineUndo : object {
 public void PushDestroyUndo(TimelineAsset timeline, Object thingToDirty, Object objectToDestroy, string operation)
@@ -763,6 +754,7 @@ public bool OnFrameBoundary(double time, double frameRate, double epsilon)
 public string TimeAsFrames(double timeValue, double frameRate, string format)
 public string TimeAsTimeCode(double timeValue, double frameRate, string format)
 public double ParseTimeCode(string timeCode, double frameRate, double defaultValue)
+private string RemoveChar(string str, Func`2<char, bool> charToRemoveFunc)
 private bool <ParseTimeCode>m__0(char c)
 private bool <ParseTimeCode>m__1(char c)
 }
@@ -783,10 +775,7 @@ private MediaType m_MediaType
 private Dictionary`2<Type, TrackBindingTypeAttribute> s_TrackBindingTypeAttributeCache
 protected internal List`1<TimelineClip> m_Clips
 private int <intervalBit>k__BackingField
-private Func`2<TrackAsset, bool> <>f__am$cache0
-private Func`2<TrackClipTypeAttribute, bool> <>f__am$cache1
-private Comparison`1<TimelineClip> <>f__am$cache2
-private Func`2<TimelineClip, int> <>f__am$cache3
+private Comparison`1<TimelineClip> <>f__am$cache0
 public int intervalBit
 public double start
 public double end
@@ -866,10 +855,7 @@ private void UpdateDuration()
 protected internal Playable CreatePlayable(PlayableGraph graph, GameObject go, TimelineClip clip)
 private void InvalidateTimelineCaches()
 private MediaType GetMediaType(Type t)
-private bool <OnEnable>m__0(TrackAsset t)
-private bool <CreateDefaultClip>m__1(TrackClipTypeAttribute t)
-private int <SortClips>m__2(TimelineClip clip1, TimelineClip clip2)
-private int <UpdateDuration>m__3(TimelineClip c)
+private int <SortClips>m__0(TimelineClip clip1, TimelineClip clip2)
 }
 public UnityEngine.Timeline.TrackAssetExtensions : object {
 public GroupTrack GetGroup(TrackAsset asset)

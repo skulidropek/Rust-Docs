@@ -173,6 +173,7 @@ public void .ctor(Vector3 position, Vector3 scale, Quaternion rotation, Bounds b
 public void .ctor(Vector3 position, Quaternion rotation, Bounds bounds)
 public void .ctor(Vector3 position, Vector3 size, Quaternion rotation)
 public void Transform(Vector3 position, Vector3 scale, Quaternion rotation)
+public Vector3 GetPoint(float x, float y, float z)
 public Bounds ToBounds()
 public bool Contains(Vector3 target)
 public bool Intersects(OBB target)
@@ -210,6 +211,7 @@ public AmmoTypes SHOTGUN_12GUAGE
 public AmmoTypes BOW_ARROW
 public AmmoTypes HANDMADE_SHELL
 public AmmoTypes ROCKET
+public AmmoTypes NAILS
 }
 public Rust.Application : object {
 public bool isQuitting
@@ -237,10 +239,13 @@ private bool cache
 private Action worker
 public bool keepWaiting
 public bool isDone
+public bool isValid
 public Texture2D texture
 public bool get_keepWaiting()
 public bool get_isDone()
+public bool get_isValid()
 public Texture2D get_texture()
+public void LoadIntoTexture(Texture2D tex)
 private void FreeTexture(IntPtr& buffer)
 private void LoadTextureFromFile(string filename, IntPtr& buffer, Int32& size, Int32& width, Int32& height, Int32& channels, bool normal, bool dither, bool hqmode)
 private void LoadTextureFromCache(string filename, IntPtr& buffer, Int32& size, Int32& width, Int32& height, Int32& format)
@@ -328,14 +333,14 @@ public Layer Ragdoll
 public Layer Invisible
 public Layer AI
 public Layer Player_Movement
-public Layer Unused1
+public Layer Vehicle_Movement
 public Layer Game_Trace
-public Layer Unused2
+public Layer Reflections
 public Layer World
 public Layer Player_Server
 public Layer Trigger
 public Layer Player_Model_Rendering
-public Layer Viewmodel
+public Layer Unused1
 public Layer Construction
 public Layer Construction_Socket
 public Layer Terrain
@@ -346,7 +351,7 @@ public Layer Occluder
 public Layer Prevent_Movement
 public Layer Prevent_Building
 public Layer Tree
-public Layer Unused3
+public Layer Unused2
 }
 public Rust.Layers : object {
 public int Terrain
@@ -420,12 +425,15 @@ public int Range(UInt32& seed, int min, int max)
 public float Range(float min, float max)
 public float Range(UInt32 seed, float min, float max)
 public float Range(UInt32& seed, float min, float max)
-public float Sign()
-public float Sign(UInt32 seed)
-public float Sign(UInt32& seed)
+public int Sign()
+public int Sign(UInt32 seed)
+public int Sign(UInt32& seed)
 public float Value()
 public float Value(UInt32 seed)
 public float Value(UInt32& seed)
+public Vector2 Value2D()
+public Vector2 Value2D(UInt32 seed)
+public Vector2 Value2D(UInt32& seed)
 public UInt32 Wanghash(UInt32& x)
 public float Wanghash01(UInt32& x)
 public UInt32 Xorshift(UInt32& x)
@@ -455,40 +463,13 @@ public Vector3 ClosestPoint(Vector3 pos)
 public float Distance(Vector3 pos)
 public float SqrDistance(Vector3 pos)
 }
-public Union16 : ValueType {
-public short i
-public ushort u
-public byte b1
-public byte b2
-}
-public Union32 : ValueType {
-public int i
-public UInt32 u
-public float f
-public byte b1
-public byte b2
-public byte b3
-public byte b4
-}
-public Union64 : ValueType {
-public long i
-public ulong u
-public double f
-public byte b1
-public byte b2
-public byte b3
-public byte b4
-public byte b5
-public byte b6
-public byte b7
-public byte b8
-}
 public UnityEngine.MathEx : object {
 public float SnapTo(float val, float snapValue)
 public bool QuadTest(Ray ray, Vector3 planeCenter, Quaternion planeRot, Vector2 planeSize, Vector3& hitPosition, float gridSize)
 }
 public UnityEngine.Vector2Ex : object {
 public Vector2 Parse(string p)
+public Vector2 Rotate(Vector2 v, float degrees)
 }
 public UnityEngine.Vector3Ex : object {
 public float Distance2D(Vector3 a, Vector3 b)
@@ -534,6 +515,7 @@ public bool y
 public void .ctor(bool x, bool y)
 public bool op_Equality(Vector2b a, Vector2b b)
 public bool op_Inequality(Vector2b a, Vector2b b)
+public bool Equals(Vector2b o)
 public int GetHashCode()
 public bool Equals(object o)
 public string ToString()
@@ -563,6 +545,7 @@ public Vector2 op_Implicit(Vector2i other)
 public Vector2i op_Explicit(Vector2 other)
 public bool op_Equality(Vector2i a, Vector2i b)
 public bool op_Inequality(Vector2i a, Vector2i b)
+public bool Equals(Vector2i o)
 public int GetHashCode()
 public bool Equals(object o)
 public string ToString()
@@ -576,6 +559,7 @@ public bool z
 public void .ctor(bool x, bool y, bool z)
 public bool op_Equality(Vector3b a, Vector3b b)
 public bool op_Inequality(Vector3b a, Vector3b b)
+public bool Equals(Vector3b o)
 public int GetHashCode()
 public bool Equals(object o)
 public string ToString()
@@ -608,6 +592,7 @@ public Vector3 op_Implicit(Vector3i other)
 public Vector3i op_Explicit(Vector3 other)
 public bool op_Equality(Vector3i a, Vector3i b)
 public bool op_Inequality(Vector3i a, Vector3i b)
+public bool Equals(Vector3i o)
 public int GetHashCode()
 public bool Equals(object o)
 public string ToString()

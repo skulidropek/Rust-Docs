@@ -1,8 +1,70 @@
-internal EasyAntiCheat.Server.BackendType : Enum {
+internal EasyAntiCheat.Server.Cerberus.Cerberus`1 : object {
+private EasyAntiCheatServer`1<TClient> EACServer
+internal void .ctor(IntPtr NativeInstance, EasyAntiCheatServer`1<TClient> EACServer)
+public void BeginFrame()
+public void EndFrame()
+public void LogGameRoundStart(string MapName)
+public void LogGameRoundEnd(int WinningTeamID)
+public void LogPlayerSpawn(TClient Player, int TeamID, int CharacterID)
+public void LogPlayerDespawn(TClient Player)
+public void LogPlayerKill(TClient PlayerVictim, TClient PlayerAttacker)
+public void LogPlayerRevive(TClient PlayerRevived, TClient PlayerReviving)
+public void LogPlayerTick(TClient Player, PlayerTick EventParams)
+public void LogPlayerUseWeapon(TClient Player, PlayerUseWeapon EventParams)
+public void LogPlayerTakeDamage(TClient PlayerVictim, TClient PlayerAttacker, PlayerTakeDamage EventParams)
+internal void SetNativeInstance(IntPtr NativeInstance)
+}
+public EasyAntiCheat.Server.Cerberus.ICerberus`1 {
+public void BeginFrame()
+public void EndFrame()
+public void LogGameRoundStart(string MapName)
+public void LogGameRoundEnd(int WinningTeamID)
+public void LogPlayerSpawn(TClient Player, int TeamID, int CharacterID)
+public void LogPlayerDespawn(TClient Player)
+public void LogPlayerKill(TClient ClientVictim, TClient ClientKiller)
+public void LogPlayerRevive(TClient PlayerRevived, TClient PlayerReviving)
+public void LogPlayerTick(TClient Player, PlayerTick EventParams)
+public void LogPlayerUseWeapon(TClient Player, PlayerUseWeapon EventParams)
+public void LogPlayerTakeDamage(TClient PlayerVictim, TClient PlayerAttacker, PlayerTakeDamage EventParams)
+}
+public EasyAntiCheat.Server.Cerberus.PlayerTakeDamage : ValueType {
+public Vector3 VictimPosition
+public Vector3 VictimViewAngles
+public Vector3 AttackerPosition
+public Vector3 AttackerViewAngles
+public int AttackerFieldOfView
+public int WeaponID
+public int HitBoneID
+public int DamageTaken
+}
+public EasyAntiCheat.Server.Cerberus.PlayerTick : ValueType {
+public Vector3 Position
+public Vector3 ViewAngles
+public int Health
+public PlayerTickFlags TickFlags
+}
+public EasyAntiCheat.Server.Cerberus.PlayerTickFlags : Enum {
 public int value__
-public BackendType Client
-public BackendType Hydra
-public BackendType Cerberus
+public PlayerTickFlags PlayerTickNone
+public PlayerTickFlags PlayerTickCrouched
+public PlayerTickFlags PlayerTickProned
+public PlayerTickFlags PlayerTickMounted
+public PlayerTickFlags PlayerTickDormant
+public PlayerTickFlags PlayerTickSwimming
+public PlayerTickFlags PlayerTickAirborne
+public PlayerTickFlags PlayerTickClimbingLadder
+}
+public EasyAntiCheat.Server.Cerberus.PlayerUseWeapon : ValueType {
+public Vector3 Position
+public Vector3 ViewAngles
+public int FieldOfView
+public int WeaponID
+}
+public EasyAntiCheat.Server.Cerberus.Vector3 : ValueType {
+public float X
+public float Y
+public float Z
+public void .ctor(float x, float y, float z)
 }
 public EasyAntiCheat.Server.ClientAuth.ClientAuth : object {
 public void Dispose()
@@ -32,136 +94,88 @@ public ClientStatus ClientBanned
 public ClientStatus ClientViolation
 public ClientStatus ClientAuthenticatedRemote
 }
-public EasyAntiCheat.Server.Hydra.Cerberus.GameRoundStart : ValueType {
-public string MapName
-}
-public EasyAntiCheat.Server.Hydra.Cerberus.ICerberus {
-public void LogPlayerDespawn(PlayerDespawn Despawn)
-public void LogPlayerTakeDamage(PlayerTakeDamage TakeDamage)
-public void LogPlayerUseWeapon(PlayerUseWeapon UseWeapon)
-public void LogPlayerTick(PlayerTick Tick)
-public void LogGameRoundStart(string MapName)
-}
-public EasyAntiCheat.Server.Hydra.Cerberus.PlayerDespawn : ValueType {
-public Client Client
-}
-public EasyAntiCheat.Server.Hydra.Cerberus.PlayerTakeDamage : ValueType {
-public Client VictimClient
-public Vector3 VictimPosition
-public Vector3 VictimViewAngles
-public Client AttackerClient
-public Vector3 AttackerPosition
-public Vector3 AttackerViewAngles
-public int WeaponID
-public int HitBoneID
-public PlayerTakeDamageFlags Flags
-}
-public EasyAntiCheat.Server.Hydra.Cerberus.PlayerTakeDamageFlags : Enum {
-public int value__
-public PlayerTakeDamageFlags PlayerTakeDamageFlagNone
-public PlayerTakeDamageFlags PlayerTakeDamageFlagHeadshot
-}
-public EasyAntiCheat.Server.Hydra.Cerberus.PlayerTick : ValueType {
-public Client Client
-public Vector3 PlayerPosition
-public Vector3 PlayerViewAngles
-public PlayerTickFlags Flags
-}
-public EasyAntiCheat.Server.Hydra.Cerberus.PlayerTickFlags : Enum {
-public int value__
-public PlayerTickFlags PlayerTickFlagNone
-public PlayerTickFlags PlayerTickFlagAirborne
-}
-internal EasyAntiCheat.Server.Hydra.Cerberus.PlayerTracker : object {
-public void .ctor(IntPtr CerberusInstance)
-public void LogPlayerDespawn(PlayerDespawn Despawn)
-public void LogPlayerTakeDamage(PlayerTakeDamage TakeDamage)
-public void LogPlayerUseWeapon(PlayerUseWeapon UseWeapon)
-public void LogPlayerTick(PlayerTick Tick)
-public void LogGameRoundStart(string MapName)
-}
-public EasyAntiCheat.Server.Hydra.Cerberus.PlayerUseWeapon : ValueType {
-public Client Client
-public Vector3 PlayerPosition
-public Vector3 PlayerViewAngles
-public int WeaponID
-}
-public EasyAntiCheat.Server.Hydra.Cerberus.Vector3 : ValueType {
-public float X
-public float Y
-public float Z
-public void .ctor(float x, float y, float z)
-}
 public EasyAntiCheat.Server.Hydra.Client : ValueType {
-private int <ClientID>k__BackingField
-public int ClientID
-internal void .ctor(int clientID)
+private UInt32 <ClientID>k__BackingField
+public UInt32 ClientID
+internal void .ctor(UInt32 clientID)
 public bool Equals(Client other)
 public int GetHashCode()
-public int get_ClientID()
-private void set_ClientID(int value)
+public UInt32 get_ClientID()
+private void set_ClientID(UInt32 value)
 }
 public EasyAntiCheat.Server.Hydra.ClientStatusUpdate`1 : object {
-private Nullable`1<DateTime> timeBanExpires
-private TClient <ClientObject>k__BackingField
+private Nullable`1<DateTime> TimeBanExpires
+private TClient <Client>k__BackingField
 private string <Message>k__BackingField
 private ClientStatus <Status>k__BackingField
-public TClient ClientObject
+public TClient Client
 public string Message
 public bool RequiresKick
 public ClientStatus Status
-public TClient get_ClientObject()
-private void set_ClientObject(TClient value)
+public TClient get_Client()
+private void set_Client(TClient value)
 public string get_Message()
 private void set_Message(string value)
 public bool get_RequiresKick()
 public ClientStatus get_Status()
 private void set_Status(ClientStatus value)
-internal void .ctor(TClient clientObject, ClientStatus clientStatus, Nullable`1<DateTime> timeBanExpires, string message)
+internal void .ctor(TClient client, ClientStatus clientStatus, Nullable`1<DateTime> timeBanExpires, string message)
 public bool IsBanned(Nullable`1& timeBanExpires)
 public string ToString()
 }
 public EasyAntiCheat.Server.Hydra.EasyAntiCheatServer`1 : object {
 private ClientStatusHandler<TClient> _ClientStatusHandler
-private IDictionary`2<TClient, int> clientMap
-private IDictionary`2<int, TClient> invClientMap
-private int clientIDCtr
-private PlayerTracker _Cerberus
-public ICerberus Cerberus
+internal IDictionary`2<TClient, IntPtr> MapClientToInternalObject
+private IDictionary`2<IntPtr, TClient> MapInternalObjectToClient
+private IntPtr UniqueClientObjectCounter
+private Cerberus`1<TClient> _Cerberus
+private NetProtect`1<TClient> _NetProtect
+public ICerberus`1<TClient> Cerberus
+public INetProtect`1<TClient> NetProtect
 public void .ctor(ClientStatusHandler<TClient> clientStatusHandler, string serverName)
 public void .ctor(ClientStatusHandler<TClient> clientStatusHandler, int registerTimeout, string serverName)
 internal void .ctor(ClientStatusHandler<TClient> clientStatusHandler, ServerConfiguration serverConfiguration, Nullable`1<int> gameID)
-public ICerberus get_Cerberus()
+public ICerberus`1<TClient> get_Cerberus()
+public INetProtect`1<TClient> get_NetProtect()
 public void Dispose()
 public void HandleClientUpdates()
-public void RegisterClient(TClient clientObject, string playerGuid, string playerIP)
-public void RegisterClient(TClient clientObject, string playerGuid, string playerIP, string ownerGuid)
-public void RegisterClient(TClient clientObject, string playerGuid, string playerIP, string ownerGuid, string playerName, PlayerRegisterFlags flags)
+public void RegisterClient(TClient client, string playerGuid, string playerIP)
+public void RegisterClient(TClient client, string playerGuid, string playerIP, string ownerGuid)
+public void RegisterClient(TClient client, string playerGuid, string playerIP, string ownerGuid, string playerName, PlayerRegisterFlags flags)
 public Client GenerateCompatibilityClient()
-public void UnregisterClient(TClient clientObject)
-public bool PopNetworkMessage(TClient& clientObject, Byte[]& messageBuffer, Int32& messageLength)
+public void UnregisterClient(TClient client)
+public bool PopNetworkMessage(TClient& client, Byte[]& messageBuffer, Int32& messageLength)
 public bool PopNetworkMessage(TClient desiredClient, Byte[]& messageBuffer, Int32& messageLength)
-public void SetMaxAllowedMessageLength(TClient clientObject, int maxMessageLength)
-public void PushNetworkMessage(TClient clientObject, Byte[] messageBuffer, int messageLength)
-public void SetClientNetworkState(TClient clientObject, bool networkActive)
-internal void SetServer(ServerType serverType)
+public void SetMaxAllowedMessageLength(TClient client, int maxMessageLength)
+public void PushNetworkMessage(TClient client, Byte[] messageBuffer, int messageLength)
+public void SetClientNetworkState(TClient client, bool networkActive)
+private IntPtr GetNextClientObject()
 }
 internal EasyAntiCheat.Server.Hydra.NativeCerberus : object {
 private string DllFileName
 private IntPtr Instance
-private void dotLogPlayerDespawn(IntPtr Instance, UInt32 ClientID)
-private void dotLogPlayerTakeDamage(IntPtr Instance, UInt32 VictimClientID, float VictimPositionX, float VictimPositionY, float VictimPositionZ, float VictimViewAnglesX, float VictimViewAnglesY, float VictimViewAnglesZ, UInt32 AttackerClientID, float AttackerPlayerPositionX, float AttackerPlayerPositionY, float AttackerPlayerPositionZ, float AttackerPlayerViewAnglesX, float AttackerPlayerViewAnglesY, float AttackerPlayerViewAnglesZ, UInt32 WeaponID, UInt32 HitBoneID, UInt32 Flags)
-private void dotLogPlayerUseWeapon(IntPtr Instance, UInt32 ClientID, float PlayerPositionX, float PlayerPositionY, float PlayerPositionZ, float PlayerViewAnglesX, float PlayerViewAnglesY, float PlayerViewAnglesZ, UInt32 WeaponID)
-private void dotLogPlayerTick(IntPtr Instance, UInt32 ClientID, float PlayerPositionX, float PlayerPositionY, float PlayerPositionZ, float PlayerViewAnglesX, float PlayerViewAnglesY, float PlayerViewAnglesZ, UInt32 Flags)
-private void dotLogGameRoundStart(IntPtr Instance, string MapName)
-private void dotSetEACServer(IntPtr Instance, string EACServerName)
-public void SetInstance(IntPtr CerberusInstance)
-public void LogPlayerDespawn(int ClientID)
-public void LogPlayerTakeDamage(int VictimClientID, Vector3 VictimPlayerPosition, Vector3 VictimPlayerViewAngles, int AttackerClientID, Vector3 AttackerPlayerPosition, Vector3 AttackerPlayerViewAngles, int WeaponID, int HitBoneID, PlayerTakeDamageFlags Flags)
-public void LogPlayerUseWeapon(int ClientID, Vector3 PlayerPosition, Vector3 PlayerViewAngles, int WeaponID)
-public void LogPlayerTick(int ClientID, Vector3 PlayerPosition, Vector3 PlayerViewAngles, PlayerTickFlags Flags)
-public void LogGameRoundStart(string MapName)
-public void SetEACServer(string EACServerName)
+private void dotBeginFrame(IntPtr Instance)
+private void dotEndFrame(IntPtr Instance)
+private void dotGameRoundStart(IntPtr Instance, string MapName)
+private void dotGameRoundEnd(IntPtr Instance, UInt32 WinningTeamID)
+private void dotPlayerSpawn(IntPtr Instance, IntPtr Player, UInt32 TeamID, UInt32 CharacterID)
+private void dotPlayerDespawn(IntPtr Instance, IntPtr Player, UInt32 IsPlayerDeath, IntPtr PlayerAttacker)
+private void dotPlayerRevive(IntPtr Instance, IntPtr PlayerRevived, IntPtr PlayerReviving)
+private void dotPlayerTick(IntPtr Instance, IntPtr Player, float PositionX, float PositionY, float PositionZ, float ViewAnglesX, float ViewAnglesY, float ViewAnglesZ, UInt32 Health, UInt32 TickFlags)
+private void dotPlayerUseWeapon(IntPtr Instance, IntPtr Player, float PositionX, float PositionY, float PositionZ, float ViewAnglesX, float ViewAnglesY, float ViewAnglesZ, UInt32 FieldOfView, UInt32 WeaponID)
+private void dotPlayerTakeDamage(IntPtr Instance, IntPtr PlayerVictim, float VictimPositionX, float VictimPositionY, float VictimPositionZ, float VictimViewAnglesX, float VictimViewAnglesY, float VictimViewAnglesZ, IntPtr PlayerAttacker, float AttackerPositionX, float AttackerPositionY, float AttackerPositionZ, float AttackerViewAnglesX, float AttackerViewAnglesY, float AttackerViewAnglesZ, UInt32 AttackerFieldOfView, UInt32 WeaponID, UInt32 HitBoneID, UInt32 DamageTaken)
+internal void SetInstance(IntPtr CerberusInstance)
+internal void BeginFrame()
+internal void EndFrame()
+internal void LogGameRoundStart(string MapName)
+internal void LogGameRoundEnd(int WinningTeamID)
+internal void LogPlayerSpawn(IntPtr PlayerObject, int TeamID, int CharacterID)
+internal void LogPlayerDespawn(IntPtr PlayerObject)
+internal void LogPlayerKill(IntPtr PlayerVictim, IntPtr PlayerAttacker)
+internal void LogPlayerRevive(IntPtr PlayerRevived, IntPtr PlayerReviving)
+internal void LogPlayerTick(IntPtr PlayerObject, PlayerTick EventParams)
+internal void LogPlayerUseWeapon(IntPtr PlayerObject, PlayerUseWeapon EventParams)
+internal void LogPlayerTakeDamage(IntPtr PlayerVictim, IntPtr PlayerAttacker, PlayerTakeDamage EventParams)
 }
 internal EasyAntiCheat.Server.Hydra.NativeModule : object {
 private string DllFileName
@@ -173,93 +187,59 @@ private IntPtr dotCreateGameServer(string InterfaceVersion)
 private bool dotInitialize(IntPtr Instance, UInt32 RegisterTimeout, string ServerName)
 private bool dotInitializeWithGameID(IntPtr Instance, UInt32 GameID, UInt32 RegisterTimeout, string ServerName)
 private void dotDestroy(IntPtr Instance)
-private bool dotRegisterClient(IntPtr Instance, UIntPtr ClientObject, string PlayerGUID, string PlayerIP, string OwnerGUID, string PlayerName, UInt32 Flags)
+private bool dotRegisterClient(IntPtr Instance, IntPtr ClientObject, string PlayerGUID, string PlayerIP, string OwnerGUID, string PlayerName, UInt32 Flags)
 private UInt32 dotGenerateCompatibilityClientID(IntPtr Instance)
-private void dotUnregisterClient(IntPtr Instance, UIntPtr ClientObject)
-private UIntPtr dotGetNextClientUpdate(IntPtr Instance, UIntPtr ClientObject, Byte* ClientUpdate)
-private UIntPtr dotPopNetworkMessage(IntPtr Instance, UIntPtr ClientObject, IntPtr& MessageBuffer, UInt32& MessageLength)
-private void dotSetMaxAllowedMessageLength(IntPtr Instance, UIntPtr ClientObject, UInt32 MaxMessageLength)
-private void dotPushNetworkMessage(IntPtr Instance, UIntPtr ClientObject, Byte[] MessageBuffer, UInt32 MessageLength)
+private void dotUnregisterClient(IntPtr Instance, IntPtr ClientObject)
+private IntPtr dotGetNextClientUpdate(IntPtr Instance, IntPtr ClientObject, Byte* ClientUpdate)
+private IntPtr dotPopNetworkMessage(IntPtr Instance, IntPtr ClientObject, IntPtr& MessageBuffer, UInt32& MessageLength)
+private void dotSetMaxAllowedMessageLength(IntPtr Instance, IntPtr ClientObject, UInt32 MaxMessageLength)
+private void dotPushNetworkMessage(IntPtr Instance, IntPtr ClientObject, Byte[] MessageBuffer, UInt32 MessageLength)
 private void dotSetLogCallback(IntPtr Instance, LogEventHandler LogCallback, LogLevel LogLevel)
 private IntPtr dotCerberus(IntPtr Instance)
-private void dotSetClientNetworkState(IntPtr Instance, UIntPtr ClientObject, bool NetworkActive)
-private void dotSetEACServer(IntPtr Instance, string EACServerName)
-private UInt32 dotGetGameID(IntPtr Instance)
+private IntPtr dotNetProtect(IntPtr Instance)
+private void dotSetClientNetworkState(IntPtr Instance, IntPtr ClientObject, bool NetworkActive)
 public bool Initialize(ServerConfiguration config)
 public bool InitializeWithGameID(int GameID, ServerConfiguration config)
 public void Unload()
-public bool RegisterClient(int ClientObject, string PlayerGUID, string PlayerIP, string OwnerGUID, string PlayerName, PlayerRegisterFlags Flags)
-public int GenerateCompatibilityClientID()
-public void UnregisterClient(int ClientObject)
-public int GetNextClientUpdate(int ClientObject, ClientUpdate& Msg)
-public int PopNetworkMessage(int ClientObject, Byte[]& MessageBuffer, Int32& MessageLength)
-public void SetMaxAllowedMessageLength(int ClientObject, int MaxMessageLength)
-public void PushNetworkMessage(int ClientObject, Byte[] MessageBuffer, int MessageLength)
+public bool RegisterClient(IntPtr ClientObject, string PlayerGUID, string PlayerIP, string OwnerGUID, string PlayerName, PlayerRegisterFlags Flags)
+public UInt32 GenerateCompatibilityClientID()
+public void UnregisterClient(IntPtr ClientObject)
+public IntPtr GetNextClientUpdate(IntPtr ClientObject, ClientUpdate& Msg)
+public IntPtr PopNetworkMessage(IntPtr ClientObject, Byte[]& MessageBuffer, Int32& MessageLength)
+public void SetMaxAllowedMessageLength(IntPtr ClientObject, int MaxMessageLength)
+public void PushNetworkMessage(IntPtr ClientObject, Byte[] MessageBuffer, int MessageLength)
 public IntPtr Cerberus()
-public void SetClientNetworkState(int ClientObject, bool NetworkActive)
-public void SetEACServer(string EACServerName)
-public int GetGameID()
+public IntPtr NetProtect()
+public void SetClientNetworkState(IntPtr ClientObject, bool NetworkActive)
 private void OnLogEvent(LogLevel LogLevel, string Message)
 }
-public EasyAntiCheat.Server.Legacy.Cerberus.GameRoundStart : ValueType {
-public string MapName
+internal EasyAntiCheat.Server.Hydra.NativeNetProtect : object {
+private string DllFileName
+private IntPtr Instance
+private UInt32 dotProtectMessage(IntPtr Instance, IntPtr ClientObject, Byte[] Input, UInt32 InputLength, Byte[] Output, UInt32& OutputLength)
+private UInt32 dotProtectMessage_RawPtr(IntPtr Instance, IntPtr ClientObject, IntPtr Input, UInt32 InputLength, IntPtr Output, UInt32& OutputLength)
+private UInt32 dotUnprotectMessage(IntPtr Instance, IntPtr ClientObject, Byte[] Input, UInt32 InputLength, Byte[] Output, UInt32& OutputLength)
+private UInt32 dotUnprotectMessage_RawPtr(IntPtr Instance, IntPtr ClientObject, IntPtr Input, UInt32 InputLength, IntPtr Output, UInt32& OutputLength)
+private UInt32 dotGetProtectMessageOutputLength(IntPtr Instance, UInt32 InputLength)
+internal void SetInstance(IntPtr NetProtectInstance)
+public bool ProtectMessage(IntPtr ClientObject, MemoryStream Input, MemoryStream Output)
+public bool ProtectMessage(IntPtr ClientObject, MemoryStream Input, long InputOffset, MemoryStream Output, long OutputOffset)
+public bool UnprotectMessage(IntPtr ClientObject, MemoryStream Input, MemoryStream Output)
+public bool UnprotectMessage(IntPtr ClientObject, MemoryStream Input, long InputOffset, MemoryStream Output, long OutputOffset)
 }
-public EasyAntiCheat.Server.Legacy.Cerberus.ICerberus {
-public void LogPlayerDespawn(string PlayerGUID)
-public void LogPlayerTakeDamage(PlayerTakeDamage TakeDamage)
-public void LogPlayerUseWeapon(PlayerUseWeapon UseWeapon)
-public void LogPlayerTick(PlayerTick Tick)
-public void LogGameRoundStart(string MapName)
+public EasyAntiCheat.Server.Hydra.NetProtect.INetProtect`1 {
+public bool ProtectMessage(TClient Client, MemoryStream Input, MemoryStream Output)
+public bool ProtectMessage(TClient Client, MemoryStream Input, long InputOffset, MemoryStream Output, long OutputOffset)
+public bool UnprotectMessage(TClient Client, MemoryStream Source, MemoryStream Destination)
+public bool UnprotectMessage(TClient Client, MemoryStream Input, long InputOffset, MemoryStream Output, long OutputOffset)
 }
-public EasyAntiCheat.Server.Legacy.Cerberus.PlayerDespawn : ValueType {
-public string PlayerGUID
-}
-public EasyAntiCheat.Server.Legacy.Cerberus.PlayerTakeDamage : ValueType {
-public string VictimPlayerGUID
-public Vector3 VictimPlayerPosition
-public Vector3 VictimPlayerViewAngles
-public string AttackerPlayerGUID
-public Vector3 AttackerPlayerPosition
-public Vector3 AttackerPlayerViewAngles
-public int WeaponID
-public int HitBoneID
-public PlayerTakeDamageFlags Flags
-}
-public EasyAntiCheat.Server.Legacy.Cerberus.PlayerTakeDamageFlags : Enum {
-public int value__
-public PlayerTakeDamageFlags PlayerTakeDamageFlagNone
-public PlayerTakeDamageFlags PlayerTakeDamageFlagHeadshot
-}
-public EasyAntiCheat.Server.Legacy.Cerberus.PlayerTick : ValueType {
-public string PlayerGUID
-public Vector3 PlayerPosition
-public Vector3 PlayerViewAngles
-public PlayerTickFlags Flags
-}
-public EasyAntiCheat.Server.Legacy.Cerberus.PlayerTickFlags : Enum {
-public int value__
-public PlayerTickFlags PlayerTickFlagNone
-public PlayerTickFlags PlayerTickFlagAirborne
-}
-internal EasyAntiCheat.Server.Legacy.Cerberus.PlayerTracker : object {
-public void .ctor(IntPtr CerberusInstance)
-public void LogPlayerDespawn(string PlayerGUID)
-public void LogPlayerTakeDamage(PlayerTakeDamage TakeDamage)
-public void LogPlayerUseWeapon(PlayerUseWeapon UseWeapon)
-public void LogPlayerTick(PlayerTick Tick)
-public void LogGameRoundStart(string MapName)
-}
-public EasyAntiCheat.Server.Legacy.Cerberus.PlayerUseWeapon : ValueType {
-public string PlayerGUID
-public Vector3 PlayerPosition
-public Vector3 PlayerViewAngles
-public int WeaponID
-}
-public EasyAntiCheat.Server.Legacy.Cerberus.Vector3 : ValueType {
-public float X
-public float Y
-public float Z
-public void .ctor(float x, float y, float z)
+internal EasyAntiCheat.Server.Hydra.NetProtect.NetProtect`1 : object {
+private EasyAntiCheatServer`1<TClient> ServerInstance
+public void .ctor(IntPtr NetProtectInstance, EasyAntiCheatServer`1<TClient> EACServerInstance)
+public bool ProtectMessage(TClient Client, MemoryStream Input, MemoryStream Output)
+public bool ProtectMessage(TClient Client, MemoryStream Input, long InputOffset, MemoryStream Output, long OutputOffset)
+public bool UnprotectMessage(TClient Client, MemoryStream Input, MemoryStream Output)
+public bool UnprotectMessage(TClient Client, MemoryStream Input, long InputOffset, MemoryStream Output, long OutputOffset)
 }
 public EasyAntiCheat.Server.Legacy.Client : ValueType {
 private string <OwnerGuid>k__BackingField
@@ -305,39 +285,18 @@ public string ToString()
 public EasyAntiCheat.Server.Legacy.EasyAntiCheatServer : object {
 private Scout _Scout
 private ClientAuth _ClientAuth
-private PlayerTracker _Cerberus
 public Scout Scout
 public ClientAuth ClientAuth
-public ICerberus Cerberus
 public void .ctor(string serverName)
 internal void .ctor(ServerConfiguration serverConfiguration, Nullable`1<int> gameID)
 public Scout get_Scout()
 public ClientAuth get_ClientAuth()
-public ICerberus get_Cerberus()
 public void Dispose()
 public void HandleUserUpdates(ClientStatusHandler handleStatus)
 public void RegisterUser(Byte[] token, string playerGuid)
 public void RegisterUser(Byte[] token, string playerGuid, string ownerGuid)
 public void RegisterUser(Byte[] token, string playerGuid, string ownerGuid, string playerName, PlayerRegisterFlags flags)
 public void UnregisterUser(Byte[] token)
-internal void SetServer(ServerType serverType)
-}
-internal EasyAntiCheat.Server.Legacy.NativeCerberus : object {
-private string DllFileName
-private IntPtr Instance
-private void dotLogPlayerDespawn(IntPtr Instance, string PlayerGUID)
-private void dotLogPlayerTakeDamage(IntPtr Instance, string VictimPlayerGUID, float VictimPositionX, float VictimPositionY, float VictimPositionZ, float VictimViewAnglesX, float VictimViewAnglesY, float VictimViewAnglesZ, string AttackerPlayerGUID, float AttackerPlayerPositionX, float AttackerPlayerPositionY, float AttackerPlayerPositionZ, float AttackerPlayerViewAnglesX, float AttackerPlayerViewAnglesY, float AttackerPlayerViewAnglesZ, UInt32 WeaponID, UInt32 HitBoneID, UInt32 Flags)
-private void dotLogPlayerUseWeapon(IntPtr Instance, string PlayerGUID, float PlayerPositionX, float PlayerPositionY, float PlayerPositionZ, float PlayerViewAnglesX, float PlayerViewAnglesY, float PlayerViewAnglesZ, UInt32 WeaponID)
-private void dotLogPlayerTick(IntPtr Instance, string PlayerGUID, float PlayerPositionX, float PlayerPositionY, float PlayerPositionZ, float PlayerViewAnglesX, float PlayerViewAnglesY, float PlayerViewAnglesZ, UInt32 Flags)
-private void dotLogGameRoundStart(IntPtr Instance, string MapName)
-private void dotSetEACServer(IntPtr Instance, string EACServerName)
-public void SetInstance(IntPtr CerberusInstance)
-public void LogPlayerDespawn(string PlayerGUID)
-public void LogPlayerTakeDamage(string VictimPlayerGUID, Vector3 VictimPlayerPosition, Vector3 VictimPlayerViewAngles, string AttackerPlayerGUID, Vector3 AttackerPlayerPosition, Vector3 AttackerPlayerViewAngles, int WeaponID, int HitBoneID, PlayerTakeDamageFlags Flags)
-public void LogPlayerUseWeapon(string PlayerGUID, Vector3 PlayerPosition, Vector3 PlayerViewAngles, int WeaponID)
-public void LogPlayerTick(string PlayerGUID, Vector3 PlayerPosition, Vector3 PlayerViewAngles, PlayerTickFlags Flags)
-public void LogGameRoundStart(string MapName)
-public void SetEACServer(string EACServerName)
 }
 internal EasyAntiCheat.Server.Legacy.NativeModule : object {
 private string DllFileName
@@ -352,18 +311,12 @@ private void dotRegisterClient(IntPtr Instance, Byte[] Token, UInt32 SizeOfToken
 private void dotUnregisterClient(IntPtr Instance, Byte[] Token, UInt32 SizeOfToken)
 private bool dotGetNextClientUpdate(IntPtr Instance, EAC_CLIENTUPDATE& Msg)
 private void dotSetLogCallback(IntPtr Instance, LogEventHandler LogCallback, LogLevel LogLevel)
-private IntPtr dotCerberus(IntPtr Instance)
-private void dotSetEACServer(IntPtr Instance, string EACServerName)
-private UInt32 dotGetGameID(IntPtr Instance)
 public bool Initialize(ServerConfiguration config)
 public bool InitializeWithGameID(int GameID, ServerConfiguration config)
 public void Unload()
 public void RegisterClient(Byte[] Token, string PlayerGUID, string OwnerGUID, string PlayerName, PlayerRegisterFlags Flags)
 public void UnregisterClient(Byte[] Token)
 public bool GetNextClientUpdate(EAC_CLIENTUPDATE& Msg)
-public IntPtr Cerberus()
-public void SetEACServer(string EACServerName)
-public int GetGameID()
 private void OnLogEvent(LogLevel LogLevel, string Message)
 }
 internal EasyAntiCheat.Server.Legacy.Protocol.EpochTime : ValueType {
@@ -389,10 +342,11 @@ public string ToString()
 }
 public EasyAntiCheat.Server.Log : object {
 private LogWriterDelegate doWrite
+private StringBuilder stringBuilder
+private Mutex stringBuilderMutex
 private LogLevel <Level>k__BackingField
 private string <Prefix>k__BackingField
 private string <TimestampFormat>k__BackingField
-private LogWriterDelegate CS$<>9__CachedAnonymousMethodDelegate4
 public LogLevel Level
 public string Prefix
 public string TimestampFormat
@@ -405,10 +359,8 @@ public void set_TimestampFormat(string value)
 public void SetOut(TextWriter writer)
 public void SetOut(LogMessageWriterDelegate doWrite)
 public void SetOut(LogWriterDelegate doWrite)
-internal void WriteLine(LogLevel logLevel, object value)
-internal void WriteLine(LogLevel logLevel, string format, Object[] args)
+internal void WriteLine(LogLevel logLevel, string message)
 internal void WriteException(LogLevel logLevel, string message, Exception e, bool includeStack)
-private void <SetOut>b__3(LogLevel lvl, string msg)
 }
 public EasyAntiCheat.Server.LogLevel : Enum {
 public UInt32 value__
@@ -508,16 +460,4 @@ public int get_RegisterTimeout()
 public void set_RegisterTimeout(int value)
 public string get_ServerName()
 public void set_ServerName(string value)
-}
-internal EasyAntiCheat.Server.ServerType : Enum {
-public int value__
-public ServerType Release
-public ServerType Debug
-}
-internal EasyAntiCheat.Server.ServerTypeExtensions : object {
-private Predicate`1<IPAddress> CS$<>9__CachedAnonymousMethodDelegate1
-public string GetDomain(BackendType backendType, ServerType serverType)
-public bool TryGetHostAddress(BackendType backendType, ServerType serverType, IPAddress& hostAddress)
-public string GetName(BackendType backendType, ServerType serverType)
-private bool <TryGetHostAddress>b__0(IPAddress a)
 }

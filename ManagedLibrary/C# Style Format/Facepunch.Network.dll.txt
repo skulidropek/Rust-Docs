@@ -44,7 +44,10 @@ public Network.Connection : object {
 public State state
 public bool active
 public bool connected
-public int authLevel
+public UInt32 authLevel
+public UInt32 encryptionLevel
+public bool decryptIncoming
+public bool encryptOutgoing
 public bool rejected
 public string authStatus
 public Byte[] token
@@ -70,6 +73,14 @@ public ulong GetPacketsPerSecond(Type message)
 public ulong GetPacketsPerSecond(int index)
 public float GetSecondsConnected()
 public string ToString()
+}
+public Network.INetworkCryptocraphy {
+public bool IsEnabledIncoming(Connection connection)
+public bool IsEnabledOutgoing(Connection connection)
+public MemoryStream EncryptCopy(Connection connection, MemoryStream stream, int offset)
+public MemoryStream DecryptCopy(Connection connection, MemoryStream stream, int offset)
+public void Encrypt(Connection connection, MemoryStream stream, int offset)
+public void Decrypt(Connection connection, MemoryStream stream, int offset)
 }
 public Network.Message : object {
 public Type type
@@ -114,6 +125,7 @@ public void OnNetworkGroupEnter(Group group)
 public Network.NetworkPeer : object {
 public Write write
 public Read read
+public INetworkCryptocraphy cryptography
 public Action`1<Message> onMessage
 public Func`5<int, Read, UInt32, int, bool> onUnconnectedMessage
 protected Message StartMessage(Type type, Connection connection)
@@ -140,7 +152,10 @@ public long Position
 public int get_length()
 public int get_position()
 public int get_unread()
+public bool Start()
+public bool Start(Connection connection)
 public bool Bit()
+public byte PacketID()
 public byte UInt8()
 public ushort UInt16()
 public UInt32 UInt32()
@@ -165,9 +180,9 @@ public bool get_CanWrite()
 public long get_Length()
 public long get_Position()
 public void set_Position(long value)
-public void Write(Byte[] buffer, int offset, int count)
 public void Flush()
-public int ReadByte()
+public void Write(Byte[] buffer, int offset, int count)
+public void WriteByte(byte value)
 public long Seek(long offset, SeekOrigin origin)
 public void SetLength(long value)
 }
@@ -175,15 +190,10 @@ public Network.SendInfo : ValueType {
 public SendMethod method
 public sbyte channel
 public Priority priority
-public bool broadcast
-public List`1<Connection> connections
+public IEnumerable`1<Connection> connections
 public Connection connection
-public ulong connectionGUID
-public void .ctor(bool broadcast)
-public void .ctor(List`1<Connection> connections)
+public void .ctor(IEnumerable`1<Connection> connections)
 public void .ctor(Connection connection)
-public void .ctor(ulong connection)
-public void .ctor(Group group)
 }
 public Network.SendMethod : Enum {
 public int value__
@@ -236,7 +246,7 @@ public Network.Visibility.Group : object {
 protected Manager manager
 public UInt32 ID
 public Bounds bounds
-public HashSet`1<Networkable> networkables
+public ListHashSet`1<Networkable> networkables
 public List`1<Connection> subscribers
 public bool isGlobal
 public bool get_isGlobal()
@@ -304,7 +314,6 @@ public void Float(float val)
 public void Double(double val)
 public void Bytes(Byte[] val)
 public void String(string val)
-public void WriteObject(object obj)
 public void Vector3(Vector3 obj)
 public void Quaternion(Quaternion obj)
 public void Ray(Ray obj)
@@ -312,6 +321,7 @@ public void EntityID(UInt32 id)
 public void GroupID(UInt32 id)
 public void BytesWithSize(MemoryStream val)
 public void BytesWithSize(Byte[] b)
+public void BytesWithSize(Byte[] b, int length)
 public bool get_CanRead()
 public bool get_CanSeek()
 public bool get_CanWrite()

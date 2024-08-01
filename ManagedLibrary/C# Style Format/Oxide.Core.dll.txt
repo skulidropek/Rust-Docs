@@ -10,9 +10,9 @@ public void Collect()
 public void Event(string category, string action)
 public void SendPayload(string payload)
 }
-internal Oxide.Core.Cleanup : object {
+public Oxide.Core.Cleanup : object {
 internal HashSet`1<string> files
-internal void Add(string file)
+public void Add(string file)
 internal void Run()
 }
 public Oxide.Core.CommandLine : object {
@@ -281,6 +281,7 @@ public string Dirname(string text)
 public string Humanize(string name)
 public bool IsSteamId(string id)
 public bool IsSteamId(ulong id)
+public string Plaintext(string text)
 public string QuoteSafe(string text)
 public string Quote(string text)
 public T Sample(T[] array)
@@ -292,22 +293,26 @@ public string ToSentence(IEnumerable`1<T> items)
 public string Truncate(string text, int max)
 }
 public Oxide.Core.Extensions.Extension : object {
+private bool <IsCoreExtension>k__BackingField
 private bool <IsGameExtension>k__BackingField
 private ExtensionManager <Manager>k__BackingField
 private String[] <WhitelistAssemblies>k__BackingField
 private String[] <WhitelistNamespaces>k__BackingField
+public bool IsCoreExtension
+public bool IsGameExtension
 public string Name
 public string Author
 public VersionNumber Version
-public bool IsGameExtension
 public ExtensionManager Manager
 public String[] WhitelistAssemblies
 public String[] WhitelistNamespaces
+public bool get_IsCoreExtension()
+private void set_IsCoreExtension(bool value)
+public bool get_IsGameExtension()
+private void set_IsGameExtension(bool value)
 public string get_Name()
 public string get_Author()
 public VersionNumber get_Version()
-public bool get_IsGameExtension()
-protected void set_IsGameExtension(bool value)
 public ExtensionManager get_Manager()
 private void set_Manager(ExtensionManager value)
 public String[] get_WhitelistAssemblies()
@@ -322,9 +327,7 @@ public void OnShutdown()
 }
 public Oxide.Core.Extensions.ExtensionManager : object {
 private IList`1<Extension> extensions
-private string coreExtSearchPattern
-private string gameExtSearchPattern
-private string communitySearchPattern
+private string extSearchPattern
 private CompoundLogger <Logger>k__BackingField
 private IList`1<PluginLoader> pluginloaders
 private IDictionary`2<string, Library> libraries
@@ -451,6 +454,13 @@ public float Y
 public float Z
 public void .ctor(float x, float y, float z)
 public bool Equals(object obj)
+public bool op_Equality(GenericPosition a, GenericPosition b)
+public bool op_Inequality(GenericPosition a, GenericPosition b)
+public GenericPosition op_Addition(GenericPosition a, GenericPosition b)
+public GenericPosition op_Subtraction(GenericPosition a, GenericPosition b)
+public GenericPosition op_Multiply(float mult, GenericPosition a)
+public GenericPosition op_Multiply(GenericPosition a, float mult)
+public GenericPosition op_Division(GenericPosition a, float div)
 public int GetHashCode()
 public string ToString()
 }
@@ -465,9 +475,9 @@ public UInt32 ServerAppId
 public string get_GameName()
 public UInt32 get_ClientAppId()
 public UInt32 get_ServerAppId()
-public IServer CreateServer()
-public IPlayerManager CreatePlayerManager()
 public ICommandSystem CreateCommandSystemProvider()
+public IPlayerManager CreatePlayerManager()
+public IServer CreateServer()
 public string FormatText(string text)
 }
 public Oxide.Core.Libraries.Covalence.IPlayer {
@@ -480,6 +490,7 @@ public int Ping
 public CultureInfo Language
 public bool IsConnected
 public bool IsSleeping
+public bool IsServer
 public bool IsAdmin
 public bool IsBanned
 public TimeSpan BanTimeRemaining
@@ -489,12 +500,14 @@ public object get_Object()
 public CommandType get_LastCommand()
 public void set_LastCommand(CommandType value)
 public string get_Name()
+public void set_Name(string value)
 public string get_Id()
 public string get_Address()
 public int get_Ping()
 public CultureInfo get_Language()
 public bool get_IsConnected()
 public bool get_IsSleeping()
+public bool get_IsServer()
 public bool get_IsAdmin()
 public bool get_IsBanned()
 public void Ban(string reason, TimeSpan duration)
@@ -509,13 +522,14 @@ public float get_MaxHealth()
 public void set_MaxHealth(float value)
 public void Rename(string name)
 public void Teleport(float x, float y, float z)
+public void Teleport(GenericPosition pos)
 public void Unban()
 public void Position(Single& x, Single& y, Single& z)
 public GenericPosition Position()
+public void Message(string message, string prefix, Object[] args)
 public void Message(string message)
-public void Message(string message, Object[] args)
+public void Reply(string message, string prefix, Object[] args)
 public void Reply(string message)
-public void Reply(string message, Object[] args)
 public void Command(string command, Object[] args)
 public bool HasPermission(string perm)
 public void GrantPermission(string perm)
@@ -544,6 +558,7 @@ public CultureInfo Language
 public int Players
 public int MaxPlayers
 public DateTime Time
+public SaveInfo SaveInfo
 public string get_Name()
 public void set_Name(string value)
 public IPAddress get_Address()
@@ -556,13 +571,34 @@ public int get_MaxPlayers()
 public void set_MaxPlayers(int value)
 public DateTime get_Time()
 public void set_Time(DateTime value)
+public SaveInfo get_SaveInfo()
 public void Ban(string id, string reason, TimeSpan duration)
 public TimeSpan BanTimeRemaining(string id)
 public bool IsBanned(string id)
 public void Save()
 public void Unban(string id)
+public void Broadcast(string message, string prefix, Object[] args)
 public void Broadcast(string message)
 public void Command(string command, Object[] args)
+}
+public Oxide.Core.Libraries.Covalence.SaveInfo : object {
+private Time time
+private string FullPath
+private string <SaveName>k__BackingField
+private DateTime <CreationTime>k__BackingField
+private UInt32 <CreationTimeUnix>k__BackingField
+public string SaveName
+public DateTime CreationTime
+public UInt32 CreationTimeUnix
+public string get_SaveName()
+private void set_SaveName(string value)
+public DateTime get_CreationTime()
+private void set_CreationTime(DateTime value)
+public UInt32 get_CreationTimeUnix()
+private void set_CreationTimeUnix(UInt32 value)
+public void Refresh()
+private void .ctor(string filepath)
+public SaveInfo Create(string filepath)
 }
 public Oxide.Core.Libraries.Global : Library {
 public bool IsGlobal
@@ -716,12 +752,22 @@ public Plugin Find(string name)
 public object CallHook(string hookname, Object[] args)
 public Plugin[] GetAll()
 }
+public Oxide.Core.Libraries.RequestMethod : Enum {
+public int value__
+public RequestMethod DELETE
+public RequestMethod GET
+public RequestMethod PATCH
+public RequestMethod POST
+public RequestMethod PUT
+}
 public Oxide.Core.Libraries.Time : Library {
 private DateTime Epoch
 public bool IsGlobal
 public bool get_IsGlobal()
-public UInt32 GetUnixTimestamp()
 public DateTime GetCurrentTime()
+public DateTime GetDateTimeFromUnix(UInt32 timestamp)
+public UInt32 GetUnixTimestamp()
+public UInt32 GetUnixFromDateTime(DateTime time)
 }
 public Oxide.Core.Libraries.Timer : Library {
 private int <Count>k__BackingField
@@ -772,11 +818,13 @@ private int maxCompletionPortThreads
 public void Shutdown()
 private void Worker()
 public void EnqueueGet(string url, Action`2<int, string> callback, Plugin owner, Dictionary`2<string, string> headers, float timeout)
-public void EnqueueDelete(string url, string body, Action`2<int, string> callback, Plugin owner, Dictionary`2<string, string> headers, float timeout)
-public void EnqueuePatch(string url, string body, Action`2<int, string> callback, Plugin owner, Dictionary`2<string, string> headers, float timeout)
 public void EnqueuePost(string url, string body, Action`2<int, string> callback, Plugin owner, Dictionary`2<string, string> headers, float timeout)
 public void EnqueuePut(string url, string body, Action`2<int, string> callback, Plugin owner, Dictionary`2<string, string> headers, float timeout)
+public void Enqueue(string url, string body, Action`2<int, string> callback, Plugin owner, RequestMethod method, Dictionary`2<string, string> headers, float timeout)
 public int GetQueueLength()
+}
+public Oxide.Core.Localization : object {
+public Dictionary`2<string, Dictionary`2<string, string>> languages
 }
 public Oxide.Core.Logging.CallbackLogger : Logger {
 private NativeDebugCallback callback
@@ -798,19 +846,19 @@ protected Queue`1<LogMessage> MessageQueue
 private bool processImediately
 protected void .ctor(bool processImediately)
 protected LogMessage CreateLogMessage(LogType type, string format, Object[] args)
+public void HandleMessage(string message, string stackTrace, LogType logType)
 public void Write(LogType type, string format, Object[] args)
-internal void Write(LogMessage msg)
+internal void Write(LogMessage message)
 protected void ProcessMessage(LogMessage message)
 public void WriteException(string message, Exception ex)
 public void OnRemoved()
 }
 public Oxide.Core.Logging.LogType : Enum {
 public int value__
-public LogType Info
-public LogType Debug
-public LogType Warning
+public LogType Chat
 public LogType Error
-public LogType Stacktrace
+public LogType Info
+public LogType Warning
 }
 public Oxide.Core.Logging.RotatingFileLogger : ThreadedLogger {
 private string <Directory>k__BackingField
@@ -921,11 +969,11 @@ public void Load()
 public T GetLibrary(string name)
 public IEnumerable`1<Extension> GetAllExtensions()
 public IEnumerable`1<PluginLoader> GetPluginLoaders()
-public void LogInfo(string format, Object[] args)
 public void LogDebug(string format, Object[] args)
-public void LogWarning(string format, Object[] args)
 public void LogError(string format, Object[] args)
 public void LogException(string message, Exception ex)
+public void LogInfo(string format, Object[] args)
+public void LogWarning(string format, Object[] args)
 public void LoadAllPlugins(bool init)
 public void UnloadAllPlugins(IList`1<string> skip)
 public void ReloadAllPlugins(IList`1<string> skip)
@@ -952,11 +1000,13 @@ private float <Load>b__75_1()
 private float <Load>b__0_1()
 }
 public Oxide.Core.Plugins.CSPlugin : Plugin {
-protected Dictionary`2<string, List`1<HookMethod>> hooks
+protected Dictionary`2<string, List`1<HookMethod>> Hooks
+protected Dictionary`2<string, List`1<HookMethod>> HooksCache
 public T GetLibrary(string name)
 public void HandleAddedToManager(PluginManager manager)
 protected void AddHookMethod(string name, MethodInfo method)
 protected object OnCallHook(string name, Object[] args)
+protected List`1<HookMethod> FindHooks(string name, Object[] args)
 protected object InvokeMethod(HookMethod method, Object[] args)
 }
 public Oxide.Core.Plugins.HookMethodAttribute : Attribute {
@@ -986,7 +1036,6 @@ private bool <IsLoaded>k__BackingField
 private double <TotalHookTime>k__BackingField
 private Stopwatch trackStopwatch
 private Stopwatch stopwatch
-private float trackStartAt
 private float averageAt
 private double sum
 private int preHookGcCount
@@ -1061,6 +1110,7 @@ protected void LoadDefaultConfig()
 protected void SaveConfig()
 protected void LoadDefaultMessages()
 public void AddCovalenceCommand(string command, string callback, string perm)
+public void AddCovalenceCommand(String[] commands, string callback, string perm)
 public void AddCovalenceCommand(String[] commands, string callback, String[] perms)
 protected void AddCovalenceCommand(String[] commands, String[] perms, CommandCallback callback)
 private void RegisterWithCovalence()
@@ -1210,13 +1260,6 @@ public void SendMessage(RemoteMessage message)
 public void SendMessage(string message, int identifier)
 public void SendMessage(WebSocketContext connection, string message, int identifier)
 private void OnMessage(MessageEventArgs e, WebSocketContext connection)
-private void BroadcastMessage(string command, String[] args, int identifier, WebSocketContext connection)
-private void PlayerListCommand(string command, String[] args, int identifier, WebSocketContext connection)
-private void HostnameCommand(string command, String[] args, int identifier, WebSocketContext connection)
-private void KickCommand(string command, String[] args, int identifier, WebSocketContext connection)
-private void BanCommand(string command, String[] args, int identifier, WebSocketContext connection)
-private void UnbanCommand(string command, String[] args, int identifier, WebSocketContext connection)
-private void TeleportCommand(string command, String[] args, int identifier, WebSocketContext connection)
 private RconListener <Initalize>b__4_0()
 }
 public Oxide.Core.RemoteConsole.RemoteMessage : object {
@@ -1246,9 +1289,9 @@ private Dictionary`2<string, string> BuildHeaders()
 public void SetTag(string name, string value)
 public string GetTag(string name)
 public void Debug(string message)
+public void Error(string message)
 public void Info(string message)
 public void Warning(string message)
-public void Error(string message)
 public void Exception(string message, Exception exception)
 public void Exception(string message, string rawStackTrace)
 private void EnqueueReport(string level, Assembly assembly, string culprit, string message, string exception)

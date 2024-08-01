@@ -177,6 +177,7 @@ public int port
 public UInt32 levelSeed
 public UInt32 levelSize
 public string checksum
+public UInt32 encryption
 public bool ShouldPool
 private bool _disposed
 public void ResetToPool(Approval instance)
@@ -551,8 +552,6 @@ public void SerializeLengthDelimited(Stream stream, BradleyAPC instance)
 public ProtoBuf.BuildingBlock : object {
 public int grade
 public bool beingDemolished
-public float stability
-public UInt32 buildingID
 public bool ShouldPool
 private bool _disposed
 public void ResetToPool(BuildingBlock instance)
@@ -583,6 +582,9 @@ public void SerializeLengthDelimited(Stream stream, BuildingBlock instance)
 }
 public ProtoBuf.BuildingPrivilege : object {
 public List`1<PlayerNameID> users
+public float upkeepPeriodMinutes
+public float costFraction
+public float protectedMinutes
 public bool ShouldPool
 private bool _disposed
 public void ResetToPool(BuildingPrivilege instance)
@@ -742,6 +744,8 @@ public void SerializeLengthDelimited(Stream stream, CreateBuilding instance)
 }
 public ProtoBuf.DecayEntity : object {
 public float decayTimer
+public UInt32 buildingID
+public float upkeepTimer
 public bool ShouldPool
 private bool _disposed
 public void ResetToPool(DecayEntity instance)
@@ -879,6 +883,7 @@ public VendingMachine vendingMachine
 public SpinnerWheel spinnerWheel
 public Lift lift
 public BradleyAPC bradley
+public WaterWell waterwell
 public bool createdThisFrame
 public bool ShouldPool
 private bool _disposed
@@ -942,6 +947,7 @@ public ProtoBuf.EntitySlots : object {
 public UInt32 slotLock
 public UInt32 slotFireMod
 public UInt32 slotUpperModification
+public UInt32 centerDecoration
 public bool ShouldPool
 private bool _disposed
 public void ResetToPool(EntitySlots instance)
@@ -1397,6 +1403,7 @@ public void SerializeLengthDelimited(Stream stream, MapEntity instance)
 }
 public ProtoBuf.MiningQuarry : object {
 public ResourceExtractor extractor
+public int staticType
 public bool ShouldPool
 private bool _disposed
 public void ResetToPool(MiningQuarry instance)
@@ -2071,7 +2078,6 @@ public void SerializeLengthDelimited(Stream stream, Sign instance)
 }
 public ProtoBuf.SleepingBag : object {
 public string name
-public Private privateData
 public ulong deployerID
 public bool ShouldPool
 private bool _disposed
@@ -2375,6 +2381,37 @@ public Byte[] ToProtoBytes()
 public void ToProto(Stream stream)
 public Byte[] SerializeToBytes(VendingMachine instance)
 public void SerializeLengthDelimited(Stream stream, VendingMachine instance)
+}
+public ProtoBuf.WaterWell : object {
+public float pressure
+public float waterLevel
+public bool ShouldPool
+private bool _disposed
+public void ResetToPool(WaterWell instance)
+public void ResetToPool()
+public void Dispose()
+public void EnterPool()
+public void LeavePool()
+public void WriteToStream(Stream stream)
+public void WriteToStreamDelta(Stream stream, WaterWell previous)
+public void ReadFromStream(Stream stream, int size, bool isDelta)
+public void CopyTo(WaterWell instance)
+public WaterWell Copy()
+public WaterWell Deserialize(Stream stream)
+public WaterWell DeserializeLengthDelimited(Stream stream)
+public WaterWell DeserializeLength(Stream stream, int length)
+public WaterWell Deserialize(Byte[] buffer)
+public void FromProto(Stream stream, bool isDelta)
+public WaterWell Deserialize(Byte[] buffer, WaterWell instance, bool isDelta)
+public WaterWell Deserialize(Stream stream, WaterWell instance, bool isDelta)
+public WaterWell DeserializeLengthDelimited(Stream stream, WaterWell instance, bool isDelta)
+public WaterWell DeserializeLength(Stream stream, int length, WaterWell instance, bool isDelta)
+public void SerializeDelta(Stream stream, WaterWell instance, WaterWell previous)
+public void Serialize(Stream stream, WaterWell instance)
+public Byte[] ToProtoBytes()
+public void ToProto(Stream stream)
+public Byte[] SerializeToBytes(WaterWell instance)
+public void SerializeLengthDelimited(Stream stream, WaterWell instance)
 }
 public ProtoBuf.WorldItem : object {
 public Item item

@@ -14,7 +14,7 @@ public string Description
 public bool State
 public DateTime UnlockTime
 private int iconId
-public float Percentage
+public float GlobalUnlockedPercentage
 public Image Icon
 public string get_Id()
 private void set_Id(string value)
@@ -28,7 +28,7 @@ public DateTime get_UnlockTime()
 private void set_UnlockTime(DateTime value)
 private int get_iconId()
 private void set_iconId(int value)
-public float get_Percentage()
+public float get_GlobalUnlockedPercentage()
 public Image get_Icon()
 public void .ctor(Client client, int index)
 public bool Trigger(bool apply)
@@ -103,6 +103,7 @@ public Workshop get_Workshop()
 internal void set_Workshop(Workshop value)
 internal void add_OnUpdate(Action value)
 internal void remove_OnUpdate(Action value)
+protected void .ctor(UInt32 appId)
 public void Dispose()
 protected void SetupCommonInterfaces()
 public bool get_IsValid()
@@ -237,6 +238,7 @@ private string <CurrentLanguage>k__BackingField
 private String[] <AvailableLanguages>k__BackingField
 private Voice <Voice>k__BackingField
 private ServerList <ServerList>k__BackingField
+private LobbyList <LobbyList>k__BackingField
 private App <App>k__BackingField
 private Achievements <Achievements>k__BackingField
 private Stats <Stats>k__BackingField
@@ -245,6 +247,7 @@ private User <User>k__BackingField
 private RemoteStorage <RemoteStorage>k__BackingField
 private Auth _auth
 private Friends _friends
+private Lobby _lobby
 private Overlay _overlay
 private Screenshots _screenshots
 public Client Instance
@@ -258,6 +261,7 @@ public string CurrentLanguage
 public String[] AvailableLanguages
 public Voice Voice
 public ServerList ServerList
+public LobbyList LobbyList
 public App App
 public Achievements Achievements
 public Stats Stats
@@ -270,6 +274,7 @@ public bool IsSubscribedFromFreeWeekend
 public bool IsLowViolence
 public Auth Auth
 public Friends Friends
+public Lobby Lobby
 public Overlay Overlay
 public Screenshots Screenshots
 public Client get_Instance()
@@ -292,6 +297,8 @@ public Voice get_Voice()
 private void set_Voice(Voice value)
 public ServerList get_ServerList()
 private void set_ServerList(ServerList value)
+public LobbyList get_LobbyList()
+private void set_LobbyList(LobbyList value)
 public App get_App()
 private void set_App(App value)
 public Achievements get_Achievements()
@@ -316,6 +323,7 @@ public bool get_IsLowViolence()
 public bool RestartIfNecessary(UInt32 appid)
 public Auth get_Auth()
 public Friends get_Friends()
+public Lobby get_Lobby()
 public Overlay get_Overlay()
 public Screenshots get_Screenshots()
 }
@@ -336,6 +344,7 @@ public void ForcePlatform(OperatingSystem os, Architecture arch)
 public Facepunch.Steamworks.Friends : object {
 internal Client client
 private List`1<SteamFriend> _allFriends
+private List`1<PersonaCallback> PersonaCallbacks
 public IEnumerable`1<SteamFriend> All
 public IEnumerable`1<SteamFriend> AllFriends
 public IEnumerable`1<SteamFriend> AllBlocked
@@ -346,8 +355,10 @@ public IEnumerable`1<SteamFriend> get_All()
 public IEnumerable`1<SteamFriend> get_AllFriends()
 public IEnumerable`1<SteamFriend> get_AllBlocked()
 public void Refresh()
-public Image GetAvatar(AvatarSize size, ulong steamid)
+public Image GetCachedAvatar(AvatarSize size, ulong steamid)
+public void GetAvatar(AvatarSize size, ulong steamid, Action`1<Image> callback)
 public SteamFriend Get(ulong steamid)
+private void OnPersonaStateChange(PersonaStateChange_t data, bool error)
 }
 public Facepunch.Steamworks.Image : object {
 private int <Id>k__BackingField
@@ -397,8 +408,6 @@ internal SteamGameServer gameServer
 internal SteamGameServerStats gameServerStats
 internal SteamRemoteStorage remoteStorage
 private bool isServer
-private HSteamUser hUser
-private HSteamPipe hPipe
 internal bool InitClient(BaseSteamworks steamworks)
 internal bool InitServer(BaseSteamworks steamworks, UInt32 IpAddress, ushort usPort, ushort GamePort, ushort QueryPort, int eServerMode, string pchVersionString)
 public void FillInterfaces(BaseSteamworks steamworks, int hpipe, int huser)
@@ -411,7 +420,7 @@ private GCHandle RulesRespondPin
 private GCHandle FailedRespondPin
 private GCHandle CompletePin
 private Server Server
-public void .ctor(Server server, UInt32 address, int queryPort)
+public void .ctor(Server server, IPAddress address, int queryPort)
 public void Dispose()
 private void InstallVTable()
 private void InternalOnRulesResponded(string k, string v)
@@ -432,7 +441,10 @@ internal SteamInventory inventory
 private Stopwatch fetchRetryTimer
 private bool <IsServer>k__BackingField
 public Definition[] Definitions
+private string <Currency>k__BackingField
 private bool IsServer
+public IEnumerable`1<Definition> DefinitionsWithPrices
+public string Currency
 private bool get_IsServer()
 private void set_IsServer(bool value)
 internal void .ctor(BaseSteamworks steamworks, SteamInventory c, bool server)
@@ -446,6 +458,7 @@ public void Refresh()
 public Definition CreateDefinition(int id)
 internal void FetchItemDefinitions()
 public void Update()
+public IEnumerable`1<Definition> get_DefinitionsWithPrices()
 public float PriceCategoryToFloat(string price)
 public Definition FindDefinition(int DefinitionId)
 public Result Deserialize(Byte[] data, int dataLength)
@@ -454,7 +467,13 @@ public Result CraftItem(Amount[] list, Definition target)
 public Result SplitStack(Item item, int quantity)
 public Result Stack(Item source, Item dest, int quantity)
 public Result GenerateItem(Definition target, int amount)
+public bool StartPurchase(Definition[] items, StartPurchaseSuccess callback)
+public string get_Currency()
+private void set_Currency(string value)
+public void UpdatePrices()
+internal Item ItemFrom(SteamInventoryResult_t handle, SteamItemDetails_t detail, int index)
 private Definition <FetchItemDefinitions>b__20_0(SteamItemDef_t x)
+private void <UpdatePrices>b__39_0(SteamInventoryRequestPricesResult_t result, bool b)
 }
 public Facepunch.Steamworks.Leaderboard : object {
 private Int32[] subEntriesBuffer
@@ -466,6 +485,7 @@ private string <Name>k__BackingField
 private int <TotalEntries>k__BackingField
 private bool <IsError>k__BackingField
 private bool <IsQuerying>k__BackingField
+public Action OnBoardInformation
 private List`1<Entry> _sEntryBuffer
 public string Name
 public int TotalEntries
@@ -493,6 +513,85 @@ public bool FetchScores(RequestType RequestType, int start, int end)
 private void ReadScores(LeaderboardScoresDownloaded_t result, List`1<Entry> dest)
 public bool FetchScores(RequestType RequestType, int start, int end, FetchScoresCallback onSuccess, FailureCallback onFailure)
 private void OnScores(LeaderboardScoresDownloaded_t result, bool error)
+}
+public Facepunch.Steamworks.Lobby : object {
+internal Client client
+private ulong <CurrentLobby>k__BackingField
+private LobbyData <CurrentLobbyData>k__BackingField
+public Action`1<bool> OnLobbyJoined
+internal Type createdLobbyType
+public Action`1<bool> OnLobbyCreated
+public Action OnLobbyDataUpdated
+public Action`1<ulong> OnLobbyMemberDataUpdated
+private Byte[] chatMessageData
+public Action`3<ulong, Byte[], int> OnChatMessageRecieved
+public Action`2<ulong, string> OnChatStringRecieved
+public Action`3<MemberStateChange, ulong, ulong> OnLobbyStateChanged
+public Action`2<ulong, ulong> OnUserInvitedToLobby
+public ulong CurrentLobby
+public LobbyData CurrentLobbyData
+public bool IsValid
+public Type LobbyType
+public string Name
+public ulong Owner
+public bool Joinable
+public int MaxMembers
+public int NumMembers
+public void .ctor(Client c)
+public ulong get_CurrentLobby()
+private void set_CurrentLobby(ulong value)
+public LobbyData get_CurrentLobbyData()
+private void set_CurrentLobbyData(LobbyData value)
+public bool get_IsValid()
+public void Join(ulong lobbyID)
+private void OnLobbyJoinedAPI(LobbyEnter_t callback, bool error)
+public void Create(Type lobbyType, int maxMembers)
+internal void OnLobbyCreatedAPI(LobbyCreated_t callback, bool error)
+public void SetMemberData(string key, string value)
+public string GetMemberData(ulong steamID, string key)
+internal void OnLobbyDataUpdatedAPI(LobbyDataUpdate_t callback, bool error)
+internal void UpdateLobbyData()
+public Type get_LobbyType()
+public void set_LobbyType(Type value)
+private void OnLobbyChatMessageRecievedAPI(LobbyChatMsg_t callback, bool error)
+public bool SendChatMessage(string message)
+internal void OnLobbyStateUpdatedAPI(LobbyChatUpdate_t callback, bool error)
+public string get_Name()
+public void set_Name(string value)
+public ulong get_Owner()
+public void set_Owner(ulong value)
+public bool get_Joinable()
+public void set_Joinable(bool value)
+public int get_MaxMembers()
+public void set_MaxMembers(int value)
+public int get_NumMembers()
+public void Leave()
+public void Dispose()
+public UInt64[] GetMemberIDs()
+public bool UserIsInCurrentLobby(ulong steamID)
+public bool InviteUserToLobby(ulong friendID)
+internal void OnUserInvitedToLobbyAPI(LobbyInvite_t callback, bool error)
+internal void OnLobbyJoinRequestedAPI(GameLobbyJoinRequested_t callback, bool error)
+internal void OnLobbyMemberPersonaChangeAPI(PersonaStateChange_t callback, bool error)
+}
+public Facepunch.Steamworks.LobbyList : object {
+internal Client client
+private List`1<Lobby> <Lobbies>k__BackingField
+private bool <Finished>k__BackingField
+internal List`1<ulong> requests
+public Action OnLobbiesUpdated
+public List`1<Lobby> Lobbies
+public bool Finished
+public List`1<Lobby> get_Lobbies()
+private void set_Lobbies(List`1<Lobby> value)
+public bool get_Finished()
+private void set_Finished(bool value)
+internal void .ctor(Client client)
+public void Refresh(Filter filter)
+private void OnLobbyList(LobbyMatchList_t callback, bool error)
+private void checkFinished()
+private void OnLobbyDataUpdated(LobbyDataUpdate_t callback, bool error)
+public void Dispose()
 }
 public Facepunch.Steamworks.MicroTransactions : object {
 internal Client client
@@ -583,6 +682,7 @@ public Byte[] ReadAllBytes()
 public string ReadAllText(Encoding encoding)
 public bool Share(ShareCallback onSuccess, FailureCallback onFailure)
 public bool Delete()
+public bool Forget()
 private void GetUGCDetails()
 }
 public Facepunch.Steamworks.RemoteFileWriteStream : Stream {
@@ -650,6 +750,9 @@ public Facepunch.Steamworks.Screenshots : object {
 internal Client client
 internal void .ctor(Client c)
 public void Trigger()
+public void Write(Byte[] rgbData, int width, int height)
+public void AddScreenshotToLibrary(string filename, string thumbnailFilename, int width, int height)
+public void AddScreenshotToLibrary(string filename, int width, int height)
 }
 public Facepunch.Steamworks.Server : BaseSteamworks {
 private Server <Instance>k__BackingField
@@ -847,6 +950,7 @@ internal Client get_Client()
 internal void set_Client(Client value)
 public string GetRichPresence(string key)
 public void Refresh()
+public Image GetAvatar(AvatarSize size)
 }
 public Facepunch.Steamworks.User : object {
 internal Client client
@@ -859,15 +963,18 @@ public void ClearRichPresence()
 }
 internal Facepunch.Steamworks.Utility : object {
 internal UInt32 SwapBytes(UInt32 x)
+internal UInt32 IpToInt32(IPAddress ipAddress)
+internal IPAddress Int32ToIp(UInt32 ipAddress)
+internal string FormatPrice(string currency, ulong price)
 }
 public Facepunch.Steamworks.Voice : object {
 private int ReadBufferSize
 internal Client client
-internal IntPtr ReadCompressedBuffer
-internal IntPtr ReadUncompressedBuffer
+internal Byte[] ReadCompressedBuffer
+internal Byte[] ReadUncompressedBuffer
 internal Byte[] UncompressBuffer
-public Action`2<IntPtr, int> OnCompressedData
-public Action`2<IntPtr, int> OnUncompressedData
+public Action`2<Byte[], int> OnCompressedData
+public Action`2<Byte[], int> OnUncompressedData
 private Stopwatch UpdateTimer
 private bool _wantsrecording
 private DateTime <LastVoiceRecordTime>k__BackingField
@@ -884,10 +991,11 @@ public DateTime get_LastVoiceRecordTime()
 private void set_LastVoiceRecordTime(DateTime value)
 public TimeSpan get_TimeSinceLastVoiceRecord()
 internal void .ctor(Client client)
-public void Dispose()
 public void Update()
 public bool Decompress(Byte[] input, MemoryStream output, UInt32 samepleRate)
-public bool Decompress(IntPtr input, int inputoffset, int inputsize, MemoryStream output, UInt32 samepleRate)
+public bool Decompress(Byte[] input, int inputsize, MemoryStream output, UInt32 samepleRate)
+public bool Decompress(Byte[] input, int inputoffset, int inputsize, MemoryStream output, UInt32 samepleRate)
+private bool Decompress(IntPtr input, int inputoffset, int inputsize, MemoryStream output, UInt32 samepleRate)
 }
 public Facepunch.Steamworks.Workshop : object {
 internal ulong InvalidHandle
@@ -907,8 +1015,36 @@ private void onItemInstalled(ItemInstalled_t obj, bool failed)
 private void onDownloadResult(DownloadItemResult_t obj, bool failed)
 public Query CreateQuery()
 public Editor CreateItem(ItemType type)
+public Editor CreateItem(UInt32 workshopUploadAppId, ItemType type)
 public Editor EditItem(ulong itemId)
 public Item GetItem(ulong itemid)
+}
+internal SourceServerQuery : object {
+private IPEndPoint endPoint
+private Socket socket
+private UdpClient client
+private int send_timeout
+private int receive_timeout
+private Byte[] raw_data
+private int offset
+private Byte[] FFFFFFFF
+public void .ctor(string ip, int port)
+public PlayersResponse GetPlayerList()
+public Dictionary`2<string, string> GetRules()
+public void Dispose()
+private void GetSocket()
+private void GetClient()
+private Byte[] ReassemblePacket(List`1<Byte[]> splitPackets, bool isCompressed, int uncompressedSize, int packetChecksum)
+private int ReverseBytes(int value)
+private bool PacketIsCompressed(int value)
+private bool PacketIsSplit(int paket)
+private Byte[] GetChallenge(byte type, bool socket)
+private byte ReadByte()
+private Byte[] ReadBytes()
+private int ReadInt32()
+private short ReadInt16()
+private float ReadFloat()
+private string ReadString()
 }
 internal SteamNative.AccountID_t : ValueType {
 public UInt32 Value
@@ -929,6 +1065,15 @@ public AccountType Chat
 public AccountType ConsoleUser
 public AccountType AnonUser
 public AccountType Max
+}
+internal SteamNative.AddAppDependencyResult_t : ValueType {
+public int CallbackId
+public Result Result
+public ulong PublishedFileId
+public UInt32 AppID
+public AddAppDependencyResult_t FromPointer(IntPtr p)
+public CallbackHandle CallResult(BaseSteamworks steamworks, SteamAPICall_t call, Action`2<AddAppDependencyResult_t, bool> CallbackFunction)
+public void RegisterCallback(BaseSteamworks steamworks, Action`2<AddAppDependencyResult_t, bool> CallbackFunction)
 }
 internal SteamNative.AddUGCDependencyResult_t : ValueType {
 public int CallbackId
@@ -1002,6 +1147,7 @@ public AppType Video
 public AppType Plugin
 public AppType Music
 public AppType Series
+public AppType Comic
 public AppType Shortcut
 public AppType DepotOnly
 }
@@ -1154,6 +1300,8 @@ public int SteamHTMLSurface
 public int ClientVideo
 public int ClientInventory
 public int ClientBluetoothManager
+public int ClientSharedConnection
+public int ClientShader
 }
 internal SteamNative.CallbackMsg_t : ValueType {
 public int SteamUser
@@ -1208,6 +1356,7 @@ public ChatRoomEnterResponse ClanDisabled
 public ChatRoomEnterResponse CommunityBan
 public ChatRoomEnterResponse MemberBlockedYou
 public ChatRoomEnterResponse YouBlockedMember
+public ChatRoomEnterResponse RatelimitExceeded
 }
 internal SteamNative.ChatSteamIDInstanceFlags : Enum {
 public int value__
@@ -1249,11 +1398,6 @@ public ushort Secure
 public UInt32 Reason
 public ClientGameServerDeny_t FromPointer(IntPtr p)
 public void RegisterCallback(BaseSteamworks steamworks, Action`2<ClientGameServerDeny_t, bool> CallbackFunction)
-}
-internal SteamNative.ClientUnifiedMessageHandle : ValueType {
-public ulong Value
-public ClientUnifiedMessageHandle op_Implicit(ulong value)
-public ulong op_Implicit(ClientUnifiedMessageHandle value)
 }
 internal SteamNative.ComputeNewPlayerCompatibilityResult_t : ValueType {
 public int CallbackId
@@ -1525,6 +1669,8 @@ public ControllerSource Gyro
 public ControllerSource CenterTrackpad
 public ControllerSource RightJoystick
 public ControllerSource DPad
+public ControllerSource Key
+public ControllerSource Mouse
 public ControllerSource Count
 }
 internal SteamNative.ControllerSourceMode : Enum {
@@ -1578,14 +1724,22 @@ internal string STEAMMATCHMAKINGSERVERS_INTERFACE_VERSION
 internal string STEAMMUSIC_INTERFACE_VERSION
 internal string STEAMMUSICREMOTE_INTERFACE_VERSION
 internal string STEAMNETWORKING_INTERFACE_VERSION
+internal string STEAMPARENTALSETTINGS_INTERFACE_VERSION
 internal string STEAMREMOTESTORAGE_INTERFACE_VERSION
 internal string STEAMSCREENSHOTS_INTERFACE_VERSION
 internal string STEAMUGC_INTERFACE_VERSION
-internal string STEAMUNIFIEDMESSAGES_INTERFACE_VERSION
 internal string STEAMUSER_INTERFACE_VERSION
 internal string STEAMUSERSTATS_INTERFACE_VERSION
 internal string STEAMUTILS_INTERFACE_VERSION
 internal string STEAMVIDEO_INTERFACE_VERSION
+}
+internal SteamNative.DeleteItemResult_t : ValueType {
+public int CallbackId
+public Result Result
+public ulong PublishedFileId
+public DeleteItemResult_t FromPointer(IntPtr p)
+public CallbackHandle CallResult(BaseSteamworks steamworks, SteamAPICall_t call, Action`2<DeleteItemResult_t, bool> CallbackFunction)
+public void RegisterCallback(BaseSteamworks steamworks, Action`2<DeleteItemResult_t, bool> CallbackFunction)
 }
 internal SteamNative.DenyReason : Enum {
 public int value__
@@ -1860,6 +2014,17 @@ public string URL
 public GameWebCallback_t FromPointer(IntPtr p)
 public void RegisterCallback(BaseSteamworks steamworks, Action`2<GameWebCallback_t, bool> CallbackFunction)
 }
+internal SteamNative.GetAppDependenciesResult_t : ValueType {
+public int CallbackId
+public Result Result
+public ulong PublishedFileId
+public AppId_t[] GAppIDs
+public UInt32 NumAppDependencies
+public UInt32 TotalNumAppDependencies
+public GetAppDependenciesResult_t FromPointer(IntPtr p)
+public CallbackHandle CallResult(BaseSteamworks steamworks, SteamAPICall_t call, Action`2<GetAppDependenciesResult_t, bool> CallbackFunction)
+public void RegisterCallback(BaseSteamworks steamworks, Action`2<GetAppDependenciesResult_t, bool> CallbackFunction)
+}
 internal SteamNative.GetAuthSessionTicketResponse_t : ValueType {
 public int CallbackId
 public UInt32 AuthTicket
@@ -2044,6 +2209,13 @@ public UInt32 UnBrowserHandle
 public HTML_BrowserReady_t FromPointer(IntPtr p)
 public CallbackHandle CallResult(BaseSteamworks steamworks, SteamAPICall_t call, Action`2<HTML_BrowserReady_t, bool> CallbackFunction)
 public void RegisterCallback(BaseSteamworks steamworks, Action`2<HTML_BrowserReady_t, bool> CallbackFunction)
+}
+internal SteamNative.HTML_BrowserRestarted_t : ValueType {
+public int CallbackId
+public UInt32 UnBrowserHandle
+public UInt32 UnOldBrowserHandle
+public HTML_BrowserRestarted_t FromPointer(IntPtr p)
+public void RegisterCallback(BaseSteamworks steamworks, Action`2<HTML_BrowserRestarted_t, bool> CallbackFunction)
 }
 internal SteamNative.HTML_CanGoBackAndForward_t : ValueType {
 public int CallbackId
@@ -2769,6 +2941,23 @@ public UInt32 Value
 public PackageId_t op_Implicit(UInt32 value)
 public UInt32 op_Implicit(PackageId_t value)
 }
+internal SteamNative.ParentalFeature : Enum {
+public int value__
+public ParentalFeature Invalid
+public ParentalFeature Store
+public ParentalFeature Community
+public ParentalFeature Profile
+public ParentalFeature Friends
+public ParentalFeature News
+public ParentalFeature Trading
+public ParentalFeature Settings
+public ParentalFeature Console
+public ParentalFeature Browser
+public ParentalFeature ParentalSetup
+public ParentalFeature Library
+public ParentalFeature Test
+public ParentalFeature Max
+}
 internal SteamNative.PartnerId_t : ValueType {
 public UInt32 Value
 public PartnerId_t op_Implicit(UInt32 value)
@@ -3162,6 +3351,15 @@ public WorkshopVote Vote
 public RemoteStorageUserVoteDetails_t FromPointer(IntPtr p)
 public void RegisterCallback(BaseSteamworks steamworks, Action`2<RemoteStorageUserVoteDetails_t, bool> CallbackFunction)
 }
+internal SteamNative.RemoveAppDependencyResult_t : ValueType {
+public int CallbackId
+public Result Result
+public ulong PublishedFileId
+public UInt32 AppID
+public RemoveAppDependencyResult_t FromPointer(IntPtr p)
+public CallbackHandle CallResult(BaseSteamworks steamworks, SteamAPICall_t call, Action`2<RemoveAppDependencyResult_t, bool> CallbackFunction)
+public void RegisterCallback(BaseSteamworks steamworks, Action`2<RemoveAppDependencyResult_t, bool> CallbackFunction)
+}
 internal SteamNative.RemoveUGCDependencyResult_t : ValueType {
 public int CallbackId
 public Result Result
@@ -3280,6 +3478,10 @@ public Result IPBanned
 public Result GSLTExpired
 public Result InsufficientFunds
 public Result TooManyPending
+public Result NoSiteLicensesFound
+public Result WGNetworkSendExceeded
+public Result AccountNotFriends
+public Result LimitedUserAccount
 }
 internal SteamNative.RTime32 : ValueType {
 public UInt32 Value
@@ -3308,7 +3510,7 @@ internal SteamNative.SetPersonaNameResponse_t : ValueType {
 public int CallbackId
 public bool Success
 public bool LocalSuccess
-public Result Esult
+public Result Result
 public SetPersonaNameResponse_t FromPointer(IntPtr p)
 public CallbackHandle CallResult(BaseSteamworks steamworks, SteamAPICall_t call, Action`2<SetPersonaNameResponse_t, bool> CallbackFunction)
 public void RegisterCallback(BaseSteamworks steamworks, Action`2<SetPersonaNameResponse_t, bool> CallbackFunction)
@@ -3321,6 +3523,11 @@ public bool VoteUp
 public SetUserItemVoteResult_t FromPointer(IntPtr p)
 public CallbackHandle CallResult(BaseSteamworks steamworks, SteamAPICall_t call, Action`2<SetUserItemVoteResult_t, bool> CallbackFunction)
 public void RegisterCallback(BaseSteamworks steamworks, Action`2<SetUserItemVoteResult_t, bool> CallbackFunction)
+}
+internal SteamNative.SiteId_t : ValueType {
+public ulong Value
+public SiteId_t op_Implicit(ulong value)
+public ulong op_Implicit(SiteId_t value)
 }
 internal SteamNative.SNetListenSocket_t : ValueType {
 public UInt32 Value
@@ -3498,10 +3705,10 @@ public SteamMatchmakingServers GetISteamMatchmakingServers(HSteamUser hSteamUser
 public SteamMusic GetISteamMusic(HSteamUser hSteamuser, HSteamPipe hSteamPipe, string pchVersion)
 public SteamMusicRemote GetISteamMusicRemote(HSteamUser hSteamuser, HSteamPipe hSteamPipe, string pchVersion)
 public SteamNetworking GetISteamNetworking(HSteamUser hSteamUser, HSteamPipe hSteamPipe, string pchVersion)
+public SteamParentalSettings GetISteamParentalSettings(HSteamUser hSteamuser, HSteamPipe hSteamPipe, string pchVersion)
 public SteamRemoteStorage GetISteamRemoteStorage(HSteamUser hSteamuser, HSteamPipe hSteamPipe, string pchVersion)
 public SteamScreenshots GetISteamScreenshots(HSteamUser hSteamuser, HSteamPipe hSteamPipe, string pchVersion)
 public SteamUGC GetISteamUGC(HSteamUser hSteamUser, HSteamPipe hSteamPipe, string pchVersion)
-public SteamUnifiedMessages GetISteamUnifiedMessages(HSteamUser hSteamuser, HSteamPipe hSteamPipe, string pchVersion)
 public SteamUser GetISteamUser(HSteamUser hSteamUser, HSteamPipe hSteamPipe, string pchVersion)
 public SteamUserStats GetISteamUserStats(HSteamUser hSteamUser, HSteamPipe hSteamPipe, string pchVersion)
 public SteamUtils GetISteamUtils(HSteamPipe hSteamPipe, string pchVersion)
@@ -3518,7 +3725,11 @@ internal void .ctor(BaseSteamworks steamworks, IntPtr pointer)
 public bool get_IsValid()
 public void Dispose()
 public void ActivateActionSet(ControllerHandle_t controllerHandle, ControllerActionSetHandle_t actionSetHandle)
+public void ActivateActionSetLayer(ControllerHandle_t controllerHandle, ControllerActionSetHandle_t actionSetLayerHandle)
+public void DeactivateActionSetLayer(ControllerHandle_t controllerHandle, ControllerActionSetHandle_t actionSetLayerHandle)
+public void DeactivateAllActionSetLayers(ControllerHandle_t controllerHandle)
 public ControllerActionSetHandle_t GetActionSetHandle(string pszActionSetName)
+public int GetActiveActionSetLayers(ControllerHandle_t controllerHandle, IntPtr handlesOut)
 public ControllerAnalogActionData_t GetAnalogActionData(ControllerHandle_t controllerHandle, ControllerAnalogActionHandle_t analogActionHandle)
 public ControllerAnalogActionHandle_t GetAnalogActionHandle(string pszActionName)
 public int GetAnalogActionOrigins(ControllerHandle_t controllerHandle, ControllerActionSetHandle_t actionSetHandle, ControllerAnalogActionHandle_t analogActionHandle, ControllerActionOrigin& originsOut)
@@ -3530,6 +3741,7 @@ public ControllerDigitalActionHandle_t GetDigitalActionHandle(string pszActionNa
 public int GetDigitalActionOrigins(ControllerHandle_t controllerHandle, ControllerActionSetHandle_t actionSetHandle, ControllerDigitalActionHandle_t digitalActionHandle, ControllerActionOrigin& originsOut)
 public int GetGamepadIndexForController(ControllerHandle_t ulControllerHandle)
 public string GetGlyphForActionOrigin(ControllerActionOrigin eOrigin)
+public SteamInputType GetInputTypeForHandle(ControllerHandle_t controllerHandle)
 public ControllerMotionData_t GetMotionData(ControllerHandle_t controllerHandle)
 public string GetStringForActionOrigin(ControllerActionOrigin eOrigin)
 public bool Init()
@@ -3616,6 +3828,8 @@ public bool HasFriend(CSteamID steamIDFriend, int iFriendFlags)
 public bool InviteUserToGame(CSteamID steamIDFriend, string pchConnectString)
 public bool IsClanChatAdmin(CSteamID steamIDClanChat, CSteamID steamIDUser)
 public bool IsClanChatWindowOpenInSteam(CSteamID steamIDClanChat)
+public bool IsClanOfficialGameGroup(CSteamID steamIDClan)
+public bool IsClanPublic(CSteamID steamIDClan)
 public CallbackHandle IsFollowing(CSteamID steamID, Action`2<FriendsIsFollowing_t, bool> CallbackFunction)
 public bool IsUserInSource(CSteamID steamIDUser, CSteamID steamIDSource)
 public CallbackHandle JoinClanChatRoom(CSteamID steamIDClan, Action`2<JoinClanChatRoomCompletionResult_t, bool> CallbackFunction)
@@ -3735,6 +3949,7 @@ public void Reload(HHTMLBrowser unBrowserHandle)
 public void RemoveBrowser(HHTMLBrowser unBrowserHandle)
 public void SetBackgroundMode(HHTMLBrowser unBrowserHandle, bool bBackgroundMode)
 public void SetCookie(string pchHostname, string pchKey, string pchValue, string pchPath, RTime32 nExpires, bool bSecure, bool bHTTPOnly)
+public void SetDPIScalingFactor(HHTMLBrowser unBrowserHandle, float flDPIScaling)
 public void SetHorizontalScroll(HHTMLBrowser unBrowserHandle, UInt32 nAbsolutePixelScroll)
 public void SetKeyFocus(HHTMLBrowser unBrowserHandle, bool bHasKeyFocus)
 public void SetPageScaleFactor(HHTMLBrowser unBrowserHandle, float flZoom, int nPointX, int nPointY)
@@ -3778,6 +3993,15 @@ public bool SetHTTPRequestRawPostBody(HTTPRequestHandle hRequest, string pchCont
 public bool SetHTTPRequestRequiresVerifiedCertificate(HTTPRequestHandle hRequest, bool bRequireVerifiedCertificate)
 public bool SetHTTPRequestUserAgentInfo(HTTPRequestHandle hRequest, string pchUserAgentInfo)
 }
+internal SteamNative.SteamInputType : Enum {
+public int value__
+public SteamInputType Unknown
+public SteamInputType SteamController
+public SteamInputType XBox360Controller
+public SteamInputType XBoxOneController
+public SteamInputType GenericXInput
+public SteamInputType PS4Controller
+}
 internal SteamNative.SteamInventory : object {
 internal Interface platform
 internal BaseSteamworks steamworks
@@ -3797,23 +4021,35 @@ public bool GetAllItems(SteamInventoryResult_t& pResultHandle)
 public SteamItemDef_t[] GetEligiblePromoItemDefinitionIDs(CSteamID steamID)
 public SteamItemDef_t[] GetItemDefinitionIDs()
 public bool GetItemDefinitionProperty(SteamItemDef_t iDefinition, string pchPropertyName, String& pchValueBuffer)
+public bool GetItemPrice(SteamItemDef_t iDefinition, UInt64& pPrice)
 public bool GetItemsByID(SteamInventoryResult_t& pResultHandle, SteamItemInstanceID_t[] pInstanceIDs, UInt32 unCountInstanceIDs)
+public bool GetItemsWithPrices(IntPtr pArrayItemDefs, IntPtr pPrices, UInt32 unArrayLength)
+public UInt32 GetNumItemsWithPrices()
 public bool GetResultItemProperty(SteamInventoryResult_t resultHandle, UInt32 unItemIndex, string pchPropertyName, String& pchValueBuffer)
 public SteamItemDetails_t[] GetResultItems(SteamInventoryResult_t resultHandle)
 public Result GetResultStatus(SteamInventoryResult_t resultHandle)
 public UInt32 GetResultTimestamp(SteamInventoryResult_t resultHandle)
 public bool GrantPromoItems(SteamInventoryResult_t& pResultHandle)
 public bool LoadItemDefinitions()
+public bool RemoveProperty(SteamInventoryUpdateHandle_t handle, SteamItemInstanceID_t nItemID, string pchPropertyName)
 public CallbackHandle RequestEligiblePromoItemDefinitionsIDs(CSteamID steamID, Action`2<SteamInventoryEligiblePromoItemDefIDs_t, bool> CallbackFunction)
+public CallbackHandle RequestPrices(Action`2<SteamInventoryRequestPricesResult_t, bool> CallbackFunction)
 public void SendItemDropHeartbeat()
 public bool SerializeResult(SteamInventoryResult_t resultHandle, IntPtr pOutBuffer, UInt32& punOutBufferSize)
+public bool SetProperty(SteamInventoryUpdateHandle_t handle, SteamItemInstanceID_t nItemID, string pchPropertyName, string pchPropertyValue)
+public bool SetProperty0(SteamInventoryUpdateHandle_t handle, SteamItemInstanceID_t nItemID, string pchPropertyName, bool bValue)
+public bool SetProperty1(SteamInventoryUpdateHandle_t handle, SteamItemInstanceID_t nItemID, string pchPropertyName, long nValue)
+public bool SetProperty2(SteamInventoryUpdateHandle_t handle, SteamItemInstanceID_t nItemID, string pchPropertyName, float flValue)
+public CallbackHandle StartPurchase(SteamItemDef_t[] pArrayItemDefs, UInt32[] punArrayQuantity, UInt32 unArrayLength, Action`2<SteamInventoryStartPurchaseResult_t, bool> CallbackFunction)
+public SteamInventoryUpdateHandle_t StartUpdateProperties()
+public bool SubmitUpdateProperties(SteamInventoryUpdateHandle_t handle, SteamInventoryResult_t& pResultHandle)
 public bool TradeItems(SteamInventoryResult_t& pResultHandle, CSteamID steamIDTradePartner, SteamItemInstanceID_t[] pArrayGive, UInt32[] pArrayGiveQuantity, UInt32 nArrayGiveLength, SteamItemInstanceID_t[] pArrayGet, UInt32[] pArrayGetQuantity, UInt32 nArrayGetLength)
 public bool TransferItemQuantity(SteamInventoryResult_t& pResultHandle, SteamItemInstanceID_t itemIdSource, UInt32 unQuantity, SteamItemInstanceID_t itemIdDest)
 public bool TriggerItemDrop(SteamInventoryResult_t& pResultHandle, SteamItemDef_t dropListDefinition)
 }
 internal SteamNative.SteamInventoryEligiblePromoItemDefIDs_t : ValueType {
 public int CallbackId
-public Result Esult
+public Result Result
 public ulong SteamID
 public int UmEligiblePromoItemDefs
 public bool CachedData
@@ -3827,6 +4063,14 @@ public int Handle
 public SteamInventoryFullUpdate_t FromPointer(IntPtr p)
 public void RegisterCallback(BaseSteamworks steamworks, Action`2<SteamInventoryFullUpdate_t, bool> CallbackFunction)
 }
+internal SteamNative.SteamInventoryRequestPricesResult_t : ValueType {
+public int CallbackId
+public Result Result
+public string Currency
+public SteamInventoryRequestPricesResult_t FromPointer(IntPtr p)
+public CallbackHandle CallResult(BaseSteamworks steamworks, SteamAPICall_t call, Action`2<SteamInventoryRequestPricesResult_t, bool> CallbackFunction)
+public void RegisterCallback(BaseSteamworks steamworks, Action`2<SteamInventoryRequestPricesResult_t, bool> CallbackFunction)
+}
 internal SteamNative.SteamInventoryResult_t : ValueType {
 public int Value
 public SteamInventoryResult_t op_Implicit(int value)
@@ -3835,9 +4079,23 @@ public int op_Implicit(SteamInventoryResult_t value)
 internal SteamNative.SteamInventoryResultReady_t : ValueType {
 public int CallbackId
 public int Handle
-public Result Esult
+public Result Result
 public SteamInventoryResultReady_t FromPointer(IntPtr p)
 public void RegisterCallback(BaseSteamworks steamworks, Action`2<SteamInventoryResultReady_t, bool> CallbackFunction)
+}
+internal SteamNative.SteamInventoryStartPurchaseResult_t : ValueType {
+public int CallbackId
+public Result Result
+public ulong OrderID
+public ulong TransID
+public SteamInventoryStartPurchaseResult_t FromPointer(IntPtr p)
+public CallbackHandle CallResult(BaseSteamworks steamworks, SteamAPICall_t call, Action`2<SteamInventoryStartPurchaseResult_t, bool> CallbackFunction)
+public void RegisterCallback(BaseSteamworks steamworks, Action`2<SteamInventoryStartPurchaseResult_t, bool> CallbackFunction)
+}
+internal SteamNative.SteamInventoryUpdateHandle_t : ValueType {
+public ulong Value
+public SteamInventoryUpdateHandle_t op_Implicit(ulong value)
+public ulong op_Implicit(SteamInventoryUpdateHandle_t value)
 }
 internal SteamNative.SteamItemDef_t : ValueType {
 public int Value
@@ -4035,6 +4293,20 @@ public IntPtr Strings
 public int NumStrings
 public SteamParamStringArray_t FromPointer(IntPtr p)
 }
+internal SteamNative.SteamParentalSettings : object {
+internal Interface platform
+internal BaseSteamworks steamworks
+public bool IsValid
+internal void .ctor(BaseSteamworks steamworks, IntPtr pointer)
+public bool get_IsValid()
+public void Dispose()
+public bool BIsAppBlocked(AppId_t nAppID)
+public bool BIsAppInBlockList(AppId_t nAppID)
+public bool BIsFeatureBlocked(ParentalFeature eFeature)
+public bool BIsFeatureInBlockList(ParentalFeature eFeature)
+public bool BIsParentalLockEnabled()
+public bool BIsParentalLockLocked()
+}
 internal SteamNative.SteamRemoteStorage : object {
 internal Interface platform
 internal BaseSteamworks steamworks
@@ -4135,6 +4407,7 @@ public bool IsValid
 internal void .ctor(BaseSteamworks steamworks, IntPtr pointer)
 public bool get_IsValid()
 public void Dispose()
+public CallbackHandle AddAppDependency(PublishedFileId_t nPublishedFileID, AppId_t nAppID, Action`2<AddAppDependencyResult_t, bool> CallbackFunction)
 public CallbackHandle AddDependency(PublishedFileId_t nParentPublishedFileID, PublishedFileId_t nChildPublishedFileID, Action`2<AddUGCDependencyResult_t, bool> CallbackFunction)
 public bool AddExcludedTag(UGCQueryHandle_t handle, string pTagName)
 public bool AddItemKeyValueTag(UGCUpdateHandle_t handle, string pchKey, string pchValue)
@@ -4148,7 +4421,9 @@ public CallbackHandle CreateItem(AppId_t nConsumerAppId, WorkshopFileType eFileT
 public UGCQueryHandle_t CreateQueryAllUGCRequest(UGCQuery eQueryType, UGCMatchingUGCType eMatchingeMatchingUGCTypeFileType, AppId_t nCreatorAppID, AppId_t nConsumerAppID, UInt32 unPage)
 public UGCQueryHandle_t CreateQueryUGCDetailsRequest(PublishedFileId_t[] pvecPublishedFileID)
 public UGCQueryHandle_t CreateQueryUserUGCRequest(AccountID_t unAccountID, UserUGCList eListType, UGCMatchingUGCType eMatchingUGCType, UserUGCListSortOrder eSortOrder, AppId_t nCreatorAppID, AppId_t nConsumerAppID, UInt32 unPage)
+public CallbackHandle DeleteItem(PublishedFileId_t nPublishedFileID, Action`2<DeleteItemResult_t, bool> CallbackFunction)
 public bool DownloadItem(PublishedFileId_t nPublishedFileID, bool bHighPriority)
+public CallbackHandle GetAppDependencies(PublishedFileId_t nPublishedFileID, Action`2<GetAppDependenciesResult_t, bool> CallbackFunction)
 public bool GetItemDownloadInfo(PublishedFileId_t nPublishedFileID, UInt64& punBytesDownloaded, UInt64& punBytesTotal)
 public bool GetItemInstallInfo(PublishedFileId_t nPublishedFileID, UInt64& punSizeOnDisk, String& pchFolder, UInt32& punTimeStamp)
 public UInt32 GetItemState(PublishedFileId_t nPublishedFileID)
@@ -4166,6 +4441,7 @@ public bool GetQueryUGCStatistic(UGCQueryHandle_t handle, UInt32 index, ItemStat
 public UInt32 GetSubscribedItems(PublishedFileId_t* pvecPublishedFileID, UInt32 cMaxEntries)
 public CallbackHandle GetUserItemVote(PublishedFileId_t nPublishedFileID, Action`2<GetUserItemVoteResult_t, bool> CallbackFunction)
 public bool ReleaseQueryUGCRequest(UGCQueryHandle_t handle)
+public CallbackHandle RemoveAppDependency(PublishedFileId_t nPublishedFileID, AppId_t nAppID, Action`2<RemoveAppDependencyResult_t, bool> CallbackFunction)
 public CallbackHandle RemoveDependency(PublishedFileId_t nParentPublishedFileID, PublishedFileId_t nChildPublishedFileID, Action`2<RemoveUGCDependencyResult_t, bool> CallbackFunction)
 public CallbackHandle RemoveItemFromFavorites(AppId_t nAppId, PublishedFileId_t nPublishedFileID, Action`2<UserFavoriteItemsListChanged_t, bool> CallbackFunction)
 public bool RemoveItemKeyValueTags(UGCUpdateHandle_t handle, string pchKey)
@@ -4252,28 +4528,6 @@ public SteamUGCDetails_t Details
 public bool CachedData
 public SteamUGCRequestUGCDetailsResult_t FromPointer(IntPtr p)
 public void RegisterCallback(BaseSteamworks steamworks, Action`2<SteamUGCRequestUGCDetailsResult_t, bool> CallbackFunction)
-}
-internal SteamNative.SteamUnifiedMessages : object {
-internal Interface platform
-internal BaseSteamworks steamworks
-public bool IsValid
-internal void .ctor(BaseSteamworks steamworks, IntPtr pointer)
-public bool get_IsValid()
-public void Dispose()
-public bool GetMethodResponseData(ClientUnifiedMessageHandle hHandle, IntPtr pResponseBuffer, UInt32 unResponseBufferSize, bool bAutoRelease)
-public bool GetMethodResponseInfo(ClientUnifiedMessageHandle hHandle, UInt32& punResponseSize, Result& peResult)
-public bool ReleaseMethod(ClientUnifiedMessageHandle hHandle)
-public ClientUnifiedMessageHandle SendMethod(string pchServiceMethod, IntPtr pRequestBuffer, UInt32 unRequestBufferSize, ulong unContext)
-public bool SendNotification(string pchServiceNotification, IntPtr pNotificationBuffer, UInt32 unNotificationBufferSize)
-}
-internal SteamNative.SteamUnifiedMessagesSendMethodResult_t : ValueType {
-public int CallbackId
-public ulong Handle
-public ulong Context
-public Result Result
-public UInt32 ResponseSize
-public SteamUnifiedMessagesSendMethodResult_t FromPointer(IntPtr p)
-public void RegisterCallback(BaseSteamworks steamworks, Action`2<SteamUnifiedMessagesSendMethodResult_t, bool> CallbackFunction)
 }
 internal SteamNative.SteamUser : object {
 internal Interface platform
@@ -4440,6 +4694,7 @@ internal SteamNative.SubmitItemUpdateResult_t : ValueType {
 public int CallbackId
 public Result Result
 public bool UserNeedsToAcceptWorkshopLegalAgreement
+public ulong PublishedFileId
 public SubmitItemUpdateResult_t FromPointer(IntPtr p)
 public CallbackHandle CallResult(BaseSteamworks steamworks, SteamAPICall_t call, Action`2<SubmitItemUpdateResult_t, bool> CallbackFunction)
 public void RegisterCallback(BaseSteamworks steamworks, Action`2<SubmitItemUpdateResult_t, bool> CallbackFunction)
@@ -4651,6 +4906,18 @@ public VRHMDType Oculus_DK1
 public VRHMDType Oculus_DK2
 public VRHMDType Oculus_Rift
 public VRHMDType Oculus_Unknown
+public VRHMDType Acer_Unknown
+public VRHMDType Acer_WindowsMR
+public VRHMDType Dell_Unknown
+public VRHMDType Dell_Visor
+public VRHMDType Lenovo_Unknown
+public VRHMDType Lenovo_Explorer
+public VRHMDType HP_Unknown
+public VRHMDType HP_WindowsMR
+public VRHMDType Samsung_Unknown
+public VRHMDType Samsung_Odyssey
+public VRHMDType Unannounced_Unknown
+public VRHMDType Unannounced_WindowsMR
 }
 internal SteamNative.VRScreenshotType : Enum {
 public int value__

@@ -48,7 +48,6 @@ private object initLock
 private Dictionary`2<Guid, AIData> _aiLookup
 private Dictionary`2<Guid, List`1<IUtilityAIClient>> _aiClients
 public AIClientResolver GetAIClient
-private AIClientResolver CS$<>9__CachedAnonymousMethodDelegateb
 public IEnumerable`1<IUtilityAIClient> allClients
 public IEnumerable`1<IUtilityAIClient> get_allClients()
 public IList`1<IUtilityAIClient> GetAIClients(Guid aiId)
@@ -59,7 +58,6 @@ public void Register(IUtilityAIClient client)
 public void Unregister(IUtilityAIClient client)
 private void ReadAndInit(AIData data)
 private void EnsureLookup(bool init)
-private IUtilityAIClient <.cctor>b__a(GameObject host, Guid aiId)
 }
 public Apex.AI.BasicExtensions : object {
 public bool ExecuteOnce(IUtilityAI ai, IAIContext context)
@@ -150,14 +148,27 @@ public UtilityAIClientState Paused
 public Apex.AI.Components.UtilityAIComponent : ExtendedMonoBehaviour {
 internal UtilityAIConfig[] aiConfigs
 private IUtilityAIClient[] _clients
+private int _usedClients
+private Action`1<IUtilityAIClient> OnNewAI
 public IUtilityAIClient[] clients
+internal void add_OnNewAI(Action`1<IUtilityAIClient> value)
+internal void remove_OnNewAI(Action`1<IUtilityAIClient> value)
 public IUtilityAIClient[] get_clients()
 public IUtilityAIClient GetClient(Guid aiId)
+public int AddClient(string aiId)
+public int AddClient(Guid aiId)
+public int AddClient(Guid aiId, IContextProvider contextProvider)
+public int AddClient(Guid aiId, IContextProvider contextProvider, float intervalMin, float intervalMax, float startDelayMin, float startDelayMax)
+private int AddClient(IUtilityAIClient client)
+public bool RemoveClient(Guid aiId)
+public bool RemoveClient(IUtilityAIClient client)
+public void RemoveClientAt(int index)
 public void Pause()
 public void Resume()
 internal void ToggleActive(int idx, bool active)
 protected void OnStartAndEnable()
 private void OnDisable()
+private void Resize(T[]& array, int newCapacity)
 }
 internal Apex.AI.Components.UtilityAIConfig : object {
 public string aiId
@@ -168,13 +179,15 @@ public float startDelayMax
 public bool isActive
 }
 public Apex.AI.CompositeAction : object {
-private List`1<IAction> _actions
+protected List`1<IAction> _actions
 private IConnectorAction _connectorAction
 public IList`1<IAction> actions
 internal IConnectorAction connectorAction
+private bool Apex.AI.ICompositeAction.isConnector
 public IList`1<IAction> get_actions()
 internal IConnectorAction get_connectorAction()
 internal void set_connectorAction(IConnectorAction value)
+private bool Apex.AI.ICompositeAction.get_isConnector()
 public void Execute(IAIContext context)
 public IAction Select(IAIContext context)
 public void CloneFrom(object other)
@@ -258,6 +271,76 @@ public void set_description(string value)
 public int get_sortOrder()
 public void set_sortOrder(int value)
 }
+public Apex.Ai.HTN.CompoundTaskSelector : Selector {
+private DecompositionType _decomposition
+private List`1<ICompositeScorer> _preconditions
+private List`1<TaskQualifier> _taskQualifiers
+public List`1<ICompositeScorer> Preconditions
+public DecompositionType Decomposition
+public List`1<ICompositeScorer> get_Preconditions()
+public DecompositionType get_Decomposition()
+public void Reset()
+public float Decompose(IAIContext context, List`1& plan)
+private bool _UpdateTasksQualifiers()
+public IQualifier Select(IAIContext context, IList`1<IQualifier> qualifiers, IDefaultQualifier defaultQualifier)
+}
+public Apex.Ai.HTN.DecompositionType : Enum {
+public int value__
+public DecompositionType One
+public DecompositionType All
+}
+public Apex.Ai.HTN.DomainSelector : Selector {
+private List`1<TaskQualifier> _tasks
+private List`1<PrimitiveTaskSelector> _plan
+public IQualifier Select(IAIContext context, IList`1<IQualifier> qualifiers, IDefaultQualifier defaultQualifier)
+private bool _UpdateTaskQualifiers()
+}
+public Apex.Ai.HTN.IHTNContext {
+public PlanStateType PlanState
+public List`1<PrimitiveTaskSelector> HtnPlan
+public PlanStateType get_PlanState()
+public void set_PlanState(PlanStateType value)
+public List`1<PrimitiveTaskSelector> get_HtnPlan()
+}
+public Apex.Ai.HTN.ITask {
+public List`1<ICompositeScorer> Preconditions
+public List`1<ICompositeScorer> get_Preconditions()
+public void Reset()
+public float Decompose(IAIContext context, List`1& plan)
+}
+public Apex.Ai.HTN.PlanStateType : Enum {
+public int value__
+public PlanStateType Running
+public PlanStateType Complete
+public PlanStateType Aborted
+}
+public Apex.Ai.HTN.PrimitiveTaskAction : ActionBase {
+private List`1<IAction> _actions
+public List`1<IAction> Actions
+public List`1<IAction> get_Actions()
+public void Execute(IAIContext context)
+}
+public Apex.Ai.HTN.PrimitiveTaskSelector : Selector {
+public string Name
+private List`1<ICompositeScorer> _preconditions
+private List`1<ICompositeScorer> _effects
+public List`1<ICompositeScorer> Preconditions
+public PrimitiveTaskAction PrimitiveTaskAction
+public List`1<ICompositeScorer> get_Preconditions()
+public PrimitiveTaskAction get_PrimitiveTaskAction()
+public void Reset()
+public float Decompose(IAIContext context, List`1& plan)
+public IQualifier Select(IAIContext context, IList`1<IQualifier> qualifiers, IDefaultQualifier defaultQualifier)
+}
+public Apex.Ai.HTN.TaskQualifier : QualifierBase {
+private ITask _task
+private float _lastScore
+public void Reset()
+public float Decompose(IAIContext context, List`1& plan)
+private float DecomposeTask(ITask task, IAIContext context, List`1& plan)
+private float TestPreconditions(ITask task, IAIContext context)
+public float Score(IAIContext context)
+}
 public Apex.AI.IAction {
 public void Execute(IAIContext context)
 }
@@ -268,6 +351,10 @@ public void set_isDisabled(bool value)
 }
 public Apex.AI.ICanClone {
 public void CloneFrom(object other)
+}
+public Apex.AI.ICompositeAction {
+public bool isConnector
+public bool get_isConnector()
 }
 public Apex.AI.ICompositeScorer {
 public IList`1<IContextualScorer> scorers
@@ -461,6 +548,13 @@ private string Apex.AI.IHaveFriendlyName.get_friendlyName()
 private string Apex.AI.IHaveFriendlyName.get_description()
 public AIStorage Create(string aiId, string aiName)
 }
+public Apex.AI.TerminableActionBase`1 : ActionBase`1<TContext> {
+private void Apex.AI.IRequireTermination.Terminate(IAIContext context)
+public void Terminate(TContext context)
+}
+public Apex.AI.TerminableCompositeAction : CompositeAction {
+public void Terminate(IAIContext context)
+}
 public Apex.AI.UtilityAI : object {
 private Guid _rootSelectorId
 private Guid _id
@@ -532,12 +626,15 @@ internal Apex.AI.Visualization.CompositeActionVisualizer : ConnectorActionVisual
 private List`1<ActionVisualizer> _actions
 private ConnectorActionVisualizer _connectorAction
 private IList Apex.AI.Visualization.ICompositeVisualizer.children
+private bool Apex.AI.ICompositeAction.isConnector
 internal void .ctor(CompositeAction action, IQualifierVisualizer parent)
 private IList Apex.AI.Visualization.ICompositeVisualizer.get_children()
+private bool Apex.AI.ICompositeAction.get_isConnector()
 internal void Init()
 internal void Execute(IAIContext context, bool doCallback)
 public IAction Select(IAIContext context)
 private void Apex.AI.Visualization.ICompositeVisualizer.Add(object item)
+public void Terminate(IAIContext context)
 }
 internal Apex.AI.Visualization.CompositeQualifierVisualizer : QualifierVisualizer {
 private List`1<IContextualScorer> _scorers
