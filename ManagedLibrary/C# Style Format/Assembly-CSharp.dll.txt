@@ -1724,7 +1724,6 @@ public float steeringScale
 public Transform thrustPoint
 public Transform centerOfMass
 public Buoyancy buoyancy
-public bool preventDecayIndoors
 public Transform[] planeFitPoints
 public Vector3 inAirPID
 public float inAirDesiredPitch
@@ -1748,7 +1747,7 @@ protected void OnServerWake()
 public bool EngineOn()
 public void VehicleFixedUpdate()
 protected void ApplyCorrectionForces()
-public void WaterVehicleDecay(BaseCombatEntity entity, float decayTickRate, float timeSinceLastUsed, float outsideDecayMinutes, float deepWaterDecayMinutes, float decayStartDelayMinutes, bool preventDecayIndoors)
+public void WaterVehicleDecay(BaseCombatEntity entity, float decayTickRate, float timeSinceLastUsed, float outsideDecayMinutes, float deepWaterDecayMinutes, float decayStartDelayMinutes)
 public bool EngineInWater()
 public float WaterFactorForPlayer(BasePlayer player)
 public float GetWaterDepth(Vector3 pos)
@@ -3211,8 +3210,6 @@ private void OnNetworkLimitStart()
 private void OnNetworkLimitEnd()
 public BaseEntity GetParentEntity()
 public bool HasParent()
-public BaseEntity GetLargeVehicleParent()
-public bool HasLargeVehicleParent()
 public void AddChild(BaseEntity child)
 protected void OnChildAdded(BaseEntity child)
 public void RemoveChild(BaseEntity child)
@@ -8909,7 +8906,6 @@ public float projectile_losforgiveness
 public int projectile_damagedepth
 public int projectile_impactspawndepth
 public bool projectile_terraincheck
-public bool projectile_vehiclecheck
 public int melee_protection
 public float melee_penalty
 public float melee_forgiveness
@@ -8918,7 +8914,6 @@ public float melee_clientframes
 public float melee_backtracking
 public float melee_losforgiveness
 public bool melee_terraincheck
-public bool melee_vehiclecheck
 public int eye_protection
 public float eye_penalty
 public float eye_forgiveness
@@ -11169,7 +11164,6 @@ public void IdleDestroy()
 public void OnCollision(Collision collision, BaseEntity hitEntity)
 public void OnDroppedOn(DroppedItem di)
 public void OnParentChanging(BaseEntity oldParent, BaseEntity newParent)
-private void SetCollisionForParent(BaseEntity parent)
 internal void OnParentRemoved()
 public void GoKinematic()
 public void PostInitShared()
@@ -26993,7 +26987,13 @@ public void ServerUpdateTick(BaseVehicleModule parentModule)
 private void CheckPosition(BaseEntity parentEntity, float dt)
 }
 public Rust.Numlock : object {
+private byte VK_NUMLOCK
+private UInt32 KEYEVENTF_EXTENDEDKEY
+private int KEYEVENTF_KEYUP
+private int KEYEVENTF_KEYDOWN
 public bool IsOn
+private short GetKeyState(int keyCode)
+private void keybd_event(byte bVk, byte bScan, UInt32 dwFlags, int dwExtraInfo)
 public bool get_IsOn()
 public void TurnOn()
 }
@@ -27982,6 +27982,9 @@ protected Building CreateBuilding(UInt32 id)
 protected void DisposeBuilding(Building& building)
 }
 public ServerConsole : SingletonComponent`1<ServerConsole> {
+private ConsoleWindow console
+private ConsoleInput input
+private float nextUpdate
 private DateTime currentGameTime
 private int currentPlayerCount
 private int maxPlayerCount
@@ -27992,6 +27995,8 @@ private void OnDisable()
 private void OnInputText(string obj)
 public void PrintColoured(Object[] objects)
 private void HandleLog(string message, string stackTrace, LogType type)
+private void Update()
+private void UpdateStatus()
 private DateTime get_currentGameTime()
 private int get_currentPlayerCount()
 private int get_maxPlayerCount()
@@ -33120,7 +33125,6 @@ private AnimationCurve emissionCurve
 private ParticleSystemContainer fxLightDamage
 private ParticleSystemContainer fxMediumDamage
 private ParticleSystemContainer fxHeavyDamage
-private GameObject heavyDamageLights
 public float tugcorpseseconds
 public float tugdecayminutes
 public float tugdecaystartdelayminutes
@@ -37651,6 +37655,19 @@ internal void OnBackspace()
 internal void OnEscape()
 internal void OnEnter()
 public void Update()
+}
+public Windows.ConsoleWindow : object {
+private TextWriter oldOutput
+private int STD_INPUT_HANDLE
+private int STD_OUTPUT_HANDLE
+public void Initialize()
+public void Shutdown()
+public void SetTitle(string strName)
+private bool AttachConsole(UInt32 dwProcessId)
+private bool AllocConsole()
+private bool FreeConsole()
+private IntPtr GetStdHandle(int nStdHandle)
+private bool SetConsoleTitleA(string lpConsoleTitle)
 }
 public WindowsAffinityShim : object {
 public bool SetProcessAffinityMask(IntPtr process, IntPtr mask)
