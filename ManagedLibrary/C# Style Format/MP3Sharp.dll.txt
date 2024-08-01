@@ -1,337 +1,538 @@
-internal javazoom.jl.converter.RiffFile : object {
-public int DDC_SUCCESS
-public int DDC_FAILURE
-public int DDC_OUT_OF_MEMORY
-public int DDC_FILE_ERROR
-public int DDC_INVALID_CALL
-public int DDC_USER_ABORT
-public int DDC_INVALID_FILE
-public int RFM_UNKNOWN
-public int RFM_WRITE
-public int RFM_READ
-private RiffChunkHeader riff_header
-protected internal int fmode
-protected internal Stream file
-public int CurrentFileMode()
-public int Open(string Filename, int NewMode)
-public int Open(Stream stream, int NewMode)
-public int Write(SByte[] Data, int NumBytes)
-public int Write(Int16[] Data, int NumBytes)
-public int Write(RiffChunkHeader Triff_header, int NumBytes)
-public int Write(short Data, int NumBytes)
-public int Write(int Data, int NumBytes)
-public int Read(SByte[] Data, int NumBytes)
-public int Expect(string Data, int NumBytes)
-public int Close()
-public long CurrentFilePosition()
-public int Backpatch(long FileOffset, RiffChunkHeader Data, int NumBytes)
-public int Backpatch(long FileOffset, SByte[] Data, int NumBytes)
-protected internal int Seek(long offset)
-private string DDCRET_String(int retcode)
-public int FourCC(string ChunkName)
+public MP3Sharp.Buffer16BitStereo : ABuffer {
+internal bool DoubleMonoToStereo
+private int OUTPUT_CHANNELS
+private Byte[] _Buffer
+private Int32[] _BufferChannelOffsets
+private int _End
+private int _Offset
+internal int BytesLeft
+internal int get_BytesLeft()
+internal int Read(Byte[] bufferOut, int offset, int count)
+protected void Append(int channel, short sampleValue)
+internal void AppendSamples(int channel, Single[] samples)
+internal void ClearBuffer()
+internal void SetStopFlag()
+internal void WriteBuffer(int val)
+internal void Close()
 }
-internal javazoom.jl.converter.WaveFile : RiffFile {
-public int MAX_WAVE_CHANNELS
-private WaveFormat_Chunk wave_format
-private RiffChunkHeader pcm_data
-private long pcm_data_offset
-private int num_samples
-private bool JustWriteLengthBytes
-public int OpenForWrite(string Filename, Stream stream, int SamplingRate, short BitsPerSample, short NumChannels)
-public int WriteData(Int16[] data, int numData)
-public int Close()
-public int Close(bool justWriteLengthBytes)
-public int SamplingRate()
-public short BitsPerSample()
-public short NumChannels()
-public int NumSamples()
-public int OpenForWrite(string Filename, WaveFile OtherWave)
-public long CurrentFilePosition()
+public MP3Sharp.Decoding.ABuffer : object {
+internal int OBUFFERSIZE
+internal int MAXCHANNELS
+protected void Append(int channel, short sampleValue)
+internal void AppendSamples(int channel, Single[] samples)
+private short Clip(float sample)
+internal void WriteBuffer(int val)
+internal void Close()
+internal void ClearBuffer()
+internal void SetStopFlag()
 }
-internal javazoom.jl.converter.WaveFileObuffer : Obuffer {
-private Int16[] buffer
-private Int16[] bufferp
-private int channels
-private WaveFile outWave
-internal Int16[] myBuffer
-private void InitBlock()
-public void .ctor(int number_of_channels, int freq, string FileName)
-public void .ctor(int number_of_channels, int freq, Stream stream)
-public void append(int channel, short value_Renamed)
-public void write_buffer(int val)
-public void close(bool justWriteLengthBytes)
-public void close()
-public void clear_buffer()
-public void set_stop_flag()
-}
-internal javazoom.jl.decoder.BackStream : object {
-private Stream S
-private int BackBufferSize
-private int NumForwardBytesInBuffer
-private Byte[] Temp
-private CircularByteBuffer COB
-public void .ctor(Stream s, int backBufferSize)
-public int Read(SByte[] toRead, int offset, int length)
-public void UnRead(int length)
-public void Close()
-}
-internal javazoom.jl.decoder.BitReserve : object {
+internal MP3Sharp.Decoding.BitReserve : object {
 private int BUFSIZE
 private int BUFSIZE_MASK
-private int offset
-private int totbit
-private int buf_byte_idx
-private Int32[] buf
-private int buf_bit_idx
+private Int32[] _Buffer
+private int _Offset
+private int _Totbit
+private int _BufByteIdx
 private void InitBlock()
-public int hsstell()
-public int hgetbits(int N)
-public int hget1bit()
-public void hputbuf(int val)
-public void rewindNbits(int N)
-public void rewindNbytes(int N)
+internal int HssTell()
+internal int ReadBits(int n)
+internal int ReadOneBit()
+internal void PutBuffer(int val)
+internal void RewindStreamBits(int bitCount)
+internal void RewindStreamBytes(int byteCount)
 }
-internal javazoom.jl.decoder.Bitstream : object {
+public MP3Sharp.Decoding.Bitstream : object {
+private int BUFFER_INT_SIZE
 internal sbyte INITIAL_SYNC
 internal sbyte STRICT_SYNC
-private int BUFFER_INT_SIZE
-private Int32[] framebuffer
-private int framesize
-private SByte[] frame_bytes
-private int wordpointer
-private int bitindex
-private int syncword
-private bool single_ch_mode
-private Int32[] bitmask
-private BackStream source
-private Header header
-private SByte[] syncbuf
-private Crc16[] crc
+private Int32[] _Bitmask
+private PushbackStream _SourceStream
+private int _BitIndex
+private Crc16[] _CRC
+private SByte[] _FrameBytes
+private Int32[] _FrameBuffer
+private int _FrameSize
+private Header _Header
+private bool _SingleChMode
+private SByte[] _SyncBuffer
+private int _SyncWord
+private int _WordPointer
+internal void .ctor(PushbackStream stream)
 private void InitBlock()
-internal void .ctor(BackStream in_Renamed)
-public void close()
-internal Header readFrame()
-private Header readNextFrame()
-private void nextFrame()
-public void unreadFrame()
-public void closeFrame()
-public bool isSyncCurrentPosition(int syncmode)
-public int readBits(int n)
-public int readCheckedBits(int n)
-protected internal BitstreamException newBitstreamException(int errorcode)
-protected internal BitstreamException newBitstreamException(int errorcode, Exception throwable)
-internal int syncHeader(sbyte syncmode)
-public bool isSyncMark(int headerstring, int syncmode, int word)
-internal void read_frame_data(int bytesize)
-internal void parse_frame()
-public int get_bits(int number_of_bits)
-internal void set_syncword(int syncword0)
-private void readFully(SByte[] b, int offs, int len)
-private int readBytes(SByte[] b, int offs, int len)
+internal void Close()
+internal Header ReadFrame()
+private Header ReadNextFrame()
+internal void UnreadFrame()
+internal void CloseFrame()
+internal bool IsSyncCurrentPosition(int syncmode)
+internal int ReadBits(int n)
+internal int ReadCheckedBits(int n)
+internal BitstreamException NewBitstreamException(int errorcode)
+internal BitstreamException NewBitstreamException(int errorcode, Exception throwable)
+internal int SyncHeader(sbyte syncmode)
+internal bool IsSyncMark(int headerstring, int syncmode, int word)
+internal void Read_frame_data(int bytesize)
+internal void ParseFrame()
+internal int GetBitsFromBuffer(int countBits)
+internal void SetSyncWord(int syncword0)
+private void ReadFully(SByte[] b, int offs, int len)
+private int ReadBytes(SByte[] b, int offs, int len)
 }
-internal javazoom.jl.decoder.BitstreamErrors_Fields : ValueType {
-public int UNKNOWN_ERROR
-public int UNKNOWN_SAMPLE_RATE
-public int STREAM_ERROR
-public int UNEXPECTED_EOF
-public int STREAM_EOF
-public int BITSTREAM_LAST
+internal MP3Sharp.Decoding.BitstreamErrors : ValueType {
+internal int UNKNOWN_ERROR
+internal int UNKNOWN_SAMPLE_RATE
+internal int STREA_ERROR
+internal int UNEXPECTED_EOF
+internal int STREA_EOF
+internal int BITSTREA_LAST
+internal int BITSTREAM_ERROR
+internal int DECODER_ERROR
 }
-internal javazoom.jl.decoder.CircularByteBuffer : object {
-private Byte[] dataArray
-private int length
-private int index
-private int numValid
-public int BufferSize
-public byte Item
-public int NumValid
-public void .ctor(int size)
-public void .ctor(CircularByteBuffer cdb)
-public CircularByteBuffer Copy()
-public int get_BufferSize()
-public void set_BufferSize(int value)
-public void Reset()
-public byte Push(byte newValue)
-public byte Pop()
-public byte Peek()
-public byte get_Item(int index)
-public void set_Item(int index, byte value)
+public MP3Sharp.Decoding.BitstreamException : MP3SharpException {
+private int _ErrorCode
+internal int ErrorCode
+internal void .ctor(string message, Exception inner)
+internal void .ctor(int errorcode, Exception inner)
+protected void .ctor(SerializationInfo info, StreamingContext context)
+internal int get_ErrorCode()
+public void GetObjectData(SerializationInfo info, StreamingContext context)
+private void InitBlock()
+internal string GetErrorString(int errorcode)
+}
+internal MP3Sharp.Decoding.CircularByteBuffer : object {
+private Byte[] _DataArray
+private int _Index
+private int _Length
+private int _NumValid
+internal int BufferSize
+internal byte Item
+internal int NumValid
+internal void .ctor(int size)
+internal void .ctor(CircularByteBuffer cdb)
+internal int get_BufferSize()
+internal void set_BufferSize(int value)
+internal byte get_Item(int index)
+internal void set_Item(int index, byte value)
+internal int get_NumValid()
+internal void set_NumValid(int value)
+internal CircularByteBuffer Copy()
+internal void Reset()
+internal byte Push(byte newValue)
+internal byte Pop()
+internal byte Peek()
 private byte InternalGet(int offset)
 private void InternalSet(int offset, byte valueToSet)
-public int get_NumValid()
-public void set_NumValid(int value)
-public Byte[] GetRange(int str, int stp)
+internal Byte[] GetRange(int str, int stp)
 public string ToString()
 }
-internal javazoom.jl.decoder.Control {
-public bool Playing
-public bool RandomAccess
-public double Position
-public bool get_Playing()
-public bool get_RandomAccess()
-public double get_Position()
-public void set_Position(double value)
-public void start()
-public void stop()
-public void pause()
+public MP3Sharp.Decoding.Crc16 : object {
+private short Polynomial
+private short _CRC
+internal void AddBits(int bitstring, int length)
+internal short Checksum()
 }
-internal javazoom.jl.decoder.Crc16 : object {
-private short polynomial
-private short crc
-public void add_bits(int bitstring, int length)
-public short checksum()
-}
-internal javazoom.jl.decoder.Decoder : object {
-private Params DEFAULT_PARAMS
-private Obuffer output
-private SynthesisFilter filter1
-private SynthesisFilter filter2
-private LayerIIIDecoder l3decoder
-private LayerIIDecoder l2decoder
-private LayerIDecoder l1decoder
-private int outputFrequency
-private int outputChannels
-private Equalizer equalizer
-private Params params_Renamed
-private bool initialized
-public Params DefaultParams
-public Equalizer Equalizer
-public Obuffer OutputBuffer
-public int OutputFrequency
-public int OutputChannels
-public int OutputBlockSize
+public MP3Sharp.Decoding.Decoder : object {
+private Params DecoderDefaultParams
+private Equalizer _Equalizer
+private SynthesisFilter _LeftChannelFilter
+private SynthesisFilter _RightChannelFilter
+private bool _IsInitialized
+private LayerIDecoder _L1Decoder
+private LayerIIDecoder _L2Decoder
+private LayerIIIDecoder _L3Decoder
+private ABuffer _Output
+private int _OutputChannels
+private int _OutputFrequency
+internal Params DefaultParams
+internal Equalizer Equalizer
+internal ABuffer OutputBuffer
+internal int OutputFrequency
+internal int OutputChannels
+internal int OutputBlockSize
+internal void .ctor(Params params0)
+internal Params get_DefaultParams()
+internal void set_Equalizer(Equalizer value)
+internal void set_OutputBuffer(ABuffer value)
+internal int get_OutputFrequency()
+internal int get_OutputChannels()
+internal int get_OutputBlockSize()
 private void InitBlock()
-public Params get_DefaultParams()
-public void set_Equalizer(Equalizer value)
-public void set_OutputBuffer(Obuffer value)
-public int get_OutputFrequency()
-public int get_OutputChannels()
-public int get_OutputBlockSize()
-public void .ctor(Params params0)
-public Obuffer decodeFrame(Header header, Bitstream stream)
-protected internal DecoderException newDecoderException(int errorcode)
-protected internal DecoderException newDecoderException(int errorcode, Exception throwable)
-protected internal FrameDecoder retrieveDecoder(Header header, Bitstream stream, int layer)
-private void initialize(Header header)
+internal ABuffer DecodeFrame(Header header, Bitstream stream)
+protected DecoderException NewDecoderException(int errorcode)
+protected DecoderException NewDecoderException(int errorcode, Exception throwable)
+protected IFrameDecoder RetrieveDecoder(Header header, Bitstream stream, int layer)
+private void Initialize(Header header)
 }
-internal javazoom.jl.decoder.DecoderErrors_Fields : ValueType {
-public int UNKNOWN_ERROR
-public int UNSUPPORTED_LAYER
+internal MP3Sharp.Decoding.DecoderErrors : ValueType {
+internal int UNKNOWN_ERROR
+internal int UNSUPPORTED_LAYER
 }
-internal javazoom.jl.decoder.DecoderException : Mp3SharpException {
-private int errorcode
-public int ErrorCode
+public MP3Sharp.Decoding.DecoderException : MP3SharpException {
+private int _ErrorCode
+internal int ErrorCode
+internal void .ctor(string message, Exception inner)
+internal void .ctor(int errorcode, Exception inner)
+protected void .ctor(SerializationInfo info, StreamingContext context)
+internal int get_ErrorCode()
+public void GetObjectData(SerializationInfo info, StreamingContext context)
 private void InitBlock()
-public int get_ErrorCode()
-public void .ctor(string msg, Exception t)
-public void .ctor(int errorcode, Exception t)
-public string getErrorString(int errorcode)
+internal string GetErrorString(int errorcode)
 }
-internal javazoom.jl.decoder.Equalizer : object {
-public float BAND_NOT_PRESENT
-public Equalizer PASS_THRU_EQ
+public MP3Sharp.Decoding.Decoders.ASubband : object {
+internal Single[] ScaleFactors
+internal void ReadAllocation(Bitstream stream, Header header, Crc16 crc)
+internal void ReadScaleFactor(Bitstream stream, Header header)
+internal bool ReadSampleData(Bitstream stream)
+internal bool PutNextSample(int channels, SynthesisFilter filter1, SynthesisFilter filter2)
+}
+public MP3Sharp.Decoding.Decoders.IFrameDecoder {
+public void DecodeFrame()
+}
+public MP3Sharp.Decoding.Decoders.LayerI.SubbandLayer1 : ASubband {
+internal Single[] TableFactor
+internal Single[] TableOffset
+protected int Allocation
+protected float Factor
+protected float Offset
+protected float Sample
+protected int Samplelength
+protected int Samplenumber
+protected float Scalefactor
+protected int Subbandnumber
+internal void .ctor(int subbandnumber)
+internal void ReadAllocation(Bitstream stream, Header header, Crc16 crc)
+internal void ReadScaleFactor(Bitstream stream, Header header)
+internal bool ReadSampleData(Bitstream stream)
+internal bool PutNextSample(int channels, SynthesisFilter filter1, SynthesisFilter filter2)
+}
+public MP3Sharp.Decoding.Decoders.LayerI.SubbandLayer1IntensityStereo : SubbandLayer1 {
+protected float Channel2Scalefactor
+internal void .ctor(int subbandnumber)
+internal void ReadScaleFactor(Bitstream stream, Header header)
+internal bool PutNextSample(int channels, SynthesisFilter filter1, SynthesisFilter filter2)
+}
+public MP3Sharp.Decoding.Decoders.LayerI.SubbandLayer1Stereo : SubbandLayer1 {
+protected int Channel2Allocation
+protected float Channel2Factor
+protected float Channel2Offset
+protected float Channel2Sample
+protected int Channel2Samplelength
+protected float Channel2Scalefactor
+internal void .ctor(int subbandnumber)
+internal void ReadAllocation(Bitstream stream, Header header, Crc16 crc)
+internal void ReadScaleFactor(Bitstream stream, Header header)
+internal bool ReadSampleData(Bitstream stream)
+internal bool PutNextSample(int channels, SynthesisFilter filter1, SynthesisFilter filter2)
+}
+public MP3Sharp.Decoding.Decoders.LayerIDecoder : object {
+protected ABuffer Buffer
+protected Crc16 CRC
+protected SynthesisFilter Filter1
+protected SynthesisFilter Filter2
+protected Header Header
+protected int Mode
+protected int NuSubbands
+protected Bitstream Stream
+protected ASubband[] Subbands
+protected int WhichChannels
+public void DecodeFrame()
+internal void Create(Bitstream stream0, Header header0, SynthesisFilter filtera, SynthesisFilter filterb, ABuffer buffer0, int whichCh0)
+protected void CreateSubbands()
+protected void ReadAllocation()
+protected void ReadScaleFactorSelection()
+protected void ReadScaleFactors()
+protected void ReadSampleData()
+}
+public MP3Sharp.Decoding.Decoders.LayerII.SubbandLayer2 : ASubband {
+internal Single[] Grouping5Bits
+internal Single[] Grouping7Bits
+internal Single[] Grouping10Bits
+internal Int32[] TableAb1Codelength
+internal Single[][] TableAb1Groupingtables
+internal Single[] TableAb1Factor
+internal Single[] TableAb1C
+internal Single[] TableAb1D
+internal Single[][] TableAb234Groupingtables
+internal Int32[] TableAb2Codelength
+internal Single[] TableAb2Factor
+internal Single[] TableAb2C
+internal Single[] TableAb2D
+internal Int32[] TableAb3Codelength
+internal Single[] TableAb3Factor
+internal Single[] TableAb3C
+internal Single[] TableAb3D
+internal Int32[] TableAb4Codelength
+internal Single[] TableAb4Factor
+internal Single[] TableAb4C
+internal Single[] TableAb4D
+internal Int32[] TableCdCodelength
+internal Single[][] TableCdGroupingtables
+internal Single[] TableCdFactor
+internal Single[] TableCdC
+internal Single[] TableCdD
+protected int Allocation
+protected Single[] CFactor
+protected Int32[] Codelength
+protected Single[] D
+protected Single[] Factor
+protected Single[][] Groupingtable
+protected int Groupnumber
+protected int Samplenumber
+protected Single[] Samples
+protected float Scalefactor1
+protected float Scalefactor2
+protected float Scalefactor3
+protected int Scfsi
+protected int Subbandnumber
+internal void .ctor(int subbandnumber)
+private void InitBlock()
+protected int GetAllocationLength(Header header)
+protected void PrepareForSampleRead(Header header, int allocation, int channel, Single[] factor, Int32[] codelength, Single[] c, Single[] d)
+internal void ReadAllocation(Bitstream stream, Header header, Crc16 crc)
+internal void ReadScaleFactorSelection(Bitstream stream, Crc16 crc)
+internal void ReadScaleFactor(Bitstream stream, Header header)
+internal bool ReadSampleData(Bitstream stream)
+internal bool PutNextSample(int channels, SynthesisFilter filter1, SynthesisFilter filter2)
+}
+public MP3Sharp.Decoding.Decoders.LayerII.SubbandLayer2IntensityStereo : SubbandLayer2 {
+protected float Channel2Scalefactor1
+protected float Channel2Scalefactor2
+protected float Channel2Scalefactor3
+protected int Channel2Scfsi
+internal void .ctor(int subbandnumber)
+internal void ReadScaleFactorSelection(Bitstream stream, Crc16 crc)
+internal void ReadScaleFactor(Bitstream stream, Header header)
+internal bool PutNextSample(int channels, SynthesisFilter filter1, SynthesisFilter filter2)
+}
+public MP3Sharp.Decoding.Decoders.LayerII.SubbandLayer2Stereo : SubbandLayer2 {
+protected int Channel2Allocation
+protected Single[] Channel2C
+protected Int32[] Channel2Codelength
+protected Single[] Channel2D
+protected Single[] Channel2Factor
+protected Single[] Channel2Samples
+protected float Channel2Scalefactor1
+protected float Channel2Scalefactor2
+protected float Channel2Scalefactor3
+protected int Channel2Scfsi
+internal void .ctor(int subbandnumber)
+internal void ReadAllocation(Bitstream stream, Header header, Crc16 crc)
+internal void ReadScaleFactorSelection(Bitstream stream, Crc16 crc)
+internal void ReadScaleFactor(Bitstream stream, Header header)
+internal bool ReadSampleData(Bitstream stream)
+internal bool PutNextSample(int channels, SynthesisFilter filter1, SynthesisFilter filter2)
+}
+public MP3Sharp.Decoding.Decoders.LayerIIDecoder : LayerIDecoder {
+protected void CreateSubbands()
+protected void ReadScaleFactorSelection()
+}
+public MP3Sharp.Decoding.Decoders.LayerIII.ChannelData : object {
+internal GranuleInfo[] Granules
+internal Int32[] ScaleFactorBits
+}
+public MP3Sharp.Decoding.Decoders.LayerIII.GranuleInfo : object {
+internal int BigValues
+internal int BlockType
+internal int Count1TableSelect
+internal int GlobalGain
+internal int MixedBlockFlag
+internal int Part23Length
+internal int Preflag
+internal int Region0Count
+internal int Region1Count
+internal int ScaleFacCompress
+internal int ScaleFacScale
+internal Int32[] SubblockGain
+internal Int32[] TableSelect
+internal int WindowSwitchingFlag
+}
+public MP3Sharp.Decoding.Decoders.LayerIII.Layer3SideInfo : object {
+internal ChannelData[] Channels
+internal int MainDataBegin
+internal int PrivateBits
+}
+public MP3Sharp.Decoding.Decoders.LayerIII.SBI : object {
+internal Int32[] L
+internal Int32[] S
+internal void .ctor(Int32[] thel, Int32[] thes)
+}
+public MP3Sharp.Decoding.Decoders.LayerIII.ScaleFactorData : object {
+internal Int32[] L
+internal Int32[][] S
+}
+public MP3Sharp.Decoding.Decoders.LayerIII.ScaleFactorTable : object {
+internal Int32[] L
+internal Int32[] S
+private LayerIIIDecoder _EnclosingInstance
+internal LayerIIIDecoder EnclosingInstance
+internal void .ctor(LayerIIIDecoder enclosingInstance)
+internal void .ctor(LayerIIIDecoder enclosingInstance, Int32[] thel, Int32[] thes)
+internal LayerIIIDecoder get_EnclosingInstance()
+private void InitBlock(LayerIIIDecoder enclosingInstance)
+}
+internal MP3Sharp.Decoding.Decoders.LayerIIIDecoder : object {
+private int SSLIMIT
+private int SBLIMIT
+private Int32[][] Slen
+internal Int32[] Pretab
+internal Single[] TwoToNegativeHalfPow
+internal Single[] PowerTable
+internal Single[][] Io
+internal Single[] Tan12
+private Int32[][] _reorderTable
+private Single[] Cs
+private Single[] Ca
+internal Single[][] Win
+internal Int32[][][] NrOfSfbBlock
+private ABuffer _Buffer
+private int _Channels
+private SynthesisFilter _Filter1
+private SynthesisFilter _Filter2
+private int _FirstChannel
+private Header _Header
+private Int32[] _Is1D
+private Single[][] _K
+private int _LastChannel
+private Single[][][] _Lr
+private int _MaxGr
+private Int32[] _Nonzero
+private Single[] _Out1D
+private Single[][] _Prevblck
+private Single[][][] _Ro
+private ScaleFactorData[] _Scalefac
+private SBI[] _SfBandIndex
+private int _Sfreq
+private Layer3SideInfo _SideInfo
+private Bitstream _Stream
+private int _WhichChannels
+private BitReserve _BitReserve
+private int _CheckSumHuff
+private int _FrameStart
+internal Int32[] IsPos
+internal Single[] IsRatio
+private Int32[] _NewSlen
+private int _Part2Start
+internal Single[] Rawout
+private Single[] _Samples1
+private Single[] _Samples2
+internal Int32[] ScalefacBuffer
+internal ScaleFactorTable Sftable
+internal Single[] TsOutCopy
+internal Int32[] V
+internal Int32[] W
+internal Int32[] X
+internal Int32[] Y
+internal void .ctor(Bitstream stream, Header header, SynthesisFilter filtera, SynthesisFilter filterb, ABuffer buffer, int whichCh)
+public void DecodeFrame()
+private void InitBlock()
+internal void SeekNotify()
+internal void Decode()
+private bool ReadSideInfo()
+private void ReadScaleFactors(int ch, int gr)
+private void GetLSFScaleData(int ch, int gr)
+private void GLSFScaleFactors(int ch, int gr)
+private void HuffmanDecode(int ch, int gr)
+private void GetKStereoValues(int isPos, int ioType, int i)
+private void DequantizeSample(Single[][] xr, int ch, int gr)
+private void Reorder(Single[][] xr, int ch, int gr)
+private void Stereo(int gr)
+private void Antialias(int ch, int gr)
+private void Hybrid(int ch, int gr)
+private void DoDownMix()
+internal void InverseMdct(Single[] inValues, Single[] outValues, int blockType)
+private Single[] CreatePowerTable()
+internal Int32[] Reorder(Int32[] scalefacBand)
+}
+public MP3Sharp.Decoding.Equalizer : object {
 private int BANDS
-private Single[] settings
-public Single[] FromFloatArray
-public Equalizer FromEqualizer
-public EQFunction FromEQFunction
-public int BandCount
+internal float BAND_NOT_PRESENT
+internal Equalizer PassThruEq
+private Single[] _Settings
+internal Single[] FromFloatArray
+internal Equalizer FromEqualizer
+internal EQFunction FromEQFunction
+internal int BandCount
 internal Single[] BandFactors
-private void InitBlock()
-public void set_FromFloatArray(Single[] value)
-public void set_FromEqualizer(Equalizer value)
-public void set_FromEQFunction(EQFunction value)
-public int get_BandCount()
+internal void .ctor(Single[] settings)
+internal void .ctor(EQFunction eq)
+internal void set_FromFloatArray(Single[] value)
+internal void set_FromEqualizer(Equalizer value)
+internal void set_FromEQFunction(EQFunction value)
+internal int get_BandCount()
 internal Single[] get_BandFactors()
-public void .ctor(Single[] settings)
-public void .ctor(EQFunction eq)
-public void reset()
-public float setBand(int band, float neweq)
-public float getBand(int band)
-private float limit(float eq)
-internal float getBandFactor(float eq)
-}
-internal javazoom.jl.decoder.FrameDecoder {
-public void decodeFrame()
-}
-internal javazoom.jl.decoder.Header : object {
-public Int32[][] frequencies
-public int MPEG2_LSF
-public int MPEG25_LSF
-public int MPEG1
-public int STEREO
-public int JOINT_STEREO
-public int DUAL_CHANNEL
-public int SINGLE_CHANNEL
-public int FOURTYFOUR_POINT_ONE
-public int FOURTYEIGHT
-public int THIRTYTWO
-private int h_layer
-private int h_protection_bit
-private int h_bitrate_index
-private int h_padding_bit
-private int h_mode_extension
-private int h_version
-private int h_mode
-private int h_sample_frequency
-private int h_number_of_subbands
-private int h_intensity_stereo_bound
-private bool h_copyright
-private bool h_original
-private sbyte syncmode
-private Crc16 crc
-public short checksum
-public int framesize
-public int nSlots
-private int _headerstring
-public Int32[][][] bitrates
-public String[][][] bitrate_str
-public int SyncHeader
 private void InitBlock()
-public int get_SyncHeader()
+internal void Reset()
+internal float SetBand(int band, float neweq)
+internal float GetBand(int band)
+private float Limit(float eq)
+internal float GetBandFactor(float eq)
+}
+public MP3Sharp.Decoding.Header : object {
+internal int MPEG2_LSF
+internal int MPEG25_LSF
+internal int MPEG1
+internal int STEREO
+internal int JOINT_STEREO
+internal int DUAL_CHANNEL
+internal int SINGLE_CHANNEL
+internal int FOURTYFOUR_POINT_ONE
+internal int FOURTYEIGHT
+internal int THIRTYTWO
+internal Int32[][] Frequencies
+internal Int32[][][] Bitrates
+internal String[][][] BitrateStr
+internal short Checksum
+internal int NSlots
+private Crc16 _CRC
+internal int Framesize
+private bool _Copyright
+private bool _Original
+private int _Headerstring
+private int _Layer
+private int _ProtectionBit
+private int _BitrateIndex
+private int _PaddingBit
+private int _ModeExtension
+private int _Mode
+private int _NumberOfSubbands
+private int _IntensityStereoBound
+private int _SampleFrequency
+private sbyte _Syncmode
+private int _Version
+internal int SyncHeader
+internal int get_SyncHeader()
+private void InitBlock()
 public string ToString()
 internal void read_header(Bitstream stream, Crc16[] crcp)
-public int version()
-public int layer()
-public int bitrate_index()
-public int sample_frequency()
-public int frequency()
-public int mode()
-public bool checksums()
-public bool copyright()
-public bool original()
-public bool checksum_ok()
-public bool padding()
-public int slots()
-public int mode_extension()
-public int calculate_framesize()
-public int max_number_of_frames(int streamsize)
-public int min_number_of_frames(int streamsize)
-public float ms_per_frame()
-public float total_ms(int streamsize)
-public string layer_string()
-public string bitrate_string()
-public string sample_frequency_string()
-public string mode_string()
-public string version_string()
-public int number_of_subbands()
-public int intensity_stereo_bound()
+internal int Version()
+internal int Layer()
+internal int bitrate_index()
+internal int sample_frequency()
+internal int Frequency()
+internal int Mode()
+internal bool IsProtection()
+internal bool IsCopyright()
+internal bool IsOriginal()
+internal bool IsChecksumOK()
+internal bool IsPadding()
+internal int Slots()
+internal int mode_extension()
+internal int CalculateFrameSize()
+internal int MaxNumberOfFrame(int streamsize)
+internal int min_number_of_frames(int streamsize)
+internal float MsPerFrame()
+internal float TotalMS(int streamsize)
+internal string LayerAsString()
+internal string BitrateAsString()
+internal string SampleFrequencyAsString()
+internal string ModeAsString()
+internal string VersionAsString()
+internal int NumberSubbands()
+internal int IntensityStereoBound()
 }
-internal javazoom.jl.decoder.huffcodetab : object {
+internal MP3Sharp.Decoding.Huffman : object {
 private int MXOFF
 private int HTN
-private char tablename0
-private char tablename1
-private char tablename2
-private int xlen
-private int ylen
-private int linbits
-private int linmax
-private int ref_Renamed
-private Int32[] table
-private Int32[] hlen
-private Int32[][] val
-private int treelen
 private Int32[][] ValTab0
 private Int32[][] ValTab1
 private Int32[][] ValTab2
@@ -352,392 +553,289 @@ private Int32[][] ValTab16
 private Int32[][] ValTab24
 private Int32[][] ValTab32
 private Int32[][] ValTab33
-public huffcodetab[] ht
-private Int32[] bitbuf
-private void .ctor(string S, int XLEN, int YLEN, int LINBITS, int LINMAX, int REF, Int32[] TABLE, Int32[] HLEN, Int32[][] VAL, int TREELEN)
-public int huffman_decoder(huffcodetab h, Int32[] x, Int32[] y, Int32[] v, Int32[] w, BitReserve br)
-public void inithuff()
+internal Huffman[] HuffmanTable
+private int _Linbits
+private char _Tablename0
+private char _Tablename1
+private int _Treelen
+private Int32[][] _Val
+private int _Xlen
+private int _Ylen
+private Int32[] _Hlen
+private int _Linmax
+private int _RefRenamed
+private Int32[] _Table
+private char _Tablename2
+private void .ctor(string s, int xlen, int ylen, int linbits, int linmax, int ref, Int32[] table, Int32[] hlen, Int32[][] val, int treelen)
+internal int Decode(Huffman h, Int32[] x, Int32[] y, Int32[] v, Int32[] w, BitReserve br)
+internal void Initialize()
 }
-internal javazoom.jl.decoder.InputStreamSource : object {
-private Stream in_Renamed
-public bool Seekable
-public bool get_Seekable()
-public void .ctor(Stream in_Renamed)
-public int read(SByte[] b, int offs, int len)
-public bool willReadBlock()
-public long tell()
-public long seek(long to)
-public long length()
-}
-internal javazoom.jl.decoder.JavaLayerErrors_Fields : ValueType {
-public int BITSTREAM_ERROR
-public int DECODER_ERROR
-}
-internal javazoom.jl.decoder.JavaLayerHook {
-public Stream getResourceAsStream(string name)
-}
-internal javazoom.jl.decoder.JavaLayerUtils : object {
-private JavaLayerHook hook
-public JavaLayerHook Hook
-public JavaLayerHook get_Hook()
-public void set_Hook(JavaLayerHook value)
-}
-internal javazoom.jl.decoder.LayerIDecoder : object {
-protected internal Bitstream stream
-protected internal Header header
-protected internal SynthesisFilter filter1
-protected internal SynthesisFilter filter2
-protected internal Obuffer buffer
-protected internal int which_channels
-protected internal int mode
-protected internal int num_subbands
-protected internal Subband[] subbands
-protected internal Crc16 crc
-public void create(Bitstream stream0, Header header0, SynthesisFilter filtera, SynthesisFilter filterb, Obuffer buffer0, int which_ch0)
-public void decodeFrame()
-protected internal void createSubbands()
-protected internal void readAllocation()
-protected internal void readScaleFactorSelection()
-protected internal void readScaleFactors()
-protected internal void readSampleData()
-}
-internal javazoom.jl.decoder.LayerIIDecoder : LayerIDecoder {
-protected internal void createSubbands()
-protected internal void readScaleFactorSelection()
-}
-internal javazoom.jl.decoder.LayerIIIDecoder : object {
-public Int32[] scalefac_buffer
-private int CheckSumHuff
-private Int32[] is_1d
-private Single[][][] ro
-private Single[][][] lr
-private Single[] out_1d
-private Single[][] prevblck
-private Single[][] k
-private Int32[] nonzero
-private Bitstream stream
-private Header header
-private SynthesisFilter filter1
-private SynthesisFilter filter2
-private Obuffer buffer
-private int which_channels
-private BitReserve br
-private III_side_info_t si
-private temporaire2[] III_scalefac_t
-private temporaire2[] scalefac
-private int max_gr
-private int frame_start
-private int part2_start
-private int channels
-private int first_channel
-private int last_channel
-private int sfreq
-private Single[] samples1
-private Single[] samples2
-private Int32[] new_slen
-internal Int32[] x
-internal Int32[] y
-internal Int32[] v
-internal Int32[] w
-internal Int32[] is_pos
-internal Single[] is_ratio
-internal Single[] tsOutCopy
-internal Single[] rawout
-private int counter
-private int SSLIMIT
-private int SBLIMIT
-private Int32[][] slen
-public Int32[] pretab
-private SBI[] sfBandIndex
-public Single[] two_to_negative_half_pow
-public Single[] t_43
-public Single[][] io
-public Single[] TAN12
-private Int32[][] reorder_table
-private Single[] cs
-private Single[] ca
-public Single[][] win
-public Sftable sftable
-public Int32[][][] nr_of_sfb_block
-private void InitBlock()
-public void .ctor(Bitstream stream0, Header header0, SynthesisFilter filtera, SynthesisFilter filterb, Obuffer buffer0, int which_ch0)
-public void seek_notify()
-public void decodeFrame()
-public void decode()
-private bool get_side_info()
-private void get_scale_factors(int ch, int gr)
-private void get_LSF_scale_data(int ch, int gr)
-private void get_LSF_scale_factors(int ch, int gr)
-private void huffman_decode(int ch, int gr)
-private void i_stereo_k_values(int is_pos, int io_type, int i)
-private void dequantize_sample(Single[][] xr, int ch, int gr)
-private void reorder(Single[][] xr, int ch, int gr)
-private void stereo(int gr)
-private void antialias(int ch, int gr)
-private void hybrid(int ch, int gr)
-private void do_downmix()
-public void inv_mdct(Single[] in_Renamed, Single[] out_Renamed, int block_type)
-private Single[] create_t_43()
-internal Int32[] reorder(Int32[] scalefac_band)
-}
-internal javazoom.jl.decoder.Manager : object {
-public void addControl(Control c)
-public void removeControl(Control c)
-public void removeAll()
-}
-internal javazoom.jl.decoder.Obuffer : object {
-public int OBUFFERSIZE
-public int MAXCHANNELS
-public void append(int channel, short value_Renamed)
-public void appendSamples(int channel, Single[] f)
-private short clip(float sample)
-public void write_buffer(int val)
-public void close()
-public void clear_buffer()
-public void set_stop_flag()
-}
-internal javazoom.jl.decoder.OutputChannels : object {
-public int BOTH_CHANNELS
-public int LEFT_CHANNEL
-public int RIGHT_CHANNEL
-public int DOWNMIX_CHANNELS
-public OutputChannels LEFT
-public OutputChannels RIGHT
-public OutputChannels BOTH
-public OutputChannels DOWNMIX
-private int outputChannels
-public int ChannelsOutputCode
-public int ChannelCount
-public int get_ChannelsOutputCode()
-public int get_ChannelCount()
-public OutputChannels fromInt(int code)
+public MP3Sharp.Decoding.OutputChannels : object {
+internal int BOTH_CHANNELS
+internal int LEFT_CHANNEL
+internal int RIGHT_CHANNEL
+internal int DOWNMIX_CHANNELS
+internal OutputChannels Left
+internal OutputChannels Right
+internal OutputChannels Both
+internal OutputChannels DownMix
+private int _OutputChannels
+internal int ChannelsOutputCode
+internal int ChannelCount
 private void .ctor(int channels)
-public bool Equals(object o)
+internal int get_ChannelsOutputCode()
+internal int get_ChannelCount()
+internal OutputChannels FromInt(int code)
+public bool Equals(object obj)
 public int GetHashCode()
 }
-internal javazoom.jl.decoder.OutputChannelsEnum : Enum {
+internal MP3Sharp.Decoding.OutputChannelsEnum : Enum {
 public int value__
-public OutputChannelsEnum BOTH_CHANNELS
-public OutputChannelsEnum LEFT_CHANNEL
-public OutputChannelsEnum RIGHT_CHANNEL
-public OutputChannelsEnum DOWNMIX_CHANNELS
+public OutputChannelsEnum BothChannels
+public OutputChannelsEnum LeftChannel
+public OutputChannelsEnum RightChannel
+public OutputChannelsEnum DownmixChannels
 }
-internal javazoom.jl.decoder.SampleBuffer : Obuffer {
-private Int16[] buffer
-private Int32[] bufferp
-private int channels
-private int frequency
-public int ChannelCount
-public int SampleFrequency
-public Int16[] Buffer
-public int BufferLength
-public int get_ChannelCount()
-public int get_SampleFrequency()
-public Int16[] get_Buffer()
-public int get_BufferLength()
-public void .ctor(int sample_frequency, int number_of_channels)
-public void append(int channel, short value_Renamed)
-public void appendSamples(int channel, Single[] f)
-public void write_buffer(int val)
-public void close()
-public void clear_buffer()
-public void set_stop_flag()
+public MP3Sharp.Decoding.PushbackStream : object {
+private int _BackBufferSize
+private CircularByteBuffer _CircularByteBuffer
+private Stream _Stream
+private Byte[] _TemporaryBuffer
+private int _NumForwardBytesInBuffer
+internal void .ctor(Stream s, int backBufferSize)
+internal int Read(SByte[] toRead, int offset, int length)
+internal void UnRead(int length)
+internal void Close()
 }
-internal javazoom.jl.decoder.Source {
-public bool Seekable
-public bool get_Seekable()
-public int read(SByte[] b, int offs, int len)
-public bool willReadBlock()
-public long length()
-public long tell()
-public long seek(long pos)
+public MP3Sharp.Decoding.SampleBuffer : ABuffer {
+private Int16[] _Buffer
+private Int32[] _Bufferp
+private int _Channels
+private int _Frequency
+internal int ChannelCount
+internal int SampleFrequency
+internal Int16[] Buffer
+internal int BufferLength
+internal void .ctor(int sampleFrequency, int numberOfChannels)
+internal int get_ChannelCount()
+internal int get_SampleFrequency()
+internal Int16[] get_Buffer()
+internal int get_BufferLength()
+protected void Append(int channel, short valueRenamed)
+internal void AppendSamples(int channel, Single[] samples)
+internal void WriteBuffer(int val)
+internal void Close()
+internal void ClearBuffer()
+internal void SetStopFlag()
 }
-internal javazoom.jl.decoder.Source_Fields : ValueType {
-public long LENGTH_UNKNOWN
-}
-internal javazoom.jl.decoder.SynthesisFilter : object {
-private Single[] v1
-private Single[] v2
-private Single[] actual_v
-private int actual_write_pos
-private Single[] samples
-private int channel
-private float scalefactor
-private Single[] eq
-private Single[] _tmpOut
+public MP3Sharp.Decoding.SynthesisFilter : object {
 private double MY_PI
-private float cos1_64
-private float cos3_64
-private float cos5_64
-private float cos7_64
-private float cos9_64
-private float cos11_64
-private float cos13_64
-private float cos15_64
-private float cos17_64
-private float cos19_64
-private float cos21_64
-private float cos23_64
-private float cos25_64
-private float cos27_64
-private float cos29_64
-private float cos31_64
-private float cos1_32
-private float cos3_32
-private float cos5_32
-private float cos7_32
-private float cos9_32
-private float cos11_32
-private float cos13_32
-private float cos15_32
-private float cos1_16
-private float cos3_16
-private float cos5_16
-private float cos7_16
-private float cos1_8
-private float cos3_8
-private float cos1_4
-private Single[] d
-private Single[][] d16
-private Single[] d_data
-public Single[] EQ
+private float Cos164
+private float Cos364
+private float Cos564
+private float Cos764
+private float Cos964
+private float Cos1164
+private float Cos1364
+private float Cos1564
+private float Cos1764
+private float Cos1964
+private float Cos2164
+private float Cos2364
+private float Cos2564
+private float Cos2764
+private float Cos2964
+private float Cos3164
+private float Cos132
+private float Cos332
+private float Cos532
+private float Cos732
+private float Cos932
+private float Cos1132
+private float Cos1332
+private float Cos1532
+private float Cos116
+private float Cos316
+private float Cos516
+private float Cos716
+private float Cos18
+private float Cos38
+private float Cos14
+private Single[] _d
+private Single[][] _d16
+private Single[] DData
+private int _Channel
+private Single[] _Samples
+private float _Scalefactor
+private Single[] _V1
+private Single[] _V2
+private Single[] _TmpOut
+private Single[] _ActualV
+private int _ActualWritePos
+private Single[] _Eq
+internal Single[] Eq
+internal void .ctor(int channelnumber, float factor, Single[] eq0)
+internal void set_Eq(Single[] value)
 private void InitBlock()
-public void set_EQ(Single[] value)
-public void .ctor(int channelnumber, float factor, Single[] eq0)
-public void reset()
-public void input_sample(float sample, int subbandnumber)
-public void input_samples(Single[] s)
-private void compute_new_v()
-private void compute_new_v_old()
-private void compute_pcm_samples0(Obuffer buffer)
-private void compute_pcm_samples1(Obuffer buffer)
-private void compute_pcm_samples2(Obuffer buffer)
-private void compute_pcm_samples3(Obuffer buffer)
-private void compute_pcm_samples4(Obuffer buffer)
-private void compute_pcm_samples5(Obuffer buffer)
-private void compute_pcm_samples6(Obuffer buffer)
-private void compute_pcm_samples7(Obuffer buffer)
-private void compute_pcm_samples8(Obuffer buffer)
-private void compute_pcm_samples9(Obuffer buffer)
-private void compute_pcm_samples10(Obuffer buffer)
-private void compute_pcm_samples11(Obuffer buffer)
-private void compute_pcm_samples12(Obuffer buffer)
-private void compute_pcm_samples13(Obuffer buffer)
-private void compute_pcm_samples14(Obuffer buffer)
-private void compute_pcm_samples15(Obuffer buffer)
-private void compute_pcm_samples(Obuffer buffer)
-public void calculate_pcm_samples(Obuffer buffer)
-private Single[] load_d()
-private Single[][] splitArray(Single[] array, int blockSize)
-private Single[] subArray(Single[] array, int offs, int len)
+internal void Reset()
+internal void AddSample(float sample, int subbandnumber)
+internal void AddSamples(Single[] s)
+private void ComputeNewValues()
+private void compute_pc_samples0(ABuffer buffer)
+private void compute_pc_samples1(ABuffer buffer)
+private void compute_pc_samples2(ABuffer buffer)
+private void compute_pc_samples3(ABuffer buffer)
+private void compute_pc_samples4(ABuffer buffer)
+private void compute_pc_samples5(ABuffer buffer)
+private void compute_pc_samples6(ABuffer buffer)
+private void compute_pc_samples7(ABuffer buffer)
+private void compute_pc_samples8(ABuffer buffer)
+private void compute_pc_samples9(ABuffer buffer)
+private void compute_pc_samples10(ABuffer buffer)
+private void compute_pc_samples11(ABuffer buffer)
+private void compute_pc_samples12(ABuffer buffer)
+private void compute_pc_samples13(ABuffer buffer)
+private void compute_pc_samples14(ABuffer buffer)
+private void Compute_pc_samples15(ABuffer buffer)
+private void compute_pc_samples(ABuffer buffer)
+internal void calculate_pc_samples(ABuffer buffer)
+private Single[][] SplitArray(Single[] array, int blockSize)
+private Single[] SubArray(Single[] array, int offs, int len)
 }
-public Mp3Sharp.BitstreamException : Mp3SharpException {
-private int errorcode
-public int ErrorCode
-private void InitBlock()
-public int get_ErrorCode()
-public void .ctor(string msg, Exception t)
-public void .ctor(int errorcode, Exception t)
-public string getErrorString(int errorcode)
+public MP3Sharp.IO.RandomAccessFileStream : object {
+internal FileStream CreateRandomAccessFile(string fileName, string mode)
 }
-public Mp3Sharp.Mp3SharpException : Exception {
-private Exception exception
-public Exception Exception
-public Exception get_Exception()
-public void .ctor(string msg)
-public void .ctor(string msg, Exception t)
-public void printStackTrace()
-public void printStackTrace(StreamWriter ps)
+public MP3Sharp.IO.RiffFile : object {
+protected int DDC_SUCCESS
+protected int DDC_FAILURE
+protected int DDC_OUT_OF_MEMORY
+protected int DDC_FILE_ERROR
+protected int DDC_INVALID_CALL
+protected int DDC_USER_ABORT
+protected int DDC_INVALID_FILE
+protected int RF_UNKNOWN
+protected int RF_WRITE
+protected int RF_READ
+private RiffChunkHeader _RiffHeader
+protected int Fmode
+private Stream _File
+internal int CurrentFileMode()
+internal int Open(string filename, int newMode)
+internal int Open(Stream stream, int newMode)
+internal int Write(SByte[] data, int numBytes)
+internal int Write(Int16[] data, int numBytes)
+internal int Write(RiffChunkHeader riffHeader, int numBytes)
+internal int Write(short data, int numBytes)
+internal int Write(int data, int numBytes)
+internal int Read(SByte[] data, int numBytes)
+internal int Expect(string data, int numBytes)
+internal int Close()
+internal long CurrentFilePosition()
+internal int Backpatch(long fileOffset, RiffChunkHeader data, int numBytes)
+internal int Backpatch(long fileOffset, SByte[] data, int numBytes)
+protected int Seek(long offset)
+internal int FourCC(string chunkName)
 }
-public Mp3Sharp.Mp3Stream : Stream {
-private int BackStreamByteCountRep
-private Decoder JZDecoder
-private Bitstream JZBitStream
-private Stream SourceStream
-private int FrequencyRep
-private short ChannelCountRep
-protected SoundFormat FormatRep
-private OBuffer16BitStereo QueueOBuffer
-public int ChunkSize
+public MP3Sharp.IO.WaveFile : RiffFile {
+internal int MAX_WAVE_CHANNELS
+private int _NumSamples
+private RiffChunkHeader _PcmData
+private WaveFormatChunk _WaveFormat
+private bool _JustWriteLengthBytes
+private long _PcmDataOffset
+internal int OpenForWrite(string filename, Stream stream, int samplingRate, short bitsPerSample, short numChannels)
+internal int WriteData(Int16[] data, int numData)
+internal int Close()
+internal int Close(bool justWriteLengthBytes)
+internal int SamplingRate()
+internal short BitsPerSample()
+internal short NumChannels()
+internal int NumSamples()
+internal int OpenForWrite(string filename, WaveFile otherWave)
+}
+public MP3Sharp.IO.WaveFileBuffer : ABuffer {
+private Int16[] _Buffer
+private Int16[] _Bufferp
+private int _Channels
+private WaveFile _OutWave
+internal void .ctor(int numberOfChannels, int freq, string fileName)
+internal void .ctor(int numberOfChannels, int freq, Stream stream)
+protected void Append(int channel, short valueRenamed)
+internal void WriteBuffer(int val)
+internal void Close(bool justWriteLengthBytes)
+internal void Close()
+internal void ClearBuffer()
+internal void SetStopFlag()
+}
+public MP3Sharp.MP3SharpException : Exception {
+internal void .ctor(string message)
+internal void .ctor(string message, Exception inner)
+protected void .ctor(SerializationInfo info, StreamingContext context)
+internal void PrintStackTrace()
+internal void PrintStackTrace(StreamWriter ps)
+}
+public MP3Sharp.MP3Stream : Stream {
+private Bitstream _BitStream
+private Decoder _Decoder
+private Buffer16BitStereo _Buffer
+private Stream _SourceStream
+private int BACK_STREAM_BYTE_COUNT_REP
+private short _ChannelCountRep
+private SoundFormat FormatRep
+private int _FrequencyRep
+private bool <IsEOF>k__BackingField
+public bool IsEOF
+internal int ChunkSize
 public bool CanRead
 public bool CanSeek
 public bool CanWrite
 public long Length
 public long Position
 public int Frequency
-public short ChannelCount
-public SoundFormat Format
+internal short ChannelCount
+internal SoundFormat Format
+public bool get_IsEOF()
+protected void set_IsEOF(bool value)
 public void .ctor(string fileName)
 public void .ctor(string fileName, int chunkSize)
 public void .ctor(Stream sourceStream)
 public void .ctor(Stream sourceStream, int chunkSize)
-public int get_ChunkSize()
+internal int get_ChunkSize()
 public bool get_CanRead()
 public bool get_CanSeek()
 public bool get_CanWrite()
 public long get_Length()
-public void Flush()
 public long get_Position()
 public void set_Position(long value)
-public long Seek(long pos, SeekOrigin origin)
-public void SetLength(long len)
-public void Write(Byte[] buf, int ofs, int count)
 public int get_Frequency()
-public short get_ChannelCount()
-public SoundFormat get_Format()
-public int DecodeFrames(int frameCount)
+internal short get_ChannelCount()
+internal SoundFormat get_Format()
+public void Flush()
+public long Seek(long offset, SeekOrigin origin)
+public void SetLength(long value)
+public void Write(Byte[] buffer, int offset, int count)
+internal int DecodeFrames(int frameCount)
 public int Read(Byte[] buffer, int offset, int count)
 public void Close()
 private bool ReadFrame()
-public int BytesLeft()
 }
-internal Mp3Sharp.OBuffer16BitStereo : Obuffer {
-private int CHANNELS
-private int _offset
-private int _end
-private Byte[] buffer
-private Int32[] bufferp
-public int bytesLeft
-public int get_bytesLeft()
-public int Read(Byte[] buffer_out, int offset, int count)
-public void append(int channel, short value)
-public void appendSamples(int channel, Single[] f)
-public void clear_buffer()
-public void set_stop_flag()
-public void write_buffer(int val)
-public void close()
-}
-internal Mp3Sharp.Sample : object {
-public string Mp3FilePath
-public void ReadAllTheWayThroughMp3File()
-}
-public Mp3Sharp.SoundFormat : Enum {
+public MP3Sharp.SoundFormat : Enum {
 public int value__
 public SoundFormat Pcm16BitMono
 public SoundFormat Pcm16BitStereo
 }
-internal Support.IThreadRunnable {
-public void Run()
-}
-internal Support.SupportClass : object {
-public object CreateNewInstance(Type classType)
-public object PutElement(Hashtable hashTable, object key, object newValue)
-public object HashtableRemove(Hashtable hashtable, object key)
-public int URShift(int number, int bits)
-public int URShift(int number, long bits)
-public long URShift(long number, int bits)
-public long URShift(long number, long bits)
-public void WriteStackTrace(Exception throwable, TextWriter stream)
-public long Identity(long literal)
-public ulong Identity(ulong literal)
-public float Identity(float literal)
-public double Identity(double literal)
-public int ReadInput(Stream sourceStream, SByte[]& target, int start, int count)
-public int ReadInput(TextReader sourceTextReader, SByte[]& target, int start, int count)
-public object Deserialize(BinaryReader binaryReader)
-public void Serialize(Stream stream, object objectToSend)
-public void Serialize(BinaryWriter binaryWriter, object objectToSend)
-public Byte[] ToByteArray(SByte[] sbyteArray)
-public Byte[] ToByteArray(string sourceString)
-public void GetSBytesFromString(string sourceString, int sourceStart, int sourceEnd, SByte[]& destinationArray, int destinationStart)
+public MP3Sharp.Support.SupportClass : object {
+internal int URShift(int number, int bits)
+internal int URShift(int number, long bits)
+internal long URShift(long number, int bits)
+internal long URShift(long number, long bits)
+internal void WriteStackTrace(Exception throwable, TextWriter stream)
+internal long Identity(long literal)
+internal ulong Identity(ulong literal)
+internal float Identity(float literal)
+internal double Identity(double literal)
+internal int ReadInput(Stream sourceStream, SByte[]& target, int start, int count)
+internal Byte[] ToByteArray(SByte[] sbyteArray)
+internal Byte[] ToByteArray(string sourceString)
+internal void GetSBytesFromString(string sourceString, int sourceStart, int sourceEnd, SByte[]& destinationArray, int destinationStart)
 }

@@ -33,63 +33,6 @@ public AppId op_Implicit(UInt32 value)
 public AppId op_Implicit(int value)
 public UInt32 op_Implicit(AppId value)
 }
-internal Steamworks.AppOwnershipFlags : Enum {
-public int value__
-public AppOwnershipFlags None
-public AppOwnershipFlags OwnsLicense
-public AppOwnershipFlags FreeLicense
-public AppOwnershipFlags RegionRestricted
-public AppOwnershipFlags LowViolence
-public AppOwnershipFlags InvalidPlatform
-public AppOwnershipFlags SharedLicense
-public AppOwnershipFlags FreeWeekend
-public AppOwnershipFlags RetailLicense
-public AppOwnershipFlags LicenseLocked
-public AppOwnershipFlags LicensePending
-public AppOwnershipFlags LicenseExpired
-public AppOwnershipFlags LicensePermanent
-public AppOwnershipFlags LicenseRecurring
-public AppOwnershipFlags LicenseCanceled
-public AppOwnershipFlags AutoGrant
-public AppOwnershipFlags PendingGift
-public AppOwnershipFlags RentalNotActivated
-public AppOwnershipFlags Rental
-public AppOwnershipFlags SiteLicense
-public AppOwnershipFlags LegacyFreeSub
-public AppOwnershipFlags InvalidOSType
-public AppOwnershipFlags TimedTrial
-}
-internal Steamworks.AppReleaseState : Enum {
-public int value__
-public AppReleaseState Unknown
-public AppReleaseState Unavailable
-public AppReleaseState Prerelease
-public AppReleaseState PreloadOnly
-public AppReleaseState Released
-}
-internal Steamworks.AppType : Enum {
-public int value__
-public AppType Invalid
-public AppType Game
-public AppType Application
-public AppType Tool
-public AppType Demo
-public AppType Media_DEPRECATED
-public AppType DLC
-public AppType Guide
-public AppType Driver
-public AppType Config
-public AppType Hardware
-public AppType Franchise
-public AppType Video
-public AppType Plugin
-public AppType MusicAlbum
-public AppType Series
-public AppType Comic_UNUSED
-public AppType Beta
-public AppType Shortcut
-public AppType DepotOnly_DEPRECATED
-}
 public Steamworks.AuthResponse : Enum {
 public int value__
 public AuthResponse OK
@@ -118,26 +61,6 @@ public BeginAuthResult InvalidVersion
 public BeginAuthResult GameMismatch
 public BeginAuthResult ExpiredTicket
 }
-internal Steamworks.BroadcastBufferManager : object {
-private Stack`1<ReferenceCounter> ReferenceCounterPool
-private Dictionary`2<int, Stack`1<IntPtr>> BufferPools
-private Dictionary`2<IntPtr, ReferenceCounter> ReferenceCounters
-public IntPtr FreeFunctionPointer
-private int Bucket512
-private int Bucket1Kb
-private int Bucket4Kb
-private int Bucket16Kb
-private int Bucket64Kb
-private int Bucket256Kb
-public IntPtr Get(int size, int referenceCount)
-private void Free(NetMsg* msg)
-private ReferenceCounter AllocateReferenceCounter(IntPtr ptr, int size, int referenceCount)
-private void FreeReferenceCounter(ReferenceCounter counter)
-private void AllocateBuffer(int minimumSize, IntPtr& ptr, Int32& size)
-private void FreeBuffer(IntPtr ptr, int size)
-private int GetBucketSize(int size)
-private int GetBucketLimit(int size)
-}
 public Steamworks.BroadcastUploadResult : Enum {
 public int value__
 public BroadcastUploadResult None
@@ -164,6 +87,27 @@ public BroadcastUploadResult Shutdown
 public BroadcastUploadResult Disconnect
 public BroadcastUploadResult VideoInitFailed
 public BroadcastUploadResult AudioInitFailed
+}
+internal Steamworks.BufferManager : object {
+private Stack`1<ReferenceCounter> ReferenceCounterPool
+private Dictionary`2<int, Stack`1<IntPtr>> BufferPools
+private Dictionary`2<IntPtr, ReferenceCounter> ReferenceCounters
+private FreeFn FreeFunctionPin
+public IntPtr FreeFunctionPointer
+private int Bucket512
+private int Bucket1Kb
+private int Bucket4Kb
+private int Bucket16Kb
+private int Bucket64Kb
+private int Bucket256Kb
+public IntPtr Get(int size, int referenceCount)
+private void Free(NetMsg* msg)
+private ReferenceCounter AllocateReferenceCounter(IntPtr ptr, int size, int referenceCount)
+private void FreeReferenceCounter(ReferenceCounter counter)
+private void AllocateBuffer(int minimumSize, IntPtr& ptr, Int32& size)
+private void FreeBuffer(IntPtr ptr, int size)
+private int GetBucketSize(int size)
+private int GetBucketLimit(int size)
 }
 public Steamworks.CallbackType : Enum {
 public int value__
@@ -229,6 +173,8 @@ public CallbackType SteamAPICallCompleted
 public CallbackType SteamShutdown
 public CallbackType CheckFileSignature
 public CallbackType GamepadTextInputDismissed
+public CallbackType AppResumingFromSuspend
+public CallbackType FloatingGamepadTextInputDismissed
 public CallbackType DlcInstalled
 public CallbackType RegisterActivationCodeResponse
 public CallbackType NewUrlLaunchParameters
@@ -252,13 +198,10 @@ public CallbackType P2PSessionRequest
 public CallbackType P2PSessionConnectFail
 public CallbackType SteamNetConnectionStatusChangedCallback
 public CallbackType SteamNetAuthenticationStatus
+public CallbackType SteamNetworkingFakeIPResult
 public CallbackType SteamNetworkingMessagesSessionRequest
 public CallbackType SteamNetworkingMessagesSessionFailed
 public CallbackType SteamRelayNetworkStatus
-public CallbackType RemoteStorageAppSyncedClient
-public CallbackType RemoteStorageAppSyncedServer
-public CallbackType RemoteStorageAppSyncProgress
-public CallbackType RemoteStorageAppSyncStatusCheck
 public CallbackType RemoteStorageFileShareResult
 public CallbackType RemoteStoragePublishFileResult
 public CallbackType RemoteStorageDeletePublishedFileResult
@@ -283,6 +226,7 @@ public CallbackType RemoteStoragePublishFileProgress
 public CallbackType RemoteStoragePublishedFileUpdated
 public CallbackType RemoteStorageFileWriteAsyncComplete
 public CallbackType RemoteStorageFileReadAsyncComplete
+public CallbackType RemoteStorageLocalFileChange
 public CallbackType GSStatsReceived
 public CallbackType GSStatsStored
 public CallbackType HTTPRequestCompleted
@@ -290,6 +234,9 @@ public CallbackType HTTPRequestHeadersReceived
 public CallbackType HTTPRequestDataReceived
 public CallbackType ScreenshotReady
 public CallbackType ScreenshotRequested
+public CallbackType SteamInputDeviceConnected
+public CallbackType SteamInputDeviceDisconnected
+public CallbackType SteamInputConfigurationLoaded
 public CallbackType SteamUGCQueryCompleted
 public CallbackType SteamUGCRequestUGCDetailsResult
 public CallbackType CreateItemResult
@@ -307,6 +254,8 @@ public CallbackType AddAppDependencyResult
 public CallbackType RemoveAppDependencyResult
 public CallbackType GetAppDependenciesResult
 public CallbackType DeleteItemResult
+public CallbackType UserSubscribedItemsListChanged
+public CallbackType WorkshopEULAStatus
 public CallbackType SteamAppInstalled
 public CallbackType SteamAppUninstalled
 public CallbackType PlaybackStatusHasChanged
@@ -810,8 +759,98 @@ public ControllerActionOrigin PS5_Gyro_Move
 public ControllerActionOrigin PS5_Gyro_Pitch
 public ControllerActionOrigin PS5_Gyro_Yaw
 public ControllerActionOrigin PS5_Gyro_Roll
+public ControllerActionOrigin XBoxOne_LeftGrip_Lower
+public ControllerActionOrigin XBoxOne_LeftGrip_Upper
+public ControllerActionOrigin XBoxOne_RightGrip_Lower
+public ControllerActionOrigin XBoxOne_RightGrip_Upper
+public ControllerActionOrigin XBoxOne_Share
+public ControllerActionOrigin SteamDeck_A
+public ControllerActionOrigin SteamDeck_B
+public ControllerActionOrigin SteamDeck_X
+public ControllerActionOrigin SteamDeck_Y
+public ControllerActionOrigin SteamDeck_L1
+public ControllerActionOrigin SteamDeck_R1
+public ControllerActionOrigin SteamDeck_Menu
+public ControllerActionOrigin SteamDeck_View
+public ControllerActionOrigin SteamDeck_LeftPad_Touch
+public ControllerActionOrigin SteamDeck_LeftPad_Swipe
+public ControllerActionOrigin SteamDeck_LeftPad_Click
+public ControllerActionOrigin SteamDeck_LeftPad_DPadNorth
+public ControllerActionOrigin SteamDeck_LeftPad_DPadSouth
+public ControllerActionOrigin SteamDeck_LeftPad_DPadWest
+public ControllerActionOrigin SteamDeck_LeftPad_DPadEast
+public ControllerActionOrigin SteamDeck_RightPad_Touch
+public ControllerActionOrigin SteamDeck_RightPad_Swipe
+public ControllerActionOrigin SteamDeck_RightPad_Click
+public ControllerActionOrigin SteamDeck_RightPad_DPadNorth
+public ControllerActionOrigin SteamDeck_RightPad_DPadSouth
+public ControllerActionOrigin SteamDeck_RightPad_DPadWest
+public ControllerActionOrigin SteamDeck_RightPad_DPadEast
+public ControllerActionOrigin SteamDeck_L2_SoftPull
+public ControllerActionOrigin SteamDeck_L2
+public ControllerActionOrigin SteamDeck_R2_SoftPull
+public ControllerActionOrigin SteamDeck_R2
+public ControllerActionOrigin SteamDeck_LeftStick_Move
+public ControllerActionOrigin SteamDeck_L3
+public ControllerActionOrigin SteamDeck_LeftStick_DPadNorth
+public ControllerActionOrigin SteamDeck_LeftStick_DPadSouth
+public ControllerActionOrigin SteamDeck_LeftStick_DPadWest
+public ControllerActionOrigin SteamDeck_LeftStick_DPadEast
+public ControllerActionOrigin SteamDeck_LeftStick_Touch
+public ControllerActionOrigin SteamDeck_RightStick_Move
+public ControllerActionOrigin SteamDeck_R3
+public ControllerActionOrigin SteamDeck_RightStick_DPadNorth
+public ControllerActionOrigin SteamDeck_RightStick_DPadSouth
+public ControllerActionOrigin SteamDeck_RightStick_DPadWest
+public ControllerActionOrigin SteamDeck_RightStick_DPadEast
+public ControllerActionOrigin SteamDeck_RightStick_Touch
+public ControllerActionOrigin SteamDeck_L4
+public ControllerActionOrigin SteamDeck_R4
+public ControllerActionOrigin SteamDeck_L5
+public ControllerActionOrigin SteamDeck_R5
+public ControllerActionOrigin SteamDeck_DPad_Move
+public ControllerActionOrigin SteamDeck_DPad_North
+public ControllerActionOrigin SteamDeck_DPad_South
+public ControllerActionOrigin SteamDeck_DPad_West
+public ControllerActionOrigin SteamDeck_DPad_East
+public ControllerActionOrigin SteamDeck_Gyro_Move
+public ControllerActionOrigin SteamDeck_Gyro_Pitch
+public ControllerActionOrigin SteamDeck_Gyro_Yaw
+public ControllerActionOrigin SteamDeck_Gyro_Roll
+public ControllerActionOrigin SteamDeck_Reserved1
+public ControllerActionOrigin SteamDeck_Reserved2
+public ControllerActionOrigin SteamDeck_Reserved3
+public ControllerActionOrigin SteamDeck_Reserved4
+public ControllerActionOrigin SteamDeck_Reserved5
+public ControllerActionOrigin SteamDeck_Reserved6
+public ControllerActionOrigin SteamDeck_Reserved7
+public ControllerActionOrigin SteamDeck_Reserved8
+public ControllerActionOrigin SteamDeck_Reserved9
+public ControllerActionOrigin SteamDeck_Reserved10
+public ControllerActionOrigin SteamDeck_Reserved11
+public ControllerActionOrigin SteamDeck_Reserved12
+public ControllerActionOrigin SteamDeck_Reserved13
+public ControllerActionOrigin SteamDeck_Reserved14
+public ControllerActionOrigin SteamDeck_Reserved15
+public ControllerActionOrigin SteamDeck_Reserved16
+public ControllerActionOrigin SteamDeck_Reserved17
+public ControllerActionOrigin SteamDeck_Reserved18
+public ControllerActionOrigin SteamDeck_Reserved19
+public ControllerActionOrigin SteamDeck_Reserved20
 public ControllerActionOrigin Count
 public ControllerActionOrigin MaximumPossibleValue
+}
+internal Steamworks.ControllerHapticLocation : Enum {
+public int value__
+public ControllerHapticLocation Left
+public ControllerHapticLocation Right
+public ControllerHapticLocation Both
+}
+internal Steamworks.ControllerHapticType : Enum {
+public int value__
+public ControllerHapticType Off
+public ControllerHapticType Tick
+public ControllerHapticType Click
 }
 internal Steamworks.Data.AccountID_t : ValueType {
 public UInt32 Value
@@ -885,17 +924,12 @@ internal string KeyUTF8()
 public int get_DataSize()
 public CallbackType get_CallbackType()
 }
-internal Steamworks.Data.AssetClassId_t : ValueType {
-public ulong Value
-public AssetClassId_t op_Implicit(ulong value)
-public ulong op_Implicit(AssetClassId_t value)
-public string ToString()
-public int GetHashCode()
-public bool Equals(object p)
-public bool Equals(AssetClassId_t p)
-public bool op_Equality(AssetClassId_t a, AssetClassId_t b)
-public bool op_Inequality(AssetClassId_t a, AssetClassId_t b)
-public int CompareTo(AssetClassId_t other)
+internal Steamworks.Data.AppResumingFromSuspend_t : ValueType {
+public int _datasize
+public int DataSize
+public CallbackType CallbackType
+public int get_DataSize()
+public CallbackType get_CallbackType()
 }
 internal Steamworks.Data.AssociateWithClanResult_t : ValueType {
 internal Result Result
@@ -922,42 +956,6 @@ public int DataSize
 public CallbackType CallbackType
 public int get_DataSize()
 public CallbackType get_CallbackType()
-}
-internal Steamworks.Data.BREAKPAD_HANDLE : ValueType {
-public IntPtr Value
-public BREAKPAD_HANDLE op_Implicit(IntPtr value)
-public IntPtr op_Implicit(BREAKPAD_HANDLE value)
-public string ToString()
-public int GetHashCode()
-public bool Equals(object p)
-public bool Equals(BREAKPAD_HANDLE p)
-public bool op_Equality(BREAKPAD_HANDLE a, BREAKPAD_HANDLE b)
-public bool op_Inequality(BREAKPAD_HANDLE a, BREAKPAD_HANDLE b)
-public int CompareTo(BREAKPAD_HANDLE other)
-}
-internal Steamworks.Data.BundleId_t : ValueType {
-public UInt32 Value
-public BundleId_t op_Implicit(UInt32 value)
-public UInt32 op_Implicit(BundleId_t value)
-public string ToString()
-public int GetHashCode()
-public bool Equals(object p)
-public bool Equals(BundleId_t p)
-public bool op_Equality(BundleId_t a, BundleId_t b)
-public bool op_Inequality(BundleId_t a, BundleId_t b)
-public int CompareTo(BundleId_t other)
-}
-internal Steamworks.Data.CellID_t : ValueType {
-public UInt32 Value
-public CellID_t op_Implicit(UInt32 value)
-public UInt32 op_Implicit(CellID_t value)
-public string ToString()
-public int GetHashCode()
-public bool Equals(object p)
-public bool Equals(CellID_t p)
-public bool op_Equality(CellID_t a, CellID_t b)
-public bool op_Inequality(CellID_t a, CellID_t b)
-public int CompareTo(CellID_t other)
 }
 internal Steamworks.Data.ChangeNumOpenSlotsCallback_t : ValueType {
 internal Result Result
@@ -1023,22 +1021,27 @@ public string ConnectionName
 public UInt32 get_Id()
 public void set_Id(UInt32 value)
 public bool Equals(Connection other)
+public bool Equals(object obj)
+public int GetHashCode()
 public string ToString()
 public Connection op_Implicit(UInt32 value)
 public UInt32 op_Implicit(Connection value)
+public bool op_Equality(Connection value1, Connection value2)
+public bool op_Inequality(Connection value1, Connection value2)
 public Result Accept()
 public bool Close(bool linger, int reasonCode, string debugString)
 public long get_UserData()
 public void set_UserData(long value)
 public string get_ConnectionName()
 public void set_ConnectionName(string value)
-public Result SendMessage(IntPtr ptr, int size, SendType sendType)
-public Result SendMessage(Byte[] data, SendType sendType)
-public Result SendMessage(Byte[] data, int offset, int length, SendType sendType)
-public Result SendMessage(string str, SendType sendType)
+public Result SendMessage(IntPtr ptr, int size, SendType sendType, ushort laneIndex)
+public Result SendMessage(Byte[] data, SendType sendType, ushort laneIndex)
+public Result SendMessage(Byte[] data, int offset, int length, SendType sendType, ushort laneIndex)
+public Result SendMessage(string str, SendType sendType, ushort laneIndex)
 public Result Flush()
 public string DetailedStatus()
 public ConnectionStatus QuickStatus()
+public Result ConfigureConnectionLanes(Int32[] lanePriorities, UInt16[] laneWeights)
 }
 public Steamworks.Data.ConnectionInfo : ValueType {
 internal NetIdentity identity
@@ -1060,6 +1063,20 @@ public ConnectionState get_State()
 public NetAddress get_Address()
 public NetIdentity get_Identity()
 public NetConnectionEnd get_EndReason()
+}
+public Steamworks.Data.ConnectionLaneStatus : ValueType {
+internal int cbPendingUnreliable
+internal int cbPendingReliable
+internal int cbSentUnackedReliable
+internal int _reservePad1
+internal long ecQueueTime
+internal UInt32[] reserved
+public int PendingUnreliable
+public int PendingReliable
+public int SentUnackedReliable
+public int get_PendingUnreliable()
+public int get_PendingReliable()
+public int get_SentUnackedReliable()
 }
 public Steamworks.Data.ConnectionStatus : ValueType {
 internal ConnectionState state
@@ -1165,22 +1182,9 @@ public int get_DataSize()
 public CallbackType get_CallbackType()
 }
 internal Steamworks.Data.Defines : object {
-internal int k_cubSaltSize
-internal GID_t k_GIDNil
-internal GID_t k_TxnIDNil
-internal GID_t k_TxnIDUnknown
-internal JobID_t k_JobIDNil
-internal PackageId_t k_uPackageIdInvalid
-internal BundleId_t k_uBundleIdInvalid
 internal AppId k_uAppIdInvalid
-internal AssetClassId_t k_ulAssetClassIdInvalid
-internal PhysicalItemId_t k_uPhysicalItemIdInvalid
 internal DepotId_t k_uDepotIdInvalid
-internal CellID_t k_uCellIDInvalid
 internal SteamAPICall_t k_uAPICallInvalid
-internal PartnerId_t k_uPartnerIdInvalid
-internal ManifestId_t k_uManifestIdInvalid
-internal SiteId_t k_ulSiteIdInvalid
 internal PartyBeaconID_t k_ulPartyBeaconIdInvalid
 internal HAuthTicket k_HAuthTicketInvalid
 internal UInt32 k_unSteamAccountIDMask
@@ -1234,6 +1238,13 @@ internal HSteamNetPollGroup k_HSteamNetPollGroup_Invalid
 internal int k_cchMaxSteamNetworkingErrMsg
 internal int k_cchSteamNetworkingMaxConnectionCloseReason
 internal int k_cchSteamNetworkingMaxConnectionDescription
+internal int k_cchSteamNetworkingMaxConnectionAppName
+internal int k_nSteamNetworkConnectionInfoFlags_Unauthenticated
+internal int k_nSteamNetworkConnectionInfoFlags_Unencrypted
+internal int k_nSteamNetworkConnectionInfoFlags_LoopbackBuffers
+internal int k_nSteamNetworkConnectionInfoFlags_Fast
+internal int k_nSteamNetworkConnectionInfoFlags_Relayed
+internal int k_nSteamNetworkConnectionInfoFlags_DualWifi
 internal int k_cbMaxSteamNetworkingSocketsMessageSizeSend
 internal int k_nSteamNetworkingSend_Unreliable
 internal int k_nSteamNetworkingSend_NoNagle
@@ -1254,9 +1265,13 @@ internal int k_nSteamNetworkingConfig_P2P_Transport_ICE_Enable_Private
 internal int k_nSteamNetworkingConfig_P2P_Transport_ICE_Enable_Public
 internal int k_nSteamNetworkingConfig_P2P_Transport_ICE_Enable_All
 internal SteamNetworkingPOPID k_SteamDatagramPOPID_dev
+internal ushort STEAMGAMESERVER_QUERY_PORT_SHARED
+internal ushort MASTERSERVERUPDATERPORT_USEGAMESOCKETSHARE
 internal UInt32 k_cbSteamDatagramMaxSerializedTicket
 internal UInt32 k_cbMaxSteamDatagramGameCoordinatorServerLoginAppData
 internal UInt32 k_cbMaxSteamDatagramGameCoordinatorServerLoginSerialized
+internal int k_cbSteamNetworkingSocketsFakeUDPPortRecommendedMTU
+internal int k_cbSteamNetworkingSocketsFakeUDPPortMaxMessageSize
 }
 internal Steamworks.Data.DeleteItemResult_t : ValueType {
 internal Result Result
@@ -1330,6 +1345,8 @@ public Steamworks.Data.DownloadProgress : ValueType {
 public bool Active
 public ulong BytesDownloaded
 public ulong BytesTotal
+public ulong BytesRemaining
+public ulong get_BytesRemaining()
 }
 public Steamworks.Data.DurationControl : ValueType {
 internal DurationControl_t _inner
@@ -1408,6 +1425,13 @@ internal Result Result
 internal ulong FileSize
 internal Byte[] FileSHA
 internal UInt32 Flags
+public int _datasize
+public int DataSize
+public CallbackType CallbackType
+public int get_DataSize()
+public CallbackType get_CallbackType()
+}
+internal Steamworks.Data.FloatingGamepadTextInputDismissed_t : ValueType {
 public int _datasize
 public int DataSize
 public CallbackType CallbackType
@@ -1653,18 +1677,6 @@ public CallbackType CallbackType
 internal string URLUTF8()
 public int get_DataSize()
 public CallbackType get_CallbackType()
-}
-internal Steamworks.Data.GID_t : ValueType {
-public ulong Value
-public GID_t op_Implicit(ulong value)
-public ulong op_Implicit(GID_t value)
-public string ToString()
-public int GetHashCode()
-public bool Equals(object p)
-public bool Equals(GID_t p)
-public bool op_Equality(GID_t a, GID_t b)
-public bool op_Inequality(GID_t a, GID_t b)
-public int CompareTo(GID_t other)
 }
 internal Steamworks.Data.GlobalAchievementPercentagesReady_t : ValueType {
 internal ulong GameID
@@ -2284,18 +2296,6 @@ public CallbackType CallbackType
 public int get_DataSize()
 public CallbackType get_CallbackType()
 }
-internal Steamworks.Data.JobID_t : ValueType {
-public ulong Value
-public JobID_t op_Implicit(ulong value)
-public ulong op_Implicit(JobID_t value)
-public string ToString()
-public int GetHashCode()
-public bool Equals(object p)
-public bool Equals(JobID_t p)
-public bool op_Equality(JobID_t a, JobID_t b)
-public bool op_Inequality(JobID_t a, JobID_t b)
-public int CompareTo(JobID_t other)
-}
 internal Steamworks.Data.JoinClanChatRoomCompletionResult_t : ValueType {
 internal ulong SteamIDClanChat
 internal RoomEnter ChatRoomEnterResponse
@@ -2444,7 +2444,8 @@ public IEnumerable`1<KeyValuePair`2<string, string>> get_Data()
 public string GetMemberData(Friend member, string key)
 public void SetMemberData(string key, string value)
 public bool SendChatString(string message)
-internal bool SendChatBytes(Byte[] data)
+public bool SendChatBytes(Byte[] data)
+public bool SendChatBytesUnsafe(Byte* ptr, int length)
 public bool Refresh()
 public int get_MaxMembers()
 public void set_MaxMembers(int value)
@@ -2580,18 +2581,6 @@ public int DataSize
 public CallbackType CallbackType
 public int get_DataSize()
 public CallbackType get_CallbackType()
-}
-internal Steamworks.Data.ManifestId_t : ValueType {
-public ulong Value
-public ManifestId_t op_Implicit(ulong value)
-public ulong op_Implicit(ManifestId_t value)
-public string ToString()
-public int GetHashCode()
-public bool Equals(object p)
-public bool Equals(ManifestId_t p)
-public bool op_Equality(ManifestId_t a, ManifestId_t b)
-public bool op_Inequality(ManifestId_t a, ManifestId_t b)
-public int CompareTo(ManifestId_t other)
 }
 internal Steamworks.Data.MarketEligibilityResponse_t : ValueType {
 internal bool Allowed
@@ -2731,6 +2720,7 @@ public ushort Port
 public NetAddress Cleared
 public bool IsIPv6AllZeros
 public bool IsIPv4
+public bool IsFakeIPv4
 public bool IsLocalHost
 public IPAddress Address
 internal void InternalClear(NetAddress& self)
@@ -2744,6 +2734,8 @@ internal bool InternalIsLocalHost(NetAddress& self)
 internal void InternalToString(NetAddress& self, IntPtr buf, UInt32 cbBuf, bool bWithPort)
 internal bool InternalParseString(NetAddress& self, string pszStr)
 internal bool InternalIsEqualTo(NetAddress& self, NetAddress& x)
+internal SteamNetworkingFakeIPType InternalGetFakeIPType(NetAddress& self)
+internal bool InternalIsFakeIP(NetAddress& self)
 public ushort get_Port()
 public NetAddress AnyIp(ushort port)
 public NetAddress LocalHost(ushort port)
@@ -2752,14 +2744,10 @@ public NetAddress From(IPAddress address, ushort port)
 public NetAddress get_Cleared()
 public bool get_IsIPv6AllZeros()
 public bool get_IsIPv4()
+public bool get_IsFakeIPv4()
 public bool get_IsLocalHost()
 public IPAddress get_Address()
 public string ToString()
-}
-internal Steamworks.Data.NetAddressRender : ValueType {
-internal Byte[] Buf
-internal Utf8StringPointer Internalc_str(NetAddressRender& self)
-internal string BufUTF8()
 }
 internal Steamworks.Data.NetErrorMessage : ValueType {
 public <Value>e__FixedBuffer Value
@@ -2789,6 +2777,10 @@ internal void InternalSetStadiaID(NetIdentity& self, ulong id)
 internal ulong InternalGetStadiaID(NetIdentity& self)
 internal void InternalSetIPAddr(NetIdentity& self, NetAddress& addr)
 internal IntPtr InternalGetIPAddr(NetIdentity& self)
+internal void InternalSetIPv4Addr(NetIdentity& self, UInt32 nIPv4, ushort nPort)
+internal UInt32 InternalGetIPv4(NetIdentity& self)
+internal SteamNetworkingFakeIPType InternalGetFakeIPType(NetIdentity& self)
+internal bool InternalIsFakeIP(NetIdentity& self)
 internal void InternalSetLocalHost(NetIdentity& self)
 internal bool InternalIsLocalHost(NetIdentity& self)
 internal bool InternalSetGenericString(NetIdentity& self, string pszString)
@@ -2808,11 +2800,6 @@ public SteamId op_Implicit(NetIdentity value)
 public SteamId get_SteamId()
 public NetAddress get_Address()
 public string ToString()
-}
-internal Steamworks.Data.NetIdentityRender : ValueType {
-internal Byte[] Buf
-internal Utf8StringPointer Internalc_str(NetIdentityRender& self)
-internal string BufUTF8()
 }
 internal Steamworks.Data.NetKeyValue : ValueType {
 internal NetConfig Value
@@ -2840,6 +2827,8 @@ internal IntPtr ReleasePtr
 internal int Channel
 internal SendType Flags
 internal long UserData
+internal ushort IdxLane
+internal ushort _pad1__
 internal void InternalRelease(NetMsg* self)
 }
 public Steamworks.Data.NetPingLocation : ValueType {
@@ -2936,30 +2925,6 @@ internal int PacketsQueuedForSend
 internal UInt32 RemoteIP
 internal ushort RemotePort
 }
-internal Steamworks.Data.PackageId_t : ValueType {
-public UInt32 Value
-public PackageId_t op_Implicit(UInt32 value)
-public UInt32 op_Implicit(PackageId_t value)
-public string ToString()
-public int GetHashCode()
-public bool Equals(object p)
-public bool Equals(PackageId_t p)
-public bool op_Equality(PackageId_t a, PackageId_t b)
-public bool op_Inequality(PackageId_t a, PackageId_t b)
-public int CompareTo(PackageId_t other)
-}
-internal Steamworks.Data.PartnerId_t : ValueType {
-public UInt32 Value
-public PartnerId_t op_Implicit(UInt32 value)
-public UInt32 op_Implicit(PartnerId_t value)
-public string ToString()
-public int GetHashCode()
-public bool Equals(object p)
-public bool Equals(PartnerId_t p)
-public bool op_Equality(PartnerId_t a, PartnerId_t b)
-public bool op_Inequality(PartnerId_t a, PartnerId_t b)
-public int CompareTo(PartnerId_t other)
-}
 internal Steamworks.Data.PartyBeaconID_t : ValueType {
 public ulong Value
 public PartyBeaconID_t op_Implicit(ulong value)
@@ -2980,18 +2945,6 @@ public int DataSize
 public CallbackType CallbackType
 public int get_DataSize()
 public CallbackType get_CallbackType()
-}
-internal Steamworks.Data.PhysicalItemId_t : ValueType {
-public UInt32 Value
-public PhysicalItemId_t op_Implicit(UInt32 value)
-public UInt32 op_Implicit(PhysicalItemId_t value)
-public string ToString()
-public int GetHashCode()
-public bool Equals(object p)
-public bool Equals(PhysicalItemId_t p)
-public bool op_Equality(PhysicalItemId_t a, PhysicalItemId_t b)
-public bool op_Inequality(PhysicalItemId_t a, PhysicalItemId_t b)
-public int CompareTo(PhysicalItemId_t other)
 }
 internal Steamworks.Data.PlaybackStatusHasChanged_t : ValueType {
 public int _datasize
@@ -3070,48 +3023,6 @@ public bool Equals(RemotePlaySessionID_t p)
 public bool op_Equality(RemotePlaySessionID_t a, RemotePlaySessionID_t b)
 public bool op_Inequality(RemotePlaySessionID_t a, RemotePlaySessionID_t b)
 public int CompareTo(RemotePlaySessionID_t other)
-}
-internal Steamworks.Data.RemoteStorageAppSyncedClient_t : ValueType {
-internal AppId AppID
-internal Result Result
-internal int NumDownloads
-public int _datasize
-public int DataSize
-public CallbackType CallbackType
-public int get_DataSize()
-public CallbackType get_CallbackType()
-}
-internal Steamworks.Data.RemoteStorageAppSyncedServer_t : ValueType {
-internal AppId AppID
-internal Result Result
-internal int NumUploads
-public int _datasize
-public int DataSize
-public CallbackType CallbackType
-public int get_DataSize()
-public CallbackType get_CallbackType()
-}
-internal Steamworks.Data.RemoteStorageAppSyncProgress_t : ValueType {
-internal Byte[] CurrentFile
-internal AppId AppID
-internal UInt32 BytesTransferredThisChunk
-internal double DAppPercentComplete
-internal bool Uploading
-public int _datasize
-public int DataSize
-public CallbackType CallbackType
-internal string CurrentFileUTF8()
-public int get_DataSize()
-public CallbackType get_CallbackType()
-}
-internal Steamworks.Data.RemoteStorageAppSyncStatusCheck_t : ValueType {
-internal AppId AppID
-internal Result Result
-public int _datasize
-public int DataSize
-public CallbackType CallbackType
-public int get_DataSize()
-public CallbackType get_CallbackType()
 }
 internal Steamworks.Data.RemoteStorageDeletePublishedFileResult_t : ValueType {
 internal Result Result
@@ -3267,6 +3178,13 @@ internal int VotesFor
 internal int VotesAgainst
 internal int Reports
 internal float FScore
+public int _datasize
+public int DataSize
+public CallbackType CallbackType
+public int get_DataSize()
+public CallbackType get_CallbackType()
+}
+internal Steamworks.Data.RemoteStorageLocalFileChange_t : ValueType {
 public int _datasize
 public int DataSize
 public CallbackType CallbackType
@@ -3660,18 +3578,6 @@ public CallbackType CallbackType
 public int get_DataSize()
 public CallbackType get_CallbackType()
 }
-internal Steamworks.Data.SiteId_t : ValueType {
-public ulong Value
-public SiteId_t op_Implicit(ulong value)
-public ulong op_Implicit(SiteId_t value)
-public string ToString()
-public int GetHashCode()
-public bool Equals(object p)
-public bool Equals(SiteId_t p)
-public bool op_Equality(SiteId_t a, SiteId_t b)
-public bool op_Inequality(SiteId_t a, SiteId_t b)
-public int CompareTo(SiteId_t other)
-}
 internal Steamworks.Data.SNetListenSocket_t : ValueType {
 public UInt32 Value
 public SNetListenSocket_t op_Implicit(UInt32 value)
@@ -3763,6 +3669,7 @@ public CallbackType get_CallbackType()
 }
 internal Steamworks.Data.SteamAppInstalled_t : ValueType {
 internal AppId AppID
+internal int InstallFolderIndex
 public int _datasize
 public int DataSize
 public CallbackType CallbackType
@@ -3771,6 +3678,7 @@ public CallbackType get_CallbackType()
 }
 internal Steamworks.Data.SteamAppUninstalled_t : ValueType {
 internal AppId AppID
+internal int InstallFolderIndex
 public int _datasize
 public int DataSize
 public CallbackType CallbackType
@@ -3793,6 +3701,40 @@ internal void InternalClear(SteamDatagramHostedAddress& self)
 internal SteamNetworkingPOPID InternalGetPopID(SteamDatagramHostedAddress& self)
 internal void InternalSetDevAddress(SteamDatagramHostedAddress& self, UInt32 nIP, ushort nPort, SteamNetworkingPOPID popid)
 internal string DataUTF8()
+}
+internal Steamworks.Data.SteamInputActionEvent_t : ValueType {
+internal ulong ControllerHandle
+internal SteamInputActionEventType EEventType
+}
+internal Steamworks.Data.SteamInputConfigurationLoaded_t : ValueType {
+internal AppId AppID
+internal ulong DeviceHandle
+internal ulong MappingCreator
+internal UInt32 MajorRevision
+internal UInt32 MinorRevision
+internal bool UsesSteamInputAPI
+internal bool UsesGamepadAPI
+public int _datasize
+public int DataSize
+public CallbackType CallbackType
+public int get_DataSize()
+public CallbackType get_CallbackType()
+}
+internal Steamworks.Data.SteamInputDeviceConnected_t : ValueType {
+internal ulong ConnectedDeviceHandle
+public int _datasize
+public int DataSize
+public CallbackType CallbackType
+public int get_DataSize()
+public CallbackType get_CallbackType()
+}
+internal Steamworks.Data.SteamInputDeviceDisconnected_t : ValueType {
+internal ulong DisconnectedDeviceHandle
+public int _datasize
+public int DataSize
+public CallbackType CallbackType
+public int get_DataSize()
+public CallbackType get_CallbackType()
 }
 internal Steamworks.Data.SteamInventoryDefinitionUpdate_t : ValueType {
 public int _datasize
@@ -3929,6 +3871,17 @@ public CallbackType CallbackType
 public int get_DataSize()
 public CallbackType get_CallbackType()
 }
+internal Steamworks.Data.SteamNetworkingFakeIPResult_t : ValueType {
+internal Result Result
+internal NetIdentity Dentity
+internal UInt32 IP
+internal UInt16[] Ports
+public int _datasize
+public int DataSize
+public CallbackType CallbackType
+public int get_DataSize()
+public CallbackType get_CallbackType()
+}
 internal Steamworks.Data.SteamNetworkingMessagesSessionFailed_t : ValueType {
 internal ConnectionInfo Nfo
 public int _datasize
@@ -3956,11 +3909,6 @@ public bool Equals(SteamNetworkingPOPID p)
 public bool op_Equality(SteamNetworkingPOPID a, SteamNetworkingPOPID b)
 public bool op_Inequality(SteamNetworkingPOPID a, SteamNetworkingPOPID b)
 public int CompareTo(SteamNetworkingPOPID other)
-}
-internal Steamworks.Data.SteamNetworkingPOPIDRender : ValueType {
-internal Byte[] Buf
-internal Utf8StringPointer Internalc_str(SteamNetworkingPOPIDRender& self)
-internal string BufUTF8()
 }
 internal Steamworks.Data.SteamParamStringArray_t : ValueType {
 internal IntPtr Strings
@@ -4141,18 +4089,6 @@ public CallbackType CallbackType
 public int get_DataSize()
 public CallbackType get_CallbackType()
 }
-internal Steamworks.Data.TxnID_t : ValueType {
-public ulong Value
-public TxnID_t op_Implicit(ulong value)
-public ulong op_Implicit(TxnID_t value)
-public string ToString()
-public int GetHashCode()
-public bool Equals(object p)
-public bool Equals(TxnID_t p)
-public bool op_Equality(TxnID_t a, TxnID_t b)
-public bool op_Inequality(TxnID_t a, TxnID_t b)
-public int CompareTo(TxnID_t other)
-}
 public Steamworks.Data.Ugc : ValueType {
 internal UGCHandle_t Handle
 }
@@ -4288,6 +4224,14 @@ public CallbackType CallbackType
 public int get_DataSize()
 public CallbackType get_CallbackType()
 }
+internal Steamworks.Data.UserSubscribedItemsListChanged_t : ValueType {
+internal AppId AppID
+public int _datasize
+public int DataSize
+public CallbackType CallbackType
+public int get_DataSize()
+public CallbackType get_CallbackType()
+}
 internal Steamworks.Data.ValidateAuthTicketResponse_t : ValueType {
 internal ulong SteamID
 internal AuthResponse AuthSessionResponse
@@ -4300,6 +4244,19 @@ public CallbackType get_CallbackType()
 }
 internal Steamworks.Data.VolumeHasChanged_t : ValueType {
 internal float NewVolume
+public int _datasize
+public int DataSize
+public CallbackType CallbackType
+public int get_DataSize()
+public CallbackType get_CallbackType()
+}
+internal Steamworks.Data.WorkshopEULAStatus_t : ValueType {
+internal Result Result
+internal AppId AppID
+internal UInt32 Version
+internal UInt32 TAction
+internal bool Accepted
+internal bool NeedsAction
 public int _datasize
 public int DataSize
 public CallbackType CallbackType
@@ -4409,6 +4366,12 @@ public void .ctor(object object, IntPtr method)
 public void Invoke(SteamNetConnectionStatusChangedCallback_t& arg)
 public IAsyncResult BeginInvoke(SteamNetConnectionStatusChangedCallback_t& arg, AsyncCallback callback, object object)
 public void EndInvoke(SteamNetConnectionStatusChangedCallback_t& arg, IAsyncResult result)
+}
+internal Steamworks.FnSteamNetworkingFakeIPResult : MulticastDelegate {
+public void .ctor(object object, IntPtr method)
+public void Invoke(SteamNetworkingFakeIPResult_t& arg)
+public IAsyncResult BeginInvoke(SteamNetworkingFakeIPResult_t& arg, AsyncCallback callback, object object)
+public void EndInvoke(SteamNetworkingFakeIPResult_t& arg, IAsyncResult result)
 }
 internal Steamworks.FnSteamNetworkingMessagesSessionFailed : MulticastDelegate {
 public void .ctor(object object, IntPtr method)
@@ -4523,13 +4486,18 @@ public GameSearchErrorCode_t Failed_Offline
 public GameSearchErrorCode_t Failed_NotAuthorized
 public GameSearchErrorCode_t Failed_Unknown_Error
 }
+public Steamworks.GlyphSize : Enum {
+public int value__
+public GlyphSize Small
+public GlyphSize Medium
+public GlyphSize Large
+public GlyphSize Count
+}
 internal Steamworks.Helpers : object {
 public int MemoryBufferSize
-private IntPtr[] MemoryPool
-private int MemoryPoolIndex
 private Byte[][] BufferPool
 private int BufferPoolIndex
-public IntPtr TakeMemory()
+public Memory TakeMemory()
 public Byte[] TakeBuffer(int minSize)
 internal string MemoryToString(IntPtr ptr)
 }
@@ -4749,11 +4717,11 @@ public InputActionOrigin XBoxOne_DPad_South
 public InputActionOrigin XBoxOne_DPad_West
 public InputActionOrigin XBoxOne_DPad_East
 public InputActionOrigin XBoxOne_DPad_Move
-public InputActionOrigin XBoxOne_Reserved1
-public InputActionOrigin XBoxOne_Reserved2
-public InputActionOrigin XBoxOne_Reserved3
-public InputActionOrigin XBoxOne_Reserved4
-public InputActionOrigin XBoxOne_Reserved5
+public InputActionOrigin XBoxOne_LeftGrip_Lower
+public InputActionOrigin XBoxOne_LeftGrip_Upper
+public InputActionOrigin XBoxOne_RightGrip_Lower
+public InputActionOrigin XBoxOne_RightGrip_Upper
+public InputActionOrigin XBoxOne_Share
 public InputActionOrigin XBoxOne_Reserved6
 public InputActionOrigin XBoxOne_Reserved7
 public InputActionOrigin XBoxOne_Reserved8
@@ -4939,6 +4907,79 @@ public InputActionOrigin PS5_Reserved17
 public InputActionOrigin PS5_Reserved18
 public InputActionOrigin PS5_Reserved19
 public InputActionOrigin PS5_Reserved20
+public InputActionOrigin SteamDeck_A
+public InputActionOrigin SteamDeck_B
+public InputActionOrigin SteamDeck_X
+public InputActionOrigin SteamDeck_Y
+public InputActionOrigin SteamDeck_L1
+public InputActionOrigin SteamDeck_R1
+public InputActionOrigin SteamDeck_Menu
+public InputActionOrigin SteamDeck_View
+public InputActionOrigin SteamDeck_LeftPad_Touch
+public InputActionOrigin SteamDeck_LeftPad_Swipe
+public InputActionOrigin SteamDeck_LeftPad_Click
+public InputActionOrigin SteamDeck_LeftPad_DPadNorth
+public InputActionOrigin SteamDeck_LeftPad_DPadSouth
+public InputActionOrigin SteamDeck_LeftPad_DPadWest
+public InputActionOrigin SteamDeck_LeftPad_DPadEast
+public InputActionOrigin SteamDeck_RightPad_Touch
+public InputActionOrigin SteamDeck_RightPad_Swipe
+public InputActionOrigin SteamDeck_RightPad_Click
+public InputActionOrigin SteamDeck_RightPad_DPadNorth
+public InputActionOrigin SteamDeck_RightPad_DPadSouth
+public InputActionOrigin SteamDeck_RightPad_DPadWest
+public InputActionOrigin SteamDeck_RightPad_DPadEast
+public InputActionOrigin SteamDeck_L2_SoftPull
+public InputActionOrigin SteamDeck_L2
+public InputActionOrigin SteamDeck_R2_SoftPull
+public InputActionOrigin SteamDeck_R2
+public InputActionOrigin SteamDeck_LeftStick_Move
+public InputActionOrigin SteamDeck_L3
+public InputActionOrigin SteamDeck_LeftStick_DPadNorth
+public InputActionOrigin SteamDeck_LeftStick_DPadSouth
+public InputActionOrigin SteamDeck_LeftStick_DPadWest
+public InputActionOrigin SteamDeck_LeftStick_DPadEast
+public InputActionOrigin SteamDeck_LeftStick_Touch
+public InputActionOrigin SteamDeck_RightStick_Move
+public InputActionOrigin SteamDeck_R3
+public InputActionOrigin SteamDeck_RightStick_DPadNorth
+public InputActionOrigin SteamDeck_RightStick_DPadSouth
+public InputActionOrigin SteamDeck_RightStick_DPadWest
+public InputActionOrigin SteamDeck_RightStick_DPadEast
+public InputActionOrigin SteamDeck_RightStick_Touch
+public InputActionOrigin SteamDeck_L4
+public InputActionOrigin SteamDeck_R4
+public InputActionOrigin SteamDeck_L5
+public InputActionOrigin SteamDeck_R5
+public InputActionOrigin SteamDeck_DPad_Move
+public InputActionOrigin SteamDeck_DPad_North
+public InputActionOrigin SteamDeck_DPad_South
+public InputActionOrigin SteamDeck_DPad_West
+public InputActionOrigin SteamDeck_DPad_East
+public InputActionOrigin SteamDeck_Gyro_Move
+public InputActionOrigin SteamDeck_Gyro_Pitch
+public InputActionOrigin SteamDeck_Gyro_Yaw
+public InputActionOrigin SteamDeck_Gyro_Roll
+public InputActionOrigin SteamDeck_Reserved1
+public InputActionOrigin SteamDeck_Reserved2
+public InputActionOrigin SteamDeck_Reserved3
+public InputActionOrigin SteamDeck_Reserved4
+public InputActionOrigin SteamDeck_Reserved5
+public InputActionOrigin SteamDeck_Reserved6
+public InputActionOrigin SteamDeck_Reserved7
+public InputActionOrigin SteamDeck_Reserved8
+public InputActionOrigin SteamDeck_Reserved9
+public InputActionOrigin SteamDeck_Reserved10
+public InputActionOrigin SteamDeck_Reserved11
+public InputActionOrigin SteamDeck_Reserved12
+public InputActionOrigin SteamDeck_Reserved13
+public InputActionOrigin SteamDeck_Reserved14
+public InputActionOrigin SteamDeck_Reserved15
+public InputActionOrigin SteamDeck_Reserved16
+public InputActionOrigin SteamDeck_Reserved17
+public InputActionOrigin SteamDeck_Reserved18
+public InputActionOrigin SteamDeck_Reserved19
+public InputActionOrigin SteamDeck_Reserved20
 public InputActionOrigin Count
 public InputActionOrigin MaximumPossibleValue
 }
@@ -4978,6 +5019,7 @@ public InputType SwitchProController
 public InputType MobileTouch
 public InputType PS3Controller
 public InputType PS5Controller
+public InputType SteamDeckController
 public InputType Count
 public InputType MaximumPossibleValue
 }
@@ -5124,8 +5166,6 @@ internal Steamworks.ISteamApps : SteamInterface {
 internal void .ctor(bool IsGameServer)
 internal IntPtr SteamAPI_SteamApps_v008()
 public IntPtr GetUserInterfacePointer()
-internal IntPtr SteamAPI_SteamGameServerApps_v008()
-public IntPtr GetServerInterfacePointer()
 private bool _BIsSubscribed(IntPtr self)
 internal bool BIsSubscribed()
 private bool _BIsLowViolence(IntPtr self)
@@ -5525,7 +5565,7 @@ internal GameSearchErrorCode_t EndGame(ulong ullUniqueGameID)
 }
 internal Steamworks.ISteamGameServer : SteamInterface {
 internal void .ctor(bool IsGameServer)
-internal IntPtr SteamAPI_SteamGameServer_v013()
+internal IntPtr SteamAPI_SteamGameServer_v014()
 public IntPtr GetServerInterfacePointer()
 private void _SetProduct(IntPtr self, string pszProduct)
 internal void SetProduct(string pszProduct)
@@ -5573,14 +5613,8 @@ private void _SetGameData(IntPtr self, string pchGameData)
 internal void SetGameData(string pchGameData)
 private void _SetRegion(IntPtr self, string pszRegion)
 internal void SetRegion(string pszRegion)
-private bool _SendUserConnectAndAuthenticate(IntPtr self, UInt32 unIPClient, IntPtr pvAuthBlob, UInt32 cubAuthBlobSize, SteamId& pSteamIDUser)
-internal bool SendUserConnectAndAuthenticate(UInt32 unIPClient, IntPtr pvAuthBlob, UInt32 cubAuthBlobSize, SteamId& pSteamIDUser)
-private SteamId _CreateUnauthenticatedUserConnection(IntPtr self)
-internal SteamId CreateUnauthenticatedUserConnection()
-private void _SendUserDisconnect(IntPtr self, SteamId steamIDUser)
-internal void SendUserDisconnect(SteamId steamIDUser)
-private bool _BUpdateUserData(IntPtr self, SteamId steamIDUser, string pchPlayerName, UInt32 uScore)
-internal bool BUpdateUserData(SteamId steamIDUser, string pchPlayerName, UInt32 uScore)
+private void _SetAdvertiseServerActive(IntPtr self, bool bActive)
+internal void SetAdvertiseServerActive(bool bActive)
 private HAuthTicket _GetAuthSessionTicket(IntPtr self, IntPtr pTicket, int cbMaxTicket, UInt32& pcbTicket)
 internal HAuthTicket GetAuthSessionTicket(IntPtr pTicket, int cbMaxTicket, UInt32& pcbTicket)
 private BeginAuthResult _BeginAuthSession(IntPtr self, IntPtr pAuthTicket, int cbAuthTicket, SteamId steamID)
@@ -5603,16 +5637,18 @@ private bool _HandleIncomingPacket(IntPtr self, IntPtr pData, int cbData, UInt32
 internal bool HandleIncomingPacket(IntPtr pData, int cbData, UInt32 srcIP, ushort srcPort)
 private int _GetNextOutgoingPacket(IntPtr self, IntPtr pOut, int cbMaxOut, UInt32& pNetAdr, UInt16& pPort)
 internal int GetNextOutgoingPacket(IntPtr pOut, int cbMaxOut, UInt32& pNetAdr, UInt16& pPort)
-private void _EnableHeartbeats(IntPtr self, bool bActive)
-internal void EnableHeartbeats(bool bActive)
-private void _SetHeartbeatInterval(IntPtr self, int iHeartbeatInterval)
-internal void SetHeartbeatInterval(int iHeartbeatInterval)
-private void _ForceHeartbeat(IntPtr self)
-internal void ForceHeartbeat()
 private SteamAPICall_t _AssociateWithClan(IntPtr self, SteamId steamIDClan)
 internal CallResult`1<AssociateWithClanResult_t> AssociateWithClan(SteamId steamIDClan)
 private SteamAPICall_t _ComputeNewPlayerCompatibility(IntPtr self, SteamId steamIDNewPlayer)
 internal CallResult`1<ComputeNewPlayerCompatibilityResult_t> ComputeNewPlayerCompatibility(SteamId steamIDNewPlayer)
+private bool _SendUserConnectAndAuthenticate_DEPRECATED(IntPtr self, UInt32 unIPClient, IntPtr pvAuthBlob, UInt32 cubAuthBlobSize, SteamId& pSteamIDUser)
+internal bool SendUserConnectAndAuthenticate_DEPRECATED(UInt32 unIPClient, IntPtr pvAuthBlob, UInt32 cubAuthBlobSize, SteamId& pSteamIDUser)
+private SteamId _CreateUnauthenticatedUserConnection(IntPtr self)
+internal SteamId CreateUnauthenticatedUserConnection()
+private void _SendUserDisconnect_DEPRECATED(IntPtr self, SteamId steamIDUser)
+internal void SendUserDisconnect_DEPRECATED(SteamId steamIDUser)
+private bool _BUpdateUserData(IntPtr self, SteamId steamIDUser, string pchPlayerName, UInt32 uScore)
+internal bool BUpdateUserData(SteamId steamIDUser, string pchPlayerName, UInt32 uScore)
 }
 internal Steamworks.ISteamGameServerStats : SteamInterface {
 internal void .ctor(bool IsGameServer)
@@ -5777,16 +5813,24 @@ internal bool GetHTTPRequestWasTimedOut(HTTPRequestHandle hRequest, Boolean& pbW
 }
 internal Steamworks.ISteamInput : SteamInterface {
 internal void .ctor(bool IsGameServer)
-internal IntPtr SteamAPI_SteamInput_v002()
+internal IntPtr SteamAPI_SteamInput_v006()
 public IntPtr GetUserInterfacePointer()
-private bool _Init(IntPtr self)
-internal bool Init()
+private bool _Init(IntPtr self, bool bExplicitlyCallRunFrame)
+internal bool Init(bool bExplicitlyCallRunFrame)
 private bool _Shutdown(IntPtr self)
 internal bool Shutdown()
-private void _RunFrame(IntPtr self)
-internal void RunFrame()
+private bool _SetInputActionManifestFilePath(IntPtr self, string pchInputActionManifestAbsolutePath)
+internal bool SetInputActionManifestFilePath(string pchInputActionManifestAbsolutePath)
+private void _RunFrame(IntPtr self, bool bReservedValue)
+internal void RunFrame(bool bReservedValue)
+private bool _BWaitForData(IntPtr self, bool bWaitForever, UInt32 unTimeout)
+internal bool BWaitForData(bool bWaitForever, UInt32 unTimeout)
+private bool _BNewDataAvailable(IntPtr self)
+internal bool BNewDataAvailable()
 private int _GetConnectedControllers(IntPtr self, InputHandle_t[] handlesOut)
 internal int GetConnectedControllers(InputHandle_t[] handlesOut)
+private void _EnableDeviceCallbacks(IntPtr self)
+internal void EnableDeviceCallbacks()
 private InputActionSetHandle_t _GetActionSetHandle(IntPtr self, string pszActionSetName)
 internal InputActionSetHandle_t GetActionSetHandle(string pszActionSetName)
 private void _ActivateActionSet(IntPtr self, InputHandle_t inputHandle, InputActionSetHandle_t actionSetHandle)
@@ -5807,28 +5851,40 @@ private DigitalState _GetDigitalActionData(IntPtr self, InputHandle_t inputHandl
 internal DigitalState GetDigitalActionData(InputHandle_t inputHandle, InputDigitalActionHandle_t digitalActionHandle)
 private int _GetDigitalActionOrigins(IntPtr self, InputHandle_t inputHandle, InputActionSetHandle_t actionSetHandle, InputDigitalActionHandle_t digitalActionHandle, InputActionOrigin& originsOut)
 internal int GetDigitalActionOrigins(InputHandle_t inputHandle, InputActionSetHandle_t actionSetHandle, InputDigitalActionHandle_t digitalActionHandle, InputActionOrigin& originsOut)
+private Utf8StringPointer _GetStringForDigitalActionName(IntPtr self, InputDigitalActionHandle_t eActionHandle)
+internal string GetStringForDigitalActionName(InputDigitalActionHandle_t eActionHandle)
 private InputAnalogActionHandle_t _GetAnalogActionHandle(IntPtr self, string pszActionName)
 internal InputAnalogActionHandle_t GetAnalogActionHandle(string pszActionName)
 private AnalogState _GetAnalogActionData(IntPtr self, InputHandle_t inputHandle, InputAnalogActionHandle_t analogActionHandle)
 internal AnalogState GetAnalogActionData(InputHandle_t inputHandle, InputAnalogActionHandle_t analogActionHandle)
 private int _GetAnalogActionOrigins(IntPtr self, InputHandle_t inputHandle, InputActionSetHandle_t actionSetHandle, InputAnalogActionHandle_t analogActionHandle, InputActionOrigin& originsOut)
 internal int GetAnalogActionOrigins(InputHandle_t inputHandle, InputActionSetHandle_t actionSetHandle, InputAnalogActionHandle_t analogActionHandle, InputActionOrigin& originsOut)
-private Utf8StringPointer _GetGlyphForActionOrigin(IntPtr self, InputActionOrigin eOrigin)
-internal string GetGlyphForActionOrigin(InputActionOrigin eOrigin)
+private Utf8StringPointer _GetGlyphPNGForActionOrigin(IntPtr self, InputActionOrigin eOrigin, GlyphSize eSize, UInt32 unFlags)
+internal string GetGlyphPNGForActionOrigin(InputActionOrigin eOrigin, GlyphSize eSize, UInt32 unFlags)
+private Utf8StringPointer _GetGlyphSVGForActionOrigin(IntPtr self, InputActionOrigin eOrigin, UInt32 unFlags)
+internal string GetGlyphSVGForActionOrigin(InputActionOrigin eOrigin, UInt32 unFlags)
+private Utf8StringPointer _GetGlyphForActionOrigin_Legacy(IntPtr self, InputActionOrigin eOrigin)
+internal string GetGlyphForActionOrigin_Legacy(InputActionOrigin eOrigin)
 private Utf8StringPointer _GetStringForActionOrigin(IntPtr self, InputActionOrigin eOrigin)
 internal string GetStringForActionOrigin(InputActionOrigin eOrigin)
+private Utf8StringPointer _GetStringForAnalogActionName(IntPtr self, InputAnalogActionHandle_t eActionHandle)
+internal string GetStringForAnalogActionName(InputAnalogActionHandle_t eActionHandle)
 private void _StopAnalogActionMomentum(IntPtr self, InputHandle_t inputHandle, InputAnalogActionHandle_t eAction)
 internal void StopAnalogActionMomentum(InputHandle_t inputHandle, InputAnalogActionHandle_t eAction)
 private MotionState _GetMotionData(IntPtr self, InputHandle_t inputHandle)
 internal MotionState GetMotionData(InputHandle_t inputHandle)
 private void _TriggerVibration(IntPtr self, InputHandle_t inputHandle, ushort usLeftSpeed, ushort usRightSpeed)
 internal void TriggerVibration(InputHandle_t inputHandle, ushort usLeftSpeed, ushort usRightSpeed)
+private void _TriggerVibrationExtended(IntPtr self, InputHandle_t inputHandle, ushort usLeftSpeed, ushort usRightSpeed, ushort usLeftTriggerSpeed, ushort usRightTriggerSpeed)
+internal void TriggerVibrationExtended(InputHandle_t inputHandle, ushort usLeftSpeed, ushort usRightSpeed, ushort usLeftTriggerSpeed, ushort usRightTriggerSpeed)
+private void _TriggerSimpleHapticEvent(IntPtr self, InputHandle_t inputHandle, ControllerHapticLocation eHapticLocation, byte nIntensity, char nGainDB, byte nOtherIntensity, char nOtherGainDB)
+internal void TriggerSimpleHapticEvent(InputHandle_t inputHandle, ControllerHapticLocation eHapticLocation, byte nIntensity, char nGainDB, byte nOtherIntensity, char nOtherGainDB)
 private void _SetLEDColor(IntPtr self, InputHandle_t inputHandle, byte nColorR, byte nColorG, byte nColorB, UInt32 nFlags)
 internal void SetLEDColor(InputHandle_t inputHandle, byte nColorR, byte nColorG, byte nColorB, UInt32 nFlags)
-private void _TriggerHapticPulse(IntPtr self, InputHandle_t inputHandle, SteamControllerPad eTargetPad, ushort usDurationMicroSec)
-internal void TriggerHapticPulse(InputHandle_t inputHandle, SteamControllerPad eTargetPad, ushort usDurationMicroSec)
-private void _TriggerRepeatedHapticPulse(IntPtr self, InputHandle_t inputHandle, SteamControllerPad eTargetPad, ushort usDurationMicroSec, ushort usOffMicroSec, ushort unRepeat, UInt32 nFlags)
-internal void TriggerRepeatedHapticPulse(InputHandle_t inputHandle, SteamControllerPad eTargetPad, ushort usDurationMicroSec, ushort usOffMicroSec, ushort unRepeat, UInt32 nFlags)
+private void _Legacy_TriggerHapticPulse(IntPtr self, InputHandle_t inputHandle, SteamControllerPad eTargetPad, ushort usDurationMicroSec)
+internal void Legacy_TriggerHapticPulse(InputHandle_t inputHandle, SteamControllerPad eTargetPad, ushort usDurationMicroSec)
+private void _Legacy_TriggerRepeatedHapticPulse(IntPtr self, InputHandle_t inputHandle, SteamControllerPad eTargetPad, ushort usDurationMicroSec, ushort usOffMicroSec, ushort unRepeat, UInt32 nFlags)
+internal void Legacy_TriggerRepeatedHapticPulse(InputHandle_t inputHandle, SteamControllerPad eTargetPad, ushort usDurationMicroSec, ushort usOffMicroSec, ushort unRepeat, UInt32 nFlags)
 private bool _ShowBindingPanel(IntPtr self, InputHandle_t inputHandle)
 internal bool ShowBindingPanel(InputHandle_t inputHandle)
 private InputType _GetInputTypeForHandle(IntPtr self, InputHandle_t inputHandle)
@@ -5849,6 +5905,8 @@ private bool _GetDeviceBindingRevision(IntPtr self, InputHandle_t inputHandle, I
 internal bool GetDeviceBindingRevision(InputHandle_t inputHandle, Int32& pMajor, Int32& pMinor)
 private UInt32 _GetRemotePlaySessionID(IntPtr self, InputHandle_t inputHandle)
 internal UInt32 GetRemotePlaySessionID(InputHandle_t inputHandle)
+private ushort _GetSessionInputConfigurationSettings(IntPtr self)
+internal ushort GetSessionInputConfigurationSettings()
 }
 internal Steamworks.ISteamInventory : SteamInterface {
 internal void .ctor(bool IsGameServer)
@@ -6204,6 +6262,17 @@ internal bool AllowP2PPacketRelay(bool bAllow)
 private SNetSocket_t _CreateP2PConnectionSocket(IntPtr self, SteamId steamIDTarget, int nVirtualPort, int nTimeoutSec, bool bAllowUseOfPacketRelay)
 internal SNetSocket_t CreateP2PConnectionSocket(SteamId steamIDTarget, int nVirtualPort, int nTimeoutSec, bool bAllowUseOfPacketRelay)
 }
+internal Steamworks.ISteamNetworkingFakeUDPPort : SteamInterface {
+internal void .ctor(bool IsGameServer)
+private void _DestroyFakeUDPPort(IntPtr self)
+internal void DestroyFakeUDPPort()
+private Result _SendMessageToFakeIP(IntPtr self, NetAddress& remoteAddress, IntPtr pData, UInt32 cbData, int nSendFlags)
+internal Result SendMessageToFakeIP(NetAddress& remoteAddress, IntPtr pData, UInt32 cbData, int nSendFlags)
+private int _ReceiveMessages(IntPtr self, IntPtr ppOutMessages, int nMaxMessages)
+internal int ReceiveMessages(IntPtr ppOutMessages, int nMaxMessages)
+private void _ScheduleCleanup(IntPtr self, NetAddress& remoteAddress)
+internal void ScheduleCleanup(NetAddress& remoteAddress)
+}
 internal Steamworks.ISteamNetworkingMessages : SteamInterface {
 internal void .ctor(bool IsGameServer)
 internal IntPtr SteamAPI_SteamNetworkingMessages_SteamAPI_v002()
@@ -6225,9 +6294,9 @@ internal ConnectionState GetSessionConnectionInfo(NetIdentity& identityRemote, C
 }
 internal Steamworks.ISteamNetworkingSockets : SteamInterface {
 internal void .ctor(bool IsGameServer)
-internal IntPtr SteamAPI_SteamNetworkingSockets_SteamAPI_v009()
+internal IntPtr SteamAPI_SteamNetworkingSockets_SteamAPI_v012()
 public IntPtr GetUserInterfacePointer()
-internal IntPtr SteamAPI_SteamGameServerNetworkingSockets_SteamAPI_v009()
+internal IntPtr SteamAPI_SteamGameServerNetworkingSockets_SteamAPI_v012()
 public IntPtr GetServerInterfacePointer()
 private Socket _CreateListenSocketIP(IntPtr self, NetAddress& localAddress, int nOptions, NetKeyValue[] pOptions)
 internal Socket CreateListenSocketIP(NetAddress& localAddress, int nOptions, NetKeyValue[] pOptions)
@@ -6261,14 +6330,16 @@ private int _ReceiveMessagesOnConnection(IntPtr self, Connection hConn, IntPtr p
 internal int ReceiveMessagesOnConnection(Connection hConn, IntPtr ppOutMessages, int nMaxMessages)
 private bool _GetConnectionInfo(IntPtr self, Connection hConn, ConnectionInfo& pInfo)
 internal bool GetConnectionInfo(Connection hConn, ConnectionInfo& pInfo)
-private bool _GetQuickConnectionStatus(IntPtr self, Connection hConn, ConnectionStatus& pStats)
-internal bool GetQuickConnectionStatus(Connection hConn, ConnectionStatus& pStats)
+private Result _GetConnectionRealTimeStatus(IntPtr self, Connection hConn, ConnectionStatus& pStatus, int nLanes, ConnectionLaneStatus[] pLanes)
+internal Result GetConnectionRealTimeStatus(Connection hConn, ConnectionStatus& pStatus, int nLanes, ConnectionLaneStatus[] pLanes)
 private int _GetDetailedConnectionStatus(IntPtr self, Connection hConn, IntPtr pszBuf, int cbBuf)
 internal int GetDetailedConnectionStatus(Connection hConn, String& pszBuf)
 private bool _GetListenSocketAddress(IntPtr self, Socket hSocket, NetAddress& address)
 internal bool GetListenSocketAddress(Socket hSocket, NetAddress& address)
 private bool _CreateSocketPair(IntPtr self, Connection[] pOutConnection1, Connection[] pOutConnection2, bool bUseNetworkLoopback, NetIdentity& pIdentity1, NetIdentity& pIdentity2)
 internal bool CreateSocketPair(Connection[] pOutConnection1, Connection[] pOutConnection2, bool bUseNetworkLoopback, NetIdentity& pIdentity1, NetIdentity& pIdentity2)
+private Result _ConfigureConnectionLanes(IntPtr self, Connection hConn, int nNumLanes, Int32[] pLanePriorities, UInt16[] pLaneWeights)
+internal Result ConfigureConnectionLanes(Connection hConn, int nNumLanes, Int32[] pLanePriorities, UInt16[] pLaneWeights)
 private bool _GetIdentity(IntPtr self, NetIdentity& pIdentity)
 internal bool GetIdentity(NetIdentity& pIdentity)
 private SteamNetworkingAvailability _InitAuthentication(IntPtr self)
@@ -6307,12 +6378,24 @@ private bool _GetCertificateRequest(IntPtr self, Int32& pcbBlob, IntPtr pBlob, N
 internal bool GetCertificateRequest(Int32& pcbBlob, IntPtr pBlob, NetErrorMessage& errMsg)
 private bool _SetCertificate(IntPtr self, IntPtr pCertificate, int cbCertificate, NetErrorMessage& errMsg)
 internal bool SetCertificate(IntPtr pCertificate, int cbCertificate, NetErrorMessage& errMsg)
+private void _ResetIdentity(IntPtr self, NetIdentity& pIdentity)
+internal void ResetIdentity(NetIdentity& pIdentity)
 private void _RunCallbacks(IntPtr self)
 internal void RunCallbacks()
+private bool _BeginAsyncRequestFakeIP(IntPtr self, int nNumPorts)
+internal bool BeginAsyncRequestFakeIP(int nNumPorts)
+private void _GetFakeIP(IntPtr self, int idxFirstPort, SteamNetworkingFakeIPResult_t& pInfo)
+internal void GetFakeIP(int idxFirstPort, SteamNetworkingFakeIPResult_t& pInfo)
+private Socket _CreateListenSocketP2PFakeIP(IntPtr self, int idxFakePort, int nOptions, NetKeyValue[] pOptions)
+internal Socket CreateListenSocketP2PFakeIP(int idxFakePort, int nOptions, NetKeyValue[] pOptions)
+private Result _GetRemoteFakeIPForConnection(IntPtr self, Connection hConn, NetAddress[] pOutAddr)
+internal Result GetRemoteFakeIPForConnection(Connection hConn, NetAddress[] pOutAddr)
+private IntPtr _CreateFakeUDPPort(IntPtr self, int idxFakeServerPort)
+internal IntPtr CreateFakeUDPPort(int idxFakeServerPort)
 }
 internal Steamworks.ISteamNetworkingUtils : SteamInterface {
 internal void .ctor(bool IsGameServer)
-internal IntPtr SteamAPI_SteamNetworkingUtils_SteamAPI_v003()
+internal IntPtr SteamAPI_SteamNetworkingUtils_SteamAPI_v004()
 public IntPtr GetGlobalInterfacePointer()
 private NetMsg* _AllocateMessage(IntPtr self, int cbAllocateBuffer)
 internal NetMsg* AllocateMessage(int cbAllocateBuffer)
@@ -6344,6 +6427,12 @@ private long _GetLocalTimestamp(IntPtr self)
 internal long GetLocalTimestamp()
 private void _SetDebugOutputFunction(IntPtr self, NetDebugOutput eDetailLevel, NetDebugFunc pfnFunc)
 internal void SetDebugOutputFunction(NetDebugOutput eDetailLevel, NetDebugFunc pfnFunc)
+private bool _IsFakeIPv4(IntPtr self, UInt32 nIPv4)
+internal bool IsFakeIPv4(UInt32 nIPv4)
+private SteamNetworkingFakeIPType _GetIPv4FakeIPType(IntPtr self, UInt32 nIPv4)
+internal SteamNetworkingFakeIPType GetIPv4FakeIPType(UInt32 nIPv4)
+private Result _GetRealIdentityForFakeIP(IntPtr self, NetAddress& fakeIP, NetIdentity[] pOutRealIdentity)
+internal Result GetRealIdentityForFakeIP(NetAddress& fakeIP, NetIdentity[] pOutRealIdentity)
 private bool _SetGlobalConfigValueInt32(IntPtr self, NetConfig eValue, int val)
 internal bool SetGlobalConfigValueInt32(NetConfig eValue, int val)
 private bool _SetGlobalConfigValueFloat(IntPtr self, NetConfig eValue, float val)
@@ -6364,6 +6453,8 @@ private bool _SetGlobalCallback_SteamNetAuthenticationStatusChanged(IntPtr self,
 internal bool SetGlobalCallback_SteamNetAuthenticationStatusChanged(FnSteamNetAuthenticationStatusChanged fnCallback)
 private bool _SetGlobalCallback_SteamRelayNetworkStatusChanged(IntPtr self, FnSteamRelayNetworkStatusChanged fnCallback)
 internal bool SetGlobalCallback_SteamRelayNetworkStatusChanged(FnSteamRelayNetworkStatusChanged fnCallback)
+private bool _SetGlobalCallback_FakeIPResult(IntPtr self, FnSteamNetworkingFakeIPResult fnCallback)
+internal bool SetGlobalCallback_FakeIPResult(FnSteamNetworkingFakeIPResult fnCallback)
 private bool _SetGlobalCallback_MessagesSessionRequest(IntPtr self, FnSteamNetworkingMessagesSessionRequest fnCallback)
 internal bool SetGlobalCallback_MessagesSessionRequest(FnSteamNetworkingMessagesSessionRequest fnCallback)
 private bool _SetGlobalCallback_MessagesSessionFailed(IntPtr self, FnSteamNetworkingMessagesSessionFailed fnCallback)
@@ -6374,14 +6465,16 @@ private bool _SetConfigValueStruct(IntPtr self, NetKeyValue& opt, NetConfigScope
 internal bool SetConfigValueStruct(NetKeyValue& opt, NetConfigScope eScopeType, IntPtr scopeObj)
 private NetConfigResult _GetConfigValue(IntPtr self, NetConfig eValue, NetConfigScope eScopeType, IntPtr scopeObj, NetConfigType& pOutDataType, IntPtr pResult, UIntPtr& cbResult)
 internal NetConfigResult GetConfigValue(NetConfig eValue, NetConfigScope eScopeType, IntPtr scopeObj, NetConfigType& pOutDataType, IntPtr pResult, UIntPtr& cbResult)
-private bool _GetConfigValueInfo(IntPtr self, NetConfig eValue, string pOutName, NetConfigType& pOutDataType, NetConfigScope[] pOutScope, NetConfig[] pOutNextValue)
-internal bool GetConfigValueInfo(NetConfig eValue, string pOutName, NetConfigType& pOutDataType, NetConfigScope[] pOutScope, NetConfig[] pOutNextValue)
-private NetConfig _GetFirstConfigValue(IntPtr self)
-internal NetConfig GetFirstConfigValue()
+private Utf8StringPointer _GetConfigValueInfo(IntPtr self, NetConfig eValue, NetConfigType& pOutDataType, NetConfigScope[] pOutScope)
+internal string GetConfigValueInfo(NetConfig eValue, NetConfigType& pOutDataType, NetConfigScope[] pOutScope)
+private NetConfig _IterateGenericEditableConfigValues(IntPtr self, NetConfig eCurrent, bool bEnumerateDevVars)
+internal NetConfig IterateGenericEditableConfigValues(NetConfig eCurrent, bool bEnumerateDevVars)
 private void _SteamNetworkingIPAddr_ToString(IntPtr self, NetAddress& addr, IntPtr buf, UInt32 cbBuf, bool bWithPort)
 internal void SteamNetworkingIPAddr_ToString(NetAddress& addr, String& buf, bool bWithPort)
 private bool _SteamNetworkingIPAddr_ParseString(IntPtr self, NetAddress& pAddr, string pszStr)
 internal bool SteamNetworkingIPAddr_ParseString(NetAddress& pAddr, string pszStr)
+private SteamNetworkingFakeIPType _SteamNetworkingIPAddr_GetFakeIPType(IntPtr self, NetAddress& addr)
+internal SteamNetworkingFakeIPType SteamNetworkingIPAddr_GetFakeIPType(NetAddress& addr)
 private void _SteamNetworkingIdentity_ToString(IntPtr self, NetIdentity& identity, IntPtr buf, UInt32 cbBuf)
 internal void SteamNetworkingIdentity_ToString(NetIdentity& identity, String& buf)
 private bool _SteamNetworkingIdentity_ParseString(IntPtr self, NetIdentity& pIdentity, string pszStr)
@@ -6454,7 +6547,7 @@ internal bool BSendRemotePlayTogetherInvite(SteamId steamIDFriend)
 }
 internal Steamworks.ISteamRemoteStorage : SteamInterface {
 internal void .ctor(bool IsGameServer)
-internal IntPtr SteamAPI_SteamRemoteStorage_v014()
+internal IntPtr SteamAPI_SteamRemoteStorage_v016()
 public IntPtr GetUserInterfacePointer()
 private bool _FileWrite(IntPtr self, string pchFile, IntPtr pvData, int cubData)
 internal bool FileWrite(string pchFile, IntPtr pvData, int cubData)
@@ -6518,6 +6611,14 @@ private UGCHandle_t _GetCachedUGCHandle(IntPtr self, int iCachedContent)
 internal UGCHandle_t GetCachedUGCHandle(int iCachedContent)
 private SteamAPICall_t _UGCDownloadToLocation(IntPtr self, UGCHandle_t hContent, string pchLocation, UInt32 unPriority)
 internal CallResult`1<RemoteStorageDownloadUGCResult_t> UGCDownloadToLocation(UGCHandle_t hContent, string pchLocation, UInt32 unPriority)
+private int _GetLocalFileChangeCount(IntPtr self)
+internal int GetLocalFileChangeCount()
+private Utf8StringPointer _GetLocalFileChange(IntPtr self, int iFile, RemoteStorageLocalFileChange& pEChangeType, RemoteStorageFilePathType& pEFilePathType)
+internal string GetLocalFileChange(int iFile, RemoteStorageLocalFileChange& pEChangeType, RemoteStorageFilePathType& pEFilePathType)
+private bool _BeginFileWriteBatch(IntPtr self)
+internal bool BeginFileWriteBatch()
+private bool _EndFileWriteBatch(IntPtr self)
+internal bool EndFileWriteBatch()
 }
 internal Steamworks.ISteamScreenshots : SteamInterface {
 internal void .ctor(bool IsGameServer)
@@ -6544,9 +6645,9 @@ internal ScreenshotHandle AddVRScreenshotToLibrary(VRScreenshotType eType, strin
 }
 internal Steamworks.ISteamUGC : SteamInterface {
 internal void .ctor(bool IsGameServer)
-internal IntPtr SteamAPI_SteamUGC_v015()
+internal IntPtr SteamAPI_SteamUGC_v016()
 public IntPtr GetUserInterfacePointer()
-internal IntPtr SteamAPI_SteamGameServerUGC_v015()
+internal IntPtr SteamAPI_SteamGameServerUGC_v016()
 public IntPtr GetServerInterfacePointer()
 private UGCQueryHandle_t _CreateQueryUserUGCRequest(IntPtr self, AccountID_t unAccountID, UserUGCList eListType, UgcType eMatchingUGCType, UserUGCListSortOrder eSortOrder, AppId nCreatorAppID, AppId nConsumerAppID, UInt32 unPage)
 internal UGCQueryHandle_t CreateQueryUserUGCRequest(AccountID_t unAccountID, UserUGCList eListType, UgcType eMatchingUGCType, UserUGCListSortOrder eSortOrder, AppId nCreatorAppID, AppId nConsumerAppID, UInt32 unPage)
@@ -6620,6 +6721,10 @@ private bool _SetSearchText(IntPtr self, UGCQueryHandle_t handle, string pSearch
 internal bool SetSearchText(UGCQueryHandle_t handle, string pSearchText)
 private bool _SetRankedByTrendDays(IntPtr self, UGCQueryHandle_t handle, UInt32 unDays)
 internal bool SetRankedByTrendDays(UGCQueryHandle_t handle, UInt32 unDays)
+private bool _SetTimeCreatedDateRange(IntPtr self, UGCQueryHandle_t handle, RTime32 rtStart, RTime32 rtEnd)
+internal bool SetTimeCreatedDateRange(UGCQueryHandle_t handle, RTime32 rtStart, RTime32 rtEnd)
+private bool _SetTimeUpdatedDateRange(IntPtr self, UGCQueryHandle_t handle, RTime32 rtStart, RTime32 rtEnd)
+internal bool SetTimeUpdatedDateRange(UGCQueryHandle_t handle, RTime32 rtStart, RTime32 rtEnd)
 private bool _AddRequiredKeyValueTag(IntPtr self, UGCQueryHandle_t handle, string pKey, string pValue)
 internal bool AddRequiredKeyValueTag(UGCQueryHandle_t handle, string pKey, string pValue)
 private SteamAPICall_t _CreateItem(IntPtr self, AppId nConsumerAppId, WorkshopFileType eFileType)
@@ -6710,6 +6815,10 @@ private SteamAPICall_t _GetAppDependencies(IntPtr self, PublishedFileId nPublish
 internal CallResult`1<GetAppDependenciesResult_t> GetAppDependencies(PublishedFileId nPublishedFileID)
 private SteamAPICall_t _DeleteItem(IntPtr self, PublishedFileId nPublishedFileID)
 internal CallResult`1<DeleteItemResult_t> DeleteItem(PublishedFileId nPublishedFileID)
+private bool _ShowWorkshopEULA(IntPtr self)
+internal bool ShowWorkshopEULA()
+private SteamAPICall_t _GetWorkshopEULAStatus(IntPtr self)
+internal CallResult`1<WorkshopEULAStatus_t> GetWorkshopEULAStatus()
 }
 internal Steamworks.ISteamUser : SteamInterface {
 internal void .ctor(bool IsGameServer)
@@ -6721,10 +6830,10 @@ private bool _BLoggedOn(IntPtr self)
 internal bool BLoggedOn()
 private SteamId _GetSteamID(IntPtr self)
 internal SteamId GetSteamID()
-private int _InitiateGameConnection(IntPtr self, IntPtr pAuthBlob, int cbMaxAuthBlob, SteamId steamIDGameServer, UInt32 unIPServer, ushort usPortServer, bool bSecure)
-internal int InitiateGameConnection(IntPtr pAuthBlob, int cbMaxAuthBlob, SteamId steamIDGameServer, UInt32 unIPServer, ushort usPortServer, bool bSecure)
-private void _TerminateGameConnection(IntPtr self, UInt32 unIPServer, ushort usPortServer)
-internal void TerminateGameConnection(UInt32 unIPServer, ushort usPortServer)
+private int _InitiateGameConnection_DEPRECATED(IntPtr self, IntPtr pAuthBlob, int cbMaxAuthBlob, SteamId steamIDGameServer, UInt32 unIPServer, ushort usPortServer, bool bSecure)
+internal int InitiateGameConnection_DEPRECATED(IntPtr pAuthBlob, int cbMaxAuthBlob, SteamId steamIDGameServer, UInt32 unIPServer, ushort usPortServer, bool bSecure)
+private void _TerminateGameConnection_DEPRECATED(IntPtr self, UInt32 unIPServer, ushort usPortServer)
+internal void TerminateGameConnection_DEPRECATED(UInt32 unIPServer, ushort usPortServer)
 private void _TrackAppUsageEvent(IntPtr self, GameId gameID, int eAppUsageEvent, string pchExtraInfo)
 internal void TrackAppUsageEvent(GameId gameID, int eAppUsageEvent, string pchExtraInfo)
 private bool _GetUserDataFolder(IntPtr self, IntPtr pchBuffer, int cubBuffer)
@@ -6945,6 +7054,14 @@ private int _FilterText(IntPtr self, TextFilteringContext eContext, SteamId sour
 internal int FilterText(TextFilteringContext eContext, SteamId sourceSteamID, string pchInputMessage, String& pchOutFilteredText)
 private SteamIPv6ConnectivityState _GetIPv6ConnectivityState(IntPtr self, SteamIPv6ConnectivityProtocol eProtocol)
 internal SteamIPv6ConnectivityState GetIPv6ConnectivityState(SteamIPv6ConnectivityProtocol eProtocol)
+private bool _IsSteamRunningOnSteamDeck(IntPtr self)
+internal bool IsSteamRunningOnSteamDeck()
+private bool _ShowFloatingGamepadTextInput(IntPtr self, TextInputMode eKeyboardMode, int nTextFieldXPosition, int nTextFieldYPosition, int nTextFieldWidth, int nTextFieldHeight)
+internal bool ShowFloatingGamepadTextInput(TextInputMode eKeyboardMode, int nTextFieldXPosition, int nTextFieldYPosition, int nTextFieldWidth, int nTextFieldHeight)
+private void _SetGameLauncherMode(IntPtr self, bool bLauncherMode)
+internal void SetGameLauncherMode(bool bLauncherMode)
+private bool _DismissFloatingGamepadTextInput(IntPtr self)
+internal bool DismissFloatingGamepadTextInput()
 }
 internal Steamworks.ISteamVideo : SteamInterface {
 internal void .ctor(bool IsGameServer)
@@ -7003,26 +7120,6 @@ public ItemUpdateStatus UploadingContent
 public ItemUpdateStatus UploadingPreviewFile
 public ItemUpdateStatus CommittingChanges
 }
-internal Steamworks.LaunchOptionType : Enum {
-public int value__
-public LaunchOptionType None
-public LaunchOptionType Default
-public LaunchOptionType SafeMode
-public LaunchOptionType Multiplayer
-public LaunchOptionType Config
-public LaunchOptionType OpenVR
-public LaunchOptionType Server
-public LaunchOptionType Editor
-public LaunchOptionType Manual
-public LaunchOptionType Benchmark
-public LaunchOptionType Option1
-public LaunchOptionType Option2
-public LaunchOptionType Option3
-public LaunchOptionType OculusVR
-public LaunchOptionType OpenVROverlay
-public LaunchOptionType OSVR
-public LaunchOptionType Dialog
-}
 internal Steamworks.LeaderboardDataRequest : Enum {
 public int value__
 public LeaderboardDataRequest Global
@@ -7059,15 +7156,6 @@ public LobbyType FriendsOnly
 public LobbyType Public
 public LobbyType Invisible
 public LobbyType PrivateUnique
-}
-internal Steamworks.MarketingMessageFlags : Enum {
-public int value__
-public MarketingMessageFlags None
-public MarketingMessageFlags HighPriority
-public MarketingMessageFlags PlatformWindows
-public MarketingMessageFlags PlatformMac
-public MarketingMessageFlags PlatformLinux
-public MarketingMessageFlags PlatformRestrictions
 }
 internal Steamworks.MarketNotAllowedReasonFlags : Enum {
 public int value__
@@ -7117,6 +7205,21 @@ public MusicStatus Idle
 internal Steamworks.NetConfig : Enum {
 public int value__
 public NetConfig Invalid
+public NetConfig TimeoutInitial
+public NetConfig TimeoutConnected
+public NetConfig SendBufferSize
+public NetConfig ConnectionUserData
+public NetConfig SendRateMin
+public NetConfig SendRateMax
+public NetConfig NagleTime
+public NetConfig IP_AllowWithoutAuth
+public NetConfig MTU_PacketSize
+public NetConfig MTU_DataSize
+public NetConfig Unencrypted
+public NetConfig SymmetricConnect
+public NetConfig LocalVirtualPort
+public NetConfig DualWifi_Enable
+public NetConfig EnableDiagnosticsUI
 public NetConfig FakePacketLoss_Send
 public NetConfig FakePacketLoss_Recv
 public NetConfig FakePacketLag_Send
@@ -7127,25 +7230,18 @@ public NetConfig FakePacketReorder_Time
 public NetConfig FakePacketDup_Send
 public NetConfig FakePacketDup_Recv
 public NetConfig FakePacketDup_TimeMax
-public NetConfig TimeoutInitial
-public NetConfig TimeoutConnected
-public NetConfig SendBufferSize
-public NetConfig SendRateMin
-public NetConfig SendRateMax
-public NetConfig NagleTime
-public NetConfig IP_AllowWithoutAuth
-public NetConfig MTU_PacketSize
-public NetConfig MTU_DataSize
-public NetConfig Unencrypted
-public NetConfig EnumerateDevVars
-public NetConfig SymmetricConnect
-public NetConfig LocalVirtualPort
+public NetConfig PacketTraceMaxBytes
+public NetConfig FakeRateLimit_Send_Rate
+public NetConfig FakeRateLimit_Send_Burst
+public NetConfig FakeRateLimit_Recv_Rate
+public NetConfig FakeRateLimit_Recv_Burst
 public NetConfig Callback_ConnectionStatusChanged
 public NetConfig Callback_AuthStatusChanged
 public NetConfig Callback_RelayNetworkStatusChanged
 public NetConfig Callback_MessagesSessionRequest
 public NetConfig Callback_MessagesSessionFailed
 public NetConfig Callback_CreateConnectionSignaling
+public NetConfig Callback_FakeIPResult
 public NetConfig P2P_STUN_ServerList
 public NetConfig P2P_Transport_ICE_Enable
 public NetConfig P2P_Transport_ICE_Penalty
@@ -7164,6 +7260,7 @@ public NetConfig LogLevel_Message
 public NetConfig LogLevel_PacketGaps
 public NetConfig LogLevel_P2PRendezvous
 public NetConfig LogLevel_SDRRelayPings
+public NetConfig DELETED_EnumerateDevVars
 }
 internal Steamworks.NetConfigResult : Enum {
 public int value__
@@ -7209,8 +7306,6 @@ public NetConnectionEnd Remote_Min
 public NetConnectionEnd Remote_Timeout
 public NetConnectionEnd Remote_BadCrypt
 public NetConnectionEnd Remote_BadCert
-public NetConnectionEnd Remote_NotLoggedIn
-public NetConnectionEnd Remote_NotRunningApp
 public NetConnectionEnd Remote_BadProtocolVersion
 public NetConnectionEnd Remote_P2P_ICE_NoPublicAddresses
 public NetConnectionEnd Remote_Max
@@ -7218,7 +7313,6 @@ public NetConnectionEnd Misc_Min
 public NetConnectionEnd Misc_Generic
 public NetConnectionEnd Misc_InternalError
 public NetConnectionEnd Misc_Timeout
-public NetConnectionEnd Misc_RelayConnectivity
 public NetConnectionEnd Misc_SteamConnectivity
 public NetConnectionEnd Misc_NoRelaySessionsToClient
 public NetConnectionEnd Misc_P2P_Rendezvous
@@ -7369,6 +7463,18 @@ public Relationship IgnoredFriend
 public Relationship Suggested_DEPRECATED
 public Relationship Max
 }
+internal Steamworks.RemoteStorageFilePathType : Enum {
+public int value__
+public RemoteStorageFilePathType Invalid
+public RemoteStorageFilePathType Absolute
+public RemoteStorageFilePathType APIFilename
+}
+internal Steamworks.RemoteStorageLocalFileChange : Enum {
+public int value__
+public RemoteStorageLocalFileChange Invalid
+public RemoteStorageLocalFileChange FileUpdated
+public RemoteStorageLocalFileChange FileDeleted
+}
 internal Steamworks.RemoteStoragePlatform : Enum {
 public int value__
 public RemoteStoragePlatform None
@@ -7509,6 +7615,10 @@ public Result CommunityCooldown
 public Result NoLauncherSpecified
 public Result MustAgreeToSSA
 public Result LauncherMigrated
+public Result SteamRealmMismatch
+public Result InvalidSignature
+public Result ParseFailure
+public Result NoVerifiedPhone
 }
 public Steamworks.RoomEnter : Enum {
 public int value__
@@ -7845,9 +7955,32 @@ internal void InitializeInterface(bool server)
 public void RunFrame()
 public IEnumerable`1<Controller> get_Controllers()
 public string GetDigitalActionGlyph(Controller controller, string action)
+public string GetPngActionGlyph(Controller controller, string action, GlyphSize size)
+public string GetSvgActionGlyph(Controller controller, string action)
 internal InputDigitalActionHandle_t GetDigitalActionHandle(string name)
 internal InputAnalogActionHandle_t GetAnalogActionHandle(string name)
 internal InputActionSetHandle_t GetActionSetHandle(string name)
+}
+internal Steamworks.SteamInputActionEventType : Enum {
+public int value__
+public SteamInputActionEventType DigitalAction
+public SteamInputActionEventType AnalogAction
+}
+internal Steamworks.SteamInputConfigurationEnableType : Enum {
+public int value__
+public SteamInputConfigurationEnableType None
+public SteamInputConfigurationEnableType Playstation
+public SteamInputConfigurationEnableType Xbox
+public SteamInputConfigurationEnableType Generic
+public SteamInputConfigurationEnableType Switch
+}
+internal Steamworks.SteamInputGlyphStyle : Enum {
+public int value__
+public SteamInputGlyphStyle Knockout
+public SteamInputGlyphStyle Light
+public SteamInputGlyphStyle Dark
+public SteamInputGlyphStyle NeutralColorABXY
+public SteamInputGlyphStyle SolidABXY
 }
 internal Steamworks.SteamInputLEDFlag : Enum {
 public int value__
@@ -8020,17 +8153,6 @@ public void PlayNext()
 public float get_Volume()
 public void set_Volume(float value)
 }
-internal Steamworks.SteamNetTransportKind : Enum {
-public int value__
-public SteamNetTransportKind Unknown
-public SteamNetTransportKind LoopbackBuffers
-public SteamNetTransportKind LocalHost
-public SteamNetTransportKind UDP
-public SteamNetTransportKind UDPProbablyLocal
-public SteamNetTransportKind TURN
-public SteamNetTransportKind SDRP2P
-public SteamNetTransportKind SDRHostedServer
-}
 public Steamworks.SteamNetworking : SteamSharedClass`1<SteamNetworking> {
 public Action`1<SteamId> OnP2PSessionRequest
 public Action`2<SteamId, P2PSessionError> OnP2PConnectionFailed
@@ -8042,6 +8164,7 @@ public bool AcceptP2PSessionWithUser(SteamId user)
 public bool AllowP2PPacketRelay(bool allow)
 public bool CloseP2PSessionWithUser(SteamId user)
 public bool IsP2PPacketAvailable(int channel)
+public bool IsP2PPacketAvailable(UInt32& msgSize, int channel)
 public Nullable`1<P2Packet> ReadP2PPacket(int channel)
 public bool ReadP2PPacket(Byte[] buffer, UInt32& size, SteamId& steamid, int channel)
 public bool ReadP2PPacket(Byte* buffer, UInt32 cbuf, UInt32& size, SteamId& steamid, int channel)
@@ -8061,10 +8184,18 @@ public SteamNetworkingAvailability Current
 public SteamNetworkingAvailability Unknown
 public SteamNetworkingAvailability Force32bit
 }
+internal Steamworks.SteamNetworkingFakeIPType : Enum {
+public int value__
+public SteamNetworkingFakeIPType Invalid
+public SteamNetworkingFakeIPType NotFake
+public SteamNetworkingFakeIPType GlobalIPv4
+public SteamNetworkingFakeIPType LocalIPv4
+}
 public Steamworks.SteamNetworkingSockets : SteamSharedClass`1<SteamNetworkingSockets> {
 private Dictionary`2<UInt32, SocketManager> SocketInterfaces
 private Dictionary`2<UInt32, ConnectionManager> ConnectionInterfaces
 private Action`2<Connection, ConnectionInfo> OnConnectionStatusChanged
+private Action`1<NetAddress> OnFakeIPResult
 internal ISteamNetworkingSockets Internal
 public NetIdentity Identity
 internal ISteamNetworkingSockets get_Internal()
@@ -8078,6 +8209,9 @@ internal void InstallEvents(bool server)
 private void ConnectionStatusChanged(SteamNetConnectionStatusChangedCallback_t data)
 public void add_OnConnectionStatusChanged(Action`2<Connection, ConnectionInfo> value)
 public void remove_OnConnectionStatusChanged(Action`2<Connection, ConnectionInfo> value)
+private void FakeIPResult(SteamNetworkingFakeIPResult_t data)
+public void add_OnFakeIPResult(Action`1<NetAddress> value)
+public void remove_OnFakeIPResult(Action`1<NetAddress> value)
 public T CreateNormalSocket(NetAddress address)
 public SocketManager CreateNormalSocket(NetAddress address, ISocketManager intrface)
 public T ConnectNormal(NetAddress address)
@@ -8086,6 +8220,10 @@ public T CreateRelaySocket(int virtualport)
 public SocketManager CreateRelaySocket(int virtualport, ISocketManager intrface)
 public T ConnectRelay(SteamId serverId, int virtualport)
 public ConnectionManager ConnectRelay(SteamId serverId, int virtualport, IConnectionManager iface)
+public bool RequestFakeIP(int numFakePorts)
+public Result GetFakeIP(int fakePortIndex, NetAddress& address)
+public T CreateRelaySocketFakeIP(int fakePortIndex)
+public SocketManager CreateRelaySocketFakeIP(int fakePortIndex, ISocketManager intrface)
 }
 public Steamworks.SteamNetworkingUtils : SteamSharedClass`1<SteamNetworkingUtils> {
 private Action`2<NetDebugOutput, string> OnDebugOutput
@@ -8106,6 +8244,12 @@ public int Timeout
 public int SendBufferSize
 public int AllowWithoutAuth
 public int Unencrypted
+public int DebugLevelAckRTT
+public int DebugLevelPacketDecode
+public int DebugLevelMessage
+public int DebugLevelPacketGaps
+public int DebugLevelP2PRendezvous
+public int DebugLevelSDRRelayPings
 public NetDebugOutput DebugLevel
 internal ISteamNetworkingUtils get_Internal()
 internal void InitializeInterface(bool server)
@@ -8137,6 +8281,18 @@ public int get_AllowWithoutAuth()
 public void set_AllowWithoutAuth(int value)
 public int get_Unencrypted()
 public void set_Unencrypted(int value)
+public int get_DebugLevelAckRTT()
+public void set_DebugLevelAckRTT(int value)
+public int get_DebugLevelPacketDecode()
+public void set_DebugLevelPacketDecode(int value)
+public int get_DebugLevelMessage()
+public void set_DebugLevelMessage(int value)
+public int get_DebugLevelPacketGaps()
+public void set_DebugLevelPacketGaps(int value)
+public int get_DebugLevelP2PRendezvous()
+public void set_DebugLevelP2PRendezvous(int value)
+public int get_DebugLevelSDRRelayPings()
+public void set_DebugLevelSDRRelayPings(int value)
 public NetDebugOutput get_DebugLevel()
 public void set_DebugLevel(NetDebugOutput value)
 private void OnDebugMessage(NetDebugOutput nType, IntPtr str)
@@ -8297,7 +8453,7 @@ public SteamId SteamId
 public bool LoggedOn
 public IPAddress PublicIp
 public bool AutomaticHeartbeats
-public int AutomaticHeartbeatRate
+public bool AdvertiseServer
 internal ISteamGameServer get_Internal()
 internal void InitializeInterface(bool server)
 public bool get_IsValid()
@@ -8343,7 +8499,7 @@ public void LogOff()
 public bool get_LoggedOn()
 public IPAddress get_PublicIp()
 public void set_AutomaticHeartbeats(bool value)
-public void set_AutomaticHeartbeatRate(int value)
+public void set_AdvertiseServer(bool value)
 public void ForceHeartbeat()
 public void UpdatePlayer(SteamId steamid, string name, int score)
 public void SetKey(string Key, string Value)
@@ -8363,7 +8519,6 @@ internal void DestroyInterface(bool server)
 }
 public Steamworks.SteamServerInit : ValueType {
 public IPAddress IpAddress
-public ushort SteamPort
 public ushort GamePort
 public ushort QueryPort
 public bool Secure
@@ -8372,7 +8527,6 @@ public string ModDir
 public string GameDescription
 public bool DedicatedServer
 public void .ctor(string modDir, string gameDesc)
-public SteamServerInit WithRandomSteamPort()
 public SteamServerInit WithQueryShareGamePort()
 }
 public Steamworks.SteamServerStats : SteamServerClass`1<SteamServerStats> {
@@ -8400,12 +8554,21 @@ internal void DestroyInterface(bool server)
 }
 public Steamworks.SteamUGC : SteamSharedClass`1<SteamUGC> {
 private Action`1<Result> OnDownloadItemResult
+private Action`2<AppId, PublishedFileId> OnItemSubscribed
+private Action`2<AppId, PublishedFileId> OnItemUnsubscribed
+private Action`2<AppId, PublishedFileId> OnItemInstalled
 internal ISteamUGC Internal
 internal ISteamUGC get_Internal()
 internal void InitializeInterface(bool server)
 internal void InstallEvents(bool server)
 public void add_OnDownloadItemResult(Action`1<Result> value)
 public void remove_OnDownloadItemResult(Action`1<Result> value)
+public void add_OnItemSubscribed(Action`2<AppId, PublishedFileId> value)
+public void remove_OnItemSubscribed(Action`2<AppId, PublishedFileId> value)
+public void add_OnItemUnsubscribed(Action`2<AppId, PublishedFileId> value)
+public void remove_OnItemUnsubscribed(Action`2<AppId, PublishedFileId> value)
+public void add_OnItemInstalled(Action`2<AppId, PublishedFileId> value)
+public void remove_OnItemInstalled(Action`2<AppId, PublishedFileId> value)
 public Task`1<bool> DeleteFileAsync(PublishedFileId fileId)
 public bool Download(PublishedFileId fileId, bool highPriority)
 public Task`1<bool> DownloadAsync(PublishedFileId fileId, Action`1<float> progress, int milisecondsUpdateDelay, CancellationToken ct)
@@ -8415,6 +8578,8 @@ public Task`1<bool> StopPlaytimeTracking(PublishedFileId fileId)
 public Task`1<bool> StopPlaytimeTrackingForAllItems()
 public void SuspendDownloads()
 public void ResumeDownloads()
+public bool ShowWorkshopEula()
+public Task`1<Nullable`1<bool>> GetWorkshopEulaStatus()
 }
 public Steamworks.SteamUser : SteamClientClass`1<SteamUser> {
 private Dictionary`2<string, string> richPresence
@@ -8532,16 +8697,6 @@ public int GetStatInt(string name)
 public float GetStatFloat(string name)
 public bool ResetAll(bool includeAchievements)
 }
-internal Steamworks.SteamUserStatType : Enum {
-public int value__
-public SteamUserStatType INVALID
-public SteamUserStatType INT
-public SteamUserStatType FLOAT
-public SteamUserStatType AVGRATE
-public SteamUserStatType ACHIEVEMENTS
-public SteamUserStatType GROUPACHIEVEMENTS
-public SteamUserStatType MAX
-}
 public Steamworks.SteamUtils : SteamSharedClass`1<SteamUtils> {
 private Action OnIpCountryChanged
 private Action`1<int> OnLowBatteryPower
@@ -8564,6 +8719,7 @@ public bool IsSteamRunningInVR
 public bool IsSteamInBigPictureMode
 public bool VrHeadsetStreaming
 public bool IsSteamChinaLauncher
+public bool IsRunningOnSteamDeck
 internal ISteamUtils get_Internal()
 internal void InitializeInterface(bool server)
 internal void InstallEvents(bool server)
@@ -8601,6 +8757,10 @@ public bool get_VrHeadsetStreaming()
 public void set_VrHeadsetStreaming(bool value)
 internal bool IsCallComplete(SteamAPICall_t call, Boolean& failed)
 public bool get_IsSteamChinaLauncher()
+public bool InitFilterText()
+public string FilterText(TextFilteringContext context, SteamId sourceSteamID, string inputMessage)
+public bool get_IsRunningOnSteamDeck()
+public void SetGameLauncherMode(bool mode)
 }
 public Steamworks.SteamVideo : SteamClientClass`1<SteamVideo> {
 internal ISteamVideo Internal
@@ -8612,12 +8772,19 @@ internal void InstallEvents()
 public bool get_IsBroadcasting()
 public int get_NumViewers()
 }
-internal Steamworks.TextFilteringContext : Enum {
+public Steamworks.TextFilteringContext : Enum {
 public int value__
 public TextFilteringContext Unknown
 public TextFilteringContext GameContent
 public TextFilteringContext Chat
 public TextFilteringContext Name
+}
+public Steamworks.TextInputMode : Enum {
+public int value__
+public TextInputMode SingleLine
+public TextInputMode MultipleLines
+public TextInputMode Email
+public TextInputMode Numeric
 }
 public Steamworks.Ugc.Editor : ValueType {
 private PublishedFileId fileId
@@ -8996,6 +9163,7 @@ public UGCQuery RankedByAveragePlaytimeTrend
 public UGCQuery RankedByLifetimeAveragePlaytime
 public UGCQuery RankedByPlaytimeSessionsTrend
 public UGCQuery RankedByLifetimePlaytimeSessions
+public UGCQuery RankedByLastUpdatedDate
 }
 internal Steamworks.UGCReadAction : Enum {
 public int value__
@@ -9102,43 +9270,6 @@ public VoiceResult Restricted
 public VoiceResult UnsupportedCodec
 public VoiceResult ReceiverOutOfDate
 public VoiceResult ReceiverDidNotAnswer
-}
-internal Steamworks.VRHMDType : Enum {
-public int value__
-public VRHMDType MDType_None
-public VRHMDType MDType_Unknown
-public VRHMDType MDType_HTC_Dev
-public VRHMDType MDType_HTC_VivePre
-public VRHMDType MDType_HTC_Vive
-public VRHMDType MDType_HTC_VivePro
-public VRHMDType MDType_HTC_ViveCosmos
-public VRHMDType MDType_HTC_Unknown
-public VRHMDType MDType_Oculus_DK1
-public VRHMDType MDType_Oculus_DK2
-public VRHMDType MDType_Oculus_Rift
-public VRHMDType MDType_Oculus_RiftS
-public VRHMDType MDType_Oculus_Quest
-public VRHMDType MDType_Oculus_Unknown
-public VRHMDType MDType_Acer_Unknown
-public VRHMDType MDType_Acer_WindowsMR
-public VRHMDType MDType_Dell_Unknown
-public VRHMDType MDType_Dell_Visor
-public VRHMDType MDType_Lenovo_Unknown
-public VRHMDType MDType_Lenovo_Explorer
-public VRHMDType MDType_HP_Unknown
-public VRHMDType MDType_HP_WindowsMR
-public VRHMDType MDType_HP_Reverb
-public VRHMDType MDType_HP_ReverbG2
-public VRHMDType MDType_Samsung_Unknown
-public VRHMDType MDType_Samsung_Odyssey
-public VRHMDType MDType_Unannounced_Unknown
-public VRHMDType MDType_Unannounced_WindowsMR
-public VRHMDType MDType_vridge
-public VRHMDType MDType_Huawei_Unknown
-public VRHMDType MDType_Huawei_VR2
-public VRHMDType MDType_Huawei_EndOfRange
-public VRHMDType mdType_Valve_Unknown
-public VRHMDType mdType_Valve_Index
 }
 internal Steamworks.VRScreenshotType : Enum {
 public int value__

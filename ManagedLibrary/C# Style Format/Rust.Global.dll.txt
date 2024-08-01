@@ -71,8 +71,6 @@ public T TakeOrInstantiate(GameObject prefabSource)
 public Facepunch.Instantiate : object {
 public GameObject GameObject(GameObject go, Transform parent)
 public GameObject GameObject(GameObject go, Vector3 pos, Quaternion rot)
-public long WrapStart(GameObject go)
-public void WrapEnd(GameObject go, long memory)
 }
 public Facepunch.ObjectPool`1 : object {
 public List`1<T> list
@@ -204,6 +202,8 @@ public bool Trace(Ray ray, RaycastHit& hit, float maxDistance)
 public Vector3 ClosestPoint(Vector3 target)
 public float Distance(OBB other)
 public float Distance(Vector3 position)
+public float SqrDistance(OBB other)
+public float SqrDistance(Vector3 position)
 }
 public ObjectWorkQueue`1 : object {
 protected Queue`1<T> queue
@@ -215,6 +215,7 @@ public double totalTime
 public int queueProcessedLast
 public double lastMS
 public int hashsetMaxLength
+private Stopwatch stopwatch
 public int queueLength
 public int get_queueLength()
 public void Clear()
@@ -237,6 +238,9 @@ public AmmoTypes ROCKET
 public AmmoTypes NAILS
 public AmmoTypes AMMO_40MM
 public AmmoTypes SNOWBALL
+public AmmoTypes SPEARGUN_BOLT
+public AmmoTypes TORPEDO
+public AmmoTypes MLRS_ROCKET
 }
 public Rust.Application : object {
 public bool isQuitting
@@ -396,14 +400,15 @@ public int EntityLineOfSightCheck
 public int PlayerBuildings
 public int PlannerPlacement
 public int Solid
+public int StaticSolid
 public int VisCulling
-public int AltitudeCheck
 public int HABGroundEffect
 public int AILineOfSight
 public int DismountCheck
 public int AIPlacement
 public int WheelRay
 public int Water
+public int Sprays
 }
 public Rust.PropRenderer : MonoBehaviour {
 public bool HideLowLods
@@ -541,6 +546,8 @@ public float SqrDistance(Vector3 pos)
 public UnityEngine.MathEx : object {
 public float SnapTo(float val, float snapValue)
 public bool QuadTest(Ray ray, Vector3 planeCenter, Quaternion planeRot, Vector2 planeSize, Vector3& hitPosition, float gridSize)
+public float BiasedLerp(float x, float bias)
+public float Bias(float x, float bias)
 }
 public UnityEngine.StringEx : object {
 private Regex regexNumeric
@@ -555,6 +562,7 @@ public string EscapeRichText(string str)
 public IEnumerable`1<string> SplitToLines(string input)
 public IEnumerable`1<string> SplitToChunks(string str, int chunkLength)
 public UInt32 ManifestHash(string str)
+public bool StartsWithAny(string str, String[] values)
 }
 public UnityEngine.Vector2Ex : object {
 public Vector2 WithX(Vector2 v, float x)
@@ -612,6 +620,10 @@ public Vector4 Abs(Vector4 v)
 public Vector3 Abs(Vector3 v)
 public Vector2 Abs(Vector2 v)
 public Vector3 Parse(string p)
+public Vector3 GetWithInaccuracy(Vector3 o, float maxAngle)
+}
+public WorldSpaceGrid : object {
+public Vector3 ClosestGridCell(Vector3 worldPos, float gridSize, float cellSize)
 }
 public WorldSpaceGrid`1 : object {
 public T[] Cells

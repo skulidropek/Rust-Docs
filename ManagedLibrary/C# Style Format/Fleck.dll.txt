@@ -49,6 +49,7 @@ public void Dispose()
 public void Receive(Span`1<byte> newData)
 public MemoryBuffer CreateHandshake()
 public MemoryBuffer FrameText(string text)
+public MemoryBuffer FrameText(MemoryBuffer utf8StringBytes)
 public MemoryBuffer FrameBinary(MemoryBuffer bytes)
 public MemoryBuffer FramePing(MemoryBuffer bytes)
 public MemoryBuffer FramePong(MemoryBuffer bytes)
@@ -69,6 +70,7 @@ public Fleck.IHandler {
 public void Receive(Span`1<byte> newData)
 public MemoryBuffer CreateHandshake()
 public MemoryBuffer FrameText(string text)
+public MemoryBuffer FrameText(MemoryBuffer utf8StringBytes)
 public MemoryBuffer FrameBinary(MemoryBuffer bytes)
 public MemoryBuffer FramePing(MemoryBuffer bytes)
 public MemoryBuffer FramePong(MemoryBuffer bytes)
@@ -305,6 +307,7 @@ private void set_ConnectionInfo(IWebSocketConnectionInfo value)
 public bool get_IsAvailable()
 public void .ctor(ISocket socket, Action`1<IWebSocketConnection> initialize, Func`2<ArraySegment`1<byte>, WebSocketHttpRequest> parseRequest, Func`3<IWebSocketConnection, WebSocketHttpRequest, IHandler> handlerFactory)
 public void Send(string message)
+public void SendText(MemoryBuffer utf8StringBytes)
 public void Send(MemoryBuffer message)
 public void SendPing(MemoryBuffer message)
 public void SendPong(MemoryBuffer message)
@@ -363,12 +366,10 @@ private void set_StatusCode(ushort value)
 public Fleck.WebSocketHttpRequest : object {
 private string <Method>k__BackingField
 private string <Path>k__BackingField
-private string <Body>k__BackingField
 private string <Scheme>k__BackingField
 private IDictionary`2<string, string> <Headers>k__BackingField
 public string Method
 public string Path
-public string Body
 public string Scheme
 public string Item
 public IDictionary`2<string, string> Headers
@@ -376,8 +377,6 @@ public string get_Method()
 public void set_Method(string value)
 public string get_Path()
 public void set_Path(string value)
-public string get_Body()
-public void set_Body(string value)
 public string get_Scheme()
 public void set_Scheme(string value)
 public string get_Item(string name)

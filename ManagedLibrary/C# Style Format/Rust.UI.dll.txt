@@ -1,3 +1,6 @@
+public IAutoLayout {
+public void DoLayout()
+}
 public Rust.UI.Blocker : RustControl {
 public void OnPointerDown(PointerEventData eventData)
 public void AddToCanvasOf(RectTransform rt)
@@ -106,23 +109,30 @@ public void OnClick()
 }
 public Rust.UI.HttpImage : MonoBehaviour {
 public Dictionary`2<string, UnityWebRequest> RequestCache
-public Dictionary`2<string, Texture2D> TextureCache
+public Dictionary`2<string, ValueTuple`2<Texture2D, Sprite>> TextureCache
 public Texture2D LoadingImage
 public Texture2D MissingImage
-private RawImage image
+private RawImage rawImage
+private Image image
+private Sprite loadingSprite
+private Sprite missingSprite
 public string Url
 public bool PreserveAspectHeight
+public bool GenerateMipmaps
 public float MaxWidth
 public float MaxHeight
 private void Init()
 private void Start()
+private void OnDestroy()
 public bool Load(string url)
 private IEnumerator WaitForLoad(string url)
-private void UpdateImageTexture(Texture2D tex)
+private void UpdateImageTexture(ValueTuple`2<Texture2D, Sprite> tex)
 public void SetMissingImage()
 public void SetLoadingImage()
 private IEnumerator StartAndWaitForLoad(string url)
 private void AutosizeForTexture(Texture2D texture)
+private void SetImageEnabled(bool enabled)
+private Sprite CreateSprite(Texture2D texture)
 }
 public Rust.UI.Icons : Enum {
 public int value__
@@ -1977,6 +1987,7 @@ public Image Background
 public RustText Text
 public RustText SubText
 public RustIcon Icon
+public Image IconImage
 public UnityEvent OnPressed
 public UnityEvent OnReleased
 public bool IsToggle
@@ -2063,6 +2074,46 @@ public Icons Icon
 public Icons get_Icon()
 public void set_Icon(Icons value)
 }
+public Rust.UI.RustImageButton : RustControl {
+public Image Background
+public Image Icon
+public UnityEvent OnPressed
+public UnityEvent OnReleased
+public bool IsToggle
+public bool UnpressSiblings
+public bool PreventToggleOff
+public Transform TabPanelTarget
+public Sprite PressedImage
+public Sprite UnpressedImage
+public bool Value
+public float minWidth
+public float preferredWidth
+public float flexibleWidth
+public float minHeight
+public float preferredHeight
+public float flexibleHeight
+public int layoutPriority
+public bool get_Value()
+public void set_Value(bool value)
+public void Press()
+public void Unpress()
+public void OnPointerDown(PointerEventData eventData)
+public void Toggle(bool v, bool forced)
+private void ToggleTabPanel(bool onOff)
+private void DoUnpressSiblings()
+public void OnPointerUp(PointerEventData eventData)
+protected void OnDisable()
+protected void ApplyStyle(Group s)
+public float get_minWidth()
+public float get_preferredWidth()
+public float get_flexibleWidth()
+public float get_minHeight()
+public float get_preferredHeight()
+public float get_flexibleHeight()
+public int get_layoutPriority()
+public void CalculateLayoutInputHorizontal()
+public void CalculateLayoutInputVertical()
+}
 public Rust.UI.RustInput : RustControl {
 public TMP_InputField InputField
 public Image Background
@@ -2095,6 +2146,7 @@ public float Spacing
 public RectOffset Padding
 public bool ChildrenFill
 public bool ResizeToChildren
+public bool ResizeToChildrenOpposite
 public RectTransform[] IgnoreLayout
 public int MaxHeight
 public RustLayout ParentLayout
@@ -2179,6 +2231,7 @@ public bool AutoSetWidth
 public bool AutoSetHeight
 public bool AutoSizeParent
 public float MinWidth
+public float MaxWidth
 private Object[] localizationArguments
 public string LanguageToken
 public string LanguageEnglish
@@ -2349,6 +2402,7 @@ public void SetBottomLeftPosition(RectTransform trans, Vector2 newPos)
 public void SetTopLeftPosition(RectTransform trans, Vector2 newPos)
 public void SetBottomRightPosition(RectTransform trans, Vector2 newPos)
 public void SetRightTopPosition(RectTransform trans, Vector2 newPos)
+public void DoAutoLayout(RectTransform trans)
 }
 public UnityEngine.UIBehaviourEx : object {
 public void SetParent(UIBehaviour self, Transform parent)

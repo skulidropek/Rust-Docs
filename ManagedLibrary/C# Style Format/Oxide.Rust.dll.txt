@@ -401,7 +401,7 @@ public ICommandSystem CreateCommandSystemProvider()
 public string FormatText(string text)
 }
 public Oxide.Game.Rust.Libraries.Covalence.RustPlayer : object {
-internal Player Player
+private Player libPlayer
 private Permission libPerms
 private BasePlayer player
 private ulong steamId
@@ -650,19 +650,14 @@ public BasePlayer FindPlayerByName(string name)
 public BasePlayer FindPlayerById(ulong id)
 public BasePlayer FindPlayerByIdString(string id)
 private object IOnBaseCombatEntityHurt(BaseCombatEntity entity, HitInfo hitInfo)
-private int GetPlayersSensed(NPCPlayerApex npc, Vector3 position, float distance, BaseEntity[] targetList)
-private object IOnNpcSenseClose(NPCPlayerApex npc)
-private object IOnNpcSenseVision(NPCPlayerApex npc)
-private object IOnNpcTarget(NPCPlayerApex npc, BaseEntity target)
-private object IOnNpcTarget(IHTNAgent npc, BasePlayer target, int index)
 private object IOnNpcTarget(BaseNpc npc, BaseEntity target)
 private void IOnEntitySaved(BaseNetworkable baseNetworkable, SaveInfo saveInfo)
 private object IOnLoseCondition(Item item, float amount)
 private object ICanPickupEntity(BasePlayer basePlayer, DoorCloser entity)
 private object IOnBasePlayerAttacked(BasePlayer basePlayer, HitInfo hitInfo)
 private object IOnBasePlayerHurt(BasePlayer basePlayer, HitInfo hitInfo)
-private void IOnServerUsersSet(ulong steamId, UserGroup group, string playerName, string reason, long expiry)
-private void IOnServerUsersRemove(ulong steamId)
+private void OnServerUserSet(ulong steamId, UserGroup group, string playerName, string reason, long expiry)
+private void OnServerUserRemove(ulong steamId)
 private object IOnUserApprove(Connection connection)
 private void IOnPlayerBanned(Connection connection, AuthResponse status)
 private object IOnPlayerChat(ulong playerId, string playerName, string message, ChatChannel channel, BasePlayer basePlayer)
@@ -678,20 +673,18 @@ private object IOnRconCommand(IPAddress ipAddress, string command)
 private object IOnRconInitialize()
 private object IOnRunCommandLine()
 private object IOnServerCommand(Arg arg)
-private void IOnUpdateServerInformation()
-private void IOnUpdateServerDescription()
-private object OnExperimentStart(Workbench workbench, BasePlayer player)
-private object OnPlayerCorpseSpawned(BasePlayer player, BaseCorpse corpse)
-private object OnVehiclePush(BaseVehicle vehicle, BasePlayer player)
-private void OnFuelConsume(BaseOven oven, Item fuel, ItemModBurnable burnable)
-private void OnEntitySaved(Elevator elevator, SaveInfo saveInfo)
-private object OnResearchCostDetermine(Item item, ResearchTable table)
+private void OnServerInformationUpdated()
+private void OnVendingShopOpened(VendingMachine vendingMachine, BasePlayer player)
 }
 public Oxide.Game.Rust.RustExtension : Extension {
+private string OxideRustReleaseListUrl
 internal Assembly Assembly
 internal AssemblyName AssemblyName
 internal VersionNumber AssemblyVersion
 internal string AssemblyAuthors
+internal string AssemblyBranch
+private WebClient WebClient
+private VersionNumber LatestExtVersion
 public String[] Filter
 public bool IsGameExtension
 public string Name
@@ -713,6 +706,9 @@ public void .ctor(ExtensionManager manager)
 public void Load()
 public void LoadPluginWatchers(string directory)
 public void OnModLoad()
+public void GetLatestVersion(Action`2<VersionNumber, Exception> callback)
+private Task`1<VersionNumber> GetLatestExtensionVersion()
+private VersionNumber ParseVersionNumber(string versionString)
 }
 public Oxide.Game.Rust.RustPluginLoader : PluginLoader {
 public Type[] CorePlugins

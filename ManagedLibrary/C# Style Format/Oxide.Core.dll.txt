@@ -372,7 +372,9 @@ public void ReloadExtension(string filename)
 public void LoadAllExtensions(string directory)
 public IEnumerable`1<Extension> GetAllExtensions()
 public bool IsExtensionPresent(string name)
+public bool IsExtensionPresent()
 public Extension GetExtension(string name)
+public T GetExtension()
 }
 public Oxide.Core.Interface : object {
 private OxideMod <Oxide>k__BackingField
@@ -879,6 +881,7 @@ public Oxide.Core.Logging.CompoundLogger : Logger {
 private HashSet`1<Logger> subloggers
 private List`1<LogMessage> messagecache
 private bool usecache
+private object Lock
 public void AddLogger(Logger logger)
 public void RemoveLogger(Logger logger)
 public void Shutdown()
@@ -1013,6 +1016,8 @@ public void .ctor(NativeDebugCallback debugCallback)
 public void Load()
 public T GetLibrary(string name)
 public IEnumerable`1<Extension> GetAllExtensions()
+public Extension GetExtension(string name)
+public T GetExtension()
 public IEnumerable`1<PluginLoader> GetPluginLoaders()
 public void LogDebug(string format, Object[] args)
 public void LogError(string format, Object[] args)
@@ -1509,6 +1514,16 @@ public bool op_LessThan(VersionNumber a, VersionNumber b)
 public bool op_LessThanOrEqual(VersionNumber a, VersionNumber b)
 public bool Equals(object obj)
 public int GetHashCode()
+}
+public Oxide.Core.VersionNumberShortConverter : JsonConverter {
+private Char[] separators
+private Type vNumberType
+public void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+public object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+public bool CanConvert(Type objectType)
+private JsonSerializationException GenerateException(JsonReader reader, string format, Object[] args)
+private string ConvertToString(VersionNumber number)
+private VersionNumber ParseFromString(string strNumber)
 }
 public Oxide.Plugins.ExtensionMethods : object {
 public string Basename(string text, string extension)

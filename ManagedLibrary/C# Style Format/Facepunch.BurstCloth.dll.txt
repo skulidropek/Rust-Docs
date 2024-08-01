@@ -1,0 +1,193 @@
+public Facepunch.BurstCloth.BurstCloth : MonoBehaviour {
+internal int TickRateMultiplier
+internal int MaximumTickRate
+private List`1<CapsuleParams> CapsuleParamsShared
+public Transform[] RootBones
+public bool SiblingConstraints
+public int StiffnessDepth
+public float LengthModifier
+public BurstClothMaterial Material
+public Vector3 Gravity
+public Transform SimulationSpace
+public bool EnableCollisions
+public float CollisionRadius
+public AnimationCurve CollisionRadiusCurve
+public bool EnableSimulation
+public int TickRate
+public int MaxTicksPerFrame
+private List`1<Chain> _chains
+private List`1<BoneData> _boneDataOriginal
+private Vector3 _origin
+private Quaternion _rotation
+private Vector3 _up
+private Vector3 _simulationSpaceDelta
+private Transform _prevSimulationSpace
+private Vector3 _prevSimulationOrigin
+private float _accumulator
+private int _boneCount
+private int _maxBoneDepth
+private Dictionary`2<Transform, int> _boneToIndex
+private TransformAccessArray _boneTransforms
+private NativeArray`1<BoneData> _boneData
+private NativeArray`1<BoneState> _boneState
+private TransformAccessArray _colliderTransforms
+private NativeArray`1<ColliderData> _colliderData
+private NativeArray`1<ColliderState> _colliderState
+protected void Initialize()
+protected void Awake()
+protected void OnEnable()
+protected void OnDisable()
+protected internal void FrameUpdate()
+internal JobHandle SimulateSystem()
+private void SetupData()
+private void SetupManagedData()
+private void SetupNativeData()
+protected ValueTuple`3<Vector3, Quaternion, Vector3> GetOriginTransform()
+protected void GatherColliders(List`1<CapsuleParams> colliders)
+private ValueTuple`2<Vector3, float> GetBoneLocalPositionAndLength(Transform parent, Transform child)
+private ValueTuple`2<Transform, int> GetSiblingAndIndex(int chainIndex, int depth)
+private void BuildBoneToIndexMap(Dictionary`2<Transform, int> boneToIndex)
+protected CapsuleParams GetCapsuleParams(CapsuleCollider collider)
+protected void UpdateCachedMaterialData()
+}
+public Facepunch.BurstCloth.BurstClothCurveRectAttribute : PropertyAttribute {
+public Rect Rect
+public Color Color
+public void .ctor(Rect rect)
+public void .ctor(float x, float y, float width, float height)
+public void .ctor(Rect rect, Color color)
+public void .ctor(float x, float y, float width, float height, Color color)
+}
+public Facepunch.BurstCloth.BurstClothManager : MonoBehaviour {
+private BurstClothManager _instance
+internal List`1<BurstCloth> Instances
+public void LateUpdate()
+public BurstClothManager Get()
+}
+public Facepunch.BurstCloth.BurstClothMaterial : ScriptableObject {
+private float _damping
+private AnimationCurve _dampingCurve
+private float _stiffness
+private AnimationCurve _stiffnessCurve
+private float _resistance
+private AnimationCurve _resistanceCurve
+private float _slackness
+private AnimationCurve _slacknessCurve
+private BurstClothMaterial _defaultMaterial
+public float Damping
+public AnimationCurve DampingCurve
+public float Stiffness
+public AnimationCurve StiffnessCurve
+public float Resistance
+public AnimationCurve ResistanceCurve
+public float Slackness
+public AnimationCurve SlacknessCurve
+public BurstClothMaterial DefaultMaterial
+public float get_Damping()
+public void set_Damping(float value)
+public AnimationCurve get_DampingCurve()
+public float get_Stiffness()
+public void set_Stiffness(float value)
+public AnimationCurve get_StiffnessCurve()
+public float get_Resistance()
+public void set_Resistance(float value)
+public AnimationCurve get_ResistanceCurve()
+public float get_Slackness()
+public void set_Slackness(float value)
+public AnimationCurve get_SlacknessCurve()
+public BurstClothMaterial get_DefaultMaterial()
+public float GetDamping(float t)
+public float GetStiffness(float t)
+public float GetResistance(float t)
+public float GetSlackness(float t)
+}
+internal Facepunch.BurstCloth.BurstExtensions : object {
+public T& modreq(System.Runtime.InteropServices.InAttribute) GetReadonly(NativeArray`1<T> array, int index)
+public T& Get(NativeArray`1<T> array, int index)
+}
+public Facepunch.BurstCloth.CapsuleParams : ValueType {
+public Transform Transform
+public Vector3 PointA
+public Vector3 PointB
+public float Radius
+}
+internal Facepunch.BurstCloth.Jobs.BoneData : ValueType {
+public int Depth
+public int Parent
+public int Child
+public float Length
+public int LeftSibling
+public float3 LeftPosition
+public float LengthToLeft
+public int RightSibling
+public float3 RightPosition
+public float LengthToRight
+public float3 LocalPosition
+public quaternion LocalRotation
+public float3 DirectionFromOrigin
+public float ResistanceInv
+public float DampingInv
+public float Stiffness
+public float Slackness
+public float CollisionRadius
+}
+internal Facepunch.BurstCloth.Jobs.BoneState : ValueType {
+public float3 Position
+public quaternion Rotation
+public float3 Velocity
+}
+internal Facepunch.BurstCloth.Jobs.ColliderData : ValueType {
+public float Radius
+public float3 LocalPositionA
+public float3 LocalPositionB
+}
+internal Facepunch.BurstCloth.Jobs.ColliderState : ValueType {
+public float3 PositionA
+public float3 PositionB
+}
+internal Facepunch.BurstCloth.Jobs.InitializeBoneStateJob : ValueType {
+public NativeArray`1<BoneData> Data
+public NativeArray`1<BoneState> State
+public void Execute(int index, TransformAccess transform)
+}
+internal Facepunch.BurstCloth.Jobs.InitializeColliderStateJob : ValueType {
+public NativeArray`1<ColliderData> Data
+public NativeArray`1<ColliderState> State
+public void Execute(int index, TransformAccess transform)
+}
+internal Facepunch.BurstCloth.Jobs.SimulatePositionsJob : ValueType {
+public NativeArray`1<ColliderData> ColliderData
+public NativeArray`1<ColliderState> ColliderState
+public NativeArray`1<BoneData> BoneData
+public NativeArray`1<BoneState> BoneState
+public int TickRate
+public float DeltaTime
+public int IterationCount
+public float3 SimulationSpaceDelta
+public float3 Gravity
+public int StiffnessDepth
+public float LengthModifier
+public bool SiblingConstraints
+public bool EnableCollisions
+public float3 Origin
+public quaternion Rotation
+public float3 Up
+public float Radius
+public void Execute()
+private void AdjustSimulationSpace()
+private void MovePositions()
+private void ApplyPositionConstraints(NativeArray`1<float3> newPositions)
+private void ResolveCollisions()
+private void ApplyRotationConstraints()
+private float3 RayMarch(float3& origin, float3& direction, float radius, float maxDistance)
+private float Scene(float3& position)
+private float Union(float d1, float d2)
+private float Capsule(float3& p, float3& a, float3& b, float r)
+private float3 Slerp(float3 a, float3 b, float t)
+private quaternion FromToRotation(float3 from, float3 to)
+}
+internal Facepunch.BurstCloth.Jobs.UpdateTransformsJob : ValueType {
+public NativeArray`1<BoneData> Data
+public NativeArray`1<BoneState> State
+public void Execute(int index, TransformAccess transform)
+}

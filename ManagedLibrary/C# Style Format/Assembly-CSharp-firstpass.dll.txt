@@ -226,10 +226,13 @@ public string help
 public void .ctor(string help)
 }
 public Facepunch.Integration : BaseIntegration {
+private Action OnManifestUpdated
 public string PublicKey
 public string Bucket
 public string get_PublicKey()
 public string get_Bucket()
+public void add_OnManifestUpdated(Action value)
+public void remove_OnManifestUpdated(Action value)
 public void OnManifestFile(Manifest manifest)
 public bool ShouldReportException(string message, string stackTrace, LogType type)
 }
@@ -271,6 +274,7 @@ public Bitmap ConvertTo32Bits(Bitmap bitmap)
 }
 public HudMenuInput : ListComponent`1<HudMenuInput> {
 private InputField inputField
+private RustInput rustInput
 public bool AnyActive()
 private void Start()
 private bool IsCurrentlyActive()
@@ -514,6 +518,37 @@ public ushort Eval7Hand(Int32[] hand)
 public PokerResult EvalToResultName(ushort eval)
 public string HandToString(Int32[] hand)
 internal int <FindCard>g__Rank|6_0(int card)
+}
+public Rust.DLSS.DLSSData : ValueType {
+public IntPtr color
+public IntPtr depth
+public IntPtr motion
+public IntPtr exposure
+public IntPtr colorOutput
+public int resetAccumulation
+public float sharpness
+public Vector2 jitterOffset
+public Vector2 mVScale
+public Vector2 viewportOffset
+public Vector2 viewportSize
+}
+public Rust.DLSS.DlSSRecommendedSettings : ValueType {
+public float recommendedSharpness
+public UInt32 optimalRenderWidth
+public UInt32 optimalRenderHeight
+public UInt32 maximumRenderWidth
+public UInt32 maximumRenderHeight
+public UInt32 minimumRenderWidth
+public UInt32 minimumRenderHeight
+}
+public Rust.DLSS.NVSDK_NGX_PerfQuality_Value : Enum {
+public int value__
+public NVSDK_NGX_PerfQuality_Value OFF
+public NVSDK_NGX_PerfQuality_Value NVSDK_NGX_PerfQuality_Value_MaxPerf
+public NVSDK_NGX_PerfQuality_Value NVSDK_NGX_PerfQuality_Value_Balanced
+public NVSDK_NGX_PerfQuality_Value NVSDK_NGX_PerfQuality_Value_MaxQuality
+public NVSDK_NGX_PerfQuality_Value NVSDK_NGX_PerfQuality_Value_UltraPerformance
+public NVSDK_NGX_PerfQuality_Value NVSDK_NGX_PerfQuality_Value_UltraQuality
 }
 public RustNative.Graphics : object {
 public IntPtr GetRenderEventFunc()
@@ -1025,9 +1060,6 @@ public TOD_ReflectionParameters : object {
 public TOD_ReflectionType Mode
 public ReflectionProbeClearFlags ClearFlags
 public LayerMask CullingMask
-public ReflectionProbeTimeSlicingMode TimeSlicing
-public int Resolution
-public float UpdateInterval
 public GameObject ProbePrefab
 }
 public TOD_ReflectionType : Enum {
@@ -1300,7 +1332,6 @@ protected void OnRenderImage(RenderTexture source, RenderTexture destination)
 }
 public TOD_Sky : MonoBehaviour {
 private List`1<TOD_Sky> instances
-private int probeRenderID
 public TOD_ColorSpaceType ColorSpace
 public TOD_ColorRangeType ColorRange
 public TOD_ColorOutputType ColorOutput
@@ -1358,9 +1389,12 @@ private Color <FogColor>k__BackingField
 private Color <GroundColor>k__BackingField
 private Color <AmbientColor>k__BackingField
 private Color <MoonHaloColor>k__BackingField
-private ReflectionProbe <Probe>k__BackingField
-private GameObject <ProbeInstance>k__BackingField
-private MonoBehaviour <ProbeEx>k__BackingField
+private ReflectionProbeState ReflectionCur
+private ReflectionProbeState ReflectionSrc
+private ReflectionProbeState ReflectionDst
+public int ReflectionResolution
+public float ReflectionUpdateInterval
+public ReflectionProbeTimeSlicingMode ReflectionTimeSlicing
 private float timeSinceLightUpdate
 private float timeSinceAmbientUpdate
 private float timeSinceReflectionUpdate
@@ -1479,9 +1513,9 @@ public Color get_MoonLightColor()
 private void set_MoonLightColor(Color value)
 public Color get_LightColor()
 public Color get_SunRayColor()
-private void set_SunRayColor(Color value)
+public void set_SunRayColor(Color value)
 public Color get_MoonRayColor()
-private void set_MoonRayColor(Color value)
+public void set_MoonRayColor(Color value)
 public Color get_SunSkyColor()
 private void set_SunSkyColor(Color value)
 public Color get_MoonSkyColor()
@@ -1503,11 +1537,8 @@ private void set_AmbientColor(Color value)
 public Color get_MoonHaloColor()
 private void set_MoonHaloColor(Color value)
 public ReflectionProbe get_Probe()
-private void set_Probe(ReflectionProbe value)
 public GameObject get_ProbeInstance()
-private void set_ProbeInstance(GameObject value)
 public MonoBehaviour get_ProbeEx()
-private void set_ProbeEx(MonoBehaviour value)
 public Vector3 OrbitalToUnity(float radius, float theta, float phi)
 public Vector3 OrbitalToLocal(float theta, float phi)
 public Color SampleAtmosphere(Vector3 direction, bool directLight)
@@ -1515,13 +1546,16 @@ public SphericalHarmonicsL2 RenderToSphericalHarmonics()
 public SphericalHarmonicsL2 RenderToSphericalHarmonics(float intensity, float saturation)
 public void RenderToCubemap(RenderTexture targetTexture)
 public void RenderToProbe()
-private void UpdateProbeProperties()
+public bool ReflectionIsUpdating()
+private void UpdateProbeBlending(float lerp)
+private void UpdateProbeProperties(ReflectionProbe probe)
 public Color SampleFogColor(bool directLight)
 public Color SampleSkyColor()
 public Color SampleEquatorColor()
 public void UpdateFog()
 public void UpdateAmbient()
 public void UpdateReflection()
+public void DelayReflectionUpdate()
 public void LoadParameters(string xml)
 public string SaveParameters()
 private void UpdateQualitySettings()
@@ -1626,6 +1660,7 @@ public Color SatRGBA(Color color, float saturation)
 public Color AdjustRGB(Color color, float intensity, float saturation)
 public Color AdjustRGBA(Color color, float intensity, float saturation)
 public Color ApplyAlpha(Color color)
+public void Swap(T& a, T& b)
 }
 public TOD_WeatherManager : MonoBehaviour {
 public ParticleSystem RainParticleSystem
