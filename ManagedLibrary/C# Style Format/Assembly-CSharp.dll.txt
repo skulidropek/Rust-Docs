@@ -778,8 +778,8 @@ public Flags Flag_WoodArmor
 public Flags Flag_RoadsignArmor
 }
 public AnimalBrain : BaseAIBrain {
-public NavigationSpeed ControlTestAnimalSpeed
 public int Count
+public NavigationSpeed ControlTestAnimalSpeed
 public void AddStates()
 public void InitializeAI()
 public void OnDestroy()
@@ -1201,10 +1201,10 @@ private TimeSince timeSinceLastGunnerInput
 private TimeSince timeSinceFailedWeaponFireRPC
 private TimeSince timeSinceFailedFlareRPC
 public bool HasSafeZoneFlag
-public bool IsInGunnerView
+public bool GunnerIsInGunnerView
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 public bool get_HasSafeZoneFlag()
-public bool get_IsInGunnerView()
+public bool get_GunnerIsInGunnerView()
 public void OnFlagsChanged(Flags old, Flags next)
 protected void OnChildAdded(BaseEntity child)
 public void Load(LoadInfo info)
@@ -1222,8 +1222,8 @@ internal void DoServerDestroy()
 public void Save(SaveInfo info)
 private void MarkAllMountedPlayersAsHostile()
 public bool AdminFixUp(int tier)
-private bool TryFireFlare()
-private void LaunchFlare()
+public bool TryFireFlare()
+public void LaunchFlare()
 public void RPC_OpenTurret(RPCMessage msg)
 public void RPC_OpenStorage(RPCMessage msg)
 public void RPC_OpenGunnerView(RPCMessage msg)
@@ -1232,15 +1232,15 @@ public void RPC_CloseGunnerView(RPCMessage msg)
 public AttackHelicopterRockets : StorageContainer {
 private Transform[] rocketMuzzlePositions
 private GameObjectRef rocketFireTubeFX
-private float timeBetweenRockets
-private float reloadTime
-private int rocketsPerReload
+public float timeBetweenRockets
+public float reloadTime
+public int rocketsPerReload
 private ItemDefinition incendiaryRocketDef
 private ItemDefinition hvRocketDef
 private ItemDefinition flareItemDef
 public AttackHelicopter owner
 private AmmoTypes ammoType
-private TimeSince timeSinceRocketFired
+public TimeSince timeSinceRocketFired
 private int rocketsSinceReload
 private bool leftSide
 public bool CanFireNow
@@ -1257,13 +1257,14 @@ public Vector3 MuzzleMidPoint()
 public float GetMinRocketSpeed()
 public bool TryGetProjectedHitPos(Vector3& result)
 public void Save(SaveInfo info)
+public BasePlayer ToPlayer()
 public bool ItemFilter(Item item, int targetSlot)
 public void OnItemAddedOrRemoved(Item item, bool added)
 public bool InputTick(GunnerInputState input, BasePlayer gunner)
 public bool TryFireRocket(BasePlayer shooter)
 public bool TryTakeFlare()
-private bool <ItemFilter>g__IsValidRocket|27_0(<>c__DisplayClass27_0& )
-private bool <ItemFilter>g__IsValidFlare|27_1(<>c__DisplayClass27_0& )
+private bool <ItemFilter>g__IsValidRocket|28_0(<>c__DisplayClass28_0& )
+private bool <ItemFilter>g__IsValidFlare|28_1(<>c__DisplayClass28_0& )
 }
 public AttackHelicopterTurret : StorageContainer {
 private Transform turretSocket
@@ -1294,6 +1295,7 @@ public void GetAmmoAmounts(Int32& clip, Int32& available)
 public Vector3 GetProjectedHitPos()
 public void ServerInit()
 public void Save(SaveInfo info)
+public BasePlayer ToPlayer()
 private bool CanAcceptItem(Item item, int targetSlot)
 private bool IsValidWeapon(Item item)
 public bool InputTick(GunnerInputState input)
@@ -1351,6 +1353,7 @@ private Canvas rocketCrosshairIncenCanvas
 private RectTransform rocketCrosshairIncenRect
 private GameObjectRef rocketHVItem
 private GameObjectRef rocketIncenItem
+private CanvasGroup crosshairHitMarkerGroup
 private RectTransform zoomIndicator
 private RectTransform positionBox
 private RustText ammoTextGunMag
@@ -1439,38 +1442,6 @@ public float bulletSpeed
 public AmbienceEmitter ambienceEmitter
 public GameObject assignDialog
 public LaserBeam laserBeam
-public UpdateAutoTurretScanQueue updateAutoTurretScanQueue
-public float rcTurnSensitivity
-public Transform RCEyes
-public GameObjectRef IDPanelPrefab
-public RemoteControllableControls rcControls
-public string rcIdentifier
-private int <ViewerCount>k__BackingField
-private Nullable`1<CameraViewerId> <ControllingViewerId>k__BackingField
-public TargetTrigger targetTrigger
-public Transform socketTransform
-public float nextShotTime
-public float lastShotTime
-public float nextVisCheck
-public float lastTargetSeenTime
-public bool targetVisible
-public bool booting
-public float nextIdleAimTime
-public Vector3 targetAimDir
-public float bulletDamage
-public RealTimeSinceEx timeSinceLastServerTick
-public float nextForcedAimTime
-public Vector3 lastSentAimDir
-public Single[] visibilityOffsets
-public int peekIndex
-public int numConsecutiveMisses
-public int totalAmmo
-public float nextAmmoCheckTime
-public bool totalAmmoDirty
-public float currentAmmoGravity
-public float currentAmmoVelocity
-public HeldEntity AttachedWeapon
-public float attachedWeaponZOffsetScale
 public BaseCombatEntity target
 public Transform eyePos
 public Transform muzzlePos
@@ -1494,6 +1465,43 @@ public float aimCone
 public Flags Flag_Equipped
 public Flags Flag_MaxAuths
 public List`1<PlayerNameID> authorizedPlayers
+public float auto_turret_budget_ms
+public UpdateAutoTurretScanQueue updateAutoTurretScanQueue
+public float rcTurnSensitivity
+public Transform RCEyes
+public GameObjectRef IDPanelPrefab
+public RemoteControllableControls rcControls
+public string rcIdentifier
+private int <ViewerCount>k__BackingField
+private Nullable`1<CameraViewerId> <ControllingViewerId>k__BackingField
+public TargetTrigger targetTrigger
+public TriggerBase interferenceTrigger
+public float maxInterference
+public Transform socketTransform
+private bool authDirty
+private bool hasPotentialUnauthedTarget
+public float nextShotTime
+public float lastShotTime
+public float nextVisCheck
+public float lastTargetSeenTime
+public bool targetVisible
+public bool booting
+public float nextIdleAimTime
+public Vector3 targetAimDir
+public float bulletDamage
+public RealTimeSinceEx timeSinceLastServerTick
+public float nextForcedAimTime
+public Vector3 lastSentAimDir
+public Single[] visibilityOffsets
+public int peekIndex
+public int numConsecutiveMisses
+public int totalAmmo
+public float nextAmmoCheckTime
+public bool totalAmmoDirty
+public float currentAmmoGravity
+public float currentAmmoVelocity
+public HeldEntity AttachedWeapon
+public float attachedWeaponZOffsetScale
 public int consumptionAmount
 public bool CanPing
 public bool RequiresMouse
@@ -1504,6 +1512,24 @@ public Nullable`1<CameraViewerId> ControllingViewerId
 public bool IsBeingControlled
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 public bool get_CanPing()
+public bool IsOnline()
+public bool IsOffline()
+public void ResetState()
+public Transform GetCenterMuzzle()
+public float AngleToTarget(BaseCombatEntity potentialtarget, bool use2D)
+public bool InFiringArc(BaseCombatEntity potentialtarget)
+public bool CanPickup(BasePlayer player)
+public bool CanUseNetworkCache(Connection connection)
+public void Save(SaveInfo info)
+public void PostSave(SaveInfo info)
+public void Load(LoadInfo info)
+public Vector3 AimOffset(BaseCombatEntity aimat)
+public float GetAimSpeed()
+public void UpdateAiming(float dt)
+public bool IsAuthed(ulong id)
+public bool IsAuthed(BasePlayer player)
+public bool AnyAuthed()
+public bool CanChangeSettings(BasePlayer player)
 public bool PeacekeeperMode()
 public Transform GetEyes()
 public float GetFovScale()
@@ -1551,6 +1577,8 @@ private void SERVER_Peacekeeper(RPCMessage rpc)
 private void SERVER_AttackAll(RPCMessage rpc)
 public float TargetScanRate()
 public void ServerInit()
+internal void DoServerDestroy()
+private void OnEntityEnterTrigger(BaseNetworkable entity)
 public void SendAimDir()
 public void SendAimDirImmediate()
 public void SetTarget(BaseCombatEntity targ)
@@ -1585,6 +1613,10 @@ public void OfflineTick()
 public bool IsEntityHostile(BaseCombatEntity ent)
 public bool ShouldTarget(BaseCombatEntity targ)
 public void ScheduleForTargetScan()
+public bool HasInterference()
+private void UpdateInterference()
+private void UpdateInterferenceOnOthers()
+private void GetTurretsInInterferenceRange(List`1<AutoTurret> list)
 public void TargetScan()
 public bool Ignore(BasePlayer player)
 public void ServerTick()
@@ -1594,24 +1626,6 @@ public float GetAngle(Vector3 launchPosition, Vector3 targetPosition, float laun
 public void OnDeployed(BaseEntity parent, BasePlayer deployedBy, Item fromItem)
 public ItemContainerId GetIdealContainer(BasePlayer player, Item item, bool altMove)
 public int GetIdealSlot(BasePlayer player, Item item)
-public bool IsOnline()
-public bool IsOffline()
-public void ResetState()
-public Transform GetCenterMuzzle()
-public float AngleToTarget(BaseCombatEntity potentialtarget, bool use2D)
-public bool InFiringArc(BaseCombatEntity potentialtarget)
-public bool CanPickup(BasePlayer player)
-public bool CanUseNetworkCache(Connection connection)
-public void Save(SaveInfo info)
-public void PostSave(SaveInfo info)
-public void Load(LoadInfo info)
-public Vector3 AimOffset(BaseCombatEntity aimat)
-public float GetAimSpeed()
-public void UpdateAiming(float dt)
-public bool IsAuthed(ulong id)
-public bool IsAuthed(BasePlayer player)
-public bool AnyAuthed()
-public bool CanChangeSettings(BasePlayer player)
 }
 public AvatarSwitcher : StateMachineBehaviour {
 public Avatar ToApply
@@ -1720,10 +1734,6 @@ public bool IsGrouped
 public IAIGroupable GroupLeader
 public BaseNavigator Navigator
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
-public bool IsPet()
-public void SetPetOwner(BasePlayer player)
-public bool IsOwnedBy(BasePlayer player)
-public bool IssuePetCommand(PetCommandType cmd, int param, Nullable`1<Ray> ray)
 public BasicAIState get_CurrentState()
 public void set_CurrentState(BasicAIState value)
 public AIThinkMode get_ThinkMode()
@@ -1804,6 +1814,10 @@ public void LoadComponent(LoadInfo info)
 public void SaveComponent(SaveInfo info)
 private void SendStateChangeEvent(int previousStateID, int newStateID, int sourceEventID)
 public void EventTriggeredStateChange(int newStateContainerID, int sourceEventID)
+public bool IsPet()
+public void SetPetOwner(BasePlayer player)
+public bool IsOwnedBy(BasePlayer player)
+public bool IssuePetCommand(PetCommandType cmd, int param, Nullable`1<Ray> ray)
 }
 public BaseAIEvent : object {
 private AIEventType <EventType>k__BackingField
@@ -1965,6 +1979,7 @@ public float correctionSpringDamping
 private Vector3[] worldAnchors
 private PidQuaternionController pidController
 public bool generate_paths
+public bool do_shore_drift
 private int secondsUntilShoreDrift
 private int secondsBetweenShoreDrift
 public float drift_speed
@@ -2051,16 +2066,6 @@ public BaseEntity Owner
 public Model model
 }
 public BaseCombatEntity : BaseEntity {
-private float MAX_HEALTH_REPAIR
-public DamageType lastDamage
-public BaseEntity lastAttacker
-public BaseEntity lastDealtDamageTo
-public bool ResetLifeStateOnSpawn
-public DirectionProperties[] propDirection
-public float unHostileTime
-private ActionVolume <LastNoiseVolume>k__BackingField
-private Vector3 <LastNoisePosition>k__BackingField
-public float lastNoiseTime
 public SkeletonProperties skeletonProperties
 public ProtectionProperties baseProtection
 public float startHealth
@@ -2078,15 +2083,52 @@ public float lastAttackedTime
 private Vector3 <LastAttackedDir>k__BackingField
 public float lastDealtDamageTime
 public int lastNotifyFrame
-public float TimeSinceLastNoise
-public ActionVolume LastNoiseVolume
-public Vector3 LastNoisePosition
+private float MAX_HEALTH_REPAIR
+public DamageType lastDamage
+public BaseEntity lastAttacker
+public BaseEntity lastDealtDamageTo
+public bool ResetLifeStateOnSpawn
+public DirectionProperties[] propDirection
+public float unHostileTime
+private ActionVolume <LastNoiseVolume>k__BackingField
+private Vector3 <LastNoisePosition>k__BackingField
+public float lastNoiseTime
 public Vector3 LastAttackedDir
 public float SecondsSinceAttacked
 public float SecondsSinceDealtDamage
 public float healthFraction
 public float health
+public float TimeSinceLastNoise
+public ActionVolume LastNoiseVolume
+public Vector3 LastNoisePosition
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+public bool IsDead()
+public bool IsAlive()
+public Faction GetFaction()
+public bool IsFriendly(BaseCombatEntity other)
+public Vector3 get_LastAttackedDir()
+public void set_LastAttackedDir(Vector3 value)
+public float get_SecondsSinceAttacked()
+public float get_SecondsSinceDealtDamage()
+public float get_healthFraction()
+public void ResetState()
+public void DestroyShared()
+public float GetThreatLevel()
+public float PenetrationResistance(HitInfo info)
+public void ScaleDamage(HitInfo info)
+public HitArea SkeletonLookup(UInt32 boneID)
+public void Save(SaveInfo info)
+public void PostServerLoad()
+public void Load(LoadInfo info)
+public float get_health()
+public void set_health(float value)
+public float Health()
+public float MaxHealth()
+public float StartHealth()
+public float StartMaxHealth()
+public void SetMaxHealth(float newMax)
+public void DoHitNotify(HitInfo info)
+public void OnAttacked(HitInfo info)
 protected int GetPickupCount()
 public bool CanPickup(BasePlayer player)
 public void OnPickedUp(Item createdItem, BasePlayer player)
@@ -2122,33 +2164,6 @@ public Vector3 get_LastNoisePosition()
 private void set_LastNoisePosition(Vector3 value)
 public void MakeNoise(Vector3 position, ActionVolume loudness)
 public bool CanLastNoiseBeHeard(Vector3 listenPosition, float listenRange)
-public bool IsDead()
-public bool IsAlive()
-public Faction GetFaction()
-public bool IsFriendly(BaseCombatEntity other)
-public Vector3 get_LastAttackedDir()
-public void set_LastAttackedDir(Vector3 value)
-public float get_SecondsSinceAttacked()
-public float get_SecondsSinceDealtDamage()
-public float get_healthFraction()
-public void ResetState()
-public void DestroyShared()
-public float GetThreatLevel()
-public float PenetrationResistance(HitInfo info)
-public void ScaleDamage(HitInfo info)
-public HitArea SkeletonLookup(UInt32 boneID)
-public void Save(SaveInfo info)
-public void PostServerLoad()
-public void Load(LoadInfo info)
-public float get_health()
-public void set_health(float value)
-public float Health()
-public float MaxHealth()
-public float StartHealth()
-public float StartMaxHealth()
-public void SetMaxHealth(float newMax)
-public void DoHitNotify(HitInfo info)
-public void OnAttacked(HitInfo info)
 }
 public BaseCommandBuffer : MonoBehaviour {
 private Dictionary`2<Camera, Dictionary`2<int, CommandBuffer>> cameras
@@ -2195,24 +2210,6 @@ public void OnDetectorReleased()
 public int GetPassthroughAmount(int outputSlot)
 }
 public BaseEntity : BaseNetworkable {
-private Queue`1<BaseEntity> globalBroadcastQueue
-private UInt32 globalBroadcastProtocol
-private UInt32 broadcastProtocol
-public List`1<EntityLink> links
-private bool linkedToNeighbours
-private TimeUntil _transferProtectionRemaining
-private Action _disableTransferProtectionAction
-public BaseEntity creatorEntity
-public int ticksSinceStopped
-private int doneMovingWithoutARigidBodyCheck
-public bool isCallingUpdateNetworkGroup
-private EntityRef[] entitySlots
-public List`1<TriggerBase> triggers
-protected bool isVisible
-protected bool isAnimatorVisible
-protected bool isShadowVisible
-protected OccludeeSphere localOccludee
-private float <Weight>k__BackingField
 public Bounds bounds
 public GameObjectRef impactEffect
 public bool enableSaving
@@ -2225,28 +2222,120 @@ private EntityComponentBase[] _components
 public bool HasBrain
 public string _name
 private ulong <OwnerID>k__BackingField
+private Queue`1<BaseEntity> globalBroadcastQueue
+private UInt32 globalBroadcastProtocol
+private UInt32 broadcastProtocol
+public List`1<EntityLink> links
+private bool linkedToNeighbours
+private TimeUntil _transferProtectionRemaining
+private Action _disableTransferProtectionAction
 public Spawnable _spawnable
 public HashSet`1<BaseEntity> saveList
+public BaseEntity creatorEntity
+public int ticksSinceStopped
+private int doneMovingWithoutARigidBodyCheck
+public bool isCallingUpdateNetworkGroup
+private EntityRef[] entitySlots
+public List`1<TriggerBase> triggers
+protected bool isVisible
+protected bool isAnimatorVisible
+protected bool isShadowVisible
+protected OccludeeSphere localOccludee
+private float <Weight>k__BackingField
 public float RealisticMass
+public EntityComponentBase[] Components
+public bool IsNpc
+public ulong OwnerID
 protected float TransferProtectionRemaining
 protected Action DisableTransferProtectionAction
-public float radiationLevel
-public float currentTemperature
-public float currentEnvironmentalWetness
+public bool ShouldTransferAssociatedFiles
 public float PositionTickRate
 public bool PositionTickFixedTime
 public Vector3 ServerPosition
 public Quaternion ServerRotation
+public float radiationLevel
+public float currentTemperature
+public float currentEnvironmentalWetness
 public TraitFlag Traits
 public float Weight
-public EntityComponentBase[] Components
-public bool IsNpc
-public ulong OwnerID
-public bool ShouldTransferAssociatedFiles
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 public float get_RealisticMass()
 public void OnCollision(Collision collision, BaseEntity hitEntity)
 protected void ReceiveCollisionMessages(bool b)
+public EntityComponentBase[] get_Components()
+public BasePlayer ToPlayer()
+public bool get_IsNpc()
+public void InitShared()
+public void DestroyShared()
+public void ResetState()
+public float InheritedVelocityScale()
+public bool InheritedVelocityDirection()
+public Vector3 GetInheritedProjectileVelocity(Vector3 direction)
+public Vector3 GetInheritedThrowVelocity(Vector3 direction)
+public Vector3 GetInheritedDropVelocity()
+public Vector3 GetParentVelocity()
+public Vector3 GetWorldVelocity()
+public Vector3 GetLocalVelocity()
+public Quaternion GetAngularVelocity()
+public OBB WorldSpaceBounds()
+public Vector3 PivotPoint()
+public Vector3 CenterPoint()
+public Vector3 ClosestPoint(Vector3 position)
+public Vector3 TriggerPoint()
+public float Distance(Vector3 position)
+public float SqrDistance(Vector3 position)
+public float Distance(BaseEntity other)
+public float SqrDistance(BaseEntity other)
+public float Distance2D(Vector3 position)
+public float SqrDistance2D(Vector3 position)
+public float Distance2D(BaseEntity other)
+public float SqrDistance2D(BaseEntity other)
+public bool IsVisible(Ray ray, int layerMask, float maxDistance)
+public bool IsVisibleSpecificLayers(Vector3 position, Vector3 target, int layerMask, float maxDistance)
+public bool IsVisible(Vector3 position, Vector3 target, float maxDistance)
+public bool IsVisible(Vector3 position, float maxDistance)
+public bool IsVisibleAndCanSee(Vector3 position)
+public bool CanSee(Vector3 fromPos, Vector3 targetPos)
+public bool IsOlderThan(BaseEntity other)
+public bool IsOutside()
+public bool IsOutside(Vector3 position)
+public float WaterFactor()
+public float AirFactor()
+public bool WaterTestFromVolumes(Vector3 pos, WaterInfo& info)
+public bool IsInWaterVolume(Vector3 pos)
+public bool WaterTestFromVolumes(Bounds bounds, WaterInfo& info)
+public bool WaterTestFromVolumes(Vector3 start, Vector3 end, float radius, WaterInfo& info)
+public bool BlocksWaterFor(BasePlayer player)
+public float Health()
+public float MaxHealth()
+public float MaxVelocity()
+public float BoundsPadding()
+public float PenetrationResistance(HitInfo info)
+public GameObjectRef GetImpactEffect(HitInfo info)
+public void OnAttacked(HitInfo info)
+public Item GetItem()
+public Item GetItem(ItemId itemId)
+public void GiveItem(Item item, GiveItemReason reason)
+public bool CanBeLooted(BasePlayer player)
+public BaseEntity GetEntity()
+public string ToString()
+public string Categorize()
+public void Log(string str)
+public void SetModel(Model mdl)
+public Model GetModel()
+public Transform[] GetBones()
+public Transform FindBone(string strName)
+public UInt32 FindBoneID(Transform boneTransform)
+public Transform FindClosestBone(Vector3 worldPos)
+public ulong get_OwnerID()
+public void set_OwnerID(ulong value)
+public bool ShouldBlockProjectiles()
+public bool ShouldInheritNetworkGroup()
+public bool SupportsChildDeployables()
+public bool ForceDeployableSetParent()
+public bool IsOnMovingObject()
+public void BroadcastEntityMessage(string msg, float radius, int layerMask)
+public void OnEntityMessage(BaseEntity from, string msg)
 public void DebugServer(int rep, float time)
 public string DebugText()
 public void OnDebugStart()
@@ -2328,11 +2417,10 @@ protected NetWrite ClientRPCStart(Connection sourceConnection, string funcName)
 private void ClientRPCWrite(NetWrite write, T arg)
 protected void ClientRPCSend(NetWrite write, SendInfo sendInfo)
 public void ClientRPCPlayerList(Connection sourceConnection, BasePlayer player, string funcName, List`1<T1> list)
-public float get_radiationLevel()
-public float RadiationProtection()
-public float RadiationExposureFraction()
-public float get_currentTemperature()
-public float get_currentEnvironmentalWetness()
+public void Save(SaveInfo info)
+public bool ShouldNetworkOwnerInfo()
+public bool get_ShouldTransferAssociatedFiles()
+public void Load(LoadInfo info)
 public void SetCreatorEntity(BaseEntity newCreatorEntity)
 public Vector3 GetLocalVelocityServer()
 public Quaternion GetAngularVelocityServer()
@@ -2372,6 +2460,11 @@ public void set_ServerPosition(Vector3 value)
 public Quaternion get_ServerRotation()
 public void set_ServerRotation(Quaternion value)
 public string Admin_Who()
+public float get_radiationLevel()
+public float RadiationProtection()
+public float RadiationExposureFraction()
+public float get_currentTemperature()
+public float get_currentEnvironmentalWetness()
 private void BroadcastSignalFromClient(RPCMessage msg)
 public void SignalBroadcast(Signal signal, string arg, Connection sourceConnection)
 public void SignalBroadcast(Signal signal, Connection sourceConnection)
@@ -2399,83 +2492,6 @@ public bool InSafeZone()
 public TriggerParent FindSuitableParent()
 public float get_Weight()
 protected void set_Weight(float value)
-public EntityComponentBase[] get_Components()
-public BasePlayer ToPlayer()
-public bool get_IsNpc()
-public void InitShared()
-public void DestroyShared()
-public void ResetState()
-public float InheritedVelocityScale()
-public bool InheritedVelocityDirection()
-public Vector3 GetInheritedProjectileVelocity(Vector3 direction)
-public Vector3 GetInheritedThrowVelocity(Vector3 direction)
-public Vector3 GetInheritedDropVelocity()
-public Vector3 GetParentVelocity()
-public Vector3 GetWorldVelocity()
-public Vector3 GetLocalVelocity()
-public Quaternion GetAngularVelocity()
-public OBB WorldSpaceBounds()
-public Vector3 PivotPoint()
-public Vector3 CenterPoint()
-public Vector3 ClosestPoint(Vector3 position)
-public Vector3 TriggerPoint()
-public float Distance(Vector3 position)
-public float SqrDistance(Vector3 position)
-public float Distance(BaseEntity other)
-public float SqrDistance(BaseEntity other)
-public float Distance2D(Vector3 position)
-public float SqrDistance2D(Vector3 position)
-public float Distance2D(BaseEntity other)
-public float SqrDistance2D(BaseEntity other)
-public bool IsVisible(Ray ray, int layerMask, float maxDistance)
-public bool IsVisibleSpecificLayers(Vector3 position, Vector3 target, int layerMask, float maxDistance)
-public bool IsVisible(Vector3 position, Vector3 target, float maxDistance)
-public bool IsVisible(Vector3 position, float maxDistance)
-public bool IsVisibleAndCanSee(Vector3 position, float maxDistance)
-public bool IsOlderThan(BaseEntity other)
-public bool IsOutside()
-public bool IsOutside(Vector3 position)
-public float WaterFactor()
-public float AirFactor()
-public bool WaterTestFromVolumes(Vector3 pos, WaterInfo& info)
-public bool IsInWaterVolume(Vector3 pos)
-public bool WaterTestFromVolumes(Bounds bounds, WaterInfo& info)
-public bool WaterTestFromVolumes(Vector3 start, Vector3 end, float radius, WaterInfo& info)
-public bool BlocksWaterFor(BasePlayer player)
-public float Health()
-public float MaxHealth()
-public float MaxVelocity()
-public float BoundsPadding()
-public float PenetrationResistance(HitInfo info)
-public GameObjectRef GetImpactEffect(HitInfo info)
-public void OnAttacked(HitInfo info)
-public Item GetItem()
-public Item GetItem(ItemId itemId)
-public void GiveItem(Item item, GiveItemReason reason)
-public bool CanBeLooted(BasePlayer player)
-public BaseEntity GetEntity()
-public string ToString()
-public string Categorize()
-public void Log(string str)
-public void SetModel(Model mdl)
-public Model GetModel()
-public Transform[] GetBones()
-public Transform FindBone(string strName)
-public UInt32 FindBoneID(Transform boneTransform)
-public Transform FindClosestBone(Vector3 worldPos)
-public ulong get_OwnerID()
-public void set_OwnerID(ulong value)
-public bool ShouldBlockProjectiles()
-public bool ShouldInheritNetworkGroup()
-public bool SupportsChildDeployables()
-public bool ForceDeployableSetParent()
-public bool IsOnMovingObject()
-public void BroadcastEntityMessage(string msg, float radius, int layerMask)
-public void OnEntityMessage(BaseEntity from, string msg)
-public void Save(SaveInfo info)
-public bool ShouldNetworkOwnerInfo()
-public bool get_ShouldTransferAssociatedFiles()
-public void Load(LoadInfo info)
 }
 public BaseEntityChild : MonoBehaviour {
 public void Setup(GameObject obj, BaseEntity parent)
@@ -2508,25 +2524,6 @@ public bool CanIgnite()
 public bool CanPickup(BasePlayer player)
 }
 public BaseFishingRod : HeldEntity {
-public UpdateFishingRod updateFishingRodQueue
-private FishLookup fishLookup
-private TimeUntil nextFishStateChange
-private TimeSince fishCatchDuration
-private float strainTimer
-private float strainMax
-private TimeSince lastStrainUpdate
-private TimeUntil catchTime
-private TimeSince lastSightCheck
-private Vector3 playerStartPosition
-private WaterBody surfaceBody
-private ItemDefinition lureUsed
-private ItemDefinition currentFishTarget
-private ItemModFishable fishableModifier
-private ItemModFishable lastFish
-private bool inQueue
-public bool ForceSuccess
-public bool ForceFail
-public bool ImmediateHook
 public GameObjectRef FishingBobberRef
 public float FishCatchDistance
 public LineRenderer ReelLineRenderer
@@ -2548,8 +2545,35 @@ public SoundDefinition onLineSoundDef
 public SoundDefinition strainSoundDef
 public AnimationCurve strainGainCurve
 public SoundDefinition tensionBreakSoundDef
+public UpdateFishingRod updateFishingRodQueue
+private FishLookup fishLookup
+private TimeUntil nextFishStateChange
+private TimeSince fishCatchDuration
+private float strainTimer
+private float strainMax
+private TimeSince lastStrainUpdate
+private TimeUntil catchTime
+private TimeSince lastSightCheck
+private Vector3 playerStartPosition
+private WaterBody surfaceBody
+private ItemDefinition lureUsed
+private ItemDefinition currentFishTarget
+private ItemModFishable fishableModifier
+private ItemModFishable lastFish
+private bool inQueue
+public bool ForceSuccess
+public bool ForceFail
+public bool ImmediateHook
 public CatchState CurrentState
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+public CatchState get_CurrentState()
+private void set_CurrentState(CatchState value)
+public void Load(LoadInfo info)
+public bool BlocksGestures()
+private bool AllowPullInDirection(Vector3 worldDirection, Vector3 bobberPosition)
+private bool EvaluateFishingPosition(Vector3& pos, BasePlayer ply, FailReason& reason, WaterBody& waterBody)
+private Item GetCurrentLure()
+private bool HasReelInInput(InputState state)
 private void Server_RequestCast(RPCMessage msg)
 private void FailedCast(FailReason reason)
 private void CatchProcess()
@@ -2560,14 +2584,6 @@ private void Server_Cancel(FailReason reason)
 public void OnHeldChanged()
 public void Save(SaveInfo info)
 private void UpdateFlags(bool inputLeft, bool inputRight, bool back)
-public CatchState get_CurrentState()
-private void set_CurrentState(CatchState value)
-public void Load(LoadInfo info)
-public bool BlocksGestures()
-private bool AllowPullInDirection(Vector3 worldDirection, Vector3 bobberPosition)
-private bool EvaluateFishingPosition(Vector3& pos, BasePlayer ply, FailReason& reason, WaterBody& waterBody)
-private Item GetCurrentLure()
-private bool HasReelInInput(InputState state)
 }
 public BaseFishNPC : BaseNpc {
 protected FishBrain brain
@@ -2748,7 +2764,7 @@ protected GroundEffect[] groundEffects
 public GameObjectRef serverGibs
 public GameObjectRef explosionEffect
 public GameObjectRef fireBall
-private GameObjectRef crashEffect
+public GameObjectRef crashEffect
 public float liftDotMax
 public float altForceDotMin
 public float liftFraction
@@ -2766,6 +2782,7 @@ public float nextDamageTime
 public float nextEffectTime
 public float pendingImpactDamage
 protected bool autoHover
+protected bool ForceMovementHandling
 protected bool get_autoHover()
 private void set_autoHover(bool value)
 public float GetServiceCeiling()
@@ -2781,6 +2798,7 @@ public bool IsEnginePowered()
 public void VehicleFixedUpdate()
 public void LightToggle(BasePlayer player)
 public bool IsEngineOn()
+protected bool get_ForceMovementHandling()
 protected void TryStartEngine(BasePlayer player)
 public void ClearDamageTorque()
 public void SetDamageTorque(Vector3 newTorque)
@@ -2886,9 +2904,6 @@ public bool IsMagnetOn()
 public void MagnetThink(float delta)
 }
 public BaseMelee : AttackEntity {
-public bool canThrowAsProjectile
-public bool canAiHearIt
-public bool onlyThrowAsProjectile
 public DamageProperties damageProperties
 public List`1<DamageTypeEntry> damageTypes
 public float maxDistance
@@ -2903,9 +2918,10 @@ public GameObjectRef swingEffect
 public List`1<MaterialFX> materialStrikeFX
 public float heartStress
 public GatherProperties gathering
+public bool canThrowAsProjectile
+public bool canAiHearIt
+public bool onlyThrowAsProjectile
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
-public Vector3 GetInheritedVelocity(BasePlayer player, Vector3 direction)
-private void CLProject(RPCMessage msg)
 public void GetAttackStats(HitInfo info)
 public void DoAttackShared(HitInfo info)
 public GatherPropertyEntry GetGatherInfoFromIndex(GatherType index)
@@ -2921,6 +2937,8 @@ public string GetStrikeEffectPath(string materialName)
 public void ServerUse()
 public void ServerUse_OnHit(HitInfo info)
 public void ServerUse_Strike()
+public Vector3 GetInheritedVelocity(BasePlayer player, Vector3 direction)
+private void CLProject(RPCMessage msg)
 }
 public BaseMetabolism : object {
 public float targetHeartRate
@@ -3016,13 +3034,6 @@ public void ServerUpdate(BaseCombatEntity ownerEntity)
 protected void TickModifiers(BaseCombatEntity ownerEntity, float delta)
 }
 public BaseModularVehicle : GroundVehicle {
-public bool inEditableLocation
-public bool prevEditable
-public bool immuneToDecay
-private ModularVehicleInventory <Inventory>k__BackingField
-public Vector3 realLocalCOM
-public Item AssociatedItemInstance
-private bool disablePhysics
 public List`1<ModularVehicleSocket> moduleSockets
 public Transform centreOfMassTransform
 public Transform waterSample
@@ -3034,7 +3045,13 @@ private float <TotalMass>k__BackingField
 private bool <HasInited>k__BackingField
 public Flags FLAG_KINEMATIC
 public Dictionary`2<BaseVehicleModule, Action> moduleAddActions
-public ModularVehicleInventory Inventory
+public bool inEditableLocation
+public bool prevEditable
+public bool immuneToDecay
+private ModularVehicleInventory <Inventory>k__BackingField
+public Vector3 realLocalCOM
+public Item AssociatedItemInstance
+private bool disablePhysics
 public Vector3 CentreOfMass
 public int NumAttachedModules
 public bool HasAnyModules
@@ -3048,33 +3065,7 @@ public bool IsLockable
 public bool HasInited
 public ItemDefinition AssociatedItemDef
 public bool IsEditableNow
-public ModularVehicleInventory get_Inventory()
-public void set_Inventory(ModularVehicleInventory value)
-public void ServerInit()
-public void PreServerLoad()
-public void PostServerLoad()
-public void DoServerDestroy()
-public float MaxVelocity()
-public bool IsComplete()
-public bool CouldBeEdited()
-public void DisablePhysics()
-public void EnablePhysics()
-public void VehicleFixedUpdate()
-public bool MountEligable(BasePlayer player)
-public void Save(SaveInfo info)
-public bool CanMoveFrom(BasePlayer player, Item item)
-protected Vector3 GetCOMMultiplier()
-public void ModuleHurt(BaseVehicleModule hurtModule, HitInfo info)
-public void ModuleReachedZeroHealth()
-public bool TryAddModule(Item moduleItem, int socketIndex)
-public bool TryAddModule(Item moduleItem)
-public bool ModuleCanBeAdded(Item moduleItem, int socketIndex, String& failureReason)
-public BaseVehicleModule CreatePhysicalModuleEntity(Item moduleItem, ItemModVehicleModule itemModModule, int socketIndex)
-public void SetUpModule(BaseVehicleModule moduleEntity, Item moduleItem)
-public Item GetVehicleItem(ItemId itemUID)
-public BaseVehicleModule GetModuleForItem(Item item)
-public void SetMass(float mass)
-public void SetCOM(Vector3 com)
+public ModularVehicleInventory Inventory
 public Vector3 get_CentreOfMass()
 public int get_NumAttachedModules()
 public bool get_HasAnyModules()
@@ -3104,6 +3095,33 @@ public void OnChildRemoved(BaseEntity childEntity)
 public void ModuleEntityAdded(BaseVehicleModule addedModule)
 public void ModuleEntityRemoved(BaseVehicleModule removedModule)
 public void RefreshModulesExcept(BaseVehicleModule ignoredModule)
+public ModularVehicleInventory get_Inventory()
+public void set_Inventory(ModularVehicleInventory value)
+public void ServerInit()
+public void PreServerLoad()
+public void PostServerLoad()
+public void DoServerDestroy()
+public float MaxVelocity()
+public bool IsComplete()
+public bool CouldBeEdited()
+public void DisablePhysics()
+public void EnablePhysics()
+public void VehicleFixedUpdate()
+public bool MountEligable(BasePlayer player)
+public void Save(SaveInfo info)
+public bool CanMoveFrom(BasePlayer player, Item item)
+protected Vector3 GetCOMMultiplier()
+public void ModuleHurt(BaseVehicleModule hurtModule, HitInfo info)
+public void ModuleReachedZeroHealth()
+public bool TryAddModule(Item moduleItem, int socketIndex)
+public bool TryAddModule(Item moduleItem)
+public bool ModuleCanBeAdded(Item moduleItem, int socketIndex, String& failureReason)
+public BaseVehicleModule CreatePhysicalModuleEntity(Item moduleItem, ItemModVehicleModule itemModModule, int socketIndex)
+public void SetUpModule(BaseVehicleModule moduleEntity, Item moduleItem)
+public Item GetVehicleItem(ItemId itemUID)
+public BaseVehicleModule GetModuleForItem(Item item)
+public void SetMass(float mass)
+public void SetCOM(Vector3 com)
 }
 public BaseMonoBehaviour : FacepunchBehaviour {
 public bool IsDebugging()
@@ -3136,6 +3154,7 @@ public CapsuleColliderInfo customPlayerCollider
 public SoundDefinition mountSoundDef
 public SoundDefinition swapSoundDef
 public SoundDefinition dismountSoundDef
+public DismountConvarType dismountHoldType
 public MountStatType mountTimeStatType
 public MountGestureType allowedGestures
 public bool canDrinkWhileMounted
@@ -3368,16 +3387,6 @@ public bool IsAcceptableWaterDepth(Vector3 pos)
 public void SetBrakingEnabled(bool flag)
 }
 public BaseNetworkable : BaseMonoBehaviour {
-public List`1<Component> postNetworkUpdateComponents
-public bool _limitedNetworking
-public EntityRef parentEntity
-public List`1<BaseEntity> children
-public bool canTriggerParent
-public int creationFrame
-public bool isSpawned
-public MemoryStream _NetworkCache
-public Queue`1<MemoryStream> EntityMemoryStreamPool
-private MemoryStream _SaveCache
 public UInt32 prefabID
 public bool globalBroadcast
 public bool globalBuildingBlock
@@ -3388,55 +3397,26 @@ private string _prefabNameWithoutExtension
 public EntityRealm serverEntities
 private bool isServersideEntity
 public List`1<Connection> connectionsInSphereList
-public bool limitNetworking
-public GameManager gameManager
-public Library prefabAttribute
-public Group GlobalNetworkGroup
-public Group LimboNetworkGroup
+public List`1<Component> postNetworkUpdateComponents
+public bool _limitedNetworking
+public EntityRef parentEntity
+public List`1<BaseEntity> children
+public bool canTriggerParent
+public int creationFrame
+public bool isSpawned
+public MemoryStream _NetworkCache
+public Queue`1<MemoryStream> EntityMemoryStreamPool
+private MemoryStream _SaveCache
 public bool IsDestroyed
 public string PrefabName
 public string ShortPrefabName
 public bool isServer
 public bool isClient
-public void BroadcastOnPostNetworkUpdate(BaseEntity entity)
-public void PostProcess(IPrefabProcessor preProcess, GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
-public bool get_limitNetworking()
-public void set_limitNetworking(bool value)
-private void OnNetworkLimitStart()
-private void OnNetworkLimitEnd()
-public BaseEntity GetParentEntity()
-public bool HasParent()
-public void AddChild(BaseEntity child)
-protected void OnChildAdded(BaseEntity child)
-public void RemoveChild(BaseEntity child)
-protected void OnChildRemoved(BaseEntity child)
-public GameManager get_gameManager()
-public Library get_prefabAttribute()
-public Group get_GlobalNetworkGroup()
-public Group get_LimboNetworkGroup()
-public float GetNetworkTime()
-public void Spawn()
-public bool IsFullySpawned()
-public void ServerInit()
-public List`1<Connection> GetSubscribers()
-public void KillMessage()
-public void AdminKill()
-public void Kill(DestroyMode mode)
-public void TerminateOnClient(DestroyMode mode)
-private void TerminateOnServer()
-internal void DoServerDestroy()
-public bool ShouldNetworkTo(BasePlayer player)
-public void SendNetworkGroupChange()
-public void SendAsSnapshot(Connection connection, bool justCreated)
-public void SendNetworkUpdate(NetworkQueue queue)
-public void SendNetworkUpdateImmediate(bool justCreated)
-public void SendNetworkUpdate_Position()
-public void ToStream(Stream stream, SaveInfo saveInfo)
-public bool CanUseNetworkCache(Connection connection)
-public void ToStreamForNetwork(Stream stream, SaveInfo saveInfo)
-public void InvalidateNetworkCache()
-public MemoryStream GetSaveCache()
-public void UpdateNetworkGroup()
+public bool limitNetworking
+public GameManager gameManager
+public Library prefabAttribute
+public Group GlobalNetworkGroup
+public Group LimboNetworkGroup
 public bool get_IsDestroyed()
 private void set_IsDestroyed(bool value)
 public string get_PrefabName()
@@ -3474,14 +3454,53 @@ public List`1<Connection> GetConnectionsWithin(Vector3 position, float distance)
 public void GetCloseConnections(Vector3 position, float distance, List`1<BasePlayer> players)
 public bool HasCloseConnections(Vector3 position, float distance)
 public bool HasConnections(Vector3 position)
-private bool <OnNetworkLimitStart>b__7_0(Connection x)
+public void BroadcastOnPostNetworkUpdate(BaseEntity entity)
+public void PostProcess(IPrefabProcessor preProcess, GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
+public bool get_limitNetworking()
+public void set_limitNetworking(bool value)
+private void OnNetworkLimitStart()
+private void OnNetworkLimitEnd()
+public BaseEntity GetParentEntity()
+public bool HasParent()
+public void AddChild(BaseEntity child)
+protected void OnChildAdded(BaseEntity child)
+public void RemoveChild(BaseEntity child)
+protected void OnChildRemoved(BaseEntity child)
+public GameManager get_gameManager()
+public Library get_prefabAttribute()
+public Group get_GlobalNetworkGroup()
+public Group get_LimboNetworkGroup()
+public float GetNetworkTime()
+public void Spawn()
+private void SendGlobalNetworkUpdate()
+public bool IsFullySpawned()
+public void ServerInit()
+public List`1<Connection> GetSubscribers()
+public void KillMessage()
+public void AdminKill()
+public void Kill(DestroyMode mode)
+public void TerminateOnClient(DestroyMode mode)
+private void TerminateOnServer()
+internal void DoServerDestroy()
+public bool ShouldNetworkTo(BasePlayer player)
+public void SendNetworkGroupChange()
+public void SendAsSnapshot(Connection connection, bool justCreated)
+public void SendNetworkUpdate(NetworkQueue queue)
+public void SendNetworkUpdateImmediate(bool justCreated)
+public void SendNetworkUpdate_Position()
+public void ToStream(Stream stream, SaveInfo saveInfo)
+public bool CanUseNetworkCache(Connection connection)
+public void ToStreamForNetwork(Stream stream, SaveInfo saveInfo)
+public void InvalidateNetworkCache()
+public MemoryStream GetSaveCache()
+public void UpdateNetworkGroup()
+private bool <OnNetworkLimitStart>b__64_0(Connection x)
 }
 public BaseNetworkableEx : object {
 public bool IsValid(BaseNetworkable ent)
 public bool IsRealNull(BaseNetworkable ent)
 }
 public BaseNpc : BaseCombatEntity {
-public Transform ChaseTransform
 public int agentTypeIndex
 public bool NewAI
 public bool LegacyNavigation
@@ -3513,23 +3532,7 @@ private Quaternion _currentNavMeshLinkOrientation
 private Vector3 _currentNavMeshLinkEndPos
 public float nextAttackTime
 public Enum topologyPreference
-public AiFlags aiFlags
-public Byte[] CurrentFacts
-public int ForgetUnseenEntityTime
-public float SensesTickRate
-public BaseEntity[] SensesResults
-private float lastTickTime
-public float playerTargetDecisionStartTime
-private float animalTargetDecisionStartTime
-private bool isAlreadyCheckingPathPending
-private int numPathPendingAttempts
-private float accumPathPendingDelay
-public float TickRate
-private Vector3 lastStuckPos
-private float nextFlinchTime
-private float _lastHeardGunshotTime
-private Vector3 <LastHeardGunshotDirection>k__BackingField
-private float <TargetSpeed>k__BackingField
+public Transform ChaseTransform
 public GameObjectRef CorpsePrefab
 public AiStatistics Stats
 public Vector3 AttackOffset
@@ -3555,17 +3558,28 @@ public VitalLevel Stamina
 public VitalLevel Energy
 public VitalLevel Hydration
 private Behaviour <CurrentBehaviour>k__BackingField
+public AiFlags aiFlags
+public Byte[] CurrentFacts
+public int ForgetUnseenEntityTime
+public float SensesTickRate
+public BaseEntity[] SensesResults
+private float lastTickTime
+public float playerTargetDecisionStartTime
+private float animalTargetDecisionStartTime
+private bool isAlreadyCheckingPathPending
+private int numPathPendingAttempts
+private float accumPathPendingDelay
+public float TickRate
+private Vector3 lastStuckPos
+private float nextFlinchTime
+private float _lastHeardGunshotTime
+private Vector3 <LastHeardGunshotDirection>k__BackingField
+private float <TargetSpeed>k__BackingField
 public int AgentTypeIndex
 public bool IsStuck
 public bool AgencyUpdateRequired
 public bool IsOnOffmeshLinkAndReachedNewCoord
 public float GetAttackRate
-public bool IsSitting
-public bool IsChasing
-public bool IsSleeping
-public float SecondsSinceLastHeardGunshot
-public Vector3 LastHeardGunshotDirection
-public float TargetSpeed
 public bool IsNpc
 public bool IsDormant
 public float SecondsSinceLastSetDestination
@@ -3597,12 +3611,13 @@ public Vector3 AttackPosition
 public Vector3 CrouchedAttackPosition
 public float currentBehaviorDuration
 public Behaviour CurrentBehaviour
+public bool IsSitting
+public bool IsChasing
+public bool IsSleeping
+public float SecondsSinceLastHeardGunshot
+public Vector3 LastHeardGunshotDirection
+public float TargetSpeed
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
-public void UpdateDestination(Vector3 position)
-public void UpdateDestination(Transform tx)
-public void StopMoving()
-public void ApplyInheritedVelocity(Vector3 velocity)
-public Vector3 GetNewNavPosWithVelocity(BaseEntity ent, Vector3 velocity)
 public int get_AgentTypeIndex()
 public void set_AgentTypeIndex(int value)
 public bool get_IsStuck()
@@ -3661,52 +3676,11 @@ public bool WakeUpBlockMove(float timeout)
 private void TickWakeUpBlockMove()
 private void OnFactChanged(Facts fact, byte oldValue, byte newValue)
 public int TopologyPreference()
-public bool HasAiFlag(AiFlags f)
-public void SetAiFlag(AiFlags f, bool set)
-public bool get_IsSitting()
-public void set_IsSitting(bool value)
-public bool get_IsChasing()
-public void set_IsChasing(bool value)
-public bool get_IsSleeping()
-public void set_IsSleeping(bool value)
-public void InitFacts()
-public byte GetFact(Facts fact)
-public void SetFact(Facts fact, byte value, bool triggerCallback, bool onlyTriggerCallbackOnDiffValue)
-public EnemyRangeEnum ToEnemyRangeEnum(float range)
-public float GetActiveAggressionRangeSqr()
-public FoodRangeEnum ToFoodRangeEnum(float range)
-public AfraidRangeEnum ToAfraidRangeEnum(float range)
-public HealthEnum ToHealthEnum(float healthNormalized)
-public byte ToIsTired(float energyNormalized)
-public SpeedEnum ToSpeedEnum(float speed)
-public float ToSpeed(SpeedEnum speed)
-public byte GetPathStatus()
-public NavMeshPathStatus ToPathStatus(byte value)
-private void TickSenses()
-private void TickHearing()
-private void TickSmell()
-private float DecisionMomentumPlayerTarget()
-private float DecisionMomentumAnimalTarget()
-private void TickFoodAwareness()
-private void SelectFood()
-private void SelectClosestFood()
-private void UpdateSelfFacts()
-private byte IsMoving()
-private bool AiCaresAbout(BaseEntity ent)
-private bool WithinVisionCone(BaseNpc npc, BaseEntity other)
-public void SetTargetPathStatus(float pendingDelay)
-private void DelayedTargetPathStatus()
-public void ServerInit()
-internal void DoServerDestroy()
-public void Hurt(HitInfo info)
-public void OnKilled(HitInfo hitInfo)
-public void OnSensation(Sensation sensation)
-protected void OnSenseGunshot(Sensation sensation)
-public float get_SecondsSinceLastHeardGunshot()
-public Vector3 get_LastHeardGunshotDirection()
-public void set_LastHeardGunshotDirection(Vector3 value)
-public float get_TargetSpeed()
-public void set_TargetSpeed(float value)
+public void UpdateDestination(Vector3 position)
+public void UpdateDestination(Transform tx)
+public void StopMoving()
+public void ApplyInheritedVelocity(Vector3 velocity)
+public Vector3 GetNewNavPosWithVelocity(BaseEntity ent, Vector3 velocity)
 public bool get_IsNpc()
 public bool get_IsDormant()
 public void set_IsDormant(bool value)
@@ -3758,6 +3732,52 @@ public void set_CurrentBehaviour(Behaviour value)
 public void Save(SaveInfo info)
 public void Load(LoadInfo info)
 public float MaxVelocity()
+public bool HasAiFlag(AiFlags f)
+public void SetAiFlag(AiFlags f, bool set)
+public bool get_IsSitting()
+public void set_IsSitting(bool value)
+public bool get_IsChasing()
+public void set_IsChasing(bool value)
+public bool get_IsSleeping()
+public void set_IsSleeping(bool value)
+public void InitFacts()
+public byte GetFact(Facts fact)
+public void SetFact(Facts fact, byte value, bool triggerCallback, bool onlyTriggerCallbackOnDiffValue)
+public EnemyRangeEnum ToEnemyRangeEnum(float range)
+public float GetActiveAggressionRangeSqr()
+public FoodRangeEnum ToFoodRangeEnum(float range)
+public AfraidRangeEnum ToAfraidRangeEnum(float range)
+public HealthEnum ToHealthEnum(float healthNormalized)
+public byte ToIsTired(float energyNormalized)
+public SpeedEnum ToSpeedEnum(float speed)
+public float ToSpeed(SpeedEnum speed)
+public byte GetPathStatus()
+public NavMeshPathStatus ToPathStatus(byte value)
+private void TickSenses()
+private void TickHearing()
+private void TickSmell()
+private float DecisionMomentumPlayerTarget()
+private float DecisionMomentumAnimalTarget()
+private void TickFoodAwareness()
+private void SelectFood()
+private void SelectClosestFood()
+private void UpdateSelfFacts()
+private byte IsMoving()
+private bool AiCaresAbout(BaseEntity ent)
+private bool WithinVisionCone(BaseNpc npc, BaseEntity other)
+public void SetTargetPathStatus(float pendingDelay)
+private void DelayedTargetPathStatus()
+public void ServerInit()
+internal void DoServerDestroy()
+public void Hurt(HitInfo info)
+public void OnKilled(HitInfo hitInfo)
+public void OnSensation(Sensation sensation)
+protected void OnSenseGunshot(Sensation sensation)
+public float get_SecondsSinceLastHeardGunshot()
+public Vector3 get_LastHeardGunshotDirection()
+public void set_LastHeardGunshotDirection(Vector3 value)
+public float get_TargetSpeed()
+public void set_TargetSpeed(float value)
 }
 public BaseOven : StorageContainer {
 private Dictionary`2<float, HashSet`1<ItemDefinition>> _materialOutputCache
@@ -3980,29 +4000,6 @@ private TimeSince lastTick
 private bool _playerStateDirty
 private string _wipeId
 public Dictionary`2<int, FiredProjectile> firedProjectiles
-private int WILDERNESS
-private int MONUMENT
-private int BASE
-private int FLYING
-private int BOATING
-private int SWIMMING
-private int DRIVING
-public float lifeStoryFramebudgetms
-public PlayerLifeStory lifeStory
-public PlayerLifeStory previousLifeStory
-public float TimeCategoryUpdateFrequency
-public float nextTimeCategoryUpdate
-private int <currentTimeCategory>k__BackingField
-private bool hasSentPresenceState
-private bool LifeStoryInWilderness
-private bool LifeStoryInMonument
-private bool LifeStoryInBase
-private bool LifeStoryFlying
-private bool LifeStoryBoating
-private bool LifeStorySwimming
-private bool LifeStoryDriving
-private bool waitingForLifeStoryUpdate
-public LifeStoryWorkQueue lifeStoryQueue
 public PlayerStatistics stats
 public ItemId svActiveItemID
 public float NextChatTime
@@ -4034,6 +4031,29 @@ public float cachedCraftLevel
 public float nextCheckTime
 private Workbench _cachedWorkbench
 public PersistantPlayer cachedPersistantPlayer
+private int WILDERNESS
+private int MONUMENT
+private int BASE
+private int FLYING
+private int BOATING
+private int SWIMMING
+private int DRIVING
+public float lifeStoryFramebudgetms
+public PlayerLifeStory lifeStory
+public PlayerLifeStory previousLifeStory
+public float TimeCategoryUpdateFrequency
+public float nextTimeCategoryUpdate
+private int <currentTimeCategory>k__BackingField
+private bool hasSentPresenceState
+private bool LifeStoryInWilderness
+private bool LifeStoryInMonument
+private bool LifeStoryInBase
+private bool LifeStoryFlying
+private bool LifeStoryBoating
+private bool LifeStorySwimming
+private bool LifeStoryDriving
+private bool waitingForLifeStoryUpdate
+public LifeStoryWorkQueue lifeStoryQueue
 public int SpectateOffset
 public string spectateFilter
 private bool <IsBeingSpectated>k__BackingField
@@ -4123,8 +4143,6 @@ public bool isMounted
 public bool isMountingHidingWeapon
 public PlayerState State
 public string WipeId
-public bool hasPreviousLife
-public int currentTimeCategory
 public FamilyEnum Family
 protected float PositionTickRate
 public int DebugMapMarkerIndex
@@ -4141,6 +4159,8 @@ public IEnumerable`1<BasePlayer> allPlayerList
 public float currentCraftLevel
 public float currentComfort
 public PersistantPlayer PersistantPlayerInfo
+public bool hasPreviousLife
+public int currentTimeCategory
 public bool IsBeingSpectated
 public InputState serverInput
 public float timeSinceLastTick
@@ -4324,20 +4344,6 @@ public bool CanUseNetworkCache(Connection connection)
 public void PostServerLoad()
 public void Save(SaveInfo info)
 public void Load(LoadInfo info)
-public bool get_hasPreviousLife()
-public int get_currentTimeCategory()
-private void set_currentTimeCategory(int value)
-internal void LifeStoryStart()
-public void LifeStoryEnd()
-internal void LifeStoryUpdate(float deltaTime, float moveSpeed)
-public void UpdateTimeCategory()
-public void LifeStoryShotFired(BaseEntity withWeapon)
-public void LifeStoryShotHit(BaseEntity withWeapon)
-public void LifeStoryKill(BaseCombatEntity killed)
-public void LifeStoryGenericStat(string key, int value)
-public void LifeStoryHurt(float amount)
-public void LifeStoryHeal(float amount)
-internal void LifeStoryLogDeath(HitInfo deathBlow, DamageType lastDamage)
 public FamilyEnum get_Family()
 protected float get_PositionTickRate()
 public int get_DebugMapMarkerIndex()
@@ -4434,6 +4440,7 @@ public bool IsNoob()
 public bool HasHostileItem()
 public void GiveItem(Item item, GiveItemReason reason)
 public void AttackerInfo(DeathInfo info)
+public void InvalidateWorkbenchCache()
 public Workbench GetCachedCraftLevelWorkbench()
 public float get_currentCraftLevel()
 public float get_currentComfort()
@@ -4465,6 +4472,21 @@ public int GetIdealSlot(BasePlayer player, Item item)
 public ItemContainerId GetIdealContainer(BasePlayer looter, Item item, bool altMove)
 private BaseVehicle GetVehicleParent()
 private void RemoveLoadingPlayerFlag()
+public bool InNoRespawnZone()
+public bool get_hasPreviousLife()
+public int get_currentTimeCategory()
+private void set_currentTimeCategory(int value)
+internal void LifeStoryStart()
+public void LifeStoryEnd()
+internal void LifeStoryUpdate(float deltaTime, float moveSpeed)
+public void UpdateTimeCategory()
+public void LifeStoryShotFired(BaseEntity withWeapon)
+public void LifeStoryShotHit(BaseEntity withWeapon)
+public void LifeStoryKill(BaseCombatEntity killed)
+public void LifeStoryGenericStat(string key, int value)
+public void LifeStoryHurt(float amount)
+public void LifeStoryHeal(float amount)
+internal void LifeStoryLogDeath(HitInfo deathBlow, DamageType lastDamage)
 public bool get_IsBeingSpectated()
 private void set_IsBeingSpectated(bool value)
 private void Tick_Spectator()
@@ -4550,6 +4572,8 @@ public Vector3 GetInheritedDropVelocity()
 public void PreInitShared()
 public void DestroyShared()
 public bool InSafeZone()
+public bool IsInNoRespawnZone()
+public bool IsOnATugboat()
 public void ServerCycle(float deltaTime)
 public bool OnStartBeingLooted(BasePlayer baseEntity)
 public Bounds GetBounds(bool ducked)
@@ -4612,12 +4636,12 @@ public void ClearDesigningAIEntity()
 private bool <CountWaveTargets>g__CheckPlayer|96_0(BasePlayer player, <>c__DisplayClass96_0& )
 private bool <FindUnusedPointOfInterestColour>g__HasColour|126_0(int index)
 private ArraySegment`1<byte> <SaveSecondaryData>g__GetPoolableMugshotData|179_0(PlayerRelationshipInfo relationshipInfo)
-private void <SendRespawnOptions>g__CollectExternalAndSend|384_0()
-private void <SendRespawnOptions>g__SendToPlayer|384_1(List`1<SpawnOptions> spawnOptions, bool loading)
-internal float <CreateCorpse>g__GetFloatBasedOnUserID|414_0(ulong steamid, ulong seed)
-private bool <UpdateSpectateTarget>b__494_1(BaseNetworkable x)
-private bool <UpdateSpectateTarget>b__494_3(BasePlayer x)
-private bool <UpdateSpectateTarget>b__494_4(BasePlayer x)
+private void <SendRespawnOptions>g__CollectExternalAndSend|343_0()
+private void <SendRespawnOptions>g__SendToPlayer|343_1(List`1<SpawnOptions> spawnOptions, bool loading)
+internal float <CreateCorpse>g__GetFloatBasedOnUserID|373_0(ulong steamid, ulong seed)
+private bool <UpdateSpectateTarget>b__496_1(BaseNetworkable x)
+private bool <UpdateSpectateTarget>b__496_3(BasePlayer x)
+private bool <UpdateSpectateTarget>b__496_4(BasePlayer x)
 }
 public BasePortal : BaseCombatEntity {
 public bool isUsablePortal
@@ -4737,11 +4761,11 @@ private void OnDrawGizmos()
 public RecoilProperties GetRecoil()
 public bool get_isSemiAuto()
 public Transform get_MuzzleTransform()
+public float AmmoFraction()
 public bool get_IsUsableByTurret()
 public void DidAttackServerside()
 public bool ServerIsReloading()
 public bool CanReload()
-public float AmmoFraction()
 public void TopUpAmmo()
 public void ServerReload()
 public bool ServerTryReload(IAmmoContainer ammoSource)
@@ -5031,18 +5055,6 @@ public bool HasPlayersIntersecting()
 protected void DropToGround(Vector3& pos, Quaternion& rot)
 }
 public BaseSubmarine : BaseVehicle {
-public float targetClimbSpeed
-public float maxDamageThisTick
-private float nextCollisionDamageTime
-private bool prevPrimaryFireInput
-private bool primaryFireInput
-private float DECAY_TICK_TIME
-public TimeSince timeSinceLastUsed
-public TimeSince timeSinceTorpedoFired
-private TimeSince timeSinceFailRPCSent
-private float normalDrag
-private float highDrag
-private bool wasOnSurface
 private Transform centreOfMassTransform
 public Buoyancy buoyancy
 public float maxRudderAngle
@@ -5108,6 +5120,18 @@ public float curSubDepthY
 public EntityRef`1<StorageContainer> torpedoStorageInstance
 private EntityRef`1<StorageContainer> itemStorageInstance
 public int waterLayerMask
+public float targetClimbSpeed
+public float maxDamageThisTick
+private float nextCollisionDamageTime
+private bool prevPrimaryFireInput
+private bool primaryFireInput
+private float DECAY_TICK_TIME
+public TimeSince timeSinceLastUsed
+public TimeSince timeSinceTorpedoFired
+private TimeSince timeSinceFailRPCSent
+private float normalDrag
+private float highDrag
+private bool wasOnSurface
 public AirSupplyType AirType
 public EngineState<BaseSubmarine> EngineState
 public Vector3 Velocity
@@ -5121,34 +5145,6 @@ protected float PhysicalRudderAngle
 protected bool IsInWater
 protected bool IsSurfaced
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
-public void ServerInit()
-protected void OnChildAdded(BaseEntity child)
-private void ServerFlagsChanged(Flags old, Flags next)
-internal void DoServerDestroy()
-protected void OnCollisionEnter(Collision collision)
-public float MaxVelocity()
-public EntityFuelSystem GetFuelSystem()
-public int StartingFuelUnits()
-public void AttemptMount(BasePlayer player, bool doMountChecks)
-public void OnPoolDestroyed()
-public void WakeUp()
-protected void OnServerWake()
-public void OnKilled(HitInfo info)
-public void VehicleFixedUpdate()
-public void LightToggle(BasePlayer player)
-public void PlayerServerInput(InputState inputState, BasePlayer player)
-public void Save(SaveInfo info)
-public bool MeetsEngineRequirements()
-public void OnEngineStartFailed()
-public StorageContainer GetTorpedoContainer()
-public StorageContainer GetItemContainer()
-private void ProcessCollision(Collision collision)
-public void UpdateClients()
-public void SubmarineDecay()
-public void RPC_OpenFuel(RPCMessage msg)
-public void RPC_OpenTorpedoStorage(RPCMessage msg)
-public void RPC_OpenItemStorage(RPCMessage msg)
-public void OnSurfacedInMoonpool()
 public AirSupplyType get_AirType()
 public EngineState<BaseSubmarine> get_EngineState()
 public Vector3 get_Velocity()
@@ -5181,6 +5177,34 @@ private void UpdatePhysicalRudder(float turnInput, float deltaTime)
 private bool CanMount(BasePlayer player)
 private void UpdateWaterInfo()
 private float GetWaterSurfaceY()
+public void ServerInit()
+protected void OnChildAdded(BaseEntity child)
+private void ServerFlagsChanged(Flags old, Flags next)
+internal void DoServerDestroy()
+protected void OnCollisionEnter(Collision collision)
+public float MaxVelocity()
+public EntityFuelSystem GetFuelSystem()
+public int StartingFuelUnits()
+public void AttemptMount(BasePlayer player, bool doMountChecks)
+public void OnPoolDestroyed()
+public void WakeUp()
+protected void OnServerWake()
+public void OnKilled(HitInfo info)
+public void VehicleFixedUpdate()
+public void LightToggle(BasePlayer player)
+public void PlayerServerInput(InputState inputState, BasePlayer player)
+public void Save(SaveInfo info)
+public bool MeetsEngineRequirements()
+public void OnEngineStartFailed()
+public StorageContainer GetTorpedoContainer()
+public StorageContainer GetItemContainer()
+private void ProcessCollision(Collision collision)
+public void UpdateClients()
+public void SubmarineDecay()
+public void RPC_OpenFuel(RPCMessage msg)
+public void RPC_OpenTorpedoStorage(RPCMessage msg)
+public void RPC_OpenItemStorage(RPCMessage msg)
+public void OnSurfacedInMoonpool()
 private void IEngineControllerUser.Invoke(Action action, float time)
 private void IEngineControllerUser.CancelInvoke(Action action)
 }
@@ -5196,17 +5220,6 @@ internal void OnObjectAdded(GameObject obj, Collider col)
 public void OnEmpty()
 }
 public BaseVehicle : BaseMountable {
-private float MIN_TIME_BETWEEN_PUSHES
-public TimeSince timeSinceLastPush
-private bool prevSleeping
-private float nextCollisionFXTime
-private CollisionDetectionMode savedCollisionDetectionMode
-private BaseVehicle pendingLoad
-public Queue`1<BasePlayer> recentDrivers
-public Action clearRecentDriverAction
-public float safeAreaRadius
-public Vector3 safeAreaOrigin
-public float spawnTime
 public bool mountChaining
 public ClippingCheckMode clippingChecks
 public bool checkVehicleClipping
@@ -5224,15 +5237,45 @@ public Flags Flag_Stationary
 public Flags Flag_SeatsFull
 protected Flags Flag_AnyMounted
 private List`1<BaseVehicle> childVehicles
+private float MIN_TIME_BETWEEN_PUSHES
+public TimeSince timeSinceLastPush
+private bool prevSleeping
+private float nextCollisionFXTime
+private CollisionDetectionMode savedCollisionDetectionMode
+private BaseVehicle pendingLoad
+public Queue`1<BasePlayer> recentDrivers
+public Action clearRecentDriverAction
+public float safeAreaRadius
+public Vector3 safeAreaOrigin
+public float spawnTime
+public bool IsMovingOrOn
+public float RealisticMass
+public Enumerable allMountPoints
 public bool IsClient
 public bool AlwaysAllowBradleyTargeting
 protected bool RecentlyPushed
 protected bool PositionTickFixedTime
 protected bool CanSwapSeats
-public bool IsMovingOrOn
-public float RealisticMass
-public Enumerable allMountPoints
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+public bool IsStationary()
+public bool IsMoving()
+public bool get_IsMovingOrOn()
+public float get_RealisticMass()
+public bool IsAuthed(BasePlayer player)
+public bool AnyMounted()
+public bool PlayerIsMounted(BasePlayer player)
+public bool CanPushNow(BasePlayer pusher)
+public bool HasMountPoints()
+public bool CanBeLooted(BasePlayer player)
+public bool IsFlipped()
+public bool IsVehicleRoot()
+public bool DirectlyMountable()
+public BaseVehicle VehicleParent()
+protected void OnChildAdded(BaseEntity child)
+protected void OnChildRemoved(BaseEntity child)
+public Enumerable get_allMountPoints()
+public MountPointInfo GetMountPoint(int index)
+public float GetSpeed()
 public bool get_IsClient()
 public bool get_AlwaysAllowBradleyTargeting()
 protected bool get_RecentlyPushed()
@@ -5261,6 +5304,7 @@ private void OnPhysicsNeighbourChanged()
 private void CheckAndSpawnMountPoints()
 public void Spawn()
 public void Hurt(HitInfo info)
+public void DoExplosionForce(HitInfo info)
 public int NumMounted()
 public int MaxMounted()
 public bool HasDriver()
@@ -5311,31 +5355,8 @@ protected void OnServerSleep()
 public bool ShouldDisableTransferProtectionOnLoad(BasePlayer player)
 public void DisableTransferProtection()
 public bool AllowPlayerInstigatedDismount(BasePlayer player)
-public bool IsStationary()
-public bool IsMoving()
-public bool get_IsMovingOrOn()
-public float get_RealisticMass()
-public bool IsAuthed(BasePlayer player)
-public bool AnyMounted()
-public bool PlayerIsMounted(BasePlayer player)
-public bool CanPushNow(BasePlayer pusher)
-public bool HasMountPoints()
-public bool CanBeLooted(BasePlayer player)
-public bool IsFlipped()
-public bool IsVehicleRoot()
-public bool DirectlyMountable()
-public BaseVehicle VehicleParent()
-protected void OnChildAdded(BaseEntity child)
-protected void OnChildRemoved(BaseEntity child)
-public Enumerable get_allMountPoints()
-public MountPointInfo GetMountPoint(int index)
-public float GetSpeed()
 }
 public BaseVehicleModule : BaseVehicle {
-public Item AssociatedItemInstance
-private bool <PropagateDamage>k__BackingField
-private TimeSince timeSinceItemLockRefresh
-private float TIME_BETWEEN_LOCK_REFRESH
 private Transform centreOfMassTransform
 private float mass
 public VisualGroup visualGroup
@@ -5351,7 +5372,10 @@ private TimeSince TimeSinceAddedToVehicle
 private float prevRefreshHealth
 private bool prevRefreshVehicleIsDead
 private bool prevRefreshVehicleIsLockable
-public bool PropagateDamage
+public Item AssociatedItemInstance
+private bool <PropagateDamage>k__BackingField
+private TimeSince timeSinceItemLockRefresh
+private float TIME_BETWEEN_LOCK_REFRESH
 public BaseModularVehicle Vehicle
 public int FirstSocketIndex
 public Vector3 CentreOfMass
@@ -5361,23 +5385,8 @@ public bool IsOnAVehicle
 public ItemDefinition AssociatedItemDef
 public bool HasSeating
 public bool HasAnEngine
+public bool PropagateDamage
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
-public bool get_PropagateDamage()
-private void set_PropagateDamage(bool value)
-public void NonUserSpawn()
-public void VehicleFixedUpdate()
-public void Hurt(HitInfo info)
-public void OnHealthChanged(float oldValue, float newValue)
-public bool CanBeMovedNow()
-protected bool CanBeMovedNowOnVehicle()
-public float GetAdjustedDriveForce(float absSpeed, float topSpeed)
-public void AcceptPropagatedDamage(float amount, DamageType type, BaseEntity attacker, bool useProtection)
-public void Die(HitInfo info)
-public void RPC_Use(RPCMessage msg)
-public void AdminKill()
-public bool AdminFixUp(int tier)
-public void OnPlayerDismountedVehicle(BasePlayer player)
-public void Save(SaveInfo info)
 public BaseModularVehicle get_Vehicle()
 private void set_Vehicle(BaseModularVehicle value)
 public int get_FirstSocketIndex()
@@ -5413,6 +5422,22 @@ private bool CanBeUsedNowBy(BasePlayer player)
 public bool PlayerIsLookingAtUsable(string lookingAtColldierName, string usableColliderName)
 public void Load(LoadInfo info)
 public bool IsVehicleRoot()
+public bool get_PropagateDamage()
+private void set_PropagateDamage(bool value)
+public void NonUserSpawn()
+public void VehicleFixedUpdate()
+public void Hurt(HitInfo info)
+public void OnHealthChanged(float oldValue, float newValue)
+public bool CanBeMovedNow()
+protected bool CanBeMovedNowOnVehicle()
+public float GetAdjustedDriveForce(float absSpeed, float topSpeed)
+public void AcceptPropagatedDamage(float amount, DamageType type, BaseEntity attacker, bool useProtection)
+public void Die(HitInfo info)
+public void RPC_Use(RPCMessage msg)
+public void AdminKill()
+public bool AdminFixUp(int tier)
+public void OnPlayerDismountedVehicle(BasePlayer player)
+public void Save(SaveInfo info)
 }
 public BaseVehicleMountPoint : BaseMountable {
 public bool DirectlyMountable()
@@ -5426,6 +5451,7 @@ public float mountedAnimationSpeed
 public bool sendClientInputToVehicleParent
 public bool forcePlayerModelUpdate
 public bool giveCrosshair
+public bool canTeamInteract
 public void ScaleDamageForPlayer(BasePlayer player, HitInfo info)
 public void MounteeTookDamage(BasePlayer mountee, HitInfo info)
 public void PlayerServerInput(InputState inputState, BasePlayer player)
@@ -5848,14 +5874,6 @@ public bool preserveInFirstPerson
 public bool restoreBeforePooling
 }
 public BoomBox : EntityComponent`1<BaseEntity> {
-public Dictionary`2<string, string> ValidStations
-public Dictionary`2<string, string> ServerValidStations
-public string ServerUrlList
-public string lastParsedServerList
-public ShoutcastStreamer ShoutcastStreamer
-public GameObjectRef RadioIpDialog
-private string <CurrentRadioIp>k__BackingField
-public ulong AssignedRadioBy
 public AudioSource SoundSource
 public float ConditionLossRate
 public ItemDefinition[] ValidCassettes
@@ -5864,20 +5882,18 @@ public SoundDefinition StopSfx
 public Flags HasCassette
 public int BacktrackLength
 public Action`1<float> HurtCallback
-public string CurrentRadioIp
+public Dictionary`2<string, string> ValidStations
+public Dictionary`2<string, string> ServerValidStations
+public string ServerUrlList
+public string lastParsedServerList
+public ShoutcastStreamer ShoutcastStreamer
+public GameObjectRef RadioIpDialog
+private string <CurrentRadioIp>k__BackingField
+public ulong AssignedRadioBy
 public BaseEntity BaseEntity
 private bool isClient
+public string CurrentRadioIp
 public void ClearRadioByUser(Arg arg)
-public void LoadStations()
-public Dictionary`2<string, string> GetStationData()
-public bool IsStationValid(string url)
-public void ParseServerUrlList()
-public string get_CurrentRadioIp()
-public void set_CurrentRadioIp(string value)
-public void Server_UpdateRadioIP(RPCMessage msg)
-public void Save(SaveInfo info)
-public bool ClearRadioByUserId(ulong id)
-public void Load(LoadInfo info)
 public BaseEntity get_BaseEntity()
 public void ServerTogglePlay(RPCMessage msg)
 public void DeductCondition()
@@ -5889,6 +5905,16 @@ public bool IsOn()
 public bool HasFlag(Flags f)
 public void SetFlag(Flags f, bool state)
 private bool get_isClient()
+public void LoadStations()
+public Dictionary`2<string, string> GetStationData()
+public bool IsStationValid(string url)
+public void ParseServerUrlList()
+public string get_CurrentRadioIp()
+public void set_CurrentRadioIp(string value)
+public void Server_UpdateRadioIP(RPCMessage msg)
+public void Save(SaveInfo info)
+public bool ClearRadioByUserId(ulong id)
+public void Load(LoadInfo info)
 }
 public Bootstrap : SingletonComponent`1<Bootstrap> {
 internal bool bootstrapInitRun
@@ -5983,27 +6009,6 @@ private Modulator turretTurnLoopPitch
 public float enginePitch
 public float rpmMultiplier
 private TreadAnimator treadAnimator
-public List`1<Vector3> currentPath
-public int currentPathIndex
-public bool pathLooping
-public float viewDistance
-public float searchRange
-public float searchFrequency
-public float memoryDuration
-public float sightUpdateRate
-public List`1<TargetInfo> targetList
-public BaseCombatEntity mainGunTarget
-public float coaxFireRate
-public int coaxBurstLength
-public float coaxAimCone
-public float bulletDamage
-public float topTurretFireRate
-public float nextCoaxTime
-public int numCoaxBursted
-public float nextTopTurretTime
-public GameObjectRef gun_fire_effect
-public GameObjectRef bulletEffect
-public float lastLateUpdate
 public WheelCollider[] leftWheels
 public WheelCollider[] rightWheels
 public float moveForceMax
@@ -6061,33 +6066,29 @@ public int numBursted
 public float nextPatrolTime
 public float nextEngagementPathTime
 public float currentSpeedZoneLimit
+public List`1<Vector3> currentPath
+public int currentPathIndex
+public bool pathLooping
+public float viewDistance
+public float searchRange
+public float searchFrequency
+public float memoryDuration
+public float sightUpdateRate
+public List`1<TargetInfo> targetList
+public BaseCombatEntity mainGunTarget
+public float coaxFireRate
+public int coaxBurstLength
+public float coaxAimCone
+public float bulletDamage
+public float topTurretFireRate
+public float nextCoaxTime
+public int numCoaxBursted
+public float nextTopTurretTime
+public GameObjectRef gun_fire_effect
+public GameObjectRef bulletEffect
+public float lastLateUpdate
 protected float PositionTickRate
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
-public bool HasPath()
-public void ClearPath()
-public bool IndexValid(int index)
-public Vector3 GetFinalDestination()
-public Vector3 GetCurrentPathDestination()
-public bool PathComplete()
-public bool AtCurrentPathNode()
-public int GetLoopedIndex(int index)
-public Vector3 PathDirection(int index)
-public Vector3 IdealPathPosition()
-public void AdvancePathMovement(bool force)
-public bool GetPathToClosestTurnableNode(IAIPathNode start, Vector3 forward, List`1& nodes)
-public bool GetEngagementPath(List`1& nodes)
-public void AddOrUpdateTarget(BaseEntity ent, Vector3 pos, float damageFrom)
-public void UpdateTargetList()
-public int SortTargets(TargetInfo t1, TargetInfo t2)
-public Vector3 GetAimPoint(BaseEntity ent)
-public bool VisibilityTest(BaseEntity ent)
-public void UpdateTargetVisibilities()
-public void DoWeaponAiming()
-public void DoWeapons()
-public void FireGun(Vector3 targetPos, float aimCone, bool isCoax)
-public void ApplyDamage(BaseCombatEntity entity, Vector3 point, Vector3 normal)
-public void AimWeaponAt(Transform weaponYaw, Transform weaponPitch, Vector3 direction, float minPitch, float maxPitch, float maxYaw, Transform parentOverride)
-public void LateUpdate()
 public void Load(LoadInfo info)
 public void Save(SaveInfo info)
 public BradleyAPC SpawnRoadDrivingBradley(Vector3 spawnPos, Quaternion spawnRot)
@@ -6123,6 +6124,31 @@ public void DoHealing()
 public BasePlayer GetPlayerDamageInitiator()
 public float GetDamageMultiplier(BaseEntity ent)
 public void OnHurtTriggerOccupant(BaseEntity hurtEntity, DamageType damageType, float damageTotal)
+public bool HasPath()
+public void ClearPath()
+public bool IndexValid(int index)
+public Vector3 GetFinalDestination()
+public Vector3 GetCurrentPathDestination()
+public bool PathComplete()
+public bool AtCurrentPathNode()
+public int GetLoopedIndex(int index)
+public Vector3 PathDirection(int index)
+public Vector3 IdealPathPosition()
+public void AdvancePathMovement(bool force)
+public bool GetPathToClosestTurnableNode(IAIPathNode start, Vector3 forward, List`1& nodes)
+public bool GetEngagementPath(List`1& nodes)
+public void AddOrUpdateTarget(BaseEntity ent, Vector3 pos, float damageFrom)
+public void UpdateTargetList()
+public int SortTargets(TargetInfo t1, TargetInfo t2)
+public Vector3 GetAimPoint(BaseEntity ent)
+public bool VisibilityTest(BaseEntity ent)
+public void UpdateTargetVisibilities()
+public void DoWeaponAiming()
+public void DoWeapons()
+public void FireGun(Vector3 targetPos, float aimCone, bool isCoax)
+public void ApplyDamage(BaseCombatEntity entity, Vector3 point, Vector3 normal)
+public void AimWeaponAt(Transform weaponYaw, Transform weaponPitch, Vector3 direction, float minPitch, float maxPitch, float maxYaw, Transform parentOverride)
+public void LateUpdate()
 }
 public BradleyMoveTest : MonoBehaviour {
 public WheelCollider[] leftWheels
@@ -6194,6 +6220,8 @@ protected Vector3 vecAngleSpeedLast
 private Vector3 initialPosition
 }
 public BuildingBlock : StabilityEntity {
+public Construction blockDefinition
+private Vector3[] outsideLookupOffsets
 private bool forceSkinRefresh
 private ulong lastSkinID
 private int <modelState>k__BackingField
@@ -6212,12 +6240,18 @@ private bool globalNetworkCooldown
 public bool CullBushes
 public bool CheckForPipesOnModelChange
 public OBBComponent AlternativePipeBounds
-public Construction blockDefinition
-private Vector3[] outsideLookupOffsets
 public int modelState
 public UInt32 customColour
 public ConstructionGrade currentGrade
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+public void ResetState()
+public void InitShared()
+public void PostInitShared()
+public void DestroyShared()
+public string Categorize()
+public float BoundsPadding()
+public bool IsOutside()
+public bool SupportsChildDeployables()
 public bool CanDemolish(BasePlayer player)
 public bool IsDemolishable()
 public bool HasDemolishPrivilege(BasePlayer player)
@@ -6274,14 +6308,6 @@ public void Load(LoadInfo info)
 public void AttachToBuilding(DecayEntity other)
 public void ServerInit()
 public void Hurt(HitInfo info)
-public void ResetState()
-public void InitShared()
-public void PostInitShared()
-public void DestroyShared()
-public string Categorize()
-public float BoundsPadding()
-public bool IsOutside()
-public bool SupportsChildDeployables()
 }
 public BuildingBlockDecay : Decay {
 private bool isFoundation
@@ -6319,28 +6345,14 @@ protected Building CreateBuilding(UInt32 id)
 protected void DisposeBuilding(Building& building)
 }
 public BuildingPrivlidge : StorageContainer {
+public List`1<PlayerNameID> authorizedPlayers
+public Flags Flag_MaxAuths
+public List`1<ItemDefinition> allowedConstructionItems
 public float cachedProtectedMinutes
 public float nextProtectedCalcTime
 public UpkeepBracket[] upkeepBrackets
 public List`1<ItemAmount> upkeepBuffer
-public List`1<PlayerNameID> authorizedPlayers
-public Flags Flag_MaxAuths
-public List`1<ItemDefinition> allowedConstructionItems
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
-public float CalculateUpkeepPeriodMinutes()
-public float CalculateUpkeepCostFraction()
-public void CalculateUpkeepCostAmounts(List`1<ItemAmount> itemAmounts)
-public float GetProtectedMinutes(bool force)
-public void OnKilled(HitInfo info)
-public void DecayTick()
-public bool EnsurePrimary()
-public void MarkProtectedMinutesDirty(float delay)
-public float CalculateBuildingTaxRate()
-public void ApplyUpkeepPayment()
-public void QueueUpkeepPayment(List`1<ItemAmount> itemAmounts)
-public bool CanAffordUpkeepPayment(List`1<ItemAmount> itemAmounts)
-public float PurchaseUpkeepTime(DecayEntity entity, float deltaTime)
-public void PurchaseUpkeepTime(float deltaTime)
 public void ResetState()
 public bool IsAuthed(BasePlayer player)
 public bool IsAuthed(ulong userID)
@@ -6365,6 +6377,20 @@ public void RPC_Rotate(RPCMessage msg)
 public int GetIdealSlot(BasePlayer player, Item item)
 public bool HasSlot(Slot slot)
 public bool SupportsChildDeployables()
+public float CalculateUpkeepPeriodMinutes()
+public float CalculateUpkeepCostFraction()
+public void CalculateUpkeepCostAmounts(List`1<ItemAmount> itemAmounts)
+public float GetProtectedMinutes(bool force)
+public void OnKilled(HitInfo info)
+public void DecayTick()
+public bool EnsurePrimary()
+public void MarkProtectedMinutesDirty(float delay)
+public float CalculateBuildingTaxRate()
+public void ApplyUpkeepPayment()
+public void QueueUpkeepPayment(List`1<ItemAmount> itemAmounts)
+public bool CanAffordUpkeepPayment(List`1<ItemAmount> itemAmounts)
+public float PurchaseUpkeepTime(DecayEntity entity, float deltaTime)
+public void PurchaseUpkeepTime(float deltaTime)
 }
 public BuildingProximity : PrefabAttribute {
 private float check_radius
@@ -6997,26 +7023,20 @@ public float brakeForceMultiplier
 public float handlingBias
 }
 public CarvablePumpkin : BaseOven {
+private List`1<ulong> editHistory
 private float TextureRequestTimeout
 public GameObjectRef changeTextDialog
 public MeshPaintableSource[] paintableSources
 public UInt32[] textureIDs
-private List`1<ulong> editHistory
-public Vector2i TextureSize
-public int TextureCount
 public Type FileType
 public NetworkableId NetworkID
 public UGCType ContentType
 public List`1<ulong> EditingHistory
 public UInt32[] GetContentCRCs
 public BaseNetworkable UgcEntity
+public Vector2i TextureSize
+public int TextureCount
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
-public Vector2i get_TextureSize()
-public int get_TextureCount()
-public void PreProcess(IPrefabProcessor preProcess, GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
-public void UpdateSign(RPCMessage msg)
-public void EnsureInitialized()
-private void SignDebugLog(string str)
 public Type get_FileType()
 public UInt32[] GetTextureCRCs()
 public NetworkableId get_NetworkID()
@@ -7039,6 +7059,12 @@ public UInt32[] get_GetContentCRCs()
 public void ClearContent()
 public BaseNetworkable get_UgcEntity()
 public string Categorize()
+public Vector2i get_TextureSize()
+public int get_TextureCount()
+public void PreProcess(IPrefabProcessor preProcess, GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
+public void UpdateSign(RPCMessage msg)
+public void EnsureInitialized()
+private void SignDebugLog(string str)
 }
 public CarWheel : object {
 public WheelCollider wheelCollider
@@ -7625,15 +7651,15 @@ public ClanLog ToProto(ClanLogs clanLogs)
 }
 public ClanManager : BaseEntity {
 public TokenisedPhrase InvitationToast
-private int MaxMetadataRequestsPerSecond
-private float MaxMetadataRequestInterval
-private float MetadataExpiry
-private Dictionary`2<long, List`1<Connection>> _clanMemberConnections
 public int LogoSize
 private ClanManager <ServerInstance>k__BackingField
 private string _backendType
 private ClanChangeTracker _changeTracker
 private IClanBackend <Backend>k__BackingField
+private int MaxMetadataRequestsPerSecond
+private float MaxMetadataRequestInterval
+private float MetadataExpiry
+private Dictionary`2<long, List`1<Connection>> _clanMemberConnections
 public ClanManager ServerInstance
 public IClanBackend Backend
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
@@ -7657,12 +7683,6 @@ public void Server_DeleteRole(RPCMessage msg)
 public void Server_SwapRoles(RPCMessage msg)
 private bool CheckClanResult(int requestId, BasePlayer player, ClanValueResult`1<IClan> result, IClan& clan)
 private ClanActionResult BuildActionResult(int requestId, ClanResult result, IClan clan, bool hasClanInfo)
-public void Server_GetClanMetadata(RPCMessage msg)
-public void SendClanChanged(IClan clan)
-public void SendClanInvitation(ulong steamId, long clanId)
-public bool TryGetClanMemberConnections(long clanId, List`1& connections)
-public void ClanMemberConnectionsChanged(long clanId)
-public void LoadClanInfoForSleepers()
 public ClanManager get_ServerInstance()
 private void set_ServerInstance(ClanManager value)
 public IClanBackend get_Backend()
@@ -7676,8 +7696,14 @@ private string ChooseBackendType()
 private IClanBackend CreateBackendInstance(string type)
 public void InitShared()
 public void OnDestroy()
-private void <Initialize>b__43_0()
-private void <Spawn>b__45_0()
+public void Server_GetClanMetadata(RPCMessage msg)
+public void SendClanChanged(IClan clan)
+public void SendClanInvitation(ulong steamId, long clanId)
+public bool TryGetClanMemberConnections(long clanId, List`1& connections)
+public void ClanMemberConnectionsChanged(long clanId)
+public void LoadClanInfoForSleepers()
+private void <Initialize>b__33_0()
+private void <Spawn>b__35_0()
 }
 public ClanMetadata : ValueType {
 public long ClanId
@@ -7856,7 +7882,6 @@ public Vector3 worldWindScale
 public Vector3 turbulenceScale
 }
 public CoalingTower : IOEntity {
-private TrainCarUnloadable tcUnloadingNow
 private BoxCollider unloadingBounds
 private GameObjectRef oreStoragePrefab
 private GameObjectRef fuelStoragePrefab
@@ -7919,10 +7944,28 @@ private Sound suctionAirLoopSound
 private Sound suctionMaterialLoopSound
 private Sound interiorPipeLoopSound
 private Sound unloadDestinationSound
+private TrainCarUnloadable tcUnloadingNow
 private bool HasTrainCar
 private bool HasUnloadable
 private bool HasUnloadableLinedUp
 public Vector3 UnloadingPos
+private bool get_HasTrainCar()
+private bool get_HasUnloadable()
+private bool get_HasUnloadableLinedUp()
+public Vector3 get_UnloadingPos()
+private void set_UnloadingPos(Vector3 value)
+public void InitShared()
+public void DestroyShared()
+public void Load(LoadInfo info)
+public bool IsUnderAnUnloader(TrainCar trainCar, Boolean& isLinedUp, Vector3& unloaderPos)
+public bool TrainCarIsUnder(TrainCar trainCar, Boolean& isLinedUp)
+private OreHopper GetOreStorage()
+private PercentFullStorageContainer GetFuelStorage()
+private TrainCar GetActiveTrainCar()
+private TrainCarUnloadable GetActiveUnloadable()
+private bool OutputBinIsFull()
+private bool WagonIsEmpty()
+private bool CanUnloadNow(ActionAttemptStatus& attemptStatus)
 public void Save(SaveInfo info)
 public void PostServerLoad()
 protected void OnChildAdded(BaseEntity child)
@@ -7942,23 +7985,6 @@ private void ShuntEnded(ActionAttemptStatus status)
 private void RPC_Unload(RPCMessage msg)
 private void RPC_Next(RPCMessage msg)
 private void RPC_Prev(RPCMessage msg)
-private bool get_HasTrainCar()
-private bool get_HasUnloadable()
-private bool get_HasUnloadableLinedUp()
-public Vector3 get_UnloadingPos()
-private void set_UnloadingPos(Vector3 value)
-public void InitShared()
-public void DestroyShared()
-public void Load(LoadInfo info)
-public bool IsUnderAnUnloader(TrainCar trainCar, Boolean& isLinedUp, Vector3& unloaderPos)
-public bool TrainCarIsUnder(TrainCar trainCar, Boolean& isLinedUp)
-private OreHopper GetOreStorage()
-private PercentFullStorageContainer GetFuelStorage()
-private TrainCar GetActiveTrainCar()
-private TrainCarUnloadable GetActiveUnloadable()
-private bool OutputBinIsFull()
-private bool WagonIsEmpty()
-private bool CanUnloadNow(ActionAttemptStatus& attemptStatus)
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 }
 public CodeLock : BaseLock {
@@ -9024,7 +9050,6 @@ public Color warningColor
 public Color inputColor
 }
 public Construction : PrefabAttribute {
-public string lastPlacementError
 public Option info
 public bool canBypassBuildingPermission
 public bool canRotateBeforePlacement
@@ -9051,17 +9076,18 @@ public bool isSleepingBag
 public ConstructionGrade[] grades
 public Deployable deployable
 public ConstructionPlaceholder placeholder
-public bool UpdatePlacement(Transform transform, Construction common, Target& target)
-private bool TestPlacingThroughRock(Placement& placement, Target target)
-private bool TestPlacingThroughWall(Placement& placement, Transform transform, Construction common, Target target)
-private bool TestPlacingCloseToRoad(Placement& placement, Target target)
-public bool ShowAsNeutral(Target target)
+public string lastPlacementError
 public BaseEntity CreateConstruction(Target target, bool bNeedsValidPlacement)
 public bool HasMaleSockets(Target target)
 public void FindMaleSockets(Target target, List`1<Socket_Base> sockets)
 public ConstructionGrade GetGrade(Enum iGrade, ulong iSkin)
 protected void AttributeSetup(GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
 protected Type GetIndexedType()
+public bool UpdatePlacement(Transform transform, Construction common, Target& target)
+private bool TestPlacingThroughRock(Placement& placement, Target target)
+private bool TestPlacingThroughWall(Placement& placement, Transform transform, Construction common, Target target)
+private bool TestPlacingCloseToRoad(Placement& placement, Target target)
+public bool ShowAsNeutral(Target target)
 }
 public ConstructionGrade : PrefabAttribute {
 public Construction construction
@@ -9776,6 +9802,7 @@ public void status_sv(Arg args)
 public void status_cl(Arg args)
 public void teleport(Arg args)
 public void teleport2me(Arg args)
+public void teleporteveryone2me(Arg args)
 public void teleportany(Arg args)
 public void teleportpos(Arg args)
 public void teleportlos(Arg args)
@@ -10100,6 +10127,8 @@ public void print_instanced_grid(Arg arg)
 public ConVar.Sentry : ConsoleSystem {
 public bool targetall
 public float hostileduration
+public float interferenceradius
+public float maxinterference
 }
 public ConVar.Server : ConsoleSystem {
 public string ip
@@ -10221,6 +10250,7 @@ public int maximumMapMarkers
 public int maximumPings
 public float pingDuration
 public bool canEquipBackpacksInAir
+public float parachuteRepackTime
 public bool emojiOwnershipCheck
 public bool showHolsteredItems
 public int maxpacketspersecond_world
@@ -10614,8 +10644,8 @@ public InputField input
 public int target
 }
 public CoverageQueries : MonoBehaviour {
-public bool debug
 public float depthBias
+public bool debug
 }
 public CoverageQueryFlare : BaseMonoBehaviour {
 public bool isDynamic
@@ -10832,8 +10862,6 @@ public DecayPoint[] decayPoints
 public float lastDecayTick
 public float decayVariance
 public bool BypassInsideDecayMultiplier
-public void Save(SaveInfo info)
-public void Load(LoadInfo info)
 public void ResetState()
 public void AttachToBuilding(UInt32 id)
 public Building GetBuilding()
@@ -10853,6 +10881,8 @@ public void OnKilled(HitInfo info)
 public bool get_BypassInsideDecayMultiplier()
 public bool SupportsChildDeployables()
 public bool ForceDeployableSetParent()
+public void Save(SaveInfo info)
+public void Load(LoadInfo info)
 }
 public DecayPoint : PrefabAttribute {
 public float protection
@@ -10958,6 +10988,7 @@ public DeferredDecalQueue Foreground
 public DeferredExtension : MonoBehaviour {
 public ExtendGBufferParams extendGBuffer
 public SubsurfaceScatteringParams subsurfaceScattering
+public ScreenSpaceRefractionParams screenSpaceRefraction
 public Texture2D blueNoise
 public Texture preintegratedFGD_GGX
 public Texture envBrdfLut
@@ -11431,6 +11462,9 @@ protected void OnGUI()
 }
 public DiagnosticsConSys : ConsoleSystem {
 private void DumpAnimators(string targetFolder)
+public void dump(Arg args)
+private void DumpSystemInformation(string targetFolder)
+private void WriteTextToFile(string file, string text)
 private void DumpEntities(string targetFolder)
 private void DumpLODGroups(string targetFolder)
 private void DumpLODGroupTotals(string targetFolder)
@@ -11442,9 +11476,6 @@ private void DumpColliders(string targetFolder)
 private void DumpRigidBodies(string targetFolder)
 private void DumpGameObjects(string targetFolder)
 private void DumpGameObjectRecursive(StringBuilder str, Transform tx, int indent, bool includeComponents)
-public void dump(Arg args)
-private void DumpSystemInformation(string targetFolder)
-private void WriteTextToFile(string file, string text)
 }
 public DieselEngine : StorageContainer {
 public GameObjectRef rumbleEffect
@@ -11552,12 +11583,14 @@ public DOFBlurSampleCount Medium
 public DOFBlurSampleCount High
 public DOFBlurSampleCount VeryHigh
 }
-public DofExposer : SingletonComponent`1<DofExposer> {
+public DofExposer : ListComponent`1<DofExposer> {
 public PostProcessVolume PostVolume
 public bool DofEnabled
 public float FocalLength
 public float Blur
 public float FocalAperture
+public float AnamorphicSqueeze
+public float AnamorphicBarrel
 public bool debug
 }
 public Door : AnimatedBuildingBlock {
@@ -11939,7 +11972,8 @@ internal List`1<DungeonBaseSocket> Sockets
 internal List`1<DungeonVolume> Volumes
 internal List`1<DungeonBaseSocket> get_Sockets()
 internal List`1<DungeonVolume> get_Volumes()
-protected void Start()
+protected void Awake()
+internal void Initialize()
 }
 public DungeonBaseLinkType : Enum {
 public int value__
@@ -13809,6 +13843,8 @@ private void OnCommand(Command cmd)
 private void OnMessage(string message, string stacktrace, LogType type)
 }
 public Facepunch.Rust.Analytics : object {
+public HashSet`1<string> StatsBlacklist
+private HashSet`1<NetworkableId> trackedSpawnedIds
 private string <ClientAnalyticsUrl>k__BackingField
 private string <ServerAnalyticsUrl>k__BackingField
 private string <AnalyticsHeader>k__BackingField
@@ -13816,8 +13852,7 @@ private bool <UploadAnalytics>k__BackingField
 private string <AnalyticsSecret>k__BackingField
 private string <AnalyticsPublicKey>k__BackingField
 private bool <HighFrequencyStats>k__BackingField
-public HashSet`1<string> StatsBlacklist
-private HashSet`1<NetworkableId> trackedSpawnedIds
+public string stats_blacklist
 public string ClientAnalyticsUrl
 public string ServerAnalyticsUrl
 public string AnalyticsHeader
@@ -13825,7 +13860,8 @@ public bool UploadAnalytics
 public string AnalyticsSecret
 public string AnalyticsPublicKey
 public bool HighFrequencyStats
-public string stats_blacklist
+public string get_stats_blacklist()
+public void set_stats_blacklist(string value)
 public string get_ClientAnalyticsUrl()
 public void set_ClientAnalyticsUrl(string value)
 public string get_ServerAnalyticsUrl()
@@ -13841,8 +13877,6 @@ public void set_AnalyticsPublicKey(string value)
 public bool get_HighFrequencyStats()
 public void set_HighFrequencyStats(bool value)
 public void GetPendingAnalytics(Arg arg)
-public string get_stats_blacklist()
-public void set_stats_blacklist(string value)
 }
 public Facepunch.Rust.EventRecord : object {
 public DateTime Timestamp
@@ -13976,6 +14010,7 @@ private int get_BlockHeight()
 public void FullRebuild()
 public void DataChanged()
 public void Rebuild()
+public void Update()
 private void RecycleOutOfRange(int startVisible, float endVisible)
 private void Recycle(int key)
 private void BuildItem(int i)
@@ -14368,7 +14403,6 @@ public flamethrowerState PILOT_LIGHT
 public flamethrowerState FLAME_ON
 }
 public FlameTurret : StorageContainer {
-public UpdateFlameTurretWorkQueue updateFlameTurretQueueServer
 public Transform upper
 public Vector3 aimDir
 public float arc
@@ -14390,6 +14424,7 @@ private float lastServerThink
 private float triggerCheckRate
 private float nextTriggerCheckTime
 private float pendingFuel
+public UpdateFlameTurretWorkQueue updateFlameTurretQueueServer
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 public bool IsTriggered()
 public Vector3 GetEyePosition()
@@ -14981,7 +15016,7 @@ public void CapsuleSweep(Vector3 position0, Vector3 position1, float radius, Vec
 public void OverlapCapsule(Vector3 point0, Vector3 point1, float radius, List`1<Collider> list, int layerMask, QueryTriggerInteraction triggerInteraction)
 public void OverlapOBB(OBB obb, List`1<Collider> list, int layerMask, QueryTriggerInteraction triggerInteraction)
 public void OverlapBounds(Bounds bounds, List`1<Collider> list, int layerMask, QueryTriggerInteraction triggerInteraction)
-private void BufferToList(int count, List`1<Collider> list)
+private void BufferToList(Collider[] buffer, int count, List`1<Collider> list)
 public bool CheckSphere(Vector3 pos, float radius, int layerMask, QueryTriggerInteraction triggerInteraction)
 public bool CheckCapsule(Vector3 start, Vector3 end, float radius, int layerMask, QueryTriggerInteraction triggerInteraction)
 public bool CheckOBB(OBB obb, int layerMask, QueryTriggerInteraction triggerInteraction)
@@ -14991,7 +15026,7 @@ public void OverlapSphere(Vector3 position, float radius, List`1<T> list, int la
 public void OverlapCapsule(Vector3 point0, Vector3 point1, float radius, List`1<T> list, int layerMask, QueryTriggerInteraction triggerInteraction)
 public void OverlapOBB(OBB obb, List`1<T> list, int layerMask, QueryTriggerInteraction triggerInteraction)
 public void OverlapBounds(Bounds bounds, List`1<T> list, int layerMask, QueryTriggerInteraction triggerInteraction)
-private void BufferToList(int count, List`1<T> list)
+private void BufferToList(Collider[] buffer, int count, List`1<T> list)
 private void HitBufferToList(int count, List`1<RaycastHit> list)
 public bool Trace(Ray ray, float radius, RaycastHit& hitInfo, float maxDistance, int layerMask, QueryTriggerInteraction triggerInteraction, BaseEntity ignoreEntity)
 public void TraceAll(Ray ray, float radius, List`1<RaycastHit> hits, float maxDistance, int layerMask, QueryTriggerInteraction triggerInteraction, BaseEntity ignoreEntity)
@@ -15464,6 +15499,7 @@ public void DrawWireCube(Vector3 pos, Vector3 size, Quaternion rot)
 public void DrawCube(Vector3 pos, Vector3 size, Quaternion rot)
 public void DrawWirePath(Vector3 a, Vector3 b, float thickness)
 public void DrawSemiCircle(float radius)
+public void DrawArrowHead(Vector3 pos, Vector3 dir, float arrowHeadLength, float arrowHeadAngle)
 public void DrawMeshes(Transform transform)
 public void DrawBounds(Transform transform)
 }
@@ -15477,6 +15513,7 @@ public GlobalNetworkHandler server
 public Dictionary`2<NetworkableId, GlobalEntityData> serverData
 private List`1<Connection> globalConnections
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+public bool ShouldSendEntity(BaseEntity entity)
 public void ServerInit()
 public void PostServerLoad()
 public void OnClientConnected(Connection connection)
@@ -15488,11 +15525,8 @@ public void OnEntityKilled(BaseNetworkable entity)
 public void StartSendingSnapshot(BasePlayer player)
 private void SendSnapshot(BasePlayer player)
 private void SendEntityDelete(NetworkableId networkableId, SendInfo info)
-private void SendEntitiesToConnection(GlobalEntityCollection entities, SendInfo info)
-private void SendEntitiesToConnection(List`1<GlobalEntityData> list, SendInfo info)
-private void SendEntityToConnections(GlobalEntityData entity, SendInfo info)
-private void SERVER_RequestSnapshot(RPCMessage msg)
-public bool ShouldSendEntity(BaseEntity entity)
+private void SendGlobalEntities(GlobalEntityCollection entities, SendInfo info)
+private void SendGlobalEntity(GlobalEntityData entity, SendInfo info)
 }
 public GodRays : PostProcessEffectSettings {
 public BoolParameter UseDepth
@@ -15660,6 +15694,21 @@ private void OnPhysicsNeighbourChanged()
 private bool OnGround()
 }
 public GrowableEntity : BaseCombatEntity {
+public PlantProperties Properties
+public ItemDefinition SourceItemDef
+private State <State>k__BackingField
+private float <Age>k__BackingField
+private float <LightQuality>k__BackingField
+private float <GroundQuality>k__BackingField
+private float <WaterQuality>k__BackingField
+private float <WaterConsumption>k__BackingField
+private bool <Fertilized>k__BackingField
+private float <TemperatureQuality>k__BackingField
+private float <OverallQuality>k__BackingField
+private float <Yield>k__BackingField
+public float stageAge
+public GrowableGenes Genes
+public float startingHealth
 public float artificalLightQuality
 public float planterGroundModifierBase
 public float fertilizerGroundModifierBonus
@@ -15682,22 +15731,6 @@ public int harvests
 public float terrainTypeValue
 public float yieldPool
 public PlanterBox planter
-public PlantProperties Properties
-public ItemDefinition SourceItemDef
-private State <State>k__BackingField
-private float <Age>k__BackingField
-private float <LightQuality>k__BackingField
-private float <GroundQuality>k__BackingField
-private float <WaterQuality>k__BackingField
-private float <WaterConsumption>k__BackingField
-private bool <Fertilized>k__BackingField
-private float <TemperatureQuality>k__BackingField
-private float <OverallQuality>k__BackingField
-private float <Yield>k__BackingField
-public float stageAge
-public GrowableGenes Genes
-public float startingHealth
-public float CurrentTemperature
 public State State
 public float Age
 public float LightQuality
@@ -15714,7 +15747,43 @@ public float ThinkDeltaTime
 public float growDeltaTime
 public int CurrentPickAmount
 public float CurrentPickAmountFloat
+public float CurrentTemperature
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+public State get_State()
+public void set_State(State value)
+public float get_Age()
+public void set_Age(float value)
+public float get_LightQuality()
+public void set_LightQuality(float value)
+public float get_GroundQuality()
+public void set_GroundQuality(float value)
+public float get_WaterQuality()
+public void set_WaterQuality(float value)
+public float get_WaterConsumption()
+public void set_WaterConsumption(float value)
+public bool get_Fertilized()
+public void set_Fertilized(bool value)
+public float get_TemperatureQuality()
+public void set_TemperatureQuality(float value)
+public float get_OverallQuality()
+public void set_OverallQuality(float value)
+public float get_Yield()
+public void set_Yield(float value)
+public float get_StageProgressFraction()
+public Stage get_currentStage()
+public float get_ThinkDeltaTime()
+public float get_growDeltaTime()
+public void ReceiveInstanceData(InstanceData data)
+public void ResetState()
+public bool CanPick()
+public int get_CurrentPickAmount()
+public float get_CurrentPickAmountFloat()
+public bool CanTakeSeeds()
+public bool CanClone()
+public void Save(SaveInfo info)
+public void Load(LoadInfo info)
+public void ChangeState(State state, bool resetAge, bool loading)
+public void OnDeployed(BaseEntity parent, BasePlayer deployedBy, Item fromItem)
 public void QueueForQualityUpdate()
 public void CalculateQualities(bool firstTime, bool forceArtificialLightUpdates, bool forceArtificialTemperatureUpdates)
 private void CalculateQualities_Water()
@@ -15764,41 +15833,6 @@ public void RPC_RemoveDyingAll(RPCMessage msg)
 public void RemoveDying(BasePlayer receiver)
 public void GrowAll(Arg arg)
 private void RPC_RequestQualityUpdate(RPCMessage msg)
-public State get_State()
-public void set_State(State value)
-public float get_Age()
-public void set_Age(float value)
-public float get_LightQuality()
-public void set_LightQuality(float value)
-public float get_GroundQuality()
-public void set_GroundQuality(float value)
-public float get_WaterQuality()
-public void set_WaterQuality(float value)
-public float get_WaterConsumption()
-public void set_WaterConsumption(float value)
-public bool get_Fertilized()
-public void set_Fertilized(bool value)
-public float get_TemperatureQuality()
-public void set_TemperatureQuality(float value)
-public float get_OverallQuality()
-public void set_OverallQuality(float value)
-public float get_Yield()
-public void set_Yield(float value)
-public float get_StageProgressFraction()
-public Stage get_currentStage()
-public float get_ThinkDeltaTime()
-public float get_growDeltaTime()
-public void ReceiveInstanceData(InstanceData data)
-public void ResetState()
-public bool CanPick()
-public int get_CurrentPickAmount()
-public float get_CurrentPickAmountFloat()
-public bool CanTakeSeeds()
-public bool CanClone()
-public void Save(SaveInfo info)
-public void Load(LoadInfo info)
-public void ChangeState(State state, bool resetAge, bool loading)
-public void OnDeployed(BaseEntity parent, BasePlayer deployedBy, Item fromItem)
 }
 public GrowableGene : object {
 private GeneType <Type>k__BackingField
@@ -15882,13 +15916,20 @@ public int aimCone
 public float sensorRadius
 public ItemDefinition ammoType
 public TargetTrigger trigger
+private float triggerCooldown
+private BuildingPrivlidge _cachedTc
+private float _cacheTimeout
+public float gun_trap_budget_ms
+public GunTrapScanWorkQueue updateGunTrapWorkQueue
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 public string Categorize()
 public bool UseAmmo()
 public void FireWeapon()
 public void FireBullet()
 public void ServerInit()
+internal void DoServerDestroy()
 public void TriggerCheck()
+private BuildingPrivlidge GetCachedTc()
 public bool CheckTrigger()
 public bool IsTriggered()
 public Vector3 GetEyePosition()
@@ -16096,7 +16137,6 @@ public bool hostile
 public Transform MuzzleTransform
 public bool IsUsableByTurret
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
-public void SendPunch(Vector3 amount, float duration)
 public bool get_hostile()
 public Transform get_MuzzleTransform()
 public bool LightsOn()
@@ -16138,6 +16178,7 @@ public void ServerUse()
 public void ServerUse(float damageModifier, Transform originOverride)
 public bool IsInstrument()
 public void Load(LoadInfo info)
+public void SendPunch(Vector3 amount, float duration)
 }
 public HelicopterDebris : ServerGib {
 public ItemDefinition metalFragments
@@ -16363,6 +16404,22 @@ public RectTransform rectTransform
 public RectTransform get_rectTransform()
 private void Update()
 private void UpdatePosition(Camera cam)
+}
+public HomingLauncherCamOverlay : MonoBehaviour {
+public PostProcessVolume postProcessVolume
+}
+public HomingLauncherUIDialog : UIDialog {
+private Canvas canvas
+private GameObject mainUI
+private GameObject scopeCircle
+private RawImage blackScreen
+private AnimationCurve fadeEffectCurve
+private float visualSwapTime
+private Image lockPercentImage
+private Image trackingImage
+private GameObject armedObj
+private GameObject lockedObj
+private GameObject noAmmoObj
 }
 public Horse : BaseAnimalNPC {
 public float Population
@@ -17414,6 +17471,20 @@ public UInt32 MultidrawIndexStart
 public UInt32 MultidrawVertexStart
 public int Padding1
 }
+public Instancing.DrawCallKey : ValueType {
+public Material Material
+public ShadowCastingMode ShadowMode
+public bool ReceiveShadows
+public LightProbeUsage LightProbes
+public void .ctor(Material material, ShadowCastingMode shadowMode, bool receiveShadows, LightProbeUsage lightProbes)
+public int CompareTo(DrawCallKey other)
+public int CompareTo(object obj)
+public bool Equals(DrawCallKey other)
+public bool Equals(object obj)
+public int GetHashCode()
+public bool op_Equality(DrawCallKey a, DrawCallKey b)
+public bool op_Inequality(DrawCallKey a, DrawCallKey b)
+}
 public Instancing.DrawCallManager : object {
 private CellMeshAllocator cellAllocator
 private GeometryBuffers GeometryBuffers
@@ -17425,6 +17496,7 @@ public GPUBuffer`1<UInt32> RenderBuffer
 private int _overrideBufferVersion
 private int _positionBufferVersion
 private List`1<DrawCall> DrawCalls
+private bool _needsDrawCallRebuild
 private int IndirectArgCapacity
 private int <DrawCallsLastFrame>k__BackingField
 private int renderLayer
@@ -17440,40 +17512,57 @@ public void Initialize()
 public void OnDestroy()
 private void AllocateNativeMemory()
 private void FreeNativeMemory()
-public void AddDrawCall(InstancedMeshRenderer renderer, int submeshIndex, UInt32 indicies, UInt32 indiciesIndex, UInt32 vertexIndex)
+public void AddDrawCall(InstancedMeshRenderer renderer, int submeshIndex, UInt32 indicies, UInt32 indiciesIndex, UInt32 vertexIndex, MultidrawMeshInfo multidraw)
 private void RebuildAllMaterialBlocks()
 private void UpdateMaterialBlock(DrawCall drawCall)
 public void EnsureCapacity(int totalMeshCount)
 private void EnsureDrawCallCapcity()
 public void UpdateComputeBuffers()
+private void SortAndBatchDrawCalls()
 public void SubmitDrawCalls()
 private void SubmitDrawCallsInternal(Camera camera)
 public void PrintMemoryUsage(StringBuilder builder)
 }
 public Instancing.GeometryBuffers : object {
-public void Initialize()
+private int _meshCopyMode
+public GPUBuffer`1<VertexData> VertexBuffer
+public GPUBuffer`1<int> TriangleBuffer
+private int VertexIndex
+private int TriangleIndex
+private bool <IsDirty>k__BackingField
+private Dictionary`2<Mesh, MultidrawMeshInfo[]> _meshes
+public bool IsDirty
+public bool get_IsDirty()
+public void set_IsDirty(bool value)
+public void Initialize(int meshCopyMode)
+private void ResetStreamPosition()
 public void Destroy()
 private void AllocateNativeMemory()
 private void FreeNativeMemory()
+public MultidrawMeshInfo[] CopyMesh(Mesh mesh)
+private void CopyMeshViaShader(Mesh mesh)
+public void Rebuild()
+private MultidrawMeshInfo[] CalculateSubmeshInfo(Mesh mesh)
+private void CopyMeshViaCPU(Mesh mesh)
 public void PrintMemoryUsage(StringBuilder builder)
 }
 public Instancing.GPUBuffer`1 : GPUBuffer {
 private int <BufferVersion>k__BackingField
-private ComputeBuffer <Buffer>k__BackingField
-private ComputeBufferType _type
+private GraphicsBuffer <Buffer>k__BackingField
+private Target _type
 private Target <Type>k__BackingField
 private int <count>k__BackingField
 private int <stride>k__BackingField
 public int BufferVersion
-public ComputeBuffer Buffer
+public GraphicsBuffer Buffer
 public Target Type
 public int count
 public int stride
 public int ByteLength
 public int get_BufferVersion()
 private void set_BufferVersion(int value)
-public ComputeBuffer get_Buffer()
-private void set_Buffer(ComputeBuffer value)
+public GraphicsBuffer get_Buffer()
+private void set_Buffer(GraphicsBuffer value)
 public Target get_Type()
 private void set_Type(Target value)
 public int get_count()
@@ -17621,6 +17710,7 @@ private int <LodLevel>k__BackingField
 private int <TotalLodLevels>k__BackingField
 private bool <IsLastLod>k__BackingField
 private InstancedMeshCategory <MeshCategory>k__BackingField
+private MultidrawMeshInfo[] <MultidrawSubmeshes>k__BackingField
 private Vector3[] <BoundsPoints>k__BackingField
 public int RendererId
 public int DrawCallIndex
@@ -17640,6 +17730,7 @@ public int LodLevel
 public int TotalLodLevels
 public bool IsLastLod
 public InstancedMeshCategory MeshCategory
+public MultidrawMeshInfo[] MultidrawSubmeshes
 public bool HasShadow
 public bool HasMesh
 public Vector3[] BoundsPoints
@@ -17665,6 +17756,7 @@ public int get_LodLevel()
 public int get_TotalLodLevels()
 public bool get_IsLastLod()
 public InstancedMeshCategory get_MeshCategory()
+public MultidrawMeshInfo[] get_MultidrawSubmeshes()
 public bool get_HasShadow()
 public bool get_HasMesh()
 public Vector3[] get_BoundsPoints()
@@ -17705,6 +17797,7 @@ public int DrawCallIndexProperty
 public int Param_RendererIndex
 public int Param_Verticies
 public int Param_Triangles
+public GlobalKeyword Keyword_Rust_Procedural_Rendering
 public int CullingGPUThreads
 public float MB(int bytes)
 public StringBuilder MemoryUsage(StringBuilder builder, string name, ComputeBuffer buffer)
@@ -17724,6 +17817,8 @@ public void Destroy(JobInt instance)
 public Instancing.MaterialCache : object {
 public Dictionary`2<Material, Material> modifiedMaterials
 public Material EnableProceduralInstancing(Material material)
+private void RequestTextureStreaming(Material material)
+private void RequestMipmap(Material material, string textureName)
 public void FreeMemory()
 }
 public Instancing.MeshGridManager : object {
@@ -17765,6 +17860,11 @@ public void .ctor(Mesh mesh, Material[] materials, ShadowCastingMode castShadows
 public bool Equals(MeshRenderKey other)
 public bool Equals(object obj)
 public int GetHashCode()
+}
+public Instancing.MultidrawMeshInfo : ValueType {
+public int VertexStart
+public int VertexCount
+public int IndexStart
 }
 public Instancing.PreCullingJob : ValueType {
 public NativeArray`1<InstancedRendererJobData> Meshes
@@ -18193,7 +18293,6 @@ public float zoomFactor
 public float fovBias
 }
 public IronSights : MonoBehaviour {
-public bool Enabled
 public IronsightAimPoint aimPoint
 public float fieldOfViewOffset
 public float zoomFactor
@@ -19519,8 +19618,6 @@ public bool UseSpawnChance
 protected void Spawn(int numToSpawn)
 }
 public JunkPileWater : JunkPile {
-public JunkpileWaterWorkQueue junkpileWaterWorkQueue
-public float framebudgetms
 public Transform[] buoyancyPoints
 public bool debugDraw
 public float updateCullRange
@@ -19528,6 +19625,8 @@ private Quaternion baseRotation
 private bool first
 private TimeUntil nextPlayerCheck
 private bool hasPlayersNearby
+public JunkpileWaterWorkQueue junkpileWaterWorkQueue
+public float framebudgetms
 public void Spawn()
 public void FixedUpdate()
 public void UpdateMovement()
@@ -20169,11 +20268,14 @@ private int columnSize
 private int backpackSlotIndex
 private Item[] clothingBuffer
 private int setSize
+private bool isTransferringIndustrialItem
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 public bool IsEquipping()
 private RowType GetRowType(int slot)
 public void ServerInit()
 public void ClearEquipping()
+public void OnIndustrialItemTransferBegin()
+public void OnIndustrialItemTransferEnd()
 public bool ItemFilter(Item item, int targetSlot)
 private bool IsBackpackSlot(int slot)
 public void RPC_Equip(RPCMessage msg)
@@ -20184,14 +20286,16 @@ public bool SupportsChildDeployables()
 public bool CanPickup(BasePlayer player)
 }
 public LockOnLauncher : BaseLauncher {
-public float lockRange
-public float lockConeDot
-public float timeToLock
-public float currentLockTime
-public float timeToLoseLock
+private float lockRange
+private float lockConeDot
+private float timeToLock
+private float currentLockTime
+private float timeToLoseLock
+private GameObjectRef camUIDialogPrefab
 private SeekerTarget currentLockTarget
 private SeekingServerProjectile projectile
 private float lockTickRate
+private float lastSentLockTime
 private bool HasProjectile
 private bool get_HasProjectile()
 public void OnHeldChanged()
@@ -20614,31 +20718,6 @@ private Vector3 currentWaypoint
 private Vector3 nextWaypoint
 }
 public MagnetCrane : GroundVehicle {
-public float steerInput
-public float throttleInput
-private float brakeInput
-public float yawInput
-public float extensionInput
-public float raiseArmInput
-public float extensionMove
-public float yawMove
-public float raiseArmMove
-public float nextToggleTime
-public Vector3 spawnOrigin
-public float lastExtensionArmState
-public float lastRaiseArmState
-public float lastYawState
-public bool handbrakeOn
-public float nextSelfHealTime
-public Vector3 lastDamagePos
-public float lastDrivenTime
-public float lastFixedUpdateTime
-public CarPhysics`1<MagnetCrane> carPhysics
-public VehicleTerrainHandler serverTerrainHandler
-private Vector3 customInertiaTensor
-public float extensionArmState
-public float raiseArmState
-public float yawState
 public Animator animator
 private Transform COM
 public float arm1Speed
@@ -20675,9 +20754,40 @@ private int rightTreadParam
 private int yawParam
 private int arm1Param
 private int arm2Param
-public Surface OnSurface
+public float steerInput
+public float throttleInput
+private float brakeInput
+public float yawInput
+public float extensionInput
+public float raiseArmInput
+public float extensionMove
+public float yawMove
+public float raiseArmMove
+public float nextToggleTime
+public Vector3 spawnOrigin
+public float lastExtensionArmState
+public float lastRaiseArmState
+public float lastYawState
+public bool handbrakeOn
+public float nextSelfHealTime
+public Vector3 lastDamagePos
+public float lastDrivenTime
+public float lastFixedUpdateTime
+public CarPhysics`1<MagnetCrane> carPhysics
+public VehicleTerrainHandler serverTerrainHandler
+private Vector3 customInertiaTensor
+public float extensionArmState
+public float raiseArmState
+public float yawState
 public float DriveWheelVelocity
+public Surface OnSurface
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+public float get_DriveWheelVelocity()
+public float GetThrottleInput()
+public float GetBrakeInput()
+public void Load(LoadInfo info)
+public float GetMaxForwardSpeed()
+public bool CanBeLooted(BasePlayer player)
 public Surface get_OnSurface()
 public void ServerInit()
 public void PlayerServerInput(InputState inputState, BasePlayer player)
@@ -20699,13 +20809,7 @@ public CarWheel[] GetWheels()
 public float GetWheelsMidPos()
 public void UpdateAnimator(float dt)
 public void RPC_OpenFuel(RPCMessage msg)
-public float get_DriveWheelVelocity()
-public float GetThrottleInput()
-public float GetBrakeInput()
-public void Load(LoadInfo info)
-public float GetMaxForwardSpeed()
-public bool CanBeLooted(BasePlayer player)
-internal float <VehicleFixedUpdate>g__UpdateMoveInput|35_0(float input, float move, float slowRate, float dt)
+internal float <VehicleFixedUpdate>g__UpdateMoveInput|78_0(float input, float move, float slowRate, float dt)
 }
 public MagnetCraneAudio : MonoBehaviour {
 public MagnetCrane crane
@@ -20908,6 +21012,7 @@ public GameObject TeamLeaderHeader
 public RustButton HideTeamLeaderMarkersToggle
 public CanvasGroup TeamMarkersCanvas
 public RustImageButton ShowSleepingBagsButton
+public RustImageButton ShowVendingMachinesButton
 }
 public MapLayer : Enum {
 public int value__
@@ -20924,12 +21029,15 @@ public MapLayer Underwater8
 public MapLayer Dungeons
 }
 public MapLayerRenderer : SingletonComponent`1<MapLayerRenderer> {
-private Nullable`1<NetworkableId> _currentlyRenderedDungeon
-private Nullable`1<int> _underwaterLabFloorCount
 public Camera renderCamera
 public CameraEvent cameraEvent
 public Material renderMaterial
 private Nullable`1<MapLayer> _currentlyRenderedLayer
+private Nullable`1<NetworkableId> _currentlyRenderedDungeon
+private Nullable`1<int> _underwaterLabFloorCount
+public void Render(MapLayer layer)
+private void RenderImpl(CommandBuffer cb)
+public MapLayerRenderer GetOrCreate()
 private void RenderDungeonsLayer()
 private CommandBuffer BuildCommandBufferDungeons(ProceduralDynamicDungeon closest)
 public ProceduralDynamicDungeon FindDungeon(Vector3 position, float maxDist)
@@ -20938,9 +21046,6 @@ private CommandBuffer BuildCommandBufferTrainTunnels()
 private void RenderUnderwaterLabs(int floor)
 public int GetUnderwaterLabFloorCount()
 private CommandBuffer BuildCommandBufferUnderwaterLabs(int floor)
-public void Render(MapLayer layer)
-private void RenderImpl(CommandBuffer cb)
-public MapLayerRenderer GetOrCreate()
 }
 public MapMarker : BaseEntity {
 public AppMarkerType appType
@@ -21018,6 +21123,7 @@ public bool ShowTeamMembers
 public bool ShowBagsOnBottom
 public bool ShowTrainLayer
 public bool ShowMissions
+public bool ForceShowVendingMachines
 public bool ShowUndergroundLayers
 public bool MLRSMarkerMode
 public RustImageButton LockButton
@@ -21042,12 +21148,6 @@ public void Load(LoadInfo info)
 public void Save(SaveInfo info)
 }
 public MarketTerminal : StorageContainer {
-public Action`2<BasePlayer, Item> _onCurrencyRemovedCached
-public Action`2<BasePlayer, Item> _onItemPurchasedCached
-private Action _checkForExpiredOrdersCached
-private bool _transactionActive
-private List`1<NetworkableId> _deliveryEligible
-private RealTimeSince _deliveryEligibleLastCalculated
 public Flags Flag_HasItems
 public Flags Flag_InventoryFull
 public GameObjectRef menuPrefab
@@ -21062,7 +21162,17 @@ private string _customerName
 private TimeUntil _timeUntilCustomerExpiry
 private EntityRef`1<Marketplace> _marketplace
 public List`1<PendingOrder> pendingOrders
+public Action`2<BasePlayer, Item> _onCurrencyRemovedCached
+public Action`2<BasePlayer, Item> _onItemPurchasedCached
+private Action _checkForExpiredOrdersCached
+private bool _transactionActive
+private List`1<NetworkableId> _deliveryEligible
+private RealTimeSince _deliveryEligibleLastCalculated
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+public bool CanPlayerAffordOrderAndDeliveryFee(BasePlayer player, SellOrder sellOrder, int numberOfTransactions)
+public bool HasPendingOrderFor(NetworkableId vendingMachineId)
+public bool CanPlayerInteract(BasePlayer player)
+public void Load(LoadInfo info)
 public void Setup(Marketplace marketplace)
 public void ServerInit()
 private void RegisterOrder(BasePlayer player, VendingMachine vendingMachine)
@@ -21081,11 +21191,7 @@ public void OnItemAddedOrRemoved(Item item, bool added)
 public bool CanOpenLootPanel(BasePlayer player, string panelName)
 private void RemoveAnyLooters()
 public void GetDeliveryEligibleVendingMachines(List`1<NetworkableId> vendingMachineIds)
-public bool CanPlayerAffordOrderAndDeliveryFee(BasePlayer player, SellOrder sellOrder, int numberOfTransactions)
-public bool HasPendingOrderFor(NetworkableId vendingMachineId)
-public bool CanPlayerInteract(BasePlayer player)
-public void Load(LoadInfo info)
-private bool <GetDeliveryEligibleVendingMachines>g__IsEligible|24_0(VendingMachine vendingMachine, Vector3 offset, int n)
+private bool <GetDeliveryEligibleVendingMachines>g__IsEligible|42_0(VendingMachine vendingMachine, Vector3 offset, int n)
 }
 public MaterialColorLerp : MonoBehaviour {
 public Color startColor
@@ -21819,17 +21925,6 @@ public void Load(LoadInfo info)
 public List`1<Item> GetOrderedContainerItems(ItemContainer container, Boolean& itemsAreContiguous)
 }
 public MLRS : BaseMountable {
-public string MLRS_PLAYER_KILL_STAT
-private float leftRightInput
-private float upDownInput
-public Vector3 lastSentTargetHitPos
-public Vector3 lastSentTrueHitPos
-public int nextRocketIndex
-public EntityRef rocketOwnerRef
-public TimeSince timeSinceBroken
-public int radiusModIndex
-private Single[] radiusMods
-public Vector3 trueTargetHitPos
 private GameObjectRef rocketStoragePrefab
 private GameObjectRef dashboardStoragePrefab
 private Transform hRotator
@@ -21869,6 +21964,17 @@ public float rocketBaseGravity
 public float rocketSpeed
 private float <RocketDamageRadius>k__BackingField
 private bool isInitialLoad
+public string MLRS_PLAYER_KILL_STAT
+private float leftRightInput
+private float upDownInput
+public Vector3 lastSentTargetHitPos
+public Vector3 lastSentTrueHitPos
+public int nextRocketIndex
+public EntityRef rocketOwnerRef
+public TimeSince timeSinceBroken
+public int radiusModIndex
+private Single[] radiusMods
+public Vector3 trueTargetHitPos
 public Vector3 UserTargetHitPos
 public Vector3 TrueHitPos
 public bool HasAimingModule
@@ -21882,22 +21988,6 @@ public bool IsRealigning
 public bool IsFiringRockets
 public float RocketDamageRadius
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
-protected void OnChildAdded(BaseEntity child)
-public void VehicleFixedUpdate()
-public float GetSurfaceHeight(Vector3 pos)
-public void SetRepaired()
-public void PlayerServerInput(InputState inputState, BasePlayer player)
-public void Save(SaveInfo info)
-public bool AdminFixUp()
-public void Fire(BasePlayer owner)
-public void EndFiring()
-public void FireNextRocket()
-private void UpdateStorageState()
-public bool TryGetAimingModule(Item& item)
-public void RPC_SetTargetHitPos(RPCMessage msg)
-public void RPC_Fire_Rockets(RPCMessage msg)
-public void RPC_Open_Rockets(RPCMessage msg)
-public void RPC_Open_Dashboard(RPCMessage msg)
 public Vector3 get_UserTargetHitPos()
 public void set_UserTargetHitPos(Vector3 value)
 public Vector3 get_TrueHitPos()
@@ -21926,6 +22016,22 @@ public StorageContainer GetRocketContainer()
 public StorageContainer GetDashboardContainer()
 public void HitPosToRotation(Vector3 hitPos, Single& hRot, Single& vRot, Single& g)
 public float ProjectileDistToSpeed(float x, float y, float angle, float g, float fallbackV)
+protected void OnChildAdded(BaseEntity child)
+public void VehicleFixedUpdate()
+public float GetSurfaceHeight(Vector3 pos)
+public void SetRepaired()
+public void PlayerServerInput(InputState inputState, BasePlayer player)
+public void Save(SaveInfo info)
+public bool AdminFixUp()
+public void Fire(BasePlayer owner)
+public void EndFiring()
+public void FireNextRocket()
+private void UpdateStorageState()
+public bool TryGetAimingModule(Item& item)
+public void RPC_SetTargetHitPos(RPCMessage msg)
+public void RPC_Fire_Rockets(RPCMessage msg)
+public void RPC_Open_Rockets(RPCMessage msg)
+public void RPC_Open_Dashboard(RPCMessage msg)
 }
 public MLRSAmmoIcon : MonoBehaviour {
 private GameObject fill
@@ -22252,6 +22358,26 @@ public float value
 public float duration
 }
 public ModularCar : BaseModularVehicle {
+public ModularCarChassisVisuals chassisVisuals
+public VisualCarWheel wheelFL
+public VisualCarWheel wheelFR
+public VisualCarWheel wheelRL
+public VisualCarWheel wheelRR
+public CarSettings carSettings
+public float hurtTriggerMinSpeed
+public TriggerHurtNotChild hurtTriggerFront
+public TriggerHurtNotChild hurtTriggerRear
+public ProtectionProperties immortalProtection
+public ProtectionProperties mortalProtection
+private BoxCollider mainChassisCollider
+public SpawnSettings spawnSettings
+public MeshRenderer[] damageShowingRenderers
+public float population
+public float outsidedecayminutes
+public BUTTON RapidSteerButton
+private ModularCarCodeLock <CarLock>k__BackingField
+public EngineState<GroundVehicle> lastSetEngineState
+public float cachedFuelFraction
 public HashSet`1<ModularCar> allCarsList
 public ListDictionary`2<BaseMountable, DriverSeatInputs> driverSeatInputs
 public CarPhysics`1<ModularCar> carPhysics
@@ -22274,28 +22400,6 @@ private float IMMUNE_TIME
 public Vector3 groundedCOMMultiplier
 public Vector3 airbourneCOMMultiplier
 public Vector3 prevCOMMultiplier
-public ModularCarChassisVisuals chassisVisuals
-public VisualCarWheel wheelFL
-public VisualCarWheel wheelFR
-public VisualCarWheel wheelRL
-public VisualCarWheel wheelRR
-public CarSettings carSettings
-public float hurtTriggerMinSpeed
-public TriggerHurtNotChild hurtTriggerFront
-public TriggerHurtNotChild hurtTriggerRear
-public ProtectionProperties immortalProtection
-public ProtectionProperties mortalProtection
-private BoxCollider mainChassisCollider
-public SpawnSettings spawnSettings
-public MeshRenderer[] damageShowingRenderers
-public float population
-public float outsidedecayminutes
-public BUTTON RapidSteerButton
-private ModularCarCodeLock <CarLock>k__BackingField
-public EngineState<GroundVehicle> lastSetEngineState
-public float cachedFuelFraction
-public bool AlwaysAllowBradleyTargeting
-public Surface OnSurface
 public float DriveWheelVelocity
 public float DriveWheelSlip
 public float SteerAngle
@@ -22303,7 +22407,41 @@ public ItemDefinition AssociatedItemDef
 public float MaxSteerAngle
 public bool IsLockable
 public ModularCarCodeLock CarLock
+public bool AlwaysAllowBradleyTargeting
+public Surface OnSurface
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+public float get_DriveWheelVelocity()
+public float get_DriveWheelSlip()
+public float get_SteerAngle()
+public ItemDefinition get_AssociatedItemDef()
+public float get_MaxSteerAngle()
+public bool get_IsLockable()
+public ModularCarCodeLock get_CarLock()
+private void set_CarLock(ModularCarCodeLock value)
+public void PreProcess(IPrefabProcessor process, GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
+public void InitShared()
+public float MaxHealth()
+public float StartHealth()
+public float TotalHealth()
+public float TotalMaxHealth()
+public float GetMaxForwardSpeed()
+public void Load(LoadInfo info)
+public void OnFlagsChanged(Flags old, Flags next)
+public float GetThrottleInput()
+public float GetBrakeInput()
+public float GetMaxDriveForce()
+public float GetFuelFraction()
+public bool PlayerHasUnlockPermission(BasePlayer player)
+public bool KeycodeEntryBlocked(BasePlayer player)
+public bool PlayerCanUseThis(BasePlayer player, LockType lockType)
+public bool PlayerCanDestroyLock(BasePlayer player, BaseVehicleModule viaModule)
+public bool CanBeLooted(BasePlayer player)
+public bool CanPushNow(BasePlayer pusher)
+public bool RefreshEngineState()
+public float RollOffDriveForce(float driveForce)
+public void RefreshChassisProtectionState()
+public void ModuleEntityAdded(BaseVehicleModule addedModule)
+public void ModuleEntityRemoved(BaseVehicleModule removedModule)
 public bool get_AlwaysAllowBradleyTargeting()
 public Surface get_OnSurface()
 public void ServerInit()
@@ -22345,38 +22483,6 @@ public void RPC_OpenFuel(RPCMessage msg)
 public void RPC_OpenFuelWithKeycode(RPCMessage msg)
 public void RPC_TryMountWithKeycode(RPCMessage msg)
 public void ScaleDamageForPlayer(BasePlayer player, HitInfo info)
-public float get_DriveWheelVelocity()
-public float get_DriveWheelSlip()
-public float get_SteerAngle()
-public ItemDefinition get_AssociatedItemDef()
-public float get_MaxSteerAngle()
-public bool get_IsLockable()
-public ModularCarCodeLock get_CarLock()
-private void set_CarLock(ModularCarCodeLock value)
-public void PreProcess(IPrefabProcessor process, GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
-public void InitShared()
-public float MaxHealth()
-public float StartHealth()
-public float TotalHealth()
-public float TotalMaxHealth()
-public float GetMaxForwardSpeed()
-public void Load(LoadInfo info)
-public void OnFlagsChanged(Flags old, Flags next)
-public float GetThrottleInput()
-public float GetBrakeInput()
-public float GetMaxDriveForce()
-public float GetFuelFraction()
-public bool PlayerHasUnlockPermission(BasePlayer player)
-public bool KeycodeEntryBlocked(BasePlayer player)
-public bool PlayerCanUseThis(BasePlayer player, LockType lockType)
-public bool PlayerCanDestroyLock(BasePlayer player, BaseVehicleModule viaModule)
-public bool CanBeLooted(BasePlayer player)
-public bool CanPushNow(BasePlayer pusher)
-public bool RefreshEngineState()
-public float RollOffDriveForce(float driveForce)
-public void RefreshChassisProtectionState()
-public void ModuleEntityAdded(BaseVehicleModule addedModule)
-public void ModuleEntityRemoved(BaseVehicleModule removedModule)
 }
 public ModularCarCentralLockingSwitch : VehicleModuleButtonComponent {
 public Transform centralLockingSwitch
@@ -22438,9 +22544,6 @@ private float xOffset
 private ParticleSystemContainer keycodeDestroyableFX
 }
 public ModularCarGarage : ContainerIOEntity {
-public ModularCar lockedOccupant
-public HashSet`1<BasePlayer> lootingPlayers
-public MagnetSnap magnetSnap
 public Transform vehicleLift
 public Animation vehicleLiftAnim
 private string animName
@@ -22473,8 +22576,9 @@ public Flags Flag_DestroyingChassis
 public float TimeToDestroyChassis
 public Flags Flag_EnteringKeycode
 public Flags Flag_PlayerObstructing
-public ModularCar carOccupant
-public bool HasOccupant
+public ModularCar lockedOccupant
+public HashSet`1<BasePlayer> lootingPlayers
+public MagnetSnap magnetSnap
 public bool PlatformIsOccupied
 public bool HasEditableOccupant
 public bool HasDriveableOccupant
@@ -22485,7 +22589,32 @@ public bool LiftIsDown
 public bool IsDestroyingChassis
 private bool IsEnteringKeycode
 public bool PlayerObstructingLift
+public ModularCar carOccupant
+public bool HasOccupant
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+public bool get_PlatformIsOccupied()
+public void set_PlatformIsOccupied(bool value)
+public bool get_HasEditableOccupant()
+public void set_HasEditableOccupant(bool value)
+public bool get_HasDriveableOccupant()
+public void set_HasDriveableOccupant(bool value)
+public OccupantLock get_OccupantLockState()
+public void set_OccupantLockState(OccupantLock value)
+public bool get_LiftIsUp()
+public bool get_LiftIsMoving()
+public bool get_LiftIsDown()
+public bool get_IsDestroyingChassis()
+private bool get_IsEnteringKeycode()
+public bool get_PlayerObstructingLift()
+public void PreProcess(IPrefabProcessor process, GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
+public void OnFlagsChanged(Flags old, Flags next)
+public bool CanBeLooted(BasePlayer player)
+public int ConsumptionAmount()
+public void SetOccupantState(bool hasOccupant, bool editableOccupant, bool driveableOccupant, OccupantLock occupantLockState, bool forced)
+public void RefreshLiftState(bool forced)
+public void MoveLift(VehicleLiftState desiredLiftState, float startDelay, bool forced)
+public void MoveLiftUp()
+public void MoveLiftDown()
 public ModularCar get_carOccupant()
 public bool get_HasOccupant()
 public void FixedUpdate()
@@ -22519,29 +22648,6 @@ public void RPC_RequestNewCode(RPCMessage msg)
 public void RPC_StartDestroyingChassis(RPCMessage msg)
 public void RPC_StopDestroyingChassis(RPCMessage msg)
 public void FinishDestroyingChassis()
-public bool get_PlatformIsOccupied()
-public void set_PlatformIsOccupied(bool value)
-public bool get_HasEditableOccupant()
-public void set_HasEditableOccupant(bool value)
-public bool get_HasDriveableOccupant()
-public void set_HasDriveableOccupant(bool value)
-public OccupantLock get_OccupantLockState()
-public void set_OccupantLockState(OccupantLock value)
-public bool get_LiftIsUp()
-public bool get_LiftIsMoving()
-public bool get_LiftIsDown()
-public bool get_IsDestroyingChassis()
-private bool get_IsEnteringKeycode()
-public bool get_PlayerObstructingLift()
-public void PreProcess(IPrefabProcessor process, GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
-public void OnFlagsChanged(Flags old, Flags next)
-public bool CanBeLooted(BasePlayer player)
-public int ConsumptionAmount()
-public void SetOccupantState(bool hasOccupant, bool editableOccupant, bool driveableOccupant, OccupantLock occupantLockState, bool forced)
-public void RefreshLiftState(bool forced)
-public void MoveLift(VehicleLiftState desiredLiftState, float startDelay, bool forced)
-public void MoveLiftUp()
-public void MoveLiftDown()
 }
 public ModularCarOven : BaseOven {
 private BaseVehicleModule moduleParent
@@ -23417,10 +23523,6 @@ public Vector2 Position(ZoneDetails zone)
 public Vector2 Position(NexusZoneDetails zone)
 }
 public NexusFerry : BaseEntity {
-private TimeSince _sincePathCalculation
-private Nullable`1<Vector3> _pathTargetPosition
-private Nullable`1<Quaternion> _pathTargetRotation
-private Vector3 _velocity
 public float TravelVelocity
 public float ApproachVelocity
 public float StoppingVelocity
@@ -23455,18 +23557,14 @@ private bool _isTransferring
 private TimeSince _sinceStartedWaiting
 private TimeSince _sinceLastTransferAttempt
 private RealTimeSince _sinceLastNextIndexUpdate
+private TimeSince _sincePathCalculation
+private Nullable`1<Vector3> _pathTargetPosition
+private Nullable`1<Quaternion> _pathTargetRotation
+private Vector3 _velocity
 public string OwnerZone
 public bool IsRetiring
 public string NextZone
 protected bool PositionTickFixedTime
-private bool MoveTowardsTarget()
-private bool MoveTowardsPositionAvoidObstacles(Vector3 targetPosition)
-private bool MoveTowardsTargetTransform()
-private Transform GetTargetTransform(State state)
-private bool MoveTowardsPosition(Vector3 targetPosition, Quaternion targetRotation)
-private bool SphereCast(Vector3 direction, float distance, Single& travelDistance, Vector3& endPosition)
-private Vector3 GetIslandTransferPosition()
-private bool TryFindWaypointsTowards(Vector3 targetPosition, List`1<Vector3> waypoints)
 public string get_OwnerZone()
 public bool get_IsRetiring()
 public string get_NextZone()
@@ -23494,7 +23592,15 @@ public void PostServerLoad()
 public void Save(SaveInfo info)
 public void Load(LoadInfo info)
 public NexusFerry Get(NetworkableId entityId, long timestamp)
-private Vector3 <MoveTowardsPositionAvoidObstacles>g__ChooseWaypoint|5_0(Vector3 target)
+private bool MoveTowardsTarget()
+private bool MoveTowardsPositionAvoidObstacles(Vector3 targetPosition)
+private bool MoveTowardsTargetTransform()
+private Transform GetTargetTransform(State state)
+private bool MoveTowardsPosition(Vector3 targetPosition, Quaternion targetRotation)
+private bool SphereCast(Vector3 direction, float distance, Single& travelDistance, Vector3& endPosition)
+private Vector3 GetIslandTransferPosition()
+private bool TryFindWaypointsTowards(Vector3 targetPosition, List`1<Vector3> waypoints)
+private Vector3 <MoveTowardsPositionAvoidObstacles>g__ChooseWaypoint|71_0(Vector3 target)
 }
 public NexusFerrySounds : MonoBehaviour {
 private NexusFerry ferry
@@ -23566,6 +23672,13 @@ public void LeavePool()
 public NexusServer : object {
 private bool _isRefreshingCompanion
 private RealTimeSince _lastCompanionRefresh
+private Memoized`2<string, ulong> SteamIdToString
+private MemoryStream WriterStream
+private ByteArrayStream ReaderStream
+private NexusDB _database
+private NexusZoneClient <ZoneClient>k__BackingField
+private bool <Started>k__BackingField
+private bool <FailedToStart>k__BackingField
 private Dictionary`2<string, List`1<ValueTuple`2<string, FerryStatus>>> FerryEntries
 private bool _updatingFerries
 private int _cyclesWithoutFerry
@@ -23584,16 +23697,6 @@ private bool _isRefreshingZoneStatus
 private RealTimeSince _lastZoneStatusRefresh
 private Nullable`1<DateTimeOffset> _lastUnsavedTransfer
 private string CopyFromKey
-private Memoized`2<string, ulong> SteamIdToString
-private MemoryStream WriterStream
-private ByteArrayStream ReaderStream
-private NexusDB _database
-private NexusZoneClient <ZoneClient>k__BackingField
-private bool <Started>k__BackingField
-private bool <FailedToStart>k__BackingField
-public bool NeedsJournalFlush
-private int RpcResponseTtl
-public bool NeedTransferFlush
 public NexusZoneClient ZoneClient
 public bool Started
 public bool FailedToStart
@@ -23601,7 +23704,30 @@ public Nullable`1<int> NexusId
 public string ZoneKey
 public Nullable`1<long> LastReset
 public List`1<NexusZoneDetails> Zones
+public bool NeedsJournalFlush
+private int RpcResponseTtl
+public bool NeedTransferFlush
 private void RefreshCompanionVariables()
+public NexusZoneClient get_ZoneClient()
+private void set_ZoneClient(NexusZoneClient value)
+public bool get_Started()
+private void set_Started(bool value)
+public bool get_FailedToStart()
+private void set_FailedToStart(bool value)
+public Nullable`1<int> get_NexusId()
+public string get_ZoneKey()
+public Nullable`1<long> get_LastReset()
+public List`1<NexusZoneDetails> get_Zones()
+public IEnumerator Initialize()
+public void Shutdown()
+public void Update()
+public NexusZoneDetails FindZone(string zoneKey)
+public Task`1<NexusLoginResult> Login(ulong steamId)
+public void Logout(ulong steamId)
+public bool TryGetPlayer(ulong steamId, NexusPlayer& player)
+public Task AssignInitialZone(ulong steamId, string zoneKey)
+private ZoneController BuildZoneController(string name)
+public void PostGameSaved()
 public void UpdateFerries()
 private Task UpdateFerriesImpl()
 public bool TryGetFerryStatus(string ownerZone, String& currentZone, FerryStatus& status)
@@ -23655,32 +23781,12 @@ private string GetWorldConfigString()
 private JObject GetWorldConfigImpl(string zoneKey, List`1<string> stack)
 private bool TryGetWorldConfigObject(string zoneKey, bool required, JObject& cfg, String& error)
 private JObject MergeInto(JObject baseObject, JObject sourceObject)
-public NexusZoneClient get_ZoneClient()
-private void set_ZoneClient(NexusZoneClient value)
-public bool get_Started()
-private void set_Started(bool value)
-public bool get_FailedToStart()
-private void set_FailedToStart(bool value)
-public Nullable`1<int> get_NexusId()
-public string get_ZoneKey()
-public Nullable`1<long> get_LastReset()
-public List`1<NexusZoneDetails> get_Zones()
-public IEnumerator Initialize()
-public void Shutdown()
-public void Update()
-public NexusZoneDetails FindZone(string zoneKey)
-public Task`1<NexusLoginResult> Login(ulong steamId)
-public void Logout(ulong steamId)
-public bool TryGetPlayer(ulong steamId, NexusPlayer& player)
-public Task AssignInitialZone(ulong steamId, string zoneKey)
-private ZoneController BuildZoneController(string name)
-public void PostGameSaved()
 internal void <RefreshCompanionVariables>g__RefreshCompanionVariablesImpl|2_0()
-internal void <UpdateFerryStatuses>g__AddFerryStatus|12_0(string currentZone, FerryStatus status)
-internal bool <HandleRpcInvocationImpl>g__Handle|56_10(Func`2<Request, TProto> protoSelector, INexusRequestHandler& requestHandler, <>c__DisplayClass56_0& )
-internal void <RefreshZoneStatus>g__RefreshZoneStatusImpl|62_0()
-internal bool <FindRootEntity>g__TryGetParent|73_0(BaseEntity entity, BaseEntity& parent)
-internal void <Initialize>g__RunConsoleConfig|103_2(Variable cfgVariable)
+internal void <Initialize>g__RunConsoleConfig|27_2(Variable cfgVariable)
+internal void <UpdateFerryStatuses>g__AddFerryStatus|46_0(string currentZone, FerryStatus status)
+internal bool <HandleRpcInvocationImpl>g__Handle|90_10(Func`2<Request, TProto> protoSelector, INexusRequestHandler& requestHandler, <>c__DisplayClass90_0& )
+internal void <RefreshZoneStatus>g__RefreshZoneStatusImpl|96_0()
+internal bool <FindRootEntity>g__TryGetParent|107_0(BaseEntity entity, BaseEntity& parent)
 }
 public NexusServerLogger : object {
 private NexusServerLogger <Instance>k__BackingField
@@ -23755,6 +23861,10 @@ protected void OnEnable()
 protected void OnDisable()
 private void Check()
 private void Reset()
+}
+public NoRespawnIcon : FacepunchBehaviour {
+private CanvasGroup noRespawnWarning
+private GameObject noRespawnWarningGO
 }
 public note : ConsoleSystem {
 public void update(Arg arg)
@@ -24201,28 +24311,6 @@ public void Invalidate()
 public void MakeVisible()
 }
 public OcclusionCulling : MonoBehaviour {
-public DebugSettings debugSettings
-private Material debugMipMat
-private float debugDrawDuration
-private Material downscaleMat
-private Material blitCopyMat
-private int hiZLevelCount
-private int hiZWidth
-private int hiZHeight
-private RenderTexture depthTexture
-private RenderTexture hiZTexture
-private RenderTexture[] hiZLevels
-private int GridCellsPerAxis
-private int GridHalfCellsPerAxis
-private int GridMinHalfCellsPerAxis
-private int GridMaxHalfCellsPerAxis
-private float GridCellSize
-private float GridHalfCellSize
-private float GridRcpCellSize
-private int GridPoolCapacity
-private int GridPoolGranularity
-private HashedPool`1<Cell> grid
-private Queue`1<Cell> gridChanged
 public ComputeShader computeShader
 public bool usePixelShaderFallback
 public bool useAsyncReadAPI
@@ -24264,37 +24352,34 @@ private GraphicsDeviceType[] supportedDeviceTypes
 private bool _enabled
 private bool _safeMode
 private DebugFilter _debugShow
-public bool HiZReady
+public DebugSettings debugSettings
+private Material debugMipMat
+private float debugDrawDuration
+private Material downscaleMat
+private Material blitCopyMat
+private int hiZLevelCount
+private int hiZWidth
+private int hiZHeight
+private RenderTexture depthTexture
+private RenderTexture hiZTexture
+private RenderTexture[] hiZLevels
+private int GridCellsPerAxis
+private int GridHalfCellsPerAxis
+private int GridMinHalfCellsPerAxis
+private int GridMaxHalfCellsPerAxis
+private float GridCellSize
+private float GridHalfCellSize
+private float GridRcpCellSize
+private int GridPoolCapacity
+private int GridPoolGranularity
+private HashedPool`1<Cell> grid
+private Queue`1<Cell> gridChanged
 public OcclusionCulling Instance
 public bool Supported
 public bool Enabled
 public bool SafeMode
 public DebugFilter DebugShow
-public bool DebugFilterIsDynamic(int filter)
-public bool DebugFilterIsStatic(int filter)
-public bool DebugFilterIsGrid(int filter)
-private void DebugInitialize()
-private void DebugShutdown()
-private void DebugUpdate()
-private void DebugDraw()
-public void NormalizePlane(Vector4& plane)
-public void ExtractFrustum(Matrix4x4 viewProjMatrix, Vector4[]& planes)
-public bool get_HiZReady()
-public void CheckResizeHiZMap()
-private void InitializeHiZMap()
-private void FinalizeHiZMap()
-private void InitializeHiZMap(int width, int height)
-private void DestroyHiZMap()
-private RenderTexture CreateDepthTexture(string name, int width, int height, bool mips)
-private RenderTexture CreateDepthTextureMip(string name, int width, int height, int mip)
-public void GrabDepthTexture()
-public void GenerateHiZMipChain()
-private void DebugDrawGizmos()
-private int floor(float x)
-public Cell RegisterToGrid(OccludeeState occludee)
-public void UpdateInGrid(OccludeeState occludee)
-public void UnregisterFromGrid(OccludeeState occludee)
-public void UpdateGridBuffers()
+public bool HiZReady
 public OcclusionCulling get_Instance()
 public bool get_Supported()
 public bool get_Enabled()
@@ -24338,6 +24423,31 @@ private void ApplyVisibility_Fast(float time, UInt32 frame)
 private void ApplyVisibility_Native(float time, UInt32 frame)
 private void ProcessCallbacks(SimpleList`1<OccludeeState> occludees, SimpleList`1<State> states, SimpleList`1<int> changed)
 public void RetrieveAndApplyVisibility()
+public bool DebugFilterIsDynamic(int filter)
+public bool DebugFilterIsStatic(int filter)
+public bool DebugFilterIsGrid(int filter)
+private void DebugInitialize()
+private void DebugShutdown()
+private void DebugUpdate()
+private void DebugDraw()
+public void NormalizePlane(Vector4& plane)
+public void ExtractFrustum(Matrix4x4 viewProjMatrix, Vector4[]& planes)
+public bool get_HiZReady()
+public void CheckResizeHiZMap()
+private void InitializeHiZMap()
+private void FinalizeHiZMap()
+private void InitializeHiZMap(int width, int height)
+private void DestroyHiZMap()
+private RenderTexture CreateDepthTexture(string name, int width, int height, bool mips)
+private RenderTexture CreateDepthTextureMip(string name, int width, int height, int mip)
+public void GrabDepthTexture()
+public void GenerateHiZMipChain()
+private void DebugDrawGizmos()
+private int floor(float x)
+public Cell RegisterToGrid(OccludeeState occludee)
+public void UpdateInGrid(OccludeeState occludee)
+public void UnregisterFromGrid(OccludeeState occludee)
+public void UpdateGridBuffers()
 }
 public OceanSettings : ScriptableObject {
 public ComputeShader waveSpectrumCompute
@@ -24683,7 +24793,7 @@ private float distanceTravelled
 private Vector3 lastPosition
 private Vector2 lerpedInput
 private Vector3 collisionLocalPos
-private Vector3 collisionWorldPos
+private Vector3 collisionWorldNormal
 public SamTargetType SAMTargetType
 public void PlayerMounted(BasePlayer player, BaseMountable seat)
 public bool GetDismountPosition(BasePlayer player, Vector3& res)
@@ -24924,7 +25034,6 @@ public float GetMaxSpeed()
 public void OnDrawGizmosSelected()
 }
 public PatrolHelicopter : BaseCombatEntity {
-public weakspot[] weakspots
 public GameObject rotorPivot
 public GameObject mainRotor
 public GameObject mainRotor_blades
@@ -24979,10 +25088,8 @@ public GameObjectRef mapMarkerEntityPrefab
 public float lastNetworkUpdate
 private float networkUpdateRate
 private BaseEntity mapMarkerInstance
+public weakspot[] weakspots
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
-public void InitalizeWeakspots()
-public void OnAttacked(HitInfo info)
-public void Hurt(HitInfo info)
 public float MaxVelocity()
 public void InitShared()
 public void Load(LoadInfo info)
@@ -25000,9 +25107,11 @@ public void OnEntityMessage(BaseEntity from, string msg)
 public void DoFlare()
 public void ClearFlares()
 public void Update()
+public void InitalizeWeakspots()
+public void OnAttacked(HitInfo info)
+public void Hurt(HitInfo info)
 }
 public PatrolHelicopterAI : BaseMonoBehaviour {
-public List`1<targetinfo> _targetList
 public Vector3 interestZoneOrigin
 public Vector3 destination
 public bool hasInterestZone
@@ -25037,6 +25146,7 @@ public bool isDead
 public bool isRetiring
 public float spawnTime
 public float lastDamageTime
+public List`1<targetinfo> _targetList
 private float deathTimeout
 private float destination_min_dist
 private float currentOrbitDistance
@@ -25062,9 +25172,6 @@ private bool useNapalm
 public float lastNapalmTime
 public float lastStrafeTime
 private float _lastThinkTime
-public void UpdateTargetList()
-public bool PlayerVisible(BasePlayer ply)
-public void WasAttacked(HitInfo info)
 public void Awake()
 public void SetInitialDestination(Vector3 dest, float mapScaleDistance)
 public void Retire()
@@ -25092,6 +25199,9 @@ public bool IsTargeting()
 public void UpdateWind()
 public void SetAimTarget(Vector3 aimTarg, bool isDoorSide)
 public void ClearAimTarget()
+public void UpdateTargetList()
+public bool PlayerVisible(BasePlayer ply)
+public void WasAttacked(HitInfo info)
 public void State_Death_Think(float timePassed)
 public void State_Death_Enter()
 public void State_Death_Leave()
@@ -25276,8 +25386,6 @@ public PFXRepeatingFirework : RepeatingFirework {
 public ParticleSystemContainer pfx
 }
 public PhoneController : EntityComponent`1<BaseEntity> {
-public CallState <serverState>k__BackingField
-public PhoneController activeCallTo
 public int PhoneNumber
 public string PhoneName
 public bool CanModifyPhoneName
@@ -25310,8 +25418,8 @@ public EntityRef currentPlayerRef
 private int <lastDialedNumber>k__BackingField
 public PhoneDirectory <savedNumbers>k__BackingField
 public List`1<VoicemailEntry> savedVoicemail
-public CallState serverState
-public UInt32 AnsweringMessageId
+public CallState <serverState>k__BackingField
+public PhoneController activeCallTo
 public int MaxVoicemailSlots
 public BasePlayer currentPlayer
 private bool isServer
@@ -25319,6 +25427,21 @@ public int lastDialedNumber
 public PhoneDirectory savedNumbers
 public BaseEntity ParentEntity
 private Cassette cachedCassette
+public CallState serverState
+public UInt32 AnsweringMessageId
+public int get_MaxVoicemailSlots()
+public BasePlayer get_currentPlayer()
+public void set_currentPlayer(BasePlayer value)
+private bool get_isServer()
+public int get_lastDialedNumber()
+public void set_lastDialedNumber(int value)
+public PhoneDirectory get_savedNumbers()
+public void set_savedNumbers(PhoneDirectory value)
+public BaseEntity get_ParentEntity()
+private Cassette get_cachedCassette()
+private bool IsPowered()
+public bool IsSavedContactValid(string contactName, int contactNumber)
+public void OnFlagsChanged(Flags old, Flags next)
 public CallState get_serverState()
 public void set_serverState(CallState value)
 public UInt32 get_AnsweringMessageId()
@@ -25365,19 +25488,6 @@ public void ServerPlayVoicemail(RPCMessage msg)
 public void ServerStopVoicemail(RPCMessage msg)
 public void ServerDeleteVoicemail(RPCMessage msg)
 public void DeleteAllVoicemail()
-public int get_MaxVoicemailSlots()
-public BasePlayer get_currentPlayer()
-public void set_currentPlayer(BasePlayer value)
-private bool get_isServer()
-public int get_lastDialedNumber()
-public void set_lastDialedNumber(int value)
-public PhoneDirectory get_savedNumbers()
-public void set_savedNumbers(PhoneDirectory value)
-public BaseEntity get_ParentEntity()
-private Cassette get_cachedCassette()
-private bool IsPowered()
-public bool IsSavedContactValid(string contactName, int contactNumber)
-public void OnFlagsChanged(Flags old, Flags next)
 }
 public PhoneDialler : UIDialog {
 public GameObject DialingRoot
@@ -25459,32 +25569,21 @@ public void Init()
 public void Render(PostProcessRenderContext context)
 }
 public PhotoFrame : StorageContainer {
-public GameObjectRef SignEditorDialog
-public OverlayMeshPaintableSource PaintableSource
 private float TextureRequestDistance
 private EntityRef _photoEntity
 public UInt32 _overlayTextureCrc
 private List`1<ulong> editHistory
-public Vector2i TextureSize
-public int TextureCount
+public GameObjectRef SignEditorDialog
+public OverlayMeshPaintableSource PaintableSource
 public NetworkableId NetworkID
 public Type FileType
 public UGCType ContentType
 public List`1<ulong> EditingHistory
 public UInt32[] GetContentCRCs
 public BaseNetworkable UgcEntity
+public Vector2i TextureSize
+public int TextureCount
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
-public Vector2i get_TextureSize()
-public int get_TextureCount()
-public bool CanUpdateSign(BasePlayer player)
-public bool CanUnlockSign(BasePlayer player)
-public bool CanLockSign(BasePlayer player)
-public void UpdateSign(RPCMessage msg)
-public void LockSign(RPCMessage msg)
-public void UnLockSign(RPCMessage msg)
-public void OnKilled(HitInfo info)
-public bool ShouldNetworkOwnerInfo()
-public string Categorize()
 public void Load(LoadInfo info)
 public UInt32[] GetTextureCRCs()
 public NetworkableId get_NetworkID()
@@ -25501,6 +25600,17 @@ public UInt32[] get_GetContentCRCs()
 public void ClearContent()
 public BaseNetworkable get_UgcEntity()
 public bool CanPickup(BasePlayer player)
+public Vector2i get_TextureSize()
+public int get_TextureCount()
+public bool CanUpdateSign(BasePlayer player)
+public bool CanUnlockSign(BasePlayer player)
+public bool CanLockSign(BasePlayer player)
+public void UpdateSign(RPCMessage msg)
+public void LockSign(RPCMessage msg)
+public void UnLockSign(RPCMessage msg)
+public void OnKilled(HitInfo info)
+public bool ShouldNetworkOwnerInfo()
+public string Categorize()
 }
 public PhotoPanel : MonoBehaviour {
 public RawImage Image
@@ -25813,6 +25923,9 @@ public Planner : HeldEntity {
 public BaseEntity[] buildableList
 public bool isTypeDeployable
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+public ItemModDeployable GetModDeployable()
+public Deployable GetDeployable()
+public bool get_isTypeDeployable()
 private void DoPlace(RPCMessage msg)
 public Socket_Base FindSocket(string name, UInt32 prefabIDToFind)
 public void DoBuild(CreateBuilding msg)
@@ -25821,9 +25934,6 @@ public GameObject DoPlacement(Target placement, Construction component)
 public void PayForPlacement(BasePlayer player, Construction component)
 public bool CanAffordToPlace(Construction component)
 private bool ShouldParent(BaseEntity targetEntity, Deployable deployable)
-public ItemModDeployable GetModDeployable()
-public Deployable GetDeployable()
-public bool get_isTypeDeployable()
 }
 public PlanterBox : StorageContainer {
 public int soilSaturation
@@ -26022,15 +26132,15 @@ public Quaternion GetAimRotation()
 public PlayerHelicopter : BaseHelicopter {
 public Wheel[] wheels
 private Transform waterSample
-protected PlayerHeliSounds playerHeliSounds
+public PlayerHeliSounds playerHeliSounds
 private Transform joystickPositionLeft
 private Transform joystickPositionRight
 private Transform leftFootPosition
 private Transform rightFootPosition
 private Transform passengerJoystickPositionRight
 protected Animator animator
-private float maxRotorSpeed
-private float timeUntilMaxRotorSpeed
+public float maxRotorSpeed
+public float timeUntilMaxRotorSpeed
 private float rotorBlurThreshold
 private Transform mainRotorBlurBone
 private Renderer mainRotorBlurMesh
@@ -26040,8 +26150,8 @@ private Transform rearRotorBladesBone
 private Renderer[] rearRotorBladeMeshes
 private Transform rearRotorBlurBone
 private Renderer rearRotorBlurMesh
-private float motorForceConstant
-private float brakeForceConstant
+public float motorForceConstant
+public float brakeForceConstant
 private GameObject preventBuildingObject
 private float maxPitchAnim
 private float maxRollAnim
@@ -26059,14 +26169,18 @@ protected Flags RADAR_WARNING_FLAG
 protected Flags RADAR_LOCK_FLAG
 private TimeSince timeSinceCachedFuelFraction
 public float cachedFuelFraction
-public float cachedPitch
-public float cachedYaw
-public float cachedRoll
+private float <cachedPitch>k__BackingField
+private float <cachedYaw>k__BackingField
+private float <cachedRoll>k__BackingField
 public bool isPushing
 public float lastEngineOnTime
 public bool IsStartingUp
 public EngineState<PlayerHelicopter> CurEngineState
+public float cachedPitch
+public float cachedYaw
+public float cachedRoll
 public SamTargetType SAMTargetType
+protected bool ForceMovementHandling
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 public bool get_IsStartingUp()
 public EngineState<PlayerHelicopter> get_CurEngineState()
@@ -26075,6 +26189,12 @@ public float GetFuelFraction(bool force)
 public bool CanPushNow(BasePlayer pusher)
 public float InheritedVelocityScale()
 public bool InheritedVelocityDirection()
+public float get_cachedPitch()
+private void set_cachedPitch(float value)
+public float get_cachedYaw()
+private void set_cachedYaw(float value)
+public float get_cachedRoll()
+private void set_cachedRoll(float value)
 public void Load(LoadInfo info)
 public void OnFlagsChanged(Flags old, Flags next)
 public SamTargetType get_SAMTargetType()
@@ -26093,6 +26213,7 @@ public void MovementUpdate()
 public void ServerInit()
 public void DecayTick()
 public bool IsEngineOn()
+protected bool get_ForceMovementHandling()
 protected void TryStartEngine(BasePlayer player)
 public bool MeetsEngineRequirements()
 public void OnEngineStartFailed()
@@ -26103,7 +26224,7 @@ private void ClearRadarLock()
 private void ClearRadarWarning()
 public void UpdateCOM()
 public void Save(SaveInfo info)
-public void DismountAllPlayers()
+public void OnKilled(HitInfo info)
 public void DoPushAction(BasePlayer player)
 private void DisablePushing()
 public bool IsValidHomingTarget()
@@ -26123,6 +26244,8 @@ public SoundDefinition radarWarningDef
 public SoundDefinition radarLockDef
 public SoundDefinition noAmmoDef
 public SoundDefinition noFlaresDef
+public SoundDefinition flightControlMovementSoundDef
+public GameObject flightControlSoundPosition
 public float engineStartFadeOutTime
 public float engineLoopFadeInTime
 public float engineLoopFadeOutTime
@@ -26139,6 +26262,9 @@ public float rotorStartStopGainRateDown
 public AnimationCurve engineUpDotPitchCurve
 public AnimationCurve rotorUpDotPitchCurve
 public Animator animator
+public SoundDefinition reloadStartSoundDef
+public SoundDefinition reloadLoopSoundDef
+public SoundDefinition reloadFinishSoundDef
 }
 public PlayerIdleAnimationRandomiser : StateMachineBehaviour {
 public int MaxValue
@@ -26264,6 +26390,8 @@ public void ServerUpdate(BaseCombatEntity ownerEntity, float delta)
 internal bool HasChanged()
 protected void DoMetabolismDamage(BaseCombatEntity ownerEntity, float delta)
 public bool SignificantBleeding()
+public void ForceUpdateWorkbenchFlags()
+private void UpdateWorkbenchFlags()
 protected void RunMetabolism(BaseCombatEntity ownerEntity, float delta)
 private float DeltaHot()
 private float DeltaCold()
@@ -26277,8 +26405,6 @@ public void Load(PlayerMetabolism s)
 public MetabolismAttribute FindAttribute(Type type)
 }
 public PlayerModel : ListComponent`1<PlayerModel> {
-public Transform[] Shoulders
-public Transform[] AdditionalSpineBones
 protected int speed
 protected int acceleration
 protected int rotationYaw
@@ -26363,6 +26489,8 @@ public UInt32 underwearSkin
 private ulong <overrideSkinSeed>k__BackingField
 private Quaternion <AimAngles>k__BackingField
 private Quaternion <LookAngles>k__BackingField
+public Transform[] Shoulders
+public Transform[] AdditionalSpineBones
 public ulong overrideSkinSeed
 public bool IsFemale
 public SkinSetCollection SkinSet
@@ -27728,14 +27856,6 @@ public void StopAnim()
 private void ToggleAnim(bool toggle)
 }
 public ReflectionProbeEx : MonoBehaviour {
-private Mesh blitMesh
-private Mesh skyboxMesh
-private Single[] octaVerts
-private CubemapFaceMatrices[] cubemapFaceMatrices
-private CubemapFaceMatrices[] cubemapFaceMatricesD3D11
-private CubemapFaceMatrices[] shadowCubemapFaceMatrices
-private CubemapFaceMatrices[] platformCubemapFaceMatrices
-private Int32[] tab32
 public ReflectionProbeRefreshMode refreshMode
 public bool timeSlicing
 public int resolution
@@ -27754,6 +27874,14 @@ public ConvolutionQuality convolutionQuality
 public List`1<RenderListEntry> staticRenderList
 public Cubemap reflectionCubemap
 public float reflectionIntensity
+private Mesh blitMesh
+private Mesh skyboxMesh
+private Single[] octaVerts
+private CubemapFaceMatrices[] cubemapFaceMatrices
+private CubemapFaceMatrices[] cubemapFaceMatricesD3D11
+private CubemapFaceMatrices[] shadowCubemapFaceMatrices
+private CubemapFaceMatrices[] platformCubemapFaceMatrices
+private Int32[] tab32
 private void CreateMeshes()
 private void DestroyMeshes()
 private Mesh CreateBlitMesh()
@@ -28437,6 +28565,7 @@ public RoadFlare : TimedExplosive {
 public void ServerInit()
 public void OnCollision(Collision collision, BaseEntity hitEntity)
 public bool IsValidHomingTarget()
+internal void DoServerDestroy()
 }
 public RotateCameraAroundObject : MonoBehaviour {
 public GameObject m_goObjectToRotateAround
@@ -29229,6 +29358,7 @@ protected void Handle()
 private void CompleteTransfers()
 private void RepositionEntitiesFromTransfer()
 private void SpawnEntities(Dictionary`2<ulong, BasePlayer> players)
+internal void <Handle>g__UpdateWithNewUid|6_0(UidType type, UInt64& prevUid)
 }
 public Rust.Numlock : object {
 private byte VK_NUMLOCK
@@ -29552,11 +29682,6 @@ public bool Hide
 public EmojiSource Source
 }
 public RustEmojiLibrary : BaseScriptableObject {
-private long MAX_FILE_SIZE_BYTES
-public int MAX_TEX_SIZE_PIXELS
-public Dictionary`2<string, ServerEmojiConfig> allServerEmoji
-private bool hasLoaded
-public List`1<string> cachedServerList
 public NetworkableId EmojiStorageNetworkId
 public RustEmojiConfig[] Configs
 public RenderTextureDescriptor RenderTextureDesc
@@ -29566,14 +29691,19 @@ private List`1<EmojiSource> conditionalAccessOnly
 public GameObjectRef VideoPlayerRef
 private RustEmojiLibrary _instance
 private bool hasPrewarmed
+private long MAX_FILE_SIZE_BYTES
+public int MAX_TEX_SIZE_PIXELS
+public Dictionary`2<string, ServerEmojiConfig> allServerEmoji
+private bool hasLoaded
+public List`1<string> cachedServerList
 public RustEmojiLibrary Instance
+public RustEmojiLibrary get_Instance()
+private void Prewarm()
+public bool TryGetEmoji(string key, EmojiSource& er, Int32& skinVariantIndex, Int32& allIndex, bool serverSide)
 public void FindAllServerEmoji()
 public void ResetServerEmoji()
 private bool CheckByteArray(long arrayLength)
 public bool CheckByteArray(int arrayLength)
-public RustEmojiLibrary get_Instance()
-private void Prewarm()
-public bool TryGetEmoji(string key, EmojiSource& er, Int32& skinVariantIndex, Int32& allIndex, bool serverSide)
 }
 public RustigeEgg : BaseCombatEntity {
 public Flags Flag_Spin
@@ -29709,13 +29839,6 @@ private RealTimeSince TimeSinceLastSave
 private MemoryStream SaveBuffer
 private string <WipeId>k__BackingField
 public string WipeId
-public void ClearMapEntities()
-public bool Load(string strFilename, bool allowOutOfDateSaves)
-public void GetSaveCache()
-public void InitializeEntityLinks()
-public void InitializeEntitySupports()
-public void InitializeEntityConditionals()
-public void InitializeWipeId()
 public string get_WipeId()
 private void set_WipeId(string value)
 public IEnumerator Save(string strFilename, bool AndWait)
@@ -29724,7 +29847,14 @@ private void Start()
 private IEnumerator SaveRegularly()
 private IEnumerator DoAutomatedSave(bool AndWait)
 public bool Save(bool AndWait)
-internal string <ShiftSaveBackups>g__GetBackupName|17_0(int i, <>c__DisplayClass17_0& )
+public void ClearMapEntities()
+public bool Load(string strFilename, bool allowOutOfDateSaves)
+public void GetSaveCache()
+public void InitializeEntityLinks()
+public void InitializeEntitySupports()
+public void InitializeEntityConditionals()
+public void InitializeWipeId()
+internal string <ShiftSaveBackups>g__GetBackupName|9_0(int i, <>c__DisplayClass9_0& )
 }
 public ScaleByIntensity : MonoBehaviour {
 public Vector3 initialScale
@@ -29974,6 +30104,10 @@ public int sizeMultiplier
 public ScreenshotCamera : RustCamera`1<ScreenshotCamera> {
 public List`1<ScreenshotCamera> activeScreenshotCameras
 }
+public ScreenSpaceRefractionParams : ValueType {
+public float screenWeightDistance
+public ScreenSpaceRefractionParams Default
+}
 public ScrollRectZoom : MonoBehaviour {
 public ScrollRectEx scrollRect
 public float zoom
@@ -30080,9 +30214,9 @@ public SeekerTarget : object {
 public SeekerStrength strength
 public ISeekerTargetOwner owner
 private Dictionary`2<ISeekerTargetOwner, SeekerTarget> seekerTargets
-private Vector3 lastPosition
 public bool IsValidTarget()
-public Vector3 GetPosition()
+public bool TryGetPosition(Vector3& result)
+public void SendOwnerMessage(BaseEntity from, string message)
 public SeekerTarget GetBestForPoint(Vector3 from, Vector3 forward, float maxCone, float maxDist, SeekerStrength minStrength)
 public void SetSeekerTarget(ISeekerTargetOwner toAdd, SeekerStrength strength)
 }
@@ -30284,9 +30418,6 @@ public ServerBrowserTagList serverTagList
 public TextMeshProUGUI changeset
 }
 public ServerBrowserList : ServerBrowserListBase {
-public QueryType queryType
-public string VersionTag
-public ServerKeyvalues[] keyValues
 public bool startActive
 public Transform listTransform
 public int refreshOrder
@@ -30297,7 +30428,11 @@ public bool hideOfficialServers
 public bool excludeEmptyServersUsingQuery
 public bool alwaysIncludeEmptyServers
 public bool clampPlayerCountsToTrustedValues
+public QueryType queryType
+public string VersionTag
+public ServerKeyvalues[] keyValues
 public int GetItemCount()
+public void OnVisualUpdate(int i, GameObject obj)
 public void SetItemData(int i, GameObject obj)
 }
 public ServerBrowserListBase : BaseMonoBehaviour {
@@ -30405,9 +30540,6 @@ public Text lastJoinDate
 public UInt32 order
 }
 public ServerMgr : SingletonComponent`1<ServerMgr> {
-public ConnectionQueue connectionQueue
-public TimeAverageValueLookup`1<Type> packetHistory
-public TimeAverageValueLookup`1<UInt32> rpcHistory
 public string BYPASS_PROCEDURAL_SPAWN_PREF
 private ConnectionAuth auth
 private bool <runFrameUpdate>k__BackingField
@@ -30417,21 +30549,13 @@ private QueueType aiTick
 private List`1<ulong> bannedPlayerNotices
 private string _AssemblyHash
 public IEnumerator restartCoroutine
+public ConnectionQueue connectionQueue
+public TimeAverageValueLookup`1<Type> packetHistory
+public TimeAverageValueLookup`1<UInt32> rpcHistory
 public bool runFrameUpdate
 public int AvailableSlots
 private string AssemblyHash
 public bool Restarting
-private void Log(Exception e)
-public void OnNetworkMessage(Message packet)
-public void ProcessUnhandledPacket(Message packet)
-public void ReadDisconnectReason(Message packet)
-private BasePlayer SpawnPlayerSleeping(Connection connection)
-public BasePlayer SpawnNewPlayer(Connection connection)
-private void ClientReady(Message packet)
-private void OnRPCMessage(Message packet)
-private void OnPlayerTick(Message packet)
-private void OnPlayerVoice(Message packet)
-private void OnGiveUserInformation(Message packet)
 public bool get_runFrameUpdate()
 private void set_runFrameUpdate(bool value)
 public bool Initialize(bool loadSave, string saveFile, bool allowOutOfDateSaves, bool skipInitialSpawn)
@@ -30468,6 +30592,17 @@ public void RestartServer(string strNotice, int iSeconds)
 public void SendReplicatedVars(string filter)
 public void SendReplicatedVars(Connection connection)
 private void OnReplicatedVarChanged(string fullName, string value)
+private void Log(Exception e)
+public void OnNetworkMessage(Message packet)
+public void ProcessUnhandledPacket(Message packet)
+public void ReadDisconnectReason(Message packet)
+private BasePlayer SpawnPlayerSleeping(Connection connection)
+public BasePlayer SpawnNewPlayer(Connection connection)
+private void ClientReady(Message packet)
+private void OnRPCMessage(Message packet)
+private void OnPlayerTick(Message packet)
+private void OnPlayerVoice(Message packet)
+private void OnGiveUserInformation(Message packet)
 }
 public ServerPerformance : BaseMonoBehaviour {
 public ulong deaths
@@ -30579,6 +30714,11 @@ public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int laye
 public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
 private void SetParameter(Animator animator)
 }
+public SetParameterCurveAnimatorBehaviour : StateMachineBehaviour {
+public string FloatParameterName
+public AnimationCurve ParameterCurve
+public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+}
 public SetupAppNotification : UIDialog {
 public RustInput titleInput
 public RustInput bodyInput
@@ -30660,27 +30800,21 @@ public ShowIfConvarEnabled : MonoBehaviour {
 public string Convar
 }
 public Signage : IOEntity {
+public ItemDefinition RequiredHeldEntity
+private List`1<ulong> editHistory
 private float TextureRequestTimeout
 public GameObjectRef changeTextDialog
 public MeshPaintableSource[] paintableSources
 public UInt32[] textureIDs
-public ItemDefinition RequiredHeldEntity
-private List`1<ulong> editHistory
-public Vector2i TextureSize
-public int TextureCount
 public NetworkableId NetworkID
 public Type FileType
 public UGCType ContentType
 public List`1<ulong> EditingHistory
 public BaseNetworkable UgcEntity
 public UInt32[] GetContentCRCs
+public Vector2i TextureSize
+public int TextureCount
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
-public Vector2i get_TextureSize()
-public int get_TextureCount()
-public void PreProcess(IPrefabProcessor preProcess, GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
-public void UpdateSign(RPCMessage msg)
-public void EnsureInitialized()
-private void SignDebugLog(string str)
 public bool CanUpdateSign(BasePlayer player)
 public bool CanUnlockSign(BasePlayer player)
 public bool CanLockSign(BasePlayer player)
@@ -30706,6 +30840,12 @@ public void ClearContent()
 public string Admin_Who()
 public int ConsumptionAmount()
 public string Categorize()
+public Vector2i get_TextureSize()
+public int get_TextureCount()
+public void PreProcess(IPrefabProcessor preProcess, GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
+public void UpdateSign(RPCMessage msg)
+public void EnsureInitialized()
+private void SignDebugLog(string str)
 }
 public SignContent : ImageStorageEntity {
 private UInt32[] textureIDs
@@ -31043,7 +31183,7 @@ public void AssignToFriend(RPCMessage msg)
 public void RPC_MakePublic(RPCMessage msg)
 public void RPC_MakeBed(RPCMessage msg)
 protected void PostPlayerSpawn(BasePlayer p)
-public bool IsOccupied(ulong userID)
+public RespawnState GetRespawnState(ulong userID)
 public bool IsMobile()
 public string Admin_Who()
 public void Load(LoadInfo info)
@@ -31053,7 +31193,11 @@ private bool <DoServerDestroy>b__54_0(SleepingBag x)
 public SleepingBagButton : MonoBehaviour {
 public GameObject TimeLockRoot
 public GameObject LockRoot
-public GameObject OccupiedRoot
+public GameObject UnavailableRoot
+public Tooltip unavailableTooltip
+public Phrase occupied
+public Phrase underwater
+public Phrase noRespawnZone
 public Button ClickButton
 public TextMeshProUGUI BagName
 public TextMeshProUGUI ZoneName
@@ -31077,7 +31221,7 @@ public void ServerInit()
 protected void PostPlayerSpawn(BasePlayer p)
 public void SetSeat(BaseVehicleSeat seat, bool sendNetworkUpdate)
 public void Save(SaveInfo info)
-public bool IsOccupied(ulong userID)
+public RespawnState GetRespawnState(ulong userID)
 public void ServerClearBed(RPCMessage msg)
 }
 public SleepingBagClusterMapMarker : MonoBehaviour {
@@ -31372,13 +31516,6 @@ public void EnableFogField()
 public void FinishFogging()
 }
 public Snowmobile : GroundVehicle {
-public CarPhysics`1<Snowmobile> carPhysics
-public VehicleTerrainHandler serverTerrainHandler
-private CarWheel[] wheels
-public TimeSince timeSinceLastUsed
-private float DECAY_TICK_TIME
-public float prevTerrainModDrag
-public TimeSince timeSinceTerrainModCheck
 private Transform centreOfMassTransform
 private GameObjectRef itemStoragePrefab
 private VisualCarWheel wheelSkiFL
@@ -31419,7 +31556,13 @@ public Flags Flag_Slowmode
 private EntityRef`1<StorageContainer> itemStorageInstance
 private float cachedFuelFraction
 private float FORCE_MULTIPLIER
-public Surface OnSurface
+public CarPhysics`1<Snowmobile> carPhysics
+public VehicleTerrainHandler serverTerrainHandler
+private CarWheel[] wheels
+public TimeSince timeSinceLastUsed
+private float DECAY_TICK_TIME
+public float prevTerrainModDrag
+public TimeSince timeSinceTerrainModCheck
 public float ThrottleInput
 public float BrakeInput
 public bool IsBraking
@@ -31430,29 +31573,8 @@ public float DriveWheelSlip
 public float MaxSteerAngle
 public bool InSlowMode
 private float Mass
+public Surface OnSurface
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
-public Surface get_OnSurface()
-public void ServerInit()
-public void VehicleFixedUpdate()
-public void PlayerServerInput(InputState inputState, BasePlayer player)
-public float GetAdjustedDriveForce(float absSpeed, float topSpeed)
-public float GetModifiedDrag()
-public float MaxVelocity()
-public CarWheel[] GetWheels()
-public float GetWheelsMidPos()
-public void Save(SaveInfo info)
-public int StartingFuelUnits()
-protected void OnChildAdded(BaseEntity child)
-internal void DoServerDestroy()
-public bool MeetsEngineRequirements()
-public void AttemptMount(BasePlayer player, bool doMountChecks)
-public void SnowmobileDecay()
-public StorageContainer GetItemContainer()
-private void UpdateClients()
-public void OnEngineStartFailed()
-public void ScaleDamageForPlayer(BasePlayer player, HitInfo info)
-public void RPC_OpenFuel(RPCMessage msg)
-public void RPC_OpenItemStorage(RPCMessage msg)
 public float get_ThrottleInput()
 protected void set_ThrottleInput(float value)
 public float get_BrakeInput()
@@ -31478,6 +31600,28 @@ public float GetPerformanceFraction()
 public float GetFuelFraction()
 public bool CanBeLooted(BasePlayer player)
 public void OnFlagsChanged(Flags old, Flags next)
+public Surface get_OnSurface()
+public void ServerInit()
+public void VehicleFixedUpdate()
+public void PlayerServerInput(InputState inputState, BasePlayer player)
+public float GetAdjustedDriveForce(float absSpeed, float topSpeed)
+public float GetModifiedDrag()
+public float MaxVelocity()
+public CarWheel[] GetWheels()
+public float GetWheelsMidPos()
+public void Save(SaveInfo info)
+public int StartingFuelUnits()
+protected void OnChildAdded(BaseEntity child)
+internal void DoServerDestroy()
+public bool MeetsEngineRequirements()
+public void AttemptMount(BasePlayer player, bool doMountChecks)
+public void SnowmobileDecay()
+public StorageContainer GetItemContainer()
+private void UpdateClients()
+public void OnEngineStartFailed()
+public void ScaleDamageForPlayer(BasePlayer player, HitInfo info)
+public void RPC_OpenFuel(RPCMessage msg)
+public void RPC_OpenItemStorage(RPCMessage msg)
 }
 public SnowmobileAudio : GroundVehicleAudio {
 private EngineAudioSet engineAudioSet
@@ -32269,16 +32413,14 @@ public float linear_to_srgb(float linear)
 public float srgb_to_linear(float srgb)
 }
 public StabilityEntity : DecayEntity {
-public StabilityCheckWorkQueue stabilityCheckQueue
-public UpdateSurroundingsQueue updateSurroundingsQueue
 public bool grounded
 public float cachedStability
 public int cachedDistanceFromGround
 private List`1<Support> supports
 private int stabilityStrikes
 private bool dirty
-public void Save(SaveInfo info)
-public void Load(LoadInfo info)
+public StabilityCheckWorkQueue stabilityCheckQueue
+public UpdateSurroundingsQueue updateSurroundingsQueue
 public void ResetState()
 public void InitializeSupports()
 public int DistanceFromGround(StabilityEntity ignoreEntity)
@@ -32293,6 +32435,8 @@ protected void OnPhysicsNeighbourChanged()
 protected void DebugNudge()
 public void ServerInit()
 internal void DoServerDestroy()
+public void Save(SaveInfo info)
+public void Load(LoadInfo info)
 }
 public StabilitySocket : Socket_Base {
 public float support
@@ -32341,7 +32485,6 @@ public GameObjectRef buryEffect
 public float uncoverRange
 private float lastToggleTime
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
-public bool IsHidden()
 public bool PlayerInRange(BasePlayer ply)
 public void InitShared()
 public void DoOccludedCheck()
@@ -32354,6 +32497,7 @@ public void ToggleHidden()
 public void RPC_HideStash(RPCMessage rpc)
 public void RPC_WantsUnhide(RPCMessage rpc)
 public void OnFlagsChanged(Flags old, Flags next)
+public bool IsHidden()
 }
 public StateErrorAIEvent : BaseAIEvent {
 public void Execute(AIMemory memory, AIBrainSenses senses, StateStatus stateStatus)
@@ -33033,10 +33177,16 @@ public Transform CableEndPoint
 public float LineDroopAmount
 private Cassette <cachedCassette>k__BackingField
 public PhoneController Controller
-public UInt32 AnsweringMessageId
 public Cassette cachedCassette
 public BaseEntity ToBaseEntity
+public UInt32 AnsweringMessageId
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+public Cassette get_cachedCassette()
+private void set_cachedCassette(Cassette value)
+public void Load(LoadInfo info)
+public bool CanPickup(BasePlayer player)
+public BaseEntity get_ToBaseEntity()
+public void OnFlagsChanged(Flags old, Flags next)
 public UInt32 get_AnsweringMessageId()
 public void Save(SaveInfo info)
 public void ServerInit()
@@ -33060,12 +33210,6 @@ public void ServerPlayVoicemail(RPCMessage msg)
 public void ServerStopVoicemail(RPCMessage msg)
 public void ServerDeleteVoicemail(RPCMessage msg)
 public int GetPassthroughAmount(int outputSlot)
-public Cassette get_cachedCassette()
-private void set_cachedCassette(Cassette value)
-public void Load(LoadInfo info)
-public bool CanPickup(BasePlayer player)
-public BaseEntity get_ToBaseEntity()
-public void OnFlagsChanged(Flags old, Flags next)
 }
 public TelephoneManager : object {
 public int MaxPhoneNumber
@@ -33613,6 +33757,7 @@ public List`1<DungeonGridInfo> DungeonGridEntrances
 public List`1<DungeonGridCell> DungeonGridCells
 public GameObject DungeonBaseRoot
 public List`1<DungeonBaseInfo> DungeonBaseEntrances
+internal List`1<DungeonBaseLink> DungeonBaseLinks
 public List`1<Vector3> OceanPatrolClose
 public List`1<Vector3> OceanPatrolFar
 public Dictionary`2<string, List`1<PowerlineNode>> wires
@@ -33746,6 +33891,9 @@ public Enum SplatType
 protected void Apply(Vector3 position, float opacity, float radius, float fade)
 }
 public TerrainTexturing : TerrainExtension {
+public bool debugFoliageDisplacement
+private bool initialized
+private TerrainTexturing instance
 private int ShoreVectorDownscale
 private int ShoreVectorBlurPasses
 private float terrainSize
@@ -33753,18 +33901,24 @@ private int shoreMapSize
 private float shoreDistanceScale
 private Single[] shoreDistances
 private Vector3[] shoreVectors
-public bool debugFoliageDisplacement
-private bool initialized
-private TerrainTexturing instance
+public TerrainTexturing Instance
 public int ShoreMapSize
 public Vector3[] ShoreMap
-public TerrainTexturing Instance
 private void InitializeBasePyramid()
 private void ReleaseBasePyramid()
 private void UpdateBasePyramid()
 private void InitializeCoarseHeightSlope()
 private void ReleaseCoarseHeightSlope()
 private void UpdateCoarseHeightSlope()
+public TerrainTexturing get_Instance()
+private void CheckInstance()
+private void Awake()
+public void Setup()
+public void PostSetup()
+private void Shutdown()
+private void OnEnable()
+private void OnDisable()
+private void Update()
 public int get_ShoreMapSize()
 public Vector3[] get_ShoreMap()
 private void InitializeShoreVector()
@@ -33775,15 +33929,6 @@ public float GetCoarseDistanceToShore(Vector3 pos)
 public float GetCoarseDistanceToShore(Vector2 uv)
 public Vector3 GetCoarseVectorToShore(Vector3 pos)
 public Vector3 GetCoarseVectorToShore(Vector2 uv)
-public TerrainTexturing get_Instance()
-private void CheckInstance()
-private void Awake()
-public void Setup()
-public void PostSetup()
-private void Shutdown()
-private void OnEnable()
-private void OnDisable()
-private void Update()
 }
 public TerrainTopologyAdd : TerrainModifier {
 public Enum TopologyType
@@ -34479,6 +34624,7 @@ public string get_english()
 public TooltipContainer : MonoBehaviour {
 public Transform ScaleRoot
 public RustText TooltipText
+public RectTransform OverrideLayoutRoot
 }
 public TooltipContainer_Emoji : TooltipContainer {
 public TmProEmojiRedirector EmojiRedirector
@@ -34542,22 +34688,6 @@ private void DestroyThisBarrier()
 private void PushForceTick()
 }
 public TrainCar : BaseVehicle {
-private float <FrontWheelSplineDist>k__BackingField
-protected bool trainDebug
-public CompleteTrain completeTrain
-private bool frontAtEndOfLine
-private bool rearAtEndOfLine
-public float frontBogieYRot
-public float rearBogieYRot
-public Vector3 spawnOrigin
-public float TRAINCAR_MAX_SPEED
-public TrainTrackSpline _frontTrackSection
-private TrainTrackSpline <RearTrackSection>k__BackingField
-public float distFrontToBackWheel
-public float initialSpawnTime
-public float decayingFor
-public float decayTickSpacing
-public float lastDecayTick
 public float corpseSeconds
 public TriggerTrainCollisions frontCollisionTrigger
 public TriggerTrainCollisions rearCollisionTrigger
@@ -34598,6 +34728,26 @@ public float DistFrontWheelToBackCoupling
 public TrainCouplingController coupling
 public TrackSelection localTrackSelection
 public Flags Flag_LinedUpToUnload
+private float <FrontWheelSplineDist>k__BackingField
+protected bool trainDebug
+public CompleteTrain completeTrain
+private bool frontAtEndOfLine
+private bool rearAtEndOfLine
+public float frontBogieYRot
+public float rearBogieYRot
+public Vector3 spawnOrigin
+public float TRAINCAR_MAX_SPEED
+public TrainTrackSpline _frontTrackSection
+private TrainTrackSpline <RearTrackSection>k__BackingField
+public float distFrontToBackWheel
+public float initialSpawnTime
+public float decayingFor
+public float decayTickSpacing
+public float lastDecayTick
+public TriggerTrainCollisions FrontCollisionTrigger
+public TriggerTrainCollisions RearCollisionTrigger
+public TrainCarType CarType
+public bool LinedUpToUnload
 public Vector3 Position
 public float FrontWheelSplineDist
 public bool FrontAtEndOfLine
@@ -34608,11 +34758,19 @@ public TrainTrackSpline RearTrackSection
 public bool IsAtAStation
 public bool IsOnAboveGroundSpawnRail
 public bool RecentlySpawned
-public TriggerTrainCollisions FrontCollisionTrigger
-public TriggerTrainCollisions RearCollisionTrigger
-public TrainCarType CarType
-public bool LinedUpToUnload
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+public TriggerTrainCollisions get_FrontCollisionTrigger()
+public TriggerTrainCollisions get_RearCollisionTrigger()
+public TrainCarType get_CarType()
+public bool get_LinedUpToUnload()
+public void PreProcess(IPrefabProcessor process, GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
+public void InitShared()
+public void Load(LoadInfo info)
+public void OnFlagsChanged(Flags old, Flags next)
+public bool CustomCollision(TrainCar train, TriggerTrainCollisions trainTrigger)
+public float InheritedVelocityScale()
+public void SetTrackSelection(TrackSelection trackSelection)
+public bool PlayerIsOnPlatform(BasePlayer player)
 public Vector3 get_Position()
 public float get_FrontWheelSplineDist()
 public void set_FrontWheelSplineDist(float value)
@@ -34675,18 +34833,6 @@ public float GetDecayMinutes(bool hasPassengers)
 public bool CanDieFromDecayNow()
 public bool AnyPlayersNearby(float maxDist)
 public void RPC_WantsUncouple(RPCMessage msg)
-public TriggerTrainCollisions get_FrontCollisionTrigger()
-public TriggerTrainCollisions get_RearCollisionTrigger()
-public TrainCarType get_CarType()
-public bool get_LinedUpToUnload()
-public void PreProcess(IPrefabProcessor process, GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
-public void InitShared()
-public void Load(LoadInfo info)
-public void OnFlagsChanged(Flags old, Flags next)
-public bool CustomCollision(TrainCar train, TriggerTrainCollisions trainTrigger)
-public float InheritedVelocityScale()
-public void SetTrackSelection(TrackSelection trackSelection)
-public bool PlayerIsOnPlatform(BasePlayer player)
 }
 public TrainCarAudio : MonoBehaviour {
 private TrainCar trainCar
@@ -34835,16 +34981,6 @@ public void GetAll(List`1& result)
 public void OnPreCouplingChange()
 }
 public TrainEngine : TrainCar {
-public float HAZARD_CHECK_EVERY
-public float HAZARD_DIST_MAX
-public float HAZARD_DIST_MIN
-public float HAZARD_SPEED_MIN
-public float buttonHoldTime
-public EngineSpeeds MaxThrottle
-public EngineSpeeds MinThrottle
-public EngineDamageOverTime engineDamage
-public Vector3 engineLocalOffset
-public int lastSentLinedUpToUnload
 public Transform leftHandLever
 public Transform rightHandLever
 public Transform leftHandGrip
@@ -34886,13 +35022,39 @@ public Flags Flag_AltColor
 public Flags Flag_EngineSlowed
 public VehicleEngineController`1<TrainEngine> engineController
 private EngineSpeeds <CurThrottleSetting>k__BackingField
-public bool networkUpdateOnCompleteTrainChange
+public float HAZARD_CHECK_EVERY
+public float HAZARD_DIST_MAX
+public float HAZARD_DIST_MIN
+public float HAZARD_SPEED_MIN
+public float buttonHoldTime
+public EngineSpeeds MaxThrottle
+public EngineSpeeds MinThrottle
+public EngineDamageOverTime engineDamage
+public Vector3 engineLocalOffset
+public int lastSentLinedUpToUnload
 public bool LightsAreOn
 public bool CloseToHazard
 public bool EngineIsSlowed
 public EngineSpeeds CurThrottleSetting
 public TrainCarType CarType
+public bool networkUpdateOnCompleteTrainChange
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+public bool get_LightsAreOn()
+public bool get_CloseToHazard()
+public bool get_EngineIsSlowed()
+public EngineSpeeds get_CurThrottleSetting()
+public void set_CurThrottleSetting(EngineSpeeds value)
+public TrainCarType get_CarType()
+public void InitShared()
+public void Load(LoadInfo info)
+public bool CanBeLooted(BasePlayer player)
+public float GetEnginePowerMultiplier(float minPercent)
+public float GetThrottleFraction()
+public bool IsNearDesiredSpeed(float leeway)
+public void SetTrackSelection(TrackSelection trackSelection)
+public void SetThrottle(EngineSpeeds throttle)
+public int GetFuelAmount()
+public bool CanMount(BasePlayer player)
 public bool get_networkUpdateOnCompleteTrainChange()
 public void ServerInit()
 public void OnChildAdded(BaseEntity child)
@@ -34921,25 +35083,9 @@ public void ResetEngineToNormal()
 public float GetCurTopSpeed()
 public float GetCurEngineForce()
 public void RPC_OpenFuel(RPCMessage msg)
-public bool get_LightsAreOn()
-public bool get_CloseToHazard()
-public bool get_EngineIsSlowed()
-public EngineSpeeds get_CurThrottleSetting()
-public void set_CurThrottleSetting(EngineSpeeds value)
-public TrainCarType get_CarType()
-public void InitShared()
-public void Load(LoadInfo info)
-public bool CanBeLooted(BasePlayer player)
-public float GetEnginePowerMultiplier(float minPercent)
-public float GetThrottleFraction()
-public bool IsNearDesiredSpeed(float leeway)
-public void SetTrackSelection(TrackSelection trackSelection)
-public void SetThrottle(EngineSpeeds throttle)
-public int GetFuelAmount()
-public bool CanMount(BasePlayer player)
 private void IEngineControllerUser.Invoke(Action action, float time)
 private void IEngineControllerUser.CancelInvoke(Action action)
-private bool <PlayerServerInput>g__ProcessThrottleInput|19_0(BUTTON button, Action action, <>c__DisplayClass19_0& )
+private bool <PlayerServerInput>g__ProcessThrottleInput|83_0(BUTTON button, Action action, <>c__DisplayClass83_0& )
 }
 public TrainEngineAudio : TrainCarAudio {
 private TrainEngine trainEngine
@@ -35179,6 +35325,8 @@ public TriggerBase : BaseMonoBehaviour {
 public LayerMask interestLayers
 public HashSet`1<GameObject> contents
 public HashSet`1<BaseEntity> entityContents
+public Action`1<BaseNetworkable> OnEntityEnterTrigger
+public Action`1<BaseNetworkable> OnEntityLeaveTrigger
 public bool HasAnyContents
 public bool HasAnyEntityContents
 public bool get_HasAnyContents()
@@ -35328,6 +35476,19 @@ private void CheckForMount()
 public TriggerMovement : TriggerBase {
 public Transform losEyes
 public MovementModify movementModify
+}
+public TriggerNoRespawnZone : TriggerBase {
+public List`1<TriggerNoRespawnZone> allNRZones
+public float maxDepth
+public float maxAltitude
+private SphereCollider sphereCollider
+private float radiusSqr
+protected void Awake()
+protected void OnEnable()
+protected void OnDisable()
+internal GameObject InterestedInObject(GameObject obj)
+public bool InAnyNoRespawnZone(Vector3 theirPos)
+public bool InNoRespawnZone(Vector3 theirPos, bool checkRadius)
 }
 public TriggerNoSpray : TriggerBase {
 public BoxCollider TriggerCollider
@@ -35539,6 +35700,8 @@ public TriggerWorkbench : TriggerBase {
 public Workbench parentBench
 public GameObject InterestedInObject(GameObject obj)
 public float WorkbenchLevel()
+internal void OnEntityEnter(BaseEntity ent)
+internal void OnEntityLeave(BaseEntity ent)
 }
 public trisPerSubmesh : object {
 public Int32[] triangles
@@ -35822,6 +35985,15 @@ public GameObject InviteToTeamButton
 public UIClanConfirmation : BaseMonoBehaviour {
 public RustText Text
 public RustText TryAgainText
+}
+public UIClanCreator : BaseMonoBehaviour {
+public Phrase CreateNameBlank
+public Phrase CreateNameInvalid
+public Phrase CreateAlreadyInClan
+public Phrase CreateDuplicateName
+public Phrase CreateFailure
+public UIClans UiClans
+public RustInput ClanName
 }
 public UIClanInvitation : BaseMonoBehaviour {
 public Phrase AcceptInvitationFailure
@@ -39826,6 +39998,7 @@ public WaterBodyType Moonpool
 }
 public WaterCatcher : LiquidContainer {
 public ItemDefinition itemToCreate
+public WaterCatcherCollectRate collectionRates
 public float maxItemToCreate
 public Vector3 rainTestPosition
 public float rainTestSize
@@ -39836,6 +40009,12 @@ public bool IsFull()
 public bool TestIsOutside()
 public void AddResource(int iAmount)
 private IOEntity CheckPushLiquid(IOEntity connected, int amount, IOEntity fromSource, int depth)
+}
+public WaterCatcherCollectRate : ScriptableObject {
+public float baseRate
+public float rainRate
+public float snowRate
+public float fogRate
 }
 public WaterCheck : PrefabAttribute {
 public bool Rotate
@@ -39982,7 +40161,6 @@ public bool stopWhenOutputFull
 public LiquidContainer waterStorage
 public float dirtyWaterProcssed
 public float pendingFreshWater
-public bool IsBoiling()
 public void ServerInit()
 public void PostServerLoad()
 protected void SpawnStorageEnt(bool load)
@@ -39994,6 +40172,7 @@ public bool HasDirtyWater()
 public void Cook(float timeCooked)
 protected void ConvertWater(float timeCooked)
 public void Load(LoadInfo info)
+public bool IsBoiling()
 }
 public WaterQuality : Enum {
 public int value__
@@ -40038,8 +40217,6 @@ public int Layer
 public int Reflections
 public float WindowDirection
 public Single[] OctaveScales
-private void EditorInitialize()
-private void EditorShutdown()
 public WaterSystem get_Instance()
 private void set_Instance(WaterSystem value)
 public WaterCollision get_Collision()
@@ -40078,6 +40255,8 @@ public void UnregisterBody(WaterBody body)
 private void UpdateOceanLevel()
 private void UpdateOceanSimulation()
 public void Refresh()
+private void EditorInitialize()
+private void EditorShutdown()
 }
 public WaterVisibilityTrigger : EnvironmentVolumeTrigger {
 public bool togglePhysics
@@ -40154,6 +40333,23 @@ private WeaponRackSlot[] gridSlots
 private WeaponRackSlot[] gridCellSlotReferences
 private HashSet`1<int> usedSlots
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+public void InitShared()
+private void ClearGridCellContentsRefs()
+private void SetupSlot(WeaponRackSlot slot)
+private void ClearSlot(WeaponRackSlot slot)
+private void SetGridCellContents(WeaponRackSlot slot, bool clear)
+public void Load(LoadInfo info)
+public WeaponRackSlot GetWeaponAtIndex(int gridIndex)
+public Vector2Int GetXYForIndex(int index)
+private Vector2Int GetWeaponSize(WorldModelRackMountConfig config, int rotation)
+private Vector2Int GetWeaponStart(Vector2Int targetXY, Vector2Int size, bool clamp)
+public bool CanAcceptWeaponType(WorldModelRackMountConfig weaponConfig)
+public int GetBestPlacementCellIndex(Vector2Int targetXY, WorldModelRackMountConfig config, int rotation, WeaponRackSlot ignoreSlot)
+public int GetGridIndexAtPosition(Vector3 pos)
+private bool GridCellsFree(WorldModelRackMountConfig config, int gridIndex, int rotation, WeaponRackSlot ignoreGridSlot)
+private int GetGridCellIndex(int x, int y)
+private bool GridCellFree(int index, WeaponRackSlot ignoreSlot)
+private bool ItemIsRackMountable(Item item)
 public void ServerInit()
 private void SpawnLightSubEntities()
 private bool InventoryItemFilter(Item item, int targetSlot)
@@ -40173,23 +40369,6 @@ private void SetSlotAmmoDetails(WeaponRackSlot slot, Item item)
 private bool MountWeapon(Item item, BasePlayer player, int gridCellIndex, int rotation, bool sendUpdate)
 private void PlayMountSound(int itemID)
 private void LoadWeaponAmmo(RPCMessage msg)
-public void InitShared()
-private void ClearGridCellContentsRefs()
-private void SetupSlot(WeaponRackSlot slot)
-private void ClearSlot(WeaponRackSlot slot)
-private void SetGridCellContents(WeaponRackSlot slot, bool clear)
-public void Load(LoadInfo info)
-public WeaponRackSlot GetWeaponAtIndex(int gridIndex)
-public Vector2Int GetXYForIndex(int index)
-private Vector2Int GetWeaponSize(WorldModelRackMountConfig config, int rotation)
-private Vector2Int GetWeaponStart(Vector2Int targetXY, Vector2Int size, bool clamp)
-public bool CanAcceptWeaponType(WorldModelRackMountConfig weaponConfig)
-public int GetBestPlacementCellIndex(Vector2Int targetXY, WorldModelRackMountConfig config, int rotation, WeaponRackSlot ignoreSlot)
-public int GetGridIndexAtPosition(Vector3 pos)
-private bool GridCellsFree(WorldModelRackMountConfig config, int gridIndex, int rotation, WeaponRackSlot ignoreGridSlot)
-private int GetGridCellIndex(int x, int y)
-private bool GridCellFree(int index, WeaponRackSlot ignoreSlot)
-private bool ItemIsRackMountable(Item item)
 }
 public WeaponRackBatchAutoSet : MonoBehaviour {
 public Transform Anchor
@@ -40442,8 +40621,6 @@ public float trappedEffectRepeatRate
 public float trapSuccessRate
 public List`1<ItemDefinition> ignoreBait
 public List`1<WildlifeWeight> targetWildlife
-public bool HasCatch()
-public bool IsTrapActive()
 public void ResetState()
 public void SetTrapActive(bool trapOn)
 public int GetBaitCalories()
@@ -40457,6 +40634,8 @@ public bool HasBait()
 public void PlayerStoppedLooting(BasePlayer player)
 public bool OnStartBeingLooted(BasePlayer baseEntity)
 public TrappableWildlife GetRandomWildlife()
+public bool HasCatch()
+public bool IsTrapActive()
 }
 public Windows.ConsoleInput : object {
 private Action`1<string> OnInputText
@@ -40798,20 +40977,13 @@ public float MaxRefreshDistance
 public float MinTimeBetweenRefreshes
 }
 public WorldItem : BaseEntity {
-private bool _isInvokingSendItemUpdate
 public bool allowPickup
 public Item item
 protected float eatSeconds
 protected float caloriesPerSecond
+private bool _isInvokingSendItemUpdate
 public TraitFlag Traits
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
-public void ServerInit()
-private void DoItemNetworking()
-private void SendItemUpdate()
-public void Pickup(RPCMessage msg)
-public void Save(SaveInfo info)
-internal void DoServerDestroy()
-public void SwitchParent(BaseEntity ent)
 public Item GetItem()
 public void InitializeItem(Item in_item)
 public void RemoveItem()
@@ -40821,6 +40993,13 @@ public void Load(LoadInfo info)
 public TraitFlag get_Traits()
 public void Eat(BaseNpc baseNpc, float timeSpent)
 public string ToString()
+public void ServerInit()
+private void DoItemNetworking()
+private void SendItemUpdate()
+public void Pickup(RPCMessage msg)
+public void Save(SaveInfo info)
+internal void DoServerDestroy()
+public void SwitchParent(BaseEntity ent)
 }
 public WorldModel : MonoBehaviour {
 public float mass

@@ -9,6 +9,7 @@ public float LengthModifier
 public BurstClothMaterial Material
 public Vector3 Gravity
 public Transform SimulationSpace
+public float RootMotionStrength
 public bool EnableCollisions
 public float CollisionRadius
 public AnimationCurve CollisionRadiusCurve
@@ -23,7 +24,9 @@ private Quaternion _rotation
 private Vector3 _up
 private Vector3 _simulationSpaceDelta
 private Transform _prevSimulationSpace
-private Vector3 _prevSimulationOrigin
+private Nullable`1<Vector3> _prevSimulationOrigin
+private Vector3 _originDelta
+private Nullable`1<Vector3> _prevOrigin
 private float _accumulator
 private int _boneCount
 private int _maxBoneDepth
@@ -104,7 +107,7 @@ public float GetDamping(float t)
 public float GetTightness(float t)
 public float GetStiffness(float t)
 }
-internal Facepunch.BurstCloth.BurstExtensions : object {
+public Facepunch.BurstCloth.BurstExtensions : object {
 public T& modreq(System.Runtime.InteropServices.InAttribute) GetReadonly(NativeArray`1<T> array, int index)
 public T& Get(NativeArray`1<T> array, int index)
 }
@@ -176,6 +179,7 @@ public float DeltaTime
 public int IterationCount
 public int ConstraintIterationCount
 public float3 SimulationSpaceDelta
+public float3 OriginDelta
 public float3 Gravity
 public int StiffnessDepth
 public float LengthModifier
