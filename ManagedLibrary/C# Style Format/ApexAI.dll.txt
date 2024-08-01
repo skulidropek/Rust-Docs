@@ -199,6 +199,7 @@ public float Score(IAIContext context, IList`1<IContextualScorer> scorers)
 public Apex.AI.CompositeAllOrNothingQualifier : CompositeQualifier {
 public float threshold
 public float Score(IAIContext context, IList`1<IContextualScorer> scorers)
+public bool Validate(IHTNContext context, IList`1<IContextualScorer> scorers)
 }
 public Apex.AI.CompositePriorityQualifier : CompositeQualifier {
 public float threshold
@@ -218,6 +219,7 @@ public void set_action(IAction value)
 public IList`1<IContextualScorer> get_scorers()
 public float Score(IAIContext context)
 public float Score(IAIContext context, IList`1<IContextualScorer> scorers)
+public bool Validate(IHTNContext context, IList`1<IContextualScorer> scorers)
 public void CloneFrom(object other)
 }
 public Apex.AI.CompositeScoreAboveThresholdQualifier : CompositeQualifier {
@@ -228,21 +230,38 @@ public Apex.AI.CompositeScoreQualifier : CompositeQualifier {
 public float Score(IAIContext context, IList`1<IContextualScorer> scorers)
 }
 public Apex.AI.ContextualScorerBase : object {
+private bool <CanInvalidatePlan>k__BackingField
 public float score
 private bool <isDisabled>k__BackingField
+public bool CanInvalidatePlan
 public bool isDisabled
+public bool get_CanInvalidatePlan()
+public void set_CanInvalidatePlan(bool value)
 public bool get_isDisabled()
 public void set_isDisabled(bool value)
 public float Score(IAIContext context)
 }
 public Apex.AI.ContextualScorerBase`1 : object {
+private bool <CanInvalidatePlan>k__BackingField
 public float score
 private bool <isDisabled>k__BackingField
+public bool CanInvalidatePlan
 public bool isDisabled
+public bool get_CanInvalidatePlan()
+public void set_CanInvalidatePlan(bool value)
 public bool get_isDisabled()
 public void set_isDisabled(bool value)
 private float Apex.AI.IContextualScorer.Score(IAIContext context)
 public float Score(TContext context)
+}
+public Apex.AI.Core.HTN.IHTNDomain {
+public IHTNContext PlannerContext
+public IUtilityAI PlannerAi
+public IUtilityAIClient PlannerAiClient
+public IHTNContext get_PlannerContext()
+public IUtilityAI get_PlannerAi()
+public IUtilityAIClient get_PlannerAiClient()
+public IAIContext GetContext(Guid aiId)
 }
 public Apex.AI.DefaultQualifier : QualifierBase {
 private float <score>k__BackingField
@@ -275,13 +294,21 @@ public Apex.Ai.HTN.CompoundTaskSelector : Selector {
 private DecompositionType _decomposition
 private List`1<ICompositeScorer> _preconditions
 private List`1<TaskQualifier> _taskQualifiers
+private List`1<ITask> <Parents>k__BackingField
 public List`1<ICompositeScorer> Preconditions
 public DecompositionType Decomposition
+public List`1<ITask> Parents
 public List`1<ICompositeScorer> get_Preconditions()
 public DecompositionType get_Decomposition()
+public List`1<ITask> get_Parents()
 public void Reset()
-public float Decompose(IAIContext context, List`1& plan)
+public float Decompose(DomainSelector domain, ITask parent, IHTNContext context, List`1& plan, Int32& score, int scoreThreshold, Int32& localCost)
+private void RemovalAtFailedDecomposition(IHTNContext context, List`1& plan)
+public void RemoveAppliedEffects(IHTNContext context, List`1& plan)
 private bool _UpdateTasksQualifiers()
+public void GetDecompositionCostFromIndex(Int32& cost, int index)
+public void GetFullDecompositionCost(Int32& cost)
+public bool ValidatePreconditions(IHTNContext context)
 public IQualifier Select(IAIContext context, IList`1<IQualifier> qualifiers, IDefaultQualifier defaultQualifier)
 }
 public Apex.Ai.HTN.DecompositionType : Enum {
@@ -292,54 +319,169 @@ public DecompositionType All
 public Apex.Ai.HTN.DomainSelector : Selector {
 private List`1<TaskQualifier> _tasks
 private List`1<PrimitiveTaskSelector> _plan
+public int DecompositionScore
 public IQualifier Select(IAIContext context, IList`1<IQualifier> qualifiers, IDefaultQualifier defaultQualifier)
+private float ScoreOfDecomposition(List`1<float> scores)
 private bool _UpdateTaskQualifiers()
 }
+public Apex.Ai.HTN.EffectBase`1 : object {
+private void Apex.AI.IAction.Execute(IAIContext context)
+public void Apply(IHTNContext context, bool fromPlanner, bool temporary)
+private void Apex.Ai.HTN.IEffect.Reverse(IHTNContext context, bool fromPlanner)
+public void Apply(TContext context, bool fromPlanner, bool temporary)
+public void Reverse(TContext context, bool fromPlanner)
+}
+public Apex.Ai.HTN.IEffect {
+public void Apply(IHTNContext context, bool fromPlanner, bool temporary)
+public void Reverse(IHTNContext context, bool fromPlanner)
+}
 public Apex.Ai.HTN.IHTNContext {
+public PlanResultType PlanResult
 public PlanStateType PlanState
-public List`1<PrimitiveTaskSelector> HtnPlan
+public Stack`1<PrimitiveTaskSelector> HtnPlan
+public int DecompositionScore
+public Dictionary`2<Guid, Stack`1<IEffect>> AppliedEffects
+public Dictionary`2<Guid, Stack`1<IEffect>> AppliedExpectedEffects
+public Byte[] WorldState
+public Byte[] PreviousWorldState
+public bool IsWorldStateDirty
+public Stack`1[] WorldStateChanges
+public List`1<PrimitiveTaskSelector> DebugPlan
+public PrimitiveTaskSelector CurrentTask
+public PlanResultType get_PlanResult()
+public void set_PlanResult(PlanResultType value)
 public PlanStateType get_PlanState()
 public void set_PlanState(PlanStateType value)
-public List`1<PrimitiveTaskSelector> get_HtnPlan()
+public Stack`1<PrimitiveTaskSelector> get_HtnPlan()
+public int get_DecompositionScore()
+public void set_DecompositionScore(int value)
+public Dictionary`2<Guid, Stack`1<IEffect>> get_AppliedEffects()
+public Dictionary`2<Guid, Stack`1<IEffect>> get_AppliedExpectedEffects()
+public Byte[] get_WorldState()
+public Byte[] get_PreviousWorldState()
+public bool get_IsWorldStateDirty()
+public void set_IsWorldStateDirty(bool value)
+public Stack`1[] get_WorldStateChanges()
+public List`1<PrimitiveTaskSelector> get_DebugPlan()
+public PrimitiveTaskSelector get_CurrentTask()
+public void set_CurrentTask(PrimitiveTaskSelector value)
+public void StartDomainDecomposition()
+}
+public Apex.Ai.HTN.IOperator {
+public OperatorStateType Tick(IHTNContext context, PrimitiveTaskSelector task)
+public void ApplyExpectedEffects(IHTNContext context, PrimitiveTaskSelector task)
+public void Abort(IHTNContext context, PrimitiveTaskSelector task)
 }
 public Apex.Ai.HTN.ITask {
 public List`1<ICompositeScorer> Preconditions
+public List`1<ITask> Parents
 public List`1<ICompositeScorer> get_Preconditions()
 public void Reset()
-public float Decompose(IAIContext context, List`1& plan)
+public float Decompose(DomainSelector domain, ITask parent, IHTNContext context, List`1& plan, Int32& score, int scoreThreshold, Int32& localCost)
+public void GetFullDecompositionCost(Int32& cost)
+public void RemoveAppliedEffects(IHTNContext context, List`1& plan)
+public List`1<ITask> get_Parents()
+public bool ValidatePreconditions(IHTNContext context)
+}
+public Apex.Ai.HTN.OperatorBase`1 : object {
+private void Apex.AI.IAction.Execute(IAIContext context)
+private OperatorStateType Apex.Ai.HTN.IOperator.Tick(IHTNContext context, PrimitiveTaskSelector task)
+private void Apex.Ai.HTN.IOperator.ApplyExpectedEffects(IHTNContext context, PrimitiveTaskSelector task)
+private void Apex.Ai.HTN.IOperator.Abort(IHTNContext context, PrimitiveTaskSelector task)
+public void Execute(TContext context)
+public OperatorStateType Tick(TContext context, PrimitiveTaskSelector task)
+public void Abort(TContext context, PrimitiveTaskSelector task)
+public void ApplyExpectedEffects(TContext context, PrimitiveTaskSelector task)
+}
+public Apex.Ai.HTN.OperatorStateType : Enum {
+public int value__
+public OperatorStateType NotStarted
+public OperatorStateType Running
+public OperatorStateType Complete
+public OperatorStateType Aborted
+}
+public Apex.Ai.HTN.PlanResultType : Enum {
+public int value__
+public PlanResultType NoPlan
+public PlanResultType FoundNewPlan
+public PlanResultType ReplacedPlan
+public PlanResultType KeepCurrentPlan
 }
 public Apex.Ai.HTN.PlanStateType : Enum {
 public int value__
+public PlanStateType NoPlan
 public PlanStateType Running
 public PlanStateType Complete
 public PlanStateType Aborted
 }
 public Apex.Ai.HTN.PrimitiveTaskAction : ActionBase {
 private List`1<IAction> _actions
+private string <Name>k__BackingField
 public List`1<IAction> Actions
+public string Name
 public List`1<IAction> get_Actions()
+public string get_Name()
+internal void set_Name(string value)
 public void Execute(IAIContext context)
 }
 public Apex.Ai.HTN.PrimitiveTaskSelector : Selector {
 public string Name
 private List`1<ICompositeScorer> _preconditions
-private List`1<ICompositeScorer> _effects
+private List`1<IOperator> _operators
+private List`1<IEffect> _effects
+private List`1<IEffect> _expectedEffects
+private List`1<ITask> <Parents>k__BackingField
+private bool <isBreakPoint>k__BackingField
+private bool <breakPointHit>k__BackingField
+private PrimitiveTaskStateType <State>k__BackingField
 public List`1<ICompositeScorer> Preconditions
+public List`1<IEffect> ExpectedEffects
+public List`1<IOperator> Operators
+public List`1<ITask> Parents
+public bool isBreakPoint
+public bool breakPointHit
 public PrimitiveTaskAction PrimitiveTaskAction
+public PrimitiveTaskStateType State
 public List`1<ICompositeScorer> get_Preconditions()
+public List`1<IEffect> get_ExpectedEffects()
+public List`1<IOperator> get_Operators()
+public List`1<ITask> get_Parents()
+public bool get_isBreakPoint()
+public void set_isBreakPoint(bool value)
+public bool get_breakPointHit()
+public void set_breakPointHit(bool value)
 public PrimitiveTaskAction get_PrimitiveTaskAction()
+public PrimitiveTaskStateType get_State()
+public void set_State(PrimitiveTaskStateType value)
 public void Reset()
-public float Decompose(IAIContext context, List`1& plan)
+public float Decompose(DomainSelector domain, ITask parent, IHTNContext context, List`1& plan, Int32& score, int scoreThreshold, Int32& localCost)
+public void GetFullDecompositionCost(Int32& cost)
+public void RemoveAppliedEffects(IHTNContext context, List`1& plan)
+public bool ValidatePreconditions(IHTNContext context)
 public IQualifier Select(IAIContext context, IList`1<IQualifier> qualifiers, IDefaultQualifier defaultQualifier)
+}
+public Apex.Ai.HTN.PrimitiveTaskStateType : Enum {
+public int value__
+public PrimitiveTaskStateType NotStarted
+public PrimitiveTaskStateType Running
+public PrimitiveTaskStateType Complete
+public PrimitiveTaskStateType Aborted
 }
 public Apex.Ai.HTN.TaskQualifier : QualifierBase {
 private ITask _task
 private float _lastScore
 public void Reset()
-public float Decompose(IAIContext context, List`1& plan)
-private float DecomposeTask(ITask task, IAIContext context, List`1& plan)
-private float TestPreconditions(ITask task, IAIContext context)
+public float Decompose(DomainSelector domain, ITask parent, IHTNContext context, List`1& plan, Int32& score, int scoreThreshold, Int32& localCost)
+private float DecomposeTask(DomainSelector domain, ITask parent, ITask task, IHTNContext context, List`1& plan, Int32& score, int scoreThreshold, Int32& localCost)
+private ITask FindTaskOfQualifier()
+public void GetFullDecompositionCost(Int32& cost)
+public float TestPreconditions(ITask task, IHTNContext context)
+public void RemoveAppliedEffects(IHTNContext context, List`1& plan)
 public float Score(IAIContext context)
+}
+public Apex.Ai.HTN.WorldStateInfo : ValueType {
+public byte Value
+public bool Temporary
 }
 public Apex.AI.IAction {
 public void Execute(IAIContext context)
@@ -360,11 +502,15 @@ public Apex.AI.ICompositeScorer {
 public IList`1<IContextualScorer> scorers
 public IList`1<IContextualScorer> get_scorers()
 public float Score(IAIContext context, IList`1<IContextualScorer> scorers)
+public bool Validate(IHTNContext context, IList`1<IContextualScorer> scorers)
 }
 public Apex.AI.IConnectorAction {
 public IAction Select(IAIContext context)
 }
 public Apex.AI.IContextualScorer {
+public bool CanInvalidatePlan
+public bool get_CanInvalidatePlan()
+public void set_CanInvalidatePlan(bool value)
 public float Score(IAIContext context)
 }
 public Apex.AI.IDefaultQualifier {
@@ -810,11 +956,14 @@ internal Apex.AI.Visualization.ScorerVisualizer : object {
 private IContextualScorer _scorer
 private CompositeQualifierVisualizer _parent
 private string <lastScore>k__BackingField
+public bool CanInvalidatePlan
 public bool isDisabled
 internal CompositeQualifierVisualizer parent
 internal IContextualScorer scorer
 internal string lastScore
 internal void .ctor(IContextualScorer scorer, CompositeQualifierVisualizer parent)
+public bool get_CanInvalidatePlan()
+public void set_CanInvalidatePlan(bool value)
 public bool get_isDisabled()
 public void set_isDisabled(bool value)
 internal CompositeQualifierVisualizer get_parent()

@@ -225,6 +225,7 @@ public bool isQuitting
 public bool isLoading
 public bool isReceiving
 public bool isLoadingSave
+public bool isLoadingPrefabs
 public string installPath
 public string dataPath
 public void Quit()
@@ -237,13 +238,11 @@ private int size
 private int width
 private int height
 private int format
-private string filename
-private string cachename1
-private string cachename2
-private bool normal
-private bool dither
-private bool hqmode
-private bool cache
+public string filename
+public bool normal
+public bool dither
+public bool hqmode
+public bool cache
 private Action worker
 public bool keepWaiting
 public bool isDone
@@ -255,12 +254,11 @@ public bool get_isDone()
 public bool get_isValid()
 public Texture2D get_texture()
 public void LoadIntoTexture(Texture2D tex)
+public void WriteToCache(string cachename)
 private void FreeTexture(IntPtr& buffer)
 private void LoadTextureFromFile(string filename, IntPtr& buffer, Int32& size, Int32& width, Int32& height, Int32& channels, bool normal, bool dither, bool hqmode)
 private void LoadTextureFromCache(string filename, IntPtr& buffer, Int32& size, Int32& width, Int32& height, Int32& format)
 private void SaveTextureToCache(string filename, IntPtr buffer, int size, int width, int height, int format)
-private bool CanLoadFromCache()
-private bool CanSaveToCache()
 private void DoWork()
 private void Invoke()
 private void Callback(IAsyncResult result)
@@ -348,14 +346,14 @@ public Layer World
 public Layer Player_Server
 public Layer Trigger
 public Layer Player_Model_Rendering
-public Layer PhysicsProp
+public Layer Physics_Projectile
 public Layer Construction
 public Layer Construction_Socket
 public Layer Terrain
 public Layer Transparent
 public Layer Clutter
 public Layer Debris
-public Layer Occluder
+public Layer Vehicle_Large
 public Layer Prevent_Movement
 public Layer Prevent_Building
 public Layer Tree
@@ -383,6 +381,7 @@ public int PlannerPlacement
 public int Solid
 public int VisCulling
 public int AltitudeCheck
+public int HABGroundEffect
 public int AILineOfSight
 }
 public Rust.PropRenderer : MonoBehaviour {
@@ -526,6 +525,7 @@ public Vector2 Parse(string p)
 public Vector2 Rotate(Vector2 v, float degrees)
 }
 public UnityEngine.Vector3Ex : object {
+public Vector3 XZ(Vector3 v)
 public float Distance2D(Vector3 a, Vector3 b)
 public Vector3 Direction2D(Vector3 aimAt, Vector3 aimFrom)
 public Vector3 Range(float x, float y)

@@ -242,17 +242,6 @@ public string get_UserName()
 public Auth get_Auth()
 public bool get_DebugOutput()
 }
-public Facepunch.ObjectList : ValueType {
-private object object0
-private object object1
-private object object2
-private object object3
-private object object4
-public int Length
-public void .ctor(object object0, object object1, object object2, object object3, object object4)
-public object Get(int i)
-public int get_Length()
-}
 public Facepunch.RandomUsernames : object {
 public String[] All
 public string Get(int v)
@@ -297,13 +286,14 @@ public ImageEffectComposite : MonoBehaviour {
 public RenderTextureFormat format
 public RenderTextureReadWrite readWrite
 private List`1<ImageEffectLayer> layers
+private Comparison`1<ImageEffectLayer> layerSort
 private List`1<IImageEffect> effects
 private bool sorted
-private Func`2<ImageEffectLayer, int> <>f__am$cache0
+private Comparison`1<ImageEffectLayer> <>f__am$cache0
 public void Add(ImageEffectLayer effect)
 public void Remove(ImageEffectLayer effect)
 private void OnRenderImage(RenderTexture src, RenderTexture dst)
-private int <OnRenderImage>m__0(ImageEffectLayer l)
+private int <layerSort>m__0(ImageEffectLayer x, ImageEffectLayer y)
 }
 public ImageEffectLayer : FacepunchBehaviour {
 protected int sortOrder
@@ -1313,6 +1303,8 @@ public TOD_FogType Gradient
 public TOD_ImageEffect : MonoBehaviour {
 public TOD_Sky sky
 protected Camera cam
+private bool supportsDepth
+private bool supportsHdr
 private Vector3[] frustumCornersArray
 protected Material CreateMaterial(Shader shader)
 private TOD_Sky FindSky(bool fallback)
@@ -2088,35 +2080,9 @@ public float Longitude
 public float UTC
 }
 public TrackIR : object {
-private dNP_GetSignatureDelegate NP_GetSignatureDelegate
-private dNP_RegisterWindowHandle NP_RegisterWindowHandle
-private dNP_UnregisterWindowHandle NP_UnregisterWindowHandle
-private dNP_RegisterProgramProfileID NP_RegisterProgramProfileID
-private dNP_QueryVersion NP_QueryVersion
-private dNP_RequestData NP_RequestData
-private dNP_GetData NP_GetData
-private dNP_StartCursor NP_StartCursor
-private dNP_StopCursor NP_StopCursor
-private dNP_ReCenter NP_ReCenter
-private dNP_StartDataTransmission NP_StartDataTransmission
-private dNP_StopDataTransmission NP_StopDataTransmission
-private ulong frameSignature
-private ulong staleFrames
-private NPRESULT result
-private NPDATA data
-private bool verbose
-private IntPtr dllPtr
-private ushort developerID
-private long appKeyHigh
-private long appKeyLow
 public void .ctor(ushort developerID, long appKeyHigh, long appKeyLow, NPDATA data, bool verbose)
-private int GetForegroundWindow()
-private IntPtr LoadLibrary(string lpFileName)
-private IntPtr GetProcAddress(IntPtr hModule, string lpProcName)
-private bool FreeLibrary(IntPtr hModule)
 public void Init()
 private bool Connect(string dllPath)
-private string GetPath()
 public void Shutdown()
 public LPTRACKIRDATA GetData()
 public void Refresh()
@@ -2857,9 +2823,15 @@ private void SanitizeParameters()
 private void OnRenderImage(RenderTexture source, RenderTexture destination)
 }
 public UnityStandardAssets.ImageEffects.PostEffectsBase : MonoBehaviour {
+protected bool supportImageEffects
 protected bool supportHDRTextures
+protected bool supportDepthTextures
 protected bool supportDX11
+private bool checkedSystemInfo
 protected bool isSupported
+private Camera camera
+public Camera Camera
+public Camera get_Camera()
 protected Material CheckShaderAndCreateMaterial(Shader s, Material m2Create)
 protected Material CreateMaterial(Shader s, Material m2Create)
 private void OnEnable()

@@ -8,7 +8,7 @@ public string ServerName
 public bool IsOfficialServer
 public Stats IncomingStats
 private bool <ConnectionAccepted>k__BackingField
-public Action`1<string> onDisconnected
+public IClientCallback callbackHandler
 public PlaybackStatsData PlaybackStats
 public Connection Connection
 public bool ConnectionAccepted
@@ -74,6 +74,10 @@ public ulong GetPacketsPerSecond(int index)
 public float GetSecondsConnected()
 public string ToString()
 }
+public Network.IClientCallback {
+public void OnNetworkMessage(Message message)
+public void OnClientDisconnected(string reason)
+}
 public Network.INetworkCryptocraphy {
 public bool IsEnabledIncoming(Connection connection)
 public bool IsEnabledOutgoing(Connection connection)
@@ -81,6 +85,11 @@ public MemoryStream EncryptCopy(Connection connection, MemoryStream stream, int 
 public MemoryStream DecryptCopy(Connection connection, MemoryStream stream, int offset)
 public void Encrypt(Connection connection, MemoryStream stream, int offset)
 public void Decrypt(Connection connection, MemoryStream stream, int offset)
+}
+public Network.IServerCallback {
+public void OnNetworkMessage(Message message)
+public bool OnUnconnectedMessage(int type, Read read, UInt32 ip, int port)
+public void OnDisconnected(string reason, Connection connection)
 }
 public Network.Message : object {
 public Type type
@@ -126,8 +135,6 @@ public Network.NetworkPeer : object {
 public Write write
 public Read read
 public INetworkCryptocraphy cryptography
-public Action`1<Message> onMessage
-public Func`5<int, Read, UInt32, int, bool> onUnconnectedMessage
 protected Message StartMessage(Type type, Connection connection)
 public string GetDebug(Connection connection)
 public ulong GetStat(Connection connection, StatTypeLong type)
@@ -209,7 +216,7 @@ public int port
 public bool compressionEnabled
 public bool logging
 public Manager visibility
-public Action`2<string, Connection> onDisconnected
+public IServerCallback callbackHandler
 public bool debug
 internal UInt32 lastValueGiven
 public List`1<Connection> connections
