@@ -354,14 +354,10 @@ public byte a
 }
 public Facepunch.Steamworks.Config : object {
 private bool <UseThisCall>k__BackingField
-private bool <IsUnity>k__BackingField
 public bool UseThisCall
-internal bool IsUnity
 public void ForUnity(string platform)
 public bool get_UseThisCall()
 public void set_UseThisCall(bool value)
-internal bool get_IsUnity()
-internal void set_IsUnity(bool value)
 public void ForcePlatform(OperatingSystem os, Architecture arch)
 }
 public Facepunch.Steamworks.Friends : object {
@@ -520,6 +516,7 @@ public int TotalEntries
 public bool IsValid
 public bool IsError
 public bool IsQuerying
+public ulong GetBoardId()
 internal void .ctor(Client c)
 public string get_Name()
 private void set_Name(string value)
@@ -540,6 +537,7 @@ public bool AttachRemoteFile(RemoteFile file, AttachRemoteFileCallback onSuccess
 public bool FetchScores(RequestType RequestType, int start, int end)
 private void ReadScores(LeaderboardScoresDownloaded_t result, List`1<Entry> dest)
 public bool FetchScores(RequestType RequestType, int start, int end, FetchScoresCallback onSuccess, FailureCallback onFailure)
+public bool FetchUsersScores(RequestType RequestType, UInt64[] steamIds, FetchScoresCallback onSuccess, FailureCallback onFailure)
 private void OnScores(LeaderboardScoresDownloaded_t result, bool error)
 }
 public Facepunch.Steamworks.Lobby : object {
@@ -687,6 +685,7 @@ internal RemoteStorage remoteStorage
 private bool _isUgc
 private string _fileName
 private int _sizeInBytes
+private long _timestamp
 private UGCHandle_t _handle
 private ulong _ownerId
 private bool _isDownloading
@@ -701,6 +700,7 @@ public ulong SharingId
 public string FileName
 public ulong OwnerId
 public int SizeInBytes
+public long FileTimestamp
 public bool get_Exists()
 internal void set_Exists(bool value)
 public bool get_IsDownloading()
@@ -712,8 +712,10 @@ public string get_FileName()
 public ulong get_OwnerId()
 public int get_SizeInBytes()
 internal void set_SizeInBytes(int value)
+public long get_FileTimestamp()
+internal void set_FileTimestamp(long value)
 internal void .ctor(RemoteStorage r, UGCHandle_t handle)
-internal void .ctor(RemoteStorage r, string name, ulong ownerId, int sizeInBytes)
+internal void .ctor(RemoteStorage r, string name, ulong ownerId, int sizeInBytes, long timestamp)
 public RemoteFileWriteStream OpenWrite()
 public void WriteAllBytes(Byte[] buffer)
 public void WriteAllText(string text, Encoding encoding)
@@ -933,7 +935,6 @@ public bool GetAchievement(ulong steamid, string name)
 internal Facepunch.Steamworks.SourceServerQuery : object {
 public List`1<SourceServerQuery> Current
 private Byte[] A2S_SERVERQUERY_GETCHALLENGE
-private byte A2S_PLAYER
 private byte A2S_RULES
 public Boolean modreq(System.Runtime.CompilerServices.IsVolatile) IsRunning
 public Boolean modreq(System.Runtime.CompilerServices.IsVolatile) IsSuccessful
@@ -1032,7 +1033,7 @@ internal Dictionary`2<string, string> richPresence
 internal void .ctor(Client c)
 public void Dispose()
 public string GetRichPresence(string key)
-public void SetRichPresence(string key, string value)
+public bool SetRichPresence(string key, string value)
 public void ClearRichPresence()
 }
 public Facepunch.Steamworks.Utility : object {
@@ -1080,6 +1081,7 @@ internal BaseSteamworks steamworks
 internal SteamRemoteStorage remoteStorage
 private Action`2<ulong, Result> OnFileDownloaded
 private Action`1<ulong> OnItemInstalled
+private UInt64[] _sSubscribedItemBuffer
 public void add_OnFileDownloaded(Action`2<ulong, Result> value)
 public void remove_OnFileDownloaded(Action`2<ulong, Result> value)
 public void add_OnItemInstalled(Action`1<ulong> value)
@@ -1088,6 +1090,8 @@ internal void .ctor(BaseSteamworks steamworks, SteamUGC ugc, SteamRemoteStorage 
 public void Dispose()
 private void onItemInstalled(ItemInstalled_t obj)
 private void onDownloadResult(DownloadItemResult_t obj)
+public UInt64[] GetSubscribedItemIds()
+public int GetSubscribedItemIds(List`1<ulong> destList)
 public Query CreateQuery()
 public Editor CreateItem(ItemType type)
 public Editor CreateItem(UInt32 workshopUploadAppId, ItemType type)

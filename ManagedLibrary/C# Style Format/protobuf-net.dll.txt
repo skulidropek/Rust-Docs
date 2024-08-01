@@ -1,6 +1,9 @@
 public ProtoBuf.BclHelpers : object {
 private int FieldTimeSpanValue
 private int FieldTimeSpanScale
+private int FieldTimeSpanKind
+internal DateTime[] EpochOrigin
+private DateTime TimestampEpoch
 private int FieldDecimalLow
 private int FieldDecimalHigh
 private int FieldDecimalSignScale
@@ -12,13 +15,22 @@ private int FieldExistingTypeKey
 private int FieldNewTypeKey
 private int FieldTypeName
 private int FieldObject
-internal DateTime EpochOrigin
 public object GetUninitializedObject(Type type)
 public void WriteTimeSpan(TimeSpan timeSpan, ProtoWriter dest)
+private void WriteTimeSpanImpl(TimeSpan timeSpan, ProtoWriter dest, DateTimeKind kind)
 public TimeSpan ReadTimeSpan(ProtoReader source)
+public TimeSpan ReadDuration(ProtoReader source)
+public void WriteDuration(TimeSpan value, ProtoWriter dest)
+private void WriteSecondsNanos(long seconds, int nanos, ProtoWriter dest)
+public DateTime ReadTimestamp(ProtoReader source)
+public void WriteTimestamp(DateTime value, ProtoWriter dest)
+private TimeSpan FromDurationSeconds(long seconds, int nanos)
+private long ToDurationSeconds(TimeSpan value, Int32& nanos)
 public DateTime ReadDateTime(ProtoReader source)
 public void WriteDateTime(DateTime value, ProtoWriter dest)
-private long ReadTimeSpanTicks(ProtoReader source)
+public void WriteDateTimeWithKind(DateTime value, ProtoWriter dest)
+private void WriteDateTimeImpl(DateTime value, ProtoWriter dest, bool includeKind)
+private long ReadTimeSpanTicks(ProtoReader source, DateTimeKind& kind)
 public decimal ReadDecimal(ProtoReader reader)
 public void WriteDecimal(decimal value, ProtoWriter writer)
 public void WriteGuid(Guid value, ProtoWriter dest)
@@ -28,6 +40,7 @@ public void WriteNetObject(object value, ProtoWriter dest, int key, NetObjectOpt
 }
 public ProtoBuf.BufferExtension : object {
 private Byte[] buffer
+private void ProtoBuf.IExtensionResettable.Reset()
 private int ProtoBuf.IExtension.GetLength()
 private Stream ProtoBuf.IExtension.BeginAppend()
 private void ProtoBuf.IExtension.EndAppend(Stream stream, bool commit)
@@ -38,6 +51,7 @@ internal ProtoBuf.BufferPool : object {
 private int PoolSize
 internal int BufferLength
 private Object[] pool
+private int MaxByteArraySize
 internal void Flush()
 internal Byte[] GetBuffer()
 internal void ResizeAndFlushLeft(Byte[]& buffer, int toFitAtLeastBytes, int copyFromIndex, int copyBytes)
@@ -70,6 +84,7 @@ public Local InputValue
 public ILVersion MetadataVersion
 public TypeModel get_Model()
 internal CodeLabel DefineLabel()
+private void TraceCompile(string value)
 internal void MarkLabel(CodeLabel label)
 public ProtoSerializer BuildSerializer(IProtoSerializer head, TypeModel model)
 public ProtoDeserializer BuildDeserializer(IProtoSerializer head, TypeModel model)
@@ -81,7 +96,7 @@ internal MethodBuilder GetDedicatedMethod(int metaKey, bool read)
 internal int MapMetaKeyToCompiledKey(int metaKey)
 internal bool get_NonPublic()
 public Local get_InputValue()
-internal void .ctor(ILGenerator il, bool isStatic, bool isWriter, SerializerPair[] methodPairs, TypeModel model, ILVersion metadataVersion, string assemblyName, Type inputType)
+internal void .ctor(ILGenerator il, bool isStatic, bool isWriter, SerializerPair[] methodPairs, TypeModel model, ILVersion metadataVersion, string assemblyName, Type inputType, string traceName)
 private void .ctor(Type associatedType, bool isWriter, bool isStatic, TypeModel model, Type inputType)
 private void Emit(OpCode opcode)
 public void LoadValue(string value)
@@ -101,21 +116,23 @@ internal void EmitBasicWrite(string methodName, Local fromValue)
 private MethodInfo GetWriterMethod(string methodName)
 internal void EmitWrite(Type helperType, string methodName, Local valueFrom)
 public void EmitCall(MethodInfo method)
+public void EmitCall(MethodInfo method, Type targetType)
 public void LoadNullRef()
 internal void WriteNullCheckedTail(Type type, IProtoSerializer tail, Local valueFrom)
 internal void ReadNullCheckedTail(Type type, IProtoSerializer tail, Local valueFrom)
 public void EmitCtor(Type type)
 public void EmitCtor(ConstructorInfo ctor)
+public void InitLocal(Type type, Local target)
 public void EmitCtor(Type type, Type[] parameterTypes)
 private bool InternalsVisible(Assembly assembly)
-internal void CheckAccessibility(MemberInfo member)
+internal void CheckAccessibility(MemberInfo& member)
 public void LoadValue(FieldInfo field)
 public void StoreValue(FieldInfo field)
 public void LoadValue(PropertyInfo property)
 public void StoreValue(PropertyInfo property)
 internal void LoadValue(ILGenerator il, int value)
 private bool UseShortForm(Local local)
-internal void LoadAddress(Local local, Type type)
+internal void LoadAddress(Local local, Type type, bool evenIfClass)
 internal void Branch(CodeLabel label, bool short)
 internal void BranchIfFalse(CodeLabel label, bool short)
 internal void BranchIfTrue(CodeLabel label, bool short)
@@ -181,6 +198,148 @@ public DataFormat ZigZag
 public DataFormat TwosComplement
 public DataFormat FixedSize
 public DataFormat Group
+public DataFormat WellKnown
+}
+public ProtoBuf.DiscriminatedUnion128 : ValueType {
+private int _discriminator
+public long Int64
+public ulong UInt64
+public int Int32
+public UInt32 UInt32
+public bool Boolean
+public float Single
+public double Double
+public DateTime DateTime
+public TimeSpan TimeSpan
+public Guid Guid
+private void .ctor(int discriminator)
+public bool Is(int discriminator)
+public void .ctor(int discriminator, long value)
+public void .ctor(int discriminator, int value)
+public void .ctor(int discriminator, ulong value)
+public void .ctor(int discriminator, UInt32 value)
+public void .ctor(int discriminator, float value)
+public void .ctor(int discriminator, double value)
+public void .ctor(int discriminator, bool value)
+public void .ctor(int discriminator, Nullable`1<DateTime> value)
+public void .ctor(int discriminator, Nullable`1<TimeSpan> value)
+public void .ctor(int discriminator, Nullable`1<Guid> value)
+public void Reset(DiscriminatedUnion128& value, int discriminator)
+}
+public ProtoBuf.DiscriminatedUnion128Object : ValueType {
+private int _discriminator
+public long Int64
+public ulong UInt64
+public int Int32
+public UInt32 UInt32
+public bool Boolean
+public float Single
+public double Double
+public DateTime DateTime
+public TimeSpan TimeSpan
+public Guid Guid
+public object Object
+private void .ctor(int discriminator)
+public bool Is(int discriminator)
+public void .ctor(int discriminator, long value)
+public void .ctor(int discriminator, int value)
+public void .ctor(int discriminator, ulong value)
+public void .ctor(int discriminator, UInt32 value)
+public void .ctor(int discriminator, float value)
+public void .ctor(int discriminator, double value)
+public void .ctor(int discriminator, bool value)
+public void .ctor(int discriminator, object value)
+public void .ctor(int discriminator, Nullable`1<DateTime> value)
+public void .ctor(int discriminator, Nullable`1<TimeSpan> value)
+public void .ctor(int discriminator, Nullable`1<Guid> value)
+public void Reset(DiscriminatedUnion128Object& value, int discriminator)
+}
+public ProtoBuf.DiscriminatedUnion32 : ValueType {
+private int _discriminator
+public int Int32
+public UInt32 UInt32
+public bool Boolean
+public float Single
+private void .ctor(int discriminator)
+public bool Is(int discriminator)
+public void .ctor(int discriminator, int value)
+public void .ctor(int discriminator, UInt32 value)
+public void .ctor(int discriminator, float value)
+public void .ctor(int discriminator, bool value)
+public void Reset(DiscriminatedUnion32& value, int discriminator)
+}
+public ProtoBuf.DiscriminatedUnion32Object : ValueType {
+private int _discriminator
+public int Int32
+public UInt32 UInt32
+public bool Boolean
+public float Single
+public object Object
+private void .ctor(int discriminator)
+public bool Is(int discriminator)
+public void .ctor(int discriminator, int value)
+public void .ctor(int discriminator, UInt32 value)
+public void .ctor(int discriminator, float value)
+public void .ctor(int discriminator, bool value)
+public void .ctor(int discriminator, object value)
+public void Reset(DiscriminatedUnion32Object& value, int discriminator)
+}
+public ProtoBuf.DiscriminatedUnion64 : ValueType {
+private int _discriminator
+public long Int64
+public ulong UInt64
+public int Int32
+public UInt32 UInt32
+public bool Boolean
+public float Single
+public double Double
+public DateTime DateTime
+public TimeSpan TimeSpan
+private void .ctor(int discriminator)
+public bool Is(int discriminator)
+public void .ctor(int discriminator, long value)
+public void .ctor(int discriminator, int value)
+public void .ctor(int discriminator, ulong value)
+public void .ctor(int discriminator, UInt32 value)
+public void .ctor(int discriminator, float value)
+public void .ctor(int discriminator, double value)
+public void .ctor(int discriminator, bool value)
+public void .ctor(int discriminator, Nullable`1<DateTime> value)
+public void .ctor(int discriminator, Nullable`1<TimeSpan> value)
+public void Reset(DiscriminatedUnion64& value, int discriminator)
+}
+public ProtoBuf.DiscriminatedUnion64Object : ValueType {
+private int _discriminator
+public long Int64
+public ulong UInt64
+public int Int32
+public UInt32 UInt32
+public bool Boolean
+public float Single
+public double Double
+public DateTime DateTime
+public TimeSpan TimeSpan
+public object Object
+private void .ctor(int discriminator)
+public bool Is(int discriminator)
+public void .ctor(int discriminator, long value)
+public void .ctor(int discriminator, int value)
+public void .ctor(int discriminator, ulong value)
+public void .ctor(int discriminator, UInt32 value)
+public void .ctor(int discriminator, float value)
+public void .ctor(int discriminator, double value)
+public void .ctor(int discriminator, bool value)
+public void .ctor(int discriminator, object value)
+public void .ctor(int discriminator, Nullable`1<DateTime> value)
+public void .ctor(int discriminator, Nullable`1<TimeSpan> value)
+public void Reset(DiscriminatedUnion64Object& value, int discriminator)
+}
+public ProtoBuf.DiscriminatedUnionObject : ValueType {
+private int _discriminator
+public object Object
+public bool Is(int discriminator)
+public void .ctor(int discriminator, object value)
+public void Reset(DiscriminatedUnionObject& value, int discriminator)
 }
 public ProtoBuf.Extensible : object {
 private IExtension extensionObject
@@ -220,12 +379,15 @@ public void BlockCopy(Byte[] from, int fromIndex, Byte[] to, int toIndex, int co
 public bool IsInfinity(float value)
 internal MethodInfo GetInstanceMethod(Type declaringType, string name)
 internal MethodInfo GetStaticMethod(Type declaringType, string name)
+internal MethodInfo GetStaticMethod(Type declaringType, string name, Type[] parameterTypes)
 internal MethodInfo GetInstanceMethod(Type declaringType, string name, Type[] types)
 internal bool IsSubclassOf(Type type, Type baseClass)
 public bool IsInfinity(double value)
 public ProtoTypeCode GetTypeCode(Type type)
 internal Type GetUnderlyingType(Type type)
 internal bool IsValueType(Type type)
+internal bool IsSealed(Type type)
+internal bool IsClass(Type type)
 internal bool IsEnum(Type type)
 internal MethodInfo GetGetMethod(PropertyInfo property, bool nonPublic, bool allowInternal)
 internal MethodInfo GetSetMethod(PropertyInfo property, bool nonPublic, bool allowInternal)
@@ -236,6 +398,8 @@ internal object ParseEnum(Type type, string value)
 internal MemberInfo[] GetInstanceFieldsAndProperties(Type type, bool publicOnly)
 internal Type GetMemberType(MemberInfo member)
 internal bool IsAssignableFrom(Type target, Type type)
+internal Assembly GetAssembly(Type type)
+internal Byte[] GetBuffer(MemoryStream ms)
 }
 public ProtoBuf.IExtensible {
 public IExtension GetExtensionObject(bool createIfMissing)
@@ -246,6 +410,9 @@ public void EndAppend(Stream stream, bool commit)
 public Stream BeginQuery()
 public void EndQuery(Stream stream)
 public int GetLength()
+}
+public ProtoBuf.IExtensionResettable {
+public void Reset()
 }
 public ProtoBuf.ImplicitFields : Enum {
 public int value__
@@ -266,6 +433,7 @@ public MemberSerializationOptions AsReferenceHasValue
 internal ProtoBuf.Meta.AttributeMap : object {
 public Type AttributeType
 public object Target
+public string ToString()
 public bool TryGet(string key, bool publicOnly, Object& value)
 public bool TryGet(string key, Object& value)
 public Type get_AttributeType()
@@ -332,14 +500,6 @@ public IAsyncResult BeginInvoke(object sender, LockContentedEventArgs args, Asyn
 public void EndInvoke(IAsyncResult result)
 }
 public ProtoBuf.Meta.MetaType : object {
-private byte OPTIONS_Pending
-private byte OPTIONS_EnumPassThru
-private byte OPTIONS_Frozen
-private byte OPTIONS_PrivateOnApi
-private byte OPTIONS_SkipConstructor
-private byte OPTIONS_AsReferenceDefault
-private byte OPTIONS_AutoTuple
-private byte OPTIONS_IgnoreListHandling
 private MetaType baseType
 private BasicList subTypes
 internal Type ienumerable
@@ -352,7 +512,16 @@ private IProtoTypeSerializer serializer
 private Type constructType
 private Type surrogate
 private BasicList fields
-private Byte modreq(System.Runtime.CompilerServices.IsVolatile) flags
+private ushort OPTIONS_Pending
+private ushort OPTIONS_EnumPassThru
+private ushort OPTIONS_Frozen
+private ushort OPTIONS_PrivateOnApi
+private ushort OPTIONS_SkipConstructor
+private ushort OPTIONS_AsReferenceDefault
+private ushort OPTIONS_AutoTuple
+private ushort OPTIONS_IgnoreListHandling
+private ushort OPTIONS_IsGroup
+private UInt16 modreq(System.Runtime.CompilerServices.IsVolatile) flags
 private IProtoSerializer ProtoBuf.Serializers.ISerializerProxy.Serializer
 public MetaType BaseType
 internal TypeModel Model
@@ -375,6 +544,7 @@ public bool IgnoreListHandling
 internal bool Pending
 internal IEnumerable Fields
 internal bool IsAutoTuple
+public bool IsGroup
 public string ToString()
 private IProtoSerializer ProtoBuf.Serializers.ISerializerProxy.get_Serializer()
 public MetaType get_BaseType()
@@ -409,13 +579,13 @@ private IProtoTypeSerializer BuildSerializer()
 private Type GetBaseType(MetaType type)
 internal bool GetAsReferenceDefault(RuntimeTypeModel model, Type type)
 internal void ApplyDefaultBehaviour()
-private void ApplyDefaultBehaviour_AddMembers(TypeModel model, AttributeFamily family, bool isEnum, BasicList partialMembers, int dataMemberOffset, bool inferTagByName, ImplicitFields implicitMode, BasicList members, MemberInfo member, Boolean& forced, bool isPublic, bool isField, Type& effectiveType)
+private void ApplyDefaultBehaviour_AddMembers(TypeModel model, AttributeFamily family, bool isEnum, BasicList partialMembers, int dataMemberOffset, bool inferTagByName, ImplicitFields implicitMode, BasicList members, MemberInfo member, Boolean& forced, bool isPublic, bool isField, Type& effectiveType, Boolean& hasConflictingEnumValue, MemberInfo backingMember)
 private MethodInfo Coalesce(MethodInfo[] arr, int x, int y)
 internal AttributeFamily GetContractFamily(RuntimeTypeModel model, Type type, AttributeMap[] attributes)
 internal ConstructorInfo ResolveTupleConstructor(Type type, MemberInfo[]& mappedMembers)
 private void CheckForCallback(MethodInfo method, AttributeMap[] attributes, string callbackTypeName, MethodInfo[]& callbacks, int index)
 private bool HasFamily(AttributeFamily value, AttributeFamily required)
-private ProtoMemberAttribute NormalizeProtoMember(TypeModel model, MemberInfo member, AttributeFamily family, bool forced, bool isEnum, BasicList partialMembers, int dataMemberOffset, bool inferByTagName)
+private ProtoMemberAttribute NormalizeProtoMember(TypeModel model, MemberInfo member, AttributeFamily family, bool forced, bool isEnum, BasicList partialMembers, int dataMemberOffset, bool inferByTagName, Boolean& hasConflictingEnumValue, MemberInfo backingMember)
 private ValueMember ApplyDefaultBehaviour(bool isEnum, ProtoMemberAttribute normalizedAttribute)
 private void GetDataFormat(DataFormat& value, AttributeMap attrib, string memberName)
 private void GetIgnore(Boolean& ignore, AttributeMap attrib, AttributeMap[] attribs, string fullName)
@@ -446,6 +616,8 @@ public ValueMember get_Item(int fieldNumber)
 public ValueMember get_Item(MemberInfo member)
 public ValueMember[] GetFields()
 public SubType[] GetSubtypes()
+internal IEnumerable`1<Type> GetAllGenericArguments()
+private IEnumerable`1<Type> GetAllGenericArguments(Type type)
 public void CompileInPlace()
 internal bool IsDefined(int fieldNumber)
 internal int GetKey(bool demand, bool getBaseKey)
@@ -456,14 +628,20 @@ public bool get_IgnoreListHandling()
 public void set_IgnoreListHandling(bool value)
 internal bool get_Pending()
 internal void set_Pending(bool value)
-private bool HasFlag(byte flag)
-private void SetFlag(byte flag, bool value, bool throwIfFrozen)
+private bool HasFlag(ushort flag)
+private void SetFlag(ushort flag, bool value, bool throwIfFrozen)
 internal MetaType GetRootType(MetaType source)
 internal bool IsPrepared()
 internal IEnumerable get_Fields()
 internal StringBuilder NewLine(StringBuilder builder, int indent)
 internal bool get_IsAutoTuple()
-internal void WriteSchema(StringBuilder builder, int indent, Boolean& requiresBclImport)
+public bool get_IsGroup()
+public void set_IsGroup(bool value)
+internal void WriteSchema(StringBuilder builder, int indent, CommonImports& imports, ProtoSyntax syntax)
+private StringBuilder AddOption(StringBuilder builder, Boolean& hasOption)
+private StringBuilder CloseOption(StringBuilder builder, Boolean& hasOption)
+private bool IsImplicitDefault(object value)
+private bool CanPack(Type type)
 }
 internal ProtoBuf.Meta.MutableList : BasicList {
 public object Item
@@ -472,40 +650,48 @@ public void set_Item(int index, object value)
 public void RemoveLast()
 public void Clear()
 }
+public ProtoBuf.Meta.ProtoSyntax : Enum {
+public int value__
+public ProtoSyntax Proto2
+public ProtoSyntax Proto3
+}
 public ProtoBuf.Meta.RuntimeTypeModel : TypeModel {
-private byte OPTIONS_InferTagFromNameDefault
-private byte OPTIONS_IsDefaultModel
-private byte OPTIONS_Frozen
-private byte OPTIONS_AutoAddMissingTypes
-private byte OPTIONS_AutoCompile
-private byte OPTIONS_UseImplicitZeroDefaults
-private byte OPTIONS_AllowParseableTypes
-private byte OPTIONS_AutoAddProtoContractTypesOnly
-private int KnownTypes_Array
-private int KnownTypes_Dictionary
-private int KnownTypes_Hashtable
-private int KnownTypes_ArrayCutoff
-private byte options
+private ushort options
+private ushort OPTIONS_InferTagFromNameDefault
+private ushort OPTIONS_IsDefaultModel
+private ushort OPTIONS_Frozen
+private ushort OPTIONS_AutoAddMissingTypes
+private ushort OPTIONS_AutoCompile
+private ushort OPTIONS_UseImplicitZeroDefaults
+private ushort OPTIONS_AllowParseableTypes
+private ushort OPTIONS_AutoAddProtoContractTypesOnly
+private ushort OPTIONS_IncludeDateTimeKind
+private ushort OPTIONS_DoNotInternStrings
 private MatchPredicate MetaTypeFinder
 private MatchPredicate BasicTypeFinder
 private BasicList basicTypes
 private BasicList types
+private int KnownTypes_Array
+private int KnownTypes_Dictionary
+private int KnownTypes_Hashtable
+private int KnownTypes_ArrayCutoff
 private int metadataTimeoutMilliseconds
 private int contentionCounter
-private object contentionLock
 private LockContentedEventHandler LockContended
 private MethodInfo defaultFactory
 public bool InferTagFromNameDefault
 public bool AutoAddProtoContractTypesOnly
 public bool UseImplicitZeroDefaults
 public bool AllowParseableTypes
+public bool IncludeDateTimeKind
+public bool InternStrings
 public RuntimeTypeModel Default
 public MetaType Item
 public bool AutoCompile
 public bool AutoAddMissingTypes
 public int MetadataTimeoutMilliseconds
-private bool GetOption(byte option)
-private void SetOption(byte option, bool value)
+private bool GetOption(ushort option)
+private void SetOption(ushort option, bool value)
 public bool get_InferTagFromNameDefault()
 public void set_InferTagFromNameDefault(bool value)
 public bool get_AutoAddProtoContractTypesOnly()
@@ -514,10 +700,16 @@ public bool get_UseImplicitZeroDefaults()
 public void set_UseImplicitZeroDefaults(bool value)
 public bool get_AllowParseableTypes()
 public void set_AllowParseableTypes(bool value)
+public bool get_IncludeDateTimeKind()
+public void set_IncludeDateTimeKind(bool value)
+public bool get_InternStrings()
+public void set_InternStrings(bool value)
+protected internal bool SerializeDateTimeKind()
 public RuntimeTypeModel get_Default()
 public IEnumerable GetTypes()
-public string GetSchema(Type type)
+public string GetSchema(Type type, ProtoSyntax syntax)
 private void CascadeDependents(BasicList list, MetaType metaType)
+private void TryGetCoreSerializer(BasicList list, Type itemType)
 internal void .ctor(bool isDefault)
 public MetaType get_Item(Type type)
 internal MetaType FindWithoutAdd(Type type)
@@ -564,7 +756,7 @@ internal void ReleaseLock(int opaqueToken)
 public void add_LockContended(LockContentedEventHandler value)
 public void remove_LockContended(LockContentedEventHandler value)
 internal void ResolveListTypes(Type type, Type& itemType, Type& defaultType)
-internal string GetSchemaTypeName(Type effectiveType, DataFormat dataFormat, bool asReference, bool dynamicType, Boolean& requiresBclImport)
+internal string GetSchemaTypeName(Type effectiveType, DataFormat dataFormat, bool asReference, bool dynamicType, CommonImports& imports)
 public void SetDefaultFactory(MethodInfo methodInfo)
 internal void VerifyFactory(MethodInfo factory, Type type)
 }
@@ -604,10 +796,11 @@ public void EndInvoke(IAsyncResult result)
 public ProtoBuf.Meta.TypeModel : object {
 private Type ilist
 private TypeFormatEventHandler DynamicTypeFormatting
+protected internal bool SerializeDateTimeKind()
 protected internal Type MapType(Type type)
 protected internal Type MapType(Type type, bool demand)
 private WireType GetWireType(ProtoTypeCode code, DataFormat format, Type& type, Int32& modelKey)
-internal bool TrySerializeAuxiliaryType(ProtoWriter writer, Type type, DataFormat format, int tag, object value, bool isInsideList)
+internal bool TrySerializeAuxiliaryType(ProtoWriter writer, Type type, DataFormat format, int tag, object value, bool isInsideList, object parentList)
 private void SerializeCore(ProtoWriter writer, object value)
 public void Serialize(Stream dest, object value)
 public void Serialize(Stream dest, object value, SerializationContext context)
@@ -615,7 +808,8 @@ public void Serialize(ProtoWriter dest, object value)
 public object DeserializeWithLengthPrefix(Stream source, object value, Type type, PrefixStyle style, int fieldNumber)
 public object DeserializeWithLengthPrefix(Stream source, object value, Type type, PrefixStyle style, int expectedField, TypeResolver resolver)
 public object DeserializeWithLengthPrefix(Stream source, object value, Type type, PrefixStyle style, int expectedField, TypeResolver resolver, Int32& bytesRead)
-private object DeserializeWithLengthPrefix(Stream source, object value, Type type, PrefixStyle style, int expectedField, TypeResolver resolver, Int32& bytesRead, Boolean& haveObject, SerializationContext context)
+public object DeserializeWithLengthPrefix(Stream source, object value, Type type, PrefixStyle style, int expectedField, TypeResolver resolver, Int64& bytesRead)
+private object DeserializeWithLengthPrefix(Stream source, object value, Type type, PrefixStyle style, int expectedField, TypeResolver resolver, Int64& bytesRead, Boolean& haveObject, SerializationContext context)
 public IEnumerable DeserializeItems(Stream source, Type type, PrefixStyle style, int expectedField, TypeResolver resolver)
 public IEnumerable DeserializeItems(Stream source, Type type, PrefixStyle style, int expectedField, TypeResolver resolver, SerializationContext context)
 public IEnumerable`1<T> DeserializeItems(Stream source, PrefixStyle style, int expectedField)
@@ -626,7 +820,9 @@ public object Deserialize(Stream source, object value, Type type)
 public object Deserialize(Stream source, object value, Type type, SerializationContext context)
 private bool PrepareDeserialize(object value, Type& type)
 public object Deserialize(Stream source, object value, Type type, int length)
+public object Deserialize(Stream source, object value, Type type, long length)
 public object Deserialize(Stream source, object value, Type type, int length, SerializationContext context)
+public object Deserialize(Stream source, object value, Type type, long length, SerializationContext context)
 public object Deserialize(ProtoReader source, object value, Type type)
 private object DeserializeCore(ProtoReader reader, Type type, object value, bool noAutoCreate)
 internal MethodInfo ResolveListAdd(TypeModel model, Type listType, Type itemType, Boolean& isList)
@@ -635,7 +831,7 @@ private void TestEnumerableListPatterns(TypeModel model, BasicList candidates, T
 private bool CheckDictionaryAccessors(TypeModel model, Type pair, Type value)
 private bool TryDeserializeList(TypeModel model, ProtoReader reader, DataFormat format, int tag, Type listType, Type itemType, Object& value)
 private object CreateListInstance(Type listType, Type itemType)
-internal bool TryDeserializeAuxiliaryType(ProtoReader reader, DataFormat format, int tag, Type type, Object& value, bool skipOtherFields, bool asListItem, bool autoCreate, bool insideList)
+internal bool TryDeserializeAuxiliaryType(ProtoReader reader, DataFormat format, int tag, Type type, Object& value, bool skipOtherFields, bool asListItem, bool autoCreate, bool insideList, object parentListOrType)
 public RuntimeTypeModel Create()
 protected internal Type ResolveProxies(Type type)
 public bool IsDefined(Type type)
@@ -646,7 +842,7 @@ protected internal object Deserialize(int key, object value, ProtoReader source)
 public object DeepClone(object value)
 protected internal void ThrowUnexpectedSubtype(Type expected, Type actual)
 protected internal void ThrowUnexpectedType(Type type)
-internal Exception CreateNestedListsNotSupported()
+internal Exception CreateNestedListsNotSupported(Type type)
 public void ThrowCannotCreateInstance(Type type)
 internal string SerializeType(TypeModel model, Type type)
 internal Type DeserializeType(TypeModel model, string value)
@@ -655,6 +851,7 @@ public bool CanSerialize(Type type)
 public bool CanSerializeBasicType(Type type)
 private bool CanSerialize(Type type, bool allowBasic, bool allowContract, bool allowLists)
 public string GetSchema(Type type)
+public string GetSchema(Type type, ProtoSyntax syntax)
 public void add_DynamicTypeFormatting(TypeFormatEventHandler value)
 public void remove_DynamicTypeFormatting(TypeFormatEventHandler value)
 public IFormatter CreateFormatter(Type type)
@@ -662,13 +859,9 @@ internal Type GetType(string fullName, Assembly context)
 internal Type ResolveKnownType(string name, TypeModel model, Assembly assembly)
 }
 public ProtoBuf.Meta.ValueMember : object {
-private byte OPTIONS_IsStrict
-private byte OPTIONS_IsPacked
-private byte OPTIONS_IsRequired
-private byte OPTIONS_OverwriteList
-private byte OPTIONS_SupportNull
 private int fieldNumber
-private MemberInfo member
+private MemberInfo originalMember
+private MemberInfo backingMember
 private Type parentType
 private Type itemType
 private Type defaultType
@@ -677,14 +870,23 @@ private object defaultValue
 private RuntimeTypeModel model
 private IProtoSerializer serializer
 private DataFormat dataFormat
-private bool asReference
-private bool dynamicType
+private DataFormat mapKeyFormat
+private DataFormat mapValueFormat
 private MethodInfo getSpecified
 private MethodInfo setSpecified
 private string name
+private byte OPTIONS_IsStrict
+private byte OPTIONS_IsPacked
+private byte OPTIONS_IsRequired
+private byte OPTIONS_OverwriteList
+private byte OPTIONS_SupportNull
+private byte OPTIONS_AsReference
+private byte OPTIONS_IsMap
+private byte OPTIONS_DynamicType
 private byte flags
 public int FieldNumber
 public MemberInfo Member
+public MemberInfo BackingMember
 public Type ItemType
 public Type MemberType
 public Type DefaultType
@@ -698,10 +900,15 @@ public bool OverwriteList
 public bool IsRequired
 public bool AsReference
 public bool DynamicType
+public bool IsMap
+public DataFormat MapKeyFormat
+public DataFormat MapValueFormat
 public string Name
 public bool SupportNull
 public int get_FieldNumber()
 public MemberInfo get_Member()
+public MemberInfo get_BackingMember()
+public void set_BackingMember(MemberInfo value)
 public Type get_ItemType()
 public Type get_MemberType()
 public Type get_DefaultType()
@@ -727,19 +934,28 @@ public bool get_AsReference()
 public void set_AsReference(bool value)
 public bool get_DynamicType()
 public void set_DynamicType(bool value)
+public bool get_IsMap()
+public void set_IsMap(bool value)
+public DataFormat get_MapKeyFormat()
+public void set_MapKeyFormat(DataFormat value)
+public DataFormat get_MapValueFormat()
+public void set_MapValueFormat(DataFormat value)
 public void SetSpecified(MethodInfo getSpecified, MethodInfo setSpecified)
 private void ThrowIfFrozen()
+internal bool ResolveMapTypes(Type& dictionaryType, Type& keyType, Type& valueType)
+private bool IsValidMapKeyType(Type type)
 private IProtoSerializer BuildSerializer()
 private WireType GetIntWireType(DataFormat format, int width)
 private WireType GetDateTimeWireType(DataFormat format)
 internal IProtoSerializer TryGetCoreSerializer(RuntimeTypeModel model, DataFormat dataFormat, Type type, WireType& defaultWireType, bool asReference, bool dynamicType, bool overwriteList, bool allowComplexTypes)
 internal void SetName(string name)
 public string get_Name()
+public void set_Name(string value)
 private bool HasFlag(byte flag)
 private void SetFlag(byte flag, bool value, bool throwIfFrozen)
 public bool get_SupportNull()
 public void set_SupportNull(bool value)
-internal string GetSchemaTypeName(bool applyNetObjectProxy, Boolean& requiresBclImport)
+internal string GetSchemaTypeName(bool applyNetObjectProxy, CommonImports& imports)
 }
 internal ProtoBuf.NetObjectCache : object {
 internal int Root
@@ -764,19 +980,20 @@ public PrefixStyle Fixed32
 public PrefixStyle Fixed32BigEndian
 }
 public ProtoBuf.ProtoContractAttribute : Attribute {
-private byte OPTIONS_InferTagFromName
-private byte OPTIONS_InferTagFromNameHasValue
-private byte OPTIONS_UseProtoMembersOnly
-private byte OPTIONS_SkipConstructor
-private byte OPTIONS_IgnoreListHandling
-private byte OPTIONS_AsReferenceDefault
-private byte OPTIONS_EnumPassthru
-private byte OPTIONS_EnumPassthruHasValue
 private string name
 private int implicitFirstTag
 private ImplicitFields implicitFields
 private int dataMemberOffset
-private byte flags
+private ushort flags
+private ushort OPTIONS_InferTagFromName
+private ushort OPTIONS_InferTagFromNameHasValue
+private ushort OPTIONS_UseProtoMembersOnly
+private ushort OPTIONS_SkipConstructor
+private ushort OPTIONS_IgnoreListHandling
+private ushort OPTIONS_AsReferenceDefault
+private ushort OPTIONS_EnumPassthru
+private ushort OPTIONS_EnumPassthruHasValue
+private ushort OPTIONS_IsGroup
 public string Name
 public int ImplicitFirstTag
 public bool UseProtoMembersOnly
@@ -787,6 +1004,7 @@ internal bool InferTagFromNameHasValue
 public int DataMemberOffset
 public bool SkipConstructor
 public bool AsReferenceDefault
+public bool IsGroup
 public bool EnumPassthru
 internal bool EnumPassthruHasValue
 public string get_Name()
@@ -808,8 +1026,10 @@ public bool get_SkipConstructor()
 public void set_SkipConstructor(bool value)
 public bool get_AsReferenceDefault()
 public void set_AsReferenceDefault(bool value)
-private bool HasFlag(byte flag)
-private void SetFlag(byte flag, bool value)
+public bool get_IsGroup()
+public void set_IsGroup(bool value)
+private bool HasFlag(ushort flag)
+private void SetFlag(ushort flag, bool value)
 public bool get_EnumPassthru()
 public void set_EnumPassthru(bool value)
 internal bool get_EnumPassthruHasValue()
@@ -847,8 +1067,23 @@ public Type get_KnownType()
 public DataFormat get_DataFormat()
 public void set_DataFormat(DataFormat value)
 }
+public ProtoBuf.ProtoMapAttribute : Attribute {
+private DataFormat <KeyFormat>k__BackingField
+private DataFormat <ValueFormat>k__BackingField
+private bool <DisableMap>k__BackingField
+public DataFormat KeyFormat
+public DataFormat ValueFormat
+public bool DisableMap
+public DataFormat get_KeyFormat()
+public void set_KeyFormat(DataFormat value)
+public DataFormat get_ValueFormat()
+public void set_ValueFormat(DataFormat value)
+public bool get_DisableMap()
+public void set_DisableMap(bool value)
+}
 public ProtoBuf.ProtoMemberAttribute : Attribute {
 internal MemberInfo Member
+internal MemberInfo BackingMember
 internal bool TagIsPinned
 private string name
 private DataFormat dataFormat
@@ -902,25 +1137,25 @@ public void .ctor(int tag, string memberName)
 public string get_MemberName()
 }
 public ProtoBuf.ProtoReader : object {
-internal int TO_EOF
-private long Int64Msb
-private int Int32Msb
 private Stream source
 private Byte[] ioBuffer
 private TypeModel model
 private int fieldNumber
 private int depth
-private int dataRemaining
 private int ioIndex
-private int position
 private int available
-private int blockEnd
+private long position64
+private long blockEnd64
+private long dataRemaining64
 private WireType wireType
 private bool isFixedLength
 private bool internStrings
 private NetObjectCache netCache
 private UInt32 trapCount
+internal long TO_EOF
 private SerializationContext context
+private long Int64Msb
+private int Int32Msb
 private Dictionary`2<string, string> stringInterner
 private UTF8Encoding encoding
 private Byte[] EmptyBlob
@@ -930,6 +1165,7 @@ public WireType WireType
 public bool InternStrings
 public SerializationContext Context
 public int Position
+public long LongPosition
 public TypeModel Model
 internal NetObjectCache NetCache
 public int get_FieldNumber()
@@ -938,7 +1174,8 @@ public void .ctor(Stream source, TypeModel model, SerializationContext context)
 public bool get_InternStrings()
 public void set_InternStrings(bool value)
 public void .ctor(Stream source, TypeModel model, SerializationContext context, int length)
-private void Init(ProtoReader reader, Stream source, TypeModel model, SerializationContext context, int length)
+public void .ctor(Stream source, TypeModel model, SerializationContext context, long length)
+private void Init(ProtoReader reader, Stream source, TypeModel model, SerializationContext context, long length)
 public SerializationContext get_Context()
 public void Dispose()
 internal int TryReadUInt32VariantWithoutMoving(bool trimNegative, UInt32& value)
@@ -946,6 +1183,7 @@ private UInt32 ReadUInt32Variant(bool trimNegative)
 private bool TryReadUInt32Variant(UInt32& value)
 public UInt32 ReadUInt32()
 public int get_Position()
+public long get_LongPosition()
 internal void Ensure(int count, bool strict)
 public short ReadInt16()
 public ushort ReadUInt16()
@@ -986,8 +1224,9 @@ public void DirectReadBytes(Stream source, Byte[] buffer, int offset, int count)
 public Byte[] DirectReadBytes(Stream source, int count)
 public string DirectReadString(Stream source, int length)
 public int ReadLengthPrefix(Stream source, bool expectHeader, PrefixStyle style, Int32& fieldNumber, Int32& bytesRead)
-private int TryReadUInt32Variant(Stream source, UInt32& value)
-internal void Seek(Stream source, int count, Byte[] buffer)
+public long ReadLongLengthPrefix(Stream source, bool expectHeader, PrefixStyle style, Int32& fieldNumber, Int32& bytesRead)
+private int TryReadUInt64Variant(Stream source, UInt64& value)
+internal void Seek(Stream source, long count, Byte[] buffer)
 internal Exception AddErrorData(Exception exception, ProtoReader source)
 private Exception EoF(ProtoReader source)
 public void AppendExtensionData(IExtensible instance)
@@ -1003,6 +1242,7 @@ internal void TrapNextObject(int newObjectKey)
 internal void CheckFullyConsumed()
 public object Merge(ProtoReader parent, object from, object to)
 internal ProtoReader Create(Stream source, TypeModel model, SerializationContext context, int len)
+internal ProtoReader Create(Stream source, TypeModel model, SerializationContext context, long len)
 private ProtoReader GetRecycled()
 internal void Recycle(ProtoReader reader)
 }
@@ -1032,7 +1272,6 @@ public ProtoTypeCode Uri
 public ProtoTypeCode Type
 }
 public ProtoBuf.ProtoWriter : object {
-private int RecursionCheckDepth
 private Stream dest
 private TypeModel model
 private NetObjectCache netCache
@@ -1040,11 +1279,12 @@ private int fieldNumber
 private int flushLock
 private WireType wireType
 private int depth
+private int RecursionCheckDepth
 private MutableList recursionStack
 private SerializationContext context
 private Byte[] ioBuffer
 private int ioIndex
-private int position
+private long position64
 private UTF8Encoding encoding
 private int packedFieldNumber
 internal NetObjectCache NetCache
@@ -1073,6 +1313,7 @@ public void .ctor(Stream dest, TypeModel model, SerializationContext context)
 public SerializationContext get_Context()
 private void System.IDisposable.Dispose()
 private void Dispose()
+internal long GetLongPosition(ProtoWriter writer)
 internal int GetPosition(ProtoWriter writer)
 private void DemandSpace(int required, ProtoWriter writer)
 public void Close()
@@ -1100,6 +1341,8 @@ internal Exception CreateException(ProtoWriter writer)
 public void WriteBoolean(bool value, ProtoWriter writer)
 public void AppendExtensionData(IExtensible instance, ProtoWriter writer)
 public void SetPackedField(int fieldNumber, ProtoWriter writer)
+public void ClearPackedField(int fieldNumber, ProtoWriter writer)
+public void WritePackedPrefix(int elementCount, WireType wireType, ProtoWriter writer)
 internal string SerializeType(Type type)
 public void SetRootObject(object value)
 public void WriteType(Type value, ProtoWriter writer)
@@ -1126,9 +1369,11 @@ public ProtoBuf.Serializer : object {
 private string ProtoBinaryField
 public int ListItemTag
 public string GetProto()
+public string GetProto(ProtoSyntax syntax)
 public T DeepClone(T instance)
 public T Merge(Stream source, T instance)
 public T Deserialize(Stream source)
+public object Deserialize(Type type, Stream source)
 public void Serialize(Stream destination, T instance)
 public TTo ChangeType(TFrom instance)
 public void Serialize(SerializationInfo info, T instance)
@@ -1150,10 +1395,10 @@ public bool TryReadLengthPrefix(Byte[] buffer, int index, int count, PrefixStyle
 public void FlushPool()
 }
 internal ProtoBuf.Serializers.ArrayDecorator : ProtoDecoratorBase {
+private int fieldNumber
 private byte OPTIONS_WritePacked
 private byte OPTIONS_OverwriteList
 private byte OPTIONS_SupportNull
-private int fieldNumber
 private byte options
 private WireType packedWireType
 private Type arrayType
@@ -1168,6 +1413,8 @@ public Type get_ExpectedType()
 public bool get_RequiresOldValue()
 public bool get_ReturnsValue()
 protected void EmitWrite(CompilerContext ctx, Local valueFrom)
+private bool CanUsePackedPrefix()
+internal bool CanUsePackedPrefix(WireType packedWireType, Type itemType)
 private void EmitWriteArrayLoop(CompilerContext ctx, Local i, Local arr)
 private bool get_AppendToCollection()
 private bool get_SupportNull()
@@ -1251,13 +1498,15 @@ private void ProtoBuf.Serializers.IProtoTypeSerializer.EmitCreateInstance(Compil
 }
 internal ProtoBuf.Serializers.DateTimeSerializer : object {
 private Type expectedType
+private bool includeKind
+private bool wellKnown
 public Type ExpectedType
 private bool ProtoBuf.Serializers.IProtoSerializer.RequiresOldValue
 private bool ProtoBuf.Serializers.IProtoSerializer.ReturnsValue
 public Type get_ExpectedType()
 private bool ProtoBuf.Serializers.IProtoSerializer.get_RequiresOldValue()
 private bool ProtoBuf.Serializers.IProtoSerializer.get_ReturnsValue()
-public void .ctor(TypeModel model)
+public void .ctor(DataFormat dataFormat, TypeModel model)
 public object Read(object value, ProtoReader source)
 public void Write(object value, ProtoWriter dest)
 private void ProtoBuf.Serializers.IProtoSerializer.EmitWrite(CompilerContext ctx, Local valueFrom)
@@ -1436,13 +1685,13 @@ public IProtoSerializer Serializer
 public IProtoSerializer get_Serializer()
 }
 internal ProtoBuf.Serializers.ListDecorator : ProtoDecoratorBase {
+private byte options
 private byte OPTIONS_IsList
 private byte OPTIONS_SuppressIList
 private byte OPTIONS_WritePacked
 private byte OPTIONS_ReturnList
 private byte OPTIONS_OverwriteList
 private byte OPTIONS_SupportNull
-private byte options
 private Type declaredType
 private Type concreteType
 private MethodInfo add
@@ -1477,9 +1726,35 @@ protected void EmitRead(CompilerContext ctx, Local valueFrom)
 internal void EmitReadList(CompilerContext ctx, Local list, IProtoSerializer tail, MethodInfo add, WireType packedWireType, bool castListForAdd)
 private void EmitReadAndAddItem(CompilerContext ctx, Local list, IProtoSerializer tail, MethodInfo add, bool castListForAdd)
 protected MethodInfo GetEnumeratorInfo(TypeModel model, MethodInfo& moveNext, MethodInfo& current)
+internal MethodInfo GetEnumeratorInfo(TypeModel model, Type expectedType, Type itemType, MethodInfo& moveNext, MethodInfo& current)
 protected void EmitWrite(CompilerContext ctx, Local valueFrom)
 public void Write(object value, ProtoWriter dest)
+private bool CanUsePackedPrefix(object obj)
 public object Read(object value, ProtoReader source)
+}
+internal ProtoBuf.Serializers.MapDecorator`3 : ProtoDecoratorBase {
+private Type concreteType
+private IProtoSerializer keyTail
+private int fieldNumber
+private WireType wireType
+private MethodInfo indexerSet
+private TKey DefaultKey
+private TValue DefaultValue
+private bool <AppendToCollection>k__BackingField
+public Type ExpectedType
+public bool ReturnsValue
+public bool RequiresOldValue
+private bool AppendToCollection
+internal void .ctor(TypeModel model, Type concreteType, IProtoSerializer keyTail, IProtoSerializer valueTail, int fieldNumber, WireType wireType, WireType keyWireType, WireType valueWireType, bool overwriteList)
+private MethodInfo GetIndexerSetter()
+public Type get_ExpectedType()
+public bool get_ReturnsValue()
+public bool get_RequiresOldValue()
+private bool get_AppendToCollection()
+public object Read(object untyped, ProtoReader source)
+public void Write(object untyped, ProtoWriter dest)
+protected void EmitWrite(CompilerContext ctx, Local valueFrom)
+protected void EmitRead(CompilerContext ctx, Local valueFrom)
 }
 internal ProtoBuf.Serializers.MemberSpecifiedDecorator : ProtoDecoratorBase {
 private MethodInfo getSpecified
@@ -1513,8 +1788,8 @@ public void EmitRead(CompilerContext ctx, Local valueFrom)
 public void EmitWrite(CompilerContext ctx, Local valueFrom)
 }
 internal ProtoBuf.Serializers.NullDecorator : ProtoDecoratorBase {
-public int Tag
 private Type expectedType
+public int Tag
 public Type ExpectedType
 public bool ReturnsValue
 public bool RequiresOldValue
@@ -1663,9 +1938,9 @@ private void ProtoBuf.Serializers.IProtoTypeSerializer.Callback(object value, Ca
 public bool get_ReturnsValue()
 public bool get_RequiresOldValue()
 public Type get_ExpectedType()
-public void .ctor(Type forType, Type declaredType, IProtoTypeSerializer rootTail)
-private bool HasCast(Type type, Type from, Type to, MethodInfo& op)
-public MethodInfo GetConversion(bool toTail)
+public void .ctor(TypeModel model, Type forType, Type declaredType, IProtoTypeSerializer rootTail)
+private bool HasCast(TypeModel model, Type type, Type from, Type to, MethodInfo& op)
+public MethodInfo GetConversion(TypeModel model, bool toTail)
 public void Write(object value, ProtoWriter writer)
 public object Read(object value, ProtoReader source)
 private void ProtoBuf.Serializers.IProtoSerializer.EmitRead(CompilerContext ctx, Local valueFrom)
@@ -1711,10 +1986,11 @@ protected void EmitRead(CompilerContext ctx, Local valueFrom)
 }
 internal ProtoBuf.Serializers.TimeSpanSerializer : object {
 private Type expectedType
+private bool wellKnown
 public Type ExpectedType
 private bool ProtoBuf.Serializers.IProtoSerializer.RequiresOldValue
 private bool ProtoBuf.Serializers.IProtoSerializer.ReturnsValue
-public void .ctor(TypeModel model)
+public void .ctor(DataFormat dataFormat, TypeModel model)
 public Type get_ExpectedType()
 private bool ProtoBuf.Serializers.IProtoSerializer.get_RequiresOldValue()
 private bool ProtoBuf.Serializers.IProtoSerializer.get_ReturnsValue()
@@ -1843,9 +2119,54 @@ public object Read(object value, ProtoReader source)
 protected void EmitWrite(CompilerContext ctx, Local valueFrom)
 protected void EmitRead(CompilerContext ctx, Local valueFrom)
 }
+public ProtoBuf.ServiceModel.ProtoBehaviorAttribute : Attribute {
+private void System.ServiceModel.Description.IOperationBehavior.AddBindingParameters(OperationDescription operationDescription, BindingParameterCollection bindingParameters)
+private void System.ServiceModel.Description.IOperationBehavior.ApplyClientBehavior(OperationDescription operationDescription, ClientOperation clientOperation)
+private void System.ServiceModel.Description.IOperationBehavior.ApplyDispatchBehavior(OperationDescription operationDescription, DispatchOperation dispatchOperation)
+private void System.ServiceModel.Description.IOperationBehavior.Validate(OperationDescription operationDescription)
+}
+public ProtoBuf.ServiceModel.ProtoBehaviorExtension : BehaviorExtensionElement {
+public Type BehaviorType
+public Type get_BehaviorType()
+protected object CreateBehavior()
+}
+public ProtoBuf.ServiceModel.ProtoEndpointBehavior : object {
+private void System.ServiceModel.Description.IEndpointBehavior.AddBindingParameters(ServiceEndpoint endpoint, BindingParameterCollection bindingParameters)
+private void System.ServiceModel.Description.IEndpointBehavior.ApplyClientBehavior(ServiceEndpoint endpoint, ClientRuntime clientRuntime)
+private void System.ServiceModel.Description.IEndpointBehavior.ApplyDispatchBehavior(ServiceEndpoint endpoint, EndpointDispatcher endpointDispatcher)
+private void System.ServiceModel.Description.IEndpointBehavior.Validate(ServiceEndpoint endpoint)
+private void ReplaceDataContractSerializerOperationBehavior(ServiceEndpoint serviceEndpoint)
+private void ReplaceDataContractSerializerOperationBehavior(OperationDescription description)
+}
+public ProtoBuf.ServiceModel.ProtoOperationBehavior : DataContractSerializerOperationBehavior {
+private TypeModel model
+public TypeModel Model
+public TypeModel get_Model()
+public void set_Model(TypeModel value)
+public void .ctor(OperationDescription operation)
+public XmlObjectSerializer CreateSerializer(Type type, XmlDictionaryString name, XmlDictionaryString ns, IList`1<Type> knownTypes)
+}
+public ProtoBuf.ServiceModel.XmlProtoSerializer : XmlObjectSerializer {
+private TypeModel model
+private int key
+private bool isList
+private bool isEnum
+private Type type
+private string PROTO_ELEMENT
+internal void .ctor(TypeModel model, int key, Type type, bool isList)
+public XmlProtoSerializer TryCreate(TypeModel model, Type type)
+public void .ctor(TypeModel model, Type type)
+private int GetKey(TypeModel model, Type& type, Boolean& isList)
+public void WriteEndObject(XmlDictionaryWriter writer)
+public void WriteStartObject(XmlDictionaryWriter writer, object graph)
+public void WriteObjectContent(XmlDictionaryWriter writer, object graph)
+public bool IsStartObject(XmlDictionaryReader reader)
+public object ReadObject(XmlDictionaryReader reader, bool verifyObjectName)
+}
 public ProtoBuf.SubItemToken : ValueType {
-internal int value
+internal long value64
 internal void .ctor(int value)
+internal void .ctor(long value)
 }
 internal ProtoBuf.TimeSpanScale : Enum {
 public int value__

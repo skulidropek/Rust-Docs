@@ -4,10 +4,13 @@ public string MonoCompany
 public string MonoProduct
 public string MonoCopyright
 public string FxVersion
-public string VsVersion
 public string FxFileVersion
+public string EnvironmentVersion
+public string VsVersion
 public string VsFileVersion
+private string PublicKeyToken
 public string AssemblyI18N
+public string AssemblyMicrosoft_JScript
 public string AssemblyMicrosoft_VisualStudio
 public string AssemblyMicrosoft_VisualStudio_Web
 public string AssemblyMicrosoft_VSDesigner
@@ -27,7 +30,15 @@ public string AssemblySystem_Security
 public string AssemblySystem_ServiceProcess
 public string AssemblySystem_Web
 public string AssemblySystem_Windows_Forms
+public string AssemblySystem_2_0
+public string AssemblySystemCore_3_5
 public string AssemblySystem_Core
+public string WindowsBase_3_0
+public string AssemblyWindowsBase
+public string AssemblyPresentationCore_3_5
+public string AssemblyPresentationCore_4_0
+public string AssemblyPresentationFramework_3_5
+public string AssemblySystemServiceModel_3_0
 }
 internal Locale : object {
 public string GetText(string msg)
@@ -65,15 +76,35 @@ private bool System.IAsyncResult.CompletedSynchronously
 private bool System.IAsyncResult.IsCompleted
 public void .ctor(TimeSpan timeout)
 public void .ctor(TransactionOptions options)
+public IAsyncResult BeginCommit(AsyncCallback callback, object user_defined_state)
+public void EndCommit(IAsyncResult ar)
+private void CommitCallback(IAsyncResult ar)
+public void Commit()
 private void System.Runtime.Serialization.ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
 private object System.IAsyncResult.get_AsyncState()
 private WaitHandle System.IAsyncResult.get_AsyncWaitHandle()
 private bool System.IAsyncResult.get_CompletedSynchronously()
 private bool System.IAsyncResult.get_IsCompleted()
-public IAsyncResult BeginCommit(AsyncCallback callback, object user_defined_state)
-public void EndCommit(IAsyncResult ar)
-private void CommitCallback(IAsyncResult ar)
-public void Commit()
+}
+public System.Transactions.Configuration.DefaultSettingsSection : ConfigurationSection {
+public TimeSpan Timeout
+public string DistributedTransactionManagerName
+public TimeSpan get_Timeout()
+public void set_Timeout(TimeSpan value)
+public string get_DistributedTransactionManagerName()
+public void set_DistributedTransactionManagerName(string value)
+}
+public System.Transactions.Configuration.MachineSettingsSection : ConfigurationSection {
+public TimeSpan MaxTimeout
+public TimeSpan get_MaxTimeout()
+public void set_MaxTimeout(TimeSpan value)
+}
+public System.Transactions.Configuration.TransactionsSectionGroup : ConfigurationSectionGroup {
+public DefaultSettingsSection DefaultSettings
+public MachineSettingsSection MachineSettings
+public TransactionsSectionGroup GetSectionGroup(Configuration config)
+public DefaultSettingsSection get_DefaultSettings()
+public MachineSettingsSection get_MachineSettings()
 }
 public System.Transactions.DependentCloneOption : Enum {
 public int value__
@@ -84,13 +115,14 @@ public System.Transactions.DependentTransaction : Transaction {
 private bool completed
 internal bool Completed
 internal void .ctor(Transaction parent, DependentCloneOption option)
-private void System.Runtime.Serialization.ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
 internal bool get_Completed()
 public void Complete()
+private void System.Runtime.Serialization.ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
 }
 public System.Transactions.Enlistment : object {
 internal bool done
 public void Done()
+internal void InternalOnDone()
 }
 public System.Transactions.EnlistmentOptions : Enum {
 public int value__
@@ -148,18 +180,28 @@ public System.Transactions.PreparingEnlistment : Enlistment {
 private bool prepared
 private Transaction tx
 private IEnlistmentNotification enlisted
+private WaitHandle waitHandle
+private Exception ex
 internal bool IsPrepared
+internal WaitHandle WaitHandle
+internal IEnlistmentNotification EnlistmentNotification
+internal Exception Exception
 internal void .ctor(Transaction tx, IEnlistmentNotification enlisted)
 public void ForceRollback()
+internal void InternalOnDone()
 public void ForceRollback(Exception ex)
 public void Prepared()
 public Byte[] RecoveryInformation()
 internal bool get_IsPrepared()
+internal WaitHandle get_WaitHandle()
+internal IEnlistmentNotification get_EnlistmentNotification()
+internal Exception get_Exception()
+internal void set_Exception(Exception value)
 }
 public System.Transactions.SinglePhaseEnlistment : Enlistment {
 private Transaction tx
-private ISinglePhaseNotification enlisted
-internal void .ctor(Transaction tx, ISinglePhaseNotification enlisted)
+private object abortingEnlisted
+internal void .ctor(Transaction tx, object abortingEnlisted)
 public void Aborted()
 public void Aborted(Exception e)
 public void Committed()
@@ -176,13 +218,18 @@ private TransactionInformation info
 private ArrayList dependents
 private List`1<IEnlistmentNotification> volatiles
 private List`1<ISinglePhaseNotification> durables
+private IPromotableSinglePhaseNotification pspe
 private AsyncCommit asyncCommit
 private bool committing
 private bool committed
 private bool aborted
 private TransactionScope scope
 private Exception innerException
+private Guid tag
 private TransactionCompletedEventHandler TransactionCompleted
+internal List`1<IEnlistmentNotification> Volatiles
+internal List`1<ISinglePhaseNotification> Durables
+internal IPromotableSinglePhaseNotification Pspe
 public Transaction Current
 internal Transaction CurrentInternal
 public IsolationLevel IsolationLevel
@@ -190,9 +237,12 @@ public TransactionInformation TransactionInformation
 private bool Aborted
 internal TransactionScope Scope
 internal void .ctor(Transaction other)
+internal List`1<IEnlistmentNotification> get_Volatiles()
+internal List`1<ISinglePhaseNotification> get_Durables()
+internal IPromotableSinglePhaseNotification get_Pspe()
+private void System.Runtime.Serialization.ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
 public void add_TransactionCompleted(TransactionCompletedEventHandler value)
 public void remove_TransactionCompleted(TransactionCompletedEventHandler value)
-private void System.Runtime.Serialization.ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
 public Transaction get_Current()
 public void set_Current(Transaction value)
 internal Transaction get_CurrentInternal()
@@ -210,10 +260,12 @@ public Enlistment EnlistVolatile(ISinglePhaseNotification notification, Enlistme
 private Enlistment EnlistVolatileInternal(IEnlistmentNotification notification, EnlistmentOptions options)
 public bool Equals(object obj)
 private bool Equals(Transaction t)
+public bool op_Equality(Transaction x, Transaction y)
+public bool op_Inequality(Transaction x, Transaction y)
 public int GetHashCode()
 public void Rollback()
 public void Rollback(Exception ex)
-internal void Rollback(Exception ex, IEnlistmentNotification enlisted)
+internal void Rollback(Exception ex, object abortingEnlisted)
 private bool get_Aborted()
 private void set_Aborted(bool value)
 internal TransactionScope get_Scope()
@@ -224,13 +276,14 @@ internal void CommitInternal()
 private void DoCommit()
 private void Complete()
 internal void InitScope(TransactionScope scope)
+private void PrepareCallbackWrapper(object state)
 private void DoPreparePhase()
 private void DoCommitPhase()
 private void DoSingleCommit(ISinglePhaseNotification single)
+private void DoSingleCommit(IPromotableSinglePhaseNotification single)
 private void CheckAborted()
+private void FireCompleted()
 private void EnsureIncompleteCurrentScope()
-public bool op_Equality(Transaction x, Transaction y)
-public bool op_Inequality(Transaction x, Transaction y)
 }
 public System.Transactions.TransactionAbortedException : TransactionException {
 public void .ctor(string message)
@@ -244,7 +297,9 @@ public IAsyncResult BeginInvoke(object o, TransactionEventArgs e, AsyncCallback 
 public void EndInvoke(IAsyncResult result)
 }
 public System.Transactions.TransactionEventArgs : EventArgs {
+private Transaction transaction
 public Transaction Transaction
+internal void .ctor(Transaction transaction)
 public Transaction get_Transaction()
 }
 public System.Transactions.TransactionException : SystemException {
@@ -285,20 +340,22 @@ public Byte[] GetTransmitterPropagationToken(Transaction transaction)
 public Byte[] GetWhereabouts()
 }
 public System.Transactions.TransactionManager : object {
+private DefaultSettingsSection defaultSettings
+private MachineSettingsSection machineSettings
 private TimeSpan defaultTimeout
 private TimeSpan maxTimeout
 private TransactionStartedEventHandler DistributedTransactionStarted
 public TimeSpan DefaultTimeout
 public HostCurrentTransactionCallback HostCurrentCallback
 public TimeSpan MaximumTimeout
-public void add_DistributedTransactionStarted(TransactionStartedEventHandler value)
-public void remove_DistributedTransactionStarted(TransactionStartedEventHandler value)
 public TimeSpan get_DefaultTimeout()
 public HostCurrentTransactionCallback get_HostCurrentCallback()
 public void set_HostCurrentCallback(HostCurrentTransactionCallback value)
 public TimeSpan get_MaximumTimeout()
 public void RecoveryComplete(Guid manager)
 public Enlistment Reenlist(Guid manager, Byte[] recoveryInfo, IEnlistmentNotification notification)
+public void add_DistributedTransactionStarted(TransactionStartedEventHandler value)
+public void remove_DistributedTransactionStarted(TransactionStartedEventHandler value)
 }
 public System.Transactions.TransactionManagerCommunicationException : TransactionException {
 public void .ctor(string message)
@@ -315,10 +372,10 @@ public IsolationLevel get_IsolationLevel()
 public void set_IsolationLevel(IsolationLevel value)
 public TimeSpan get_Timeout()
 public void set_Timeout(TimeSpan value)
-public bool Equals(object obj)
-public int GetHashCode()
 public bool op_Equality(TransactionOptions o1, TransactionOptions o2)
 public bool op_Inequality(TransactionOptions o1, TransactionOptions o2)
+public bool Equals(object obj)
+public int GetHashCode()
 }
 public System.Transactions.TransactionPromotionException : TransactionException {
 public void .ctor(string message)
@@ -330,23 +387,35 @@ private TransactionOptions defaultOptions
 private Transaction transaction
 private Transaction oldTransaction
 private TransactionScope parentScope
+private TimeSpan timeout
 private int nested
 private bool disposed
 private bool completed
 private bool isRoot
+private bool asyncFlowEnabled
 internal bool IsComplete
+internal TimeSpan Timeout
+public void .ctor(TransactionScopeAsyncFlowOption asyncFlow)
 public void .ctor(Transaction transaction)
 public void .ctor(Transaction transaction, TimeSpan timeout)
 public void .ctor(Transaction transaction, TimeSpan timeout, EnterpriseServicesInteropOption opt)
 public void .ctor(TransactionScopeOption option)
 public void .ctor(TransactionScopeOption option, TimeSpan timeout)
+public void .ctor(TransactionScopeOption option, TransactionScopeAsyncFlowOption asyncFlow)
+public void .ctor(TransactionScopeOption option, TimeSpan timeout, TransactionScopeAsyncFlowOption asyncFlow)
 public void .ctor(TransactionScopeOption scopeOption, TransactionOptions options)
 public void .ctor(TransactionScopeOption scopeOption, TransactionOptions options, EnterpriseServicesInteropOption opt)
-private void Initialize(TransactionScopeOption scopeOption, Transaction tx, TransactionOptions options, EnterpriseServicesInteropOption interop, TimeSpan timeout)
+private void Initialize(TransactionScopeOption scopeOption, Transaction tx, TransactionOptions options, EnterpriseServicesInteropOption interop, TimeSpan timeout, TransactionScopeAsyncFlowOption asyncFlow)
 private Transaction InitTransaction(Transaction tx, TransactionScopeOption scopeOption)
 public void Complete()
 internal bool get_IsComplete()
+internal TimeSpan get_Timeout()
 public void Dispose()
+}
+public System.Transactions.TransactionScopeAsyncFlowOption : Enum {
+public int value__
+public TransactionScopeAsyncFlowOption Suppress
+public TransactionScopeAsyncFlowOption Enabled
 }
 public System.Transactions.TransactionScopeOption : Enum {
 public int value__

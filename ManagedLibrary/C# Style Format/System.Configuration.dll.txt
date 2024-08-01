@@ -10,11 +10,15 @@ public string MonoVersion
 public string MonoCompany
 public string MonoProduct
 public string MonoCopyright
+public int MonoCorlibVersion
 public string FxVersion
-public string VsVersion
 public string FxFileVersion
+public string EnvironmentVersion
+public string VsVersion
 public string VsFileVersion
+private string PublicKeyToken
 public string AssemblyI18N
+public string AssemblyMicrosoft_JScript
 public string AssemblyMicrosoft_VisualStudio
 public string AssemblyMicrosoft_VisualStudio_Web
 public string AssemblyMicrosoft_VSDesigner
@@ -34,7 +38,15 @@ public string AssemblySystem_Security
 public string AssemblySystem_ServiceProcess
 public string AssemblySystem_Web
 public string AssemblySystem_Windows_Forms
+public string AssemblySystem_2_0
+public string AssemblySystemCore_3_5
 public string AssemblySystem_Core
+public string WindowsBase_3_0
+public string AssemblyWindowsBase
+public string AssemblyPresentationCore_3_5
+public string AssemblyPresentationCore_4_0
+public string AssemblyPresentationFramework_3_5
+public string AssemblySystemServiceModel_3_0
 }
 internal Locale : object {
 public string GetText(string msg)
@@ -50,7 +62,7 @@ protected internal ConfigurationPropertyCollection Properties
 protected internal bool IsModified()
 protected internal void DeserializeElement(XmlReader reader, bool serializeCollectionKey)
 protected internal void Reset(ConfigurationElement parentSection)
-protected internal string SerializeSection(ConfigurationElement parent, string name, ConfigurationSaveMode mode)
+protected internal string SerializeSection(ConfigurationElement parentElement, string name, ConfigurationSaveMode saveMode)
 public string get_File()
 public void set_File(string value)
 public KeyValueConfigurationCollection get_Settings()
@@ -79,16 +91,17 @@ public ConfigurationValidatorBase get_ValidatorInstance()
 }
 internal System.Configuration.ClientConfigurationSystem : object {
 private Configuration cfg
-private bool System.Configuration.Internal.IInternalConfigSystem.SupportsUserConfig
 private Configuration Configuration
+private bool System.Configuration.Internal.IInternalConfigSystem.SupportsUserConfig
+private Configuration get_Configuration()
 private object System.Configuration.Internal.IInternalConfigSystem.GetSection(string configKey)
 private void System.Configuration.Internal.IInternalConfigSystem.RefreshConfig(string sectionName)
 private bool System.Configuration.Internal.IInternalConfigSystem.get_SupportsUserConfig()
-private Configuration get_Configuration()
 }
 public System.Configuration.CommaDelimitedStringCollection : StringCollection {
 private bool modified
 private bool readOnly
+private int originalStringHash
 public bool IsModified
 public bool IsReadOnly
 public string Item
@@ -104,6 +117,7 @@ public void Insert(int index, string value)
 public void Remove(string value)
 public void SetReadOnly()
 public string ToString()
+internal void UpdateStringHash()
 }
 public System.Configuration.CommaDelimitedStringCollectionConverter : ConfigurationConverterBase {
 public object ConvertFrom(ITypeDescriptorContext ctx, CultureInfo ci, object data)
@@ -130,6 +144,8 @@ public void WriteConfig(Configuration cfg, XmlWriter writer, ConfigurationSaveMo
 public void ReadData(Configuration config, XmlReader reader, bool overrideAllowed)
 public void WriteData(Configuration config, XmlWriter writer, ConfigurationSaveMode mode)
 internal void Merge(ConfigInfo data)
+internal bool HasValues(Configuration config, ConfigurationSaveMode mode)
+internal void ResetModified(Configuration config)
 }
 internal System.Configuration.ConfigInfoCollection : NameObjectCollectionBase {
 public ICollection AllKeys
@@ -167,9 +183,9 @@ private string rootNamespace
 private string configPath
 private string locationConfigPath
 private string locationSubPath
-private ContextInformation evaluationContext
 private ConfigurationSaveEventHandler SaveStart
 private ConfigurationSaveEventHandler SaveEnd
+private ContextInformation evaluationContext
 internal Configuration Parent
 internal string FileName
 internal IInternalConfigHost ConfigHost
@@ -185,12 +201,12 @@ public bool NamespaceDeclared
 public ConfigurationSectionGroup RootSectionGroup
 public ConfigurationSectionGroupCollection SectionGroups
 public ConfigurationSectionCollection Sections
-internal void .ctor(Configuration parent, string locationSubPath)
-internal void .ctor(InternalConfigurationSystem system, string locationSubPath)
 internal void add_SaveStart(ConfigurationSaveEventHandler value)
 internal void remove_SaveStart(ConfigurationSaveEventHandler value)
 internal void add_SaveEnd(ConfigurationSaveEventHandler value)
 internal void remove_SaveEnd(ConfigurationSaveEventHandler value)
+internal void .ctor(Configuration parent, string locationSubPath)
+internal void .ctor(InternalConfigurationSystem system, string locationSubPath)
 internal Configuration FindLocationConfiguration(string relativePath, Configuration defaultConfiguration)
 internal void Init(IConfigSystem system, string configPath, Configuration parent)
 internal Configuration get_Parent()
@@ -212,8 +228,8 @@ public void set_NamespaceDeclared(bool value)
 public ConfigurationSectionGroup get_RootSectionGroup()
 public ConfigurationSectionGroupCollection get_SectionGroups()
 public ConfigurationSectionCollection get_Sections()
-public ConfigurationSection GetSection(string path)
-public ConfigurationSectionGroup GetSectionGroup(string path)
+public ConfigurationSection GetSection(string sectionName)
+public ConfigurationSectionGroup GetSectionGroup(string sectionGroupName)
 internal ConfigurationSection GetSectionInstance(SectionInfo config, bool createDefaultInstance)
 internal ConfigurationSectionGroup GetSectionGroupInstance(SectionGroupInfo group)
 internal void SetConfigurationSection(SectionInfo config, ConfigurationSection sec)
@@ -223,13 +239,15 @@ internal void CreateSection(SectionGroupInfo group, string name, ConfigurationSe
 internal void CreateSectionGroup(SectionGroupInfo parentGroup, string name, ConfigurationSectionGroup sec)
 internal void RemoveConfigInfo(ConfigInfo config)
 public void Save()
-public void Save(ConfigurationSaveMode mode)
-public void Save(ConfigurationSaveMode mode, bool forceUpdateAll)
+public void Save(ConfigurationSaveMode saveMode)
+public void Save(ConfigurationSaveMode saveMode, bool forceSaveAll)
 public void SaveAs(string filename)
-public void SaveAs(string filename, ConfigurationSaveMode mode)
-public void SaveAs(string filename, ConfigurationSaveMode mode, bool forceUpdateAll)
+public void SaveAs(string filename, ConfigurationSaveMode saveMode)
+public void SaveAs(string filename, ConfigurationSaveMode saveMode, bool forceSaveAll)
 private void Save(Stream stream, ConfigurationSaveMode mode, bool forceUpdateAll)
 private void SaveData(XmlTextWriter tw, ConfigurationSaveMode mode, bool forceUpdateAll)
+private bool HasValues(ConfigurationSaveMode mode)
+private void ResetModified()
 private bool Load()
 private void ReadConfigFile(XmlReader reader, string fileName)
 internal void ReadData(XmlReader reader, bool allowOverride)
@@ -285,11 +303,13 @@ private bool readOnly
 private ElementInformation elementInfo
 private ConfigurationElementProperty elementProperty
 private Configuration _configuration
+private bool elementPresent
 private ConfigurationLockCollection lockAllAttributesExcept
 private ConfigurationLockCollection lockAllElementsExcept
 private ConfigurationLockCollection lockAttributes
 private ConfigurationLockCollection lockElements
 private bool lockItem
+private SaveContext saveContext
 internal Configuration Configuration
 public ElementInformation ElementInformation
 internal string RawXml
@@ -303,6 +323,7 @@ public bool LockItem
 protected internal object Item
 protected internal object Item
 protected internal ConfigurationPropertyCollection Properties
+internal bool IsElementPresent
 internal Configuration get_Configuration()
 internal void set_Configuration(Configuration value)
 internal void InitFromProperty(PropertyInformation propertyInfo)
@@ -318,22 +339,21 @@ public ConfigurationLockCollection get_LockAttributes()
 public ConfigurationLockCollection get_LockElements()
 public bool get_LockItem()
 public void set_LockItem(bool value)
-protected void ListErrors(IList list)
+protected void ListErrors(IList errorList)
 protected void SetPropertyValue(ConfigurationProperty prop, object value, bool ignoreLocks)
 internal ConfigurationPropertyCollection GetKeyProperties()
 internal ConfigurationElementCollection GetDefaultCollection()
-protected internal object get_Item(ConfigurationProperty property)
-protected internal void set_Item(ConfigurationProperty property, object value)
-protected internal object get_Item(string property_name)
-protected internal void set_Item(string property_name, object value)
+protected internal object get_Item(ConfigurationProperty prop)
+protected internal void set_Item(ConfigurationProperty prop, object value)
+protected internal object get_Item(string propertyName)
+protected internal void set_Item(string propertyName, object value)
 protected internal ConfigurationPropertyCollection get_Properties()
 public bool Equals(object compareTo)
 public int GetHashCode()
-internal bool HasValues()
 internal bool HasLocalModifications()
 protected internal void DeserializeElement(XmlReader reader, bool serializeCollectionKey)
 protected bool OnDeserializeUnrecognizedAttribute(string name, string value)
-protected bool OnDeserializeUnrecognizedElement(string element, XmlReader reader)
+protected bool OnDeserializeUnrecognizedElement(string elementName, XmlReader reader)
 protected object OnRequiredPropertyNotFound(string name)
 protected void PreSerialize(XmlWriter writer)
 protected void PostDeserialize()
@@ -345,10 +365,14 @@ protected internal void Reset(ConfigurationElement parentElement)
 protected internal void ResetModified()
 protected internal bool SerializeElement(XmlWriter writer, bool serializeCollectionKey)
 protected internal bool SerializeToXmlElement(XmlWriter writer, string elementName)
-protected internal void Unmerge(ConfigurationElement source, ConfigurationElement parent, ConfigurationSaveMode updateMode)
+protected internal void Unmerge(ConfigurationElement sourceElement, ConfigurationElement parentElement, ConfigurationSaveMode saveMode)
 internal bool HasValue(string propName)
 internal bool IsReadFromConfig(string propName)
+internal bool get_IsElementPresent()
 private void ValidateValue(ConfigurationProperty p, string value)
+internal bool HasValue(ConfigurationElement parent, PropertyInformation prop, ConfigurationSaveMode mode)
+internal bool HasValues(ConfigurationElement parent, ConfigurationSaveMode mode)
+internal void PrepareSave(ConfigurationElement parent, ConfigurationSaveMode mode)
 }
 public System.Configuration.ConfigurationElementCollection : ConfigurationElement {
 private ArrayList list
@@ -374,7 +398,6 @@ protected internal string AddElementName
 protected internal string ClearElementName
 protected internal string RemoveElementName
 protected void .ctor(IComparer comparer)
-private void System.Collections.ICollection.CopyTo(Array arr, int index)
 internal void InitFromProperty(PropertyInformation propertyInfo)
 public ConfigurationElementCollectionType get_CollectionType()
 private bool get_IsBasic()
@@ -413,18 +436,20 @@ private ConfigurationElement CreateNewElementInternal(string elementName)
 public bool Equals(object compareTo)
 protected object GetElementKey(ConfigurationElement element)
 public int GetHashCode()
+private void System.Collections.ICollection.CopyTo(Array arr, int index)
 public IEnumerator GetEnumerator()
 protected bool IsElementName(string elementName)
 protected bool IsElementRemovable(ConfigurationElement element)
 protected internal bool IsModified()
 public bool IsReadOnly()
-internal bool HasValues()
+internal void PrepareSave(ConfigurationElement parentElement, ConfigurationSaveMode mode)
+internal bool HasValues(ConfigurationElement parentElement, ConfigurationSaveMode mode)
 protected internal void Reset(ConfigurationElement parentElement)
 protected internal void ResetModified()
 protected internal void SetReadOnly()
 protected internal bool SerializeElement(XmlWriter writer, bool serializeCollectionKey)
 protected bool OnDeserializeUnrecognizedElement(string elementName, XmlReader reader)
-protected internal void Unmerge(ConfigurationElement sourceElement, ConfigurationElement parentElement, ConfigurationSaveMode updateMode)
+protected internal void Unmerge(ConfigurationElement sourceElement, ConfigurationElement parentElement, ConfigurationSaveMode saveMode)
 }
 public System.Configuration.ConfigurationElementCollectionType : Enum {
 public int value__
@@ -500,6 +525,7 @@ public ConfigurationLocation Item
 public ConfigurationLocation get_Item(int index)
 internal void Add(ConfigurationLocation loc)
 internal ConfigurationLocation Find(string location)
+internal ConfigurationLocation FindBest(string location)
 }
 public System.Configuration.ConfigurationLockCollection : object {
 private ArrayList names
@@ -515,7 +541,6 @@ public bool IsModified
 public bool IsSynchronized
 public object SyncRoot
 internal void .ctor(ConfigurationElement element, ConfigurationLockType lockType)
-private void System.Collections.ICollection.CopyTo(Array array, int index)
 private void CheckName(string name)
 public void Add(string name)
 public void Clear()
@@ -525,6 +550,7 @@ public IEnumerator GetEnumerator()
 public bool IsReadOnly(string name)
 public void Remove(string name)
 public void SetFromList(string attributeList)
+private void System.Collections.ICollection.CopyTo(Array array, int index)
 public string get_AttributeList()
 public int get_Count()
 public bool get_HasParentElements()
@@ -540,7 +566,6 @@ public ConfigurationLockType Element
 public ConfigurationLockType Exclude
 }
 public System.Configuration.ConfigurationManager : object {
-private bool systemWebInUse
 private InternalConfigurationFactory configFactory
 private IInternalConfigSystem configSystem
 private object lockobj
@@ -600,10 +625,10 @@ public ConfigurationValidatorBase Validator
 internal bool IsElement
 internal ConfigurationCollectionAttribute CollectionAttribute
 public void .ctor(string name, Type type)
-public void .ctor(string name, Type type, object default_value)
-public void .ctor(string name, Type type, object default_value, ConfigurationPropertyOptions flags)
-public void .ctor(string name, Type type, object default_value, TypeConverter converter, ConfigurationValidatorBase validation, ConfigurationPropertyOptions flags)
-public void .ctor(string name, Type type, object default_value, TypeConverter converter, ConfigurationValidatorBase validation, ConfigurationPropertyOptions flags, string description)
+public void .ctor(string name, Type type, object defaultValue)
+public void .ctor(string name, Type type, object defaultValue, ConfigurationPropertyOptions options)
+public void .ctor(string name, Type type, object defaultValue, TypeConverter typeConverter, ConfigurationValidatorBase validator, ConfigurationPropertyOptions options)
+public void .ctor(string name, Type type, object defaultValue, TypeConverter typeConverter, ConfigurationValidatorBase validator, ConfigurationPropertyOptions options, string description)
 public TypeConverter get_Converter()
 public object get_DefaultValue()
 public bool get_IsKey()
@@ -649,7 +674,6 @@ public int Count
 public ConfigurationProperty Item
 public bool IsSynchronized
 public object SyncRoot
-private void System.Collections.ICollection.CopyTo(Array array, int index)
 public int get_Count()
 public ConfigurationProperty get_Item(string name)
 public bool get_IsSynchronized()
@@ -657,6 +681,7 @@ public object get_SyncRoot()
 public void Add(ConfigurationProperty property)
 public bool Contains(string name)
 public void CopyTo(ConfigurationProperty[] array, int index)
+private void System.Collections.ICollection.CopyTo(Array array, int index)
 public IEnumerator GetEnumerator()
 public bool Remove(string name)
 public void Clear()
@@ -667,6 +692,9 @@ public ConfigurationPropertyOptions None
 public ConfigurationPropertyOptions IsDefaultCollection
 public ConfigurationPropertyOptions IsRequired
 public ConfigurationPropertyOptions IsKey
+public ConfigurationPropertyOptions IsTypeStringTransformationRequired
+public ConfigurationPropertyOptions IsAssemblyStringTransformationRequired
+public ConfigurationPropertyOptions IsVersionCheckRequired
 }
 internal System.Configuration.ConfigurationSaveEventArgs : EventArgs {
 private string <StreamPath>k__BackingField
@@ -679,7 +707,6 @@ public bool Start
 public object Context
 public bool Failed
 public Exception Exception
-public void .ctor(string streamPath, bool start, Exception ex, object context)
 public string get_StreamPath()
 private void set_StreamPath(string value)
 public bool get_Start()
@@ -690,6 +717,7 @@ public bool get_Failed()
 private void set_Failed(bool value)
 public Exception get_Exception()
 private void set_Exception(Exception value)
+public void .ctor(string streamPath, bool start, Exception ex, object context)
 }
 internal System.Configuration.ConfigurationSaveEventHandler : MulticastDelegate {
 public void .ctor(object object, IntPtr method)
@@ -730,6 +758,7 @@ protected internal string SerializeSection(ConfigurationElement parentElement, s
 public System.Configuration.ConfigurationSectionCollection : NameObjectCollectionBase {
 private SectionGroupInfo group
 private Configuration config
+private object lockObject
 public KeysCollection Keys
 public int Count
 public ConfigurationSection Item
@@ -752,7 +781,6 @@ public void GetObjectData(SerializationInfo info, StreamingContext context)
 }
 public System.Configuration.ConfigurationSectionGroup : object {
 private bool require_declaration
-private bool declared
 private string name
 private string type_name
 private ConfigurationSectionCollection sections
@@ -771,7 +799,7 @@ public string Type
 private Configuration get_Config()
 internal void Initialize(Configuration config, SectionGroupInfo group)
 internal void SetName(string name)
-public void ForceDeclaration(bool require)
+public void ForceDeclaration(bool force)
 public void ForceDeclaration()
 public bool get_IsDeclared()
 public bool get_IsDeclarationRequired()
@@ -824,6 +852,9 @@ public System.Configuration.ConfigurationValidatorBase : object {
 public bool CanValidate(Type type)
 public void Validate(object value)
 }
+internal System.Configuration.ConfigurationXmlDocument : XmlDocument {
+public XmlElement CreateElement(string prefix, string localName, string namespaceURI)
+}
 public System.Configuration.ConnectionStringSettings : ConfigurationElement {
 private ConfigurationPropertyCollection _properties
 private ConfigurationProperty _propConnectionString
@@ -848,7 +879,7 @@ public System.Configuration.ConnectionStringSettingsCollection : ConfigurationEl
 public ConnectionStringSettings Item
 public ConnectionStringSettings Item
 protected internal ConfigurationPropertyCollection Properties
-public ConnectionStringSettings get_Item(string Name)
+public ConnectionStringSettings get_Item(string name)
 public ConnectionStringSettings get_Item(int index)
 public void set_Item(int index, ConnectionStringSettings value)
 protected internal ConfigurationPropertyCollection get_Properties()
@@ -896,10 +927,10 @@ public bool CanValidate(Type type)
 public void Validate(object value)
 }
 public System.Configuration.DpapiProtectedConfigurationProvider : ProtectedConfigurationProvider {
-private string NotSupportedReason
 private bool useMachineProtection
+private string NotSupportedReason
 public bool UseMachineProtection
-public XmlNode Decrypt(XmlNode encrypted_node)
+public XmlNode Decrypt(XmlNode encryptedNode)
 public XmlNode Encrypt(XmlNode node)
 public void Initialize(string name, NameValueCollection configurationValues)
 public bool get_UseMachineProtection()
@@ -936,8 +967,8 @@ private ConfigurationCollectionAttribute collectionAttribute
 public ConfigurationCollectionAttribute CollectionAttribute
 public bool HasProperties
 public ConfigurationPropertyCollection Properties
-public void .ctor(Type t)
 public ElementMap GetMap(Type t)
+public void .ctor(Type t)
 public ConfigurationCollectionAttribute get_CollectionAttribute()
 public bool get_HasProperties()
 public ConfigurationPropertyCollection get_Properties()
@@ -960,8 +991,8 @@ public object Clone()
 internal System.Configuration.ExeConfigurationHost : InternalConfigurationHost {
 private ExeConfigurationFileMap map
 private ConfigurationUserLevel level
-private Dictionary`2<string, int> <>f__switch$map0
 public void Init(IInternalConfigRoot root, Object[] hostInitParams)
+private void CheckFileMap(ConfigurationUserLevel level, ExeConfigurationFileMap map)
 public string GetStreamName(string configPath)
 public void InitForConfiguration(String& locationSubPath, String& configPath, String& locationConfigPath, IInternalConfigRoot root, Object[] hostInitConfigurationParams)
 }
@@ -991,10 +1022,10 @@ private string xml
 private ConfigurationPropertyCollection properties
 protected internal ConfigurationPropertyCollection Properties
 protected internal bool IsModified()
-protected internal void DeserializeSection(XmlReader reader)
-protected internal void Reset(ConfigurationElement parentElement)
+protected internal void DeserializeSection(XmlReader xmlReader)
+protected internal void Reset(ConfigurationElement parentSection)
 protected internal void ResetModified()
-protected internal string SerializeSection(ConfigurationElement parentElement, string name, ConfigurationSaveMode saveMode)
+protected internal string SerializeSection(ConfigurationElement parentSection, string name, ConfigurationSaveMode saveMode)
 protected internal ConfigurationPropertyCollection get_Properties()
 }
 public System.Configuration.InfiniteIntConverter : ConfigurationConverterBase {
@@ -1045,10 +1076,10 @@ protected IInternalConfigHost get_Host()
 protected void set_Host(IInternalConfigHost value)
 public object CreateConfigurationContext(string configPath, string locationSubPath)
 public object CreateDeprecatedConfigContext(string configPath)
-public string DecryptSection(string encryptedXml, ProtectedConfigurationProvider protectionProvider, ProtectedConfigurationSection protectedSection)
+public string DecryptSection(string encryptedXml, ProtectedConfigurationProvider protectionProvider, ProtectedConfigurationSection protectedConfigSection)
 public void DeleteStream(string streamName)
-public string EncryptSection(string encryptedXml, ProtectedConfigurationProvider protectionProvider, ProtectedConfigurationSection protectedSection)
-public string GetConfigPathFromLocationSubPath(string configPath, string locatinSubPath)
+public string EncryptSection(string clearTextXml, ProtectedConfigurationProvider protectionProvider, ProtectedConfigurationSection protectedConfigSection)
+public string GetConfigPathFromLocationSubPath(string configPath, string locationSubPath)
 public Type GetConfigType(string typeName, bool throwOnError)
 public string GetConfigTypeName(Type t)
 public void GetRestrictedPermissions(IInternalConfigRecord configRecord, PermissionSet& permissionSet, Boolean& isHostReady)
@@ -1056,8 +1087,8 @@ public string GetStreamName(string configPath)
 public string GetStreamNameForConfigSource(string streamName, string configSource)
 public object GetStreamVersion(string streamName)
 public IDisposable Impersonate()
-public void Init(IInternalConfigRoot root, Object[] hostInitParams)
-public void InitForConfiguration(String& locationSubPath, String& configPath, String& locationConfigPath, IInternalConfigRoot root, Object[] hostInitConfigurationParams)
+public void Init(IInternalConfigRoot configRoot, Object[] hostInitParams)
+public void InitForConfiguration(String& locationSubPath, String& configPath, String& locationConfigPath, IInternalConfigRoot configRoot, Object[] hostInitConfigurationParams)
 public bool IsAboveApplication(string configPath)
 public bool IsConfigRecordRequired(string configPath)
 public bool IsDefinitionAllowed(string configPath, ConfigurationAllowDefinition allowDefinition, ConfigurationAllowExeDefinition allowExeDefinition)
@@ -1145,10 +1176,10 @@ public bool SupportsPath
 public bool SupportsRefresh
 public object CreateConfigurationContext(string configPath, string locationSubPath)
 public object CreateDeprecatedConfigContext(string configPath)
-public string DecryptSection(string encryptedXml, ProtectedConfigurationProvider protectionProvider, ProtectedConfigurationSection protectedSection)
+public string DecryptSection(string encryptedXml, ProtectedConfigurationProvider protectionProvider, ProtectedConfigurationSection protectedConfigSection)
 public void DeleteStream(string streamName)
-public string EncryptSection(string encryptedXml, ProtectedConfigurationProvider protectionProvider, ProtectedConfigurationSection protectedSection)
-public string GetConfigPathFromLocationSubPath(string configPath, string locatinSubPath)
+public string EncryptSection(string clearTextXml, ProtectedConfigurationProvider protectionProvider, ProtectedConfigurationSection protectedConfigSection)
+public string GetConfigPathFromLocationSubPath(string configPath, string locationSubPath)
 public Type GetConfigType(string typeName, bool throwOnError)
 public string GetConfigTypeName(Type t)
 public void GetRestrictedPermissions(IInternalConfigRecord configRecord, PermissionSet& permissionSet, Boolean& isHostReady)
@@ -1156,8 +1187,8 @@ public string GetStreamName(string configPath)
 public string GetStreamNameForConfigSource(string streamName, string configSource)
 public object GetStreamVersion(string streamName)
 public IDisposable Impersonate()
-public void Init(IInternalConfigRoot root, Object[] hostInitParams)
-public void InitForConfiguration(String& locationSubPath, String& configPath, String& locationConfigPath, IInternalConfigRoot root, Object[] hostInitConfigurationParams)
+public void Init(IInternalConfigRoot configRoot, Object[] hostInitParams)
+public void InitForConfiguration(String& locationSubPath, String& configPath, String& locationConfigPath, IInternalConfigRoot configRoot, Object[] hostInitConfigurationParams)
 public bool IsAboveApplication(string configPath)
 public bool IsConfigRecordRequired(string configPath)
 public bool IsDefinitionAllowed(string configPath, ConfigurationAllowDefinition allowDefinition, ConfigurationAllowExeDefinition allowExeDefinition)
@@ -1200,10 +1231,6 @@ public string get_StreamName()
 }
 public System.Configuration.Internal.IInternalConfigRoot {
 public bool IsDesignTime
-public void add_ConfigChanged(InternalConfigEventHandler value)
-public void remove_ConfigChanged(InternalConfigEventHandler value)
-public void add_ConfigRemoved(InternalConfigEventHandler value)
-public void remove_ConfigRemoved(InternalConfigEventHandler value)
 public IInternalConfigRecord GetConfigRecord(string configPath)
 public object GetSection(string section, string configPath)
 public string GetUniqueConfigPath(string configPath)
@@ -1211,6 +1238,10 @@ public IInternalConfigRecord GetUniqueConfigRecord(string configPath)
 public void Init(IInternalConfigHost host, bool isDesignTime)
 public bool get_IsDesignTime()
 public void RemoveConfig(string configPath)
+public void add_ConfigChanged(InternalConfigEventHandler value)
+public void remove_ConfigChanged(InternalConfigEventHandler value)
+public void add_ConfigRemoved(InternalConfigEventHandler value)
+public void remove_ConfigRemoved(InternalConfigEventHandler value)
 }
 public System.Configuration.Internal.IInternalConfigSettingsFactory {
 public void CompleteInit()
@@ -1251,11 +1282,11 @@ public bool SupportsChangeNotifications
 public bool SupportsLocation
 public bool SupportsPath
 public bool SupportsRefresh
-private string System.Configuration.Internal.IInternalConfigHost.DecryptSection(string encryptedXml, ProtectedConfigurationProvider protectionProvider, ProtectedConfigurationSection protectedSection)
-private string System.Configuration.Internal.IInternalConfigHost.EncryptSection(string clearXml, ProtectedConfigurationProvider protectionProvider, ProtectedConfigurationSection protectedSection)
 public object CreateConfigurationContext(string configPath, string locationSubPath)
 public object CreateDeprecatedConfigContext(string configPath)
 public void DeleteStream(string streamName)
+private string System.Configuration.Internal.IInternalConfigHost.DecryptSection(string encryptedXml, ProtectedConfigurationProvider protectionProvider, ProtectedConfigurationSection protectedSection)
+private string System.Configuration.Internal.IInternalConfigHost.EncryptSection(string clearXml, ProtectedConfigurationProvider protectionProvider, ProtectedConfigurationSection protectedSection)
 public string GetConfigPathFromLocationSubPath(string configPath, string locationSubPath)
 public Type GetConfigType(string typeName, bool throwOnError)
 public string GetConfigTypeName(Type t)
@@ -1277,6 +1308,7 @@ public bool get_IsRemote()
 public bool IsSecondaryRoot(string configPath)
 public bool IsTrustedConfigPath(string configPath)
 private string get_bundled_machine_config()
+private string get_bundled_app_config()
 public Stream OpenStreamForRead(string streamName)
 public Stream OpenStreamForRead(string streamName, bool assertPermissions)
 public Stream OpenStreamForWrite(string streamName, string templateStreamName, Object& writeContext)
@@ -1300,10 +1332,6 @@ private bool isDesignTime
 private InternalConfigEventHandler ConfigChanged
 private InternalConfigEventHandler ConfigRemoved
 public bool IsDesignTime
-public void add_ConfigChanged(InternalConfigEventHandler value)
-public void remove_ConfigChanged(InternalConfigEventHandler value)
-public void add_ConfigRemoved(InternalConfigEventHandler value)
-public void remove_ConfigRemoved(InternalConfigEventHandler value)
 public IInternalConfigRecord GetConfigRecord(string configPath)
 public object GetSection(string section, string configPath)
 public string GetUniqueConfigPath(string configPath)
@@ -1311,6 +1339,10 @@ public IInternalConfigRecord GetUniqueConfigRecord(string configPath)
 public void Init(IInternalConfigHost host, bool isDesignTime)
 public void RemoveConfig(string configPath)
 public bool get_IsDesignTime()
+public void add_ConfigChanged(InternalConfigEventHandler value)
+public void remove_ConfigChanged(InternalConfigEventHandler value)
+public void add_ConfigRemoved(InternalConfigEventHandler value)
+public void remove_ConfigRemoved(InternalConfigEventHandler value)
 }
 internal System.Configuration.InternalConfigurationSystem : object {
 private IInternalConfigHost host
@@ -1509,7 +1541,7 @@ internal ProtectedConfigurationSection get_Section()
 internal ProtectedConfigurationProvider GetProvider(string name, bool throwOnError)
 }
 public System.Configuration.ProtectedConfigurationProvider : ProviderBase {
-public XmlNode Decrypt(XmlNode encrypted_node)
+public XmlNode Decrypt(XmlNode encryptedNode)
 public XmlNode Encrypt(XmlNode node)
 }
 public System.Configuration.ProtectedConfigurationProviderCollection : ProviderCollection {
@@ -1560,10 +1592,10 @@ public int Count
 public bool IsSynchronized
 public object SyncRoot
 public ProviderBase Item
-private void System.Collections.ICollection.CopyTo(Array array, int index)
 public void Add(ProviderBase provider)
 public void Clear()
 public void CopyTo(ProviderBase[] array, int index)
+private void System.Collections.ICollection.CopyTo(Array array, int index)
 public IEnumerator GetEnumerator()
 public void Remove(string name)
 public void SetReadOnly()
@@ -1590,7 +1622,7 @@ public void .ctor(string name, string type)
 protected bool OnDeserializeUnrecognizedAttribute(string name, string value)
 protected internal bool IsModified()
 protected internal void Reset(ConfigurationElement parentElement)
-protected internal void Unmerge(ConfigurationElement source, ConfigurationElement parent, ConfigurationSaveMode updateMode)
+protected internal void Unmerge(ConfigurationElement sourceElement, ConfigurationElement parentElement, ConfigurationSaveMode saveMode)
 public string get_Name()
 public void set_Name(string value)
 public string get_Type()
@@ -1607,9 +1639,9 @@ public void Add(ProviderSettings provider)
 public void Clear()
 protected ConfigurationElement CreateNewElement()
 protected object GetElementKey(ConfigurationElement element)
-public void Remove(string key)
-public ProviderSettings get_Item(int n)
-public void set_Item(int n, ProviderSettings value)
+public void Remove(string name)
+public ProviderSettings get_Item(int index)
+public void set_Item(int index, ProviderSettings value)
 public ProviderSettings get_Item(string key)
 protected internal ConfigurationPropertyCollection get_Properties()
 }
@@ -1640,7 +1672,7 @@ public RSAParameters RsaPublicKey
 public bool UseMachineContainer
 public bool UseOAEP
 private RSACryptoServiceProvider GetProvider()
-public XmlNode Decrypt(XmlNode encrypted_node)
+public XmlNode Decrypt(XmlNode encryptedNode)
 public XmlNode Encrypt(XmlNode node)
 public void Initialize(string name, NameValueCollection configurationValues)
 public void AddKey(int keySize, bool exportable)
@@ -1654,6 +1686,7 @@ public bool get_UseMachineContainer()
 public bool get_UseOAEP()
 }
 internal System.Configuration.SectionGroupInfo : ConfigInfo {
+private bool modified
 private ConfigInfoCollection sections
 private ConfigInfoCollection groups
 private ConfigInfoCollection emptyList
@@ -1681,6 +1714,8 @@ internal void Merge(ConfigInfo newData)
 public void WriteRootData(XmlWriter writer, Configuration config, ConfigurationSaveMode mode)
 public void WriteData(Configuration config, XmlWriter writer, ConfigurationSaveMode mode)
 public void WriteContent(XmlWriter writer, Configuration config, ConfigurationSaveMode mode, bool writeElem)
+internal bool HasValues(Configuration config, ConfigurationSaveMode mode)
+internal void ResetModified(Configuration config)
 }
 internal System.Configuration.SectionInfo : ConfigInfo {
 private bool allowLocation
@@ -1688,7 +1723,6 @@ private bool requirePermission
 private bool restartOnExternalChanges
 private ConfigurationAllowDefinition allowDefinition
 private ConfigurationAllowExeDefinition allowExeDefinition
-private Dictionary`2<string, int> <>f__switch$map1
 public void .ctor(string sectionName, SectionInformation info)
 public object CreateInstance()
 public bool HasDataContent(Configuration config)
@@ -1698,6 +1732,8 @@ public void WriteConfig(Configuration cfg, XmlWriter writer, ConfigurationSaveMo
 public void ReadData(Configuration config, XmlReader reader, bool overrideAllowed)
 public void WriteData(Configuration config, XmlWriter writer, ConfigurationSaveMode mode)
 internal void Merge(ConfigInfo data)
+internal bool HasValues(Configuration config, ConfigurationSaveMode mode)
+internal void ResetModified(Configuration config)
 }
 public System.Configuration.SectionInformation : object {
 private ConfigurationSection parent
@@ -1710,8 +1746,6 @@ private bool restart_on_external_changes
 private bool require_permission
 private string config_source
 private bool force_update
-private bool is_declared
-private bool is_locked
 private string name
 private string type_name
 private string raw_xml
@@ -1767,12 +1801,12 @@ public void set_Type(string value)
 public ConfigurationSection GetParentSection()
 internal void SetParentSection(ConfigurationSection parent)
 public string GetRawXml()
-public void ProtectSection(string provider)
-public void ForceDeclaration(bool require)
+public void ProtectSection(string protectionProvider)
+public void ForceDeclaration(bool force)
 public void ForceDeclaration()
 public void RevertToParent()
 public void UnprotectSection()
-public void SetRawXml(string xml)
+public void SetRawXml(string rawXml)
 internal void SetName(string name)
 }
 public System.Configuration.StringValidator : ConfigurationValidatorBase {
@@ -1845,11 +1879,11 @@ public bool CanValidate(Type type)
 public void Validate(object value)
 }
 public System.Configuration.TimeSpanValidatorAttribute : ConfigurationValidatorAttribute {
-public string TimeSpanMaxValue
-public string TimeSpanMinValue
 private bool excludeRange
 private string maxValueString
 private string minValueString
+public string TimeSpanMaxValue
+public string TimeSpanMinValue
 private ConfigurationValidatorBase instance
 public string MaxValueString
 public string MinValueString
@@ -1873,8 +1907,8 @@ public object ConvertTo(ITypeDescriptorContext ctx, CultureInfo ci, object value
 }
 public System.Configuration.ValidatorCallback : MulticastDelegate {
 public void .ctor(object object, IntPtr method)
-public void Invoke(object o)
-public IAsyncResult BeginInvoke(object o, AsyncCallback callback, object object)
+public void Invoke(object value)
+public IAsyncResult BeginInvoke(object value, AsyncCallback callback, object object)
 public void EndInvoke(IAsyncResult result)
 }
 public System.Configuration.WhiteSpaceTrimStringConverter : ConfigurationConverterBase {

@@ -3,11 +3,15 @@ public string MonoVersion
 public string MonoCompany
 public string MonoProduct
 public string MonoCopyright
+public int MonoCorlibVersion
 public string FxVersion
-public string VsVersion
 public string FxFileVersion
+public string EnvironmentVersion
+public string VsVersion
 public string VsFileVersion
+private string PublicKeyToken
 public string AssemblyI18N
+public string AssemblyMicrosoft_JScript
 public string AssemblyMicrosoft_VisualStudio
 public string AssemblyMicrosoft_VisualStudio_Web
 public string AssemblyMicrosoft_VSDesigner
@@ -27,7 +31,15 @@ public string AssemblySystem_Security
 public string AssemblySystem_ServiceProcess
 public string AssemblySystem_Web
 public string AssemblySystem_Windows_Forms
+public string AssemblySystem_2_0
+public string AssemblySystemCore_3_5
 public string AssemblySystem_Core
+public string WindowsBase_3_0
+public string AssemblyWindowsBase
+public string AssemblyPresentationCore_3_5
+public string AssemblyPresentationCore_4_0
+public string AssemblyPresentationFramework_3_5
+public string AssemblySystemServiceModel_3_0
 }
 internal Locale : object {
 public string GetText(string msg)
@@ -36,6 +48,8 @@ public string GetText(string fmt, Object[] args)
 internal Mono.Security.Cryptography.ManagedProtection : object {
 private RSA user
 private RSA machine
+private object user_lock
+private object machine_lock
 public Byte[] Protect(Byte[] userData, Byte[] optionalEntropy, DataProtectionScope scope)
 public Byte[] Unprotect(Byte[] encryptedData, Byte[] optionalEntropy, DataProtectionScope scope)
 private RSA GetKey(DataProtectionScope scope)
@@ -49,46 +63,94 @@ private void ZeroMemory(IntPtr dest, int size)
 public Byte[] Protect(Byte[] userData, Byte[] optionalEntropy, DataProtectionScope scope)
 public Byte[] Unprotect(Byte[] encryptedData, Byte[] optionalEntropy, DataProtectionScope scope)
 }
-internal Mono.Xml.XmlCanonicalizer : object {
-private bool comments
-private bool exclusive
-private string inclusiveNamespacesPrefixList
-private XmlNodeList xnl
-private StringBuilder res
-private XmlCanonicalizerState state
-private ArrayList visibleNamespaces
-private int prevVisibleNamespacesStart
-private int prevVisibleNamespacesEnd
-private Hashtable propagatedNss
-public string InclusiveNamespacesPrefixList
-public void .ctor(bool withComments, bool excC14N, Hashtable propagatedNamespaces)
-private void Initialize()
-public Stream Canonicalize(XmlDocument doc)
-public Stream Canonicalize(XmlNodeList nodes)
-public string get_InclusiveNamespacesPrefixList()
-public void set_InclusiveNamespacesPrefixList(string value)
-private XmlAttribute CreateXmlns(XmlNode n)
-private void FillMissingPrefixes(XmlNode n, XmlNamespaceManager nsmgr, ArrayList tmpList)
-private void WriteNode(XmlNode node)
-private void WriteDocumentNode(XmlNode node)
-private void WriteElementNode(XmlNode node, bool visible)
-private void WriteNamespacesAxis(XmlNode node, bool visible)
-private void WriteAttributesAxis(XmlNode node)
-private void WriteTextNode(XmlNode node, bool visible)
-private void WriteCommentNode(XmlNode node, bool visible)
-private void WriteProcessingInstructionNode(XmlNode node, bool visible)
-private bool IsNodeVisible(XmlNode node)
-private bool IsVisiblyUtilized(XmlElement owner, XmlAttribute ns)
-private bool IsNamespaceRendered(string prefix, string uri)
-private bool IsNamespaceNode(XmlNode node)
-private bool IsTextNode(XmlNodeType type)
-private string NormalizeString(string input, XmlNodeType type)
-}
-internal Mono.Xml.XmlDsigC14NTransformAttributesComparer : object {
-public int Compare(object x, object y)
-}
-internal Mono.Xml.XmlDsigC14NTransformNamespacesComparer : object {
-public int Compare(object x, object y)
+internal SR : object {
+public string ArgumentOutOfRange_Index
+public string Arg_EmptyOrNullString
+public string Cryptography_Partial_Chain
+public string Cryptography_Xml_BadWrappedKeySize
+public string Cryptography_Xml_CipherValueElementRequired
+public string Cryptography_Xml_CreateHashAlgorithmFailed
+public string Cryptography_Xml_CreateTransformFailed
+public string Cryptography_Xml_CreatedKeyFailed
+public string Cryptography_Xml_DigestMethodRequired
+public string Cryptography_Xml_DigestValueRequired
+public string Cryptography_Xml_EnvelopedSignatureRequiresContext
+public string Cryptography_Xml_InvalidElement
+public string Cryptography_Xml_InvalidEncryptionProperty
+public string Cryptography_Xml_InvalidKeySize
+public string Cryptography_Xml_InvalidReference
+public string Cryptography_Xml_InvalidSignatureLength
+public string Cryptography_Xml_InvalidSignatureLength2
+public string Cryptography_Xml_InvalidX509IssuerSerialNumber
+public string Cryptography_Xml_KeyInfoRequired
+public string Cryptography_Xml_KW_BadKeySize
+public string Cryptography_Xml_LoadKeyFailed
+public string Cryptography_Xml_MissingAlgorithm
+public string Cryptography_Xml_MissingCipherData
+public string Cryptography_Xml_MissingDecryptionKey
+public string Cryptography_Xml_MissingEncryptionKey
+public string Cryptography_Xml_NotSupportedCryptographicTransform
+public string Cryptography_Xml_ReferenceElementRequired
+public string Cryptography_Xml_ReferenceTypeRequired
+public string Cryptography_Xml_SelfReferenceRequiresContext
+public string Cryptography_Xml_SignatureDescriptionNotCreated
+public string Cryptography_Xml_SignatureMethodKeyMismatch
+public string Cryptography_Xml_SignatureMethodRequired
+public string Cryptography_Xml_SignatureValueRequired
+public string Cryptography_Xml_SignedInfoRequired
+public string Cryptography_Xml_TransformIncorrectInputType
+public string Cryptography_Xml_IncorrectObjectType
+public string Cryptography_Xml_UnknownTransform
+public string Cryptography_Xml_UriNotResolved
+public string Cryptography_Xml_UriNotSupported
+public string Cryptography_Xml_UriRequired
+public string Cryptography_Xml_XrmlMissingContext
+public string Cryptography_Xml_XrmlMissingIRelDecryptor
+public string Cryptography_Xml_XrmlMissingIssuer
+public string Cryptography_Xml_XrmlMissingLicence
+public string Cryptography_Xml_XrmlUnableToDecryptGrant
+public string NotSupported_KeyAlgorithm
+public string Log_ActualHashValue
+public string Log_BeginCanonicalization
+public string Log_BeginSignatureComputation
+public string Log_BeginSignatureVerification
+public string Log_BuildX509Chain
+public string Log_CanonicalizationSettings
+public string Log_CanonicalizedOutput
+public string Log_CertificateChain
+public string Log_CheckSignatureFormat
+public string Log_CheckSignedInfo
+public string Log_FormatValidationSuccessful
+public string Log_FormatValidationNotSuccessful
+public string Log_KeyUsages
+public string Log_NoNamespacesPropagated
+public string Log_PropagatingNamespace
+public string Log_RawSignatureValue
+public string Log_ReferenceHash
+public string Log_RevocationMode
+public string Log_RevocationFlag
+public string Log_SigningAsymmetric
+public string Log_SigningHmac
+public string Log_SigningReference
+public string Log_TransformedReferenceContents
+public string Log_UnsafeCanonicalizationMethod
+public string Log_UrlTimeout
+public string Log_VerificationFailed
+public string Log_VerificationFailed_References
+public string Log_VerificationFailed_SignedInfo
+public string Log_VerificationFailed_X509Chain
+public string Log_VerificationFailed_X509KeyUsage
+public string Log_VerificationFlag
+public string Log_VerificationTime
+public string Log_VerificationWithKeySuccessful
+public string Log_VerificationWithKeyNotSuccessful
+public string Log_VerifyReference
+public string Log_VerifySignedInfoAsymmetric
+public string Log_VerifySignedInfoHmac
+public string Log_X509ChainError
+public string Log_XmlContext
+public string Log_SignedXmlRecursionLimit
+public string Log_UnsafeTransformMethod
 }
 internal System.MonoDocumentationNoteAttribute : MonoTODOAttribute {
 public void .ctor(string comment)
@@ -128,8 +190,6 @@ public bool IsSynchronized
 public CryptographicAttributeObject Item
 public object SyncRoot
 public void .ctor(CryptographicAttributeObject attribute)
-private void System.Collections.ICollection.CopyTo(Array array, int index)
-private IEnumerator System.Collections.IEnumerable.GetEnumerator()
 public int get_Count()
 public bool get_IsSynchronized()
 public CryptographicAttributeObject get_Item(int index)
@@ -137,16 +197,18 @@ public object get_SyncRoot()
 public int Add(AsnEncodedData asnEncodedData)
 public int Add(CryptographicAttributeObject attribute)
 public void CopyTo(CryptographicAttributeObject[] array, int index)
+private void System.Collections.ICollection.CopyTo(Array array, int index)
 public CryptographicAttributeObjectEnumerator GetEnumerator()
+private IEnumerator System.Collections.IEnumerable.GetEnumerator()
 public void Remove(CryptographicAttributeObject attribute)
 }
 public System.Security.Cryptography.CryptographicAttributeObjectEnumerator : object {
 private IEnumerator enumerator
-private object System.Collections.IEnumerator.Current
 public CryptographicAttributeObject Current
+private object System.Collections.IEnumerator.Current
 internal void .ctor(IEnumerable enumerable)
-private object System.Collections.IEnumerator.get_Current()
 public CryptographicAttributeObject get_Current()
+private object System.Collections.IEnumerator.get_Current()
 public bool MoveNext()
 public void Reset()
 }
@@ -168,8 +230,8 @@ private Byte[] _params
 public int KeyLength
 public Oid Oid
 public Byte[] Parameters
-public void .ctor(Oid algorithm)
-public void .ctor(Oid algorithm, int keyLength)
+public void .ctor(Oid oid)
+public void .ctor(Oid oid, int keyLength)
 public int get_KeyLength()
 public void set_KeyLength(int value)
 public Oid get_Oid()
@@ -195,7 +257,6 @@ public CmsRecipient Item
 public object SyncRoot
 public void .ctor(CmsRecipient recipient)
 public void .ctor(SubjectIdentifierType recipientIdentifierType, X509Certificate2Collection certificates)
-private IEnumerator System.Collections.IEnumerable.GetEnumerator()
 public int get_Count()
 public bool get_IsSynchronized()
 public CmsRecipient get_Item(int index)
@@ -204,15 +265,16 @@ public int Add(CmsRecipient recipient)
 public void CopyTo(Array array, int index)
 public void CopyTo(CmsRecipient[] array, int index)
 public CmsRecipientEnumerator GetEnumerator()
+private IEnumerator System.Collections.IEnumerable.GetEnumerator()
 public void Remove(CmsRecipient recipient)
 }
 public System.Security.Cryptography.Pkcs.CmsRecipientEnumerator : object {
 private IEnumerator enumerator
-private object System.Collections.IEnumerator.Current
 public CmsRecipient Current
+private object System.Collections.IEnumerator.Current
 internal void .ctor(IEnumerable enumerable)
-private object System.Collections.IEnumerator.get_Current()
 public CmsRecipient get_Current()
+private object System.Collections.IEnumerator.get_Current()
 public bool MoveNext()
 public void Reset()
 }
@@ -250,11 +312,10 @@ public CryptographicAttributeObjectCollection get_UnsignedAttributes()
 public System.Security.Cryptography.Pkcs.ContentInfo : object {
 private Oid _oid
 private Byte[] _content
-private Dictionary`2<string, int> <>f__switch$map0
 public Byte[] Content
 public Oid ContentType
 public void .ctor(Byte[] content)
-public void .ctor(Oid oid, Byte[] content)
+public void .ctor(Oid contentType, Byte[] content)
 protected void Finalize()
 public Byte[] get_Content()
 public Oid get_ContentType()
@@ -274,7 +335,7 @@ public ContentInfo ContentInfo
 public RecipientInfoCollection RecipientInfos
 public CryptographicAttributeObjectCollection UnprotectedAttributes
 public int Version
-public void .ctor(ContentInfo content)
+public void .ctor(ContentInfo contentInfo)
 public void .ctor(ContentInfo contentInfo, AlgorithmIdentifier encryptionAlgorithm)
 public void .ctor(SubjectIdentifierType recipientIdentifierType, ContentInfo contentInfo)
 public void .ctor(SubjectIdentifierType recipientIdentifierType, ContentInfo contentInfo, AlgorithmIdentifier encryptionAlgorithm)
@@ -431,7 +492,6 @@ public int Count
 public bool IsSynchronized
 public RecipientInfo Item
 public object SyncRoot
-private IEnumerator System.Collections.IEnumerable.GetEnumerator()
 public int get_Count()
 public bool get_IsSynchronized()
 public RecipientInfo get_Item(int index)
@@ -440,14 +500,15 @@ internal int Add(RecipientInfo ri)
 public void CopyTo(Array array, int index)
 public void CopyTo(RecipientInfo[] array, int index)
 public RecipientInfoEnumerator GetEnumerator()
+private IEnumerator System.Collections.IEnumerable.GetEnumerator()
 }
 public System.Security.Cryptography.Pkcs.RecipientInfoEnumerator : object {
 private IEnumerator enumerator
-private object System.Collections.IEnumerator.Current
 public RecipientInfo Current
+private object System.Collections.IEnumerator.Current
 internal void .ctor(IEnumerable enumerable)
-private object System.Collections.IEnumerator.get_Current()
 public RecipientInfo get_Current()
+private object System.Collections.IEnumerator.get_Current()
 public bool MoveNext()
 public void Reset()
 }
@@ -469,11 +530,11 @@ public ContentInfo ContentInfo
 public bool Detached
 public SignerInfoCollection SignerInfos
 public int Version
-public void .ctor(ContentInfo content)
-public void .ctor(ContentInfo content, bool detached)
+public void .ctor(ContentInfo contentInfo)
+public void .ctor(ContentInfo contentInfo, bool detached)
 public void .ctor(SubjectIdentifierType signerIdentifierType)
-public void .ctor(SubjectIdentifierType signerIdentifierType, ContentInfo content)
-public void .ctor(SubjectIdentifierType signerIdentifierType, ContentInfo content, bool detached)
+public void .ctor(SubjectIdentifierType signerIdentifierType, ContentInfo contentInfo)
+public void .ctor(SubjectIdentifierType signerIdentifierType, ContentInfo contentInfo, bool detached)
 public X509Certificate2Collection get_Certificates()
 public ContentInfo get_ContentInfo()
 public bool get_Detached()
@@ -529,7 +590,6 @@ public int Count
 public bool IsSynchronized
 public SignerInfo Item
 public object SyncRoot
-private IEnumerator System.Collections.IEnumerable.GetEnumerator()
 public int get_Count()
 public bool get_IsSynchronized()
 public SignerInfo get_Item(int index)
@@ -538,14 +598,15 @@ internal void Add(SignerInfo signer)
 public void CopyTo(Array array, int index)
 public void CopyTo(SignerInfo[] array, int index)
 public SignerInfoEnumerator GetEnumerator()
+private IEnumerator System.Collections.IEnumerable.GetEnumerator()
 }
 public System.Security.Cryptography.Pkcs.SignerInfoEnumerator : object {
 private IEnumerator enumerator
-private object System.Collections.IEnumerator.Current
 public SignerInfo Current
+private object System.Collections.IEnumerator.Current
 internal void .ctor(IEnumerable enumerable)
-private object System.Collections.IEnumerator.get_Current()
 public SignerInfo get_Current()
+private object System.Collections.IEnumerator.get_Current()
 public bool MoveNext()
 public void Reset()
 }
@@ -600,6 +661,10 @@ private int RtlDecryptMemory(Byte[] pData, UInt32 cbData, UInt32 dwFlags)
 private bool CryptProtectMemory(Byte[] pData, UInt32 cbData, UInt32 dwFlags)
 private bool CryptUnprotectMemory(Byte[] pData, UInt32 cbData, UInt32 dwFlags)
 }
+internal System.Security.Cryptography.X509Certificates.RSACertificateExtensions : object {
+public RSA GetRSAPrivateKey(X509Certificate2 certificate)
+public RSA GetRSAPublicKey(X509Certificate2 certificate)
+}
 public System.Security.Cryptography.X509Certificates.X509Certificate2UI : object {
 public void DisplayCertificate(X509Certificate2 certificate)
 public void DisplayCertificate(X509Certificate2 certificate, IntPtr hwndParent)
@@ -611,14 +676,195 @@ public int value__
 public X509SelectionFlag SingleSelection
 public X509SelectionFlag MultiSelection
 }
+internal System.Security.Cryptography.Xml.AncestralNamespaceContextManager : object {
+internal ArrayList _ancestorStack
+internal NamespaceFrame GetScopeAt(int i)
+internal NamespaceFrame GetCurrentScope()
+protected XmlAttribute GetNearestRenderedNamespaceWithMatchingPrefix(string nsPrefix, Int32& depth)
+protected XmlAttribute GetNearestUnrenderedNamespaceWithMatchingPrefix(string nsPrefix, Int32& depth)
+internal void EnterElementContext()
+internal void ExitElementContext()
+internal void TrackNamespaceNode(XmlAttribute attr, SortedList nsListToRender, Hashtable nsLocallyDeclared)
+internal void TrackXmlNamespaceNode(XmlAttribute attr, SortedList nsListToRender, SortedList attrListToRender, Hashtable nsLocallyDeclared)
+internal void GetNamespacesToRender(XmlElement element, SortedList attrListToRender, SortedList nsListToRender, Hashtable nsLocallyDeclared)
+internal void LoadUnrenderedNamespaces(Hashtable nsLocallyDeclared)
+internal void LoadRenderedNamespaces(SortedList nsRenderedList)
+internal void AddRendered(XmlAttribute attr)
+internal void AddUnrendered(XmlAttribute attr)
+}
+internal System.Security.Cryptography.Xml.AttributeSortOrder : object {
+public int Compare(object a, object b)
+}
+internal System.Security.Cryptography.Xml.C14NAncestralNamespaceContextManager : AncestralNamespaceContextManager {
+private void GetNamespaceToRender(string nsPrefix, SortedList attrListToRender, SortedList nsListToRender, Hashtable nsLocallyDeclared)
+internal void GetNamespacesToRender(XmlElement element, SortedList attrListToRender, SortedList nsListToRender, Hashtable nsLocallyDeclared)
+internal void TrackNamespaceNode(XmlAttribute attr, SortedList nsListToRender, Hashtable nsLocallyDeclared)
+internal void TrackXmlNamespaceNode(XmlAttribute attr, SortedList nsListToRender, SortedList attrListToRender, Hashtable nsLocallyDeclared)
+}
+internal System.Security.Cryptography.Xml.CanonicalizationDispatcher : object {
+public void Write(XmlNode node, StringBuilder strBuilder, DocPosition docPos, AncestralNamespaceContextManager anc)
+public void WriteGenericNode(XmlNode node, StringBuilder strBuilder, DocPosition docPos, AncestralNamespaceContextManager anc)
+public void WriteHash(XmlNode node, HashAlgorithm hash, DocPosition docPos, AncestralNamespaceContextManager anc)
+public void WriteHashGenericNode(XmlNode node, HashAlgorithm hash, DocPosition docPos, AncestralNamespaceContextManager anc)
+}
+internal System.Security.Cryptography.Xml.CanonicalXml : object {
+private CanonicalXmlDocument _c14nDoc
+private C14NAncestralNamespaceContextManager _ancMgr
+internal void .ctor(Stream inputStream, bool includeComments, XmlResolver resolver, string strBaseUri)
+internal void .ctor(XmlDocument document, XmlResolver resolver)
+internal void .ctor(XmlDocument document, XmlResolver resolver, bool includeComments)
+internal void .ctor(XmlNodeList nodeList, XmlResolver resolver, bool includeComments)
+private void MarkNodeAsIncluded(XmlNode node)
+private void MarkInclusionStateForNodes(XmlNodeList nodeList, XmlDocument inputRoot, XmlDocument root)
+internal Byte[] GetBytes()
+internal Byte[] GetDigestedBytes(HashAlgorithm hash)
+}
+internal System.Security.Cryptography.Xml.CanonicalXmlAttribute : XmlAttribute {
+private bool _isInNodeSet
+public bool IsInNodeSet
+public void .ctor(string prefix, string localName, string namespaceURI, XmlDocument doc, bool defaultNodeSetInclusionState)
+public bool get_IsInNodeSet()
+public void set_IsInNodeSet(bool value)
+public void Write(StringBuilder strBuilder, DocPosition docPos, AncestralNamespaceContextManager anc)
+public void WriteHash(HashAlgorithm hash, DocPosition docPos, AncestralNamespaceContextManager anc)
+}
+internal System.Security.Cryptography.Xml.CanonicalXmlCDataSection : XmlCDataSection {
+private bool _isInNodeSet
+public bool IsInNodeSet
+public void .ctor(string data, XmlDocument doc, bool defaultNodeSetInclusionState)
+public bool get_IsInNodeSet()
+public void set_IsInNodeSet(bool value)
+public void Write(StringBuilder strBuilder, DocPosition docPos, AncestralNamespaceContextManager anc)
+public void WriteHash(HashAlgorithm hash, DocPosition docPos, AncestralNamespaceContextManager anc)
+}
+internal System.Security.Cryptography.Xml.CanonicalXmlComment : XmlComment {
+private bool _isInNodeSet
+private bool _includeComments
+public bool IsInNodeSet
+public bool IncludeComments
+public void .ctor(string comment, XmlDocument doc, bool defaultNodeSetInclusionState, bool includeComments)
+public bool get_IsInNodeSet()
+public void set_IsInNodeSet(bool value)
+public bool get_IncludeComments()
+public void Write(StringBuilder strBuilder, DocPosition docPos, AncestralNamespaceContextManager anc)
+public void WriteHash(HashAlgorithm hash, DocPosition docPos, AncestralNamespaceContextManager anc)
+}
+internal System.Security.Cryptography.Xml.CanonicalXmlDocument : XmlDocument {
+private bool _defaultNodeSetInclusionState
+private bool _includeComments
+private bool _isInNodeSet
+public bool IsInNodeSet
+public void .ctor(bool defaultNodeSetInclusionState, bool includeComments)
+public bool get_IsInNodeSet()
+public void set_IsInNodeSet(bool value)
+public void Write(StringBuilder strBuilder, DocPosition docPos, AncestralNamespaceContextManager anc)
+public void WriteHash(HashAlgorithm hash, DocPosition docPos, AncestralNamespaceContextManager anc)
+public XmlElement CreateElement(string prefix, string localName, string namespaceURI)
+public XmlAttribute CreateAttribute(string prefix, string localName, string namespaceURI)
+protected XmlAttribute CreateDefaultAttribute(string prefix, string localName, string namespaceURI)
+public XmlText CreateTextNode(string text)
+public XmlWhitespace CreateWhitespace(string prefix)
+public XmlSignificantWhitespace CreateSignificantWhitespace(string text)
+public XmlProcessingInstruction CreateProcessingInstruction(string target, string data)
+public XmlComment CreateComment(string data)
+public XmlEntityReference CreateEntityReference(string name)
+public XmlCDataSection CreateCDataSection(string data)
+}
+internal System.Security.Cryptography.Xml.CanonicalXmlElement : XmlElement {
+private bool _isInNodeSet
+public bool IsInNodeSet
+public void .ctor(string prefix, string localName, string namespaceURI, XmlDocument doc, bool defaultNodeSetInclusionState)
+public bool get_IsInNodeSet()
+public void set_IsInNodeSet(bool value)
+public void Write(StringBuilder strBuilder, DocPosition docPos, AncestralNamespaceContextManager anc)
+public void WriteHash(HashAlgorithm hash, DocPosition docPos, AncestralNamespaceContextManager anc)
+}
+internal System.Security.Cryptography.Xml.CanonicalXmlEntityReference : XmlEntityReference {
+private bool _isInNodeSet
+public bool IsInNodeSet
+public void .ctor(string name, XmlDocument doc, bool defaultNodeSetInclusionState)
+public bool get_IsInNodeSet()
+public void set_IsInNodeSet(bool value)
+public void Write(StringBuilder strBuilder, DocPosition docPos, AncestralNamespaceContextManager anc)
+public void WriteHash(HashAlgorithm hash, DocPosition docPos, AncestralNamespaceContextManager anc)
+}
+internal System.Security.Cryptography.Xml.CanonicalXmlNodeList : XmlNodeList {
+private ArrayList _nodeArray
+public int Count
+public bool IsFixedSize
+public bool IsReadOnly
+private object System.Collections.IList.Item
+public object SyncRoot
+public bool IsSynchronized
+public XmlNode Item(int index)
+public IEnumerator GetEnumerator()
+public int get_Count()
+public int Add(object value)
+public void Clear()
+public bool Contains(object value)
+public int IndexOf(object value)
+public void Insert(int index, object value)
+public void Remove(object value)
+public void RemoveAt(int index)
+public bool get_IsFixedSize()
+public bool get_IsReadOnly()
+private object System.Collections.IList.get_Item(int index)
+private void System.Collections.IList.set_Item(int index, object value)
+public void CopyTo(Array array, int index)
+public object get_SyncRoot()
+public bool get_IsSynchronized()
+}
+internal System.Security.Cryptography.Xml.CanonicalXmlProcessingInstruction : XmlProcessingInstruction {
+private bool _isInNodeSet
+public bool IsInNodeSet
+public void .ctor(string target, string data, XmlDocument doc, bool defaultNodeSetInclusionState)
+public bool get_IsInNodeSet()
+public void set_IsInNodeSet(bool value)
+public void Write(StringBuilder strBuilder, DocPosition docPos, AncestralNamespaceContextManager anc)
+public void WriteHash(HashAlgorithm hash, DocPosition docPos, AncestralNamespaceContextManager anc)
+}
+internal System.Security.Cryptography.Xml.CanonicalXmlSignificantWhitespace : XmlSignificantWhitespace {
+private bool _isInNodeSet
+public bool IsInNodeSet
+public void .ctor(string strData, XmlDocument doc, bool defaultNodeSetInclusionState)
+public bool get_IsInNodeSet()
+public void set_IsInNodeSet(bool value)
+public void Write(StringBuilder strBuilder, DocPosition docPos, AncestralNamespaceContextManager anc)
+public void WriteHash(HashAlgorithm hash, DocPosition docPos, AncestralNamespaceContextManager anc)
+}
+internal System.Security.Cryptography.Xml.CanonicalXmlText : XmlText {
+private bool _isInNodeSet
+public bool IsInNodeSet
+public void .ctor(string strData, XmlDocument doc, bool defaultNodeSetInclusionState)
+public bool get_IsInNodeSet()
+public void set_IsInNodeSet(bool value)
+public void Write(StringBuilder strBuilder, DocPosition docPos, AncestralNamespaceContextManager anc)
+public void WriteHash(HashAlgorithm hash, DocPosition docPos, AncestralNamespaceContextManager anc)
+}
+internal System.Security.Cryptography.Xml.CanonicalXmlWhitespace : XmlWhitespace {
+private bool _isInNodeSet
+public bool IsInNodeSet
+public void .ctor(string strData, XmlDocument doc, bool defaultNodeSetInclusionState)
+public bool get_IsInNodeSet()
+public void set_IsInNodeSet(bool value)
+public void Write(StringBuilder strBuilder, DocPosition docPos, AncestralNamespaceContextManager anc)
+public void WriteHash(HashAlgorithm hash, DocPosition docPos, AncestralNamespaceContextManager anc)
+}
+internal System.Security.Cryptography.Xml.CertUsageType : Enum {
+public int value__
+public CertUsageType Verification
+public CertUsageType Decryption
+}
 public System.Security.Cryptography.Xml.CipherData : object {
-private Byte[] cipherValue
-private CipherReference cipherReference
-private Dictionary`2<string, int> <>f__switch$map1
+private XmlElement _cachedXml
+private CipherReference _cipherReference
+private Byte[] _cipherValue
+private bool CacheValid
 public CipherReference CipherReference
 public Byte[] CipherValue
 public void .ctor(Byte[] cipherValue)
 public void .ctor(CipherReference cipherReference)
+private bool get_CacheValid()
 public CipherReference get_CipherReference()
 public void set_CipherReference(CipherReference value)
 public Byte[] get_CipherValue()
@@ -628,338 +874,406 @@ internal XmlElement GetXml(XmlDocument document)
 public void LoadXml(XmlElement value)
 }
 public System.Security.Cryptography.Xml.CipherReference : EncryptedReference {
+private Byte[] _cipherValue
+internal Byte[] CipherValue
 public void .ctor(string uri)
-public void .ctor(string uri, TransformChain tc)
+public void .ctor(string uri, TransformChain transformChain)
+internal Byte[] get_CipherValue()
+internal void set_CipherValue(Byte[] value)
 public XmlElement GetXml()
 internal XmlElement GetXml(XmlDocument document)
 public void LoadXml(XmlElement value)
 }
+internal System.Security.Cryptography.Xml.CryptoHelpers : object {
+public object CreateFromName(string name)
+}
+internal System.Security.Cryptography.Xml.CryptoSignedXmlRecursionException : XmlException {
+public void .ctor(string message)
+public void .ctor(string message, Exception inner)
+protected void .ctor(SerializationInfo info, StreamingContext context)
+}
 public System.Security.Cryptography.Xml.DataObject : object {
-private XmlElement element
-private bool propertyModified
-private Dictionary`2<string, int> <>f__switch$map4
-public XmlNodeList Data
-public string Encoding
+private string _id
+private string _mimeType
+private string _encoding
+private CanonicalXmlNodeList _elData
+private XmlElement _cachedXml
 public string Id
 public string MimeType
+public string Encoding
+public XmlNodeList Data
+private bool CacheValid
 public void .ctor(string id, string mimeType, string encoding, XmlElement data)
-private void Build(string id, string mimeType, string encoding, XmlElement data)
-public XmlNodeList get_Data()
-public void set_Data(XmlNodeList value)
-public string get_Encoding()
-public void set_Encoding(string value)
 public string get_Id()
 public void set_Id(string value)
 public string get_MimeType()
 public void set_MimeType(string value)
-private string GetField(string attribute)
-private void SetField(string attribute, string value)
+public string get_Encoding()
+public void set_Encoding(string value)
+public XmlNodeList get_Data()
+public void set_Data(XmlNodeList value)
+private bool get_CacheValid()
 public XmlElement GetXml()
+internal XmlElement GetXml(XmlDocument document)
 public void LoadXml(XmlElement value)
 }
 public System.Security.Cryptography.Xml.DataReference : EncryptedReference {
 public void .ctor(string uri)
-public void .ctor(string uri, TransformChain tc)
+public void .ctor(string uri, TransformChain transformChain)
+}
+internal System.Security.Cryptography.Xml.DocPosition : Enum {
+public int value__
+public DocPosition BeforeRootElement
+public DocPosition InRootElement
+public DocPosition AfterRootElement
 }
 public System.Security.Cryptography.Xml.DSAKeyValue : KeyInfoClause {
-private DSA dsa
+private DSA _key
+private string KeyValueElementName
+private string DSAKeyValueElementName
+private string PElementName
+private string QElementName
+private string GElementName
+private string JElementName
+private string YElementName
+private string SeedElementName
+private string PgenCounterElementName
 public DSA Key
 public void .ctor(DSA key)
 public DSA get_Key()
 public void set_Key(DSA value)
 public XmlElement GetXml()
+internal XmlElement GetXml(XmlDocument xmlDocument)
 public void LoadXml(XmlElement value)
+}
+internal System.Security.Cryptography.Xml.DSASignatureDescription : SignatureDescription {
+private string HashAlgorithm
+public AsymmetricSignatureDeformatter CreateDeformatter(AsymmetricAlgorithm key)
+public AsymmetricSignatureFormatter CreateFormatter(AsymmetricAlgorithm key)
+public HashAlgorithm CreateDigest()
 }
 public System.Security.Cryptography.Xml.EncryptedData : EncryptedType {
-private Dictionary`2<string, int> <>f__switch$map5
+public void LoadXml(XmlElement value)
 public XmlElement GetXml()
 internal XmlElement GetXml(XmlDocument document)
-public void LoadXml(XmlElement value)
 }
 public System.Security.Cryptography.Xml.EncryptedKey : EncryptedType {
-private string carriedKeyName
-private string recipient
-private ReferenceList referenceList
-private Dictionary`2<string, int> <>f__switch$map6
-private Dictionary`2<string, int> <>f__switch$map7
-public string CarriedKeyName
+private string _recipient
+private string _carriedKeyName
+private ReferenceList _referenceList
 public string Recipient
+public string CarriedKeyName
 public ReferenceList ReferenceList
-public string get_CarriedKeyName()
-public void set_CarriedKeyName(string value)
 public string get_Recipient()
 public void set_Recipient(string value)
+public string get_CarriedKeyName()
+public void set_CarriedKeyName(string value)
 public ReferenceList get_ReferenceList()
 public void AddReference(DataReference dataReference)
 public void AddReference(KeyReference keyReference)
+public void LoadXml(XmlElement value)
 public XmlElement GetXml()
 internal XmlElement GetXml(XmlDocument document)
-public void LoadXml(XmlElement value)
 }
 public System.Security.Cryptography.Xml.EncryptedReference : object {
-private bool cacheValid
-private string referenceType
-private string uri
-private TransformChain tc
-private Dictionary`2<string, int> <>f__switch$map2
-private Dictionary`2<string, int> <>f__switch$map3
-protected internal bool CacheValid
-protected string ReferenceType
-public TransformChain TransformChain
+private string _uri
+private string _referenceType
+private TransformChain _transformChain
+internal XmlElement _cachedXml
 public string Uri
+public TransformChain TransformChain
+protected string ReferenceType
+protected internal bool CacheValid
 protected void .ctor(string uri)
-protected void .ctor(string uri, TransformChain tc)
-protected internal bool get_CacheValid()
-protected string get_ReferenceType()
-protected void set_ReferenceType(string value)
-public TransformChain get_TransformChain()
-public void set_TransformChain(TransformChain value)
+protected void .ctor(string uri, TransformChain transformChain)
 public string get_Uri()
 public void set_Uri(string value)
+public TransformChain get_TransformChain()
+public void set_TransformChain(TransformChain value)
 public void AddTransform(Transform transform)
+protected string get_ReferenceType()
+protected void set_ReferenceType(string value)
+protected internal bool get_CacheValid()
 public XmlElement GetXml()
 internal XmlElement GetXml(XmlDocument document)
 public void LoadXml(XmlElement value)
 }
 public System.Security.Cryptography.Xml.EncryptedType : object {
-private CipherData cipherData
-private string encoding
-private EncryptionMethod encryptionMethod
-private EncryptionPropertyCollection encryptionProperties
-private string id
-private KeyInfo keyInfo
-private string mimeType
-private string type
-public CipherData CipherData
+private string _id
+private string _type
+private string _mimeType
+private string _encoding
+private EncryptionMethod _encryptionMethod
+private CipherData _cipherData
+private EncryptionPropertyCollection _props
+private KeyInfo _keyInfo
+internal XmlElement _cachedXml
+internal bool CacheValid
+public string Id
+public string Type
+public string MimeType
 public string Encoding
+public KeyInfo KeyInfo
 public EncryptionMethod EncryptionMethod
 public EncryptionPropertyCollection EncryptionProperties
-public string Id
-public KeyInfo KeyInfo
-public string MimeType
-public string Type
-public CipherData get_CipherData()
-public void set_CipherData(CipherData value)
+public CipherData CipherData
+internal bool get_CacheValid()
+public string get_Id()
+public void set_Id(string value)
+public string get_Type()
+public void set_Type(string value)
+public string get_MimeType()
+public void set_MimeType(string value)
 public string get_Encoding()
 public void set_Encoding(string value)
+public KeyInfo get_KeyInfo()
+public void set_KeyInfo(KeyInfo value)
 public EncryptionMethod get_EncryptionMethod()
 public void set_EncryptionMethod(EncryptionMethod value)
 public EncryptionPropertyCollection get_EncryptionProperties()
-public string get_Id()
-public void set_Id(string value)
-public KeyInfo get_KeyInfo()
-public void set_KeyInfo(KeyInfo value)
-public string get_MimeType()
-public void set_MimeType(string value)
-public string get_Type()
-public void set_Type(string value)
 public void AddProperty(EncryptionProperty ep)
-public XmlElement GetXml()
+public CipherData get_CipherData()
+public void set_CipherData(CipherData value)
 public void LoadXml(XmlElement value)
+public XmlElement GetXml()
 }
 public System.Security.Cryptography.Xml.EncryptedXml : object {
-public string XmlEncAES128KeyWrapUrl
-public string XmlEncAES128Url
-public string XmlEncAES192KeyWrapUrl
-public string XmlEncAES192Url
-public string XmlEncAES256KeyWrapUrl
-public string XmlEncAES256Url
-public string XmlEncDESUrl
-public string XmlEncElementContentUrl
-public string XmlEncElementUrl
-public string XmlEncEncryptedKeyUrl
 public string XmlEncNamespaceUrl
+public string XmlEncElementUrl
+public string XmlEncElementContentUrl
+public string XmlEncEncryptedKeyUrl
+public string XmlEncDESUrl
+public string XmlEncTripleDESUrl
+public string XmlEncAES128Url
+public string XmlEncAES256Url
+public string XmlEncAES192Url
 public string XmlEncRSA15Url
 public string XmlEncRSAOAEPUrl
+public string XmlEncTripleDESKeyWrapUrl
+public string XmlEncAES128KeyWrapUrl
+public string XmlEncAES256KeyWrapUrl
+public string XmlEncAES192KeyWrapUrl
 public string XmlEncSHA256Url
 public string XmlEncSHA512Url
-public string XmlEncTripleDESKeyWrapUrl
-public string XmlEncTripleDESUrl
-private Evidence documentEvidence
-private Encoding encoding
-internal Hashtable keyNameMapping
-private CipherMode mode
-private PaddingMode padding
-private string recipient
-private XmlResolver resolver
-private XmlDocument document
-private Dictionary`2<string, int> <>f__switch$map8
-private Dictionary`2<string, int> <>f__switch$map9
+private XmlDocument _document
+private Evidence _evidence
+private XmlResolver _xmlResolver
+private int _capacity
+private Hashtable _keyNameMapping
+private PaddingMode _padding
+private CipherMode _mode
+private Encoding _encoding
+private string _recipient
+private int _xmlDsigSearchDepthCounter
+private int _xmlDsigSearchDepth
+public int XmlDSigSearchDepth
 public Evidence DocumentEvidence
-public Encoding Encoding
-public CipherMode Mode
-public PaddingMode Padding
-public string Recipient
 public XmlResolver Resolver
+public PaddingMode Padding
+public CipherMode Mode
+public Encoding Encoding
+public string Recipient
 public void .ctor(XmlDocument document)
 public void .ctor(XmlDocument document, Evidence evidence)
+private bool IsOverXmlDsigRecursionLimit()
+public int get_XmlDSigSearchDepth()
+public void set_XmlDSigSearchDepth(int value)
 public Evidence get_DocumentEvidence()
 public void set_DocumentEvidence(Evidence value)
-public Encoding get_Encoding()
-public void set_Encoding(Encoding value)
-public CipherMode get_Mode()
-public void set_Mode(CipherMode value)
-public PaddingMode get_Padding()
-public void set_Padding(PaddingMode value)
-public string get_Recipient()
-public void set_Recipient(string value)
 public XmlResolver get_Resolver()
 public void set_Resolver(XmlResolver value)
+public PaddingMode get_Padding()
+public void set_Padding(PaddingMode value)
+public CipherMode get_Mode()
+public void set_Mode(CipherMode value)
+public Encoding get_Encoding()
+public void set_Encoding(Encoding value)
+public string get_Recipient()
+public void set_Recipient(string value)
+private Byte[] GetCipherValue(CipherData cipherData)
+public XmlElement GetIdElement(XmlDocument document, string idValue)
+public Byte[] GetDecryptionIV(EncryptedData encryptedData, string symmetricAlgorithmUri)
+public SymmetricAlgorithm GetDecryptionKey(EncryptedData encryptedData, string symmetricAlgorithmUri)
+public Byte[] DecryptEncryptedKey(EncryptedKey encryptedKey)
 public void AddKeyNameMapping(string keyName, object keyObject)
 public void ClearKeyNameMappings()
-public Byte[] DecryptData(EncryptedData encryptedData, SymmetricAlgorithm symAlg)
-public void DecryptDocument()
-public Byte[] DecryptEncryptedKey(EncryptedKey encryptedKey)
-public Byte[] DecryptKey(Byte[] keyData, SymmetricAlgorithm symAlg)
-public Byte[] DecryptKey(Byte[] keyData, RSA rsa, bool fOAEP)
-public EncryptedData Encrypt(XmlElement inputElement, string keyName)
 public EncryptedData Encrypt(XmlElement inputElement, X509Certificate2 certificate)
-public Byte[] EncryptData(Byte[] plainText, SymmetricAlgorithm symAlg)
-private Byte[] EncryptDataCore(Byte[] plainText, SymmetricAlgorithm symAlg)
-public Byte[] EncryptData(XmlElement inputElement, SymmetricAlgorithm symAlg, bool content)
-public Byte[] EncryptKey(Byte[] keyData, SymmetricAlgorithm symAlg)
-public Byte[] EncryptKey(Byte[] keyData, RSA rsa, bool fOAEP)
-private SymmetricAlgorithm GetAlgorithm(string symAlgUri)
-private string GetAlgorithmUri(SymmetricAlgorithm symAlg)
-private string GetKeyWrapAlgorithmUri(object keyAlg)
-public Byte[] GetDecryptionIV(EncryptedData encryptedData, string symAlgUri)
-public SymmetricAlgorithm GetDecryptionKey(EncryptedData encryptedData, string symAlgUri)
-public XmlElement GetIdElement(XmlDocument document, string idValue)
+public EncryptedData Encrypt(XmlElement inputElement, string keyName)
+public void DecryptDocument()
+public Byte[] EncryptData(Byte[] plaintext, SymmetricAlgorithm symmetricAlgorithm)
+public Byte[] EncryptData(XmlElement inputElement, SymmetricAlgorithm symmetricAlgorithm, bool content)
+public Byte[] DecryptData(EncryptedData encryptedData, SymmetricAlgorithm symmetricAlgorithm)
 public void ReplaceData(XmlElement inputElement, Byte[] decryptedData)
 public void ReplaceElement(XmlElement inputElement, EncryptedData encryptedData, bool content)
-private Byte[] Transform(Byte[] data, ICryptoTransform transform)
-private Byte[] Transform(Byte[] data, ICryptoTransform transform, int blockOctetCount, bool trimPadding)
+public Byte[] EncryptKey(Byte[] keyData, SymmetricAlgorithm symmetricAlgorithm)
+public Byte[] EncryptKey(Byte[] keyData, RSA rsa, bool useOAEP)
+public Byte[] DecryptKey(Byte[] keyData, SymmetricAlgorithm symmetricAlgorithm)
+public Byte[] DecryptKey(Byte[] keyData, RSA rsa, bool useOAEP)
 }
 public System.Security.Cryptography.Xml.EncryptionMethod : object {
-private string algorithm
-private int keySize
-private Dictionary`2<string, int> <>f__switch$mapA
-public string KeyAlgorithm
+private XmlElement _cachedXml
+private int _keySize
+private string _algorithm
+private bool CacheValid
 public int KeySize
-public void .ctor(string strAlgorithm)
-public string get_KeyAlgorithm()
-public void set_KeyAlgorithm(string value)
+public string KeyAlgorithm
+public void .ctor(string algorithm)
+private bool get_CacheValid()
 public int get_KeySize()
 public void set_KeySize(int value)
+public string get_KeyAlgorithm()
+public void set_KeyAlgorithm(string value)
 public XmlElement GetXml()
 internal XmlElement GetXml(XmlDocument document)
 public void LoadXml(XmlElement value)
 }
 public System.Security.Cryptography.Xml.EncryptionProperty : object {
-private XmlElement elemProp
-private string id
-private string target
+private string _target
+private string _id
+private XmlElement _elemProp
+private XmlElement _cachedXml
 public string Id
-public XmlElement PropertyElement
 public string Target
-public void .ctor(XmlElement elemProp)
+public XmlElement PropertyElement
+private bool CacheValid
+public void .ctor(XmlElement elementProperty)
 public string get_Id()
+public string get_Target()
 public XmlElement get_PropertyElement()
 public void set_PropertyElement(XmlElement value)
-public string get_Target()
+private bool get_CacheValid()
 public XmlElement GetXml()
 internal XmlElement GetXml(XmlDocument document)
 public void LoadXml(XmlElement value)
 }
 public System.Security.Cryptography.Xml.EncryptionPropertyCollection : object {
-private ArrayList list
-private object System.Collections.IList.Item
+private ArrayList _props
 public int Count
 public bool IsFixedSize
 public bool IsReadOnly
-public bool IsSynchronized
 public EncryptionProperty ItemOf
+private object System.Collections.IList.Item
 public object SyncRoot
-private object System.Collections.IList.get_Item(int index)
-private void System.Collections.IList.set_Item(int index, object value)
-private bool System.Collections.IList.Contains(object value)
-private int System.Collections.IList.Add(object value)
-private int System.Collections.IList.IndexOf(object value)
-private void System.Collections.IList.Insert(int index, object value)
-private void System.Collections.IList.Remove(object value)
+public bool IsSynchronized
+public IEnumerator GetEnumerator()
 public int get_Count()
-public bool get_IsFixedSize()
-public bool get_IsReadOnly()
-public bool get_IsSynchronized()
-public EncryptionProperty get_ItemOf(int index)
-public void set_ItemOf(int index, EncryptionProperty value)
-public object get_SyncRoot()
+private int System.Collections.IList.Add(object value)
 public int Add(EncryptionProperty value)
 public void Clear()
+private bool System.Collections.IList.Contains(object value)
 public bool Contains(EncryptionProperty value)
-public void CopyTo(Array array, int index)
-public void CopyTo(EncryptionProperty[] array, int index)
-public IEnumerator GetEnumerator()
+private int System.Collections.IList.IndexOf(object value)
 public int IndexOf(EncryptionProperty value)
+private void System.Collections.IList.Insert(int index, object value)
 public void Insert(int index, EncryptionProperty value)
-public EncryptionProperty Item(int index)
+private void System.Collections.IList.Remove(object value)
 public void Remove(EncryptionProperty value)
 public void RemoveAt(int index)
+public bool get_IsFixedSize()
+public bool get_IsReadOnly()
+public EncryptionProperty Item(int index)
+public EncryptionProperty get_ItemOf(int index)
+public void set_ItemOf(int index, EncryptionProperty value)
+private object System.Collections.IList.get_Item(int index)
+private void System.Collections.IList.set_Item(int index, object value)
+public void CopyTo(Array array, int index)
+public void CopyTo(EncryptionProperty[] array, int index)
+public object get_SyncRoot()
+public bool get_IsSynchronized()
+}
+internal System.Security.Cryptography.Xml.ExcAncestralNamespaceContextManager : AncestralNamespaceContextManager {
+private Hashtable _inclusivePrefixSet
+internal void .ctor(string inclusiveNamespacesPrefixList)
+private bool HasNonRedundantInclusivePrefix(XmlAttribute attr)
+private void GatherNamespaceToRender(string nsPrefix, SortedList nsListToRender, Hashtable nsLocallyDeclared)
+internal void GetNamespacesToRender(XmlElement element, SortedList attrListToRender, SortedList nsListToRender, Hashtable nsLocallyDeclared)
+internal void TrackNamespaceNode(XmlAttribute attr, SortedList nsListToRender, Hashtable nsLocallyDeclared)
+internal void TrackXmlNamespaceNode(XmlAttribute attr, SortedList nsListToRender, SortedList attrListToRender, Hashtable nsLocallyDeclared)
+}
+internal System.Security.Cryptography.Xml.ExcCanonicalXml : object {
+private CanonicalXmlDocument _c14nDoc
+private ExcAncestralNamespaceContextManager _ancMgr
+internal void .ctor(Stream inputStream, bool includeComments, string inclusiveNamespacesPrefixList, XmlResolver resolver, string strBaseUri)
+internal void .ctor(XmlDocument document, bool includeComments, string inclusiveNamespacesPrefixList, XmlResolver resolver)
+internal void .ctor(XmlNodeList nodeList, bool includeComments, string inclusiveNamespacesPrefixList, XmlResolver resolver)
+internal Byte[] GetBytes()
+internal Byte[] GetDigestedBytes(HashAlgorithm hash)
+private void MarkInclusionStateForNodes(XmlNodeList nodeList, XmlDocument inputRoot, XmlDocument root)
+private void MarkNodeAsIncluded(XmlNode node)
+}
+internal System.Security.Cryptography.Xml.ICanonicalizableNode {
+public bool IsInNodeSet
+public bool get_IsInNodeSet()
+public void set_IsInNodeSet(bool value)
+public void Write(StringBuilder strBuilder, DocPosition docPos, AncestralNamespaceContextManager anc)
+public void WriteHash(HashAlgorithm hash, DocPosition docPos, AncestralNamespaceContextManager anc)
 }
 public System.Security.Cryptography.Xml.IRelDecryptor {
 public Stream Decrypt(EncryptionMethod encryptionMethod, KeyInfo keyInfo, Stream toDecrypt)
 }
 public System.Security.Cryptography.Xml.KeyInfo : object {
-private ArrayList Info
-private string id
-private Dictionary`2<string, int> <>f__switch$mapB
-private Dictionary`2<string, int> <>f__switch$mapC
-public int Count
+private string _id
+private ArrayList _keyInfoClauses
 public string Id
-public int get_Count()
+public int Count
 public string get_Id()
 public void set_Id(string value)
+public XmlElement GetXml()
+internal XmlElement GetXml(XmlDocument xmlDocument)
+public void LoadXml(XmlElement value)
+public int get_Count()
 public void AddClause(KeyInfoClause clause)
 public IEnumerator GetEnumerator()
 public IEnumerator GetEnumerator(Type requestedObjectType)
-public XmlElement GetXml()
-public void LoadXml(XmlElement value)
 }
 public System.Security.Cryptography.Xml.KeyInfoClause : object {
 public XmlElement GetXml()
+internal XmlElement GetXml(XmlDocument xmlDocument)
 public void LoadXml(XmlElement element)
 }
 public System.Security.Cryptography.Xml.KeyInfoEncryptedKey : KeyInfoClause {
-private EncryptedKey encryptedKey
+private EncryptedKey _encryptedKey
 public EncryptedKey EncryptedKey
-public void .ctor(EncryptedKey ek)
+public void .ctor(EncryptedKey encryptedKey)
 public EncryptedKey get_EncryptedKey()
 public void set_EncryptedKey(EncryptedKey value)
 public XmlElement GetXml()
-internal XmlElement GetXml(XmlDocument document)
+internal XmlElement GetXml(XmlDocument xmlDocument)
 public void LoadXml(XmlElement value)
 }
 public System.Security.Cryptography.Xml.KeyInfoName : KeyInfoClause {
-private string name
+private string _keyName
 public string Value
 public void .ctor(string keyName)
 public string get_Value()
 public void set_Value(string value)
 public XmlElement GetXml()
+internal XmlElement GetXml(XmlDocument xmlDocument)
 public void LoadXml(XmlElement value)
 }
 public System.Security.Cryptography.Xml.KeyInfoNode : KeyInfoClause {
-private XmlElement Node
+private XmlElement _node
 public XmlElement Value
 public void .ctor(XmlElement node)
 public XmlElement get_Value()
 public void set_Value(XmlElement value)
 public XmlElement GetXml()
+internal XmlElement GetXml(XmlDocument xmlDocument)
 public void LoadXml(XmlElement value)
 }
 public System.Security.Cryptography.Xml.KeyInfoRetrievalMethod : KeyInfoClause {
-private string URI
-private XmlElement element
-private string type
-public string Type
+private string _uri
+private string _type
 public string Uri
+public string Type
 public void .ctor(string strUri)
-public void .ctor(string strUri, string strType)
-public string get_Type()
-public void set_Type(string value)
+public void .ctor(string strUri, string typeName)
 public string get_Uri()
 public void set_Uri(string value)
+public string get_Type()
+public void set_Type(string value)
 public XmlElement GetXml()
+internal XmlElement GetXml(XmlDocument xmlDocument)
 public void LoadXml(XmlElement value)
 }
 public System.Security.Cryptography.Xml.KeyInfoX509Data : KeyInfoClause {
@@ -993,7 +1307,7 @@ public void LoadXml(XmlElement element)
 }
 public System.Security.Cryptography.Xml.KeyReference : EncryptedReference {
 public void .ctor(string uri)
-public void .ctor(string uri, TransformChain tc)
+public void .ctor(string uri, TransformChain transformChain)
 }
 internal System.Security.Cryptography.Xml.Manifest : object {
 private ArrayList references
@@ -1010,77 +1324,136 @@ public XmlElement GetXml()
 private string GetAttribute(XmlElement xel, string attribute)
 public void LoadXml(XmlElement value)
 }
+internal System.Security.Cryptography.Xml.MyXmlDocument : XmlDocument {
+protected XmlAttribute CreateDefaultAttribute(string prefix, string localName, string namespaceURI)
+}
+internal System.Security.Cryptography.Xml.NamespaceFrame : object {
+private Hashtable _rendered
+private Hashtable _unrendered
+internal void AddRendered(XmlAttribute attr)
+internal XmlAttribute GetRendered(string nsPrefix)
+internal void AddUnrendered(XmlAttribute attr)
+internal XmlAttribute GetUnrendered(string nsPrefix)
+internal Hashtable GetUnrendered()
+}
+internal System.Security.Cryptography.Xml.NamespaceSortOrder : object {
+public int Compare(object a, object b)
+}
 public System.Security.Cryptography.Xml.Reference : object {
-private TransformChain chain
-private string digestMethod
-private Byte[] digestValue
-private string id
-private string uri
-private string type
-private Stream stream
-private XmlElement element
+internal string DefaultDigestMethod
+private string _id
+private string _uri
+private string _type
+private TransformChain _transformChain
+private string _digestMethod
+private Byte[] _digestValue
+private HashAlgorithm _hashAlgorithm
+private object _refTarget
+private ReferenceTargetType _refTargetType
+private XmlElement _cachedXml
+private SignedXml _signedXml
+internal CanonicalXmlNodeList _namespaces
+public string Id
+public string Uri
+public string Type
 public string DigestMethod
 public Byte[] DigestValue
-public string Id
 public TransformChain TransformChain
-public string Type
-public string Uri
+internal bool CacheValid
+internal SignedXml SignedXml
+internal ReferenceTargetType ReferenceTargetType
 public void .ctor(Stream stream)
 public void .ctor(string uri)
+internal void .ctor(XmlElement element)
+public string get_Id()
+public void set_Id(string value)
+public string get_Uri()
+public void set_Uri(string value)
+public string get_Type()
+public void set_Type(string value)
 public string get_DigestMethod()
 public void set_DigestMethod(string value)
 public Byte[] get_DigestValue()
 public void set_DigestValue(Byte[] value)
-public string get_Id()
-public void set_Id(string value)
 public TransformChain get_TransformChain()
 public void set_TransformChain(TransformChain value)
-public string get_Type()
-public void set_Type(string value)
-public string get_Uri()
-public void set_Uri(string value)
-public void AddTransform(Transform transform)
+internal bool get_CacheValid()
+internal SignedXml get_SignedXml()
+internal void set_SignedXml(SignedXml value)
+internal ReferenceTargetType get_ReferenceTargetType()
 public XmlElement GetXml()
-private string GetAttribute(XmlElement xel, string attribute)
+internal XmlElement GetXml(XmlDocument document)
 public void LoadXml(XmlElement value)
+public void AddTransform(Transform transform)
+internal void UpdateHashValue(XmlDocument document, CanonicalXmlNodeList refList)
+internal Byte[] CalculateHashValue(XmlDocument document, CanonicalXmlNodeList refList)
 }
 public System.Security.Cryptography.Xml.ReferenceList : object {
-private ArrayList list
+private ArrayList _references
+public int Count
+public EncryptedReference ItemOf
 private object System.Collections.IList.Item
 private bool System.Collections.IList.IsFixedSize
 private bool System.Collections.IList.IsReadOnly
-public int Count
-public bool IsSynchronized
-public EncryptedReference ItemOf
 public object SyncRoot
-private object System.Collections.IList.get_Item(int index)
-private void System.Collections.IList.set_Item(int index, object value)
-private bool System.Collections.IList.get_IsFixedSize()
-private bool System.Collections.IList.get_IsReadOnly()
+public bool IsSynchronized
+public IEnumerator GetEnumerator()
 public int get_Count()
-public bool get_IsSynchronized()
-public EncryptedReference get_ItemOf(int index)
-public void set_ItemOf(int index, EncryptedReference value)
-public object get_SyncRoot()
 public int Add(object value)
 public void Clear()
 public bool Contains(object value)
-public void CopyTo(Array array, int index)
-public IEnumerator GetEnumerator()
-public EncryptedReference Item(int index)
 public int IndexOf(object value)
 public void Insert(int index, object value)
 public void Remove(object value)
 public void RemoveAt(int index)
+public EncryptedReference Item(int index)
+public EncryptedReference get_ItemOf(int index)
+public void set_ItemOf(int index, EncryptedReference value)
+private object System.Collections.IList.get_Item(int index)
+private void System.Collections.IList.set_Item(int index, object value)
+public void CopyTo(Array array, int index)
+private bool System.Collections.IList.get_IsFixedSize()
+private bool System.Collections.IList.get_IsReadOnly()
+public object get_SyncRoot()
+public bool get_IsSynchronized()
+}
+internal System.Security.Cryptography.Xml.ReferenceTargetType : Enum {
+public int value__
+public ReferenceTargetType Stream
+public ReferenceTargetType XmlElement
+public ReferenceTargetType UriReference
 }
 public System.Security.Cryptography.Xml.RSAKeyValue : KeyInfoClause {
-private RSA rsa
+private RSA _key
+private string KeyValueElementName
+private string RSAKeyValueElementName
+private string ModulusElementName
+private string ExponentElementName
 public RSA Key
 public void .ctor(RSA key)
 public RSA get_Key()
 public void set_Key(RSA value)
 public XmlElement GetXml()
+internal XmlElement GetXml(XmlDocument xmlDocument)
 public void LoadXml(XmlElement value)
+}
+internal System.Security.Cryptography.Xml.RSAPKCS1SHA1SignatureDescription : RSAPKCS1SignatureDescription {
+public HashAlgorithm CreateDigest()
+}
+internal System.Security.Cryptography.Xml.RSAPKCS1SHA256SignatureDescription : RSAPKCS1SignatureDescription {
+public HashAlgorithm CreateDigest()
+}
+internal System.Security.Cryptography.Xml.RSAPKCS1SHA384SignatureDescription : RSAPKCS1SignatureDescription {
+public HashAlgorithm CreateDigest()
+}
+internal System.Security.Cryptography.Xml.RSAPKCS1SHA512SignatureDescription : RSAPKCS1SignatureDescription {
+public HashAlgorithm CreateDigest()
+}
+internal System.Security.Cryptography.Xml.RSAPKCS1SignatureDescription : SignatureDescription {
+public void .ctor(string hashAlgorithmName)
+public AsymmetricSignatureDeformatter CreateDeformatter(AsymmetricAlgorithm key)
+public AsymmetricSignatureFormatter CreateFormatter(AsymmetricAlgorithm key)
+public HashAlgorithm CreateDigest()
 }
 public System.Security.Cryptography.Xml.Signature : object {
 private XmlNamespaceManager dsigNsmgr
@@ -1151,23 +1524,29 @@ private string GetAttribute(XmlElement xel, string attribute)
 public void LoadXml(XmlElement value)
 }
 public System.Security.Cryptography.Xml.SignedXml : object {
+public string XmlDsigNamespaceUrl
+public string XmlDsigMinimalCanonicalizationUrl
 public string XmlDsigCanonicalizationUrl
 public string XmlDsigCanonicalizationWithCommentsUrl
-public string XmlDsigDSAUrl
-public string XmlDsigHMACSHA1Url
-public string XmlDsigMinimalCanonicalizationUrl
-public string XmlDsigNamespaceUrl
-public string XmlDsigRSASHA1Url
 public string XmlDsigSHA1Url
-public string XmlDecryptionTransformUrl
-public string XmlDsigBase64TransformUrl
+public string XmlDsigDSAUrl
+public string XmlDsigRSASHA1Url
+public string XmlDsigHMACSHA1Url
+public string XmlDsigSHA256Url
+public string XmlDsigRSASHA256Url
+public string XmlDsigSHA384Url
+public string XmlDsigRSASHA384Url
+public string XmlDsigSHA512Url
+public string XmlDsigRSASHA512Url
 public string XmlDsigC14NTransformUrl
 public string XmlDsigC14NWithCommentsTransformUrl
-public string XmlDsigEnvelopedSignatureTransformUrl
 public string XmlDsigExcC14NTransformUrl
 public string XmlDsigExcC14NWithCommentsTransformUrl
+public string XmlDsigBase64TransformUrl
 public string XmlDsigXPathTransformUrl
 public string XmlDsigXsltTransformUrl
+public string XmlDsigEnvelopedSignatureTransformUrl
+public string XmlDecryptionTransformUrl
 public string XmlLicenseTransformUrl
 private EncryptedXml encryptedXml
 protected Signature m_signature
@@ -1177,7 +1556,9 @@ private XmlDocument envdoc
 private IEnumerator pkEnumerator
 private XmlElement signatureElement
 private Hashtable hashes
-private XmlResolver xmlResolver
+internal XmlResolver _xmlResolver
+private bool _bResolverSet
+internal XmlElement _context
 private ArrayList manifests
 private IEnumerator _x509Enumerator
 private Char[] whitespaceChars
@@ -1191,6 +1572,7 @@ public SignedInfo SignedInfo
 public AsymmetricAlgorithm SigningKey
 public string SigningKeyName
 public XmlResolver Resolver
+internal bool ResolverSet
 public void .ctor(XmlDocument document)
 public void .ctor(XmlElement elem)
 public EncryptedXml get_EncryptedXml()
@@ -1206,6 +1588,8 @@ public AsymmetricAlgorithm get_SigningKey()
 public void set_SigningKey(AsymmetricAlgorithm value)
 public string get_SigningKeyName()
 public void set_SigningKeyName(string value)
+public void set_Resolver(XmlResolver value)
+internal bool get_ResolverSet()
 public void AddObject(DataObject dataObject)
 public void AddReference(Reference reference)
 private Stream ApplyTransform(Transform t, XmlDocument input)
@@ -1229,60 +1613,171 @@ public bool CheckSignatureReturningKey(AsymmetricAlgorithm& signingKey)
 public void ComputeSignature()
 public void ComputeSignature(KeyedHashAlgorithm macAlg)
 public XmlElement GetIdElement(XmlDocument document, string idValue)
+internal XmlElement DefaultGetIdElement(XmlDocument document, string idValue)
+private XmlElement GetSingleReferenceTarget(XmlDocument document, string idAttributeName, string idValue)
 protected AsymmetricAlgorithm GetPublicKey()
 public XmlElement GetXml()
 public void LoadXml(XmlElement value)
-public void set_Resolver(XmlResolver value)
+}
+internal System.Security.Cryptography.Xml.SignedXmlDebugLog : object {
+private string NullString
+private TraceSource s_traceSource
+private Boolean modreq(System.Runtime.CompilerServices.IsVolatile) s_haveVerboseLogging
+private Boolean modreq(System.Runtime.CompilerServices.IsVolatile) s_verboseLogging
+private Boolean modreq(System.Runtime.CompilerServices.IsVolatile) s_haveInformationLogging
+private Boolean modreq(System.Runtime.CompilerServices.IsVolatile) s_informationLogging
+private bool InformationLoggingEnabled
+private bool VerboseLoggingEnabled
+private bool get_InformationLoggingEnabled()
+private bool get_VerboseLoggingEnabled()
+private string FormatBytes(Byte[] bytes)
+private string GetKeyName(object key)
+private string GetObjectId(object o)
+private string GetOidName(Oid oid)
+internal void LogBeginCanonicalization(SignedXml signedXml, Transform canonicalizationTransform)
+internal void LogBeginCheckSignatureFormat(SignedXml signedXml, Func`2<SignedXml, bool> formatValidator)
+internal void LogBeginCheckSignedInfo(SignedXml signedXml, SignedInfo signedInfo)
+internal void LogBeginSignatureComputation(SignedXml signedXml, XmlElement context)
+internal void LogBeginSignatureVerification(SignedXml signedXml, XmlElement context)
+internal void LogCanonicalizedOutput(SignedXml signedXml, Transform canonicalizationTransform)
+internal void LogFormatValidationResult(SignedXml signedXml, bool result)
+internal void LogUnsafeCanonicalizationMethod(SignedXml signedXml, string algorithm, IEnumerable`1<string> validAlgorithms)
+internal void LogUnsafeTransformMethod(SignedXml signedXml, string algorithm, IEnumerable`1<string> validC14nAlgorithms, IEnumerable`1<string> validTransformAlgorithms)
+internal void LogNamespacePropagation(SignedXml signedXml, XmlNodeList namespaces)
+internal Stream LogReferenceData(Reference reference, Stream data)
+internal void LogSigning(SignedXml signedXml, object key, SignatureDescription signatureDescription, HashAlgorithm hash, AsymmetricSignatureFormatter asymmetricSignatureFormatter)
+internal void LogSigning(SignedXml signedXml, KeyedHashAlgorithm key)
+internal void LogSigningReference(SignedXml signedXml, Reference reference)
+internal void LogVerificationFailure(SignedXml signedXml, string failureLocation)
+internal void LogVerificationResult(SignedXml signedXml, object key, bool verified)
+internal void LogVerifyKeyUsage(SignedXml signedXml, X509Certificate certificate, X509KeyUsageExtension keyUsages)
+internal void LogVerifyReference(SignedXml signedXml, Reference reference)
+internal void LogVerifyReferenceHash(SignedXml signedXml, Reference reference, Byte[] actualHash, Byte[] expectedHash)
+internal void LogVerifySignedInfo(SignedXml signedXml, AsymmetricAlgorithm key, SignatureDescription signatureDescription, HashAlgorithm hashAlgorithm, AsymmetricSignatureDeformatter asymmetricSignatureDeformatter, Byte[] actualHashValue, Byte[] signatureValue)
+internal void LogVerifySignedInfo(SignedXml signedXml, KeyedHashAlgorithm mac, Byte[] actualHashValue, Byte[] signatureValue)
+internal void LogVerifyX509Chain(SignedXml signedXml, X509Chain chain, X509Certificate certificate)
+internal void LogSignedXmlRecursionLimit(SignedXml signedXml, Reference reference)
+private void WriteLine(object source, TraceEventType eventType, SignedXmlDebugEvent eventId, string data)
 }
 internal System.Security.Cryptography.Xml.SymmetricKeyWrap : object {
-public Byte[] AESKeyWrapEncrypt(Byte[] rgbKey, Byte[] rgbWrappedKeyData)
-public Byte[] AESKeyWrapDecrypt(Byte[] rgbKey, Byte[] rgbEncryptedWrappedKeyData)
-public Byte[] TripleDESKeyWrapEncrypt(Byte[] rgbKey, Byte[] rgbWrappedKeyData)
-public Byte[] TripleDESKeyWrapDecrypt(Byte[] rgbKey, Byte[] rgbEncryptedWrappedKeyData)
-private Byte[] Transform(Byte[] data, ICryptoTransform t)
-private Byte[] ComputeCMSKeyChecksum(Byte[] data)
-private Byte[] Concatenate(Byte[] buf1, Byte[] buf2)
-private Byte[] MSB(Byte[] input)
-private Byte[] MSB(Byte[] input, int bytes)
-private Byte[] LSB(Byte[] input)
-private Byte[] LSB(Byte[] input, int bytes)
-private Byte[] Xor(Byte[] x, Byte[] y)
+private Byte[] s_rgbTripleDES_KW_IV
+private Byte[] s_rgbAES_KW_IV
+internal Byte[] TripleDESKeyWrapEncrypt(Byte[] rgbKey, Byte[] rgbWrappedKeyData)
+internal Byte[] TripleDESKeyWrapDecrypt(Byte[] rgbKey, Byte[] rgbEncryptedWrappedKeyData)
+internal Byte[] AESKeyWrapEncrypt(Byte[] rgbKey, Byte[] rgbWrappedKeyData)
+internal Byte[] AESKeyWrapDecrypt(Byte[] rgbKey, Byte[] rgbEncryptedWrappedKeyData)
 }
 public System.Security.Cryptography.Xml.Transform : object {
-private string algo
-private XmlResolver xmlResolver
-private Hashtable propagated_namespaces
+private string _algorithm
+private string _baseUri
+internal XmlResolver _xmlResolver
+private bool _bResolverSet
+private SignedXml _signedXml
+private Reference _reference
+private Hashtable _propagatedNamespaces
+private XmlElement _context
+internal string BaseURI
+internal SignedXml SignedXml
+internal Reference Reference
 public string Algorithm
+public XmlResolver Resolver
+internal bool ResolverSet
 public Type[] InputTypes
 public Type[] OutputTypes
-public XmlResolver Resolver
 public XmlElement Context
 public Hashtable PropagatedNamespaces
+internal string get_BaseURI()
+internal void set_BaseURI(string value)
+internal SignedXml get_SignedXml()
+internal void set_SignedXml(SignedXml value)
+internal Reference get_Reference()
+internal void set_Reference(Reference value)
 public string get_Algorithm()
 public void set_Algorithm(string value)
+public void set_Resolver(XmlResolver value)
+internal XmlResolver get_Resolver()
+internal bool get_ResolverSet()
 public Type[] get_InputTypes()
 public Type[] get_OutputTypes()
-public void set_Resolver(XmlResolver value)
+internal bool AcceptsType(Type inputType)
+public XmlElement GetXml()
+internal XmlElement GetXml(XmlDocument document)
+internal XmlElement GetXml(XmlDocument document, string name)
+public void LoadInnerXml(XmlNodeList nodeList)
+protected XmlNodeList GetInnerXml()
+public void LoadInput(object obj)
+public object GetOutput()
+public object GetOutput(Type type)
+public Byte[] GetDigestedOutput(HashAlgorithm hash)
 public XmlElement get_Context()
 public void set_Context(XmlElement value)
 public Hashtable get_PropagatedNamespaces()
-public Byte[] GetDigestedOutput(HashAlgorithm hash)
-protected XmlNodeList GetInnerXml()
-public object GetOutput()
-public object GetOutput(Type type)
-public XmlElement GetXml()
-public void LoadInnerXml(XmlNodeList nodeList)
-public void LoadInput(object obj)
-internal XmlResolver GetResolver()
 }
 public System.Security.Cryptography.Xml.TransformChain : object {
-private ArrayList chain
+private ArrayList _transforms
 public int Count
 public Transform Item
-public int get_Count()
-public Transform get_Item(int index)
 public void Add(Transform transform)
 public IEnumerator GetEnumerator()
+public int get_Count()
+public Transform get_Item(int index)
+internal Stream TransformToOctetStream(object inputObject, Type inputType, XmlResolver resolver, string baseUri)
+internal Stream TransformToOctetStream(Stream input, XmlResolver resolver, string baseUri)
+internal Stream TransformToOctetStream(XmlDocument document, XmlResolver resolver, string baseUri)
+internal XmlElement GetXml(XmlDocument document, string ns)
+internal void LoadXml(XmlElement value)
+}
+internal System.Security.Cryptography.Xml.Utils : object {
+internal int MaxCharactersInDocument
+internal long MaxCharactersFromEntities
+internal int XmlDsigSearchDepth
+private Char[] s_hexValues
+private bool HasNamespace(XmlElement element, string prefix, string value)
+internal bool IsCommittedNamespace(XmlElement element, string prefix, string value)
+internal bool IsRedundantNamespace(XmlElement element, string prefix, string value)
+internal string GetAttribute(XmlElement element, string localName, string namespaceURI)
+internal bool HasAttribute(XmlElement element, string localName, string namespaceURI)
+internal bool IsNamespaceNode(XmlNode n)
+internal bool IsXmlNamespaceNode(XmlNode n)
+internal bool IsDefaultNamespaceNode(XmlNode n)
+internal bool IsEmptyDefaultNamespaceNode(XmlNode n)
+internal string GetNamespacePrefix(XmlAttribute a)
+internal bool HasNamespacePrefix(XmlAttribute a, string nsPrefix)
+internal bool IsNonRedundantNamespaceDecl(XmlAttribute a, XmlAttribute nearestAncestorWithSamePrefix)
+internal bool IsXmlPrefixDefinitionNode(XmlAttribute a)
+internal string DiscardWhiteSpaces(string inputBuffer)
+internal string DiscardWhiteSpaces(string inputBuffer, int inputOffset, int inputCount)
+internal void SBReplaceCharWithString(StringBuilder sb, char oldChar, string newString)
+internal XmlReader PreProcessStreamInput(Stream inputStream, XmlResolver xmlResolver, string baseUri)
+internal XmlReaderSettings GetSecureXmlReaderSettings(XmlResolver xmlResolver)
+internal XmlDocument PreProcessDocumentInput(XmlDocument document, XmlResolver xmlResolver, string baseUri)
+internal XmlDocument PreProcessElementInput(XmlElement elem, XmlResolver xmlResolver, string baseUri)
+internal XmlDocument DiscardComments(XmlDocument document)
+internal XmlNodeList AllDescendantNodes(XmlNode node, bool includeComments)
+internal bool NodeInList(XmlNode node, XmlNodeList nodeList)
+internal string GetIdFromLocalUri(string uri, Boolean& discardComments)
+internal string ExtractIdFromLocalUri(string uri)
+internal void RemoveAllChildren(XmlElement inputElement)
+internal long Pump(Stream input, Stream output)
+internal Hashtable TokenizePrefixListString(string s)
+internal string EscapeWhitespaceData(string data)
+internal string EscapeTextData(string data)
+internal string EscapeCData(string data)
+internal string EscapeAttributeValue(string value)
+internal XmlDocument GetOwnerDocument(XmlNodeList nodeList)
+internal void AddNamespaces(XmlElement elem, CanonicalXmlNodeList namespaces)
+internal void AddNamespaces(XmlElement elem, Hashtable namespaces)
+internal CanonicalXmlNodeList GetPropagatedAttributes(XmlElement elem)
+internal Byte[] ConvertIntToByteArray(int dwInput)
+internal int ConvertByteArrayToInt(Byte[] input)
+internal int GetHexArraySize(Byte[] hex)
+internal X509Certificate2Collection BuildBagOfCerts(KeyInfoX509Data keyInfoX509Data, CertUsageType certUsageType)
+internal string EncodeHexString(Byte[] sArray)
+internal string EncodeHexString(Byte[] sArray, UInt32 start, UInt32 end)
+internal Byte[] DecodeHexString(string s)
+internal byte HexToByte(char val)
+internal bool IsSelfSigned(X509Chain chain)
+internal AsymmetricAlgorithm GetAnyPublicKey(X509Certificate2 certificate)
 }
 public System.Security.Cryptography.Xml.X509IssuerSerial : ValueType {
 private string _issuerName
@@ -1296,83 +1791,99 @@ public string get_SerialNumber()
 public void set_SerialNumber(string value)
 }
 public System.Security.Cryptography.Xml.XmlDecryptionTransform : Transform {
-private string NamespaceUri
-private EncryptedXml encryptedXml
-private Type[] inputTypes
-private Type[] outputTypes
-private object inputObj
-private ArrayList exceptUris
+private Type[] _inputTypes
+private Type[] _outputTypes
+private XmlNodeList _encryptedDataList
+private ArrayList _arrayListUri
+private EncryptedXml _exml
+private XmlDocument _containingDocument
+private XmlNamespaceManager _nsm
+private string XmlDecryptionTransformNamespaceUrl
+private ArrayList ExceptUris
 public EncryptedXml EncryptedXml
 public Type[] InputTypes
 public Type[] OutputTypes
+private ArrayList get_ExceptUris()
+protected bool IsTargetElement(XmlElement inputElement, string idValue)
 public EncryptedXml get_EncryptedXml()
 public void set_EncryptedXml(EncryptedXml value)
 public Type[] get_InputTypes()
 public Type[] get_OutputTypes()
 public void AddExceptUri(string uri)
-private void ClearExceptUris()
+public void LoadInnerXml(XmlNodeList nodeList)
 protected XmlNodeList GetInnerXml()
+public void LoadInput(object obj)
+private void LoadStreamInput(Stream stream)
+private void LoadXmlDocumentInput(XmlDocument document)
+private void ReplaceEncryptedData(XmlElement encryptedDataElement, Byte[] decrypted)
+private bool ProcessEncryptedDataItem(XmlElement encryptedDataElement)
+private void ProcessElementRecursively(XmlNodeList encryptedDatas)
 public object GetOutput()
 public object GetOutput(Type type)
-protected bool IsTargetElement(XmlElement inputElement, string idValue)
-public void LoadInnerXml(XmlNodeList nodeList)
-public void LoadInput(object obj)
 }
 public System.Security.Cryptography.Xml.XmlDsigBase64Transform : Transform {
-private CryptoStream cs
-private Type[] input
-private Type[] output
+private Type[] _inputTypes
+private Type[] _outputTypes
+private CryptoStream _cs
 public Type[] InputTypes
 public Type[] OutputTypes
 public Type[] get_InputTypes()
 public Type[] get_OutputTypes()
+public void LoadInnerXml(XmlNodeList nodeList)
 protected XmlNodeList GetInnerXml()
+public void LoadInput(object obj)
+private void LoadStreamInput(Stream inputStream)
+private void LoadXmlNodeListInput(XmlNodeList nodeList)
 public object GetOutput()
 public object GetOutput(Type type)
-public void LoadInnerXml(XmlNodeList nodeList)
-public void LoadInput(object obj)
 }
 public System.Security.Cryptography.Xml.XmlDsigC14NTransform : Transform {
-private Type[] input
-private Type[] output
-private XmlCanonicalizer canonicalizer
-private Stream s
+private Type[] _inputTypes
+private Type[] _outputTypes
+private CanonicalXml _cXml
+private bool _includeComments
 public Type[] InputTypes
 public Type[] OutputTypes
 public void .ctor(bool includeComments)
 public Type[] get_InputTypes()
 public Type[] get_OutputTypes()
+public void LoadInnerXml(XmlNodeList nodeList)
 protected XmlNodeList GetInnerXml()
-public Byte[] GetDigestedOutput(HashAlgorithm hash)
+public void LoadInput(object obj)
 public object GetOutput()
 public object GetOutput(Type type)
-public void LoadInnerXml(XmlNodeList nodeList)
-public void LoadInput(object obj)
+public Byte[] GetDigestedOutput(HashAlgorithm hash)
 }
 public System.Security.Cryptography.Xml.XmlDsigEnvelopedSignatureTransform : Transform {
-private Type[] input
-private Type[] output
-private bool comments
-private object inputObj
+private Type[] _inputTypes
+private Type[] _outputTypes
+private XmlNodeList _inputNodeList
+private bool _includeComments
+private XmlNamespaceManager _nsm
+private XmlDocument _containingDocument
+private int _signaturePosition
+internal int SignaturePosition
 public Type[] InputTypes
 public Type[] OutputTypes
+internal void set_SignaturePosition(int value)
 public void .ctor(bool includeComments)
 public Type[] get_InputTypes()
 public Type[] get_OutputTypes()
-protected XmlNodeList GetInnerXml()
-public object GetOutput()
-private XmlNamespaceManager GetNamespaceManager(XmlNode n)
-private XmlNode GetOutputFromNode(XmlNode input, XmlNamespaceManager nsmgr, bool remove)
-public object GetOutput(Type type)
 public void LoadInnerXml(XmlNodeList nodeList)
+protected XmlNodeList GetInnerXml()
 public void LoadInput(object obj)
+private void LoadStreamInput(Stream stream)
+private void LoadXmlNodeListInput(XmlNodeList nodeList)
+private void LoadXmlDocumentInput(XmlDocument doc)
+public object GetOutput()
+public object GetOutput(Type type)
 }
 public System.Security.Cryptography.Xml.XmlDsigExcC14NTransform : Transform {
-private Type[] input
-private Type[] output
-private XmlCanonicalizer canonicalizer
-private Stream s
-private string inclusiveNamespacesPrefixList
+private Type[] _inputTypes
+private Type[] _outputTypes
+private bool _includeComments
+private string _inclusiveNamespacesPrefixList
+private ExcCanonicalXml _excCanonicalXml
 public string InclusiveNamespacesPrefixList
 public Type[] InputTypes
 public Type[] OutputTypes
@@ -1383,74 +1894,69 @@ public string get_InclusiveNamespacesPrefixList()
 public void set_InclusiveNamespacesPrefixList(string value)
 public Type[] get_InputTypes()
 public Type[] get_OutputTypes()
-protected XmlNodeList GetInnerXml()
-public Byte[] GetDigestedOutput(HashAlgorithm hash)
-public object GetOutput()
-public object GetOutput(Type type)
 public void LoadInnerXml(XmlNodeList nodeList)
 public void LoadInput(object obj)
+protected XmlNodeList GetInnerXml()
+public object GetOutput()
+public object GetOutput(Type type)
+public Byte[] GetDigestedOutput(HashAlgorithm hash)
 }
 public System.Security.Cryptography.Xml.XmlDsigExcC14NWithCommentsTransform : XmlDsigExcC14NTransform {
 public void .ctor(string inclusiveNamespacesPrefixList)
 }
-internal System.Security.Cryptography.Xml.XmlDsigNodeList : XmlNodeList {
-private ArrayList _rgNodes
-public int Count
-public void .ctor(ArrayList rgNodes)
-public int get_Count()
-public IEnumerator GetEnumerator()
-public XmlNode Item(int index)
-}
 public System.Security.Cryptography.Xml.XmlDsigXPathTransform : Transform {
-private Type[] input
-private Type[] output
-private XmlNodeList xpath
-private XmlDocument doc
-private XsltContext ctx
+private Type[] _inputTypes
+private Type[] _outputTypes
+private string _xpathexpr
+private XmlDocument _document
+private XmlNamespaceManager _nsm
 public Type[] InputTypes
 public Type[] OutputTypes
 public Type[] get_InputTypes()
 public Type[] get_OutputTypes()
+public void LoadInnerXml(XmlNodeList nodeList)
 protected XmlNodeList GetInnerXml()
+public void LoadInput(object obj)
+private void LoadStreamInput(Stream stream)
+private void LoadXmlNodeListInput(XmlNodeList nodeList)
+private void LoadXmlDocumentInput(XmlDocument doc)
 public object GetOutput()
 public object GetOutput(Type type)
-private XmlDsigNodeList EvaluateMatch(XmlNode n, string xpath)
-private void EvaluateMatch(XmlNode n, XPathExpression exp, ArrayList al)
-private bool NodeMatches(XmlNode n, XPathExpression exp)
-public void LoadInnerXml(XmlNodeList nodeList)
-public void LoadInput(object obj)
 }
 public System.Security.Cryptography.Xml.XmlDsigXsltTransform : Transform {
-private Type[] input
-private Type[] output
-private bool comments
-private XmlNodeList xnl
-private XmlDocument inputDoc
+private Type[] _inputTypes
+private Type[] _outputTypes
+private XmlNodeList _xslNodes
+private string _xslFragment
+private Stream _inputStream
+private bool _includeComments
 public Type[] InputTypes
 public Type[] OutputTypes
 public void .ctor(bool includeComments)
 public Type[] get_InputTypes()
 public Type[] get_OutputTypes()
+public void LoadInnerXml(XmlNodeList nodeList)
 protected XmlNodeList GetInnerXml()
+public void LoadInput(object obj)
 public object GetOutput()
 public object GetOutput(Type type)
-public void LoadInnerXml(XmlNodeList nodeList)
-public void LoadInput(object obj)
-}
-internal System.Security.Cryptography.Xml.XmlEncryption : object {
-public string Prefix
 }
 public System.Security.Cryptography.Xml.XmlLicenseTransform : Transform {
-private IRelDecryptor _decryptor
-private Type[] inputTypes
-private Type[] outputTypes
-public IRelDecryptor Decryptor
+private Type[] _inputTypes
+private Type[] _outputTypes
+private XmlNamespaceManager _namespaceManager
+private XmlDocument _license
+private IRelDecryptor _relDecryptor
+private string ElementIssuer
+private string NamespaceUriCore
 public Type[] InputTypes
 public Type[] OutputTypes
-public IRelDecryptor get_Decryptor()
-public void set_Decryptor(IRelDecryptor value)
+public IRelDecryptor Decryptor
 public Type[] get_InputTypes()
 public Type[] get_OutputTypes()
+public IRelDecryptor get_Decryptor()
+public void set_Decryptor(IRelDecryptor value)
+private void DecryptEncryptedGrants(XmlNodeList encryptedGrantList, IRelDecryptor decryptor)
 protected XmlNodeList GetInnerXml()
 public object GetOutput()
 public object GetOutput(Type type)
@@ -1464,23 +1970,12 @@ public XmlElement GetChildElement(XmlElement xel, string element, string ns)
 public string GetAttributeFromElement(XmlElement xel, string attribute, string element)
 public XmlElement[] GetChildElements(XmlElement xel, string element)
 }
-internal System.Security.Cryptography.Xml.XmlSignatureStreamReader : TextReader {
-private TextReader source
-private int cache
-public void .ctor(TextReader input)
-public void Close()
-public int Peek()
-public int Read()
-public int ReadBlock(Char[] buffer, int index, int count)
-public string ReadLine()
-public string ReadToEnd()
-}
 public System.Security.Permissions.DataProtectionPermission : CodeAccessPermission {
 private int version
 private DataProtectionPermissionFlags _flags
 public DataProtectionPermissionFlags Flags
 public void .ctor(PermissionState state)
-public void .ctor(DataProtectionPermissionFlags flags)
+public void .ctor(DataProtectionPermissionFlags flag)
 public DataProtectionPermissionFlags get_Flags()
 public void set_Flags(DataProtectionPermissionFlags value)
 public bool IsUnrestricted()
@@ -1488,7 +1983,7 @@ public IPermission Copy()
 public IPermission Intersect(IPermission target)
 public IPermission Union(IPermission target)
 public bool IsSubsetOf(IPermission target)
-public void FromXml(SecurityElement e)
+public void FromXml(SecurityElement securityElement)
 public SecurityElement ToXml()
 private DataProtectionPermission Cast(IPermission target)
 }

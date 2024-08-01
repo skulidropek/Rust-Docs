@@ -1,14 +1,33 @@
+internal AssemblyRef : object {
+internal string SystemConfiguration
+internal string System
+public string EcmaPublicKey
+public string FrameworkPublicKeyFull
+public string FrameworkPublicKeyFull2
+public string MicrosoftPublicKey
+public string MicrosoftJScript
+public string MicrosoftVSDesigner
+public string SystemData
+public string SystemDesign
+public string SystemDrawing
+public string SystemWeb
+public string SystemWebExtensions
+public string SystemWindowsForms
+}
 internal Consts : object {
 public string MonoVersion
 public string MonoCompany
 public string MonoProduct
 public string MonoCopyright
+public int MonoCorlibVersion
 public string FxVersion
-public string VsVersion
 public string FxFileVersion
+public string EnvironmentVersion
+public string VsVersion
 public string VsFileVersion
 private string PublicKeyToken
 public string AssemblyI18N
+public string AssemblyMicrosoft_JScript
 public string AssemblyMicrosoft_VisualStudio
 public string AssemblyMicrosoft_VisualStudio_Web
 public string AssemblyMicrosoft_VSDesigner
@@ -28,7 +47,15 @@ public string AssemblySystem_Security
 public string AssemblySystem_ServiceProcess
 public string AssemblySystem_Web
 public string AssemblySystem_Windows_Forms
+public string AssemblySystem_2_0
+public string AssemblySystemCore_3_5
 public string AssemblySystem_Core
+public string WindowsBase_3_0
+public string AssemblyWindowsBase
+public string AssemblyPresentationCore_3_5
+public string AssemblyPresentationCore_4_0
+public string AssemblyPresentationFramework_3_5
+public string AssemblySystemServiceModel_3_0
 }
 internal Locale : object {
 public string GetText(string msg)
@@ -493,9 +520,9 @@ private bool hashing
 private Byte[] innerPad
 private Byte[] outerPad
 public Byte[] Key
-public void .ctor(HashAlgorithm ha, Byte[] rgbKey)
 public Byte[] get_Key()
 public void set_Key(Byte[] value)
+public void .ctor(HashAlgorithm ha, Byte[] rgbKey)
 public void Initialize()
 protected Byte[] HashFinal()
 protected void HashCore(Byte[] array, int ibStart, int cbSize)
@@ -625,7 +652,6 @@ private Byte[] emptySHA1
 private Byte[] emptySHA256
 private Byte[] emptySHA384
 private Byte[] emptySHA512
-private Dictionary`2<string, int> <>f__switch$map0
 private bool Compare(Byte[] array1, Byte[] array2)
 private Byte[] xor(Byte[] array1, Byte[] array2)
 private Byte[] GetEmptyHash(HashAlgorithm hash)
@@ -773,6 +799,665 @@ protected Byte[] FinalEncrypt(Byte[] inputBuffer, int inputOffset, int inputCoun
 protected Byte[] FinalDecrypt(Byte[] inputBuffer, int inputOffset, int inputCount)
 public Byte[] TransformFinalBlock(Byte[] inputBuffer, int inputOffset, int inputCount)
 }
+public Mono.Security.Interface.Alert : object {
+private AlertLevel level
+private AlertDescription description
+public AlertLevel Level
+public AlertDescription Description
+public string Message
+public bool IsWarning
+public bool IsCloseNotify
+public AlertLevel get_Level()
+public AlertDescription get_Description()
+public string get_Message()
+public bool get_IsWarning()
+public bool get_IsCloseNotify()
+public void .ctor(AlertDescription description)
+public void .ctor(AlertLevel level, AlertDescription description)
+private void inferAlertLevel()
+public string ToString()
+public string GetAlertMessage(AlertDescription description)
+}
+public Mono.Security.Interface.AlertDescription : Enum {
+public byte value__
+public AlertDescription CloseNotify
+public AlertDescription UnexpectedMessage
+public AlertDescription BadRecordMAC
+public AlertDescription DecryptionFailed_RESERVED
+public AlertDescription RecordOverflow
+public AlertDescription DecompressionFailure
+public AlertDescription HandshakeFailure
+public AlertDescription NoCertificate_RESERVED
+public AlertDescription BadCertificate
+public AlertDescription UnsupportedCertificate
+public AlertDescription CertificateRevoked
+public AlertDescription CertificateExpired
+public AlertDescription CertificateUnknown
+public AlertDescription IlegalParameter
+public AlertDescription UnknownCA
+public AlertDescription AccessDenied
+public AlertDescription DecodeError
+public AlertDescription DecryptError
+public AlertDescription ExportRestriction
+public AlertDescription ProtocolVersion
+public AlertDescription InsuficientSecurity
+public AlertDescription InternalError
+public AlertDescription UserCancelled
+public AlertDescription NoRenegotiation
+public AlertDescription UnsupportedExtension
+}
+public Mono.Security.Interface.AlertLevel : Enum {
+public byte value__
+public AlertLevel Warning
+public AlertLevel Fatal
+}
+public Mono.Security.Interface.CertificateValidationHelper : object {
+private string SecurityLibrary
+private bool noX509Chain
+private bool supportsTrustAnchors
+public bool SupportsX509Chain
+public bool SupportsTrustAnchors
+public bool get_SupportsX509Chain()
+public bool get_SupportsTrustAnchors()
+internal ICertificateValidator2 GetInternalValidator(MonoTlsSettings settings, MonoTlsProvider provider)
+internal ICertificateValidator2 GetDefaultValidator(MonoTlsSettings settings, MonoTlsProvider provider)
+public ICertificateValidator GetValidator(MonoTlsSettings settings)
+}
+public Mono.Security.Interface.CipherAlgorithmType : Enum {
+public int value__
+public CipherAlgorithmType None
+public CipherAlgorithmType Aes128
+public CipherAlgorithmType Aes256
+public CipherAlgorithmType AesGcm128
+public CipherAlgorithmType AesGcm256
+}
+public Mono.Security.Interface.CipherSuiteCode : Enum {
+public ushort value__
+public CipherSuiteCode TLS_NULL_WITH_NULL_NULL
+public CipherSuiteCode TLS_RSA_WITH_NULL_MD5
+public CipherSuiteCode TLS_RSA_WITH_NULL_SHA
+public CipherSuiteCode TLS_RSA_EXPORT_WITH_RC4_40_MD5
+public CipherSuiteCode TLS_RSA_WITH_RC4_128_MD5
+public CipherSuiteCode TLS_RSA_WITH_RC4_128_SHA
+public CipherSuiteCode TLS_RSA_EXPORT_WITH_RC2_CBC_40_MD5
+public CipherSuiteCode TLS_RSA_WITH_IDEA_CBC_SHA
+public CipherSuiteCode TLS_RSA_EXPORT_WITH_DES40_CBC_SHA
+public CipherSuiteCode TLS_RSA_WITH_DES_CBC_SHA
+public CipherSuiteCode TLS_RSA_WITH_3DES_EDE_CBC_SHA
+public CipherSuiteCode TLS_DH_DSS_EXPORT_WITH_DES40_CBC_SHA
+public CipherSuiteCode TLS_DH_DSS_WITH_DES_CBC_SHA
+public CipherSuiteCode TLS_DH_DSS_WITH_3DES_EDE_CBC_SHA
+public CipherSuiteCode TLS_DH_RSA_EXPORT_WITH_DES40_CBC_SHA
+public CipherSuiteCode TLS_DH_RSA_WITH_DES_CBC_SHA
+public CipherSuiteCode TLS_DH_RSA_WITH_3DES_EDE_CBC_SHA
+public CipherSuiteCode TLS_DHE_DSS_EXPORT_WITH_DES40_CBC_SHA
+public CipherSuiteCode TLS_DHE_DSS_WITH_DES_CBC_SHA
+public CipherSuiteCode TLS_DHE_DSS_WITH_3DES_EDE_CBC_SHA
+public CipherSuiteCode TLS_DHE_RSA_EXPORT_WITH_DES40_CBC_SHA
+public CipherSuiteCode TLS_DHE_RSA_WITH_DES_CBC_SHA
+public CipherSuiteCode TLS_DHE_RSA_WITH_3DES_EDE_CBC_SHA
+public CipherSuiteCode TLS_DH_anon_EXPORT_WITH_RC4_40_MD5
+public CipherSuiteCode TLS_DH_anon_WITH_RC4_128_MD5
+public CipherSuiteCode TLS_DH_anon_EXPORT_WITH_DES40_CBC_SHA
+public CipherSuiteCode TLS_DH_anon_WITH_DES_CBC_SHA
+public CipherSuiteCode TLS_DH_anon_WITH_3DES_EDE_CBC_SHA
+public CipherSuiteCode TLS_RSA_WITH_AES_128_CBC_SHA
+public CipherSuiteCode TLS_DH_DSS_WITH_AES_128_CBC_SHA
+public CipherSuiteCode TLS_DH_RSA_WITH_AES_128_CBC_SHA
+public CipherSuiteCode TLS_DHE_DSS_WITH_AES_128_CBC_SHA
+public CipherSuiteCode TLS_DHE_RSA_WITH_AES_128_CBC_SHA
+public CipherSuiteCode TLS_DH_anon_WITH_AES_128_CBC_SHA
+public CipherSuiteCode TLS_RSA_WITH_AES_256_CBC_SHA
+public CipherSuiteCode TLS_DH_DSS_WITH_AES_256_CBC_SHA
+public CipherSuiteCode TLS_DH_RSA_WITH_AES_256_CBC_SHA
+public CipherSuiteCode TLS_DHE_DSS_WITH_AES_256_CBC_SHA
+public CipherSuiteCode TLS_DHE_RSA_WITH_AES_256_CBC_SHA
+public CipherSuiteCode TLS_DH_anon_WITH_AES_256_CBC_SHA
+public CipherSuiteCode TLS_RSA_WITH_CAMELLIA_128_CBC_SHA
+public CipherSuiteCode TLS_DH_DSS_WITH_CAMELLIA_128_CBC_SHA
+public CipherSuiteCode TLS_DH_RSA_WITH_CAMELLIA_128_CBC_SHA
+public CipherSuiteCode TLS_DHE_DSS_WITH_CAMELLIA_128_CBC_SHA
+public CipherSuiteCode TLS_DHE_RSA_WITH_CAMELLIA_128_CBC_SHA
+public CipherSuiteCode TLS_DH_anon_WITH_CAMELLIA_128_CBC_SHA
+public CipherSuiteCode TLS_RSA_WITH_CAMELLIA_256_CBC_SHA
+public CipherSuiteCode TLS_DH_DSS_WITH_CAMELLIA_256_CBC_SHA
+public CipherSuiteCode TLS_DH_RSA_WITH_CAMELLIA_256_CBC_SHA
+public CipherSuiteCode TLS_DHE_DSS_WITH_CAMELLIA_256_CBC_SHA
+public CipherSuiteCode TLS_DHE_RSA_WITH_CAMELLIA_256_CBC_SHA
+public CipherSuiteCode TLS_DH_anon_WITH_CAMELLIA_256_CBC_SHA
+public CipherSuiteCode TLS_RSA_WITH_CAMELLIA_128_CBC_SHA256
+public CipherSuiteCode TLS_DH_DSS_WITH_CAMELLIA_128_CBC_SHA256
+public CipherSuiteCode TLS_DH_RSA_WITH_CAMELLIA_128_CBC_SHA256
+public CipherSuiteCode TLS_DHE_DSS_WITH_CAMELLIA_128_CBC_SHA256
+public CipherSuiteCode TLS_DHE_RSA_WITH_CAMELLIA_128_CBC_SHA256
+public CipherSuiteCode TLS_DH_anon_WITH_CAMELLIA_128_CBC_SHA256
+public CipherSuiteCode TLS_RSA_WITH_CAMELLIA_256_CBC_SHA256
+public CipherSuiteCode TLS_DH_DSS_WITH_CAMELLIA_256_CBC_SHA256
+public CipherSuiteCode TLS_DH_RSA_WITH_CAMELLIA_256_CBC_SHA256
+public CipherSuiteCode TLS_DHE_DSS_WITH_CAMELLIA_256_CBC_SHA256
+public CipherSuiteCode TLS_DHE_RSA_WITH_CAMELLIA_256_CBC_SHA256
+public CipherSuiteCode TLS_DH_anon_WITH_CAMELLIA_256_CBC_SHA256
+public CipherSuiteCode TLS_RSA_WITH_SEED_CBC_SHA
+public CipherSuiteCode TLS_DH_DSS_WITH_SEED_CBC_SHA
+public CipherSuiteCode TLS_DH_RSA_WITH_SEED_CBC_SHA
+public CipherSuiteCode TLS_DHE_DSS_WITH_SEED_CBC_SHA
+public CipherSuiteCode TLS_DHE_RSA_WITH_SEED_CBC_SHA
+public CipherSuiteCode TLS_DH_anon_WITH_SEED_CBC_SHA
+public CipherSuiteCode TLS_PSK_WITH_RC4_128_SHA
+public CipherSuiteCode TLS_PSK_WITH_3DES_EDE_CBC_SHA
+public CipherSuiteCode TLS_PSK_WITH_AES_128_CBC_SHA
+public CipherSuiteCode TLS_PSK_WITH_AES_256_CBC_SHA
+public CipherSuiteCode TLS_DHE_PSK_WITH_RC4_128_SHA
+public CipherSuiteCode TLS_DHE_PSK_WITH_3DES_EDE_CBC_SHA
+public CipherSuiteCode TLS_DHE_PSK_WITH_AES_128_CBC_SHA
+public CipherSuiteCode TLS_DHE_PSK_WITH_AES_256_CBC_SHA
+public CipherSuiteCode TLS_RSA_PSK_WITH_RC4_128_SHA
+public CipherSuiteCode TLS_RSA_PSK_WITH_3DES_EDE_CBC_SHA
+public CipherSuiteCode TLS_RSA_PSK_WITH_AES_128_CBC_SHA
+public CipherSuiteCode TLS_RSA_PSK_WITH_AES_256_CBC_SHA
+public CipherSuiteCode TLS_ECDH_ECDSA_WITH_NULL_SHA
+public CipherSuiteCode TLS_ECDH_ECDSA_WITH_RC4_128_SHA
+public CipherSuiteCode TLS_ECDH_ECDSA_WITH_3DES_EDE_CBC_SHA
+public CipherSuiteCode TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA
+public CipherSuiteCode TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA
+public CipherSuiteCode TLS_ECDHE_ECDSA_WITH_NULL_SHA
+public CipherSuiteCode TLS_ECDHE_ECDSA_WITH_RC4_128_SHA
+public CipherSuiteCode TLS_ECDHE_ECDSA_WITH_3DES_EDE_CBC_SHA
+public CipherSuiteCode TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA
+public CipherSuiteCode TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA
+public CipherSuiteCode TLS_ECDH_RSA_WITH_NULL_SHA
+public CipherSuiteCode TLS_ECDH_RSA_WITH_RC4_128_SHA
+public CipherSuiteCode TLS_ECDH_RSA_WITH_3DES_EDE_CBC_SHA
+public CipherSuiteCode TLS_ECDH_RSA_WITH_AES_128_CBC_SHA
+public CipherSuiteCode TLS_ECDH_RSA_WITH_AES_256_CBC_SHA
+public CipherSuiteCode TLS_ECDHE_RSA_WITH_NULL_SHA
+public CipherSuiteCode TLS_ECDHE_RSA_WITH_RC4_128_SHA
+public CipherSuiteCode TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA
+public CipherSuiteCode TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA
+public CipherSuiteCode TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA
+public CipherSuiteCode TLS_ECDH_anon_WITH_NULL_SHA
+public CipherSuiteCode TLS_ECDH_anon_WITH_RC4_128_SHA
+public CipherSuiteCode TLS_ECDH_anon_WITH_3DES_EDE_CBC_SHA
+public CipherSuiteCode TLS_ECDH_anon_WITH_AES_128_CBC_SHA
+public CipherSuiteCode TLS_ECDH_anon_WITH_AES_256_CBC_SHA
+public CipherSuiteCode TLS_PSK_WITH_NULL_SHA
+public CipherSuiteCode TLS_DHE_PSK_WITH_NULL_SHA
+public CipherSuiteCode TLS_RSA_PSK_WITH_NULL_SHA
+public CipherSuiteCode TLS_SRP_SHA_WITH_3DES_EDE_CBC_SHA
+public CipherSuiteCode TLS_SRP_SHA_RSA_WITH_3DES_EDE_CBC_SHA
+public CipherSuiteCode TLS_SRP_SHA_DSS_WITH_3DES_EDE_CBC_SHA
+public CipherSuiteCode TLS_SRP_SHA_WITH_AES_128_CBC_SHA
+public CipherSuiteCode TLS_SRP_SHA_RSA_WITH_AES_128_CBC_SHA
+public CipherSuiteCode TLS_SRP_SHA_DSS_WITH_AES_128_CBC_SHA
+public CipherSuiteCode TLS_SRP_SHA_WITH_AES_256_CBC_SHA
+public CipherSuiteCode TLS_SRP_SHA_RSA_WITH_AES_256_CBC_SHA
+public CipherSuiteCode TLS_SRP_SHA_DSS_WITH_AES_256_CBC_SHA
+public CipherSuiteCode TLS_RSA_WITH_NULL_SHA256
+public CipherSuiteCode TLS_RSA_WITH_AES_128_CBC_SHA256
+public CipherSuiteCode TLS_RSA_WITH_AES_256_CBC_SHA256
+public CipherSuiteCode TLS_DH_DSS_WITH_AES_128_CBC_SHA256
+public CipherSuiteCode TLS_DH_RSA_WITH_AES_128_CBC_SHA256
+public CipherSuiteCode TLS_DHE_DSS_WITH_AES_128_CBC_SHA256
+public CipherSuiteCode TLS_DHE_RSA_WITH_AES_128_CBC_SHA256
+public CipherSuiteCode TLS_DH_DSS_WITH_AES_256_CBC_SHA256
+public CipherSuiteCode TLS_DH_RSA_WITH_AES_256_CBC_SHA256
+public CipherSuiteCode TLS_DHE_DSS_WITH_AES_256_CBC_SHA256
+public CipherSuiteCode TLS_DHE_RSA_WITH_AES_256_CBC_SHA256
+public CipherSuiteCode TLS_DH_anon_WITH_AES_128_CBC_SHA256
+public CipherSuiteCode TLS_DH_anon_WITH_AES_256_CBC_SHA256
+public CipherSuiteCode TLS_RSA_WITH_AES_128_GCM_SHA256
+public CipherSuiteCode TLS_RSA_WITH_AES_256_GCM_SHA384
+public CipherSuiteCode TLS_DHE_RSA_WITH_AES_128_GCM_SHA256
+public CipherSuiteCode TLS_DHE_RSA_WITH_AES_256_GCM_SHA384
+public CipherSuiteCode TLS_DH_RSA_WITH_AES_128_GCM_SHA256
+public CipherSuiteCode TLS_DH_RSA_WITH_AES_256_GCM_SHA384
+public CipherSuiteCode TLS_DHE_DSS_WITH_AES_128_GCM_SHA256
+public CipherSuiteCode TLS_DHE_DSS_WITH_AES_256_GCM_SHA384
+public CipherSuiteCode TLS_DH_DSS_WITH_AES_128_GCM_SHA256
+public CipherSuiteCode TLS_DH_DSS_WITH_AES_256_GCM_SHA384
+public CipherSuiteCode TLS_DH_anon_WITH_AES_128_GCM_SHA256
+public CipherSuiteCode TLS_DH_anon_WITH_AES_256_GCM_SHA384
+public CipherSuiteCode TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256
+public CipherSuiteCode TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384
+public CipherSuiteCode TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA256
+public CipherSuiteCode TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA384
+public CipherSuiteCode TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256
+public CipherSuiteCode TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384
+public CipherSuiteCode TLS_ECDH_RSA_WITH_AES_128_CBC_SHA256
+public CipherSuiteCode TLS_ECDH_RSA_WITH_AES_256_CBC_SHA384
+public CipherSuiteCode TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+public CipherSuiteCode TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+public CipherSuiteCode TLS_ECDH_ECDSA_WITH_AES_128_GCM_SHA256
+public CipherSuiteCode TLS_ECDH_ECDSA_WITH_AES_256_GCM_SHA384
+public CipherSuiteCode TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+public CipherSuiteCode TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+public CipherSuiteCode TLS_ECDH_RSA_WITH_AES_128_GCM_SHA256
+public CipherSuiteCode TLS_ECDH_RSA_WITH_AES_256_GCM_SHA384
+public CipherSuiteCode TLS_PSK_WITH_AES_128_GCM_SHA256
+public CipherSuiteCode TLS_PSK_WITH_AES_256_GCM_SHA384
+public CipherSuiteCode TLS_DHE_PSK_WITH_AES_128_GCM_SHA256
+public CipherSuiteCode TLS_DHE_PSK_WITH_AES_256_GCM_SHA384
+public CipherSuiteCode TLS_RSA_PSK_WITH_AES_128_GCM_SHA256
+public CipherSuiteCode TLS_RSA_PSK_WITH_AES_256_GCM_SHA384
+public CipherSuiteCode TLS_PSK_WITH_AES_128_CBC_SHA256
+public CipherSuiteCode TLS_PSK_WITH_AES_256_CBC_SHA384
+public CipherSuiteCode TLS_PSK_WITH_NULL_SHA256
+public CipherSuiteCode TLS_PSK_WITH_NULL_SHA384
+public CipherSuiteCode TLS_DHE_PSK_WITH_AES_128_CBC_SHA256
+public CipherSuiteCode TLS_DHE_PSK_WITH_AES_256_CBC_SHA384
+public CipherSuiteCode TLS_DHE_PSK_WITH_NULL_SHA256
+public CipherSuiteCode TLS_DHE_PSK_WITH_NULL_SHA384
+public CipherSuiteCode TLS_RSA_PSK_WITH_AES_128_CBC_SHA256
+public CipherSuiteCode TLS_RSA_PSK_WITH_AES_256_CBC_SHA384
+public CipherSuiteCode TLS_RSA_PSK_WITH_NULL_SHA256
+public CipherSuiteCode TLS_RSA_PSK_WITH_NULL_SHA384
+public CipherSuiteCode TLS_ECDHE_PSK_WITH_RC4_128_SHA
+public CipherSuiteCode TLS_ECDHE_PSK_WITH_3DES_EDE_CBC_SHA
+public CipherSuiteCode TLS_ECDHE_PSK_WITH_AES_128_CBC_SHA
+public CipherSuiteCode TLS_ECDHE_PSK_WITH_AES_256_CBC_SHA
+public CipherSuiteCode TLS_ECDHE_PSK_WITH_AES_128_CBC_SHA256
+public CipherSuiteCode TLS_ECDHE_PSK_WITH_AES_256_CBC_SHA384
+public CipherSuiteCode TLS_ECDHE_PSK_WITH_NULL_SHA
+public CipherSuiteCode TLS_ECDHE_PSK_WITH_NULL_SHA256
+public CipherSuiteCode TLS_ECDHE_PSK_WITH_NULL_SHA384
+public CipherSuiteCode TLS_EMPTY_RENEGOTIATION_INFO_SCSV
+public CipherSuiteCode TLS_ECDHE_ECDSA_WITH_CAMELLIA_128_CBC_SHA256
+public CipherSuiteCode TLS_ECDHE_ECDSA_WITH_CAMELLIA_256_CBC_SHA384
+public CipherSuiteCode TLS_ECDH_ECDSA_WITH_CAMELLIA_128_CBC_SHA256
+public CipherSuiteCode TLS_ECDH_ECDSA_WITH_CAMELLIA_256_CBC_SHA384
+public CipherSuiteCode TLS_ECDHE_RSA_WITH_CAMELLIA_128_CBC_SHA256
+public CipherSuiteCode TLS_ECDHE_RSA_WITH_CAMELLIA_256_CBC_SHA384
+public CipherSuiteCode TLS_ECDH_RSA_WITH_CAMELLIA_128_CBC_SHA256
+public CipherSuiteCode TLS_ECDH_RSA_WITH_CAMELLIA_256_CBC_SHA384
+public CipherSuiteCode TLS_RSA_WITH_CAMELLIA_128_GCM_SHA256
+public CipherSuiteCode TLS_RSA_WITH_CAMELLIA_256_GCM_SHA384
+public CipherSuiteCode TLS_DHE_RSA_WITH_CAMELLIA_128_GCM_SHA256
+public CipherSuiteCode TLS_DHE_RSA_WITH_CAMELLIA_256_GCM_SHA384
+public CipherSuiteCode TLS_DH_RSA_WITH_CAMELLIA_128_GCM_SHA256
+public CipherSuiteCode TLS_DH_RSA_WITH_CAMELLIA_256_GCM_SHA384
+public CipherSuiteCode TLS_DHE_DSS_WITH_CAMELLIA_128_GCM_SHA256
+public CipherSuiteCode TLS_DHE_DSS_WITH_CAMELLIA_256_GCM_SHA384
+public CipherSuiteCode TLS_DH_DSS_WITH_CAMELLIA_128_GCM_SHA256
+public CipherSuiteCode TLS_DH_DSS_WITH_CAMELLIA_256_GCM_SHA384
+public CipherSuiteCode TLS_DH_anon_WITH_CAMELLIA_128_GCM_SHA256
+public CipherSuiteCode TLS_DH_anon_WITH_CAMELLIA_256_GCM_SHA384
+public CipherSuiteCode TLS_ECDHE_ECDSA_WITH_CAMELLIA_128_GCM_SHA256
+public CipherSuiteCode TLS_ECDHE_ECDSA_WITH_CAMELLIA_256_GCM_SHA384
+public CipherSuiteCode TLS_ECDH_ECDSA_WITH_CAMELLIA_128_GCM_SHA256
+public CipherSuiteCode TLS_ECDH_ECDSA_WITH_CAMELLIA_256_GCM_SHA384
+public CipherSuiteCode TLS_ECDHE_RSA_WITH_CAMELLIA_128_GCM_SHA256
+public CipherSuiteCode TLS_ECDHE_RSA_WITH_CAMELLIA_256_GCM_SHA384
+public CipherSuiteCode TLS_ECDH_RSA_WITH_CAMELLIA_128_GCM_SHA256
+public CipherSuiteCode TLS_ECDH_RSA_WITH_CAMELLIA_256_GCM_SHA384
+public CipherSuiteCode TLS_PSK_WITH_CAMELLIA_128_GCM_SHA256
+public CipherSuiteCode TLS_PSK_WITH_CAMELLIA_256_GCM_SHA384
+public CipherSuiteCode TLS_DHE_PSK_WITH_CAMELLIA_128_GCM_SHA256
+public CipherSuiteCode TLS_DHE_PSK_WITH_CAMELLIA_256_GCM_SHA384
+public CipherSuiteCode TLS_RSA_PSK_WITH_CAMELLIA_128_GCM_SHA256
+public CipherSuiteCode TLS_RSA_PSK_WITH_CAMELLIA_256_GCM_SHA384
+public CipherSuiteCode TLS_PSK_WITH_CAMELLIA_128_CBC_SHA256
+public CipherSuiteCode TLS_PSK_WITH_CAMELLIA_256_CBC_SHA384
+public CipherSuiteCode TLS_DHE_PSK_WITH_CAMELLIA_128_CBC_SHA256
+public CipherSuiteCode TLS_DHE_PSK_WITH_CAMELLIA_256_CBC_SHA384
+public CipherSuiteCode TLS_RSA_PSK_WITH_CAMELLIA_128_CBC_SHA256
+public CipherSuiteCode TLS_RSA_PSK_WITH_CAMELLIA_256_CBC_SHA384
+public CipherSuiteCode TLS_ECDHE_PSK_WITH_CAMELLIA_128_CBC_SHA256
+public CipherSuiteCode TLS_ECDHE_PSK_WITH_CAMELLIA_256_CBC_SHA384
+public CipherSuiteCode TLS_RSA_WITH_AES_128_CCM
+public CipherSuiteCode TLS_RSA_WITH_AES_256_CCM
+public CipherSuiteCode TLS_DHE_RSA_WITH_AES_128_CCM
+public CipherSuiteCode TLS_DHE_RSA_WITH_AES_256_CCM
+public CipherSuiteCode TLS_RSA_WITH_AES_128_CCM_8
+public CipherSuiteCode TLS_RSA_WITH_AES_256_CCM_8
+public CipherSuiteCode TLS_DHE_RSA_WITH_AES_128_CCM_8
+public CipherSuiteCode TLS_DHE_RSA_WITH_AES_256_CCM_8
+public CipherSuiteCode TLS_PSK_WITH_AES_128_CCM
+public CipherSuiteCode TLS_PSK_WITH_AES_256_CCM
+public CipherSuiteCode TLS_DHE_PSK_WITH_AES_128_CCM
+public CipherSuiteCode TLS_DHE_PSK_WITH_AES_256_CCM
+public CipherSuiteCode TLS_PSK_WITH_AES_128_CCM_8
+public CipherSuiteCode TLS_PSK_WITH_AES_256_CCM_8
+public CipherSuiteCode TLS_PSK_DHE_WITH_AES_128_CCM_8
+public CipherSuiteCode TLS_PSK_DHE_WITH_AES_256_CCM_8
+public CipherSuiteCode TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
+public CipherSuiteCode TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256
+public CipherSuiteCode TLS_DHE_RSA_WITH_CHACHA20_POLY1305_SHA256
+public CipherSuiteCode TLS_RSA_WITH_ESTREAM_SALSA20_SHA1
+public CipherSuiteCode TLS_RSA_WITH_SALSA20_SHA1
+public CipherSuiteCode TLS_ECDHE_RSA_WITH_ESTREAM_SALSA20_SHA1
+public CipherSuiteCode TLS_ECDHE_RSA_WITH_SALSA20_SHA1
+public CipherSuiteCode TLS_ECDHE_ECDSA_WITH_ESTREAM_SALSA20_SHA1
+public CipherSuiteCode TLS_ECDHE_ECDSA_WITH_SALSA20_SHA1
+public CipherSuiteCode TLS_PSK_WITH_ESTREAM_SALSA20_SHA1
+public CipherSuiteCode TLS_PSK_WITH_SALSA20_SHA1
+public CipherSuiteCode TLS_ECDHE_PSK_WITH_ESTREAM_SALSA20_SHA1
+public CipherSuiteCode TLS_ECDHE_PSK_WITH_SALSA20_SHA1
+public CipherSuiteCode TLS_RSA_PSK_WITH_ESTREAM_SALSA20_SHA1
+public CipherSuiteCode TLS_RSA_PSK_WITH_SALSA20_SHA1
+public CipherSuiteCode TLS_DHE_PSK_WITH_ESTREAM_SALSA20_SHA1
+public CipherSuiteCode TLS_DHE_PSK_WITH_SALSA20_SHA1
+public CipherSuiteCode TLS_DHE_RSA_WITH_ESTREAM_SALSA20_SHA1
+public CipherSuiteCode TLS_DHE_RSA_WITH_SALSA20_SHA1
+public CipherSuiteCode TLS_FALLBACK_SCSV
+}
+public Mono.Security.Interface.ExchangeAlgorithmType : Enum {
+public int value__
+public ExchangeAlgorithmType None
+public ExchangeAlgorithmType Dhe
+public ExchangeAlgorithmType Rsa
+public ExchangeAlgorithmType EcDhe
+}
+public Mono.Security.Interface.HashAlgorithmType : Enum {
+public int value__
+public HashAlgorithmType None
+public HashAlgorithmType Md5
+public HashAlgorithmType Sha1
+public HashAlgorithmType Sha224
+public HashAlgorithmType Sha256
+public HashAlgorithmType Sha384
+public HashAlgorithmType Sha512
+public HashAlgorithmType Unknown
+public HashAlgorithmType Md5Sha1
+}
+public Mono.Security.Interface.ICertificateValidator {
+public MonoTlsSettings Settings
+public MonoTlsSettings get_Settings()
+public bool SelectClientCertificate(string targetHost, X509CertificateCollection localCertificates, X509Certificate remoteCertificate, String[] acceptableIssuers, X509Certificate& clientCertificate)
+public ValidationResult ValidateCertificate(string targetHost, bool serverMode, X509CertificateCollection certificates)
+}
+internal Mono.Security.Interface.ICertificateValidator2 {
+public ValidationResult ValidateCertificate(string targetHost, bool serverMode, X509Certificate leaf, X509Chain chain)
+}
+public Mono.Security.Interface.IMonoSslStream {
+public SslStream SslStream
+public TransportContext TransportContext
+public bool IsAuthenticated
+public bool IsMutuallyAuthenticated
+public bool IsEncrypted
+public bool IsSigned
+public bool IsServer
+public CipherAlgorithmType CipherAlgorithm
+public int CipherStrength
+public HashAlgorithmType HashAlgorithm
+public int HashStrength
+public ExchangeAlgorithmType KeyExchangeAlgorithm
+public int KeyExchangeStrength
+public bool CanRead
+public bool CanTimeout
+public bool CanWrite
+public long Length
+public long Position
+public AuthenticatedStream AuthenticatedStream
+public int ReadTimeout
+public int WriteTimeout
+public bool CheckCertRevocationStatus
+public X509Certificate InternalLocalCertificate
+public X509Certificate LocalCertificate
+public X509Certificate RemoteCertificate
+public SslProtocols SslProtocol
+public MonoTlsProvider Provider
+public SslStream get_SslStream()
+public void AuthenticateAsClient(string targetHost)
+public void AuthenticateAsClient(string targetHost, X509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
+public IAsyncResult BeginAuthenticateAsClient(string targetHost, AsyncCallback asyncCallback, object asyncState)
+public IAsyncResult BeginAuthenticateAsClient(string targetHost, X509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState)
+public void EndAuthenticateAsClient(IAsyncResult asyncResult)
+public void AuthenticateAsServer(X509Certificate serverCertificate)
+public void AuthenticateAsServer(X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
+public IAsyncResult BeginAuthenticateAsServer(X509Certificate serverCertificate, AsyncCallback asyncCallback, object asyncState)
+public IAsyncResult BeginAuthenticateAsServer(X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols enabledSslProtocols, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState)
+public void EndAuthenticateAsServer(IAsyncResult asyncResult)
+public Task AuthenticateAsClientAsync(string targetHost)
+public Task AuthenticateAsClientAsync(string targetHost, X509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
+public Task AuthenticateAsServerAsync(X509Certificate serverCertificate)
+public Task AuthenticateAsServerAsync(X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
+public int Read(Byte[] buffer, int offset, int count)
+public void Write(Byte[] buffer)
+public void Write(Byte[] buffer, int offset, int count)
+public IAsyncResult BeginRead(Byte[] buffer, int offset, int count, AsyncCallback asyncCallback, object asyncState)
+public int EndRead(IAsyncResult asyncResult)
+public IAsyncResult BeginWrite(Byte[] buffer, int offset, int count, AsyncCallback asyncCallback, object asyncState)
+public void EndWrite(IAsyncResult asyncResult)
+public Task WriteAsync(Byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+public Task ShutdownAsync()
+public TransportContext get_TransportContext()
+public bool get_IsAuthenticated()
+public bool get_IsMutuallyAuthenticated()
+public bool get_IsEncrypted()
+public bool get_IsSigned()
+public bool get_IsServer()
+public CipherAlgorithmType get_CipherAlgorithm()
+public int get_CipherStrength()
+public HashAlgorithmType get_HashAlgorithm()
+public int get_HashStrength()
+public ExchangeAlgorithmType get_KeyExchangeAlgorithm()
+public int get_KeyExchangeStrength()
+public bool get_CanRead()
+public bool get_CanTimeout()
+public bool get_CanWrite()
+public long get_Length()
+public long get_Position()
+public void SetLength(long value)
+public AuthenticatedStream get_AuthenticatedStream()
+public int get_ReadTimeout()
+public void set_ReadTimeout(int value)
+public int get_WriteTimeout()
+public void set_WriteTimeout(int value)
+public bool get_CheckCertRevocationStatus()
+public X509Certificate get_InternalLocalCertificate()
+public X509Certificate get_LocalCertificate()
+public X509Certificate get_RemoteCertificate()
+public SslProtocols get_SslProtocol()
+public MonoTlsProvider get_Provider()
+public MonoTlsConnectionInfo GetConnectionInfo()
+}
+public Mono.Security.Interface.MonoEncryptionPolicy : Enum {
+public int value__
+public MonoEncryptionPolicy RequireEncryption
+public MonoEncryptionPolicy AllowNoEncryption
+public MonoEncryptionPolicy NoEncryption
+}
+public Mono.Security.Interface.MonoLocalCertificateSelectionCallback : MulticastDelegate {
+public void .ctor(object object, IntPtr method)
+public X509Certificate Invoke(string targetHost, X509CertificateCollection localCertificates, X509Certificate remoteCertificate, String[] acceptableIssuers)
+public IAsyncResult BeginInvoke(string targetHost, X509CertificateCollection localCertificates, X509Certificate remoteCertificate, String[] acceptableIssuers, AsyncCallback callback, object object)
+public X509Certificate EndInvoke(IAsyncResult result)
+}
+public Mono.Security.Interface.MonoRemoteCertificateValidationCallback : MulticastDelegate {
+public void .ctor(object object, IntPtr method)
+public bool Invoke(string targetHost, X509Certificate certificate, X509Chain chain, MonoSslPolicyErrors sslPolicyErrors)
+public IAsyncResult BeginInvoke(string targetHost, X509Certificate certificate, X509Chain chain, MonoSslPolicyErrors sslPolicyErrors, AsyncCallback callback, object object)
+public bool EndInvoke(IAsyncResult result)
+}
+public Mono.Security.Interface.MonoSslPolicyErrors : Enum {
+public int value__
+public MonoSslPolicyErrors None
+public MonoSslPolicyErrors RemoteCertificateNotAvailable
+public MonoSslPolicyErrors RemoteCertificateNameMismatch
+public MonoSslPolicyErrors RemoteCertificateChainErrors
+}
+public Mono.Security.Interface.MonoTlsConnectionInfo : object {
+private CipherSuiteCode <CipherSuiteCode>k__BackingField
+private TlsProtocols <ProtocolVersion>k__BackingField
+private CipherAlgorithmType <CipherAlgorithmType>k__BackingField
+private HashAlgorithmType <HashAlgorithmType>k__BackingField
+private ExchangeAlgorithmType <ExchangeAlgorithmType>k__BackingField
+private string <PeerDomainName>k__BackingField
+public CipherSuiteCode CipherSuiteCode
+public TlsProtocols ProtocolVersion
+public CipherAlgorithmType CipherAlgorithmType
+public HashAlgorithmType HashAlgorithmType
+public ExchangeAlgorithmType ExchangeAlgorithmType
+public string PeerDomainName
+public CipherSuiteCode get_CipherSuiteCode()
+public void set_CipherSuiteCode(CipherSuiteCode value)
+public TlsProtocols get_ProtocolVersion()
+public void set_ProtocolVersion(TlsProtocols value)
+public CipherAlgorithmType get_CipherAlgorithmType()
+public void set_CipherAlgorithmType(CipherAlgorithmType value)
+public HashAlgorithmType get_HashAlgorithmType()
+public void set_HashAlgorithmType(HashAlgorithmType value)
+public ExchangeAlgorithmType get_ExchangeAlgorithmType()
+public void set_ExchangeAlgorithmType(ExchangeAlgorithmType value)
+public string get_PeerDomainName()
+public void set_PeerDomainName(string value)
+public string ToString()
+}
+public Mono.Security.Interface.MonoTlsProvider : object {
+public Guid ID
+public string Name
+public bool SupportsSslStream
+public bool SupportsConnectionInfo
+public bool SupportsMonoExtensions
+public SslProtocols SupportedProtocols
+internal bool HasNativeCertificates
+internal bool SupportsCleanShutdown
+public Guid get_ID()
+public string get_Name()
+public bool get_SupportsSslStream()
+public bool get_SupportsConnectionInfo()
+public bool get_SupportsMonoExtensions()
+public SslProtocols get_SupportedProtocols()
+public IMonoSslStream CreateSslStream(Stream innerStream, bool leaveInnerStreamOpen, MonoTlsSettings settings)
+internal IMonoSslStream CreateSslStreamInternal(SslStream sslStream, Stream innerStream, bool leaveInnerStreamOpen, MonoTlsSettings settings)
+internal bool get_HasNativeCertificates()
+internal X509Certificate2Impl GetNativeCertificate(Byte[] data, string password, X509KeyStorageFlags flags)
+internal X509Certificate2Impl GetNativeCertificate(X509Certificate certificate)
+internal bool ValidateCertificate(ICertificateValidator2 validator, string targetHost, bool serverMode, X509CertificateCollection certificates, bool wantsChain, X509Chain& chain, MonoSslPolicyErrors& errors, Int32& status11)
+internal bool get_SupportsCleanShutdown()
+}
+public Mono.Security.Interface.MonoTlsProviderFactory : object {
+internal int InternalVersion
+public bool IsInitialized
+public MonoTlsProvider GetProvider()
+public bool get_IsInitialized()
+public void Initialize()
+public void Initialize(string provider)
+public bool IsProviderSupported(string provider)
+public MonoTlsProvider GetProvider(string provider)
+public HttpWebRequest CreateHttpsRequest(Uri requestUri, MonoTlsProvider provider, MonoTlsSettings settings)
+public HttpListener CreateHttpListener(X509Certificate certificate, MonoTlsProvider provider, MonoTlsSettings settings)
+public IMonoSslStream GetMonoSslStream(SslStream stream)
+public IMonoSslStream GetMonoSslStream(HttpListenerContext context)
+}
+public Mono.Security.Interface.MonoTlsSettings : object {
+private MonoRemoteCertificateValidationCallback <RemoteCertificateValidationCallback>k__BackingField
+private MonoLocalCertificateSelectionCallback <ClientCertificateSelectionCallback>k__BackingField
+private Nullable`1<DateTime> <CertificateValidationTime>k__BackingField
+private X509CertificateCollection <TrustAnchors>k__BackingField
+private object <UserSettings>k__BackingField
+private String[] <CertificateSearchPaths>k__BackingField
+private bool <SendCloseNotify>k__BackingField
+private Nullable`1<TlsProtocols> <EnabledProtocols>k__BackingField
+private CipherSuiteCode[] <EnabledCiphers>k__BackingField
+private bool cloned
+private bool checkCertName
+private bool checkCertRevocationStatus
+private Nullable`1<bool> useServicePointManagerCallback
+private bool skipSystemValidators
+private bool callbackNeedsChain
+private ICertificateValidator certificateValidator
+private MonoTlsSettings defaultSettings
+public MonoRemoteCertificateValidationCallback RemoteCertificateValidationCallback
+public MonoLocalCertificateSelectionCallback ClientCertificateSelectionCallback
+public bool CheckCertificateName
+public bool CheckCertificateRevocationStatus
+public Nullable`1<bool> UseServicePointManagerCallback
+public bool SkipSystemValidators
+public bool CallbackNeedsCertificateChain
+public Nullable`1<DateTime> CertificateValidationTime
+public X509CertificateCollection TrustAnchors
+public object UserSettings
+internal String[] CertificateSearchPaths
+internal bool SendCloseNotify
+public Nullable`1<TlsProtocols> EnabledProtocols
+public CipherSuiteCode[] EnabledCiphers
+public MonoTlsSettings DefaultSettings
+public ICertificateValidator CertificateValidator
+public MonoRemoteCertificateValidationCallback get_RemoteCertificateValidationCallback()
+public void set_RemoteCertificateValidationCallback(MonoRemoteCertificateValidationCallback value)
+public MonoLocalCertificateSelectionCallback get_ClientCertificateSelectionCallback()
+public void set_ClientCertificateSelectionCallback(MonoLocalCertificateSelectionCallback value)
+public bool get_CheckCertificateName()
+public void set_CheckCertificateName(bool value)
+public bool get_CheckCertificateRevocationStatus()
+public void set_CheckCertificateRevocationStatus(bool value)
+public Nullable`1<bool> get_UseServicePointManagerCallback()
+public void set_UseServicePointManagerCallback(Nullable`1<bool> value)
+public bool get_SkipSystemValidators()
+public void set_SkipSystemValidators(bool value)
+public bool get_CallbackNeedsCertificateChain()
+public void set_CallbackNeedsCertificateChain(bool value)
+public Nullable`1<DateTime> get_CertificateValidationTime()
+public void set_CertificateValidationTime(Nullable`1<DateTime> value)
+public X509CertificateCollection get_TrustAnchors()
+public void set_TrustAnchors(X509CertificateCollection value)
+public object get_UserSettings()
+public void set_UserSettings(object value)
+internal String[] get_CertificateSearchPaths()
+internal void set_CertificateSearchPaths(String[] value)
+internal bool get_SendCloseNotify()
+internal void set_SendCloseNotify(bool value)
+public Nullable`1<TlsProtocols> get_EnabledProtocols()
+public void set_EnabledProtocols(Nullable`1<TlsProtocols> value)
+public CipherSuiteCode[] get_EnabledCiphers()
+public void set_EnabledCiphers(CipherSuiteCode[] value)
+public MonoTlsSettings get_DefaultSettings()
+public void set_DefaultSettings(MonoTlsSettings value)
+public MonoTlsSettings CopyDefaultSettings()
+public ICertificateValidator get_CertificateValidator()
+public MonoTlsSettings CloneWithValidator(ICertificateValidator validator)
+public MonoTlsSettings Clone()
+private void .ctor(MonoTlsSettings other)
+}
+public Mono.Security.Interface.TlsException : Exception {
+private Alert alert
+public Alert Alert
+public Alert get_Alert()
+public void .ctor(Alert alert)
+public void .ctor(Alert alert, string message)
+public void .ctor(AlertLevel level, AlertDescription description)
+public void .ctor(AlertDescription description)
+public void .ctor(AlertDescription description, string message)
+public void .ctor(AlertDescription description, string format, Object[] args)
+}
+public Mono.Security.Interface.TlsProtocolCode : Enum {
+public short value__
+public TlsProtocolCode Tls10
+public TlsProtocolCode Tls11
+public TlsProtocolCode Tls12
+}
+public Mono.Security.Interface.TlsProtocols : Enum {
+public int value__
+public TlsProtocols Zero
+public TlsProtocols Tls10Client
+public TlsProtocols Tls10Server
+public TlsProtocols Tls10
+public TlsProtocols Tls11Client
+public TlsProtocols Tls11Server
+public TlsProtocols Tls11
+public TlsProtocols Tls12Client
+public TlsProtocols Tls12Server
+public TlsProtocols Tls12
+public TlsProtocols ClientMask
+public TlsProtocols ServerMask
+}
+public Mono.Security.Interface.ValidationResult : object {
+private bool trusted
+private bool user_denied
+private int error_code
+private Nullable`1<MonoSslPolicyErrors> policy_errors
+public bool Trusted
+public bool UserDenied
+public int ErrorCode
+public Nullable`1<MonoSslPolicyErrors> PolicyErrors
+public void .ctor(bool trusted, bool user_denied, int error_code, Nullable`1<MonoSslPolicyErrors> policy_errors)
+internal void .ctor(bool trusted, bool user_denied, int error_code)
+public bool get_Trusted()
+public bool get_UserDenied()
+public int get_ErrorCode()
+public Nullable`1<MonoSslPolicyErrors> get_PolicyErrors()
+}
 public Mono.Security.PKCS7 : object {
 public ASN1 Attribute(string oid, ASN1 value)
 public ASN1 AlgorithmIdentifier(string oid)
@@ -855,7 +1540,6 @@ public NtlmFlags Negotiate56
 public Mono.Security.Protocol.Ntlm.NtlmSettings : object {
 private NtlmAuthLevel defaultAuthLevel
 public NtlmAuthLevel DefaultAuthLevel
-private FieldInfo GetDefaultAuthLevelField()
 public NtlmAuthLevel get_DefaultAuthLevel()
 public void set_DefaultAuthLevel(NtlmAuthLevel value)
 }
@@ -941,14 +1625,14 @@ public AlertDescription Description
 public string Message
 public bool IsWarning
 public bool IsCloseNotify
-public void .ctor(AlertDescription description)
-public void .ctor(AlertLevel level, AlertDescription description)
 public AlertLevel get_Level()
 public AlertDescription get_Description()
 public string get_Message()
 public bool get_IsWarning()
 public bool get_IsCloseNotify()
-private void inferAlertLevel()
+public void .ctor(AlertDescription description)
+public void .ctor(AlertLevel level, AlertDescription description)
+private AlertLevel inferAlertLevel(AlertDescription description)
 public string GetAlertMessage(AlertDescription description)
 }
 internal Mono.Security.Protocol.Tls.AlertDescription : Enum {
@@ -1052,7 +1736,6 @@ public byte ExpandedKeyMaterialSize
 public short EffectiveKeyBits
 public byte IvSize
 public Context Context
-public void .ctor(short code, string name, CipherAlgorithmType cipherAlgorithmType, HashAlgorithmType hashAlgorithmType, ExchangeAlgorithmType exchangeAlgorithmType, bool exportable, bool blockMode, byte keyMaterialSize, byte expandedKeyMaterialSize, short effectiveKeyBits, byte ivSize, byte blockSize)
 protected ICryptoTransform get_EncryptionCipher()
 protected ICryptoTransform get_DecryptionCipher()
 protected KeyedHashAlgorithm get_ClientHMAC()
@@ -1074,6 +1757,7 @@ public short get_EffectiveKeyBits()
 public byte get_IvSize()
 public Context get_Context()
 public void set_Context(Context value)
+public void .ctor(short code, string name, CipherAlgorithmType cipherAlgorithmType, HashAlgorithmType hashAlgorithmType, ExchangeAlgorithmType exchangeAlgorithmType, bool exportable, bool blockMode, byte keyMaterialSize, byte expandedKeyMaterialSize, short effectiveKeyBits, byte ivSize, byte blockSize)
 internal void Write(Byte[] array, int offset, short value)
 internal void Write(Byte[] array, int offset, ulong value)
 public void InitializeCipher()
@@ -1093,18 +1777,15 @@ internal Mono.Security.Protocol.Tls.CipherSuiteCollection : List`1<CipherSuite> 
 private SecurityProtocolType protocol
 public CipherSuite Item
 public CipherSuite Item
-public void .ctor(SecurityProtocolType protocol)
 public CipherSuite get_Item(string name)
 public CipherSuite get_Item(short code)
+public void .ctor(SecurityProtocolType protocol)
 public int IndexOf(string name)
 public int IndexOf(short code)
 public void Add(short code, string name, CipherAlgorithmType cipherType, HashAlgorithmType hashType, ExchangeAlgorithmType exchangeType, bool exportable, bool blockMode, byte keyMaterialSize, byte expandedKeyMaterialSize, short effectiveKeyBytes, byte ivSize, byte blockSize)
 public IList`1<string> GetNames()
 }
 internal Mono.Security.Protocol.Tls.CipherSuiteFactory : object {
-private Type spm
-private PropertyInfo client_callback
-private PropertyInfo server_callback
 public CipherSuiteCollection GetSupportedCiphers(bool server, SecurityProtocolType protocol)
 private CipherSuiteCollection GetTls1SupportedCiphers()
 private CipherSuiteCollection GetSsl3SupportedCiphers()
@@ -1114,10 +1795,10 @@ private SslClientStream sslStream
 private short clientHelloProtocol
 public SslClientStream SslStream
 public short ClientHelloProtocol
-public void .ctor(SslClientStream stream, SecurityProtocolType securityProtocolType, string targetHost, X509CertificateCollection clientCertificates)
 public SslClientStream get_SslStream()
 public short get_ClientHelloProtocol()
 public void set_ClientHelloProtocol(short value)
+public void .ctor(SslClientStream stream, SecurityProtocolType securityProtocolType, string targetHost, X509CertificateCollection clientCertificates)
 public void Clear()
 }
 internal Mono.Security.Protocol.Tls.ClientRecordProtocol : RecordProtocol {
@@ -1234,7 +1915,6 @@ public SecurityParameters Current
 public SecurityParameters Negotiating
 public SecurityParameters Read
 public SecurityParameters Write
-public void .ctor(SecurityProtocolType securityProtocolType)
 public bool get_AbbreviatedHandshake()
 public void set_AbbreviatedHandshake(bool value)
 public bool get_ProtocolNegotiated()
@@ -1286,6 +1966,7 @@ public Byte[] get_ServerWriteIV()
 public void set_ServerWriteIV(Byte[] value)
 public RecordProtocol get_RecordProtocol()
 public void set_RecordProtocol(RecordProtocol value)
+public void .ctor(SecurityProtocolType securityProtocolType)
 public int GetUnixTime()
 public Byte[] GetSecureRandomBytes(int count)
 public void Clear()
@@ -1427,12 +2108,12 @@ private Byte[] cache
 public Context Context
 public HandshakeType HandshakeType
 public ContentType ContentType
-public void .ctor(Context context, HandshakeType handshakeType)
-public void .ctor(Context context, HandshakeType handshakeType, ContentType contentType)
-public void .ctor(Context context, HandshakeType handshakeType, Byte[] data)
 public Context get_Context()
 public HandshakeType get_HandshakeType()
 public ContentType get_ContentType()
+public void .ctor(Context context, HandshakeType handshakeType)
+public void .ctor(Context context, HandshakeType handshakeType, ContentType contentType)
+public void .ctor(Context context, HandshakeType handshakeType, Byte[] data)
 protected void ProcessAsTls1()
 protected void ProcessAsSsl3()
 public void Process()
@@ -1456,8 +2137,10 @@ public HandshakeType None
 }
 internal Mono.Security.Protocol.Tls.Handshake.Server.TlsClientCertificate : HandshakeMessage {
 private X509CertificateCollection clientCertificates
+public bool HasCertificate
 public void .ctor(Context context, Byte[] buffer)
 public void Update()
+public bool get_HasCertificate()
 protected void ProcessAsSsl3()
 protected void ProcessAsTls1()
 private bool checkCertificateUsage(X509Certificate cert)
@@ -1542,14 +2225,10 @@ public HashAlgorithmType Sha1
 internal Mono.Security.Protocol.Tls.HttpsClientStream : SslClientStream {
 private HttpWebRequest _request
 private int _status
-private CertificateSelectionCallback <>f__am$cache0
-private PrivateKeySelectionCallback <>f__am$cache1
 public bool TrustFailure
 public void .ctor(Stream stream, X509CertificateCollection clientCertificates, HttpWebRequest request, Byte[] buffer)
 public bool get_TrustFailure()
 internal bool RaiseServerCertificateValidation(X509Certificate certificate, Int32[] certificateErrors)
-private X509Certificate <HttpsClientStream>m__0(X509CertificateCollection clientCerts, X509Certificate serverCertificate, string targetHost, X509CertificateCollection serverRequestedCertificates)
-private AsymmetricAlgorithm <HttpsClientStream>m__1(X509Certificate certificate, string targetHost)
 }
 public Mono.Security.Protocol.Tls.PrivateKeySelectionCallback : MulticastDelegate {
 public void .ctor(object object, IntPtr method)
@@ -1562,9 +2241,9 @@ private ManualResetEvent record_processing
 protected Stream innerStream
 protected Context context
 public Context Context
-public void .ctor(Stream innerStream, Context context)
 public Context get_Context()
 public void set_Context(Context value)
+public void .ctor(Stream innerStream, Context context)
 public void SendRecord(HandshakeType type)
 protected void ProcessHandshakeMessage(TlsStream handMsg)
 protected void ProcessChangeCipherSpec()
@@ -1575,6 +2254,7 @@ public Byte[] EndReceiveRecord(IAsyncResult asyncResult)
 public Byte[] ReceiveRecord(Stream record)
 private Byte[] ReadRecordBuffer(int contentType, Stream record)
 private void ProcessAlert(AlertLevel alertLevel, AlertDescription alertDesc)
+internal void SendAlert(Exception& ex)
 public void SendAlert(AlertDescription description)
 public void SendAlert(AlertLevel level, AlertDescription description)
 public void SendAlert(Alert alert)
@@ -1636,6 +2316,8 @@ public SecurityProtocolType Default
 public SecurityProtocolType Ssl2
 public SecurityProtocolType Ssl3
 public SecurityProtocolType Tls
+public SecurityProtocolType Tls11
+public SecurityProtocolType Tls12
 }
 internal Mono.Security.Protocol.Tls.ServerContext : Context {
 private SslServerStream sslStream
@@ -1644,10 +2326,10 @@ private bool clientCertificateRequired
 public SslServerStream SslStream
 public bool ClientCertificateRequired
 public bool RequestClientCertificate
-public void .ctor(SslServerStream stream, SecurityProtocolType securityProtocolType, X509Certificate serverCertificate, bool clientCertificateRequired, bool requestClientCertificate)
 public SslServerStream get_SslStream()
 public bool get_ClientCertificateRequired()
 public bool get_RequestClientCertificate()
+public void .ctor(SslServerStream stream, SecurityProtocolType securityProtocolType, X509Certificate serverCertificate, bool clientCertificateRequired, bool requestClientCertificate)
 }
 internal Mono.Security.Protocol.Tls.ServerRecordProtocol : RecordProtocol {
 private TlsClientCertificate cert
@@ -1681,11 +2363,6 @@ public CertificateValidationCallback ServerCertValidationDelegate
 public CertificateSelectionCallback ClientCertSelectionDelegate
 public PrivateKeySelectionCallback PrivateKeyCertSelectionDelegate
 internal bool HaveRemoteValidation2Callback
-public void .ctor(Stream stream, string targetHost, bool ownsStream)
-public void .ctor(Stream stream, string targetHost, X509Certificate clientCertificate)
-public void .ctor(Stream stream, string targetHost, X509CertificateCollection clientCertificates)
-public void .ctor(Stream stream, string targetHost, bool ownsStream, SecurityProtocolType securityProtocolType)
-public void .ctor(Stream stream, string targetHost, bool ownsStream, SecurityProtocolType securityProtocolType, X509CertificateCollection clientCertificates)
 internal void add_ServerCertValidation(CertificateValidationCallback value)
 internal void remove_ServerCertValidation(CertificateValidationCallback value)
 internal void add_ClientCertSelection(CertificateSelectionCallback value)
@@ -1703,6 +2380,11 @@ public PrivateKeySelectionCallback get_PrivateKeyCertSelectionDelegate()
 public void set_PrivateKeyCertSelectionDelegate(PrivateKeySelectionCallback value)
 public void add_ServerCertValidation2(CertificateValidationCallback2 value)
 public void remove_ServerCertValidation2(CertificateValidationCallback2 value)
+public void .ctor(Stream stream, string targetHost, bool ownsStream)
+public void .ctor(Stream stream, string targetHost, X509Certificate clientCertificate)
+public void .ctor(Stream stream, string targetHost, X509CertificateCollection clientCertificates)
+public void .ctor(Stream stream, string targetHost, bool ownsStream, SecurityProtocolType securityProtocolType)
+public void .ctor(Stream stream, string targetHost, bool ownsStream, SecurityProtocolType securityProtocolType, X509CertificateCollection clientCertificates)
 protected void Finalize()
 protected void Dispose(bool disposing)
 private void SafeEndReceiveRecord(IAsyncResult ar, bool ignoreEmpty)
@@ -1744,11 +2426,6 @@ public X509Certificate ClientCertificate
 public CertificateValidationCallback ClientCertValidationDelegate
 public PrivateKeySelectionCallback PrivateKeyCertSelectionDelegate
 internal bool HaveRemoteValidation2Callback
-public void .ctor(Stream stream, X509Certificate serverCertificate)
-public void .ctor(Stream stream, X509Certificate serverCertificate, bool clientCertificateRequired, bool ownsStream)
-public void .ctor(Stream stream, X509Certificate serverCertificate, bool clientCertificateRequired, bool requestClientCertificate, bool ownsStream)
-public void .ctor(Stream stream, X509Certificate serverCertificate, bool clientCertificateRequired, bool ownsStream, SecurityProtocolType securityProtocolType)
-public void .ctor(Stream stream, X509Certificate serverCertificate, bool clientCertificateRequired, bool requestClientCertificate, bool ownsStream, SecurityProtocolType securityProtocolType)
 internal void add_ClientCertValidation(CertificateValidationCallback value)
 internal void remove_ClientCertValidation(CertificateValidationCallback value)
 internal void add_PrivateKeySelection(PrivateKeySelectionCallback value)
@@ -1760,6 +2437,11 @@ public PrivateKeySelectionCallback get_PrivateKeyCertSelectionDelegate()
 public void set_PrivateKeyCertSelectionDelegate(PrivateKeySelectionCallback value)
 public void add_ClientCertValidation2(CertificateValidationCallback2 value)
 public void remove_ClientCertValidation2(CertificateValidationCallback2 value)
+public void .ctor(Stream stream, X509Certificate serverCertificate)
+public void .ctor(Stream stream, X509Certificate serverCertificate, bool clientCertificateRequired, bool ownsStream)
+public void .ctor(Stream stream, X509Certificate serverCertificate, bool clientCertificateRequired, bool requestClientCertificate, bool ownsStream)
+public void .ctor(Stream stream, X509Certificate serverCertificate, bool clientCertificateRequired, bool ownsStream, SecurityProtocolType securityProtocolType)
+public void .ctor(Stream stream, X509Certificate serverCertificate, bool clientCertificateRequired, bool requestClientCertificate, bool ownsStream, SecurityProtocolType securityProtocolType)
 protected void Finalize()
 protected void Dispose(bool disposing)
 internal IAsyncResult BeginNegotiateHandshake(AsyncCallback callback, object state)
@@ -1835,6 +2517,7 @@ private void EndNegotiateHandshake(InternalAsyncResult asyncResult)
 public IAsyncResult BeginRead(Byte[] buffer, int offset, int count, AsyncCallback callback, object state)
 private void InternalBeginRead(InternalAsyncResult asyncResult)
 private void InternalReadCallback(IAsyncResult result)
+private void InternalReadCallback_inner(InternalAsyncResult internalResult, Byte[] recbuf, Object[] state, bool didRead, int n)
 private void InternalBeginWrite(InternalAsyncResult asyncResult)
 private void InternalWriteCallback(IAsyncResult ar)
 public IAsyncResult BeginWrite(Byte[] buffer, int offset, int count, AsyncCallback callback, object state)
@@ -1890,6 +2573,7 @@ public void UpdateCertificateRSA()
 internal Mono.Security.Protocol.Tls.TlsException : Exception {
 private Alert alert
 public Alert Alert
+public Alert get_Alert()
 internal void .ctor(string message)
 internal void .ctor(SerializationInfo info, StreamingContext context)
 internal void .ctor(string message, Exception ex)
@@ -1897,7 +2581,6 @@ internal void .ctor(AlertLevel level, AlertDescription description)
 internal void .ctor(AlertLevel level, AlertDescription description, string message)
 internal void .ctor(AlertDescription description)
 internal void .ctor(AlertDescription description, string message)
-public Alert get_Alert()
 }
 internal Mono.Security.Protocol.Tls.TlsServerSettings : object {
 private X509CertificateCollection certificates
@@ -1945,7 +2628,6 @@ public bool CanRead
 public bool CanSeek
 public long Position
 public long Length
-public void .ctor(Byte[] data)
 public bool get_EOF()
 public bool get_CanWrite()
 public bool get_CanRead()
@@ -1953,6 +2635,7 @@ public bool get_CanSeek()
 public long get_Position()
 public void set_Position(long value)
 public long get_Length()
+public void .ctor(Byte[] data)
 private Byte[] ReadSmallValue(int length)
 public byte ReadByte()
 public short ReadInt16()
@@ -1972,18 +2655,6 @@ public void SetLength(long length)
 public long Seek(long offset, SeekOrigin loc)
 public int Read(Byte[] buffer, int offset, int count)
 public void Write(Byte[] buffer, int offset, int count)
-}
-public Mono.Security.Protocol.Tls.ValidationResult : object {
-private bool trusted
-private bool user_denied
-private int error_code
-public bool Trusted
-public bool UserDenied
-public int ErrorCode
-public void .ctor(bool trusted, bool user_denied, int error_code)
-public bool get_Trusted()
-public bool get_UserDenied()
-public int get_ErrorCode()
 }
 public Mono.Security.StrongName : object {
 private RSA rsa
@@ -2226,7 +2897,6 @@ private ArrayList _safeBags
 private RandomNumberGenerator _rng
 public int CryptoApiPasswordLimit
 private int password_max_length
-private Dictionary`2<string, int> <>f__switch$map1
 public string Password
 public int IterationCount
 public ArrayList Keys
@@ -2325,7 +2995,6 @@ private Byte[] title
 private Byte[] surname
 private Byte[] givenName
 private Byte[] initial
-private Dictionary`2<string, int> <>f__switch$map2
 public string ToString(ASN1 seq)
 public string ToString(ASN1 seq, bool reversed, string separator, bool quotes)
 private void AppendEntry(StringBuilder sb, ASN1 entry, bool quotes)
@@ -2342,7 +3011,6 @@ public ASN1 FromString(string rdn)
 public Mono.Security.X509.X509Builder : object {
 private string defaultHash
 private string hashName
-private Dictionary`2<string, int> <>f__switch$map3
 public string Hash
 protected ASN1 ToBeSigned(string hashName)
 protected string GetOid(string hashName)
@@ -2371,13 +3039,14 @@ private Byte[] m_signaturealgoparams
 private Byte[] certhash
 private RSA _rsa
 private DSA _dsa
+private string OID_DSA
+private string OID_RSA
 private int version
 private Byte[] serialnumber
 private Byte[] issuerUniqueID
 private Byte[] subjectUniqueID
 private X509ExtensionCollection extensions
 private string encoding_error
-private Dictionary`2<string, int> <>f__switch$map4
 public DSA DSA
 public X509ExtensionCollection Extensions
 public Byte[] Hash
@@ -2399,9 +3068,8 @@ public bool IsCurrent
 public Byte[] IssuerUniqueIdentifier
 public Byte[] SubjectUniqueIdentifier
 public bool IsSelfSigned
-public void .ctor(Byte[] data)
-protected void .ctor(SerializationInfo info, StreamingContext context)
 private void Parse(Byte[] data)
+public void .ctor(Byte[] data)
 private Byte[] GetUnsignedBigInteger(Byte[] integer)
 public DSA get_DSA()
 public void set_DSA(DSA value)
@@ -2434,6 +3102,7 @@ public bool CheckSignature(Byte[] hash, string hashAlgorithm, Byte[] signature)
 public bool get_IsSelfSigned()
 public ASN1 GetIssuerName()
 public ASN1 GetSubjectName()
+protected void .ctor(SerializationInfo info, StreamingContext context)
 public void GetObjectData(SerializationInfo info, StreamingContext context)
 private Byte[] PEM(string type, Byte[] data)
 }
@@ -2639,11 +3308,12 @@ private string _storePath
 private X509CertificateCollection _certificates
 private ArrayList _crls
 private bool _crl
+private bool _newFormat
 private string _name
 public X509CertificateCollection Certificates
 public ArrayList Crls
 public string Name
-internal void .ctor(string path, bool crl)
+internal void .ctor(string path, bool crl, bool newFormat)
 public X509CertificateCollection get_Certificates()
 public ArrayList get_Crls()
 public string get_Name()
@@ -2654,9 +3324,12 @@ public void Import(X509Certificate certificate)
 public void Import(X509Crl crl)
 public void Remove(X509Certificate certificate)
 public void Remove(X509Crl crl)
-private string GetUniqueName(X509Certificate certificate)
+private void ImportNewFormat(X509Certificate certificate)
+private void RemoveNewFormat(X509Certificate certificate)
+private string GetUniqueNameWithSerial(X509Certificate certificate)
+private string GetUniqueName(X509Certificate certificate, Byte[] serial)
 private string GetUniqueName(X509Crl crl)
-private Byte[] GetUniqueName(X509ExtensionCollection extensions)
+private Byte[] GetUniqueName(X509ExtensionCollection extensions, Byte[] serial)
 private string GetUniqueName(string method, Byte[] name, string fileExtension)
 private Byte[] Load(string filename)
 private X509Certificate LoadCertificate(string filename)
@@ -2669,12 +3342,20 @@ private void ImportPrivateKey(X509Certificate certificate, CspParameters cspPara
 public Mono.Security.X509.X509StoreManager : object {
 private string _userPath
 private string _localMachinePath
+private string _newUserPath
+private string _newLocalMachinePath
 private X509Stores _userStore
 private X509Stores _machineStore
+private X509Stores _newUserStore
+private X509Stores _newMachineStore
 internal string CurrentUserPath
 internal string LocalMachinePath
+internal string NewCurrentUserPath
+internal string NewLocalMachinePath
 public X509Stores CurrentUser
 public X509Stores LocalMachine
+public X509Stores NewCurrentUser
+public X509Stores NewLocalMachine
 public X509CertificateCollection IntermediateCACertificates
 public ArrayList IntermediateCACrls
 public X509CertificateCollection TrustedRootCertificates
@@ -2682,8 +3363,12 @@ public ArrayList TrustedRootCACrls
 public X509CertificateCollection UntrustedCertificates
 internal string get_CurrentUserPath()
 internal string get_LocalMachinePath()
+internal string get_NewCurrentUserPath()
+internal string get_NewLocalMachinePath()
 public X509Stores get_CurrentUser()
 public X509Stores get_LocalMachine()
+public X509Stores get_NewCurrentUser()
+public X509Stores get_NewLocalMachine()
 public X509CertificateCollection get_IntermediateCACertificates()
 public ArrayList get_IntermediateCACrls()
 public X509CertificateCollection get_TrustedRootCertificates()
@@ -2692,6 +3377,7 @@ public X509CertificateCollection get_UntrustedCertificates()
 }
 public Mono.Security.X509.X509Stores : object {
 private string _storePath
+private bool _newFormat
 private X509Store _personal
 private X509Store _other
 private X509Store _intermediate
@@ -2702,7 +3388,7 @@ public X509Store OtherPeople
 public X509Store IntermediateCA
 public X509Store TrustedRoot
 public X509Store Untrusted
-internal void .ctor(string path)
+internal void .ctor(string path, bool newFormat)
 public X509Store get_Personal()
 public X509Store get_OtherPeople()
 public X509Store get_IntermediateCA()

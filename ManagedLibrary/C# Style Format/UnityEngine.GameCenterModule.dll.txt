@@ -1,0 +1,365 @@
+public UnityEngine.Social : object {
+public ISocialPlatform Active
+public ILocalUser localUser
+public ISocialPlatform get_Active()
+public void set_Active(ISocialPlatform value)
+public ILocalUser get_localUser()
+public void LoadUsers(String[] userIDs, Action`1<IUserProfile[]> callback)
+public void ReportProgress(string achievementID, double progress, Action`1<bool> callback)
+public void LoadAchievementDescriptions(Action`1<IAchievementDescription[]> callback)
+public void LoadAchievements(Action`1<IAchievement[]> callback)
+public void ReportScore(long score, string board, Action`1<bool> callback)
+public void LoadScores(string leaderboardID, Action`1<IScore[]> callback)
+public ILeaderboard CreateLeaderboard()
+public IAchievement CreateAchievement()
+public void ShowAchievementsUI()
+public void ShowLeaderboardUI()
+}
+internal UnityEngine.SocialPlatforms.ActivePlatform : object {
+private ISocialPlatform _active
+internal ISocialPlatform Instance
+internal ISocialPlatform get_Instance()
+internal void set_Instance(ISocialPlatform value)
+private ISocialPlatform SelectSocialPlatform()
+}
+public UnityEngine.SocialPlatforms.IAchievement {
+public string id
+public double percentCompleted
+public bool completed
+public bool hidden
+public DateTime lastReportedDate
+public void ReportProgress(Action`1<bool> callback)
+public string get_id()
+public void set_id(string value)
+public double get_percentCompleted()
+public void set_percentCompleted(double value)
+public bool get_completed()
+public bool get_hidden()
+public DateTime get_lastReportedDate()
+}
+public UnityEngine.SocialPlatforms.IAchievementDescription {
+public string id
+public string title
+public Texture2D image
+public string achievedDescription
+public string unachievedDescription
+public bool hidden
+public int points
+public string get_id()
+public void set_id(string value)
+public string get_title()
+public Texture2D get_image()
+public string get_achievedDescription()
+public string get_unachievedDescription()
+public bool get_hidden()
+public int get_points()
+}
+public UnityEngine.SocialPlatforms.ILeaderboard {
+public bool loading
+public string id
+public UserScope userScope
+public Range range
+public TimeScope timeScope
+public IScore localUserScore
+public UInt32 maxRange
+public IScore[] scores
+public string title
+public void SetUserFilter(String[] userIDs)
+public void LoadScores(Action`1<bool> callback)
+public bool get_loading()
+public string get_id()
+public void set_id(string value)
+public UserScope get_userScope()
+public void set_userScope(UserScope value)
+public Range get_range()
+public void set_range(Range value)
+public TimeScope get_timeScope()
+public void set_timeScope(TimeScope value)
+public IScore get_localUserScore()
+public UInt32 get_maxRange()
+public IScore[] get_scores()
+public string get_title()
+}
+public UnityEngine.SocialPlatforms.ILocalUser {
+public IUserProfile[] friends
+public bool authenticated
+public bool underage
+public void Authenticate(Action`1<bool> callback)
+public void Authenticate(Action`2<bool, string> callback)
+public void LoadFriends(Action`1<bool> callback)
+public IUserProfile[] get_friends()
+public bool get_authenticated()
+public bool get_underage()
+}
+public UnityEngine.SocialPlatforms.Impl.Achievement : object {
+private bool m_Completed
+private bool m_Hidden
+private DateTime m_LastReportedDate
+private string <id>k__BackingField
+private double <percentCompleted>k__BackingField
+public string id
+public double percentCompleted
+public bool completed
+public bool hidden
+public DateTime lastReportedDate
+public void .ctor(string id, double percentCompleted, bool completed, bool hidden, DateTime lastReportedDate)
+public void .ctor(string id, double percent)
+public string ToString()
+public void ReportProgress(Action`1<bool> callback)
+public void SetCompleted(bool value)
+public void SetHidden(bool value)
+public void SetLastReportedDate(DateTime date)
+public string get_id()
+public void set_id(string value)
+public double get_percentCompleted()
+public void set_percentCompleted(double value)
+public bool get_completed()
+public bool get_hidden()
+public DateTime get_lastReportedDate()
+}
+public UnityEngine.SocialPlatforms.Impl.AchievementDescription : object {
+private string m_Title
+private Texture2D m_Image
+private string m_AchievedDescription
+private string m_UnachievedDescription
+private bool m_Hidden
+private int m_Points
+private string <id>k__BackingField
+public string id
+public string title
+public Texture2D image
+public string achievedDescription
+public string unachievedDescription
+public bool hidden
+public int points
+public void .ctor(string id, string title, Texture2D image, string achievedDescription, string unachievedDescription, bool hidden, int points)
+public string ToString()
+public void SetImage(Texture2D image)
+public string get_id()
+public void set_id(string value)
+public string get_title()
+public Texture2D get_image()
+public string get_achievedDescription()
+public string get_unachievedDescription()
+public bool get_hidden()
+public int get_points()
+}
+public UnityEngine.SocialPlatforms.Impl.Leaderboard : object {
+private bool m_Loading
+private IScore m_LocalUserScore
+private UInt32 m_MaxRange
+private IScore[] m_Scores
+private string m_Title
+private String[] m_UserIDs
+private string <id>k__BackingField
+private UserScope <userScope>k__BackingField
+private Range <range>k__BackingField
+private TimeScope <timeScope>k__BackingField
+public bool loading
+public string id
+public UserScope userScope
+public Range range
+public TimeScope timeScope
+public IScore localUserScore
+public UInt32 maxRange
+public IScore[] scores
+public string title
+public void SetUserFilter(String[] userIDs)
+public string ToString()
+public void LoadScores(Action`1<bool> callback)
+public bool get_loading()
+public void SetLocalUserScore(IScore score)
+public void SetMaxRange(UInt32 maxRange)
+public void SetScores(IScore[] scores)
+public void SetTitle(string title)
+public String[] GetUserFilter()
+public string get_id()
+public void set_id(string value)
+public UserScope get_userScope()
+public void set_userScope(UserScope value)
+public Range get_range()
+public void set_range(Range value)
+public TimeScope get_timeScope()
+public void set_timeScope(TimeScope value)
+public IScore get_localUserScore()
+public UInt32 get_maxRange()
+public IScore[] get_scores()
+public string get_title()
+}
+public UnityEngine.SocialPlatforms.Impl.LocalUser : UserProfile {
+private IUserProfile[] m_Friends
+private bool m_Authenticated
+private bool m_Underage
+public IUserProfile[] friends
+public bool authenticated
+public bool underage
+public void Authenticate(Action`1<bool> callback)
+public void Authenticate(Action`2<bool, string> callback)
+public void LoadFriends(Action`1<bool> callback)
+public void SetFriends(IUserProfile[] friends)
+public void SetAuthenticated(bool value)
+public void SetUnderage(bool value)
+public IUserProfile[] get_friends()
+public bool get_authenticated()
+public bool get_underage()
+}
+public UnityEngine.SocialPlatforms.Impl.Score : object {
+private DateTime m_Date
+private string m_FormattedValue
+private string m_UserID
+private int m_Rank
+private string <leaderboardID>k__BackingField
+private long <value>k__BackingField
+public string leaderboardID
+public long value
+public DateTime date
+public string formattedValue
+public string userID
+public int rank
+public void .ctor(string leaderboardID, long value)
+public void .ctor(string leaderboardID, long value, string userID, DateTime date, string formattedValue, int rank)
+public string ToString()
+public void ReportScore(Action`1<bool> callback)
+public void SetDate(DateTime date)
+public void SetFormattedValue(string value)
+public void SetUserID(string userID)
+public void SetRank(int rank)
+public string get_leaderboardID()
+public void set_leaderboardID(string value)
+public long get_value()
+public void set_value(long value)
+public DateTime get_date()
+public string get_formattedValue()
+public string get_userID()
+public int get_rank()
+}
+public UnityEngine.SocialPlatforms.Impl.UserProfile : object {
+protected string m_UserName
+protected string m_ID
+protected bool m_IsFriend
+protected UserState m_State
+protected Texture2D m_Image
+public string userName
+public string id
+public bool isFriend
+public UserState state
+public Texture2D image
+public void .ctor(string name, string id, bool friend)
+public void .ctor(string name, string id, bool friend, UserState state, Texture2D image)
+public string ToString()
+public void SetUserName(string name)
+public void SetUserID(string id)
+public void SetImage(Texture2D image)
+public void SetIsFriend(bool value)
+public void SetState(UserState state)
+public string get_userName()
+public string get_id()
+public bool get_isFriend()
+public UserState get_state()
+public Texture2D get_image()
+}
+public UnityEngine.SocialPlatforms.IScore {
+public string leaderboardID
+public long value
+public DateTime date
+public string formattedValue
+public string userID
+public int rank
+public void ReportScore(Action`1<bool> callback)
+public string get_leaderboardID()
+public void set_leaderboardID(string value)
+public long get_value()
+public void set_value(long value)
+public DateTime get_date()
+public string get_formattedValue()
+public string get_userID()
+public int get_rank()
+}
+public UnityEngine.SocialPlatforms.ISocialPlatform {
+public ILocalUser localUser
+public ILocalUser get_localUser()
+public void LoadUsers(String[] userIDs, Action`1<IUserProfile[]> callback)
+public void ReportProgress(string achievementID, double progress, Action`1<bool> callback)
+public void LoadAchievementDescriptions(Action`1<IAchievementDescription[]> callback)
+public void LoadAchievements(Action`1<IAchievement[]> callback)
+public IAchievement CreateAchievement()
+public void ReportScore(long score, string board, Action`1<bool> callback)
+public void LoadScores(string leaderboardID, Action`1<IScore[]> callback)
+public ILeaderboard CreateLeaderboard()
+public void ShowAchievementsUI()
+public void ShowLeaderboardUI()
+public void Authenticate(ILocalUser user, Action`1<bool> callback)
+public void Authenticate(ILocalUser user, Action`2<bool, string> callback)
+public void LoadFriends(ILocalUser user, Action`1<bool> callback)
+public void LoadScores(ILeaderboard board, Action`1<bool> callback)
+public bool GetLoading(ILeaderboard board)
+}
+public UnityEngine.SocialPlatforms.IUserProfile {
+public string userName
+public string id
+public bool isFriend
+public UserState state
+public Texture2D image
+public string get_userName()
+public string get_id()
+public bool get_isFriend()
+public UserState get_state()
+public Texture2D get_image()
+}
+public UnityEngine.SocialPlatforms.Local : object {
+private LocalUser m_LocalUser
+private List`1<UserProfile> m_Friends
+private List`1<UserProfile> m_Users
+private List`1<AchievementDescription> m_AchievementDescriptions
+private List`1<Achievement> m_Achievements
+private List`1<Leaderboard> m_Leaderboards
+private Texture2D m_DefaultTexture
+private Comparison`1<Score> <>f__am$cache0
+public ILocalUser localUser
+public ILocalUser get_localUser()
+private void UnityEngine.SocialPlatforms.ISocialPlatform.Authenticate(ILocalUser user, Action`1<bool> callback)
+private void UnityEngine.SocialPlatforms.ISocialPlatform.Authenticate(ILocalUser user, Action`2<bool, string> callback)
+private void UnityEngine.SocialPlatforms.ISocialPlatform.LoadFriends(ILocalUser user, Action`1<bool> callback)
+public void LoadUsers(String[] userIDs, Action`1<IUserProfile[]> callback)
+public void ReportProgress(string id, double progress, Action`1<bool> callback)
+public void LoadAchievementDescriptions(Action`1<IAchievementDescription[]> callback)
+public void LoadAchievements(Action`1<IAchievement[]> callback)
+public void ReportScore(long score, string board, Action`1<bool> callback)
+public void LoadScores(string leaderboardID, Action`1<IScore[]> callback)
+private void UnityEngine.SocialPlatforms.ISocialPlatform.LoadScores(ILeaderboard board, Action`1<bool> callback)
+private bool UnityEngine.SocialPlatforms.ISocialPlatform.GetLoading(ILeaderboard board)
+private void SortScores(Leaderboard board)
+private void SetLocalPlayerScore(Leaderboard board)
+public void ShowAchievementsUI()
+public void ShowLeaderboardUI()
+public ILeaderboard CreateLeaderboard()
+public IAchievement CreateAchievement()
+private bool VerifyUser()
+private void PopulateStaticData()
+private Texture2D CreateDummyTexture(int width, int height)
+private int <SortScores>m__0(Score s1, Score s2)
+}
+public UnityEngine.SocialPlatforms.Range : ValueType {
+public int from
+public int count
+public void .ctor(int fromValue, int valueCount)
+}
+public UnityEngine.SocialPlatforms.TimeScope : Enum {
+public int value__
+public TimeScope Today
+public TimeScope Week
+public TimeScope AllTime
+}
+public UnityEngine.SocialPlatforms.UserScope : Enum {
+public int value__
+public UserScope Global
+public UserScope FriendsOnly
+}
+public UnityEngine.SocialPlatforms.UserState : Enum {
+public int value__
+public UserState Online
+public UserState OnlineAndAway
+public UserState OnlineAndBusy
+public UserState Offline
+public UserState Playing
+}

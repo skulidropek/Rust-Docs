@@ -4,10 +4,13 @@ public string MonoCompany
 public string MonoProduct
 public string MonoCopyright
 public string FxVersion
-public string VsVersion
 public string FxFileVersion
+public string EnvironmentVersion
+public string VsVersion
 public string VsFileVersion
+private string PublicKeyToken
 public string AssemblyI18N
+public string AssemblyMicrosoft_JScript
 public string AssemblyMicrosoft_VisualStudio
 public string AssemblyMicrosoft_VisualStudio_Web
 public string AssemblyMicrosoft_VSDesigner
@@ -27,7 +30,15 @@ public string AssemblySystem_Security
 public string AssemblySystem_ServiceProcess
 public string AssemblySystem_Web
 public string AssemblySystem_Windows_Forms
+public string AssemblySystem_2_0
+public string AssemblySystemCore_3_5
 public string AssemblySystem_Core
+public string WindowsBase_3_0
+public string AssemblyWindowsBase
+public string AssemblyPresentationCore_3_5
+public string AssemblyPresentationCore_4_0
+public string AssemblyPresentationFramework_3_5
+public string AssemblySystemServiceModel_3_0
 }
 internal Locale : object {
 public string GetText(string msg)
@@ -52,6 +63,8 @@ private string databaseProductName
 private string databaseProductVersion
 private int databaseMajorVersion
 private CultureInfo locale
+private int lifeTime
+private DateTime created
 private string charset
 private string language
 private bool connected
@@ -103,11 +116,9 @@ protected TdsMetaParameterCollection Parameters
 public bool SequentialAccess
 public Byte[] Collation
 public TdsVersion ServerTdsVersion
+internal bool Expired
 public void .ctor(string dataSource, int port, int packetSize, int timeout, TdsVersion tdsVersion)
-public void add_TdsErrorMessage(TdsInternalErrorMessageEventHandler value)
-public void remove_TdsErrorMessage(TdsInternalErrorMessageEventHandler value)
-public void add_TdsInfoMessage(TdsInternalInfoMessageEventHandler value)
-public void remove_TdsInfoMessage(TdsInternalInfoMessageEventHandler value)
+public void .ctor(string dataSource, int port, int packetSize, int timeout, int lifeTime, TdsVersion tdsVersion)
 protected string get_Charset()
 protected CultureInfo get_Locale()
 public bool get_DoneProc()
@@ -144,6 +155,12 @@ public long GetSequentialColumnValue(int colIndex, long fieldIndex, Byte[] buffe
 private void BeginLoad(Nullable`1<TdsColumnType> colType)
 private void EndLoad()
 private long LoadData(long fieldIndex, Byte[] buffer, int bufferIndex, int size)
+public void add_TdsErrorMessage(TdsInternalErrorMessageEventHandler value)
+public void remove_TdsErrorMessage(TdsInternalErrorMessageEventHandler value)
+public void add_TdsInfoMessage(TdsInternalInfoMessageEventHandler value)
+public void remove_TdsInfoMessage(TdsInternalInfoMessageEventHandler value)
+protected void InitComm(int port, int timeout)
+internal bool get_Expired()
 protected internal void InitExec()
 public void Cancel()
 public bool Connect(TdsConnectionParameters connectionParameters)
@@ -172,6 +189,7 @@ private Encoding GetEncodingFromColumnCollation(int lcid, int sortId)
 protected object GetColumnValue(Nullable`1<TdsColumnType> colType, bool outParam)
 private object GetColumnValue(Nullable`1<TdsColumnType> colType, bool outParam, int ordinal)
 private object GetBinaryValue()
+private object GetVariantValue()
 private object GetDateTimeValue(Nullable`1<TdsColumnType> type)
 private object GetDecimalValue(byte precision, byte scale)
 private object GetDecimalValueTds70(byte precision, byte scale)
@@ -208,6 +226,7 @@ protected void SetCharset(Encoding encoder)
 protected void SetCharset(string charset)
 protected void SetLanguage(string language)
 protected void ProcessReturnStatus()
+public string GetPlainPassword(SecureString secPass)
 protected IAsyncResult BeginExecuteQueryInternal(string sql, bool wantResults, AsyncCallback callback, object state)
 protected void EndExecuteQueryInternal(IAsyncResult ar)
 protected void OnBeginExecuteQueryCallback(IAsyncResult ar)
@@ -231,7 +250,7 @@ public Mono.Data.Tds.Protocol.Tds50 : Tds {
 public TdsVersion Version
 private int packetSize
 private bool isSelectQuery
-private Dictionary`2<string, int> <>f__switch$map5
+private Dictionary`2<string, int> <>f__switch$map4
 public void .ctor(string server, int port)
 public void .ctor(string server, int port, int packetSize, int timeout)
 public string BuildExec(string sql)
@@ -252,26 +271,31 @@ protected bool IsValidRowCount(byte status, byte op)
 public Mono.Data.Tds.Protocol.Tds70 : Tds {
 private decimal SMALLMONEY_MIN
 private decimal SMALLMONEY_MAX
+private Dictionary`2<string, int> <>f__switch$map5
 private Dictionary`2<string, int> <>f__switch$map6
-private Dictionary`2<string, int> <>f__switch$map7
 protected Byte[] ClientVersion
+protected byte Precision
 public void .ctor(string server, int port)
 public void .ctor(string server, int port, int packetSize, int timeout)
 public void .ctor(string server, int port, int packetSize, int timeout, TdsVersion version)
+public void .ctor(string server, int port, int lifetime)
+public void .ctor(string server, int port, int packetSize, int timeout, int lifeTime)
+public void .ctor(string server, int port, int packetSize, int timeout, int lifeTime, TdsVersion version)
 protected Byte[] get_ClientVersion()
-private string BuildExec(string sql)
+protected byte get_Precision()
+protected string BuildExec(string sql)
 private string BuildParameters()
 private string BuildPreparedParameters()
 private string BuildPreparedQuery(string id)
 private string BuildProcedureCall(string procedure)
 public bool Connect(TdsConnectionParameters connectionParameters)
-private string EncryptPassword(string pass)
+private string EncryptPassword(SecureString secPass)
 public bool Reset()
 public void ExecPrepared(string commandText, TdsMetaParameterCollection parameters, int timeout, bool wantResults)
 public void ExecProc(string commandText, TdsMetaParameterCollection parameters, int timeout, bool wantResults)
 private void WriteRpcParameterInfo(TdsMetaParameterCollection parameters)
 private void WritePreparedParameterInfo(TdsMetaParameterCollection parameters)
-private void ExecRPC(TdsRpcProcId rpcId, string sql, TdsMetaParameterCollection parameters, int timeout, bool wantResults)
+protected void ExecRPC(TdsRpcProcId rpcId, string sql, TdsMetaParameterCollection parameters, int timeout, bool wantResults)
 protected void ExecRPC(string rpcName, TdsMetaParameterCollection parameters, int timeout, bool wantResults)
 private void WriteParameterInfo(TdsMetaParameter param)
 public void Execute(string commandText, TdsMetaParameterCollection parameters, int timeout, bool wantResults)
@@ -293,12 +317,18 @@ public void EndExecuteProcedure(IAsyncResult ar)
 public Mono.Data.Tds.Protocol.Tds80 : Tds70 {
 public TdsVersion Version
 protected Byte[] ClientVersion
+protected byte Precision
 public void .ctor(string server, int port)
 public void .ctor(string server, int port, int packetSize, int timeout)
+public void .ctor(string server, int port, int lifetime)
+public void .ctor(string server, int port, int packetSize, int timeout, int lifeTime)
 protected Byte[] get_ClientVersion()
+protected byte get_Precision()
 public bool Connect(TdsConnectionParameters connectionParameters)
 protected void ProcessColumnInfo()
 protected void ProcessOutputParam()
+public void Execute(string commandText, TdsMetaParameterCollection parameters, int timeout, bool wantResults)
+public void ExecPrepared(string commandText, TdsMetaParameterCollection parameters, int timeout, bool wantResults)
 }
 internal Mono.Data.Tds.Protocol.TdsAsyncResult : object {
 private TdsAsyncState _tdsState
@@ -361,7 +391,7 @@ private Tds tds
 public void .ctor(Tds tds)
 public bool SendColumnMetaData(string colMetaData)
 public bool BulkCopyStart(TdsMetaParameterCollection parameters)
-public bool BulkCopyData(object o, int size, bool isNewRow)
+public bool BulkCopyData(object o, bool isNewRow, int size, TdsMetaParameter parameter)
 public bool BulkCopyEnd()
 private void WriteParameterInfo(TdsMetaParameter param)
 }
@@ -379,6 +409,8 @@ public TdsColumnType Bit
 public TdsColumnType Char
 public TdsColumnType DateTime
 public TdsColumnType DateTime4
+public TdsColumnType DateTime2
+public TdsColumnType DateTimeOffset
 public TdsColumnType DateTimeN
 public TdsColumnType Decimal
 public TdsColumnType Real
@@ -461,11 +493,14 @@ public void Append(ushort s)
 private void AppendInternal(int i)
 public void Append(int i)
 public void Append(string s)
+public void AppendNonUnicode(string s)
 public Byte[] Append(string s, int len, byte pad)
 public void Append(double value)
 public void Append(float value)
 public void Append(long l)
 public void Append(decimal d, int bytes)
+public void AppendMoney(decimal d, int size)
+public void AppendDecimal(decimal d, int bytes, int scale)
 public void Close()
 public bool IsConnected()
 public byte GetByte()
@@ -504,9 +539,11 @@ public string DataSource
 public int Port
 public int PacketSize
 public int Timeout
+public int LifeTime
 public int PoolMinSize
 public int PoolMaxSize
 public void .ctor(string dataSource, int port, int packetSize, int timeout, int minSize, int maxSize)
+public void .ctor(string dataSource, int port, int packetSize, int timeout, int minSize, int maxSize, int lifeTime)
 public string ToString()
 }
 public Mono.Data.Tds.Protocol.TdsConnectionParameters : object {
@@ -516,7 +553,8 @@ public string Charset
 public string Hostname
 public string Language
 public string LibraryName
-public string Password
+public SecureString Password
+public bool PasswordSet
 public string ProgName
 public string User
 public bool DomainLogin
@@ -740,12 +778,12 @@ public Mono.Data.Tds.Protocol.TdsInternalErrorCollection : object {
 private ArrayList list
 public int Count
 public TdsInternalError Item
-private IEnumerator System.Collections.IEnumerable.GetEnumerator()
 public int get_Count()
 public TdsInternalError get_Item(int index)
 public void set_Item(int index, TdsInternalError value)
 public int Add(TdsInternalError error)
 public void Clear()
+private IEnumerator System.Collections.IEnumerable.GetEnumerator()
 }
 public Mono.Data.Tds.Protocol.TdsInternalErrorMessageEventArgs : TdsInternalInfoMessageEventArgs {
 public void .ctor(TdsInternalError error)
@@ -908,6 +946,8 @@ public int Version(Byte[] collation)
 public int SortId(Byte[] collation)
 }
 public Mono.Data.Tds.TdsMetaParameter : object {
+public int maxVarCharCharacters
+public int maxNVarCharCharacters
 private TdsParameterDirection direction
 private byte precision
 private byte scale
@@ -925,7 +965,6 @@ private Dictionary`2<string, int> <>f__switch$map0
 private Dictionary`2<string, int> <>f__switch$map1
 private Dictionary`2<string, int> <>f__switch$map2
 private Dictionary`2<string, int> <>f__switch$map3
-private Dictionary`2<string, int> <>f__switch$map4
 public TdsParameterDirection Direction
 public string TypeName
 public string ParameterName
@@ -936,6 +975,14 @@ public byte Precision
 public byte Scale
 public int Size
 public bool IsVariableSizeType
+public bool IsVarNVarCharMax
+public bool IsVarCharMax
+public bool IsAnyVarCharMax
+public bool IsNonUnicodeText
+public bool IsMoneyType
+public bool IsDateTimeType
+public bool IsTextType
+public bool IsDecimalType
 public void .ctor(string name, object value)
 public void .ctor(string name, FrameworkValueGetter valueGetter)
 public void .ctor(string name, string typeName, object value)
@@ -961,12 +1008,24 @@ public int get_Size()
 public void set_Size(int value)
 public bool get_IsVariableSizeType()
 public void set_IsVariableSizeType(bool value)
+public bool get_IsVarNVarCharMax()
+public bool get_IsVarCharMax()
+public bool get_IsAnyVarCharMax()
+public bool get_IsNonUnicodeText()
+public bool get_IsMoneyType()
+public bool get_IsDateTimeType()
+public bool get_IsTextType()
+public bool get_IsDecimalType()
 private object ResizeValue(object newValue)
 internal string Prepare()
 internal int GetActualSize()
 private int GetSize()
+private int GetDateTimePrecision()
+private int GetDateTimeStringLength(TdsColumnType type)
+private string GetDateTimeString(TdsColumnType type)
 internal Byte[] GetBytes()
 internal TdsColumnType GetMetaType()
+public void CalculateIsVariableType()
 public void Validate(int index)
 }
 public Mono.Data.Tds.TdsMetaParameterCollection : object {
@@ -976,7 +1035,6 @@ public bool IsSynchronized
 public TdsMetaParameter Item
 public TdsMetaParameter Item
 public object SyncRoot
-private IEnumerator System.Collections.IEnumerable.GetEnumerator()
 public int get_Count()
 public bool get_IsSynchronized()
 public TdsMetaParameter get_Item(int index)
@@ -986,6 +1044,7 @@ public int Add(TdsMetaParameter value)
 public void Clear()
 public bool Contains(TdsMetaParameter value)
 public void CopyTo(Array array, int index)
+private IEnumerator System.Collections.IEnumerable.GetEnumerator()
 public int IndexOf(TdsMetaParameter value)
 public int IndexOf(string name)
 public void Insert(int index, TdsMetaParameter value)

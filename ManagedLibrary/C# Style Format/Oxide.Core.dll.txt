@@ -187,7 +187,6 @@ public void AddParam(IDbCommand cmd, object item, string parameterPrefix)
 public Oxide.Core.DataFileSystem : object {
 private string <Directory>k__BackingField
 private Dictionary`2<string, DynamicConfigFile> _datafiles
-private JsonSerializerSettings _settings
 public string Directory
 public string get_Directory()
 private void set_Directory(string value)
@@ -195,6 +194,7 @@ public void .ctor(string directory)
 public DynamicConfigFile GetFile(string name)
 public bool ExistsDatafile(string name)
 public DynamicConfigFile GetDatafile(string name)
+public String[] GetFiles(string path, string searchPattern)
 public void SaveDatafile(string name)
 public T ReadObject(string name)
 public void WriteObject(string name, T Object, bool sync)
@@ -304,39 +304,39 @@ public string ToSentence(IEnumerable`1<T> items)
 public string Truncate(string text, int max)
 }
 public Oxide.Core.Extensions.Extension : object {
+private string <Filename>k__BackingField
+private string <Branch>k__BackingField
 private bool <IsCoreExtension>k__BackingField
 private bool <IsGameExtension>k__BackingField
 private bool <SupportsReloading>k__BackingField
-private string <Filename>k__BackingField
-private string <Branch>k__BackingField
 private ExtensionManager <Manager>k__BackingField
+private String[] <DefaultReferences>k__BackingField
 private String[] <WhitelistAssemblies>k__BackingField
 private String[] <WhitelistNamespaces>k__BackingField
-public bool IsCoreExtension
-public bool IsGameExtension
-public bool SupportsReloading
-public string Filename
 public string Name
 public string Author
 public VersionNumber Version
+public string Filename
 public string Branch
+public bool IsCoreExtension
+public bool IsGameExtension
+public bool SupportsReloading
 public ExtensionManager Manager
+public String[] DefaultReferences
 public String[] WhitelistAssemblies
 public String[] WhitelistNamespaces
-public bool get_IsCoreExtension()
-private void set_IsCoreExtension(bool value)
-public bool get_IsGameExtension()
-private void set_IsGameExtension(bool value)
-public bool get_SupportsReloading()
-private void set_SupportsReloading(bool value)
-public string get_Filename()
-public void set_Filename(string value)
 public string get_Name()
 public string get_Author()
 public VersionNumber get_Version()
+public string get_Filename()
+public void set_Filename(string value)
 public string get_Branch()
+public bool get_IsCoreExtension()
+public bool get_IsGameExtension()
+public bool get_SupportsReloading()
 public ExtensionManager get_Manager()
-private void set_Manager(ExtensionManager value)
+public String[] get_DefaultReferences()
+protected void set_DefaultReferences(String[] value)
 public String[] get_WhitelistAssemblies()
 protected void set_WhitelistAssemblies(String[] value)
 public String[] get_WhitelistNamespaces()
@@ -587,6 +587,7 @@ public IEnumerable`1<IPlayer> FindPlayers(string partialNameOrId)
 public Oxide.Core.Libraries.Covalence.IServer {
 public string Name
 public IPAddress Address
+public IPAddress LocalAddress
 public ushort Port
 public string Version
 public string Protocol
@@ -598,6 +599,7 @@ public SaveInfo SaveInfo
 public string get_Name()
 public void set_Name(string value)
 public IPAddress get_Address()
+public IPAddress get_LocalAddress()
 public ushort get_Port()
 public string get_Version()
 public string get_Protocol()
@@ -732,8 +734,9 @@ public bool get_IsLoaded()
 private void set_IsLoaded(bool value)
 private void LoadFromDatafile()
 public void Export(string prefix)
-private void SaveUsers()
-private void SaveGroups()
+public void SaveData()
+public void SaveUsers()
+public void SaveGroups()
 public void RegisterValidate(Func`2<string, bool> val)
 public void CleanUp()
 public void MigrateGroup(string oldGroup, string newGroup)
@@ -742,7 +745,7 @@ public bool PermissionExists(string name, Plugin owner)
 private void owner_OnRemovedFromManager(Plugin sender, PluginManager manager)
 public bool UserIdValid(string id)
 public bool UserExists(string id)
-private UserData GetUserData(string id)
+public UserData GetUserData(string id)
 public void UpdateNickname(string id, string nickname)
 public bool UserHasAnyGroup(string id)
 public bool GroupsHavePermission(HashSet`1<string> groups, string perm)
@@ -773,7 +776,7 @@ public bool SetGroupRank(string group, int rank)
 public string GetGroupParent(string group)
 public bool SetGroupParent(string group, string parent)
 private bool HasCircularParent(string group, string parent)
-private bool <CleanUp>b__16_0(string k)
+private bool <CleanUp>b__17_0(string k)
 }
 public Oxide.Core.Libraries.Plugins : Library {
 private PluginManager <PluginManager>k__BackingField
@@ -843,6 +846,7 @@ public HashSet`1<string> get_Groups()
 public void set_Groups(HashSet`1<string> value)
 }
 public Oxide.Core.Libraries.WebRequests : Library {
+private Covalence covalence
 public float Timeout
 public bool AllowDecompression
 private Queue`1<WebRequest> queue
@@ -852,6 +856,7 @@ private AutoResetEvent workevent
 private bool shutdown
 private int maxWorkerThreads
 private int maxCompletionPortThreads
+public string FormatWebException(Exception exception, string response)
 public void Shutdown()
 private void Worker()
 public void EnqueueGet(string url, Action`2<int, string> callback, Plugin owner, Dictionary`2<string, string> headers, float timeout)
@@ -944,8 +949,9 @@ private bool <IsShuttingDown>k__BackingField
 private ExtensionManager extensionManager
 public CommandLine CommandLine
 private OxideConfig <Config>k__BackingField
-private Timer libtimer
 private Covalence covalence
+private Permission libperm
+private Timer libtimer
 private Func`1<float> getTimeSinceStartup
 private List`1<Action> nextTickQueue
 private List`1<Action> lastTickQueue
@@ -1027,6 +1033,7 @@ public object CallDeprecatedHook(string oldHook, string newHook, DateTime expire
 public void NextTick(Action callback)
 public void OnFrame(Action`1<float> callback)
 public void OnFrame(float delta)
+public void OnSave()
 public void OnShutdown()
 public void RegisterEngineClock(Func`1<float> method)
 public bool CheckConsole(bool force)
@@ -1036,8 +1043,7 @@ private void watcher_OnPluginAdded(string name)
 private void watcher_OnPluginRemoved(string name)
 private void RegisterLibrarySearchPath(string path)
 private bool SetDllDirectory(string lpPathName)
-private float <Load>b__75_1()
-private float <Load>b__0_1()
+private float <Load>b__76_1()
 }
 public Oxide.Core.Plugins.CSPlugin : Plugin {
 protected Dictionary`2<string, List`1<HookMethod>> Hooks
@@ -1334,7 +1340,7 @@ public int Identifier
 public string Type
 public string Stacktrace
 public RemoteMessage CreateMessage(string message, int identifier, string type, string trace)
-public RemoteMessage GetMessage(string message)
+public RemoteMessage GetMessage(string text)
 internal string ToJSON()
 }
 public Oxide.Core.RemoteLogger : object {
@@ -1477,6 +1483,10 @@ public string GetFileNameWithoutExtension(string value)
 public string CleanPath(string path)
 public T ConvertFromJson(string jsonstr)
 public string ConvertToJson(object obj, bool indented)
+public IPAddress GetLocalIP()
+public bool IsLocalIP(string ipAddress)
+public bool ValidateIPv4(string ipAddress)
+public int GetNumbers(string input)
 }
 public Oxide.Core.VersionNumber : ValueType {
 public int Major

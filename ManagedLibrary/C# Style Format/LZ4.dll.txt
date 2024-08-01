@@ -22,6 +22,11 @@ private ILZ4Service _service_N64
 private ILZ4Service _service_S32
 private ILZ4Service _service_S64
 public string CodecName
+private bool Has2010Runtime()
+private void InitializeLZ4mm()
+private void InitializeLZ4cc()
+private void InitializeLZ4n()
+private void InitializeLZ4s()
 private void SelectCodec(ILZ4Service& encoder, ILZ4Service& decoder, ILZ4Service& encoderHC)
 private ILZ4Service AutoTest(ILZ4Service service)
 private void Try(Action method)
@@ -41,11 +46,6 @@ private Byte[] Wrap(Byte[] inputBuffer, int inputOffset, int inputLength, bool h
 public Byte[] Wrap(Byte[] inputBuffer, int inputOffset, int inputLength)
 public Byte[] WrapHC(Byte[] inputBuffer, int inputOffset, int inputLength)
 public Byte[] Unwrap(Byte[] inputBuffer, int inputOffset)
-private bool Has2010Runtime()
-private void InitializeLZ4mm()
-private void InitializeLZ4cc()
-private void InitializeLZ4n()
-private void InitializeLZ4s()
 }
 public LZ4.LZ4Stream : Stream {
 private Stream _innerStream
@@ -86,10 +86,6 @@ public void SetLength(long value)
 public void WriteByte(byte value)
 public void Write(Byte[] buffer, int offset, int count)
 protected void Dispose(bool disposing)
-public void .ctor(Stream innerStream, CompressionMode compressionMode, bool highCompression, int blockSize, bool interactiveRead)
-public void .ctor(Stream innerStream, CompressionMode compressionMode, LZ4StreamFlags compressionFlags, int blockSize)
-private LZ4StreamMode ToLZ4StreamMode(CompressionMode compressionMode)
-private LZ4StreamFlags CombineLZ4Flags(bool highCompression, bool interactiveRead)
 }
 public LZ4.LZ4StreamFlags : Enum {
 public int value__
@@ -112,6 +108,20 @@ public int Decode(Byte[] input, int inputOffset, int inputLength, Byte[] output,
 public int EncodeHC(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength)
 }
 internal LZ4.Services.Safe64LZ4Service : object {
+public string CodecName
+public string get_CodecName()
+public int Encode(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength)
+public int Decode(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength, bool knownOutputLength)
+public int EncodeHC(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength)
+}
+internal LZ4.Services.Unsafe32LZ4Service : object {
+public string CodecName
+public string get_CodecName()
+public int Encode(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength)
+public int Decode(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength, bool knownOutputLength)
+public int EncodeHC(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength)
+}
+internal LZ4.Services.Unsafe64LZ4Service : object {
 public string CodecName
 public string get_CodecName()
 public int Encode(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength)

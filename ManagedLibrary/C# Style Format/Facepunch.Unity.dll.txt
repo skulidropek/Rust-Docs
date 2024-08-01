@@ -36,13 +36,13 @@ public void RecordAverage(string category, string name, double val)
 }
 public Facepunch.Application : object {
 public Analytics Analytics
-public Manifest Manifest
 private MonoBehaviour _controller
+public Manifest Manifest
 private BaseIntegration <Integration>k__BackingField
 public MonoBehaviour Controller
 public BaseIntegration Integration
-public void Initialize(BaseIntegration integration)
 public MonoBehaviour get_Controller()
+public void Initialize(BaseIntegration integration)
 public BaseIntegration get_Integration()
 public void set_Integration(BaseIntegration value)
 }
@@ -62,6 +62,7 @@ public int MinutesPlayed
 public Auth Auth
 public bool RestrictEditorFunctionality
 public bool LocalApi
+public string ApiUrl
 public bool DebugOutput
 public string get_PublicKey()
 public string get_Bucket()
@@ -75,7 +76,9 @@ public int get_MinutesPlayed()
 public Auth get_Auth()
 public bool get_RestrictEditorFunctionality()
 public bool get_LocalApi()
+public string get_ApiUrl()
 public bool get_DebugOutput()
+public bool ShouldReportException(string message, string stackTrace, LogType type)
 }
 public Facepunch.BenchmarkData : object {
 public Result[] Results
@@ -87,6 +90,12 @@ public string BuildId
 public AppInfo AppInfo
 public BenchmarkData New()
 public string Upload()
+}
+public Facepunch.BinaryReaderExtensions : object {
+public Vector3 ReadVector3(BinaryReader o)
+}
+public Facepunch.BinaryWriterExtensions : object {
+public void Write(BinaryWriter o, Vector3 vec)
 }
 public Facepunch.BuildInfo : object {
 private int <Date>k__BackingField
@@ -111,10 +120,55 @@ public bool get_Valid()
 public void set_Valid(bool value)
 public BuildInfo get_Current()
 }
+public Facepunch.ComponentExtensions : object {
+public T Duplicate(T obj)
+public T[] Duplicate(T obj, int amount, bool includeOriginalInArray)
+public void SetActive(T obj, bool active)
+public Vector2 WorldToRectTransform(T obj, Vector2 worldPos)
+public Rect GetWorldRect(T obj)
+public bool GetComponent(T obj, U& value)
+public bool GetComponentInParent(T obj, U& value)
+public bool GetComponentInChildren(T obj, U& value)
+}
 public Facepunch.Database : object {
 public void Insert(string parent, object contents, Action`1<bool> onFinished)
+public void Insert(string parent, object contents, Action`2<bool, string> onFinished)
+public void Remove(string parent, string id, Action`1<bool> onFinished)
 public Result`1<T> Query(string parent, int limit, Action`1<Result`1<T>> onFinished)
 public void Count(string parent, Action`1<int> onResult)
+}
+public Facepunch.DebugDraw : object {
+public void Point(Vector3 position, Color color, float scale, float duration, bool depthTest)
+public void Point(Vector3 position, float scale, float duration, bool depthTest)
+public void Bounds(Bounds bounds, Color color, float duration, bool depthTest)
+public void Normal(Vector3 point, Vector3 normal, float size, Color color, float duration, bool depthtest)
+public void Bounds(Bounds bounds, float duration, bool depthTest)
+public void LocalCube(Transform transform, Vector3 size, Color color, Vector3 center, float duration, bool depthTest)
+public void LocalCube(Transform transform, Vector3 size, Vector3 center, float duration, bool depthTest)
+public void LocalCube(Matrix4x4 space, Vector3 size, Color color, Vector3 center, float duration, bool depthTest)
+public void LocalCube(Matrix4x4 space, Vector3 size, Vector3 center, float duration, bool depthTest)
+public void Circle(Vector3 position, Vector3 up, Color color, float radius, float duration, bool depthTest)
+public void Circle(Vector3 position, Color color, float radius, float duration, bool depthTest)
+public void Circle(Vector3 position, Vector3 up, float radius, float duration, bool depthTest)
+public void Circle(Vector3 position, float radius, float duration, bool depthTest)
+public void Sphere(Vector3 position, Color color, float radius, float duration, bool depthTest)
+public void Sphere(Vector3 position, float radius, float duration, bool depthTest)
+public void Cylinder(Vector3 start, Vector3 end, Color color, float radius, float duration, bool depthTest)
+public void Cylinder(Vector3 start, Vector3 end, float radius, float duration, bool depthTest)
+public void Cone(Vector3 position, Vector3 direction, Color color, float angle, float duration, bool depthTest)
+public void Cone(Vector3 position, Vector3 direction, float angle, float duration, bool depthTest)
+public void Cone(Vector3 position, Color color, float angle, float duration, bool depthTest)
+public void Cone(Vector3 position, float angle, float duration, bool depthTest)
+public void Line(Vector3 position, Vector3 endposition, Color color, float duration, bool depthTest)
+public void Arrow(Vector3 position, Vector3 direction, Color color, float duration, bool depthTest)
+public void Arrow(Vector3 position, Vector3 direction, float duration, bool depthTest)
+public void Capsule(Vector3 start, Vector3 end, Color color, float radius, float duration, bool depthTest)
+public void Capsule(Vector3 start, Vector3 end, float radius, float duration, bool depthTest)
+}
+public Facepunch.DestroyInSeconds : MonoBehaviour {
+public float TimeToDie
+public float TimeToDieVariance
+private void Start()
 }
 public Facepunch.ExceptionReporter : MonoBehaviour {
 private bool <Disabled>k__BackingField
@@ -170,10 +224,26 @@ public FrameRateCategory Good
 public FrameRateCategory VeryGood
 public FrameRateCategory Count
 }
+public Facepunch.GameObjectExtensions : object {
+public void SetIgnoreCollisions(GameObject self, GameObject other, bool ignore)
+}
 public Facepunch.Leaderboard : object {
 public void Insert(string board, float score, bool OnlyIfLower, bool OnlyIfHigher, string extra, Action`1<string> result)
 public void GetRank(string board, string userid, bool desc, String[] friends, Action`1<Rank> result)
 public void GetPage(string board, string country, string city, int skip, int take, bool desc, String[] friends, Action`1<Entry[]> result)
+}
+public Facepunch.ListComponent : MonoBehaviour {
+public void Setup()
+public void Clear()
+protected void OnEnable()
+protected void OnDisable()
+}
+public Facepunch.ListComponent`1 : ListComponent {
+private ListHashSet`1<T> instanceList
+public ListHashSet`1<T> InstanceList
+public ListHashSet`1<T> get_InstanceList()
+public void Setup()
+public void Clear()
 }
 public Facepunch.Manifest : object {
 private DateTime <LastDownloaded>k__BackingField
@@ -283,12 +353,21 @@ public string Ticket
 public string Name
 public Auth Steam(Byte[] ticket, ulong steamId, string username)
 }
-public Facepunch.Models.Database.Add : object {
-public string Parent
+public Facepunch.Models.Database.Add : Base {
 public string Content
+}
+internal Facepunch.Models.Database.AddResponse : BaseResponse {
+public string Id
+}
+public Facepunch.Models.Database.Base : object {
+public string Parent
 public Auth Auth
 public int Version
 public int get_Version()
+}
+internal Facepunch.Models.Database.BaseResponse : object {
+public string Status
+public string Reason
 }
 internal Facepunch.Models.Database.QueryResponse : object {
 public string Content
@@ -297,6 +376,9 @@ public DateTime Created
 public DateTime Updated
 public string AuthorId
 public string AuthType
+}
+public Facepunch.Models.Database.Remove : Base {
+public string Id
 }
 public Facepunch.Models.Database.Result`1 : object {
 public bool Running
@@ -480,10 +562,56 @@ public string GetSwitch(string strName, string strDefault)
 public int GetSwitchInt(string strName, int iDefault)
 public Dictionary`2<string, string> GetSwitches()
 }
+public Facepunch.Vector3Extensions : object {
+public Vector3 XZ(Vector3 o, float y)
+public Vector3 RemoveAxis(Vector3 o, Vector3 axis)
+}
 public Facepunch.WebUtil : object {
 internal void Get(string url, Action`1<string> result)
 private IEnumerator DownloadStringCoroutine(WWW www, Action`1<string> result)
 internal void Post(string url, Dictionary`2<string, string> data, bool wait, Action`1<string> result)
 private IEnumerator PostValuesCoroutine(WWW www, Action`1<string> result)
 internal string Escape(string type)
+}
+public Facepunch.WeightedGameObjectList : object {
+public List`1<Container> Objects
+private float _total
+private Func`2<Container, float> <>f__am$cache0
+private float Total
+private float get_Total()
+public GameObject Get(float f)
+public GameObject GetRandom()
+private float <get_Total>m__0(Container x)
+}
+public Facepunch.WeightedStringList : object {
+public List`1<Container> Objects
+private float _total
+private Func`2<Container, float> <>f__am$cache0
+private float Total
+private float get_Total()
+public string Get(float f)
+public string GetRandom()
+private float <get_Total>m__0(Container x)
+}
+public RealTimeSince : ValueType {
+private float time
+public float op_Implicit(RealTimeSince ts)
+public RealTimeSince op_Implicit(float ts)
+}
+public SceneField : object {
+private Object sceneAsset
+private string sceneName
+public string SceneName
+public string get_SceneName()
+public string op_Implicit(SceneField sceneField)
+}
+public TimeSince : ValueType {
+private float time
+public float op_Implicit(TimeSince ts)
+public TimeSince op_Implicit(float ts)
+}
+public TimeUntil : ValueType {
+private float time
+public float op_Implicit(TimeUntil ts)
+public TimeUntil op_Implicit(float ts)
 }

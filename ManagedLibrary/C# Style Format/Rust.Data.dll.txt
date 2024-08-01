@@ -183,6 +183,7 @@ public UInt32 levelSeed
 public UInt32 levelSize
 public string checksum
 public UInt32 encryption
+public string levelUrl
 public bool ShouldPool
 private bool _disposed
 public void ResetToPool(Approval instance)
@@ -427,6 +428,7 @@ public float skinMesh
 public PlayerLifeStory currentLife
 public PlayerLifeStory previousLife
 public UInt32 mounted
+public ulong currentTeam
 public bool ShouldPool
 private bool _disposed
 public void ResetToPool(BasePlayer instance)
@@ -790,6 +792,7 @@ public string checksum
 public ulong localclient
 public Vector3 position
 public Vector3 rotation
+public string levelUrl
 public bool ShouldPool
 private bool _disposed
 public void ResetToPool(DemoHeader instance)
@@ -892,6 +895,9 @@ public Lift lift
 public BradleyAPC bradley
 public WaterWell waterwell
 public Motorboat motorBoat
+public IOEntity ioEntity
+public PuzzleReset puzzleReset
+public RelationshipManager relationshipManager
 public bool createdThisFrame
 public bool ShouldPool
 private bool _disposed
@@ -1111,6 +1117,44 @@ public Byte[] ToProtoBytes()
 public void ToProto(Stream stream)
 public Byte[] SerializeToBytes(Helicopter instance)
 public void SerializeLengthDelimited(Stream stream, Helicopter instance)
+}
+public ProtoBuf.IOEntity : object {
+public List`1<IOConnection> inputs
+public List`1<IOConnection> outputs
+public UInt32 genericEntRef1
+public UInt32 genericEntRef2
+public UInt32 genericEntRef3
+public int genericInt1
+public int genericInt2
+public float genericFloat1
+public float genericFloat2
+public bool ShouldPool
+private bool _disposed
+public void ResetToPool(IOEntity instance)
+public void ResetToPool()
+public void Dispose()
+public void EnterPool()
+public void LeavePool()
+public void WriteToStream(Stream stream)
+public void WriteToStreamDelta(Stream stream, IOEntity previous)
+public void ReadFromStream(Stream stream, int size, bool isDelta)
+public void CopyTo(IOEntity instance)
+public IOEntity Copy()
+public IOEntity Deserialize(Stream stream)
+public IOEntity DeserializeLengthDelimited(Stream stream)
+public IOEntity DeserializeLength(Stream stream, int length)
+public IOEntity Deserialize(Byte[] buffer)
+public void FromProto(Stream stream, bool isDelta)
+public IOEntity Deserialize(Byte[] buffer, IOEntity instance, bool isDelta)
+public IOEntity Deserialize(Stream stream, IOEntity instance, bool isDelta)
+public IOEntity DeserializeLengthDelimited(Stream stream, IOEntity instance, bool isDelta)
+public IOEntity DeserializeLength(Stream stream, int length, IOEntity instance, bool isDelta)
+public void SerializeDelta(Stream stream, IOEntity instance, IOEntity previous)
+public void Serialize(Stream stream, IOEntity instance)
+public Byte[] ToProtoBytes()
+public void ToProto(Stream stream)
+public Byte[] SerializeToBytes(IOEntity instance)
+public void SerializeLengthDelimited(Stream stream, IOEntity instance)
 }
 public ProtoBuf.Item : object {
 public UInt32 UID
@@ -1602,6 +1646,10 @@ public float age
 public int genetics
 public int water
 public float healthy
+public float totalAge
+public float growthAge
+public float yieldFraction
+public float stageAge
 public bool ShouldPool
 private bool _disposed
 public void ResetToPool(PlantEntity instance)
@@ -1904,6 +1952,39 @@ public void ToProto(Stream stream)
 public Byte[] SerializeToBytes(PlayerProjectileUpdate instance)
 public void SerializeLengthDelimited(Stream stream, PlayerProjectileUpdate instance)
 }
+public ProtoBuf.PlayerTeam : object {
+public ulong teamID
+public string teamName
+public ulong teamLeader
+public List`1<TeamMember> members
+public bool ShouldPool
+private bool _disposed
+public void ResetToPool(PlayerTeam instance)
+public void ResetToPool()
+public void Dispose()
+public void EnterPool()
+public void LeavePool()
+public void WriteToStream(Stream stream)
+public void WriteToStreamDelta(Stream stream, PlayerTeam previous)
+public void ReadFromStream(Stream stream, int size, bool isDelta)
+public void CopyTo(PlayerTeam instance)
+public PlayerTeam Copy()
+public PlayerTeam Deserialize(Stream stream)
+public PlayerTeam DeserializeLengthDelimited(Stream stream)
+public PlayerTeam DeserializeLength(Stream stream, int length)
+public PlayerTeam Deserialize(Byte[] buffer)
+public void FromProto(Stream stream, bool isDelta)
+public PlayerTeam Deserialize(Byte[] buffer, PlayerTeam instance, bool isDelta)
+public PlayerTeam Deserialize(Stream stream, PlayerTeam instance, bool isDelta)
+public PlayerTeam DeserializeLengthDelimited(Stream stream, PlayerTeam instance, bool isDelta)
+public PlayerTeam DeserializeLength(Stream stream, int length, PlayerTeam instance, bool isDelta)
+public void SerializeDelta(Stream stream, PlayerTeam instance, PlayerTeam previous)
+public void Serialize(Stream stream, PlayerTeam instance)
+public Byte[] ToProtoBytes()
+public void ToProto(Stream stream)
+public Byte[] SerializeToBytes(PlayerTeam instance)
+public void SerializeLengthDelimited(Stream stream, PlayerTeam instance)
+}
 public ProtoBuf.PlayerUpdateLoot : object {
 public UInt32 itemID
 public UInt32 entityID
@@ -1966,6 +2047,72 @@ public Byte[] ToProtoBytes()
 public void ToProto(Stream stream)
 public Byte[] SerializeToBytes(ProjectileShoot instance)
 public void SerializeLengthDelimited(Stream stream, ProjectileShoot instance)
+}
+public ProtoBuf.PuzzleReset : object {
+public bool playerBlocksReset
+public float playerDetectionRadius
+public Vector3 playerDetectionOrigin
+public float timeBetweenResets
+public bool scaleWithServerPopulation
+public bool ShouldPool
+private bool _disposed
+public void ResetToPool(PuzzleReset instance)
+public void ResetToPool()
+public void Dispose()
+public void EnterPool()
+public void LeavePool()
+public void WriteToStream(Stream stream)
+public void WriteToStreamDelta(Stream stream, PuzzleReset previous)
+public void ReadFromStream(Stream stream, int size, bool isDelta)
+public void CopyTo(PuzzleReset instance)
+public PuzzleReset Copy()
+public PuzzleReset Deserialize(Stream stream)
+public PuzzleReset DeserializeLengthDelimited(Stream stream)
+public PuzzleReset DeserializeLength(Stream stream, int length)
+public PuzzleReset Deserialize(Byte[] buffer)
+public void FromProto(Stream stream, bool isDelta)
+public PuzzleReset Deserialize(Byte[] buffer, PuzzleReset instance, bool isDelta)
+public PuzzleReset Deserialize(Stream stream, PuzzleReset instance, bool isDelta)
+public PuzzleReset DeserializeLengthDelimited(Stream stream, PuzzleReset instance, bool isDelta)
+public PuzzleReset DeserializeLength(Stream stream, int length, PuzzleReset instance, bool isDelta)
+public void SerializeDelta(Stream stream, PuzzleReset instance, PuzzleReset previous)
+public void Serialize(Stream stream, PuzzleReset instance)
+public Byte[] ToProtoBytes()
+public void ToProto(Stream stream)
+public Byte[] SerializeToBytes(PuzzleReset instance)
+public void SerializeLengthDelimited(Stream stream, PuzzleReset instance)
+}
+public ProtoBuf.RelationshipManager : object {
+public ulong lastTeamIndex
+public List`1<PlayerTeam> teamList
+public int maxTeamSize
+public bool ShouldPool
+private bool _disposed
+public void ResetToPool(RelationshipManager instance)
+public void ResetToPool()
+public void Dispose()
+public void EnterPool()
+public void LeavePool()
+public void WriteToStream(Stream stream)
+public void WriteToStreamDelta(Stream stream, RelationshipManager previous)
+public void ReadFromStream(Stream stream, int size, bool isDelta)
+public void CopyTo(RelationshipManager instance)
+public RelationshipManager Copy()
+public RelationshipManager Deserialize(Stream stream)
+public RelationshipManager DeserializeLengthDelimited(Stream stream)
+public RelationshipManager DeserializeLength(Stream stream, int length)
+public RelationshipManager Deserialize(Byte[] buffer)
+public void FromProto(Stream stream, bool isDelta)
+public RelationshipManager Deserialize(Byte[] buffer, RelationshipManager instance, bool isDelta)
+public RelationshipManager Deserialize(Stream stream, RelationshipManager instance, bool isDelta)
+public RelationshipManager DeserializeLengthDelimited(Stream stream, RelationshipManager instance, bool isDelta)
+public RelationshipManager DeserializeLength(Stream stream, int length, RelationshipManager instance, bool isDelta)
+public void SerializeDelta(Stream stream, RelationshipManager instance, RelationshipManager previous)
+public void Serialize(Stream stream, RelationshipManager instance)
+public Byte[] ToProtoBytes()
+public void ToProto(Stream stream)
+public Byte[] SerializeToBytes(RelationshipManager instance)
+public void SerializeLengthDelimited(Stream stream, RelationshipManager instance)
 }
 public ProtoBuf.ResearchTable : object {
 public float researchTimeLeft
@@ -2398,6 +2545,7 @@ public void SerializeLengthDelimited(Stream stream, UpdateItemContainer instance
 public ProtoBuf.VendingMachine : object {
 public SellOrderContainer sellOrderContainer
 public string shopName
+public int vmoIndex
 public bool ShouldPool
 private bool _disposed
 public void ResetToPool(VendingMachine instance)
@@ -2496,11 +2644,11 @@ private UInt32 <Field>k__BackingField
 private Wire <WireType>k__BackingField
 public UInt32 Field
 public Wire WireType
+public void .ctor(UInt32 field, Wire wireType)
 public UInt32 get_Field()
 public void set_Field(UInt32 value)
 public Wire get_WireType()
 public void set_WireType(Wire value)
-public void .ctor(UInt32 field, Wire wireType)
 public string ToString()
 }
 public SilentOrbit.ProtocolBuffers.KeyValue : object {
@@ -2508,11 +2656,11 @@ private Key <Key>k__BackingField
 private Byte[] <Value>k__BackingField
 public Key Key
 public Byte[] Value
+public void .ctor(Key key, Byte[] value)
 public Key get_Key()
 public void set_Key(Key value)
 public Byte[] get_Value()
 public void set_Value(Byte[] value)
-public void .ctor(Key key, Byte[] value)
 public string ToString()
 }
 public SilentOrbit.ProtocolBuffers.ProtocolBufferException : Exception {

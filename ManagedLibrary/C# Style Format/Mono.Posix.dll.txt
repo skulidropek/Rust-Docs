@@ -3,11 +3,15 @@ public string MonoVersion
 public string MonoCompany
 public string MonoProduct
 public string MonoCopyright
+public int MonoCorlibVersion
 public string FxVersion
-public string VsVersion
 public string FxFileVersion
+public string EnvironmentVersion
+public string VsVersion
 public string VsFileVersion
+private string PublicKeyToken
 public string AssemblyI18N
+public string AssemblyMicrosoft_JScript
 public string AssemblyMicrosoft_VisualStudio
 public string AssemblyMicrosoft_VisualStudio_Web
 public string AssemblyMicrosoft_VSDesigner
@@ -27,7 +31,15 @@ public string AssemblySystem_Security
 public string AssemblySystem_ServiceProcess
 public string AssemblySystem_Web
 public string AssemblySystem_Windows_Forms
+public string AssemblySystem_2_0
+public string AssemblySystemCore_3_5
 public string AssemblySystem_Core
+public string WindowsBase_3_0
+public string AssemblyWindowsBase
+public string AssemblyPresentationCore_3_5
+public string AssemblyPresentationCore_4_0
+public string AssemblyPresentationFramework_3_5
+public string AssemblySystemServiceModel_3_0
 }
 internal Locale : object {
 public string GetText(string msg)
@@ -151,8 +163,8 @@ public DateTime ATime
 public DateTime MTime
 public DateTime CTime
 public DateTime UnixEpoch
-internal void .ctor(int device, int inode, int mode, int nlinks, int uid, int gid, int rdev, long size, long blksize, long blocks, long atime, long mtime, long ctime)
 public DateTime UnixToDateTime(long unix)
+internal void .ctor(int device, int inode, int mode, int nlinks, int uid, int gid, int rdev, long size, long blksize, long blocks, long atime, long mtime, long ctime)
 }
 public Mono.Posix.StatMode : Enum {
 public int value__
@@ -368,7 +380,6 @@ private bool _includeVersions
 private bool _strictBinding
 private IDictionary _properties
 public UnixBinaryCore DefaultInstance
-private Dictionary`2<string, int> <>f__switch$map0
 public BinaryFormatter Serializer
 public BinaryFormatter Deserializer
 public IDictionary Properties
@@ -414,8 +425,8 @@ public string ChannelName
 public int ChannelPriority
 public object ChannelData
 public void .ctor(string path)
-public void .ctor(IDictionary properties, IClientChannelSinkProvider clientSinkProvider, IServerChannelSinkProvider serverSinkProvider)
 private void Init(IDictionary properties, IClientChannelSinkProvider clientSink, IServerChannelSinkProvider serverSink)
+public void .ctor(IDictionary properties, IClientChannelSinkProvider clientSinkProvider, IServerChannelSinkProvider serverSinkProvider)
 public IMessageSink CreateMessageSink(string url, object remoteChannelData, String& objectURI)
 public string get_ChannelName()
 public int get_ChannelPriority()
@@ -451,6 +462,7 @@ private void ReadAsyncUnixMessage(object data)
 public void AsyncProcessResponse(IClientResponseChannelSinkStack sinkStack, object state, ITransportHeaders headers, Stream stream)
 public Stream GetRequestStream(IMessage msg, ITransportHeaders headers)
 public void ProcessMessage(IMessage msg, ITransportHeaders requestHeaders, Stream requestStream, ITransportHeaders& responseHeaders, Stream& responseStream)
+private void <AsyncProcessRequest>b__6_0(object data)
 }
 internal Mono.Remoting.Channels.Unix.UnixClientTransportSinkProvider : object {
 public IClientChannelSinkProvider Next
@@ -499,7 +511,6 @@ private Byte[] msgUriTransportKey
 private Byte[] msgContentTypeTransportKey
 private Byte[] msgDefaultTransportKey
 private Byte[] msgHeaderTerminator
-private Dictionary`2<string, int> <>f__switch$map1
 public MessageStatus ReceiveMessageStatus(Stream networkStream, Byte[] buffer)
 private bool StreamRead(Stream networkStream, Byte[] buffer, int count)
 public void SendMessageStream(Stream networkStream, Stream data, ITransportHeaders requestHeaders, Byte[] buffer)
@@ -520,15 +531,14 @@ private UnixServerTransportSink sink
 private ChannelDataStore channel_data
 private int _maxConcurrentConnections
 private ArrayList _activeConnections
-private Dictionary`2<string, int> <>f__switch$map2
 public object ChannelData
 public string ChannelName
 public int ChannelPriority
+private void Init(IServerChannelSinkProvider serverSinkProvider)
 public void .ctor(string path)
 public void .ctor(IDictionary properties, IServerChannelSinkProvider serverSinkProvider)
 public void .ctor(string name, string path, IServerChannelSinkProvider serverSinkProvider)
 public void .ctor(string name, string path)
-private void Init(IServerChannelSinkProvider serverSinkProvider)
 public object get_ChannelData()
 public string get_ChannelName()
 public int get_ChannelPriority()
@@ -633,12 +643,32 @@ public FileTypes Fifo
 public FileTypes SymbolicLink
 public FileTypes Socket
 }
+internal Mono.Unix.Native._SockaddrDynamic : ValueType {
+public SockaddrType type
+public UnixAddressFamily sa_family
+public Byte* data
+public long len
+public void .ctor(Sockaddr address, Byte* data, bool useMaxLength)
+public void Update(Sockaddr address)
+}
+internal Mono.Unix.Native._SockaddrHeader : ValueType {
+internal SockaddrType type
+internal UnixAddressFamily sa_family
+}
 public Mono.Unix.Native.AccessModes : Enum {
 public int value__
 public AccessModes R_OK
 public AccessModes W_OK
 public AccessModes X_OK
 public AccessModes F_OK
+}
+public Mono.Unix.Native.AtFlags : Enum {
+public int value__
+public AtFlags AT_SYMLINK_NOFOLLOW
+public AtFlags AT_REMOVEDIR
+public AtFlags AT_SYMLINK_FOLLOW
+public AtFlags AT_NO_AUTOMOUNT
+public AtFlags AT_EMPTY_PATH
 }
 public Mono.Unix.Native.CdeclFunction : object {
 private string library
@@ -656,6 +686,17 @@ private TypeBuilder CreateType(string typeName)
 private Type GetMarshalType(Type t)
 private string GetTypeName(Type[] parameterTypes)
 private Type[] GetParameterTypes(Object[] parameters)
+}
+public Mono.Unix.Native.Cmsghdr : ValueType {
+public long cmsg_len
+public UnixSocketProtocol cmsg_level
+public UnixSocketControlMessage cmsg_type
+private int size
+public int Size
+private int getsize()
+public int get_Size()
+public Cmsghdr ReadFromBuffer(Msghdr msgh, long cmsg)
+public void WriteToBuffer(Msghdr msgh, long cmsg)
 }
 public Mono.Unix.Native.ConfstrName : Enum {
 public int value__
@@ -726,6 +767,40 @@ public bool Equals(Dirent value)
 public string ToString()
 public bool op_Equality(Dirent lhs, Dirent rhs)
 public bool op_Inequality(Dirent lhs, Dirent rhs)
+}
+public Mono.Unix.Native.EpollEvent : ValueType {
+public EpollEvents events
+public int fd
+public IntPtr ptr
+public UInt32 u32
+public ulong u64
+}
+public Mono.Unix.Native.EpollEvents : Enum {
+public UInt32 value__
+public EpollEvents EPOLLIN
+public EpollEvents EPOLLPRI
+public EpollEvents EPOLLOUT
+public EpollEvents EPOLLRDNORM
+public EpollEvents EPOLLRDBAND
+public EpollEvents EPOLLWRNORM
+public EpollEvents EPOLLWRBAND
+public EpollEvents EPOLLMSG
+public EpollEvents EPOLLERR
+public EpollEvents EPOLLHUP
+public EpollEvents EPOLLRDHUP
+public EpollEvents EPOLLONESHOT
+public EpollEvents EPOLLET
+}
+public Mono.Unix.Native.EpollFlags : Enum {
+public int value__
+public EpollFlags EPOLL_CLOEXEC
+public EpollFlags EPOLL_NONBLOCK
+}
+public Mono.Unix.Native.EpollOp : Enum {
+public int value__
+public EpollOp EPOLL_CTL_ADD
+public EpollOp EPOLL_CTL_DEL
+public EpollOp EPOLL_CTL_MOD
 }
 public Mono.Unix.Native.Errno : Enum {
 public int value__
@@ -853,6 +928,30 @@ public Errno EREMOTEIO
 public Errno EDQUOT
 public Errno ENOMEDIUM
 public Errno EMEDIUMTYPE
+public Errno ECANCELED
+public Errno ENOKEY
+public Errno EKEYEXPIRED
+public Errno EKEYREVOKED
+public Errno EKEYREJECTED
+public Errno EOWNERDEAD
+public Errno ENOTRECOVERABLE
+public Errno EPROCLIM
+public Errno EBADRPC
+public Errno ERPCMISMATCH
+public Errno EPROGUNAVAIL
+public Errno EPROGMISMATCH
+public Errno EPROCUNAVAIL
+public Errno EFTYPE
+public Errno EAUTH
+public Errno ENEEDAUTH
+public Errno EPWROFF
+public Errno EDEVERR
+public Errno EBADEXEC
+public Errno EBADARCH
+public Errno ESHLIBVERS
+public Errno EBADMACHO
+public Errno ENOATTR
+public Errno ENOPOLICY
 }
 public Mono.Unix.Native.FcntlCommand : Enum {
 public int value__
@@ -868,6 +967,7 @@ public FcntlCommand F_SETOWN
 public FcntlCommand F_GETOWN
 public FcntlCommand F_SETSIG
 public FcntlCommand F_GETSIG
+public FcntlCommand F_NOCACHE
 public FcntlCommand F_SETLEASE
 public FcntlCommand F_GETLEASE
 public FcntlCommand F_NOTIFY
@@ -966,6 +1066,43 @@ private void GetMembers(StringBuilder sb, String[] members)
 public bool op_Equality(Group lhs, Group rhs)
 public bool op_Inequality(Group lhs, Group rhs)
 }
+public Mono.Unix.Native.In6Addr : ValueType {
+private ulong addr0
+private ulong addr1
+public byte Item
+public void .ctor(Byte[] buffer)
+public void CopyFrom(Byte[] source, int startIndex)
+public void CopyTo(Byte[] destination, int startIndex)
+public byte get_Item(int index)
+public void set_Item(int index, byte value)
+public string ToString()
+public int GetHashCode()
+public bool Equals(object obj)
+public bool Equals(In6Addr value)
+}
+public Mono.Unix.Native.InAddr : ValueType {
+public UInt32 s_addr
+public byte Item
+public void .ctor(byte b0, byte b1, byte b2, byte b3)
+public void .ctor(Byte[] buffer)
+public void CopyFrom(Byte[] source, int startIndex)
+public void CopyTo(Byte[] destination, int startIndex)
+public byte get_Item(int index)
+public void set_Item(int index, byte value)
+public string ToString()
+public int GetHashCode()
+public bool Equals(object obj)
+public bool Equals(InAddr value)
+}
+public Mono.Unix.Native.Iovec : ValueType {
+public IntPtr iov_base
+public ulong iov_len
+}
+public Mono.Unix.Native.Linger : ValueType {
+public int l_onoff
+public int l_linger
+public string ToString()
+}
 public Mono.Unix.Native.LockfCommand : Enum {
 public int value__
 public LockfCommand F_ULOCK
@@ -978,6 +1115,28 @@ public short value__
 public LockType F_RDLCK
 public LockType F_WRLCK
 public LockType F_UNLCK
+}
+public Mono.Unix.Native.MessageFlags : Enum {
+public int value__
+public MessageFlags MSG_OOB
+public MessageFlags MSG_PEEK
+public MessageFlags MSG_DONTROUTE
+public MessageFlags MSG_CTRUNC
+public MessageFlags MSG_PROXY
+public MessageFlags MSG_TRUNC
+public MessageFlags MSG_DONTWAIT
+public MessageFlags MSG_EOR
+public MessageFlags MSG_WAITALL
+public MessageFlags MSG_FIN
+public MessageFlags MSG_SYN
+public MessageFlags MSG_CONFIRM
+public MessageFlags MSG_RST
+public MessageFlags MSG_ERRQUEUE
+public MessageFlags MSG_NOSIGNAL
+public MessageFlags MSG_MORE
+public MessageFlags MSG_WAITFORONE
+public MessageFlags MSG_FASTOPEN
+public MessageFlags MSG_CMSG_CLOEXEC
 }
 public Mono.Unix.Native.MlockallFlags : Enum {
 public int value__
@@ -1030,6 +1189,14 @@ public Mono.Unix.Native.MremapFlags : Enum {
 public ulong value__
 public MremapFlags MREMAP_MAYMOVE
 }
+public Mono.Unix.Native.Msghdr : object {
+public Sockaddr msg_name
+public Iovec[] msg_iov
+public int msg_iovlen
+public Byte[] msg_control
+public long msg_controllen
+public MessageFlags msg_flags
+}
 public Mono.Unix.Native.MsyncFlags : Enum {
 public int value__
 public MsyncFlags MS_ASYNC
@@ -1037,10 +1204,11 @@ public MsyncFlags MS_SYNC
 public MsyncFlags MS_INVALIDATE
 }
 public Mono.Unix.Native.NativeConvert : object {
-private string LIB
+public DateTime UnixEpoch
 public DateTime LocalUnixEpoch
 public TimeSpan LocalUtcOffset
 private String[][] fopen_modes
+private string LIB
 private int FromRealTimeSignum(int offset, Int32& rval)
 public int FromRealTimeSignum(RealTimeSignum sig)
 public RealTimeSignum ToRealTimeSignum(int offset)
@@ -1053,6 +1221,7 @@ public string ToUnixPermissionString(FilePermissions value)
 private void SetUnixPermissionGroup(FilePermissions value, Char[] access, int index, FilePermissions read, FilePermissions write, FilePermissions exec, char both, char setonly, FilePermissions setxbit)
 private char GetSymbolicMode(FilePermissions value, FilePermissions xbit, char both, char setonly, FilePermissions setxbit)
 public DateTime ToDateTime(long time)
+public DateTime ToDateTime(long time, long nanoTime)
 public long FromDateTime(DateTime time)
 public DateTime FromTimeT(long time)
 public long ToTimeT(DateTime time)
@@ -1060,10 +1229,30 @@ public OpenFlags ToOpenFlags(FileMode mode, FileAccess access)
 public string ToFopenMode(FileAccess access)
 public string ToFopenMode(FileMode mode)
 public string ToFopenMode(FileMode mode, FileAccess access)
+private int FromStat(Stat& source, IntPtr destination)
+public bool TryCopy(Stat& source, IntPtr destination)
+private int ToStat(IntPtr source, Stat& destination)
+public bool TryCopy(IntPtr source, Stat& destination)
 private int FromStatvfs(Statvfs& source, IntPtr destination)
 public bool TryCopy(Statvfs& source, IntPtr destination)
 private int ToStatvfs(IntPtr source, Statvfs& destination)
 public bool TryCopy(IntPtr source, Statvfs& destination)
+private int FromInAddr(InAddr& source, IntPtr destination)
+public bool TryCopy(InAddr& source, IntPtr destination)
+private int ToInAddr(IntPtr source, InAddr& destination)
+public bool TryCopy(IntPtr source, InAddr& destination)
+private int FromIn6Addr(In6Addr& source, IntPtr destination)
+public bool TryCopy(In6Addr& source, IntPtr destination)
+private int ToIn6Addr(IntPtr source, In6Addr& destination)
+public bool TryCopy(IntPtr source, In6Addr& destination)
+public InAddr ToInAddr(IPAddress address)
+public IPAddress ToIPAddress(InAddr address)
+public In6Addr ToIn6Addr(IPAddress address)
+public IPAddress ToIPAddress(In6Addr address)
+private int FromSockaddr(_SockaddrHeader* source, IntPtr destination)
+public bool TryCopy(Sockaddr source, IntPtr destination)
+private int ToSockaddr(IntPtr source, long size, _SockaddrHeader* destination)
+public bool TryCopy(IntPtr source, long size, Sockaddr destination)
 private void ThrowArgumentException(object value)
 private int FromAccessModes(AccessModes value, Int32& rval)
 public bool TryFromAccessModes(AccessModes value, Int32& rval)
@@ -1071,6 +1260,16 @@ public int FromAccessModes(AccessModes value)
 private int ToAccessModes(int value, AccessModes& rval)
 public bool TryToAccessModes(int value, AccessModes& rval)
 public AccessModes ToAccessModes(int value)
+private int FromAtFlags(AtFlags value, Int32& rval)
+public bool TryFromAtFlags(AtFlags value, Int32& rval)
+public int FromAtFlags(AtFlags value)
+private int ToAtFlags(int value, AtFlags& rval)
+public bool TryToAtFlags(int value, AtFlags& rval)
+public AtFlags ToAtFlags(int value)
+private int FromCmsghdr(Cmsghdr& source, IntPtr destination)
+public bool TryCopy(Cmsghdr& source, IntPtr destination)
+private int ToCmsghdr(IntPtr source, Cmsghdr& destination)
+public bool TryCopy(IntPtr source, Cmsghdr& destination)
 private int FromConfstrName(ConfstrName value, Int32& rval)
 public bool TryFromConfstrName(ConfstrName value, Int32& rval)
 public int FromConfstrName(ConfstrName value)
@@ -1083,6 +1282,18 @@ public int FromDirectoryNotifyFlags(DirectoryNotifyFlags value)
 private int ToDirectoryNotifyFlags(int value, DirectoryNotifyFlags& rval)
 public bool TryToDirectoryNotifyFlags(int value, DirectoryNotifyFlags& rval)
 public DirectoryNotifyFlags ToDirectoryNotifyFlags(int value)
+private int FromEpollEvents(EpollEvents value, UInt32& rval)
+public bool TryFromEpollEvents(EpollEvents value, UInt32& rval)
+public UInt32 FromEpollEvents(EpollEvents value)
+private int ToEpollEvents(UInt32 value, EpollEvents& rval)
+public bool TryToEpollEvents(UInt32 value, EpollEvents& rval)
+public EpollEvents ToEpollEvents(UInt32 value)
+private int FromEpollFlags(EpollFlags value, Int32& rval)
+public bool TryFromEpollFlags(EpollFlags value, Int32& rval)
+public int FromEpollFlags(EpollFlags value)
+private int ToEpollFlags(int value, EpollFlags& rval)
+public bool TryToEpollFlags(int value, EpollFlags& rval)
+public EpollFlags ToEpollFlags(int value)
 private int FromErrno(Errno value, Int32& rval)
 public bool TryFromErrno(Errno value, Int32& rval)
 public int FromErrno(Errno value)
@@ -1105,6 +1316,14 @@ private int FromFlock(Flock& source, IntPtr destination)
 public bool TryCopy(Flock& source, IntPtr destination)
 private int ToFlock(IntPtr source, Flock& destination)
 public bool TryCopy(IntPtr source, Flock& destination)
+private int FromIovec(Iovec& source, IntPtr destination)
+public bool TryCopy(Iovec& source, IntPtr destination)
+private int ToIovec(IntPtr source, Iovec& destination)
+public bool TryCopy(IntPtr source, Iovec& destination)
+private int FromLinger(Linger& source, IntPtr destination)
+public bool TryCopy(Linger& source, IntPtr destination)
+private int ToLinger(IntPtr source, Linger& destination)
+public bool TryCopy(IntPtr source, Linger& destination)
 private int FromLockType(LockType value, Int16& rval)
 public bool TryFromLockType(LockType value, Int16& rval)
 public short FromLockType(LockType value)
@@ -1117,6 +1336,12 @@ public int FromLockfCommand(LockfCommand value)
 private int ToLockfCommand(int value, LockfCommand& rval)
 public bool TryToLockfCommand(int value, LockfCommand& rval)
 public LockfCommand ToLockfCommand(int value)
+private int FromMessageFlags(MessageFlags value, Int32& rval)
+public bool TryFromMessageFlags(MessageFlags value, Int32& rval)
+public int FromMessageFlags(MessageFlags value)
+private int ToMessageFlags(int value, MessageFlags& rval)
+public bool TryToMessageFlags(int value, MessageFlags& rval)
+public MessageFlags ToMessageFlags(int value)
 private int FromMlockallFlags(MlockallFlags value, Int32& rval)
 public bool TryFromMlockallFlags(MlockallFlags value, Int32& rval)
 public int FromMlockallFlags(MlockallFlags value)
@@ -1193,16 +1418,32 @@ public short FromSeekFlags(SeekFlags value)
 private int ToSeekFlags(short value, SeekFlags& rval)
 public bool TryToSeekFlags(short value, SeekFlags& rval)
 public SeekFlags ToSeekFlags(short value)
+private int FromShutdownOption(ShutdownOption value, Int32& rval)
+public bool TryFromShutdownOption(ShutdownOption value, Int32& rval)
+public int FromShutdownOption(ShutdownOption value)
+private int ToShutdownOption(int value, ShutdownOption& rval)
+public bool TryToShutdownOption(int value, ShutdownOption& rval)
+public ShutdownOption ToShutdownOption(int value)
 private int FromSignum(Signum value, Int32& rval)
 public bool TryFromSignum(Signum value, Int32& rval)
 public int FromSignum(Signum value)
 private int ToSignum(int value, Signum& rval)
 public bool TryToSignum(int value, Signum& rval)
 public Signum ToSignum(int value)
-private int FromStat(Stat& source, IntPtr destination)
-public bool TryCopy(Stat& source, IntPtr destination)
-private int ToStat(IntPtr source, Stat& destination)
-public bool TryCopy(IntPtr source, Stat& destination)
+private int FromSockaddrIn(SockaddrIn source, IntPtr destination)
+public bool TryCopy(SockaddrIn source, IntPtr destination)
+private int ToSockaddrIn(IntPtr source, SockaddrIn destination)
+public bool TryCopy(IntPtr source, SockaddrIn destination)
+private int FromSockaddrIn6(SockaddrIn6 source, IntPtr destination)
+public bool TryCopy(SockaddrIn6 source, IntPtr destination)
+private int ToSockaddrIn6(IntPtr source, SockaddrIn6 destination)
+public bool TryCopy(IntPtr source, SockaddrIn6 destination)
+private int FromSockaddrType(SockaddrType value, Int32& rval)
+internal bool TryFromSockaddrType(SockaddrType value, Int32& rval)
+internal int FromSockaddrType(SockaddrType value)
+private int ToSockaddrType(int value, SockaddrType& rval)
+internal bool TryToSockaddrType(int value, SockaddrType& rval)
+internal SockaddrType ToSockaddrType(int value)
 private int FromSysconfName(SysconfName value, Int32& rval)
 public bool TryFromSysconfName(SysconfName value, Int32& rval)
 public int FromSysconfName(SysconfName value)
@@ -1239,6 +1480,42 @@ private int FromTimezone(Timezone& source, IntPtr destination)
 public bool TryCopy(Timezone& source, IntPtr destination)
 private int ToTimezone(IntPtr source, Timezone& destination)
 public bool TryCopy(IntPtr source, Timezone& destination)
+private int FromUnixAddressFamily(UnixAddressFamily value, Int32& rval)
+public bool TryFromUnixAddressFamily(UnixAddressFamily value, Int32& rval)
+public int FromUnixAddressFamily(UnixAddressFamily value)
+private int ToUnixAddressFamily(int value, UnixAddressFamily& rval)
+public bool TryToUnixAddressFamily(int value, UnixAddressFamily& rval)
+public UnixAddressFamily ToUnixAddressFamily(int value)
+private int FromUnixSocketControlMessage(UnixSocketControlMessage value, Int32& rval)
+public bool TryFromUnixSocketControlMessage(UnixSocketControlMessage value, Int32& rval)
+public int FromUnixSocketControlMessage(UnixSocketControlMessage value)
+private int ToUnixSocketControlMessage(int value, UnixSocketControlMessage& rval)
+public bool TryToUnixSocketControlMessage(int value, UnixSocketControlMessage& rval)
+public UnixSocketControlMessage ToUnixSocketControlMessage(int value)
+private int FromUnixSocketFlags(UnixSocketFlags value, Int32& rval)
+public bool TryFromUnixSocketFlags(UnixSocketFlags value, Int32& rval)
+public int FromUnixSocketFlags(UnixSocketFlags value)
+private int ToUnixSocketFlags(int value, UnixSocketFlags& rval)
+public bool TryToUnixSocketFlags(int value, UnixSocketFlags& rval)
+public UnixSocketFlags ToUnixSocketFlags(int value)
+private int FromUnixSocketOptionName(UnixSocketOptionName value, Int32& rval)
+public bool TryFromUnixSocketOptionName(UnixSocketOptionName value, Int32& rval)
+public int FromUnixSocketOptionName(UnixSocketOptionName value)
+private int ToUnixSocketOptionName(int value, UnixSocketOptionName& rval)
+public bool TryToUnixSocketOptionName(int value, UnixSocketOptionName& rval)
+public UnixSocketOptionName ToUnixSocketOptionName(int value)
+private int FromUnixSocketProtocol(UnixSocketProtocol value, Int32& rval)
+public bool TryFromUnixSocketProtocol(UnixSocketProtocol value, Int32& rval)
+public int FromUnixSocketProtocol(UnixSocketProtocol value)
+private int ToUnixSocketProtocol(int value, UnixSocketProtocol& rval)
+public bool TryToUnixSocketProtocol(int value, UnixSocketProtocol& rval)
+public UnixSocketProtocol ToUnixSocketProtocol(int value)
+private int FromUnixSocketType(UnixSocketType value, Int32& rval)
+public bool TryFromUnixSocketType(UnixSocketType value, Int32& rval)
+public int FromUnixSocketType(UnixSocketType value)
+private int ToUnixSocketType(int value, UnixSocketType& rval)
+public bool TryToUnixSocketType(int value, UnixSocketType& rval)
+public UnixSocketType ToUnixSocketType(int value)
 private int FromUtimbuf(Utimbuf& source, IntPtr destination)
 public bool TryCopy(Utimbuf& source, IntPtr destination)
 private int ToUtimbuf(IntPtr source, Utimbuf& destination)
@@ -1273,6 +1550,8 @@ public OpenFlags O_DIRECTORY
 public OpenFlags O_DIRECT
 public OpenFlags O_ASYNC
 public OpenFlags O_LARGEFILE
+public OpenFlags O_CLOEXEC
+public OpenFlags O_PATH
 }
 public Mono.Unix.Native.Passwd : object {
 public string pw_name
@@ -1376,6 +1655,12 @@ public SeekFlags L_SET
 public SeekFlags L_INCR
 public SeekFlags L_XTND
 }
+public Mono.Unix.Native.ShutdownOption : Enum {
+public int value__
+public ShutdownOption SHUT_RD
+public ShutdownOption SHUT_WR
+public ShutdownOption SHUT_RDWR
+}
 public Mono.Unix.Native.SignalAction : Enum {
 public int value__
 public SignalAction Default
@@ -1426,6 +1711,112 @@ public Signum SIGPWR
 public Signum SIGSYS
 public Signum SIGUNUSED
 }
+public Mono.Unix.Native.Sockaddr : object {
+internal SockaddrType type
+internal UnixAddressFamily _sa_family
+private Sockaddr nullSockaddr
+public UnixAddressFamily sa_family
+public UnixAddressFamily get_sa_family()
+public void set_sa_family(UnixAddressFamily value)
+internal void .ctor(SockaddrType type, UnixAddressFamily sa_family)
+private int GetNativeSize(_SockaddrHeader* address, Int64& size)
+internal long GetNativeSize()
+internal Sockaddr GetAddress(Sockaddr address)
+internal _SockaddrHeader* GetNative(_SockaddrDynamic* dyn, SockaddrType* addr)
+internal Byte[] GetDynamicData(Sockaddr addr)
+internal Byte[] DynamicData()
+internal long GetDynamicLength()
+internal void SetDynamicLength(long value)
+public SockaddrStorage ToSockaddrStorage()
+public Sockaddr FromSockaddrStorage(SockaddrStorage storage)
+}
+public Mono.Unix.Native.SockaddrIn : Sockaddr {
+public ushort sin_port
+public InAddr sin_addr
+public UnixAddressFamily sin_family
+public UnixAddressFamily get_sin_family()
+public void set_sin_family(UnixAddressFamily value)
+public string ToString()
+public SockaddrIn FromSockaddrStorage(SockaddrStorage storage)
+public int GetHashCode()
+public bool Equals(object obj)
+public bool Equals(SockaddrIn value)
+}
+public Mono.Unix.Native.SockaddrIn6 : Sockaddr {
+public ushort sin6_port
+public UInt32 sin6_flowinfo
+public In6Addr sin6_addr
+public UInt32 sin6_scope_id
+public UnixAddressFamily sin6_family
+public UnixAddressFamily get_sin6_family()
+public void set_sin6_family(UnixAddressFamily value)
+public string ToString()
+public SockaddrIn6 FromSockaddrStorage(SockaddrStorage storage)
+public int GetHashCode()
+public bool Equals(object obj)
+public bool Equals(SockaddrIn6 value)
+}
+public Mono.Unix.Native.SockaddrStorage : Sockaddr {
+private Byte[] <data>k__BackingField
+private long <data_len>k__BackingField
+private int default_size
+public Byte[] data
+public long data_len
+public Byte[] get_data()
+public void set_data(Byte[] value)
+public long get_data_len()
+public void set_data_len(long value)
+internal Byte[] DynamicData()
+internal long GetDynamicLength()
+internal void SetDynamicLength(long value)
+private int get_size()
+public void .ctor(int size)
+public void SetTo(Sockaddr address)
+public void CopyTo(Sockaddr address)
+public string ToString()
+public int GetHashCode()
+public bool Equals(object obj)
+public bool Equals(SockaddrStorage value)
+}
+internal Mono.Unix.Native.SockaddrType : Enum {
+public int value__
+public SockaddrType Invalid
+public SockaddrType SockaddrStorage
+public SockaddrType SockaddrUn
+public SockaddrType Sockaddr
+public SockaddrType SockaddrIn
+public SockaddrType SockaddrIn6
+public SockaddrType MustBeWrapped
+}
+public Mono.Unix.Native.SockaddrUn : Sockaddr {
+private Byte[] <sun_path>k__BackingField
+private long <sun_path_len>k__BackingField
+private int sizeof_sun_path
+public UnixAddressFamily sun_family
+public Byte[] sun_path
+public long sun_path_len
+public bool IsLinuxAbstractNamespace
+public string Path
+public UnixAddressFamily get_sun_family()
+public void set_sun_family(UnixAddressFamily value)
+public Byte[] get_sun_path()
+public void set_sun_path(Byte[] value)
+public long get_sun_path_len()
+public void set_sun_path_len(long value)
+internal Byte[] DynamicData()
+internal long GetDynamicLength()
+internal void SetDynamicLength(long value)
+private int get_sizeof_sun_path()
+public void .ctor(int size)
+public void .ctor(string path, bool linuxAbstractNamespace)
+public bool get_IsLinuxAbstractNamespace()
+public string get_Path()
+public string ToString()
+public SockaddrUn FromSockaddrStorage(SockaddrStorage storage)
+public int GetHashCode()
+public bool Equals(object obj)
+public bool Equals(SockaddrUn value)
+}
 public Mono.Unix.Native.Stat : ValueType {
 public ulong st_dev
 public ulong st_ino
@@ -1441,6 +1832,18 @@ public long st_blocks
 public long st_atime
 public long st_mtime
 public long st_ctime
+public long st_atime_nsec
+public long st_mtime_nsec
+public long st_ctime_nsec
+public Timespec st_atim
+public Timespec st_mtim
+public Timespec st_ctim
+public Timespec get_st_atim()
+public void set_st_atim(Timespec value)
+public Timespec get_st_mtim()
+public void set_st_mtim(Timespec value)
+public Timespec get_st_ctim()
+public void set_st_ctim(Timespec value)
 public int GetHashCode()
 public bool Equals(object obj)
 public bool Equals(Stat value)
@@ -1468,13 +1871,13 @@ public bool op_Inequality(Statvfs lhs, Statvfs rhs)
 public Mono.Unix.Native.Stdlib : object {
 internal string LIBC
 internal string MPH
+private bool versionCheckPerformed
 private IntPtr _SIG_DFL
 private IntPtr _SIG_ERR
 private IntPtr _SIG_IGN
 public SignalHandler SIG_DFL
 public SignalHandler SIG_ERR
 public SignalHandler SIG_IGN
-private SignalHandler[] registered_signals
 public int _IOFBF
 public int _IOLBF
 public int _IONBF
@@ -1493,7 +1896,10 @@ public int EXIT_SUCCESS
 public int MB_CUR_MAX
 public int RAND_MAX
 private object strerror_lock
+private IntPtr VersionStringPtr()
+internal void VersionCheck()
 public Errno GetLastError()
+private int _GetLastError()
 private void SetLastError(int error)
 protected void SetLastError(Errno error)
 internal void InvokeSignalHandler(int signum, IntPtr handler)
@@ -1610,6 +2016,7 @@ public ulong strlen(IntPtr s)
 public Mono.Unix.Native.Syscall : Stdlib {
 internal string LIBC
 internal object readdir_lock
+public int AT_FDCWD
 internal object fstab_lock
 internal object grp_lock
 internal object pwd_lock
@@ -1618,6 +2025,8 @@ public int L_ctermid
 public int L_cuserid
 internal object getlogin_lock
 public IntPtr MAP_FAILED
+public long UTIME_NOW
+public long UTIME_OMIT
 private object tty_lock
 internal object usershell_lock
 public int setxattr(string path, string name, Byte[] value, ulong size, XattrFlags flags)
@@ -1665,8 +2074,11 @@ public Dirent readdir(IntPtr dir)
 private int sys_readdir_r(IntPtr dirp, _Dirent& entry, IntPtr& result)
 public int readdir_r(IntPtr dirp, Dirent entry, IntPtr& result)
 public int dirfd(IntPtr dir)
+public IntPtr fdopendir(int fd)
 public int fcntl(int fd, FcntlCommand cmd)
 public int fcntl(int fd, FcntlCommand cmd, long arg)
+public int fcntl(int fd, FcntlCommand cmd, int arg)
+public int fcntl(int fd, FcntlCommand cmd, IntPtr ptr)
 public int fcntl(int fd, FcntlCommand cmd, DirectoryNotifyFlags arg)
 public int fcntl(int fd, FcntlCommand cmd, Flock& lock)
 public int open(string pathname, OpenFlags flags)
@@ -1674,6 +2086,11 @@ public int open(string pathname, OpenFlags flags, FilePermissions mode)
 public int creat(string pathname, FilePermissions mode)
 public int posix_fadvise(int fd, long offset, long len, PosixFadviseAdvice advice)
 public int posix_fallocate(int fd, long offset, ulong len)
+private int sys_openat(int dirfd, string pathname, int flags)
+private int sys_openat(int dirfd, string pathname, int flags, UInt32 mode)
+public int openat(int dirfd, string pathname, OpenFlags flags)
+public int openat(int dirfd, string pathname, OpenFlags flags, FilePermissions mode)
+private int get_at_fdcwd()
 private void CopyFstab(Fstab to, _Fstab& from)
 private int sys_endfsent()
 public int endfsent()
@@ -1685,6 +2102,9 @@ private int sys_getfsspec(string special_file, _Fstab& fs)
 public Fstab getfsspec(string special_file)
 private int sys_setfsent()
 public int setfsent()
+private int sys_getgrouplist(string user, UInt32 grp, UInt32[] groups, Int32& ngroups)
+public Group[] getgrouplist(string username)
+public Group[] getgrouplist(Passwd user)
 public int setgroups(ulong size, UInt32[] list)
 public int setgroups(UInt32[] list)
 private void CopyGroup(Group to, _Group& from)
@@ -1731,12 +2151,23 @@ private int _L_ctermid()
 private int _L_cuserid()
 private IntPtr sys_cuserid(StringBuilder string)
 public string cuserid(StringBuilder string)
+public int renameat(int olddirfd, string oldpath, int newdirfd, string newpath)
 public int mkstemp(StringBuilder template)
+private IntPtr sys_mkdtemp(StringBuilder template)
+public StringBuilder mkdtemp(StringBuilder template)
 public int ttyslot()
 public int setkey(string key)
 private int sys_strerror_r(int errnum, StringBuilder buf, ulong n)
 public int strerror_r(Errno errnum, StringBuilder buf, ulong n)
 public int strerror_r(Errno errnum, StringBuilder buf)
+public int epoll_create(int size)
+public int epoll_create(EpollFlags flags)
+public int epoll_ctl(int epfd, EpollOp op, int fd, EpollEvents events)
+public int epoll_wait(int epfd, EpollEvent[] events, int max_events, int timeout)
+private int sys_epoll_create(int size)
+private int sys_epoll_create1(EpollFlags flags)
+public int epoll_ctl(int epfd, EpollOp op, int fd, EpollEvent& ee)
+private int sys_epoll_wait(int epfd, EpollEvent[] ee, int maxevents, int timeout)
 public int posix_madvise(IntPtr addr, ulong len, PosixMadviseAdvice advice)
 public IntPtr mmap(IntPtr start, ulong length, MmapProts prot, MmapFlags flags, int fd, long offset)
 public int munmap(IntPtr start, ulong length)
@@ -1768,6 +2199,20 @@ public int mkdir(string oldpath, FilePermissions mode)
 public int mknod(string pathname, FilePermissions mode, ulong dev)
 private int sys_mkfifo(string pathname, UInt32 mode)
 public int mkfifo(string pathname, FilePermissions mode)
+private int sys_fchmodat(int dirfd, string pathname, UInt32 mode, int flags)
+public int fchmodat(int dirfd, string pathname, FilePermissions mode, AtFlags flags)
+public int fstatat(int dirfd, string file_name, Stat& buf, AtFlags flags)
+private long get_utime_now()
+private long get_utime_omit()
+private int sys_futimens(int fd, Timespec[] times)
+public int futimens(int fd, Timespec[] times)
+private int sys_utimensat(int dirfd, string pathname, Timespec[] times, int flags)
+public int utimensat(int dirfd, string pathname, Timespec[] times, AtFlags flags)
+private int sys_mkdirat(int dirfd, string oldpath, UInt32 mode)
+public int mkdirat(int dirfd, string oldpath, FilePermissions mode)
+public int mknodat(int dirfd, string pathname, FilePermissions mode, ulong dev)
+private int sys_mkfifoat(int dirfd, string pathname, UInt32 mode)
+public int mkfifoat(int dirfd, string pathname, FilePermissions mode)
 public int statvfs(string path, Statvfs& buf)
 public int fstatvfs(int fd, Statvfs& buf)
 public int gettimeofday(Timeval& tv, Timezone& tz)
@@ -1888,8 +2333,11 @@ private int sys_isatty(int fd)
 public bool isatty(int fd)
 public int link(string oldpath, string newpath)
 public int symlink(string oldpath, string newpath)
+private int ReadlinkIntoStringBuilder(DoReadlinkFun doReadlink, StringBuilder buf, ulong bufsiz)
 public int readlink(string path, StringBuilder buf, ulong bufsiz)
 public int readlink(string path, StringBuilder buf)
+private long readlink(string path, Byte[] buf, ulong bufsiz)
+public long readlink(string path, Byte[] buf)
 public int unlink(string pathname)
 public int rmdir(string pathname)
 public int tcgetpgrp(int fd)
@@ -1933,9 +2381,103 @@ public string crypt(string key, string salt)
 public int encrypt(Byte[] block, bool decode)
 public int swab(IntPtr from, IntPtr to, long n)
 public void swab(Void* from, Void* to, long n)
+private int sys_faccessat(int dirfd, string pathname, int mode, int flags)
+public int faccessat(int dirfd, string pathname, AccessModes mode, AtFlags flags)
+private int sys_fchownat(int dirfd, string pathname, UInt32 owner, UInt32 group, int flags)
+public int fchownat(int dirfd, string pathname, UInt32 owner, UInt32 group, AtFlags flags)
+private int sys_linkat(int olddirfd, string oldpath, int newdirfd, string newpath, int flags)
+public int linkat(int olddirfd, string oldpath, int newdirfd, string newpath, AtFlags flags)
+public int readlinkat(int dirfd, string pathname, StringBuilder buf, ulong bufsiz)
+public int readlinkat(int dirfd, string pathname, StringBuilder buf)
+private long readlinkat(int dirfd, string pathname, Byte[] buf, ulong bufsiz)
+public long readlinkat(int dirfd, string pathname, Byte[] buf)
+public int symlinkat(string oldpath, int dirfd, string newpath)
+private int sys_unlinkat(int dirfd, string pathname, int flags)
+public int unlinkat(int dirfd, string pathname, AtFlags flags)
 private int sys_utime(string filename, Utimbuf& buf, int use_buf)
 public int utime(string filename, Utimbuf& buf)
 public int utime(string filename)
+private long sys_readv(int fd, Iovec[] iov, int iovcnt)
+public long readv(int fd, Iovec[] iov)
+private long sys_writev(int fd, Iovec[] iov, int iovcnt)
+public long writev(int fd, Iovec[] iov)
+private long sys_preadv(int fd, Iovec[] iov, int iovcnt, long offset)
+public long preadv(int fd, Iovec[] iov, long offset)
+private long sys_pwritev(int fd, Iovec[] iov, int iovcnt, long offset)
+public long pwritev(int fd, Iovec[] iov, long offset)
+public UInt32 htonl(UInt32 hostlong)
+public ushort htons(ushort hostshort)
+public UInt32 ntohl(UInt32 netlong)
+public ushort ntohs(ushort netshort)
+private int sys_socket(int domain, int type, int protocol)
+public int socket(UnixAddressFamily domain, UnixSocketType type, UnixSocketFlags flags, UnixSocketProtocol protocol)
+public int socket(UnixAddressFamily domain, UnixSocketType type, UnixSocketProtocol protocol)
+private int sys_socketpair(int domain, int type, int protocol, Int32& socket1, Int32& socket2)
+public int socketpair(UnixAddressFamily domain, UnixSocketType type, UnixSocketFlags flags, UnixSocketProtocol protocol, Int32& socket1, Int32& socket2)
+public int socketpair(UnixAddressFamily domain, UnixSocketType type, UnixSocketProtocol protocol, Int32& socket1, Int32& socket2)
+public int sockatmark(int socket)
+public int listen(int socket, int backlog)
+private int sys_getsockopt(int socket, int level, int option_name, Void* option_value, Int64& option_len)
+private int sys_getsockopt_timeval(int socket, int level, int option_name, Timeval& option_value)
+private int sys_getsockopt_linger(int socket, int level, int option_name, Linger& option_value)
+public int getsockopt(int socket, UnixSocketProtocol level, UnixSocketOptionName option_name, Void* option_value, Int64& option_len)
+public int getsockopt(int socket, UnixSocketProtocol level, UnixSocketOptionName option_name, IntPtr option_value, Int64& option_len)
+public int getsockopt(int socket, UnixSocketProtocol level, UnixSocketOptionName option_name, Int32& option_value)
+public int getsockopt(int socket, UnixSocketProtocol level, UnixSocketOptionName option_name, Byte[] option_value, Int64& option_len)
+public int getsockopt(int socket, UnixSocketProtocol level, UnixSocketOptionName option_name, Timeval& option_value)
+public int getsockopt(int socket, UnixSocketProtocol level, UnixSocketOptionName option_name, Linger& option_value)
+private int sys_setsockopt(int socket, int level, int option_name, Void* option_value, long option_len)
+private int sys_setsockopt_timeval(int socket, int level, int option_name, Timeval& option_value)
+private int sys_setsockopt_linger(int socket, int level, int option_name, Linger& option_value)
+public int setsockopt(int socket, UnixSocketProtocol level, UnixSocketOptionName option_name, Void* option_value, long option_len)
+public int setsockopt(int socket, UnixSocketProtocol level, UnixSocketOptionName option_name, IntPtr option_value, long option_len)
+public int setsockopt(int socket, UnixSocketProtocol level, UnixSocketOptionName option_name, int option_value)
+public int setsockopt(int socket, UnixSocketProtocol level, UnixSocketOptionName option_name, Byte[] option_value, long option_len)
+public int setsockopt(int socket, UnixSocketProtocol level, UnixSocketOptionName option_name, Timeval option_value)
+public int setsockopt(int socket, UnixSocketProtocol level, UnixSocketOptionName option_name, Linger option_value)
+private int sys_shutdown(int socket, int how)
+public int shutdown(int socket, ShutdownOption how)
+private long sys_recv(int socket, Void* buffer, ulong length, int flags)
+public long recv(int socket, Void* buffer, ulong length, MessageFlags flags)
+public long recv(int socket, IntPtr buffer, ulong length, MessageFlags flags)
+public long recv(int socket, Byte[] buffer, ulong length, MessageFlags flags)
+private long sys_send(int socket, Void* message, ulong length, int flags)
+public long send(int socket, Void* message, ulong length, MessageFlags flags)
+public long send(int socket, IntPtr message, ulong length, MessageFlags flags)
+public long send(int socket, Byte[] message, ulong length, MessageFlags flags)
+private int sys_bind(int socket, _SockaddrHeader* address)
+public int bind(int socket, Sockaddr address)
+private int sys_connect(int socket, _SockaddrHeader* address)
+public int connect(int socket, Sockaddr address)
+private int sys_accept(int socket, _SockaddrHeader* address)
+public int accept(int socket, Sockaddr address)
+private int sys_accept4(int socket, _SockaddrHeader* address, int flags)
+public int accept4(int socket, Sockaddr address, UnixSocketFlags flags)
+private int sys_getpeername(int socket, _SockaddrHeader* address)
+public int getpeername(int socket, Sockaddr address)
+private int sys_getsockname(int socket, _SockaddrHeader* address)
+public int getsockname(int socket, Sockaddr address)
+private long sys_recvfrom(int socket, Void* buffer, ulong length, int flags, _SockaddrHeader* address)
+public long recvfrom(int socket, Void* buffer, ulong length, MessageFlags flags, Sockaddr address)
+public long recvfrom(int socket, IntPtr buffer, ulong length, MessageFlags flags, Sockaddr address)
+public long recvfrom(int socket, Byte[] buffer, ulong length, MessageFlags flags, Sockaddr address)
+private long sys_sendto(int socket, Void* message, ulong length, int flags, _SockaddrHeader* address)
+public long sendto(int socket, Void* message, ulong length, MessageFlags flags, Sockaddr address)
+public long sendto(int socket, IntPtr message, ulong length, MessageFlags flags, Sockaddr address)
+public long sendto(int socket, Byte[] message, ulong length, MessageFlags flags, Sockaddr address)
+private long sys_recvmsg(int socket, _Msghdr& message, _SockaddrHeader* msg_name, int flags)
+public long recvmsg(int socket, Msghdr message, MessageFlags flags)
+private long sys_sendmsg(int socket, _Msghdr& message, _SockaddrHeader* msg_name, int flags)
+public long sendmsg(int socket, Msghdr message, MessageFlags flags)
+private long CMSG_FIRSTHDR(Byte* msg_control, long msg_controllen)
+public long CMSG_FIRSTHDR(Msghdr msgh)
+private long CMSG_NXTHDR(Byte* msg_control, long msg_controllen, long cmsg)
+public long CMSG_NXTHDR(Msghdr msgh, long cmsg)
+private long CMSG_DATA(Byte* msg_control, long msg_controllen, long cmsg)
+public long CMSG_DATA(Msghdr msgh, long cmsg)
+public ulong CMSG_ALIGN(ulong length)
+public ulong CMSG_SPACE(ulong length)
+public ulong CMSG_LEN(ulong length)
 }
 public Mono.Unix.Native.SysconfName : Enum {
 public int value__
@@ -2211,6 +2753,147 @@ public bool Equals(Timezone value)
 public bool op_Equality(Timezone lhs, Timezone rhs)
 public bool op_Inequality(Timezone lhs, Timezone rhs)
 }
+public Mono.Unix.Native.UnixAddressFamily : Enum {
+public int value__
+public UnixAddressFamily AF_UNSPEC
+public UnixAddressFamily AF_UNIX
+public UnixAddressFamily AF_INET
+public UnixAddressFamily AF_AX25
+public UnixAddressFamily AF_IPX
+public UnixAddressFamily AF_APPLETALK
+public UnixAddressFamily AF_NETROM
+public UnixAddressFamily AF_BRIDGE
+public UnixAddressFamily AF_ATMPVC
+public UnixAddressFamily AF_X25
+public UnixAddressFamily AF_INET6
+public UnixAddressFamily AF_ROSE
+public UnixAddressFamily AF_DECnet
+public UnixAddressFamily AF_NETBEUI
+public UnixAddressFamily AF_SECURITY
+public UnixAddressFamily AF_KEY
+public UnixAddressFamily AF_NETLINK
+public UnixAddressFamily AF_PACKET
+public UnixAddressFamily AF_ASH
+public UnixAddressFamily AF_ECONET
+public UnixAddressFamily AF_ATMSVC
+public UnixAddressFamily AF_RDS
+public UnixAddressFamily AF_SNA
+public UnixAddressFamily AF_IRDA
+public UnixAddressFamily AF_PPPOX
+public UnixAddressFamily AF_WANPIPE
+public UnixAddressFamily AF_LLC
+public UnixAddressFamily AF_CAN
+public UnixAddressFamily AF_TIPC
+public UnixAddressFamily AF_BLUETOOTH
+public UnixAddressFamily AF_IUCV
+public UnixAddressFamily AF_RXRPC
+public UnixAddressFamily AF_ISDN
+public UnixAddressFamily AF_PHONET
+public UnixAddressFamily AF_IEEE802154
+public UnixAddressFamily AF_CAIF
+public UnixAddressFamily AF_ALG
+public UnixAddressFamily AF_NFC
+public UnixAddressFamily AF_VSOCK
+public UnixAddressFamily Unknown
+}
+public Mono.Unix.Native.UnixSocketControlMessage : Enum {
+public int value__
+public UnixSocketControlMessage SCM_RIGHTS
+public UnixSocketControlMessage SCM_CREDENTIALS
+}
+public Mono.Unix.Native.UnixSocketFlags : Enum {
+public int value__
+public UnixSocketFlags SOCK_CLOEXEC
+public UnixSocketFlags SOCK_NONBLOCK
+}
+public Mono.Unix.Native.UnixSocketOptionName : Enum {
+public int value__
+public UnixSocketOptionName SO_DEBUG
+public UnixSocketOptionName SO_REUSEADDR
+public UnixSocketOptionName SO_TYPE
+public UnixSocketOptionName SO_ERROR
+public UnixSocketOptionName SO_DONTROUTE
+public UnixSocketOptionName SO_BROADCAST
+public UnixSocketOptionName SO_SNDBUF
+public UnixSocketOptionName SO_RCVBUF
+public UnixSocketOptionName SO_SNDBUFFORCE
+public UnixSocketOptionName SO_RCVBUFFORCE
+public UnixSocketOptionName SO_KEEPALIVE
+public UnixSocketOptionName SO_OOBINLINE
+public UnixSocketOptionName SO_NO_CHECK
+public UnixSocketOptionName SO_PRIORITY
+public UnixSocketOptionName SO_LINGER
+public UnixSocketOptionName SO_BSDCOMPAT
+public UnixSocketOptionName SO_REUSEPORT
+public UnixSocketOptionName SO_PASSCRED
+public UnixSocketOptionName SO_PEERCRED
+public UnixSocketOptionName SO_RCVLOWAT
+public UnixSocketOptionName SO_SNDLOWAT
+public UnixSocketOptionName SO_RCVTIMEO
+public UnixSocketOptionName SO_SNDTIMEO
+public UnixSocketOptionName SO_SECURITY_AUTHENTICATION
+public UnixSocketOptionName SO_SECURITY_ENCRYPTION_TRANSPORT
+public UnixSocketOptionName SO_SECURITY_ENCRYPTION_NETWORK
+public UnixSocketOptionName SO_BINDTODEVICE
+public UnixSocketOptionName SO_ATTACH_FILTER
+public UnixSocketOptionName SO_DETACH_FILTER
+public UnixSocketOptionName SO_PEERNAME
+public UnixSocketOptionName SO_TIMESTAMP
+public UnixSocketOptionName SO_ACCEPTCONN
+public UnixSocketOptionName SO_PEERSEC
+public UnixSocketOptionName SO_PASSSEC
+public UnixSocketOptionName SO_TIMESTAMPNS
+public UnixSocketOptionName SO_MARK
+public UnixSocketOptionName SO_TIMESTAMPING
+public UnixSocketOptionName SO_PROTOCOL
+public UnixSocketOptionName SO_DOMAIN
+public UnixSocketOptionName SO_RXQ_OVFL
+public UnixSocketOptionName SO_WIFI_STATUS
+public UnixSocketOptionName SO_PEEK_OFF
+public UnixSocketOptionName SO_NOFCS
+public UnixSocketOptionName SO_LOCK_FILTER
+public UnixSocketOptionName SO_SELECT_ERR_QUEUE
+public UnixSocketOptionName SO_BUSY_POLL
+public UnixSocketOptionName SO_MAX_PACING_RATE
+}
+public Mono.Unix.Native.UnixSocketProtocol : Enum {
+public int value__
+public UnixSocketProtocol IPPROTO_ICMP
+public UnixSocketProtocol IPPROTO_IGMP
+public UnixSocketProtocol IPPROTO_IPIP
+public UnixSocketProtocol IPPROTO_TCP
+public UnixSocketProtocol IPPROTO_EGP
+public UnixSocketProtocol IPPROTO_PUP
+public UnixSocketProtocol IPPROTO_UDP
+public UnixSocketProtocol IPPROTO_IDP
+public UnixSocketProtocol IPPROTO_TP
+public UnixSocketProtocol IPPROTO_DCCP
+public UnixSocketProtocol IPPROTO_IPV6
+public UnixSocketProtocol IPPROTO_RSVP
+public UnixSocketProtocol IPPROTO_GRE
+public UnixSocketProtocol IPPROTO_ESP
+public UnixSocketProtocol IPPROTO_AH
+public UnixSocketProtocol IPPROTO_MTP
+public UnixSocketProtocol IPPROTO_BEETPH
+public UnixSocketProtocol IPPROTO_ENCAP
+public UnixSocketProtocol IPPROTO_PIM
+public UnixSocketProtocol IPPROTO_COMP
+public UnixSocketProtocol IPPROTO_SCTP
+public UnixSocketProtocol IPPROTO_UDPLITE
+public UnixSocketProtocol IPPROTO_RAW
+public UnixSocketProtocol IPPROTO_IP
+public UnixSocketProtocol SOL_SOCKET
+}
+public Mono.Unix.Native.UnixSocketType : Enum {
+public int value__
+public UnixSocketType SOCK_STREAM
+public UnixSocketType SOCK_DGRAM
+public UnixSocketType SOCK_RAW
+public UnixSocketType SOCK_RDM
+public UnixSocketType SOCK_SEQPACKET
+public UnixSocketType SOCK_DCCP
+public UnixSocketType SOCK_PACKET
+}
 public Mono.Unix.Native.Utimbuf : ValueType {
 public long actime
 public long modtime
@@ -2261,6 +2944,11 @@ public void .ctor(Socket sock)
 public int get_ProcessID()
 public int get_UserID()
 public int get_GroupID()
+}
+internal Mono.Unix.PeerCredData : ValueType {
+public int pid
+public int uid
+public int gid
 }
 public Mono.Unix.StdioFileStream : Stream {
 public IntPtr InvalidFileStream
@@ -2393,9 +3081,9 @@ public long TotalSize
 public string VolumeLabel
 public long MaximumFilenameLength
 public void .ctor(string mountPoint)
-private void .ctor(Fstab fstab)
 private void FromFstab(Fstab fstab)
 public UnixDriveInfo GetForSpecialFile(string specialFile)
+private void .ctor(Fstab fstab)
 public long get_AvailableFreeSpace()
 public string get_DriveFormat()
 public UnixDriveType get_DriveType()
@@ -2430,6 +3118,7 @@ public int GetByteCount(string s)
 private int InternalGetBytes(Char[] chars, int charIndex, int charCount, Byte[] bytes, int byteIndex, UInt32& leftOver, bool flush)
 public int GetBytes(Char[] chars, int charIndex, int charCount, Byte[] bytes, int byteIndex)
 public int GetBytes(string s, int charIndex, int charCount, Byte[] bytes, int byteIndex)
+public int GetBytes(Char* chars, int charCount, Byte* bytes, int byteCount)
 private int InternalGetCharCount(Byte[] bytes, int index, int count, UInt32 leftOverBits, UInt32 leftOverCount, bool throwOnInvalid, bool flush)
 public int GetCharCount(Byte[] bytes, int index, int count)
 private int InternalGetChars(Byte[] bytes, int byteIndex, int byteCount, Char[] chars, int charIndex, UInt32& leftOverBits, UInt32& leftOverCount, bool throwOnInvalid, bool flush)
@@ -2527,12 +3216,12 @@ public UnixStream OpenRead()
 public UnixStream OpenWrite()
 }
 public Mono.Unix.UnixFileSystemInfo : object {
-internal FileSpecialAttributes AllSpecialAttributes
-internal FileTypes AllFileTypes
 private Stat stat
 private string fullPath
 private string originalPath
 private bool valid
+internal FileSpecialAttributes AllSpecialAttributes
+internal FileTypes AllFileTypes
 protected string FullPath
 protected string OriginalPath
 public string FullName
@@ -2632,6 +3321,7 @@ public void SetOwner(UnixUserInfo owner, UnixGroupInfo group)
 public string ToString()
 public Stat ToStat()
 public UnixFileSystemInfo GetFileSystemEntry(string path)
+public bool TryGetFileSystemEntry(string path, UnixFileSystemInfo& entry)
 }
 public Mono.Unix.UnixGroupInfo : object {
 private Group group
@@ -2675,9 +3365,9 @@ private Socket server
 private EndPoint savedEP
 public EndPoint LocalEndpoint
 protected Socket Server
+private void Init(UnixEndPoint ep)
 public void .ctor(string path)
 public void .ctor(UnixEndPoint localEndPoint)
-private void Init(UnixEndPoint ep)
 public EndPoint get_LocalEndpoint()
 protected Socket get_Server()
 public Socket AcceptSocket()
@@ -2742,9 +3432,10 @@ public string GetPathRoot(string path)
 public string GetCompleteRealPath(string path)
 public string GetRealPath(string path)
 internal string ReadSymbolicLink(string path)
-private string ReadSymbolicLink(string path, Errno& errno)
 public string TryReadLink(string path)
+public string TryReadLinkAt(int dirfd, string path)
 public string ReadLink(string path)
+public string ReadLinkAt(int dirfd, string path)
 public bool IsPathRooted(string path)
 internal void CheckPath(string path)
 }
@@ -2791,7 +3482,7 @@ public void WaitForExit()
 public Mono.Unix.UnixSignal : WaitHandle {
 private int signum
 private IntPtr signal_info
-private Mono_Posix_RuntimeIsShuttingDown <>f__am$cache2
+private Mono_Posix_RuntimeIsShuttingDown ShuttingDown
 public Signum Signum
 public RealTimeSignum RealTimeSignum
 public bool IsRealTimeSignal
@@ -2805,6 +3496,7 @@ public RealTimeSignum get_RealTimeSignum()
 public bool get_IsRealTimeSignal()
 private IntPtr install(int signum)
 private int uninstall(IntPtr info)
+private int RuntimeShuttingDownCallback()
 private int WaitAny(IntPtr[] infos, int count, int timeout, Mono_Posix_RuntimeIsShuttingDown shutting_down)
 internal int GetSIGRTMIN()
 internal int GetSIGRTMAX()
@@ -2821,7 +3513,6 @@ public bool WaitOne(int millisecondsTimeout, bool exitContext)
 public int WaitAny(UnixSignal[] signals)
 public int WaitAny(UnixSignal[] signals, TimeSpan timeout)
 public int WaitAny(UnixSignal[] signals, int millisecondsTimeout)
-private int <WaitAny>m__0()
 }
 public Mono.Unix.UnixStream : Stream {
 public int InvalidFileDescriptor
@@ -2850,7 +3541,6 @@ public UnixGroupInfo OwnerGroup
 public long OwnerGroupId
 public void .ctor(int fileDescriptor)
 public void .ctor(int fileDescriptor, bool ownsHandle)
-private void System.IDisposable.Dispose()
 private void AssertNotDisposed()
 public int get_Handle()
 public bool get_CanRead()
@@ -2890,6 +3580,7 @@ public void SetOwner(string user)
 public long GetConfigurationValue(PathconfName name)
 protected void Finalize()
 public void Close()
+private void System.IDisposable.Dispose()
 }
 public Mono.Unix.UnixSymbolicLinkInfo : UnixFileSystemInfo {
 public string Name
@@ -2908,8 +3599,6 @@ public void CreateSymbolicLinkTo(UnixFileSystemInfo path)
 public void Delete()
 public void SetOwner(long owner, long group)
 protected bool GetFileStatus(string path, Stat& stat)
-private string ReadLink()
-private string TryReadLink()
 }
 public Mono.Unix.UnixUserInfo : object {
 private Passwd passwd

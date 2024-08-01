@@ -4,10 +4,13 @@ public string MonoCompany
 public string MonoProduct
 public string MonoCopyright
 public string FxVersion
-public string VsVersion
 public string FxFileVersion
+public string EnvironmentVersion
+public string VsVersion
 public string VsFileVersion
+private string PublicKeyToken
 public string AssemblyI18N
+public string AssemblyMicrosoft_JScript
 public string AssemblyMicrosoft_VisualStudio
 public string AssemblyMicrosoft_VisualStudio_Web
 public string AssemblyMicrosoft_VSDesigner
@@ -27,7 +30,15 @@ public string AssemblySystem_Security
 public string AssemblySystem_ServiceProcess
 public string AssemblySystem_Web
 public string AssemblySystem_Windows_Forms
+public string AssemblySystem_2_0
+public string AssemblySystemCore_3_5
 public string AssemblySystem_Core
+public string WindowsBase_3_0
+public string AssemblyWindowsBase
+public string AssemblyPresentationCore_3_5
+public string AssemblyPresentationCore_4_0
+public string AssemblyPresentationFramework_3_5
+public string AssemblySystemServiceModel_3_0
 }
 internal Locale : object {
 public string GetText(string msg)
@@ -74,6 +85,14 @@ public void MakeTransparent()
 public void MakeTransparent(Color transparentColor)
 public void SetResolution(float xDpi, float yDpi)
 public void UnlockBits(BitmapData bitmapdata)
+}
+public System.Drawing.BitmapSuffixInSameAssemblyAttribute : Attribute {
+public object TypeId
+public object get_TypeId()
+}
+public System.Drawing.BitmapSuffixInSatelliteAssemblyAttribute : Attribute {
+public object TypeId
+public object get_TypeId()
 }
 public System.Drawing.Brush : MarshalByRefObject {
 internal IntPtr nativeObject
@@ -551,56 +570,14 @@ private BufferedGraphicsContext graphics_context
 public BufferedGraphicsContext Current
 public BufferedGraphicsContext get_Current()
 }
-internal System.Drawing.Carbon : object {
-internal Hashtable contextReference
-internal object lockobj
-internal Delegate hwnd_delegate
-internal CarbonContext GetCGContextForView(IntPtr handle)
-internal IntPtr GetContext(IntPtr port)
-internal void ReleaseContext(IntPtr port, IntPtr context)
-public IntPtr objc_getClass(string className)
-public IntPtr objc_msgSend(IntPtr basePtr, IntPtr selector, string argument)
-public IntPtr objc_msgSend(IntPtr basePtr, IntPtr selector)
-public void objc_msgSend_stret(Rect& arect, IntPtr basePtr, IntPtr selector)
-public IntPtr sel_registerName(string selectorName)
-internal IntPtr CGMainDisplayID()
-internal Rect CGDisplayBounds(IntPtr display)
-internal int HIViewGetBounds(IntPtr vHnd, Rect& r)
-internal int HIViewConvertRect(Rect& r, IntPtr a, IntPtr b)
-internal IntPtr GetControlOwner(IntPtr aView)
-internal int GetWindowBounds(IntPtr wHnd, UInt32 reg, QDRect& rect)
-internal IntPtr GetWindowPort(IntPtr hWnd)
-internal IntPtr GetQDGlobalsThePort()
-internal void CreateCGContextForPort(IntPtr port, IntPtr& context)
-internal void CFRelease(IntPtr context)
-internal void QDBeginCGContext(IntPtr port, IntPtr& context)
-internal void QDEndCGContext(IntPtr port, IntPtr& context)
-internal int CGContextClipToRect(IntPtr context, Rect clip)
-internal int CGContextClipToRects(IntPtr context, Rect[] clip_rects, int count)
-internal void CGContextTranslateCTM(IntPtr context, float tx, float ty)
-internal void CGContextScaleCTM(IntPtr context, float x, float y)
-internal void CGContextFlush(IntPtr context)
-internal void CGContextSynchronize(IntPtr context)
-internal IntPtr CGPathCreateMutable()
-internal void CGPathAddRects(IntPtr path, IntPtr _void, Rect[] rects, int count)
-internal void CGPathAddRect(IntPtr path, IntPtr _void, Rect rect)
-internal void CGContextAddRects(IntPtr context, Rect[] rects, int count)
-internal void CGContextAddRect(IntPtr context, Rect rect)
-internal void CGContextBeginPath(IntPtr context)
-internal void CGContextClosePath(IntPtr context)
-internal void CGContextAddPath(IntPtr context, IntPtr path)
-internal void CGContextClip(IntPtr context)
-internal void CGContextEOClip(IntPtr context)
-internal void CGContextEOFillPath(IntPtr context)
-internal void CGContextSaveGState(IntPtr context)
-internal void CGContextRestoreGState(IntPtr context)
-}
 internal System.Drawing.CarbonContext : ValueType {
 public IntPtr port
 public IntPtr ctx
 public int width
 public int height
 public void .ctor(IntPtr port, IntPtr ctx, int width, int height)
+public void Synchronize()
+public void Release()
 }
 internal System.Drawing.CGPoint : ValueType {
 public float x
@@ -624,6 +601,14 @@ public bool Equals(object obj)
 public int GetHashCode()
 public bool op_Equality(CharacterRange cr1, CharacterRange cr2)
 public bool op_Inequality(CharacterRange cr1, CharacterRange cr2)
+}
+internal System.Drawing.CocoaContext : ValueType {
+public IntPtr ctx
+public int width
+public int height
+public void .ctor(IntPtr ctx, int width, int height)
+public void Synchronize()
+public void Release()
 }
 public System.Drawing.Color : ValueType {
 private long value
@@ -795,6 +780,8 @@ public Color FromArgb(int alpha, Color baseColor)
 public Color FromArgb(int argb)
 public Color FromKnownColor(KnownColor color)
 public Color FromName(string name)
+public bool op_Equality(Color left, Color right)
+public bool op_Inequality(Color left, Color right)
 public float GetBrightness()
 public float GetSaturation()
 public float GetHue()
@@ -951,8 +938,6 @@ public Color get_White()
 public Color get_WhiteSmoke()
 public Color get_Yellow()
 public Color get_YellowGreen()
-public bool op_Equality(Color left, Color right)
-public bool op_Inequality(Color left, Color right)
 }
 public System.Drawing.ColorConverter : TypeConverter {
 private StandardValuesCollection cached
@@ -1048,12 +1033,12 @@ public void CopyTo(String[] array, int index)
 public int IndexOf(string value)
 }
 public System.Drawing.Design.IPropertyValueUIService {
-public void add_PropertyUIValueItemsChanged(EventHandler value)
-public void remove_PropertyUIValueItemsChanged(EventHandler value)
 public void AddPropertyValueUIHandler(PropertyValueUIHandler newHandler)
 public PropertyValueUIItem[] GetPropertyUIValueItems(ITypeDescriptorContext context, PropertyDescriptor propDesc)
 public void NotifyPropertyValueUIItemsChanged()
 public void RemovePropertyValueUIHandler(PropertyValueUIHandler newHandler)
+public void add_PropertyUIValueItemsChanged(EventHandler value)
+public void remove_PropertyUIValueItemsChanged(EventHandler value)
 }
 public System.Drawing.Design.IToolboxItemProvider {
 public ToolboxItemCollection Items
@@ -1167,7 +1152,6 @@ private Hashtable properties
 private ToolboxComponentsCreatedEventHandler ComponentsCreated
 private ToolboxComponentsCreatingEventHandler ComponentsCreating
 private Dictionary`2<string, int> <>f__switch$map1
-private Dictionary`2<string, int> <>f__switch$map2
 public AssemblyName AssemblyName
 public Bitmap Bitmap
 public string DisplayName
@@ -1182,11 +1166,6 @@ public bool IsTransient
 public IDictionary Properties
 public string Version
 public void .ctor(Type toolType)
-public void add_ComponentsCreated(ToolboxComponentsCreatedEventHandler value)
-public void remove_ComponentsCreated(ToolboxComponentsCreatedEventHandler value)
-public void add_ComponentsCreating(ToolboxComponentsCreatingEventHandler value)
-public void remove_ComponentsCreating(ToolboxComponentsCreatingEventHandler value)
-private void System.Runtime.Serialization.ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
 public AssemblyName get_AssemblyName()
 public void set_AssemblyName(AssemblyName value)
 public Bitmap get_Bitmap()
@@ -1222,6 +1201,7 @@ public int GetHashCode()
 public Type GetType(IDesignerHost host)
 protected Type GetType(IDesignerHost host, AssemblyName assemblyName, string typeName, bool reference)
 public void Initialize(Type type)
+private void System.Runtime.Serialization.ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
 public void Lock()
 protected void OnComponentsCreated(ToolboxComponentsCreatedEventArgs args)
 protected void OnComponentsCreating(ToolboxComponentsCreatingEventArgs args)
@@ -1231,6 +1211,10 @@ protected void ValidatePropertyType(string propertyName, object value, Type expe
 protected object ValidatePropertyValue(string propertyName, object value)
 private void SetValue(string propertyName, object value)
 private string GetValue(string propertyName)
+public void add_ComponentsCreated(ToolboxComponentsCreatedEventHandler value)
+public void remove_ComponentsCreated(ToolboxComponentsCreatedEventHandler value)
+public void add_ComponentsCreating(ToolboxComponentsCreatingEventHandler value)
+public void remove_ComponentsCreating(ToolboxComponentsCreatingEventHandler value)
 }
 public System.Drawing.Design.ToolboxItemCollection : ReadOnlyCollectionBase {
 public ToolboxItem Item
@@ -1863,12 +1847,12 @@ public WrapMode TileFlipXY
 public WrapMode Clamp
 }
 public System.Drawing.Font : MarshalByRefObject {
-private byte DefaultCharSet
 private IntPtr fontObject
 private string systemFontName
 private string originalFontName
 private float _size
 private object olf
+private byte DefaultCharSet
 private int CharSetOffset
 private bool _bold
 private FontFamily _fontFamily
@@ -1881,6 +1865,7 @@ private bool _strikeout
 private FontStyle _style
 private bool _underline
 private GraphicsUnit _unit
+private int _hashCode
 internal IntPtr NativeObject
 public bool Bold
 public FontFamily FontFamily
@@ -1914,12 +1899,12 @@ public void .ctor(string familyName, float emSize, FontStyle style, GraphicsUnit
 public void .ctor(string familyName, float emSize, FontStyle style, GraphicsUnit unit, byte gdiCharSet)
 public void .ctor(string familyName, float emSize, FontStyle style, GraphicsUnit unit, byte gdiCharSet, bool gdiVerticalFont)
 internal void .ctor(string familyName, float emSize, string systemName)
-private void System.Runtime.Serialization.ISerializable.GetObjectData(SerializationInfo si, StreamingContext context)
 private void CreateFont(string familyName, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
+private void System.Runtime.Serialization.ISerializable.GetObjectData(SerializationInfo si, StreamingContext context)
 protected void Finalize()
 public void Dispose()
 internal void unitConversion(GraphicsUnit fromUnit, GraphicsUnit toUnit, float nSrc, Single& nTrg)
-internal void setProperties(FontFamily family, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
+private void setProperties(FontFamily family, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
 public Font FromHfont(IntPtr hfont)
 public IntPtr ToHfont()
 public object Clone()
@@ -2040,6 +2025,7 @@ public int LANG_NEUTRAL
 public IntPtr Display
 public bool UseX11Drawable
 public bool UseCarbonDrawable
+public bool UseCocoaDrawable
 internal ulong GdiPlusToken
 internal Status GdiplusStartup(UInt64& token, GdiplusStartupInput& input, GdiplusStartupOutput& output)
 internal void GdiplusShutdown(UInt64& token)
@@ -2691,13 +2677,13 @@ public GetSysColorIndex COLOR_BTNHILIGHT
 public GetSysColorIndex COLOR_MAXVALUE
 }
 public System.Drawing.Graphics : MarshalByRefObject {
-private string MetafileEnumeration
 internal IntPtr nativeObject
-internal CarbonContext context
+internal IMacContext maccontext
 private bool disposed
 private float defDpiX
 private float defDpiY
 private IntPtr deviceContextHdc
+private string MetafileEnumeration
 internal float systemDpiX
 internal float systemDpiY
 internal IntPtr NativeObject
@@ -2995,7 +2981,7 @@ private Size iconSize
 private IntPtr handle
 private IconDir iconDir
 private ushort id
-private IconImage[] imageData
+private ImageData[] imageData
 private bool undisposable
 private bool disposed
 private Bitmap bitmap
@@ -3021,6 +3007,7 @@ public void Dispose()
 public object Clone()
 public Icon FromHandle(IntPtr handle)
 private void SaveIconImage(BinaryWriter writer, IconImage ii)
+private void SaveIconDump(BinaryWriter writer, IconDump id)
 private void SaveIconDirEntry(BinaryWriter writer, IconDirEntry ide, UInt32 offset)
 private void SaveAll(BinaryWriter writer)
 private void SaveBestSingleIcon(BinaryWriter writer, int width, int height)
@@ -3057,6 +3044,10 @@ public void set_IsIcon(bool value)
 public System.Drawing.IDeviceContext {
 public IntPtr GetHdc()
 public void ReleaseHdc()
+}
+internal System.Drawing.IMacContext {
+public void Synchronize()
+public void Release()
 }
 public System.Drawing.Image : MarshalByRefObject {
 private object tag
@@ -3897,6 +3888,8 @@ public ImageFlags ReadOnly
 public ImageFlags Scalable
 }
 public System.Drawing.Imaging.ImageFormat : object {
+private Guid guid
+private string name
 private string BmpGuid
 private string EmfGuid
 private string ExifGuid
@@ -3907,8 +3900,6 @@ private string MemoryBmpGuid
 private string IconGuid
 private string JpegGuid
 private string WmfGuid
-private Guid guid
-private string name
 private object locker
 private ImageFormat BmpImageFormat
 private ImageFormat EmfImageFormat
@@ -4403,6 +4394,52 @@ internal byte lfClipPrecision
 internal byte lfQuality
 internal byte lfPitchAndFamily
 internal string lfFaceName
+}
+internal System.Drawing.MacSupport : object {
+internal Hashtable contextReference
+internal object lockobj
+internal Delegate hwnd_delegate
+internal CocoaContext GetCGContextForNSView(IntPtr handle)
+internal CarbonContext GetCGContextForView(IntPtr handle)
+internal IntPtr GetContext(IntPtr port)
+internal void ReleaseContext(IntPtr port, IntPtr context)
+public IntPtr objc_getClass(string className)
+public IntPtr objc_msgSend(IntPtr basePtr, IntPtr selector, string argument)
+public IntPtr objc_msgSend(IntPtr basePtr, IntPtr selector)
+public void objc_msgSend_stret(Rect& arect, IntPtr basePtr, IntPtr selector)
+public bool bool_objc_msgSend(IntPtr handle, IntPtr selector)
+public IntPtr sel_registerName(string selectorName)
+internal IntPtr CGMainDisplayID()
+internal Rect CGDisplayBounds(IntPtr display)
+internal int HIViewGetBounds(IntPtr vHnd, Rect& r)
+internal int HIViewConvertRect(Rect& r, IntPtr a, IntPtr b)
+internal IntPtr GetControlOwner(IntPtr aView)
+internal int GetWindowBounds(IntPtr wHnd, UInt32 reg, QDRect& rect)
+internal IntPtr GetWindowPort(IntPtr hWnd)
+internal IntPtr GetQDGlobalsThePort()
+internal void CreateCGContextForPort(IntPtr port, IntPtr& context)
+internal void CFRelease(IntPtr context)
+internal void QDBeginCGContext(IntPtr port, IntPtr& context)
+internal void QDEndCGContext(IntPtr port, IntPtr& context)
+internal int CGContextClipToRect(IntPtr context, Rect clip)
+internal int CGContextClipToRects(IntPtr context, Rect[] clip_rects, int count)
+internal void CGContextTranslateCTM(IntPtr context, float tx, float ty)
+internal void CGContextScaleCTM(IntPtr context, float x, float y)
+internal void CGContextFlush(IntPtr context)
+internal void CGContextSynchronize(IntPtr context)
+internal IntPtr CGPathCreateMutable()
+internal void CGPathAddRects(IntPtr path, IntPtr _void, Rect[] rects, int count)
+internal void CGPathAddRect(IntPtr path, IntPtr _void, Rect rect)
+internal void CGContextAddRects(IntPtr context, Rect[] rects, int count)
+internal void CGContextAddRect(IntPtr context, Rect rect)
+internal void CGContextBeginPath(IntPtr context)
+internal void CGContextClosePath(IntPtr context)
+internal void CGContextAddPath(IntPtr context, IntPtr path)
+internal void CGContextClip(IntPtr context)
+internal void CGContextEOClip(IntPtr context)
+internal void CGContextEOFillPath(IntPtr context)
+internal void CGContextSaveGState(IntPtr context)
+internal void CGContextRestoreGState(IntPtr context)
 }
 public System.Drawing.Pen : MarshalByRefObject {
 internal IntPtr nativeObject
@@ -4918,6 +4955,12 @@ public void .ctor(int x, int y)
 public Point Ceiling(PointF value)
 public Point Round(PointF value)
 public Point Truncate(PointF value)
+public Point op_Addition(Point pt, Size sz)
+public bool op_Equality(Point left, Point right)
+public bool op_Inequality(Point left, Point right)
+public Point op_Subtraction(Point pt, Size sz)
+public Size op_Explicit(Point p)
+public PointF op_Implicit(Point p)
 public bool get_IsEmpty()
 public int get_X()
 public void set_X(int value)
@@ -4930,12 +4973,6 @@ public string ToString()
 public Point Add(Point pt, Size sz)
 public void Offset(Point p)
 public Point Subtract(Point pt, Size sz)
-public Point op_Addition(Point pt, Size sz)
-public bool op_Equality(Point left, Point right)
-public bool op_Inequality(Point left, Point right)
-public Point op_Subtraction(Point pt, Size sz)
-public Size op_Explicit(Point p)
-public PointF op_Implicit(Point p)
 }
 public System.Drawing.PointConverter : TypeConverter {
 public bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
@@ -4955,6 +4992,12 @@ public bool IsEmpty
 public float X
 public float Y
 public void .ctor(float x, float y)
+public PointF op_Addition(PointF pt, Size sz)
+public PointF op_Addition(PointF pt, SizeF sz)
+public bool op_Equality(PointF left, PointF right)
+public bool op_Inequality(PointF left, PointF right)
+public PointF op_Subtraction(PointF pt, Size sz)
+public PointF op_Subtraction(PointF pt, SizeF sz)
 public bool get_IsEmpty()
 public float get_X()
 public void set_X(float value)
@@ -4967,12 +5010,6 @@ public PointF Add(PointF pt, Size sz)
 public PointF Add(PointF pt, SizeF sz)
 public PointF Subtract(PointF pt, Size sz)
 public PointF Subtract(PointF pt, SizeF sz)
-public PointF op_Addition(PointF pt, Size sz)
-public PointF op_Addition(PointF pt, SizeF sz)
-public bool op_Equality(PointF left, PointF right)
-public bool op_Inequality(PointF left, PointF right)
-public PointF op_Subtraction(PointF pt, Size sz)
-public PointF op_Subtraction(PointF pt, SizeF sz)
 }
 public System.Drawing.Printing.Duplex : Enum {
 public int value__
@@ -5342,14 +5379,6 @@ public string DocumentName
 public PrintController PrintController
 public PrinterSettings PrinterSettings
 public bool OriginAtMargins
-public void add_BeginPrint(PrintEventHandler value)
-public void remove_BeginPrint(PrintEventHandler value)
-public void add_EndPrint(PrintEventHandler value)
-public void remove_EndPrint(PrintEventHandler value)
-public void add_PrintPage(PrintPageEventHandler value)
-public void remove_PrintPage(PrintPageEventHandler value)
-public void add_QueryPageSettings(QueryPageSettingsEventHandler value)
-public void remove_QueryPageSettings(QueryPageSettingsEventHandler value)
 public PageSettings get_DefaultPageSettings()
 public void set_DefaultPageSettings(PageSettings value)
 public string get_DocumentName()
@@ -5366,6 +5395,14 @@ protected void OnBeginPrint(PrintEventArgs e)
 protected void OnEndPrint(PrintEventArgs e)
 protected void OnPrintPage(PrintPageEventArgs e)
 protected void OnQueryPageSettings(QueryPageSettingsEventArgs e)
+public void add_BeginPrint(PrintEventHandler value)
+public void remove_BeginPrint(PrintEventHandler value)
+public void add_EndPrint(PrintEventHandler value)
+public void remove_EndPrint(PrintEventHandler value)
+public void add_PrintPage(PrintPageEventHandler value)
+public void remove_PrintPage(PrintPageEventHandler value)
+public void add_QueryPageSettings(QueryPageSettingsEventHandler value)
+public void remove_QueryPageSettings(QueryPageSettingsEventHandler value)
 }
 public System.Drawing.Printing.PrinterResolution : object {
 private PrinterResolutionKind kind
@@ -5572,7 +5609,6 @@ private bool cups_installed
 private Hashtable installed_printers
 private string default_printer
 private string tmpfile
-private Dictionary`2<string, int> <>f__switch$map3
 internal StringCollection InstalledPrinters
 internal string DefaultPrinter
 internal StringCollection get_InstalledPrinters()
@@ -5584,12 +5620,14 @@ private int OpenDests(IntPtr& ptr)
 private void CloseDests(IntPtr& ptr, int count)
 internal bool IsPrinterValid(string printer)
 internal void LoadPrinterSettings(string printer, PrinterSettings settings)
-private void LoadPrinterOptions(IntPtr options, int numOptions, IntPtr ppd, NameValueCollection list, NameValueCollection paper_names, NameValueCollection paper_sources)
+private void LoadPrinterOptions(IntPtr options, int numOptions, IntPtr ppd, NameValueCollection list, NameValueCollection paper_names, String& defsize, NameValueCollection paper_sources, String& defsource)
 private NameValueCollection LoadPrinterOptions(IntPtr options, int numOptions)
-private void LoadOptionList(IntPtr ppd, string option_name, NameValueCollection list)
+private void LoadOptionList(IntPtr ppd, string option_name, NameValueCollection list, String& defoption)
 internal void LoadPrinterResolutions(string printer, PrinterSettings settings)
+private PrinterResolution ParseResolution(string resolution)
 private PaperSize LoadPrinterPaperSizes(IntPtr ppd_handle, PrinterSettings settings, string def_size, NameValueCollection paper_names)
 private PaperSource LoadPrinterPaperSources(PrinterSettings settings, string def_source, NameValueCollection paper_sources)
+private void LoadPrinterResolutionsAndDefault(string printer, PrinterSettings settings, IntPtr ppd_handle)
 private void LoadPrinters()
 internal void GetPrintDialogInfo(string printer, String& port, String& type, String& status, String& comment)
 private PaperKind GetPaperKind(int width, int height)
@@ -5601,7 +5639,7 @@ internal bool EndPage(GraphicsPrinter gr)
 internal IntPtr CreateGraphicsContext(PrinterSettings settings, PageSettings default_page_settings)
 private int cupsGetDests(IntPtr& dests)
 private void cupsFreeDests(int num_dests, IntPtr dests)
-private IntPtr cupsTempFile(StringBuilder sb, int len)
+private IntPtr cupsTempFd(StringBuilder sb, int len)
 private IntPtr cupsGetDefault()
 private int cupsPrintFile(string printer, string filename, string title, int num_options, IntPtr options)
 private IntPtr cupsGetPPD(string printer)
@@ -5755,6 +5793,8 @@ public void Intersect(Rectangle rect)
 public Rectangle Round(RectangleF value)
 public Rectangle Truncate(RectangleF value)
 public Rectangle Union(Rectangle a, Rectangle b)
+public bool op_Equality(Rectangle left, Rectangle right)
+public bool op_Inequality(Rectangle left, Rectangle right)
 public int get_Bottom()
 public int get_Height()
 public void set_Height(int value)
@@ -5782,8 +5822,6 @@ private bool IntersectsWithInclusive(Rectangle r)
 public void Offset(int x, int y)
 public void Offset(Point pos)
 public string ToString()
-public bool op_Equality(Rectangle left, Rectangle right)
-public bool op_Inequality(Rectangle left, Rectangle right)
 }
 public System.Drawing.RectangleConverter : TypeConverter {
 public bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
@@ -5821,6 +5859,9 @@ public void Inflate(SizeF size)
 public RectangleF Intersect(RectangleF a, RectangleF b)
 public void Intersect(RectangleF rect)
 public RectangleF Union(RectangleF a, RectangleF b)
+public bool op_Equality(RectangleF left, RectangleF right)
+public bool op_Inequality(RectangleF left, RectangleF right)
+public RectangleF op_Implicit(Rectangle r)
 public float get_Bottom()
 public float get_Height()
 public void set_Height(float value)
@@ -5848,9 +5889,6 @@ private bool IntersectsWithInclusive(RectangleF r)
 public void Offset(float x, float y)
 public void Offset(PointF pos)
 public string ToString()
-public bool op_Equality(RectangleF left, RectangleF right)
-public bool op_Inequality(RectangleF left, RectangleF right)
-public RectangleF op_Implicit(Rectangle r)
 }
 public System.Drawing.Region : MarshalByRefObject {
 private IntPtr nativeRegion
@@ -5947,6 +5985,12 @@ public void .ctor(int width, int height)
 public Size Ceiling(SizeF value)
 public Size Round(SizeF value)
 public Size Truncate(SizeF value)
+public Size op_Addition(Size sz1, Size sz2)
+public bool op_Equality(Size sz1, Size sz2)
+public bool op_Inequality(Size sz1, Size sz2)
+public Size op_Subtraction(Size sz1, Size sz2)
+public Point op_Explicit(Size size)
+public SizeF op_Implicit(Size p)
 public bool get_IsEmpty()
 public int get_Width()
 public void set_Width(int value)
@@ -5957,12 +6001,6 @@ public int GetHashCode()
 public string ToString()
 public Size Add(Size sz1, Size sz2)
 public Size Subtract(Size sz1, Size sz2)
-public Size op_Addition(Size sz1, Size sz2)
-public bool op_Equality(Size sz1, Size sz2)
-public bool op_Inequality(Size sz1, Size sz2)
-public Size op_Subtraction(Size sz1, Size sz2)
-public Point op_Explicit(Size size)
-public SizeF op_Implicit(Size p)
 }
 public System.Drawing.SizeConverter : TypeConverter {
 public bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
@@ -5984,6 +6022,11 @@ public float Height
 public void .ctor(PointF pt)
 public void .ctor(SizeF size)
 public void .ctor(float width, float height)
+public SizeF op_Addition(SizeF sz1, SizeF sz2)
+public bool op_Equality(SizeF sz1, SizeF sz2)
+public bool op_Inequality(SizeF sz1, SizeF sz2)
+public SizeF op_Subtraction(SizeF sz1, SizeF sz2)
+public PointF op_Explicit(SizeF size)
 public bool get_IsEmpty()
 public float get_Width()
 public void set_Width(float value)
@@ -5996,11 +6039,6 @@ public Size ToSize()
 public string ToString()
 public SizeF Add(SizeF sz1, SizeF sz2)
 public SizeF Subtract(SizeF sz1, SizeF sz2)
-public SizeF op_Addition(SizeF sz1, SizeF sz2)
-public bool op_Equality(SizeF sz1, SizeF sz2)
-public bool op_Inequality(SizeF sz1, SizeF sz2)
-public SizeF op_Subtraction(SizeF sz1, SizeF sz2)
-public PointF op_Explicit(SizeF size)
 }
 public System.Drawing.SizeFConverter : TypeConverter {
 public bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
@@ -6333,12 +6371,13 @@ public Font get_SmallCaptionFont()
 public Font get_StatusFont()
 }
 public System.Drawing.SystemIcons : object {
+private Icon[] icons
 private int Application_Winlogo
 private int Asterisk_Information
 private int Error_Hand
 private int Exclamation_Warning
 private int Question_
-private Icon[] icons
+private int Shield_
 public Icon Application
 public Icon Asterisk
 public Icon Error
@@ -6348,6 +6387,7 @@ public Icon Information
 public Icon Question
 public Icon Warning
 public Icon WinLogo
+public Icon Shield
 public Icon get_Application()
 public Icon get_Asterisk()
 public Icon get_Error()
@@ -6357,6 +6397,7 @@ public Icon get_Information()
 public Icon get_Question()
 public Icon get_Warning()
 public Icon get_WinLogo()
+public Icon get_Shield()
 }
 public System.Drawing.SystemPens : object {
 private Pen active_caption_text

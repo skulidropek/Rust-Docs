@@ -59,8 +59,11 @@ private BaseEventData m_BaseEventData
 protected BaseInput m_InputOverride
 private BaseInput m_DefaultInput
 public BaseInput input
+public BaseInput inputOverride
 protected EventSystem eventSystem
 public BaseInput get_input()
+public BaseInput get_inputOverride()
+public void set_inputOverride(BaseInput value)
 protected EventSystem get_eventSystem()
 protected void OnEnable()
 protected void OnDisable()
@@ -101,7 +104,7 @@ public EventHandle Used
 public UnityEngine.EventSystems.EventSystem : UIBehaviour {
 private List`1<BaseInputModule> m_SystemInputModules
 private BaseInputModule m_CurrentInputModule
-private EventSystem <current>k__BackingField
+private List`1<EventSystem> m_EventSystems
 private GameObject m_FirstSelected
 private bool m_sendNavigationEvents
 private int m_DragThreshold
@@ -353,22 +356,29 @@ public MoveDirection Down
 public MoveDirection None
 }
 public UnityEngine.EventSystems.Physics2DRaycaster : PhysicsRaycaster {
+private RaycastHit2D[] m_Hits
 public void Raycast(PointerEventData eventData, List`1<RaycastResult> resultAppendList)
 }
 public UnityEngine.EventSystems.PhysicsRaycaster : BaseRaycaster {
 protected int kNoEventMaskSet
 protected Camera m_EventCamera
 protected LayerMask m_EventMask
+protected int m_MaxRayIntersections
+protected int m_LastMaxRayIntersections
+private RaycastHit[] m_Hits
 private Comparison`1<RaycastHit> <>f__am$cache0
 public Camera eventCamera
 public int depth
 public int finalEventMask
 public LayerMask eventMask
+public int maxRayIntersections
 public Camera get_eventCamera()
 public int get_depth()
 public int get_finalEventMask()
 public LayerMask get_eventMask()
 public void set_eventMask(LayerMask value)
+public int get_maxRayIntersections()
+public void set_maxRayIntersections(int value)
 protected void ComputeRayAndDistance(PointerEventData eventData, Ray& ray, Single& distanceToClipPlane)
 public void Raycast(PointerEventData eventData, List`1<RaycastResult> resultAppendList)
 private int <Raycast>m__0(RaycastHit r1, RaycastHit r2)
@@ -519,6 +529,7 @@ private int m_ConsecutiveMoveCount
 private Vector2 m_LastMousePosition
 private Vector2 m_MousePosition
 private GameObject m_CurrentFocusedGameObject
+private PointerEventData m_InputPointerEvent
 private string m_HorizontalAxis
 private string m_VerticalAxis
 private string m_SubmitButton
@@ -574,6 +585,7 @@ protected GameObject GetCurrentFocusedGameObject()
 public UnityEngine.EventSystems.TouchInputModule : PointerInputModule {
 private Vector2 m_LastMousePosition
 private Vector2 m_MousePosition
+private PointerEventData m_InputPointerEvent
 private bool m_ForceModuleActive
 public bool allowActivationOnStandalone
 public bool forceModuleActive
@@ -633,6 +645,7 @@ public UnityEngine.UI.AspectRatioFitter : UIBehaviour {
 private AspectMode m_AspectMode
 private float m_AspectRatio
 private RectTransform m_Rect
+private bool m_DelayedSetDirty
 private DrivenRectTransformTracker m_Tracker
 public AspectMode aspectMode
 public float aspectRatio
@@ -644,6 +657,7 @@ public void set_aspectRatio(float value)
 private RectTransform get_rectTransform()
 protected void OnEnable()
 protected void OnDisable()
+protected void Update()
 protected void OnRectTransformDimensionsChange()
 private void UpdateRect()
 private float GetSizeDeltaToProduceSize(float size, int axis)
@@ -994,6 +1008,7 @@ public void set_onValueChanged(DropdownEvent value)
 public int get_value()
 public void set_value(int value)
 protected void Awake()
+protected void Start()
 public void RefreshShownValue()
 public void AddOptions(List`1<OptionData> options)
 public void AddOptions(List`1<string> options)
@@ -1088,7 +1103,7 @@ protected Material m_Material
 private Color m_Color
 private bool m_RaycastTarget
 private RectTransform m_RectTransform
-private CanvasRenderer m_CanvasRender
+private CanvasRenderer m_CanvasRenderer
 private Canvas m_Canvas
 private bool m_VertsDirty
 private bool m_MaterialDirty
@@ -1139,6 +1154,7 @@ public Texture get_mainTexture()
 protected void OnEnable()
 protected void OnDisable()
 protected void OnCanvasHierarchyChanged()
+public void OnCullingChanged()
 public void Rebuild(CanvasUpdate update)
 public void LayoutComplete()
 public void GraphicUpdateComplete()
@@ -1474,6 +1490,7 @@ private bool m_WasCanceled
 private bool m_HasDoneFocusTransition
 private string kEmailSpecialCharacters
 private Event m_ProcessingEvent
+private int k_MaxTextLength
 private BaseInput input
 private string compositionString
 protected Mesh mesh
@@ -1497,6 +1514,7 @@ public int characterLimit
 public ContentType contentType
 public LineType lineType
 public InputType inputType
+public TouchScreenKeyboard touchScreenKeyboard
 public TouchScreenKeyboardType keyboardType
 public CharacterValidation characterValidation
 public bool readOnly
@@ -1557,6 +1575,7 @@ public LineType get_lineType()
 public void set_lineType(LineType value)
 public InputType get_inputType()
 public void set_inputType(InputType value)
+public TouchScreenKeyboard get_touchScreenKeyboard()
 public TouchScreenKeyboardType get_keyboardType()
 public void set_keyboardType(TouchScreenKeyboardType value)
 public CharacterValidation get_characterValidation()
@@ -1791,7 +1810,6 @@ public void Rebuild(CanvasUpdate executing)
 private void PerformLayoutControl(RectTransform rect, UnityAction`1<Component> action)
 private void PerformLayoutCalculation(RectTransform rect, UnityAction`1<Component> action)
 public void MarkLayoutForRebuild(RectTransform rect)
-private bool ValidLayoutGroup(RectTransform parent, List`1<Component> comps)
 private bool ValidController(RectTransform layoutRoot, List`1<Component> comps)
 private void MarkLayoutRootForRebuild(RectTransform controller)
 public void LayoutComplete()
@@ -1837,9 +1855,10 @@ private float <GetFlexibleHeight>m__7(ILayoutElement e)
 }
 internal UnityEngine.UI.ListPool`1 : object {
 private ObjectPool`1<List`1<T>> s_ListPool
+private UnityAction`1<List`1<T>> <>f__mg$cache0
+private void Clear(List`1<T> l)
 public List`1<T> Get()
 public void Release(List`1<T> toRelease)
-private void <s_ListPool>m__0(List`1<T> l)
 }
 public UnityEngine.UI.Mask : UIBehaviour {
 private RectTransform m_RectTransform
@@ -1979,15 +1998,20 @@ private HashSet`1<IClippable> m_ClipTargets
 private bool m_ShouldRecalculateClipRects
 private List`1<RectMask2D> m_Clippers
 private Rect m_LastClipRectCanvasSpace
-private bool m_LastValidClipRect
 private bool m_ForceClip
+private Canvas m_Canvas
+private Vector3[] m_Corners
+private Canvas Canvas
 public Rect canvasRect
 public RectTransform rectTransform
+private Rect rootCanvasRect
+private Canvas get_Canvas()
 public Rect get_canvasRect()
 public RectTransform get_rectTransform()
 protected void OnEnable()
 protected void OnDisable()
 public bool IsRaycastLocationValid(Vector2 sp, Camera eventCamera)
+private Rect get_rootCanvasRect()
 public void PerformClipping()
 public void AddClippable(IClippable clippable)
 public void RemoveClippable(IClippable clippable)
@@ -1999,6 +2023,8 @@ public Raycast3DCallback raycast3D
 public RaycastAllCallback raycast3DAll
 public Raycast2DCallback raycast2D
 public GetRayIntersectionAllCallback getRayIntersectionAll
+public GetRayIntersectionAllNonAllocCallback getRayIntersectionAllNonAlloc
+public GetRaycastNonAllocCallback getRaycastNonAlloc
 private ReflectionMethodsCache s_ReflectionMethodsCache
 public ReflectionMethodsCache Singleton
 public ReflectionMethodsCache get_Singleton()

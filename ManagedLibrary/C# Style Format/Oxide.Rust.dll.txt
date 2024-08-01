@@ -479,6 +479,7 @@ internal void Initialize()
 internal void PlayerJoin(ulong userId, string name)
 internal void PlayerConnected(BasePlayer player)
 internal void PlayerDisconnected(BasePlayer player)
+internal void SavePlayerData()
 public IEnumerable`1<IPlayer> get_All()
 public IEnumerable`1<IPlayer> get_Connected()
 public IEnumerable`1<IPlayer> get_Sleeping()
@@ -489,10 +490,12 @@ public IEnumerable`1<IPlayer> FindPlayers(string partialNameOrId)
 }
 public Oxide.Game.Rust.Libraries.Covalence.RustServer : object {
 internal Server Server
-private SaveInfo SaveFile
 private IPAddress address
+private IPAddress localAddress
+private SaveInfo <SaveInfo>k__BackingField
 public string Name
 public IPAddress Address
+public IPAddress LocalAddress
 public ushort Port
 public string Version
 public string Protocol
@@ -504,6 +507,7 @@ public SaveInfo SaveInfo
 public string get_Name()
 public void set_Name(string value)
 public IPAddress get_Address()
+public IPAddress get_LocalAddress()
 public ushort get_Port()
 public string get_Version()
 public string get_Protocol()
@@ -629,11 +633,13 @@ private void ShowCommand(IPlayer player, string command, String[] args)
 private void UnloadCommand(IPlayer player, string command, String[] args)
 private void UserGroupCommand(IPlayer player, string command, String[] args)
 private void VersionCommand(IPlayer player, string command, String[] args)
+private void SaveCommand(IPlayer player, string command, String[] args)
 internal IEnumerable`1<string> get_RestrictedCommands()
 private bool PermissionsLoaded(IPlayer player)
 private void Init()
 private void OnPluginLoaded(Plugin plugin)
 private void OnServerInitialized()
+private void OnServerSave()
 private void OnServerShutdown()
 private void ParseCommand(string argstr, String& command, String[]& args)
 public BasePlayer FindPlayer(string nameOrIdOrIp)
@@ -642,7 +648,7 @@ public BasePlayer FindPlayerById(ulong id)
 public BasePlayer FindPlayerByIdString(string id)
 private object IOnDisableServerConsole()
 private object IOnEnableServerConsole(ServerConsole serverConsole)
-private object IOnRconCommand(IPEndPoint sender, string message)
+private object IOnRconCommand(IPEndPoint sender, string command)
 private object IOnRconInitialize()
 private object IOnRunCommandLine()
 private object IOnServerCommand(Arg arg)
@@ -653,12 +659,16 @@ private void IOnServerUsersRemove(ulong steamId)
 private object IOnUserApprove(Connection connection)
 private void IOnPlayerBanned(Connection connection)
 private object IOnPlayerChat(Arg arg)
+private void IOnPlayerCommand(Arg arg)
 private void OnPlayerDisconnected(BasePlayer player, string reason)
 private void OnPlayerInit(BasePlayer player)
 private void OnPlayerKicked(BasePlayer player, string reason)
 private object OnPlayerRespawn(BasePlayer player)
 private void OnPlayerRespawned(BasePlayer player)
 private object IOnBaseCombatEntityHurt(BaseCombatEntity entity, HitInfo info)
+private int GetPlayersSensed(NPCPlayerApex npc, Vector3 position, float distance, BaseEntity[] targetList)
+private object IOnNpcPlayerSenseClose(NPCPlayerApex npc)
+private object IOnNpcPlayerSenseVision(NPCPlayerApex npc)
 private object IOnNpcPlayerTarget(NPCPlayerApex npc, BaseEntity target)
 private object IOnNpcTarget(BaseNpc npc, BaseEntity target)
 private object IOnLoseCondition(Item item, float amount)
@@ -668,13 +678,13 @@ internal Assembly Assembly
 internal AssemblyName AssemblyName
 internal VersionNumber AssemblyVersion
 internal string AssemblyAuthors
-internal HashSet`1<string> DefaultReferences
 public String[] Filter
 public bool IsGameExtension
 public string Name
 public string Author
 public VersionNumber Version
 public string Branch
+public String[] DefaultReferences
 public String[] WhitelistAssemblies
 public String[] WhitelistNamespaces
 public bool get_IsGameExtension()
@@ -682,6 +692,7 @@ public string get_Name()
 public string get_Author()
 public VersionNumber get_Version()
 public string get_Branch()
+public String[] get_DefaultReferences()
 public String[] get_WhitelistAssemblies()
 public String[] get_WhitelistNamespaces()
 public void .ctor(ExtensionManager manager)
