@@ -1,0 +1,172 @@
+public ClanChatEntry : ValueType {
+public ulong SteamId
+public string Name
+public string Message
+public long Time
+}
+public ClanChatScrollback : ValueType {
+public long ClanId
+public List`1<ClanChatEntry> Entries
+}
+public ClanDataSource : Enum {
+public int value__
+public ClanDataSource Basic
+public ClanDataSource Motd
+public ClanDataSource Logo
+public ClanDataSource Roles
+public ClanDataSource Members
+public ClanDataSource Invites
+public ClanDataSource All
+}
+public ClanInvitation : ValueType {
+public long ClanId
+public ulong Recruiter
+public long Timestamp
+}
+public ClanInvite : ValueType {
+public ulong SteamId
+public ulong Recruiter
+public long Timestamp
+}
+public ClanLogEntry : ValueType {
+public long Timestamp
+public string EventKey
+public string Arg1
+public string Arg2
+public string Arg3
+public string Arg4
+}
+public ClanLogs : ValueType {
+public long ClanId
+public List`1<ClanLogEntry> Entries
+}
+public ClanMember : ValueType {
+public ulong SteamId
+public int RoleId
+public long Joined
+public long LastSeen
+public string Notes
+public long NotesTimestamp
+}
+public ClanResult : Enum {
+public int value__
+public ClanResult Fail
+public ClanResult Success
+public ClanResult Timeout
+public ClanResult NoClan
+public ClanResult NotFound
+public ClanResult NoPermission
+public ClanResult InvalidText
+public ClanResult InvalidLogo
+public ClanResult InvalidColor
+public ClanResult DuplicateName
+public ClanResult RoleNotEmpty
+public ClanResult CannotSwapLeader
+public ClanResult CannotDeleteLeader
+public ClanResult CannotKickLeader
+public ClanResult CannotDemoteLeader
+public ClanResult AlreadyInAClan
+public ClanResult CantModifyClanHere
+public ClanResult ClanIsFull
+}
+public ClanRole : ValueType {
+public int RoleId
+public int Rank
+public string Name
+public bool CanSetMotd
+public bool CanSetLogo
+public bool CanInvite
+public bool CanKick
+public bool CanPromote
+public bool CanDemote
+public bool CanSetPlayerNotes
+public bool CanAccessLogs
+}
+public ClanUtility : object {
+public int LeaderRank
+public long Timestamp()
+}
+public ClanValidator : object {
+private StringBuilder Builder
+public bool ValidateClanName(string name, String& validated)
+public bool ValidateRoleName(string name, String& validated)
+public bool ValidateMotd(string motd, String& validated)
+public bool ValidatePlayerNote(string note, String& validated)
+public bool ValidateChatMessage(string message, String& validated)
+private string Normalize(string value, int maxLines)
+private bool ValidateLength(string value, int min, int max)
+private bool ValidateAlphanumericOnly(string value)
+}
+public ClanValueResult`1 : ValueType {
+public ClanResult Result
+private T _value
+public bool IsSuccess
+public T Value
+public void .ctor(ClanResult result)
+public void .ctor(T value)
+public bool get_IsSuccess()
+public T get_Value()
+public ClanValueResult`1<T> op_Implicit(ClanResult result)
+public ClanValueResult`1<T> op_Implicit(T value)
+}
+public IClan {
+public long ClanId
+public string Name
+public long Created
+public ulong Creator
+public string Motd
+public long MotdTimestamp
+public ulong MotdAuthor
+public Byte[] Logo
+public Color32 Color
+public IReadOnlyList`1<ClanRole> Roles
+public IReadOnlyList`1<ClanMember> Members
+public int MaxMemberCount
+public IReadOnlyList`1<ClanInvite> Invites
+public long get_ClanId()
+public string get_Name()
+public long get_Created()
+public ulong get_Creator()
+public string get_Motd()
+public long get_MotdTimestamp()
+public ulong get_MotdAuthor()
+public Byte[] get_Logo()
+public Color32 get_Color()
+public IReadOnlyList`1<ClanRole> get_Roles()
+public IReadOnlyList`1<ClanMember> get_Members()
+public int get_MaxMemberCount()
+public IReadOnlyList`1<ClanInvite> get_Invites()
+public ValueTask`1<ClanValueResult`1<ClanLogs>> GetLogs(int limit, ulong bySteamId)
+public ValueTask`1<ClanResult> UpdateLastSeen(ulong steamId)
+public ValueTask`1<ClanResult> SetMotd(string newMotd, ulong bySteamId)
+public ValueTask`1<ClanResult> SetLogo(Byte[] newLogo, ulong bySteamId)
+public ValueTask`1<ClanResult> SetColor(Color32 newColor, ulong bySteamId)
+public ValueTask`1<ClanResult> Invite(ulong steamId, ulong bySteamId)
+public ValueTask`1<ClanResult> CancelInvite(ulong steamId, ulong bySteamId)
+public ValueTask`1<ClanResult> AcceptInvite(ulong steamId)
+public ValueTask`1<ClanResult> Kick(ulong steamId, ulong bySteamId)
+public ValueTask`1<ClanResult> SetPlayerRole(ulong steamId, int newRoleId, ulong bySteamId)
+public ValueTask`1<ClanResult> SetPlayerNotes(ulong steamId, string notes, ulong bySteamId)
+public ValueTask`1<ClanResult> CreateRole(ClanRole role, ulong bySteamId)
+public ValueTask`1<ClanResult> UpdateRole(ClanRole role, ulong bySteamId)
+public ValueTask`1<ClanResult> SwapRoleRanks(int roleIdA, int roleIdB, ulong bySteamId)
+public ValueTask`1<ClanResult> DeleteRole(int roleId, ulong bySteamId)
+public ValueTask`1<ClanResult> Disband(ulong bySteamId)
+public ValueTask`1<ClanValueResult`1<ClanChatScrollback>> GetChatScrollback()
+public ValueTask`1<ClanResult> SendChatMessage(string name, string message, ulong bySteamId)
+}
+public IClanBackend {
+public ValueTask Initialize(IClanChangeSink changeSink)
+public ValueTask`1<ClanValueResult`1<IClan>> Get(long clanId)
+public bool TryGet(long clanId, IClan& clan)
+public ValueTask`1<ClanValueResult`1<IClan>> GetByMember(ulong steamId)
+public ValueTask`1<ClanValueResult`1<IClan>> Create(ulong leaderSteamId, string name)
+public ValueTask`1<ClanValueResult`1<List`1<ClanInvitation>>> ListInvitations(ulong steamId)
+}
+public IClanChangeSink {
+public void ClanChanged(long clanId, ClanDataSource dataSources)
+public void ClanDisbanded(long clanId)
+public void InvitationCreated(ulong steamId, long clanId)
+public void MembershipChanged(ulong steamId, Nullable`1<long> clanId)
+public void ClanChatMessage(long clanId, ClanChatEntry entry)
+}

@@ -1,6 +1,7 @@
 public UnityEngine.AssetBundle : Object {
 public Object mainAsset
 public bool isStreamedSceneAssetBundle
+public UInt32 memoryBudgetKB
 public Object get_mainAsset()
 internal Object returnMainAsset(AssetBundle bundle)
 public void UnloadAllAssetBundles(bool unloadAllObjects)
@@ -61,12 +62,15 @@ public AssetBundleRequest LoadAllAssetsAsync(Type type)
 public String[] AllAssetNames()
 private AssetBundleRequest LoadAssetAsync_Internal(string name, Type type)
 public void Unload(bool unloadAllLoadedObjects)
+public AsyncOperation UnloadAsync(bool unloadAllLoadedObjects)
 public String[] GetAllAssetNames()
 public String[] GetAllScenePaths()
 internal Object[] LoadAssetWithSubAssets_Internal(string name, Type type)
 private AssetBundleRequest LoadAssetWithSubAssetsAsync_Internal(string name, Type type)
 public AssetBundleRecompressOperation RecompressAssetBundleAsync(string inputPath, string outputPath, BuildCompression method, UInt32 expectedCRC, ThreadPriority priority)
 internal AssetBundleRecompressOperation RecompressAssetBundleAsync_Internal(string inputPath, string outputPath, BuildCompression method, UInt32 expectedCRC, ThreadPriority priority)
+public UInt32 get_memoryBudgetKB()
+public void set_memoryBudgetKB(UInt32 value)
 private AssetBundleRecompressOperation RecompressAssetBundleAsync_Internal_Injected(string inputPath, string outputPath, BuildCompression& method, UInt32 expectedCRC, ThreadPriority priority)
 }
 public UnityEngine.AssetBundleCreateRequest : AsyncOperation {
@@ -74,6 +78,21 @@ public AssetBundle assetBundle
 public AssetBundle get_assetBundle()
 private void SetEnableCompatibilityChecks(bool set)
 internal void DisableCompatibilityChecks()
+}
+internal UnityEngine.AssetBundleLoadingCache : object {
+internal int kMinAllowedBlockCount
+internal int kMinAllowedMaxBlocksPerFile
+internal UInt32 maxBlocksPerFile
+internal UInt32 blockCount
+internal UInt32 blockSize
+internal UInt32 memoryBudgetKB
+internal UInt32 get_maxBlocksPerFile()
+internal void set_maxBlocksPerFile(UInt32 value)
+internal UInt32 get_blockCount()
+internal void set_blockCount(UInt32 value)
+internal UInt32 get_blockSize()
+internal UInt32 get_memoryBudgetKB()
+internal void set_memoryBudgetKB(UInt32 value)
 }
 public UnityEngine.AssetBundleLoadResult : Enum {
 public int value__
@@ -112,9 +131,10 @@ public string get_outputPath()
 public AssetBundleLoadResult get_result()
 public bool get_success()
 }
-public UnityEngine.AssetBundleRequest : AsyncOperation {
+public UnityEngine.AssetBundleRequest : ResourceRequest {
 public Object asset
 public Object[] allAssets
+protected Object GetResult()
 public Object get_asset()
 public Object[] get_allAssets()
 }

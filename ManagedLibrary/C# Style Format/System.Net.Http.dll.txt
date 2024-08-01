@@ -1,46 +1,3 @@
-internal Consts : object {
-public string MonoVersion
-public string MonoCompany
-public string MonoProduct
-public string MonoCopyright
-public int MonoCorlibVersion
-public string FxVersion
-public string FxFileVersion
-public string EnvironmentVersion
-public string VsVersion
-public string VsFileVersion
-private string PublicKeyToken
-public string AssemblyI18N
-public string AssemblyMicrosoft_JScript
-public string AssemblyMicrosoft_VisualStudio
-public string AssemblyMicrosoft_VisualStudio_Web
-public string AssemblyMicrosoft_VSDesigner
-public string AssemblyMono_Http
-public string AssemblyMono_Posix
-public string AssemblyMono_Security
-public string AssemblyMono_Messaging_RabbitMQ
-public string AssemblyCorlib
-public string AssemblySystem
-public string AssemblySystem_Data
-public string AssemblySystem_Design
-public string AssemblySystem_DirectoryServices
-public string AssemblySystem_Drawing
-public string AssemblySystem_Drawing_Design
-public string AssemblySystem_Messaging
-public string AssemblySystem_Security
-public string AssemblySystem_ServiceProcess
-public string AssemblySystem_Web
-public string AssemblySystem_Windows_Forms
-public string AssemblySystem_2_0
-public string AssemblySystemCore_3_5
-public string AssemblySystem_Core
-public string WindowsBase_3_0
-public string AssemblyWindowsBase
-public string AssemblyPresentationCore_3_5
-public string AssemblyPresentationCore_4_0
-public string AssemblyPresentationFramework_3_5
-public string AssemblySystemServiceModel_3_0
-}
 public System.Net.Http.ByteArrayContent : HttpContent {
 private Byte[] content
 private int offset
@@ -48,13 +5,26 @@ private int count
 public void .ctor(Byte[] content)
 public void .ctor(Byte[] content, int offset, int count)
 protected Task`1<Stream> CreateContentReadStreamAsync()
-protected internal Task SerializeToStreamAsync(Stream stream, TransportContext context)
+protected Task SerializeToStreamAsync(Stream stream, TransportContext context)
 protected internal bool TryComputeLength(Int64& length)
+}
+internal System.Net.Http.CancellationHelper : object {
+private string s_cancellationMessage
+internal bool ShouldWrapInOperationCanceledException(Exception exception, CancellationToken cancellationToken)
+internal Exception CreateOperationCanceledException(Exception innerException, CancellationToken cancellationToken)
+private void ThrowOperationCanceledException(Exception innerException, CancellationToken cancellationToken)
+internal void ThrowIfCancellationRequested(CancellationToken cancellationToken)
 }
 public System.Net.Http.ClientCertificateOption : Enum {
 public int value__
 public ClientCertificateOption Manual
 public ClientCertificateOption Automatic
+}
+internal System.Net.Http.ConnectHelper : object {
+private Segment<ConnectEventArgs> s_connectEventArgs
+public ValueTask`1<ValueTuple`2<Socket, Stream>> ConnectAsync(string host, int port, CancellationToken cancellationToken)
+public ValueTask`1<SslStream> EstablishSslConnectionAsync(SslClientAuthenticationOptions sslOptions, HttpRequestMessage request, Stream stream, CancellationToken cancellationToken)
+private ValueTask`1<SslStream> EstablishSslConnectionAsyncCore(Stream stream, SslClientAuthenticationOptions sslOptions, CancellationToken cancellationToken)
 }
 public System.Net.Http.DelegatingHandler : HttpMessageHandler {
 private bool disposed
@@ -939,95 +909,88 @@ public Task`1<Stream> GetStreamAsync(string requestUri)
 public Task`1<Stream> GetStreamAsync(Uri requestUri)
 public Task`1<string> GetStringAsync(string requestUri)
 public Task`1<string> GetStringAsync(Uri requestUri)
+public Task`1<HttpResponseMessage> PatchAsync(string requestUri, HttpContent content)
+public Task`1<HttpResponseMessage> PatchAsync(string requestUri, HttpContent content, CancellationToken cancellationToken)
+public Task`1<HttpResponseMessage> PatchAsync(Uri requestUri, HttpContent content)
+public Task`1<HttpResponseMessage> PatchAsync(Uri requestUri, HttpContent content, CancellationToken cancellationToken)
 private Task`1<HttpResponseMessage> <>n__0(HttpRequestMessage request, CancellationToken cancellationToken)
 }
 public System.Net.Http.HttpClientHandler : HttpMessageHandler {
-private long groupCounter
-private bool allowAutoRedirect
-private DecompressionMethods automaticDecompression
-private CookieContainer cookieContainer
-private ICredentials credentials
-private int maxAutomaticRedirections
-private long maxRequestContentBufferSize
-private bool preAuthenticate
-private IWebProxy proxy
-private bool useCookies
-private bool useDefaultCredentials
-private bool useProxy
-private ClientCertificateOption certificate
-private bool sentRequest
-private string connectionGroupName
-private bool disposed
-public bool AllowAutoRedirect
-public DecompressionMethods AutomaticDecompression
-public ClientCertificateOption ClientCertificateOptions
-public CookieContainer CookieContainer
-public ICredentials Credentials
-public int MaxAutomaticRedirections
-public long MaxRequestContentBufferSize
-public bool PreAuthenticate
-public IWebProxy Proxy
+private IMonoHttpClientHandler _delegatingHandler
+private ClientCertificateOption _clientCertificateOptions
+public Func`5<HttpRequestMessage, X509Certificate2, X509Chain, SslPolicyErrors, bool> DangerousAcceptAnyServerCertificateValidator
 public bool SupportsAutomaticDecompression
 public bool SupportsProxy
 public bool SupportsRedirectConfiguration
 public bool UseCookies
-public bool UseDefaultCredentials
-public bool UseProxy
-public bool CheckCertificateRevocationList
+public CookieContainer CookieContainer
+public ClientCertificateOption ClientCertificateOptions
 public X509CertificateCollection ClientCertificates
+public Func`5<HttpRequestMessage, X509Certificate2, X509Chain, SslPolicyErrors, bool> ServerCertificateCustomValidationCallback
+public bool CheckCertificateRevocationList
+public SslProtocols SslProtocols
+public DecompressionMethods AutomaticDecompression
+public bool UseProxy
+public IWebProxy Proxy
 public ICredentials DefaultProxyCredentials
+public bool PreAuthenticate
+public bool UseDefaultCredentials
+public ICredentials Credentials
+public bool AllowAutoRedirect
+public int MaxAutomaticRedirections
 public int MaxConnectionsPerServer
 public int MaxResponseHeadersLength
+public long MaxRequestContentBufferSize
 public IDictionary`2<string, object> Properties
-public Func`5<HttpRequestMessage, X509Certificate2, X509Chain, SslPolicyErrors, bool> ServerCertificateCustomValidationCallback
-public SslProtocols SslProtocols
-internal void EnsureModifiability()
-public bool get_AllowAutoRedirect()
-public void set_AllowAutoRedirect(bool value)
-public DecompressionMethods get_AutomaticDecompression()
-public void set_AutomaticDecompression(DecompressionMethods value)
-public ClientCertificateOption get_ClientCertificateOptions()
-public void set_ClientCertificateOptions(ClientCertificateOption value)
-public CookieContainer get_CookieContainer()
-public void set_CookieContainer(CookieContainer value)
-public ICredentials get_Credentials()
-public void set_Credentials(ICredentials value)
-public int get_MaxAutomaticRedirections()
-public void set_MaxAutomaticRedirections(int value)
-public long get_MaxRequestContentBufferSize()
-public void set_MaxRequestContentBufferSize(long value)
-public bool get_PreAuthenticate()
-public void set_PreAuthenticate(bool value)
-public IWebProxy get_Proxy()
-public void set_Proxy(IWebProxy value)
+private IMonoHttpClientHandler CreateDefaultHandler()
+public Func`5<HttpRequestMessage, X509Certificate2, X509Chain, SslPolicyErrors, bool> get_DangerousAcceptAnyServerCertificateValidator()
+internal void .ctor(IMonoHttpClientHandler handler)
+protected void Dispose(bool disposing)
 public bool get_SupportsAutomaticDecompression()
 public bool get_SupportsProxy()
 public bool get_SupportsRedirectConfiguration()
 public bool get_UseCookies()
 public void set_UseCookies(bool value)
-public bool get_UseDefaultCredentials()
-public void set_UseDefaultCredentials(bool value)
-public bool get_UseProxy()
-public void set_UseProxy(bool value)
-protected void Dispose(bool disposing)
-internal HttpWebRequest CreateWebRequest(HttpRequestMessage request)
-private HttpResponseMessage CreateResponseMessage(HttpWebResponse wr, HttpRequestMessage requestMessage, CancellationToken cancellationToken)
-private bool MethodHasBody(HttpMethod method)
-protected internal Task`1<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+public CookieContainer get_CookieContainer()
+public void set_CookieContainer(CookieContainer value)
+private void ThrowForModifiedManagedSslOptionsIfStarted()
+public ClientCertificateOption get_ClientCertificateOptions()
+public void set_ClientCertificateOptions(ClientCertificateOption value)
+public X509CertificateCollection get_ClientCertificates()
+public Func`5<HttpRequestMessage, X509Certificate2, X509Chain, SslPolicyErrors, bool> get_ServerCertificateCustomValidationCallback()
+public void set_ServerCertificateCustomValidationCallback(Func`5<HttpRequestMessage, X509Certificate2, X509Chain, SslPolicyErrors, bool> value)
 public bool get_CheckCertificateRevocationList()
 public void set_CheckCertificateRevocationList(bool value)
-public X509CertificateCollection get_ClientCertificates()
+public SslProtocols get_SslProtocols()
+public void set_SslProtocols(SslProtocols value)
+public DecompressionMethods get_AutomaticDecompression()
+public void set_AutomaticDecompression(DecompressionMethods value)
+public bool get_UseProxy()
+public void set_UseProxy(bool value)
+public IWebProxy get_Proxy()
+public void set_Proxy(IWebProxy value)
 public ICredentials get_DefaultProxyCredentials()
 public void set_DefaultProxyCredentials(ICredentials value)
+public bool get_PreAuthenticate()
+public void set_PreAuthenticate(bool value)
+public bool get_UseDefaultCredentials()
+public void set_UseDefaultCredentials(bool value)
+public ICredentials get_Credentials()
+public void set_Credentials(ICredentials value)
+public bool get_AllowAutoRedirect()
+public void set_AllowAutoRedirect(bool value)
+public int get_MaxAutomaticRedirections()
+public void set_MaxAutomaticRedirections(int value)
 public int get_MaxConnectionsPerServer()
 public void set_MaxConnectionsPerServer(int value)
 public int get_MaxResponseHeadersLength()
 public void set_MaxResponseHeadersLength(int value)
+public long get_MaxRequestContentBufferSize()
+public void set_MaxRequestContentBufferSize(long value)
 public IDictionary`2<string, object> get_Properties()
-public Func`5<HttpRequestMessage, X509Certificate2, X509Chain, SslPolicyErrors, bool> get_ServerCertificateCustomValidationCallback()
-public void set_ServerCertificateCustomValidationCallback(Func`5<HttpRequestMessage, X509Certificate2, X509Chain, SslPolicyErrors, bool> value)
-public SslProtocols get_SslProtocols()
-public void set_SslProtocols(SslProtocols value)
+internal void SetWebRequestTimeout(TimeSpan timeout)
+protected internal Task`1<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+private X509Certificate <set_ClientCertificateOptions>b__23_0(object sender, string targetHost, X509CertificateCollection localCertificates, X509Certificate remoteCertificate, String[] acceptableIssuers)
 }
 public System.Net.Http.HttpCompletionOption : Enum {
 public int value__
@@ -1057,7 +1020,8 @@ public Task`1<Byte[]> ReadAsByteArrayAsync()
 public Task`1<string> ReadAsStringAsync()
 private Encoding GetEncodingFromBuffer(Byte[] buffer, int length, Int32& preambleLength)
 private int StartsWith(Byte[] array, int length, Byte[] value)
-protected internal Task SerializeToStreamAsync(Stream stream, TransportContext context)
+internal Task SerializeToStreamAsync_internal(Stream stream, TransportContext context)
+protected Task SerializeToStreamAsync(Stream stream, TransportContext context)
 protected internal bool TryComputeLength(Int64& length)
 }
 public System.Net.Http.HttpMessageHandler : object {
@@ -1066,7 +1030,7 @@ protected void Dispose(bool disposing)
 protected internal Task`1<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
 }
 public System.Net.Http.HttpMessageInvoker : object {
-private HttpMessageHandler handler
+private protected HttpMessageHandler handler
 private bool disposeHandler
 public void .ctor(HttpMessageHandler handler)
 public void .ctor(HttpMessageHandler handler, bool disposeHandler)
@@ -1091,6 +1055,7 @@ public HttpMethod Options
 public HttpMethod Post
 public HttpMethod Put
 public HttpMethod Trace
+public HttpMethod Patch
 public void .ctor(string method)
 public HttpMethod get_Delete()
 public HttpMethod get_Get()
@@ -1106,6 +1071,7 @@ public bool Equals(HttpMethod other)
 public bool Equals(object obj)
 public int GetHashCode()
 public string ToString()
+public HttpMethod get_Patch()
 }
 public System.Net.Http.HttpRequestException : Exception {
 public void .ctor(string message)
@@ -1146,6 +1112,7 @@ public string ToString()
 }
 public System.Net.Http.HttpResponseMessage : object {
 private HttpResponseHeaders headers
+private HttpResponseHeaders trailingHeaders
 private string reasonPhrase
 private HttpStatusCode statusCode
 private Version version
@@ -1159,6 +1126,7 @@ public string ReasonPhrase
 public HttpRequestMessage RequestMessage
 public HttpStatusCode StatusCode
 public Version Version
+public HttpResponseHeaders TrailingHeaders
 public void .ctor(HttpStatusCode statusCode)
 public HttpContent get_Content()
 public void set_Content(HttpContent value)
@@ -1176,6 +1144,57 @@ public void Dispose()
 protected void Dispose(bool disposing)
 public HttpResponseMessage EnsureSuccessStatusCode()
 public string ToString()
+public HttpResponseHeaders get_TrailingHeaders()
+}
+internal System.Net.Http.IMonoHttpClientHandler {
+public bool SupportsAutomaticDecompression
+public bool UseCookies
+public CookieContainer CookieContainer
+public SslClientAuthenticationOptions SslOptions
+public DecompressionMethods AutomaticDecompression
+public bool UseProxy
+public IWebProxy Proxy
+public ICredentials DefaultProxyCredentials
+public bool PreAuthenticate
+public ICredentials Credentials
+public bool AllowAutoRedirect
+public int MaxAutomaticRedirections
+public int MaxConnectionsPerServer
+public int MaxResponseHeadersLength
+public long MaxRequestContentBufferSize
+public IDictionary`2<string, object> Properties
+public bool get_SupportsAutomaticDecompression()
+public bool get_UseCookies()
+public void set_UseCookies(bool value)
+public CookieContainer get_CookieContainer()
+public void set_CookieContainer(CookieContainer value)
+public SslClientAuthenticationOptions get_SslOptions()
+public void set_SslOptions(SslClientAuthenticationOptions value)
+public DecompressionMethods get_AutomaticDecompression()
+public void set_AutomaticDecompression(DecompressionMethods value)
+public bool get_UseProxy()
+public void set_UseProxy(bool value)
+public IWebProxy get_Proxy()
+public void set_Proxy(IWebProxy value)
+public ICredentials get_DefaultProxyCredentials()
+public void set_DefaultProxyCredentials(ICredentials value)
+public bool get_PreAuthenticate()
+public void set_PreAuthenticate(bool value)
+public ICredentials get_Credentials()
+public void set_Credentials(ICredentials value)
+public bool get_AllowAutoRedirect()
+public void set_AllowAutoRedirect(bool value)
+public int get_MaxAutomaticRedirections()
+public void set_MaxAutomaticRedirections(int value)
+public int get_MaxConnectionsPerServer()
+public void set_MaxConnectionsPerServer(int value)
+public int get_MaxResponseHeadersLength()
+public void set_MaxResponseHeadersLength(int value)
+public long get_MaxRequestContentBufferSize()
+public void set_MaxRequestContentBufferSize(long value)
+public IDictionary`2<string, object> get_Properties()
+public Task`1<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+public void SetWebRequestTimeout(TimeSpan timeout)
 }
 public System.Net.Http.MessageProcessingHandler : DelegatingHandler {
 protected void .ctor(HttpMessageHandler innerHandler)
@@ -1183,6 +1202,116 @@ protected HttpRequestMessage ProcessRequest(HttpRequestMessage request, Cancella
 protected HttpResponseMessage ProcessResponse(HttpResponseMessage response, CancellationToken cancellationToken)
 protected internal Task`1<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
 private Task`1<HttpResponseMessage> <>n__0(HttpRequestMessage request, CancellationToken cancellationToken)
+}
+internal System.Net.Http.MonoWebRequestHandler : object {
+private long groupCounter
+private bool allowAutoRedirect
+private DecompressionMethods automaticDecompression
+private CookieContainer cookieContainer
+private ICredentials credentials
+private int maxAutomaticRedirections
+private long maxRequestContentBufferSize
+private bool preAuthenticate
+private IWebProxy proxy
+private bool useCookies
+private bool useProxy
+private SslClientAuthenticationOptions sslOptions
+private bool allowPipelining
+private RequestCachePolicy cachePolicy
+private AuthenticationLevel authenticationLevel
+private TimeSpan continueTimeout
+private TokenImpersonationLevel impersonationLevel
+private int maxResponseHeadersLength
+private int readWriteTimeout
+private RemoteCertificateValidationCallback serverCertificateValidationCallback
+private bool unsafeAuthenticatedConnectionSharing
+private bool sentRequest
+private string connectionGroupName
+private Nullable`1<TimeSpan> timeout
+private bool disposed
+public bool AllowAutoRedirect
+public DecompressionMethods AutomaticDecompression
+public CookieContainer CookieContainer
+public ICredentials Credentials
+public int MaxAutomaticRedirections
+public long MaxRequestContentBufferSize
+public bool PreAuthenticate
+public IWebProxy Proxy
+public bool SupportsAutomaticDecompression
+public bool SupportsProxy
+public bool SupportsRedirectConfiguration
+public bool UseCookies
+public bool UseProxy
+public bool AllowPipelining
+public RequestCachePolicy CachePolicy
+public AuthenticationLevel AuthenticationLevel
+public TimeSpan ContinueTimeout
+public TokenImpersonationLevel ImpersonationLevel
+public int MaxResponseHeadersLength
+public int ReadWriteTimeout
+public RemoteCertificateValidationCallback ServerCertificateValidationCallback
+public bool UnsafeAuthenticatedConnectionSharing
+public SslClientAuthenticationOptions SslOptions
+public ICredentials DefaultProxyCredentials
+public int MaxConnectionsPerServer
+public IDictionary`2<string, object> Properties
+internal void EnsureModifiability()
+public bool get_AllowAutoRedirect()
+public void set_AllowAutoRedirect(bool value)
+public DecompressionMethods get_AutomaticDecompression()
+public void set_AutomaticDecompression(DecompressionMethods value)
+public CookieContainer get_CookieContainer()
+public void set_CookieContainer(CookieContainer value)
+public ICredentials get_Credentials()
+public void set_Credentials(ICredentials value)
+public int get_MaxAutomaticRedirections()
+public void set_MaxAutomaticRedirections(int value)
+public long get_MaxRequestContentBufferSize()
+public void set_MaxRequestContentBufferSize(long value)
+public bool get_PreAuthenticate()
+public void set_PreAuthenticate(bool value)
+public IWebProxy get_Proxy()
+public void set_Proxy(IWebProxy value)
+public bool get_SupportsAutomaticDecompression()
+public bool get_SupportsProxy()
+public bool get_SupportsRedirectConfiguration()
+public bool get_UseCookies()
+public void set_UseCookies(bool value)
+public bool get_UseProxy()
+public void set_UseProxy(bool value)
+public bool get_AllowPipelining()
+public void set_AllowPipelining(bool value)
+public RequestCachePolicy get_CachePolicy()
+public void set_CachePolicy(RequestCachePolicy value)
+public AuthenticationLevel get_AuthenticationLevel()
+public void set_AuthenticationLevel(AuthenticationLevel value)
+public TimeSpan get_ContinueTimeout()
+public void set_ContinueTimeout(TimeSpan value)
+public TokenImpersonationLevel get_ImpersonationLevel()
+public void set_ImpersonationLevel(TokenImpersonationLevel value)
+public int get_MaxResponseHeadersLength()
+public void set_MaxResponseHeadersLength(int value)
+public int get_ReadWriteTimeout()
+public void set_ReadWriteTimeout(int value)
+public RemoteCertificateValidationCallback get_ServerCertificateValidationCallback()
+public void set_ServerCertificateValidationCallback(RemoteCertificateValidationCallback value)
+public bool get_UnsafeAuthenticatedConnectionSharing()
+public void set_UnsafeAuthenticatedConnectionSharing(bool value)
+public SslClientAuthenticationOptions get_SslOptions()
+public void set_SslOptions(SslClientAuthenticationOptions value)
+public void Dispose()
+protected void Dispose(bool disposing)
+private bool GetConnectionKeepAlive(HttpRequestHeaders headers)
+internal HttpWebRequest CreateWebRequest(HttpRequestMessage request)
+private HttpResponseMessage CreateResponseMessage(HttpWebResponse wr, HttpRequestMessage requestMessage, CancellationToken cancellationToken)
+private bool MethodHasBody(HttpMethod method)
+public Task`1<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+public ICredentials get_DefaultProxyCredentials()
+public void set_DefaultProxyCredentials(ICredentials value)
+public int get_MaxConnectionsPerServer()
+public void set_MaxConnectionsPerServer(int value)
+public IDictionary`2<string, object> get_Properties()
+private void System.Net.Http.IMonoHttpClientHandler.SetWebRequestTimeout(TimeSpan timeout)
 }
 public System.Net.Http.MultipartContent : HttpContent {
 private List`1<HttpContent> nested_content
@@ -1192,7 +1321,7 @@ public void .ctor(string subtype, string boundary)
 private bool IsValidRFC2049(string s)
 public void Add(HttpContent content)
 protected void Dispose(bool disposing)
-protected internal Task SerializeToStreamAsync(Stream stream, TransportContext context)
+protected Task SerializeToStreamAsync(Stream stream, TransportContext context)
 protected internal bool TryComputeLength(Int64& length)
 public IEnumerator`1<HttpContent> GetEnumerator()
 private IEnumerator System.Collections.IEnumerable.GetEnumerator()
@@ -1203,6 +1332,16 @@ public void Add(HttpContent content)
 public void Add(HttpContent content, string name)
 public void Add(HttpContent content, string name, string fileName)
 private void AddContentDisposition(HttpContent content, string name, string fileName)
+}
+internal System.Net.Http.PlatformHelper : object {
+internal bool IsContentHeader(string name)
+internal string GetSingleHeaderString(string name, IEnumerable`1<string> values)
+internal StreamContent CreateStreamContent(Stream stream, CancellationToken cancellationToken)
+}
+public System.Net.Http.ReadOnlyMemoryContent : HttpContent {
+public void .ctor(ReadOnlyMemory`1<byte> content)
+protected Task SerializeToStreamAsync(Stream stream, TransportContext context)
+protected internal bool TryComputeLength(Int64& length)
 }
 public System.Net.Http.StreamContent : HttpContent {
 private Stream content
@@ -1215,7 +1354,7 @@ public void .ctor(Stream content, int bufferSize)
 internal void .ctor(Stream content, CancellationToken cancellationToken)
 protected Task`1<Stream> CreateContentReadStreamAsync()
 protected void Dispose(bool disposing)
-protected internal Task SerializeToStreamAsync(Stream stream, TransportContext context)
+protected Task SerializeToStreamAsync(Stream stream, TransportContext context)
 protected internal bool TryComputeLength(Int64& length)
 }
 public System.Net.Http.StringContent : ByteArrayContent {

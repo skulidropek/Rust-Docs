@@ -102,7 +102,7 @@ public Vector2 offset
 public Rigidbody2D attachedRigidbody
 public int shapeCount
 public Bounds bounds
-internal ColliderErrorState2D errorState
+public ColliderErrorState2D errorState
 internal bool compositeCapable
 public PhysicsMaterial2D sharedMaterial
 public float friction
@@ -122,8 +122,11 @@ public Rigidbody2D get_attachedRigidbody()
 public int get_shapeCount()
 public Mesh CreateMesh(bool useBodyPosition, bool useBodyRotation)
 public UInt32 GetShapeHash()
+public int GetShapes(PhysicsShapeGroup2D physicsShapeGroup)
+public int GetShapes(PhysicsShapeGroup2D physicsShapeGroup, int shapeIndex, int shapeCount)
+private int GetShapes_Internal(GroupState& physicsShapeGroupState, int shapeIndex, int shapeCount)
 public Bounds get_bounds()
-internal ColliderErrorState2D get_errorState()
+public ColliderErrorState2D get_errorState()
 internal bool get_compositeCapable()
 public PhysicsMaterial2D get_sharedMaterial()
 public void set_sharedMaterial(PhysicsMaterial2D value)
@@ -202,7 +205,7 @@ public bool get_isOverlapped()
 public bool get_isValid()
 public void set_isValid(bool value)
 }
-internal UnityEngine.ColliderErrorState2D : Enum {
+public UnityEngine.ColliderErrorState2D : Enum {
 public int value__
 public ColliderErrorState2D None
 public ColliderErrorState2D NoShapes
@@ -361,6 +364,28 @@ public Rigidbody2D get_rigidbody()
 public Rigidbody2D get_otherRigidbody()
 public bool get_enabled()
 }
+public UnityEngine.CustomCollider2D : Collider2D {
+public int customShapeCount
+public int customVertexCount
+public int get_customShapeCount()
+public int get_customVertexCount()
+public int GetCustomShapes(PhysicsShapeGroup2D physicsShapeGroup)
+public int GetCustomShapes(PhysicsShapeGroup2D physicsShapeGroup, int shapeIndex, int shapeCount)
+private int GetCustomShapes_Internal(GroupState& physicsShapeGroupState, int shapeIndex, int shapeCount)
+public int GetCustomShapes(NativeArray`1<PhysicsShape2D> shapes, NativeArray`1<Vector2> vertices)
+private int GetCustomShapesNative_Internal(IntPtr shapesPtr, int shapeCount, IntPtr verticesPtr, int vertexCount)
+public void SetCustomShapes(PhysicsShapeGroup2D physicsShapeGroup)
+private void SetCustomShapesAll_Internal(GroupState& physicsShapeGroupState)
+public void SetCustomShapes(NativeArray`1<PhysicsShape2D> shapes, NativeArray`1<Vector2> vertices)
+private void SetCustomShapesNative_Internal(IntPtr shapesPtr, int shapeCount, IntPtr verticesPtr, int vertexCount)
+public void SetCustomShape(PhysicsShapeGroup2D physicsShapeGroup, int srcShapeIndex, int dstShapeIndex)
+private void SetCustomShape_Internal(GroupState& physicsShapeGroupState, int srcShapeIndex, int dstShapeIndex)
+public void SetCustomShape(NativeArray`1<PhysicsShape2D> shapes, NativeArray`1<Vector2> vertices, int srcShapeIndex, int dstShapeIndex)
+private void SetCustomShapeNative_Internal(IntPtr shapesPtr, int shapeCount, IntPtr verticesPtr, int vertexCount, int srcShapeIndex, int dstShapeIndex)
+public void ClearCustomShapes(int shapeIndex, int shapeCount)
+private void ClearCustomShapes_Internal(int shapeIndex, int shapeCount)
+public void ClearCustomShapes()
+}
 public UnityEngine.DistanceJoint2D : AnchoredJoint2D {
 public bool autoConfigureDistance
 public float distance
@@ -377,6 +402,10 @@ public float edgeRadius
 public int edgeCount
 public int pointCount
 public Vector2[] points
+public bool useAdjacentStartPoint
+public bool useAdjacentEndPoint
+public Vector2 adjacentStartPoint
+public Vector2 adjacentEndPoint
 public void Reset()
 public float get_edgeRadius()
 public void set_edgeRadius(float value)
@@ -384,6 +413,20 @@ public int get_edgeCount()
 public int get_pointCount()
 public Vector2[] get_points()
 public void set_points(Vector2[] value)
+public int GetPoints(List`1<Vector2> points)
+public bool SetPoints(List`1<Vector2> points)
+public bool get_useAdjacentStartPoint()
+public void set_useAdjacentStartPoint(bool value)
+public bool get_useAdjacentEndPoint()
+public void set_useAdjacentEndPoint(bool value)
+public Vector2 get_adjacentStartPoint()
+public void set_adjacentStartPoint(Vector2 value)
+public Vector2 get_adjacentEndPoint()
+public void set_adjacentEndPoint(Vector2 value)
+private void get_adjacentStartPoint_Injected(Vector2& ret)
+private void set_adjacentStartPoint_Injected(Vector2& value)
+private void get_adjacentEndPoint_Injected(Vector2& ret)
+private void set_adjacentEndPoint_Injected(Vector2& value)
 }
 public UnityEngine.Effector2D : Behaviour {
 public bool useColliderMask
@@ -539,6 +582,7 @@ public UnityEngine.Physics2D : object {
 public int IgnoreRaycastLayer
 public int DefaultRaycastLayers
 public int AllLayers
+public int MaxPolygonShapeVertices
 private List`1<Rigidbody2D> m_LastDisabledRigidbody2D
 public PhysicsScene2D defaultPhysicsScene
 public int velocityIterations
@@ -549,7 +593,7 @@ public bool queriesStartInColliders
 public bool callbacksOnDisable
 public bool reuseCollisionCallbacks
 public bool autoSyncTransforms
-public bool autoSimulation
+public SimulationMode2D simulationMode
 public PhysicsJobOptions2D jobOptions
 public float velocityThreshold
 public float maxLinearCorrection
@@ -588,8 +632,8 @@ public bool get_reuseCollisionCallbacks()
 public void set_reuseCollisionCallbacks(bool value)
 public bool get_autoSyncTransforms()
 public void set_autoSyncTransforms(bool value)
-public bool get_autoSimulation()
-public void set_autoSimulation(bool value)
+public SimulationMode2D get_simulationMode()
+public void set_simulationMode(SimulationMode2D value)
 public PhysicsJobOptions2D get_jobOptions()
 public void set_jobOptions(PhysicsJobOptions2D value)
 public float get_velocityThreshold()
@@ -1129,6 +1173,81 @@ public PhysicsScene2D GetPhysicsScene2D(Scene scene)
 private PhysicsScene2D GetPhysicsScene_Internal(Scene scene)
 private void GetPhysicsScene_Internal_Injected(Scene& scene, PhysicsScene2D& ret)
 }
+public UnityEngine.PhysicsShape2D : ValueType {
+private PhysicsShapeType2D m_ShapeType
+private float m_Radius
+private int m_VertexStartIndex
+private int m_VertexCount
+private int m_UseAdjacentStart
+private int m_UseAdjacentEnd
+private Vector2 m_AdjacentStart
+private Vector2 m_AdjacentEnd
+public PhysicsShapeType2D shapeType
+public float radius
+public int vertexStartIndex
+public int vertexCount
+public bool useAdjacentStart
+public bool useAdjacentEnd
+public Vector2 adjacentStart
+public Vector2 adjacentEnd
+public PhysicsShapeType2D get_shapeType()
+public void set_shapeType(PhysicsShapeType2D value)
+public float get_radius()
+public void set_radius(float value)
+public int get_vertexStartIndex()
+public void set_vertexStartIndex(int value)
+public int get_vertexCount()
+public void set_vertexCount(int value)
+public bool get_useAdjacentStart()
+public void set_useAdjacentStart(bool value)
+public bool get_useAdjacentEnd()
+public void set_useAdjacentEnd(bool value)
+public Vector2 get_adjacentStart()
+public void set_adjacentStart(Vector2 value)
+public Vector2 get_adjacentEnd()
+public void set_adjacentEnd(Vector2 value)
+}
+public UnityEngine.PhysicsShapeGroup2D : object {
+internal GroupState m_GroupState
+private float MinVertexSeparation
+internal List`1<Vector2> groupVertices
+internal List`1<PhysicsShape2D> groupShapes
+public int shapeCount
+public int vertexCount
+public Matrix4x4 localToWorldMatrix
+internal List`1<Vector2> get_groupVertices()
+internal List`1<PhysicsShape2D> get_groupShapes()
+public int get_shapeCount()
+public int get_vertexCount()
+public Matrix4x4 get_localToWorldMatrix()
+public void set_localToWorldMatrix(Matrix4x4 value)
+public void .ctor(int shapeCapacity, int vertexCapacity)
+public void Clear()
+public void Add(PhysicsShapeGroup2D physicsShapeGroup)
+public void GetShapeData(List`1<PhysicsShape2D> shapes, List`1<Vector2> vertices)
+public void GetShapeData(NativeArray`1<PhysicsShape2D> shapes, NativeArray`1<Vector2> vertices)
+public void GetShapeVertices(int shapeIndex, List`1<Vector2> vertices)
+public Vector2 GetShapeVertex(int shapeIndex, int vertexIndex)
+public void SetShapeVertex(int shapeIndex, int vertexIndex, Vector2 vertex)
+public void SetShapeRadius(int shapeIndex, float radius)
+public void SetShapeAdjacentVertices(int shapeIndex, bool useAdjacentStart, bool useAdjacentEnd, Vector2 adjacentStart, Vector2 adjacentEnd)
+public void DeleteShape(int shapeIndex)
+public PhysicsShape2D GetShape(int shapeIndex)
+public int AddCircle(Vector2 center, float radius)
+public int AddCapsule(Vector2 vertex0, Vector2 vertex1, float radius)
+public int AddBox(Vector2 center, Vector2 size, float angle, float edgeRadius)
+public int AddPolygon(List`1<Vector2> vertices)
+public int AddEdges(List`1<Vector2> vertices, float edgeRadius)
+public int AddEdges(List`1<Vector2> vertices, bool useAdjacentStart, bool useAdjacentEnd, Vector2 adjacentStart, Vector2 adjacentEnd, float edgeRadius)
+internal Vector2 <AddBox>g__Rotate|28_0(float cos, float sin, Vector2 value)
+}
+public UnityEngine.PhysicsShapeType2D : Enum {
+public int value__
+public PhysicsShapeType2D Circle
+public PhysicsShapeType2D Capsule
+public PhysicsShapeType2D Polygon
+public PhysicsShapeType2D Edges
+}
 public UnityEngine.PlatformEffector2D : Effector2D {
 public bool useOneWay
 public bool useOneWayGrouping
@@ -1395,6 +1514,8 @@ public int Cast(Vector2 direction, ContactFilter2D contactFilter, RaycastHit2D[]
 private int CastFilteredArray_Internal(Vector2 direction, float distance, ContactFilter2D contactFilter, RaycastHit2D[] results)
 public int Cast(Vector2 direction, ContactFilter2D contactFilter, List`1<RaycastHit2D> results, float distance)
 private int CastFilteredList_Internal(Vector2 direction, float distance, ContactFilter2D contactFilter, List`1<RaycastHit2D> results)
+public int GetShapes(PhysicsShapeGroup2D physicsShapeGroup)
+private int GetShapes_Internal(GroupState& physicsShapeGroupState)
 private void get_position_Injected(Vector2& ret)
 private void set_position_Injected(Vector2& value)
 private void SetRotation_Quaternion_Injected(Quaternion& rotation)
@@ -1451,6 +1572,12 @@ public int value__
 public RigidbodyType2D Dynamic
 public RigidbodyType2D Kinematic
 public RigidbodyType2D Static
+}
+public UnityEngine.SimulationMode2D : Enum {
+public int value__
+public SimulationMode2D FixedUpdate
+public SimulationMode2D Update
+public SimulationMode2D Script
 }
 public UnityEngine.SliderJoint2D : AnchoredJoint2D {
 public bool autoConfigureAngle

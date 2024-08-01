@@ -15,11 +15,11 @@ public string SystemWebExtensions
 public string SystemWindowsForms
 }
 internal Consts : object {
+public string MonoCorlibVersion
 public string MonoVersion
 public string MonoCompany
 public string MonoProduct
 public string MonoCopyright
-public int MonoCorlibVersion
 public string FxVersion
 public string FxFileVersion
 public string EnvironmentVersion
@@ -218,20 +218,24 @@ public DateTime ToDateTime(ASN1 time)
 public Mono.Security.Authenticode.AuthenticodeBase : object {
 public string spcIndirectDataContext
 private Byte[] fileblock
-private FileStream fs
+private Stream fs
 private int blockNo
 private int blockLength
 private int peOffset
 private int dirSecurityOffset
 private int dirSecuritySize
 private int coffSymbolTableOffset
+private bool pe64
+internal bool PE64
 internal int PEOffset
 internal int CoffSymbolTableOffset
 internal int SecurityOffset
+internal bool get_PE64()
 internal int get_PEOffset()
 internal int get_CoffSymbolTableOffset()
 internal int get_SecurityOffset()
 internal void Open(string filename)
+internal void Open(Byte[] rawdata)
 internal void Close()
 internal void ReadFirstBlock()
 internal int ProcessFirstBlock()
@@ -241,6 +245,7 @@ protected Byte[] HashFile(string fileName, string hashName)
 }
 public Mono.Security.Authenticode.AuthenticodeDeformatter : AuthenticodeBase {
 private string filename
+private Byte[] rawdata
 private Byte[] hash
 private X509CertificateCollection coll
 private ASN1 signedHash
@@ -253,6 +258,7 @@ private Byte[] entry
 private X509Chain signerChain
 private X509Chain timestampChain
 public string FileName
+public Byte[] RawData
 public Byte[] Hash
 public int Reason
 public Byte[] Signature
@@ -260,8 +266,11 @@ public DateTime Timestamp
 public X509CertificateCollection Certificates
 public X509Certificate SigningCertificate
 public void .ctor(string fileName)
+public void .ctor(Byte[] rawData)
 public string get_FileName()
 public void set_FileName(string value)
+public Byte[] get_RawData()
+public void set_RawData(Byte[] value)
 public Byte[] get_Hash()
 public int get_Reason()
 public bool IsTrusted()
@@ -269,7 +278,7 @@ public Byte[] get_Signature()
 public DateTime get_Timestamp()
 public X509CertificateCollection get_Certificates()
 public X509Certificate get_SigningCertificate()
-private bool CheckSignature(string fileName)
+private bool CheckSignature()
 private bool CompareIssuerSerial(string issuer, Byte[] serial, X509Certificate x509)
 private bool VerifySignature(SignedData sd, Byte[] calculatedMessageDigest, HashAlgorithm ha)
 private bool VerifyCounterSignature(SignerInfo cs, Byte[] signature)
@@ -448,12 +457,14 @@ private Byte[] GetBytesLE(int val)
 private Byte[] Trim(Byte[] array)
 public RSA FromCapiPrivateKeyBlob(Byte[] blob)
 public RSA FromCapiPrivateKeyBlob(Byte[] blob, int offset)
+private RSAParameters GetParametersFromCapiPrivateKeyBlob(Byte[] blob, int offset)
 public DSA FromCapiPrivateKeyBlobDSA(Byte[] blob)
 public DSA FromCapiPrivateKeyBlobDSA(Byte[] blob, int offset)
 public Byte[] ToCapiPrivateKeyBlob(RSA rsa)
 public Byte[] ToCapiPrivateKeyBlob(DSA dsa)
 public RSA FromCapiPublicKeyBlob(Byte[] blob)
 public RSA FromCapiPublicKeyBlob(Byte[] blob, int offset)
+private RSAParameters GetParametersFromCapiPublicKeyBlob(Byte[] blob, int offset)
 public DSA FromCapiPublicKeyBlobDSA(Byte[] blob)
 public DSA FromCapiPublicKeyBlobDSA(Byte[] blob, int offset)
 public Byte[] ToCapiPublicKeyBlob(RSA rsa)
@@ -565,11 +576,11 @@ public void Save()
 public void Remove()
 private string get_UserPath()
 private string get_MachinePath()
-internal bool _CanSecure(string root)
-internal bool _ProtectUser(string path)
-internal bool _ProtectMachine(string path)
-internal bool _IsUserProtected(string path)
-internal bool _IsMachineProtected(string path)
+internal bool _CanSecure(Char* root)
+internal bool _ProtectUser(Char* path)
+internal bool _ProtectMachine(Char* path)
+internal bool _IsUserProtected(Char* path)
+internal bool _IsMachineProtected(Char* path)
 private bool CanSecure(string path)
 private bool ProtectUser(string path)
 private bool ProtectMachine(string path)
@@ -636,16 +647,6 @@ private void HH(UInt32& a, UInt32 b, UInt32 c, UInt32 d, UInt32 x, byte s)
 private void Encode(Byte[] output, UInt32[] input)
 private void Decode(UInt32[] output, Byte[] input, int index)
 private void MD4Transform(UInt32[] state, Byte[] block, int index)
-}
-internal Mono.Security.Cryptography.MD5SHA1 : HashAlgorithm {
-private HashAlgorithm md5
-private HashAlgorithm sha
-private bool hashing
-public void Initialize()
-protected Byte[] HashFinal()
-protected void HashCore(Byte[] array, int ibStart, int cbSize)
-public Byte[] CreateSignature(RSA rsa)
-public bool VerifySignature(RSA rsa, Byte[] rgbSignature)
 }
 public Mono.Security.Cryptography.PKCS1 : object {
 private Byte[] emptySHA1
@@ -859,8 +860,6 @@ public bool SupportsX509Chain
 public bool SupportsTrustAnchors
 public bool get_SupportsX509Chain()
 public bool get_SupportsTrustAnchors()
-internal ICertificateValidator2 GetInternalValidator(MonoTlsSettings settings, MonoTlsProvider provider)
-internal ICertificateValidator2 GetDefaultValidator(MonoTlsSettings settings, MonoTlsProvider provider)
 public ICertificateValidator GetValidator(MonoTlsSettings settings)
 }
 public Mono.Security.Interface.CipherAlgorithmType : Enum {
@@ -1165,8 +1164,44 @@ public MonoTlsSettings get_Settings()
 public bool SelectClientCertificate(string targetHost, X509CertificateCollection localCertificates, X509Certificate remoteCertificate, String[] acceptableIssuers, X509Certificate& clientCertificate)
 public ValidationResult ValidateCertificate(string targetHost, bool serverMode, X509CertificateCollection certificates)
 }
-internal Mono.Security.Interface.ICertificateValidator2 {
-public ValidationResult ValidateCertificate(string targetHost, bool serverMode, X509Certificate leaf, X509Chain chain)
+internal Mono.Security.Interface.IMonoAuthenticationOptions {
+public bool AllowRenegotiation
+public RemoteCertificateValidationCallback RemoteCertificateValidationCallback
+public SslProtocols EnabledSslProtocols
+public EncryptionPolicy EncryptionPolicy
+public X509RevocationMode CertificateRevocationCheckMode
+public bool get_AllowRenegotiation()
+public void set_AllowRenegotiation(bool value)
+public RemoteCertificateValidationCallback get_RemoteCertificateValidationCallback()
+public void set_RemoteCertificateValidationCallback(RemoteCertificateValidationCallback value)
+public SslProtocols get_EnabledSslProtocols()
+public void set_EnabledSslProtocols(SslProtocols value)
+public EncryptionPolicy get_EncryptionPolicy()
+public void set_EncryptionPolicy(EncryptionPolicy value)
+public X509RevocationMode get_CertificateRevocationCheckMode()
+public void set_CertificateRevocationCheckMode(X509RevocationMode value)
+}
+internal Mono.Security.Interface.IMonoSslClientAuthenticationOptions {
+public LocalCertificateSelectionCallback LocalCertificateSelectionCallback
+public string TargetHost
+public X509CertificateCollection ClientCertificates
+public LocalCertificateSelectionCallback get_LocalCertificateSelectionCallback()
+public void set_LocalCertificateSelectionCallback(LocalCertificateSelectionCallback value)
+public string get_TargetHost()
+public void set_TargetHost(string value)
+public X509CertificateCollection get_ClientCertificates()
+public void set_ClientCertificates(X509CertificateCollection value)
+}
+internal Mono.Security.Interface.IMonoSslServerAuthenticationOptions {
+public bool ClientCertificateRequired
+public MonoServerCertificateSelectionCallback ServerCertificateSelectionCallback
+public X509Certificate ServerCertificate
+public bool get_ClientCertificateRequired()
+public void set_ClientCertificateRequired(bool value)
+public MonoServerCertificateSelectionCallback get_ServerCertificateSelectionCallback()
+public void set_ServerCertificateSelectionCallback(MonoServerCertificateSelectionCallback value)
+public X509Certificate get_ServerCertificate()
+public void set_ServerCertificate(X509Certificate value)
 }
 public Mono.Security.Interface.IMonoSslStream {
 public SslStream SslStream
@@ -1196,28 +1231,11 @@ public X509Certificate LocalCertificate
 public X509Certificate RemoteCertificate
 public SslProtocols SslProtocol
 public MonoTlsProvider Provider
+public bool CanRenegotiate
 public SslStream get_SslStream()
-public void AuthenticateAsClient(string targetHost)
-public void AuthenticateAsClient(string targetHost, X509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
-public IAsyncResult BeginAuthenticateAsClient(string targetHost, AsyncCallback asyncCallback, object asyncState)
-public IAsyncResult BeginAuthenticateAsClient(string targetHost, X509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState)
-public void EndAuthenticateAsClient(IAsyncResult asyncResult)
-public void AuthenticateAsServer(X509Certificate serverCertificate)
-public void AuthenticateAsServer(X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
-public IAsyncResult BeginAuthenticateAsServer(X509Certificate serverCertificate, AsyncCallback asyncCallback, object asyncState)
-public IAsyncResult BeginAuthenticateAsServer(X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols enabledSslProtocols, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState)
-public void EndAuthenticateAsServer(IAsyncResult asyncResult)
-public Task AuthenticateAsClientAsync(string targetHost)
 public Task AuthenticateAsClientAsync(string targetHost, X509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
-public Task AuthenticateAsServerAsync(X509Certificate serverCertificate)
 public Task AuthenticateAsServerAsync(X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
-public int Read(Byte[] buffer, int offset, int count)
-public void Write(Byte[] buffer)
-public void Write(Byte[] buffer, int offset, int count)
-public IAsyncResult BeginRead(Byte[] buffer, int offset, int count, AsyncCallback asyncCallback, object asyncState)
-public int EndRead(IAsyncResult asyncResult)
-public IAsyncResult BeginWrite(Byte[] buffer, int offset, int count, AsyncCallback asyncCallback, object asyncState)
-public void EndWrite(IAsyncResult asyncResult)
+public Task`1<int> ReadAsync(Byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 public Task WriteAsync(Byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 public Task ShutdownAsync()
 public TransportContext get_TransportContext()
@@ -1250,6 +1268,8 @@ public X509Certificate get_RemoteCertificate()
 public SslProtocols get_SslProtocol()
 public MonoTlsProvider get_Provider()
 public MonoTlsConnectionInfo GetConnectionInfo()
+public bool get_CanRenegotiate()
+public Task RenegotiateAsync(CancellationToken cancellationToken)
 }
 public Mono.Security.Interface.MonoEncryptionPolicy : Enum {
 public int value__
@@ -1268,6 +1288,12 @@ public void .ctor(object object, IntPtr method)
 public bool Invoke(string targetHost, X509Certificate certificate, X509Chain chain, MonoSslPolicyErrors sslPolicyErrors)
 public IAsyncResult BeginInvoke(string targetHost, X509Certificate certificate, X509Chain chain, MonoSslPolicyErrors sslPolicyErrors, AsyncCallback callback, object object)
 public bool EndInvoke(IAsyncResult result)
+}
+internal Mono.Security.Interface.MonoServerCertificateSelectionCallback : MulticastDelegate {
+public void .ctor(object object, IntPtr method)
+public X509Certificate Invoke(object sender, string hostName)
+public IAsyncResult BeginInvoke(object sender, string hostName, AsyncCallback callback, object object)
+public X509Certificate EndInvoke(IAsyncResult result)
 }
 public Mono.Security.Interface.MonoSslPolicyErrors : Enum {
 public int value__
@@ -1319,11 +1345,7 @@ public bool get_SupportsConnectionInfo()
 public bool get_SupportsMonoExtensions()
 public SslProtocols get_SupportedProtocols()
 public IMonoSslStream CreateSslStream(Stream innerStream, bool leaveInnerStreamOpen, MonoTlsSettings settings)
-internal IMonoSslStream CreateSslStreamInternal(SslStream sslStream, Stream innerStream, bool leaveInnerStreamOpen, MonoTlsSettings settings)
 internal bool get_HasNativeCertificates()
-internal X509Certificate2Impl GetNativeCertificate(Byte[] data, string password, X509KeyStorageFlags flags)
-internal X509Certificate2Impl GetNativeCertificate(X509Certificate certificate)
-internal bool ValidateCertificate(ICertificateValidator2 validator, string targetHost, bool serverMode, X509CertificateCollection certificates, bool wantsChain, X509Chain& chain, MonoSslPolicyErrors& errors, Int32& status11)
 internal bool get_SupportsCleanShutdown()
 }
 public Mono.Security.Interface.MonoTlsProviderFactory : object {
@@ -1348,6 +1370,8 @@ private X509CertificateCollection <TrustAnchors>k__BackingField
 private object <UserSettings>k__BackingField
 private String[] <CertificateSearchPaths>k__BackingField
 private bool <SendCloseNotify>k__BackingField
+private String[] <ClientCertificateIssuers>k__BackingField
+private bool <DisallowUnauthenticatedCertificateRequest>k__BackingField
 private Nullable`1<TlsProtocols> <EnabledProtocols>k__BackingField
 private CipherSuiteCode[] <EnabledCiphers>k__BackingField
 private bool cloned
@@ -1370,6 +1394,8 @@ public X509CertificateCollection TrustAnchors
 public object UserSettings
 internal String[] CertificateSearchPaths
 internal bool SendCloseNotify
+public String[] ClientCertificateIssuers
+public bool DisallowUnauthenticatedCertificateRequest
 public Nullable`1<TlsProtocols> EnabledProtocols
 public CipherSuiteCode[] EnabledCiphers
 public MonoTlsSettings DefaultSettings
@@ -1398,6 +1424,10 @@ internal String[] get_CertificateSearchPaths()
 internal void set_CertificateSearchPaths(String[] value)
 internal bool get_SendCloseNotify()
 internal void set_SendCloseNotify(bool value)
+public String[] get_ClientCertificateIssuers()
+public void set_ClientCertificateIssuers(String[] value)
+public bool get_DisallowUnauthenticatedCertificateRequest()
+public void set_DisallowUnauthenticatedCertificateRequest(bool value)
 public Nullable`1<TlsProtocols> get_EnabledProtocols()
 public void set_EnabledProtocols(Nullable`1<TlsProtocols> value)
 public CipherSuiteCode[] get_EnabledCiphers()
@@ -1617,1045 +1647,6 @@ private string DecodeString(Byte[] buffer, int offset, int len)
 private Byte[] EncodeString(string text)
 public Byte[] GetBytes()
 }
-internal Mono.Security.Protocol.Tls.Alert : object {
-private AlertLevel level
-private AlertDescription description
-public AlertLevel Level
-public AlertDescription Description
-public string Message
-public bool IsWarning
-public bool IsCloseNotify
-public AlertLevel get_Level()
-public AlertDescription get_Description()
-public string get_Message()
-public bool get_IsWarning()
-public bool get_IsCloseNotify()
-public void .ctor(AlertDescription description)
-public void .ctor(AlertLevel level, AlertDescription description)
-private AlertLevel inferAlertLevel(AlertDescription description)
-public string GetAlertMessage(AlertDescription description)
-}
-internal Mono.Security.Protocol.Tls.AlertDescription : Enum {
-public byte value__
-public AlertDescription CloseNotify
-public AlertDescription UnexpectedMessage
-public AlertDescription BadRecordMAC
-public AlertDescription DecryptionFailed
-public AlertDescription RecordOverflow
-public AlertDescription DecompressionFailiure
-public AlertDescription HandshakeFailiure
-public AlertDescription NoCertificate
-public AlertDescription BadCertificate
-public AlertDescription UnsupportedCertificate
-public AlertDescription CertificateRevoked
-public AlertDescription CertificateExpired
-public AlertDescription CertificateUnknown
-public AlertDescription IlegalParameter
-public AlertDescription UnknownCA
-public AlertDescription AccessDenied
-public AlertDescription DecodeError
-public AlertDescription DecryptError
-public AlertDescription ExportRestriction
-public AlertDescription ProtocolVersion
-public AlertDescription InsuficientSecurity
-public AlertDescription InternalError
-public AlertDescription UserCancelled
-public AlertDescription NoRenegotiation
-}
-internal Mono.Security.Protocol.Tls.AlertLevel : Enum {
-public byte value__
-public AlertLevel Warning
-public AlertLevel Fatal
-}
-public Mono.Security.Protocol.Tls.CertificateSelectionCallback : MulticastDelegate {
-public void .ctor(object object, IntPtr method)
-public X509Certificate Invoke(X509CertificateCollection clientCertificates, X509Certificate serverCertificate, string targetHost, X509CertificateCollection serverRequestedCertificates)
-public IAsyncResult BeginInvoke(X509CertificateCollection clientCertificates, X509Certificate serverCertificate, string targetHost, X509CertificateCollection serverRequestedCertificates, AsyncCallback callback, object object)
-public X509Certificate EndInvoke(IAsyncResult result)
-}
-public Mono.Security.Protocol.Tls.CertificateValidationCallback : MulticastDelegate {
-public void .ctor(object object, IntPtr method)
-public bool Invoke(X509Certificate certificate, Int32[] certificateErrors)
-public IAsyncResult BeginInvoke(X509Certificate certificate, Int32[] certificateErrors, AsyncCallback callback, object object)
-public bool EndInvoke(IAsyncResult result)
-}
-public Mono.Security.Protocol.Tls.CertificateValidationCallback2 : MulticastDelegate {
-public void .ctor(object object, IntPtr method)
-public ValidationResult Invoke(X509CertificateCollection collection)
-public IAsyncResult BeginInvoke(X509CertificateCollection collection, AsyncCallback callback, object object)
-public ValidationResult EndInvoke(IAsyncResult result)
-}
-public Mono.Security.Protocol.Tls.CipherAlgorithmType : Enum {
-public int value__
-public CipherAlgorithmType Des
-public CipherAlgorithmType None
-public CipherAlgorithmType Rc2
-public CipherAlgorithmType Rc4
-public CipherAlgorithmType Rijndael
-public CipherAlgorithmType SkipJack
-public CipherAlgorithmType TripleDes
-}
-internal Mono.Security.Protocol.Tls.CipherSuite : object {
-public Byte[] EmptyArray
-private short code
-private string name
-private CipherAlgorithmType cipherAlgorithmType
-private HashAlgorithmType hashAlgorithmType
-private ExchangeAlgorithmType exchangeAlgorithmType
-private bool isExportable
-private CipherMode cipherMode
-private byte keyMaterialSize
-private int keyBlockSize
-private byte expandedKeyMaterialSize
-private short effectiveKeyBits
-private byte ivSize
-private byte blockSize
-private Context context
-private SymmetricAlgorithm encryptionAlgorithm
-private ICryptoTransform encryptionCipher
-private SymmetricAlgorithm decryptionAlgorithm
-private ICryptoTransform decryptionCipher
-private KeyedHashAlgorithm clientHMAC
-private KeyedHashAlgorithm serverHMAC
-protected ICryptoTransform EncryptionCipher
-protected ICryptoTransform DecryptionCipher
-protected KeyedHashAlgorithm ClientHMAC
-protected KeyedHashAlgorithm ServerHMAC
-public CipherAlgorithmType CipherAlgorithmType
-public string HashAlgorithmName
-public HashAlgorithmType HashAlgorithmType
-public int HashSize
-public ExchangeAlgorithmType ExchangeAlgorithmType
-public CipherMode CipherMode
-public short Code
-public string Name
-public bool IsExportable
-public byte KeyMaterialSize
-public int KeyBlockSize
-public byte ExpandedKeyMaterialSize
-public short EffectiveKeyBits
-public byte IvSize
-public Context Context
-protected ICryptoTransform get_EncryptionCipher()
-protected ICryptoTransform get_DecryptionCipher()
-protected KeyedHashAlgorithm get_ClientHMAC()
-protected KeyedHashAlgorithm get_ServerHMAC()
-public CipherAlgorithmType get_CipherAlgorithmType()
-public string get_HashAlgorithmName()
-internal HashAlgorithm CreateHashAlgorithm()
-public HashAlgorithmType get_HashAlgorithmType()
-public int get_HashSize()
-public ExchangeAlgorithmType get_ExchangeAlgorithmType()
-public CipherMode get_CipherMode()
-public short get_Code()
-public string get_Name()
-public bool get_IsExportable()
-public byte get_KeyMaterialSize()
-public int get_KeyBlockSize()
-public byte get_ExpandedKeyMaterialSize()
-public short get_EffectiveKeyBits()
-public byte get_IvSize()
-public Context get_Context()
-public void set_Context(Context value)
-public void .ctor(short code, string name, CipherAlgorithmType cipherAlgorithmType, HashAlgorithmType hashAlgorithmType, ExchangeAlgorithmType exchangeAlgorithmType, bool exportable, bool blockMode, byte keyMaterialSize, byte expandedKeyMaterialSize, short effectiveKeyBits, byte ivSize, byte blockSize)
-internal void Write(Byte[] array, int offset, short value)
-internal void Write(Byte[] array, int offset, ulong value)
-public void InitializeCipher()
-public Byte[] EncryptRecord(Byte[] fragment, Byte[] mac)
-public void DecryptRecord(Byte[] fragment, Byte[]& dcrFragment, Byte[]& dcrMAC)
-public Byte[] ComputeClientRecordMAC(ContentType contentType, Byte[] fragment)
-public Byte[] ComputeServerRecordMAC(ContentType contentType, Byte[] fragment)
-public void ComputeMasterSecret(Byte[] preMasterSecret)
-public void ComputeKeys()
-public Byte[] CreatePremasterSecret()
-public Byte[] PRF(Byte[] secret, string label, Byte[] data, int length)
-public Byte[] Expand(HashAlgorithm hash, Byte[] secret, Byte[] seed, int length)
-private void createEncryptionCipher()
-private void createDecryptionCipher()
-}
-internal Mono.Security.Protocol.Tls.CipherSuiteCollection : List`1<CipherSuite> {
-private SecurityProtocolType protocol
-public CipherSuite Item
-public CipherSuite Item
-public CipherSuite get_Item(string name)
-public CipherSuite get_Item(short code)
-public void .ctor(SecurityProtocolType protocol)
-public int IndexOf(string name)
-public int IndexOf(short code)
-public void Add(short code, string name, CipherAlgorithmType cipherType, HashAlgorithmType hashType, ExchangeAlgorithmType exchangeType, bool exportable, bool blockMode, byte keyMaterialSize, byte expandedKeyMaterialSize, short effectiveKeyBytes, byte ivSize, byte blockSize)
-public IList`1<string> GetNames()
-}
-internal Mono.Security.Protocol.Tls.CipherSuiteFactory : object {
-public CipherSuiteCollection GetSupportedCiphers(bool server, SecurityProtocolType protocol)
-private CipherSuiteCollection GetTls1SupportedCiphers()
-private CipherSuiteCollection GetSsl3SupportedCiphers()
-}
-internal Mono.Security.Protocol.Tls.ClientContext : Context {
-private SslClientStream sslStream
-private short clientHelloProtocol
-public SslClientStream SslStream
-public short ClientHelloProtocol
-public SslClientStream get_SslStream()
-public short get_ClientHelloProtocol()
-public void set_ClientHelloProtocol(short value)
-public void .ctor(SslClientStream stream, SecurityProtocolType securityProtocolType, string targetHost, X509CertificateCollection clientCertificates)
-public void Clear()
-}
-internal Mono.Security.Protocol.Tls.ClientRecordProtocol : RecordProtocol {
-public void .ctor(Stream innerStream, ClientContext context)
-public HandshakeMessage GetMessage(HandshakeType type)
-protected void ProcessHandshakeMessage(TlsStream handMsg)
-private HandshakeMessage createClientHandshakeMessage(HandshakeType type)
-private HandshakeMessage createServerHandshakeMessage(HandshakeType type, Byte[] buffer)
-}
-internal Mono.Security.Protocol.Tls.ClientSessionCache : object {
-private Hashtable cache
-private object locker
-public void Add(string host, Byte[] id)
-public Byte[] FromHost(string host)
-private ClientSessionInfo FromContext(Context context, bool checkValidity)
-public bool SetContextInCache(Context context)
-public bool SetContextFromCache(Context context)
-}
-internal Mono.Security.Protocol.Tls.ClientSessionInfo : object {
-private int DefaultValidityInterval
-private int ValidityInterval
-private bool disposed
-private DateTime validuntil
-private string host
-private Byte[] sid
-private Byte[] masterSecret
-public string HostName
-public Byte[] Id
-public bool Valid
-public void .ctor(string hostname, Byte[] id)
-protected void Finalize()
-public string get_HostName()
-public Byte[] get_Id()
-public bool get_Valid()
-public void GetContext(Context context)
-public void SetContext(Context context)
-public void KeepAlive()
-public void Dispose()
-private void Dispose(bool disposing)
-private void CheckDisposed()
-}
-internal Mono.Security.Protocol.Tls.ContentType : Enum {
-public byte value__
-public ContentType ChangeCipherSpec
-public ContentType Alert
-public ContentType Handshake
-public ContentType ApplicationData
-}
-internal Mono.Security.Protocol.Tls.Context : object {
-internal short MAX_FRAGMENT_SIZE
-internal short TLS1_PROTOCOL_CODE
-internal short SSL3_PROTOCOL_CODE
-internal long UNIX_BASE_TICKS
-private SecurityProtocolType securityProtocol
-private Byte[] sessionId
-private SecurityCompressionType compressionMethod
-private TlsServerSettings serverSettings
-private TlsClientSettings clientSettings
-private SecurityParameters current
-private SecurityParameters negotiating
-private SecurityParameters read
-private SecurityParameters write
-private CipherSuiteCollection supportedCiphers
-private HandshakeType lastHandshakeMsg
-private HandshakeState handshakeState
-private bool abbreviatedHandshake
-private bool receivedConnectionEnd
-private bool sentConnectionEnd
-private bool protocolNegotiated
-private ulong writeSequenceNumber
-private ulong readSequenceNumber
-private Byte[] clientRandom
-private Byte[] serverRandom
-private Byte[] randomCS
-private Byte[] randomSC
-private Byte[] masterSecret
-private Byte[] clientWriteKey
-private Byte[] serverWriteKey
-private Byte[] clientWriteIV
-private Byte[] serverWriteIV
-private TlsStream handshakeMessages
-private RandomNumberGenerator random
-private RecordProtocol recordProtocol
-private bool <ChangeCipherSpecDone>k__BackingField
-public bool AbbreviatedHandshake
-public bool ProtocolNegotiated
-public bool ChangeCipherSpecDone
-public SecurityProtocolType SecurityProtocol
-public SecurityProtocolType SecurityProtocolFlags
-public short Protocol
-public Byte[] SessionId
-public SecurityCompressionType CompressionMethod
-public TlsServerSettings ServerSettings
-public TlsClientSettings ClientSettings
-public HandshakeType LastHandshakeMsg
-public HandshakeState HandshakeState
-public bool ReceivedConnectionEnd
-public bool SentConnectionEnd
-public CipherSuiteCollection SupportedCiphers
-public TlsStream HandshakeMessages
-public ulong WriteSequenceNumber
-public ulong ReadSequenceNumber
-public Byte[] ClientRandom
-public Byte[] ServerRandom
-public Byte[] RandomCS
-public Byte[] RandomSC
-public Byte[] MasterSecret
-public Byte[] ClientWriteKey
-public Byte[] ServerWriteKey
-public Byte[] ClientWriteIV
-public Byte[] ServerWriteIV
-public RecordProtocol RecordProtocol
-public SecurityParameters Current
-public SecurityParameters Negotiating
-public SecurityParameters Read
-public SecurityParameters Write
-public bool get_AbbreviatedHandshake()
-public void set_AbbreviatedHandshake(bool value)
-public bool get_ProtocolNegotiated()
-public void set_ProtocolNegotiated(bool value)
-public bool get_ChangeCipherSpecDone()
-public void set_ChangeCipherSpecDone(bool value)
-public SecurityProtocolType get_SecurityProtocol()
-public void set_SecurityProtocol(SecurityProtocolType value)
-public SecurityProtocolType get_SecurityProtocolFlags()
-public short get_Protocol()
-public Byte[] get_SessionId()
-public void set_SessionId(Byte[] value)
-public SecurityCompressionType get_CompressionMethod()
-public void set_CompressionMethod(SecurityCompressionType value)
-public TlsServerSettings get_ServerSettings()
-public TlsClientSettings get_ClientSettings()
-public HandshakeType get_LastHandshakeMsg()
-public void set_LastHandshakeMsg(HandshakeType value)
-public HandshakeState get_HandshakeState()
-public void set_HandshakeState(HandshakeState value)
-public bool get_ReceivedConnectionEnd()
-public void set_ReceivedConnectionEnd(bool value)
-public bool get_SentConnectionEnd()
-public void set_SentConnectionEnd(bool value)
-public CipherSuiteCollection get_SupportedCiphers()
-public void set_SupportedCiphers(CipherSuiteCollection value)
-public TlsStream get_HandshakeMessages()
-public ulong get_WriteSequenceNumber()
-public void set_WriteSequenceNumber(ulong value)
-public ulong get_ReadSequenceNumber()
-public void set_ReadSequenceNumber(ulong value)
-public Byte[] get_ClientRandom()
-public void set_ClientRandom(Byte[] value)
-public Byte[] get_ServerRandom()
-public void set_ServerRandom(Byte[] value)
-public Byte[] get_RandomCS()
-public void set_RandomCS(Byte[] value)
-public Byte[] get_RandomSC()
-public void set_RandomSC(Byte[] value)
-public Byte[] get_MasterSecret()
-public void set_MasterSecret(Byte[] value)
-public Byte[] get_ClientWriteKey()
-public void set_ClientWriteKey(Byte[] value)
-public Byte[] get_ServerWriteKey()
-public void set_ServerWriteKey(Byte[] value)
-public Byte[] get_ClientWriteIV()
-public void set_ClientWriteIV(Byte[] value)
-public Byte[] get_ServerWriteIV()
-public void set_ServerWriteIV(Byte[] value)
-public RecordProtocol get_RecordProtocol()
-public void set_RecordProtocol(RecordProtocol value)
-public void .ctor(SecurityProtocolType securityProtocolType)
-public int GetUnixTime()
-public Byte[] GetSecureRandomBytes(int count)
-public void Clear()
-public void ClearKeyInfo()
-public SecurityProtocolType DecodeProtocolCode(short code, bool allowFallback)
-public void ChangeProtocol(short protocol)
-public SecurityParameters get_Current()
-public SecurityParameters get_Negotiating()
-public SecurityParameters get_Read()
-public SecurityParameters get_Write()
-public void StartSwitchingSecurityParameters(bool client)
-public void EndSwitchingSecurityParameters(bool client)
-}
-internal Mono.Security.Protocol.Tls.DebugHelper : object {
-private bool isInitialized
-public void Initialize()
-public void WriteLine(string format, Object[] args)
-public void WriteLine(string message)
-public void WriteLine(string message, Byte[] buffer)
-public void WriteBuffer(Byte[] buffer)
-public void WriteBuffer(Byte[] buffer, int index, int length)
-}
-public Mono.Security.Protocol.Tls.ExchangeAlgorithmType : Enum {
-public int value__
-public ExchangeAlgorithmType DiffieHellman
-public ExchangeAlgorithmType Fortezza
-public ExchangeAlgorithmType None
-public ExchangeAlgorithmType RsaKeyX
-public ExchangeAlgorithmType RsaSign
-}
-internal Mono.Security.Protocol.Tls.Handshake.Client.TlsClientCertificate : HandshakeMessage {
-private bool clientCertSelected
-private X509Certificate clientCert
-public X509Certificate ClientCertificate
-public void .ctor(Context context)
-public X509Certificate get_ClientCertificate()
-public void Update()
-private void GetClientCertificate()
-private void SendCertificates()
-protected void ProcessAsSsl3()
-protected void ProcessAsTls1()
-private X509Certificate FindParentCertificate(X509Certificate cert)
-}
-internal Mono.Security.Protocol.Tls.Handshake.Client.TlsClientCertificateVerify : HandshakeMessage {
-public void .ctor(Context context)
-public void Update()
-protected void ProcessAsSsl3()
-protected void ProcessAsTls1()
-private RSA getClientCertRSA(RSA privKey)
-private Byte[] getUnsignedBigInteger(Byte[] integer)
-}
-internal Mono.Security.Protocol.Tls.Handshake.Client.TlsClientFinished : HandshakeMessage {
-private Byte[] Ssl3Marker
-public void .ctor(Context context)
-public void Update()
-protected void ProcessAsSsl3()
-protected void ProcessAsTls1()
-}
-internal Mono.Security.Protocol.Tls.Handshake.Client.TlsClientHello : HandshakeMessage {
-private Byte[] random
-public void .ctor(Context context)
-public void Update()
-protected void ProcessAsSsl3()
-protected void ProcessAsTls1()
-}
-internal Mono.Security.Protocol.Tls.Handshake.Client.TlsClientKeyExchange : HandshakeMessage {
-public void .ctor(Context context)
-protected void ProcessAsSsl3()
-protected void ProcessAsTls1()
-public void ProcessCommon(bool sendLength)
-}
-internal Mono.Security.Protocol.Tls.Handshake.Client.TlsServerCertificate : HandshakeMessage {
-private X509CertificateCollection certificates
-public void .ctor(Context context, Byte[] buffer)
-public void Update()
-protected void ProcessAsSsl3()
-protected void ProcessAsTls1()
-private bool checkCertificateUsage(X509Certificate cert)
-private void validateCertificates(X509CertificateCollection certificates)
-private void RemoteValidation(ClientContext context, AlertDescription description)
-private void LocalValidation(ClientContext context, AlertDescription description)
-private bool checkServerIdentity(X509Certificate cert)
-private bool checkDomainName(string subjectName)
-private bool Match(string hostname, string pattern)
-}
-internal Mono.Security.Protocol.Tls.Handshake.Client.TlsServerCertificateRequest : HandshakeMessage {
-private ClientCertificateType[] certificateTypes
-private String[] distinguisedNames
-public void .ctor(Context context, Byte[] buffer)
-public void Update()
-protected void ProcessAsSsl3()
-protected void ProcessAsTls1()
-}
-internal Mono.Security.Protocol.Tls.Handshake.Client.TlsServerFinished : HandshakeMessage {
-private Byte[] Ssl3Marker
-public void .ctor(Context context, Byte[] buffer)
-public void Update()
-protected void ProcessAsSsl3()
-protected void ProcessAsTls1()
-}
-internal Mono.Security.Protocol.Tls.Handshake.Client.TlsServerHello : HandshakeMessage {
-private SecurityCompressionType compressionMethod
-private Byte[] random
-private Byte[] sessionId
-private CipherSuite cipherSuite
-public void .ctor(Context context, Byte[] buffer)
-public void Update()
-protected void ProcessAsSsl3()
-protected void ProcessAsTls1()
-private void processProtocol(short protocol)
-}
-internal Mono.Security.Protocol.Tls.Handshake.Client.TlsServerHelloDone : HandshakeMessage {
-public void .ctor(Context context, Byte[] buffer)
-protected void ProcessAsSsl3()
-protected void ProcessAsTls1()
-}
-internal Mono.Security.Protocol.Tls.Handshake.Client.TlsServerKeyExchange : HandshakeMessage {
-private RSAParameters rsaParams
-private Byte[] signedParams
-public void .ctor(Context context, Byte[] buffer)
-public void Update()
-protected void ProcessAsSsl3()
-protected void ProcessAsTls1()
-private void verifySignature()
-}
-internal Mono.Security.Protocol.Tls.Handshake.ClientCertificateType : Enum {
-public int value__
-public ClientCertificateType RSA
-public ClientCertificateType DSS
-public ClientCertificateType RSAFixed
-public ClientCertificateType DSSFixed
-public ClientCertificateType Unknown
-}
-internal Mono.Security.Protocol.Tls.Handshake.HandshakeMessage : TlsStream {
-private Context context
-private HandshakeType handshakeType
-private ContentType contentType
-private Byte[] cache
-public Context Context
-public HandshakeType HandshakeType
-public ContentType ContentType
-public Context get_Context()
-public HandshakeType get_HandshakeType()
-public ContentType get_ContentType()
-public void .ctor(Context context, HandshakeType handshakeType)
-public void .ctor(Context context, HandshakeType handshakeType, ContentType contentType)
-public void .ctor(Context context, HandshakeType handshakeType, Byte[] data)
-protected void ProcessAsTls1()
-protected void ProcessAsSsl3()
-public void Process()
-public void Update()
-public Byte[] EncodeMessage()
-public bool Compare(Byte[] buffer1, Byte[] buffer2)
-}
-internal Mono.Security.Protocol.Tls.Handshake.HandshakeType : Enum {
-public byte value__
-public HandshakeType HelloRequest
-public HandshakeType ClientHello
-public HandshakeType ServerHello
-public HandshakeType Certificate
-public HandshakeType ServerKeyExchange
-public HandshakeType CertificateRequest
-public HandshakeType ServerHelloDone
-public HandshakeType CertificateVerify
-public HandshakeType ClientKeyExchange
-public HandshakeType Finished
-public HandshakeType None
-}
-internal Mono.Security.Protocol.Tls.Handshake.Server.TlsClientCertificate : HandshakeMessage {
-private X509CertificateCollection clientCertificates
-public bool HasCertificate
-public void .ctor(Context context, Byte[] buffer)
-public void Update()
-public bool get_HasCertificate()
-protected void ProcessAsSsl3()
-protected void ProcessAsTls1()
-private bool checkCertificateUsage(X509Certificate cert)
-private void validateCertificates(X509CertificateCollection certificates)
-}
-internal Mono.Security.Protocol.Tls.Handshake.Server.TlsClientCertificateVerify : HandshakeMessage {
-public void .ctor(Context context, Byte[] buffer)
-protected void ProcessAsSsl3()
-protected void ProcessAsTls1()
-}
-internal Mono.Security.Protocol.Tls.Handshake.Server.TlsClientFinished : HandshakeMessage {
-public void .ctor(Context context, Byte[] buffer)
-protected void ProcessAsSsl3()
-protected void ProcessAsTls1()
-}
-internal Mono.Security.Protocol.Tls.Handshake.Server.TlsClientHello : HandshakeMessage {
-private Byte[] random
-private Byte[] sessionId
-private Int16[] cipherSuites
-private Byte[] compressionMethods
-public void .ctor(Context context, Byte[] buffer)
-public void Update()
-protected void ProcessAsSsl3()
-protected void ProcessAsTls1()
-private void processProtocol(short protocol)
-private void selectCipherSuite()
-private void selectCompressionMethod()
-}
-internal Mono.Security.Protocol.Tls.Handshake.Server.TlsClientKeyExchange : HandshakeMessage {
-public void .ctor(Context context, Byte[] buffer)
-protected void ProcessAsSsl3()
-protected void ProcessAsTls1()
-}
-internal Mono.Security.Protocol.Tls.Handshake.Server.TlsServerCertificate : HandshakeMessage {
-public void .ctor(Context context)
-protected void ProcessAsSsl3()
-protected void ProcessAsTls1()
-}
-internal Mono.Security.Protocol.Tls.Handshake.Server.TlsServerCertificateRequest : HandshakeMessage {
-public void .ctor(Context context)
-protected void ProcessAsSsl3()
-protected void ProcessAsTls1()
-}
-internal Mono.Security.Protocol.Tls.Handshake.Server.TlsServerFinished : HandshakeMessage {
-private Byte[] Ssl3Marker
-public void .ctor(Context context)
-protected void ProcessAsSsl3()
-protected void ProcessAsTls1()
-}
-internal Mono.Security.Protocol.Tls.Handshake.Server.TlsServerHello : HandshakeMessage {
-private int unixTime
-private Byte[] random
-public void .ctor(Context context)
-public void Update()
-protected void ProcessAsSsl3()
-protected void ProcessAsTls1()
-}
-internal Mono.Security.Protocol.Tls.Handshake.Server.TlsServerHelloDone : HandshakeMessage {
-public void .ctor(Context context)
-protected void ProcessAsSsl3()
-protected void ProcessAsTls1()
-}
-internal Mono.Security.Protocol.Tls.Handshake.Server.TlsServerKeyExchange : HandshakeMessage {
-public void .ctor(Context context)
-public void Update()
-protected void ProcessAsSsl3()
-protected void ProcessAsTls1()
-private Byte[] createSignature(RSA rsa, Byte[] buffer)
-}
-internal Mono.Security.Protocol.Tls.HandshakeState : Enum {
-public int value__
-public HandshakeState None
-public HandshakeState Started
-public HandshakeState Finished
-}
-public Mono.Security.Protocol.Tls.HashAlgorithmType : Enum {
-public int value__
-public HashAlgorithmType Md5
-public HashAlgorithmType None
-public HashAlgorithmType Sha1
-}
-internal Mono.Security.Protocol.Tls.HttpsClientStream : SslClientStream {
-private HttpWebRequest _request
-private int _status
-public bool TrustFailure
-public void .ctor(Stream stream, X509CertificateCollection clientCertificates, HttpWebRequest request, Byte[] buffer)
-public bool get_TrustFailure()
-internal bool RaiseServerCertificateValidation(X509Certificate certificate, Int32[] certificateErrors)
-}
-public Mono.Security.Protocol.Tls.PrivateKeySelectionCallback : MulticastDelegate {
-public void .ctor(object object, IntPtr method)
-public AsymmetricAlgorithm Invoke(X509Certificate certificate, string targetHost)
-public IAsyncResult BeginInvoke(X509Certificate certificate, string targetHost, AsyncCallback callback, object object)
-public AsymmetricAlgorithm EndInvoke(IAsyncResult result)
-}
-internal Mono.Security.Protocol.Tls.RecordProtocol : object {
-private ManualResetEvent record_processing
-protected Stream innerStream
-protected Context context
-public Context Context
-public Context get_Context()
-public void set_Context(Context value)
-public void .ctor(Stream innerStream, Context context)
-public void SendRecord(HandshakeType type)
-protected void ProcessHandshakeMessage(TlsStream handMsg)
-protected void ProcessChangeCipherSpec()
-public HandshakeMessage GetMessage(HandshakeType type)
-public IAsyncResult BeginReceiveRecord(Stream record, AsyncCallback callback, object state)
-private void InternalReceiveRecordCallback(IAsyncResult asyncResult)
-public Byte[] EndReceiveRecord(IAsyncResult asyncResult)
-public Byte[] ReceiveRecord(Stream record)
-private Byte[] ReadRecordBuffer(int contentType, Stream record)
-private void ProcessAlert(AlertLevel alertLevel, AlertDescription alertDesc)
-internal void SendAlert(Exception& ex)
-public void SendAlert(AlertDescription description)
-public void SendAlert(AlertLevel level, AlertDescription description)
-public void SendAlert(Alert alert)
-public void SendChangeCipherSpec()
-public void SendChangeCipherSpec(Stream recordStream)
-public IAsyncResult BeginSendChangeCipherSpec(AsyncCallback callback, object state)
-public void EndSendChangeCipherSpec(IAsyncResult asyncResult)
-public IAsyncResult BeginSendRecord(HandshakeType handshakeType, AsyncCallback callback, object state)
-private void InternalSendRecordCallback(IAsyncResult ar)
-public IAsyncResult BeginSendRecord(ContentType contentType, Byte[] recordData, AsyncCallback callback, object state)
-public void EndSendRecord(IAsyncResult asyncResult)
-public void SendRecord(ContentType contentType, Byte[] recordData)
-public Byte[] EncodeRecord(ContentType contentType, Byte[] recordData)
-public Byte[] EncodeRecord(ContentType contentType, Byte[] recordData, int offset, int count)
-public Byte[] EncodeHandshakeRecord(HandshakeType handshakeType)
-private Byte[] encryptRecordFragment(ContentType contentType, Byte[] fragment)
-private Byte[] decryptRecordFragment(ContentType contentType, Byte[] fragment)
-private bool Compare(Byte[] array1, Byte[] array2)
-}
-internal Mono.Security.Protocol.Tls.RSASslSignatureDeformatter : AsymmetricSignatureDeformatter {
-private RSA key
-private HashAlgorithm hash
-public void .ctor(AsymmetricAlgorithm key)
-public bool VerifySignature(Byte[] rgbHash, Byte[] rgbSignature)
-public void SetHashAlgorithm(string strName)
-public void SetKey(AsymmetricAlgorithm key)
-}
-internal Mono.Security.Protocol.Tls.RSASslSignatureFormatter : AsymmetricSignatureFormatter {
-private RSA key
-private HashAlgorithm hash
-public void .ctor(AsymmetricAlgorithm key)
-public Byte[] CreateSignature(Byte[] rgbHash)
-public void SetHashAlgorithm(string strName)
-public void SetKey(AsymmetricAlgorithm key)
-}
-public Mono.Security.Protocol.Tls.SecurityCompressionType : Enum {
-public int value__
-public SecurityCompressionType None
-public SecurityCompressionType Zlib
-}
-internal Mono.Security.Protocol.Tls.SecurityParameters : object {
-private CipherSuite cipher
-private Byte[] clientWriteMAC
-private Byte[] serverWriteMAC
-public CipherSuite Cipher
-public Byte[] ClientWriteMAC
-public Byte[] ServerWriteMAC
-public CipherSuite get_Cipher()
-public void set_Cipher(CipherSuite value)
-public Byte[] get_ClientWriteMAC()
-public void set_ClientWriteMAC(Byte[] value)
-public Byte[] get_ServerWriteMAC()
-public void set_ServerWriteMAC(Byte[] value)
-public void Clear()
-}
-public Mono.Security.Protocol.Tls.SecurityProtocolType : Enum {
-public int value__
-public SecurityProtocolType Default
-public SecurityProtocolType Ssl2
-public SecurityProtocolType Ssl3
-public SecurityProtocolType Tls
-public SecurityProtocolType Tls11
-public SecurityProtocolType Tls12
-}
-internal Mono.Security.Protocol.Tls.ServerContext : Context {
-private SslServerStream sslStream
-private bool request_client_certificate
-private bool clientCertificateRequired
-public SslServerStream SslStream
-public bool ClientCertificateRequired
-public bool RequestClientCertificate
-public SslServerStream get_SslStream()
-public bool get_ClientCertificateRequired()
-public bool get_RequestClientCertificate()
-public void .ctor(SslServerStream stream, SecurityProtocolType securityProtocolType, X509Certificate serverCertificate, bool clientCertificateRequired, bool requestClientCertificate)
-}
-internal Mono.Security.Protocol.Tls.ServerRecordProtocol : RecordProtocol {
-private TlsClientCertificate cert
-public void .ctor(Stream innerStream, ServerContext context)
-public HandshakeMessage GetMessage(HandshakeType type)
-protected void ProcessHandshakeMessage(TlsStream handMsg)
-private HandshakeMessage createClientHandshakeMessage(HandshakeType type, Byte[] buffer)
-private HandshakeMessage createServerHandshakeMessage(HandshakeType type)
-}
-internal Mono.Security.Protocol.Tls.SslCipherSuite : CipherSuite {
-private Byte[] pad1
-private Byte[] pad2
-private int MacHeaderLength
-private Byte[] header
-public void .ctor(short code, string name, CipherAlgorithmType cipherAlgorithmType, HashAlgorithmType hashAlgorithmType, ExchangeAlgorithmType exchangeAlgorithmType, bool exportable, bool blockMode, byte keyMaterialSize, byte expandedKeyMaterialSize, short effectiveKeyBytes, byte ivSize, byte blockSize)
-public Byte[] ComputeServerRecordMAC(ContentType contentType, Byte[] fragment)
-public Byte[] ComputeClientRecordMAC(ContentType contentType, Byte[] fragment)
-public void ComputeMasterSecret(Byte[] preMasterSecret)
-public void ComputeKeys()
-private Byte[] prf(Byte[] secret, string label, Byte[] random)
-}
-public Mono.Security.Protocol.Tls.SslClientStream : SslStreamBase {
-private CertificateValidationCallback ServerCertValidation
-private CertificateSelectionCallback ClientCertSelection
-private PrivateKeySelectionCallback PrivateKeySelection
-private CertificateValidationCallback2 ServerCertValidation2
-internal Stream InputBuffer
-public X509CertificateCollection ClientCertificates
-public X509Certificate SelectedClientCertificate
-public CertificateValidationCallback ServerCertValidationDelegate
-public CertificateSelectionCallback ClientCertSelectionDelegate
-public PrivateKeySelectionCallback PrivateKeyCertSelectionDelegate
-internal bool HaveRemoteValidation2Callback
-internal void add_ServerCertValidation(CertificateValidationCallback value)
-internal void remove_ServerCertValidation(CertificateValidationCallback value)
-internal void add_ClientCertSelection(CertificateSelectionCallback value)
-internal void remove_ClientCertSelection(CertificateSelectionCallback value)
-internal void add_PrivateKeySelection(PrivateKeySelectionCallback value)
-internal void remove_PrivateKeySelection(PrivateKeySelectionCallback value)
-internal Stream get_InputBuffer()
-public X509CertificateCollection get_ClientCertificates()
-public X509Certificate get_SelectedClientCertificate()
-public CertificateValidationCallback get_ServerCertValidationDelegate()
-public void set_ServerCertValidationDelegate(CertificateValidationCallback value)
-public CertificateSelectionCallback get_ClientCertSelectionDelegate()
-public void set_ClientCertSelectionDelegate(CertificateSelectionCallback value)
-public PrivateKeySelectionCallback get_PrivateKeyCertSelectionDelegate()
-public void set_PrivateKeyCertSelectionDelegate(PrivateKeySelectionCallback value)
-public void add_ServerCertValidation2(CertificateValidationCallback2 value)
-public void remove_ServerCertValidation2(CertificateValidationCallback2 value)
-public void .ctor(Stream stream, string targetHost, bool ownsStream)
-public void .ctor(Stream stream, string targetHost, X509Certificate clientCertificate)
-public void .ctor(Stream stream, string targetHost, X509CertificateCollection clientCertificates)
-public void .ctor(Stream stream, string targetHost, bool ownsStream, SecurityProtocolType securityProtocolType)
-public void .ctor(Stream stream, string targetHost, bool ownsStream, SecurityProtocolType securityProtocolType, X509CertificateCollection clientCertificates)
-protected void Finalize()
-protected void Dispose(bool disposing)
-private void SafeEndReceiveRecord(IAsyncResult ar, bool ignoreEmpty)
-internal IAsyncResult BeginNegotiateHandshake(AsyncCallback callback, object state)
-internal void EndNegotiateHandshake(IAsyncResult result)
-private void NegotiateAsyncWorker(IAsyncResult result)
-internal X509Certificate OnLocalCertificateSelection(X509CertificateCollection clientCertificates, X509Certificate serverCertificate, string targetHost, X509CertificateCollection serverRequestedCertificates)
-internal bool get_HaveRemoteValidation2Callback()
-internal ValidationResult OnRemoteCertificateValidation2(X509CertificateCollection collection)
-internal bool OnRemoteCertificateValidation(X509Certificate certificate, Int32[] errors)
-internal bool RaiseServerCertificateValidation(X509Certificate certificate, Int32[] certificateErrors)
-internal ValidationResult RaiseServerCertificateValidation2(X509CertificateCollection collection)
-internal X509Certificate RaiseClientCertificateSelection(X509CertificateCollection clientCertificates, X509Certificate serverCertificate, string targetHost, X509CertificateCollection serverRequestedCertificates)
-internal AsymmetricAlgorithm OnLocalPrivateKeySelection(X509Certificate certificate, string targetHost)
-internal AsymmetricAlgorithm RaisePrivateKeySelection(X509Certificate certificate, string targetHost)
-}
-internal Mono.Security.Protocol.Tls.SslHandshakeHash : HashAlgorithm {
-private HashAlgorithm md5
-private HashAlgorithm sha
-private bool hashing
-private Byte[] secret
-private Byte[] innerPadMD5
-private Byte[] outerPadMD5
-private Byte[] innerPadSHA
-private Byte[] outerPadSHA
-public void .ctor(Byte[] secret)
-public void Initialize()
-protected Byte[] HashFinal()
-protected void HashCore(Byte[] array, int ibStart, int cbSize)
-public Byte[] CreateSignature(RSA rsa)
-public bool VerifySignature(RSA rsa, Byte[] rgbSignature)
-private void initializePad()
-}
-public Mono.Security.Protocol.Tls.SslServerStream : SslStreamBase {
-private CertificateValidationCallback ClientCertValidation
-private PrivateKeySelectionCallback PrivateKeySelection
-private CertificateValidationCallback2 ClientCertValidation2
-public X509Certificate ClientCertificate
-public CertificateValidationCallback ClientCertValidationDelegate
-public PrivateKeySelectionCallback PrivateKeyCertSelectionDelegate
-internal bool HaveRemoteValidation2Callback
-internal void add_ClientCertValidation(CertificateValidationCallback value)
-internal void remove_ClientCertValidation(CertificateValidationCallback value)
-internal void add_PrivateKeySelection(PrivateKeySelectionCallback value)
-internal void remove_PrivateKeySelection(PrivateKeySelectionCallback value)
-public X509Certificate get_ClientCertificate()
-public CertificateValidationCallback get_ClientCertValidationDelegate()
-public void set_ClientCertValidationDelegate(CertificateValidationCallback value)
-public PrivateKeySelectionCallback get_PrivateKeyCertSelectionDelegate()
-public void set_PrivateKeyCertSelectionDelegate(PrivateKeySelectionCallback value)
-public void add_ClientCertValidation2(CertificateValidationCallback2 value)
-public void remove_ClientCertValidation2(CertificateValidationCallback2 value)
-public void .ctor(Stream stream, X509Certificate serverCertificate)
-public void .ctor(Stream stream, X509Certificate serverCertificate, bool clientCertificateRequired, bool ownsStream)
-public void .ctor(Stream stream, X509Certificate serverCertificate, bool clientCertificateRequired, bool requestClientCertificate, bool ownsStream)
-public void .ctor(Stream stream, X509Certificate serverCertificate, bool clientCertificateRequired, bool ownsStream, SecurityProtocolType securityProtocolType)
-public void .ctor(Stream stream, X509Certificate serverCertificate, bool clientCertificateRequired, bool requestClientCertificate, bool ownsStream, SecurityProtocolType securityProtocolType)
-protected void Finalize()
-protected void Dispose(bool disposing)
-internal IAsyncResult BeginNegotiateHandshake(AsyncCallback callback, object state)
-internal void EndNegotiateHandshake(IAsyncResult asyncResult)
-internal X509Certificate OnLocalCertificateSelection(X509CertificateCollection clientCertificates, X509Certificate serverCertificate, string targetHost, X509CertificateCollection serverRequestedCertificates)
-internal bool OnRemoteCertificateValidation(X509Certificate certificate, Int32[] errors)
-internal bool get_HaveRemoteValidation2Callback()
-internal ValidationResult OnRemoteCertificateValidation2(X509CertificateCollection collection)
-internal bool RaiseClientCertificateValidation(X509Certificate certificate, Int32[] certificateErrors)
-internal AsymmetricAlgorithm OnLocalPrivateKeySelection(X509Certificate certificate, string targetHost)
-internal AsymmetricAlgorithm RaisePrivateKeySelection(X509Certificate certificate, string targetHost)
-}
-public Mono.Security.Protocol.Tls.SslStreamBase : Stream {
-private ManualResetEvent record_processing
-internal Stream innerStream
-internal MemoryStream inputBuffer
-internal Context context
-internal RecordProtocol protocol
-internal bool ownsStream
-private Boolean modreq(System.Runtime.CompilerServices.IsVolatile) disposed
-private bool checkCertRevocationStatus
-private object negotiate
-private object read
-private object write
-private ManualResetEvent negotiationComplete
-private Byte[] recbuf
-private MemoryStream recordStream
-internal bool MightNeedHandshake
-internal bool HaveRemoteValidation2Callback
-public bool CheckCertRevocationStatus
-public CipherAlgorithmType CipherAlgorithm
-public int CipherStrength
-public HashAlgorithmType HashAlgorithm
-public int HashStrength
-public int KeyExchangeStrength
-public ExchangeAlgorithmType KeyExchangeAlgorithm
-public SecurityProtocolType SecurityProtocol
-public X509Certificate ServerCertificate
-internal X509CertificateCollection ServerCertificates
-public bool CanRead
-public bool CanSeek
-public bool CanWrite
-public long Length
-public long Position
-protected void .ctor(Stream stream, bool ownsStream)
-private void AsyncHandshakeCallback(IAsyncResult asyncResult)
-internal bool get_MightNeedHandshake()
-internal void NegotiateHandshake()
-internal IAsyncResult BeginNegotiateHandshake(AsyncCallback callback, object state)
-internal void EndNegotiateHandshake(IAsyncResult result)
-internal X509Certificate OnLocalCertificateSelection(X509CertificateCollection clientCertificates, X509Certificate serverCertificate, string targetHost, X509CertificateCollection serverRequestedCertificates)
-internal bool OnRemoteCertificateValidation(X509Certificate certificate, Int32[] errors)
-internal ValidationResult OnRemoteCertificateValidation2(X509CertificateCollection collection)
-internal bool get_HaveRemoteValidation2Callback()
-internal AsymmetricAlgorithm OnLocalPrivateKeySelection(X509Certificate certificate, string targetHost)
-internal X509Certificate RaiseLocalCertificateSelection(X509CertificateCollection certificates, X509Certificate remoteCertificate, string targetHost, X509CertificateCollection requestedCertificates)
-internal bool RaiseRemoteCertificateValidation(X509Certificate certificate, Int32[] errors)
-internal ValidationResult RaiseRemoteCertificateValidation2(X509CertificateCollection collection)
-internal AsymmetricAlgorithm RaiseLocalPrivateKeySelection(X509Certificate certificate, string targetHost)
-public bool get_CheckCertRevocationStatus()
-public void set_CheckCertRevocationStatus(bool value)
-public CipherAlgorithmType get_CipherAlgorithm()
-public int get_CipherStrength()
-public HashAlgorithmType get_HashAlgorithm()
-public int get_HashStrength()
-public int get_KeyExchangeStrength()
-public ExchangeAlgorithmType get_KeyExchangeAlgorithm()
-public SecurityProtocolType get_SecurityProtocol()
-public X509Certificate get_ServerCertificate()
-internal X509CertificateCollection get_ServerCertificates()
-private bool BeginNegotiateHandshake(InternalAsyncResult asyncResult)
-private void EndNegotiateHandshake(InternalAsyncResult asyncResult)
-public IAsyncResult BeginRead(Byte[] buffer, int offset, int count, AsyncCallback callback, object state)
-private void InternalBeginRead(InternalAsyncResult asyncResult)
-private void InternalReadCallback(IAsyncResult result)
-private void InternalReadCallback_inner(InternalAsyncResult internalResult, Byte[] recbuf, Object[] state, bool didRead, int n)
-private void InternalBeginWrite(InternalAsyncResult asyncResult)
-private void InternalWriteCallback(IAsyncResult ar)
-public IAsyncResult BeginWrite(Byte[] buffer, int offset, int count, AsyncCallback callback, object state)
-public int EndRead(IAsyncResult asyncResult)
-public void EndWrite(IAsyncResult asyncResult)
-public void Close()
-public void Flush()
-public int Read(Byte[] buffer)
-public int Read(Byte[] buffer, int offset, int count)
-public long Seek(long offset, SeekOrigin origin)
-public void SetLength(long value)
-public void Write(Byte[] buffer)
-public void Write(Byte[] buffer, int offset, int count)
-public bool get_CanRead()
-public bool get_CanSeek()
-public bool get_CanWrite()
-public long get_Length()
-public long get_Position()
-public void set_Position(long value)
-protected void Finalize()
-protected void Dispose(bool disposing)
-private void resetBuffer()
-internal void checkDisposed()
-}
-internal Mono.Security.Protocol.Tls.TlsCipherSuite : CipherSuite {
-private int MacHeaderLength
-private Byte[] header
-private object headerLock
-public void .ctor(short code, string name, CipherAlgorithmType cipherAlgorithmType, HashAlgorithmType hashAlgorithmType, ExchangeAlgorithmType exchangeAlgorithmType, bool exportable, bool blockMode, byte keyMaterialSize, byte expandedKeyMaterialSize, short effectiveKeyBytes, byte ivSize, byte blockSize)
-public Byte[] ComputeServerRecordMAC(ContentType contentType, Byte[] fragment)
-public Byte[] ComputeClientRecordMAC(ContentType contentType, Byte[] fragment)
-public void ComputeMasterSecret(Byte[] preMasterSecret)
-public void ComputeKeys()
-}
-internal Mono.Security.Protocol.Tls.TlsClientSettings : object {
-private string targetHost
-private X509CertificateCollection certificates
-private X509Certificate clientCertificate
-private RSAManaged certificateRSA
-public string TargetHost
-public X509CertificateCollection Certificates
-public X509Certificate ClientCertificate
-public RSAManaged CertificateRSA
-public string get_TargetHost()
-public void set_TargetHost(string value)
-public X509CertificateCollection get_Certificates()
-public void set_Certificates(X509CertificateCollection value)
-public X509Certificate get_ClientCertificate()
-public void set_ClientCertificate(X509Certificate value)
-public RSAManaged get_CertificateRSA()
-public void UpdateCertificateRSA()
-}
-internal Mono.Security.Protocol.Tls.TlsException : Exception {
-private Alert alert
-public Alert Alert
-public Alert get_Alert()
-internal void .ctor(string message)
-internal void .ctor(SerializationInfo info, StreamingContext context)
-internal void .ctor(string message, Exception ex)
-internal void .ctor(AlertLevel level, AlertDescription description)
-internal void .ctor(AlertLevel level, AlertDescription description, string message)
-internal void .ctor(AlertDescription description)
-internal void .ctor(AlertDescription description, string message)
-}
-internal Mono.Security.Protocol.Tls.TlsServerSettings : object {
-private X509CertificateCollection certificates
-private RSA certificateRSA
-private RSAParameters rsaParameters
-private Byte[] signedParams
-private String[] distinguisedNames
-private bool serverKeyExchange
-private bool certificateRequest
-private ClientCertificateType[] certificateTypes
-public bool ServerKeyExchange
-public X509CertificateCollection Certificates
-public RSA CertificateRSA
-public RSAParameters RsaParameters
-public Byte[] SignedParams
-public bool CertificateRequest
-public ClientCertificateType[] CertificateTypes
-public String[] DistinguisedNames
-public bool get_ServerKeyExchange()
-public void set_ServerKeyExchange(bool value)
-public X509CertificateCollection get_Certificates()
-public void set_Certificates(X509CertificateCollection value)
-public RSA get_CertificateRSA()
-public RSAParameters get_RsaParameters()
-public void set_RsaParameters(RSAParameters value)
-public Byte[] get_SignedParams()
-public void set_SignedParams(Byte[] value)
-public bool get_CertificateRequest()
-public void set_CertificateRequest(bool value)
-public ClientCertificateType[] get_CertificateTypes()
-public void set_CertificateTypes(ClientCertificateType[] value)
-public String[] get_DistinguisedNames()
-public void set_DistinguisedNames(String[] value)
-public void UpdateCertificateRSA()
-}
-internal Mono.Security.Protocol.Tls.TlsStream : Stream {
-private bool canRead
-private bool canWrite
-private MemoryStream buffer
-private Byte[] temp
-private int temp_size
-public bool EOF
-public bool CanWrite
-public bool CanRead
-public bool CanSeek
-public long Position
-public long Length
-public bool get_EOF()
-public bool get_CanWrite()
-public bool get_CanRead()
-public bool get_CanSeek()
-public long get_Position()
-public void set_Position(long value)
-public long get_Length()
-public void .ctor(Byte[] data)
-private Byte[] ReadSmallValue(int length)
-public byte ReadByte()
-public short ReadInt16()
-public int ReadInt24()
-public int ReadInt32()
-public Byte[] ReadBytes(int count)
-public void Write(byte value)
-public void Write(short value)
-public void WriteInt24(int value)
-public void Write(int value)
-public void Write(ulong value)
-public void Write(Byte[] buffer)
-public void Reset()
-public Byte[] ToArray()
-public void Flush()
-public void SetLength(long length)
-public long Seek(long offset, SeekOrigin loc)
-public int Read(Byte[] buffer, int offset, int count)
-public void Write(Byte[] buffer, int offset, int count)
-}
 public Mono.Security.StrongName : object {
 private RSA rsa
 private Byte[] publicKey
@@ -2675,10 +1666,13 @@ public RSA get_RSA()
 public void set_RSA(RSA value)
 public Byte[] get_PublicKey()
 public Byte[] get_PublicKeyToken()
+private HashAlgorithm GetHashAlgorithm(string algorithm)
 public string get_TokenAlgorithm()
 public void set_TokenAlgorithm(string value)
 public Byte[] GetBytes()
 private UInt32 RVAtoPosition(UInt32 r, int sections, Byte[] headers)
+private StrongNameSignature Error(string a)
+private Byte[] ReadMore(Stream stream, Byte[] a, int newSize)
 internal StrongNameSignature StrongHash(Stream stream, StrongNameOptions options)
 public Byte[] Hash(string fileName)
 public bool Sign(string fileName)
@@ -2987,6 +1981,7 @@ private Byte[] commonName
 private Byte[] localityName
 private Byte[] stateOrProvinceName
 private Byte[] streetAddress
+private Byte[] serialNumber
 private Byte[] domainComponent
 private Byte[] userid
 private Byte[] email
@@ -3039,8 +2034,9 @@ private Byte[] m_signaturealgoparams
 private Byte[] certhash
 private RSA _rsa
 private DSA _dsa
-private string OID_DSA
-private string OID_RSA
+internal string OID_DSA
+internal string OID_RSA
+internal string OID_ECC
 private int version
 private Byte[] serialnumber
 private Byte[] issuerUniqueID

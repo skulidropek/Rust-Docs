@@ -1,4 +1,14 @@
+public UnityEngine.DetailInstanceTransform : ValueType {
+public float posX
+public float posY
+public float posZ
+public float scaleXZ
+public float scaleY
+public float rotationY
+}
 public UnityEngine.DetailPrototype : object {
+internal Color DefaultHealthColor
+internal Color DefaultDryColor
 internal GameObject m_Prototype
 internal Texture2D m_PrototypeTexture
 internal Color m_HealthyColor
@@ -7,22 +17,27 @@ internal float m_MinWidth
 internal float m_MaxWidth
 internal float m_MinHeight
 internal float m_MaxHeight
+internal int m_NoiseSeed
 internal float m_NoiseSpread
-internal float m_BendFactor
+internal float m_HoleEdgePadding
 internal int m_RenderMode
 internal int m_UsePrototypeMesh
+internal int m_UseInstancing
 public GameObject prototype
 public Texture2D prototypeTexture
 public float minWidth
 public float maxWidth
 public float minHeight
 public float maxHeight
+public int noiseSeed
 public float noiseSpread
 public float bendFactor
+public float holeEdgePadding
 public Color healthyColor
 public Color dryColor
 public DetailRenderMode renderMode
 public bool usePrototypeMesh
+public bool useInstancing
 public GameObject get_prototype()
 public void set_prototype(GameObject value)
 public Texture2D get_prototypeTexture()
@@ -35,10 +50,14 @@ public float get_minHeight()
 public void set_minHeight(float value)
 public float get_maxHeight()
 public void set_maxHeight(float value)
+public int get_noiseSeed()
+public void set_noiseSeed(int value)
 public float get_noiseSpread()
 public void set_noiseSpread(float value)
 public float get_bendFactor()
 public void set_bendFactor(float value)
+public float get_holeEdgePadding()
+public void set_holeEdgePadding(float value)
 public Color get_healthyColor()
 public void set_healthyColor(Color value)
 public Color get_dryColor()
@@ -47,154 +66,22 @@ public DetailRenderMode get_renderMode()
 public void set_renderMode(DetailRenderMode value)
 public bool get_usePrototypeMesh()
 public void set_usePrototypeMesh(bool value)
+public bool get_useInstancing()
+public void set_useInstancing(bool value)
 public void .ctor(DetailPrototype other)
 public bool Equals(object obj)
 public int GetHashCode()
 private bool Equals(DetailPrototype other)
+public bool Validate()
+public bool Validate(String& errorMessage)
+internal bool ValidateDetailPrototype(DetailPrototype prototype, String& errorMessage)
+internal bool IsModeSupportedByRenderPipeline(DetailRenderMode renderMode, bool useInstancing, String& errorMessage)
 }
 public UnityEngine.DetailRenderMode : Enum {
 public int value__
 public DetailRenderMode GrassBillboard
 public DetailRenderMode VertexLit
 public DetailRenderMode Grass
-}
-public UnityEngine.Experimental.TerrainAPI.BrushTransform : ValueType {
-private Vector2 <brushOrigin>k__BackingField
-private Vector2 <brushU>k__BackingField
-private Vector2 <brushV>k__BackingField
-private Vector2 <targetOrigin>k__BackingField
-private Vector2 <targetX>k__BackingField
-private Vector2 <targetY>k__BackingField
-public Vector2 brushOrigin
-public Vector2 brushU
-public Vector2 brushV
-public Vector2 targetOrigin
-public Vector2 targetX
-public Vector2 targetY
-public Vector2 get_brushOrigin()
-public Vector2 get_brushU()
-public Vector2 get_brushV()
-public Vector2 get_targetOrigin()
-public Vector2 get_targetX()
-public Vector2 get_targetY()
-public void .ctor(Vector2 brushOrigin, Vector2 brushU, Vector2 brushV)
-public Rect GetBrushXYBounds()
-public BrushTransform FromRect(Rect brushRect)
-public Vector2 ToBrushUV(Vector2 targetXY)
-public Vector2 FromBrushUV(Vector2 brushUV)
-}
-public UnityEngine.Experimental.TerrainAPI.PaintContext : object {
-private Terrain <originTerrain>k__BackingField
-private RectInt <pixelRect>k__BackingField
-private int <targetTextureWidth>k__BackingField
-private int <targetTextureHeight>k__BackingField
-private Vector2 <pixelSize>k__BackingField
-private RenderTexture <sourceRenderTexture>k__BackingField
-private RenderTexture <destinationRenderTexture>k__BackingField
-private RenderTexture <oldRenderTexture>k__BackingField
-private List`1<TerrainTile> m_TerrainTiles
-private float m_HeightWorldSpaceMin
-private float m_HeightWorldSpaceMax
-private Action`3<ITerrainInfo, ToolAction, string> onTerrainTileBeforePaint
-private List`1<PaintedTerrain> s_PaintedTerrain
-public Terrain originTerrain
-public RectInt pixelRect
-public int targetTextureWidth
-public int targetTextureHeight
-public Vector2 pixelSize
-public RenderTexture sourceRenderTexture
-public RenderTexture destinationRenderTexture
-public RenderTexture oldRenderTexture
-public int terrainCount
-public float heightWorldSpaceMin
-public float heightWorldSpaceSize
-public float kNormalizedHeightScale
-public Terrain get_originTerrain()
-public RectInt get_pixelRect()
-public int get_targetTextureWidth()
-public int get_targetTextureHeight()
-public Vector2 get_pixelSize()
-public RenderTexture get_sourceRenderTexture()
-private void set_sourceRenderTexture(RenderTexture value)
-public RenderTexture get_destinationRenderTexture()
-private void set_destinationRenderTexture(RenderTexture value)
-public RenderTexture get_oldRenderTexture()
-private void set_oldRenderTexture(RenderTexture value)
-public int get_terrainCount()
-public Terrain GetTerrain(int terrainIndex)
-public RectInt GetClippedPixelRectInTerrainPixels(int terrainIndex)
-public RectInt GetClippedPixelRectInRenderTexturePixels(int terrainIndex)
-public float get_heightWorldSpaceMin()
-public float get_heightWorldSpaceSize()
-public float get_kNormalizedHeightScale()
-internal void add_onTerrainTileBeforePaint(Action`3<ITerrainInfo, ToolAction, string> value)
-internal void remove_onTerrainTileBeforePaint(Action`3<ITerrainInfo, ToolAction, string> value)
-public void .ctor(Terrain terrain, RectInt pixelRect, int targetTextureWidth, int targetTextureHeight, bool texelPadding)
-public PaintContext CreateFromBounds(Terrain terrain, Rect boundsInTerrainSpace, int inputTextureWidth, int inputTextureHeight, int extraBorderPixels, bool texelPadding)
-private void FindTerrainTilesUnlimited(bool texelPadding)
-public void CreateRenderTargets(RenderTextureFormat colorFormat)
-public void Cleanup(bool restoreRenderTexture)
-private void GatherInternal(Func`2<ITerrainInfo, Texture> terrainToTexture, Color defaultColor, string operationName, Material blitMaterial, int blitPass, Action`1<ITerrainInfo> beforeBlit, Action`1<ITerrainInfo> afterBlit)
-private void ScatterInternal(Func`2<ITerrainInfo, RenderTexture> terrainToRT, string operationName, Material blitMaterial, int blitPass, Action`1<ITerrainInfo> beforeBlit, Action`1<ITerrainInfo> afterBlit)
-public void Gather(Func`2<ITerrainInfo, Texture> terrainSource, Color defaultColor, Material blitMaterial, int blitPass, Action`1<ITerrainInfo> beforeBlit, Action`1<ITerrainInfo> afterBlit)
-public void Scatter(Func`2<ITerrainInfo, RenderTexture> terrainDest, Material blitMaterial, int blitPass, Action`1<ITerrainInfo> beforeBlit, Action`1<ITerrainInfo> afterBlit)
-public void GatherHeightmap()
-public void ScatterHeightmap(string editorUndoName)
-public void GatherHoles()
-public void ScatterHoles(string editorUndoName)
-public void GatherNormals()
-private SplatmapUserData GetTerrainLayerUserData(ITerrainInfo context, TerrainLayer terrainLayer, bool addLayerIfDoesntExist)
-public void GatherAlphamap(TerrainLayer inputLayer, bool addLayerIfDoesntExist)
-public void ScatterAlphamap(string editorUndoName)
-private void OnTerrainPainted(ITerrainInfo tile, ToolAction action)
-public void ApplyDelayedActions()
-}
-public UnityEngine.Experimental.TerrainAPI.TerrainCallbacks : object {
-private HeightmapChangedCallback heightmapChanged
-private TextureChangedCallback textureChanged
-public void add_heightmapChanged(HeightmapChangedCallback value)
-public void remove_heightmapChanged(HeightmapChangedCallback value)
-public void add_textureChanged(TextureChangedCallback value)
-public void remove_textureChanged(TextureChangedCallback value)
-internal void InvokeHeightmapChangedCallback(TerrainData terrainData, RectInt heightRegion, bool synched)
-internal void InvokeTextureChangedCallback(TerrainData terrainData, string textureName, RectInt texelRegion, bool synched)
-}
-public UnityEngine.Experimental.TerrainAPI.TerrainPaintUtility : object {
-private Material s_BuiltinPaintMaterial
-private Material s_BlitMaterial
-private Material s_HeightBlitMaterial
-private Material s_CopyTerrainLayerMaterial
-internal bool paintTextureUsesCopyTexture
-public Material GetBuiltinPaintMaterial()
-public void GetBrushWorldSizeLimits(Single& minBrushWorldSize, Single& maxBrushWorldSize, float terrainTileWorldSize, int terrainTileTextureResolutionPixels, int minBrushResolutionPixels, int maxBrushResolutionPixels)
-public BrushTransform CalculateBrushTransform(Terrain terrain, Vector2 brushCenterTerrainUV, float brushSize, float brushRotationDegrees)
-public void BuildTransformPaintContextUVToPaintContextUV(PaintContext src, PaintContext dst, Vector4& scaleOffset)
-public void SetupTerrainToolMaterialProperties(PaintContext paintContext, BrushTransform brushXform, Material material)
-internal bool get_paintTextureUsesCopyTexture()
-internal PaintContext InitializePaintContext(Terrain terrain, int targetWidth, int targetHeight, RenderTextureFormat pcFormat, Rect boundsInTerrainSpace, int extraBorderPixels, bool texelPadding)
-public void ReleaseContextResources(PaintContext ctx)
-public PaintContext BeginPaintHeightmap(Terrain terrain, Rect boundsInTerrainSpace, int extraBorderPixels)
-public void EndPaintHeightmap(PaintContext ctx, string editorUndoName)
-public PaintContext BeginPaintHoles(Terrain terrain, Rect boundsInTerrainSpace, int extraBorderPixels)
-public void EndPaintHoles(PaintContext ctx, string editorUndoName)
-public PaintContext CollectNormals(Terrain terrain, Rect boundsInTerrainSpace, int extraBorderPixels)
-public PaintContext BeginPaintTexture(Terrain terrain, Rect boundsInTerrainSpace, TerrainLayer inputLayer, int extraBorderPixels)
-public void EndPaintTexture(PaintContext ctx, string editorUndoName)
-public Material GetBlitMaterial()
-public Material GetHeightBlitMaterial()
-public Material GetCopyTerrainLayerMaterial()
-internal void DrawQuad(RectInt destinationPixels, RectInt sourcePixels, Texture sourceTexture)
-internal void DrawQuad2(RectInt destinationPixels, RectInt sourcePixels, Texture sourceTexture, RectInt sourcePixels2, Texture sourceTexture2)
-internal RectInt CalcPixelRectFromBounds(Terrain terrain, Rect boundsInTerrainSpace, int textureWidth, int textureHeight, int extraBorderPixels, bool texelPadding)
-public Texture2D GetTerrainAlphaMapChecked(Terrain terrain, int mapIndex)
-public int FindTerrainLayerIndex(Terrain terrain, TerrainLayer inputLayer)
-internal int AddTerrainLayer(Terrain terrain, TerrainLayer inputLayer)
-}
-public UnityEngine.Experimental.TerrainAPI.TerrainUtility : object {
-internal bool HasValidTerrains()
-internal void ClearConnectivity()
-internal TerrainGroups CollectTerrains(bool onlyAutoConnectedTerrains)
-public void AutoConnect()
 }
 public UnityEngine.PatchExtents : ValueType {
 internal float m_min
@@ -251,6 +138,7 @@ public int realtimeLightmapIndex
 public Vector4 lightmapScaleOffset
 public Vector4 realtimeLightmapScaleOffset
 public bool freeUnusedRenderingResources
+public bool keepUnusedRenderingResources
 public ShadowCastingMode shadowCastingMode
 public ReflectionProbeUsage reflectionProbeUsage
 public Material materialTemplate
@@ -317,6 +205,10 @@ public Vector4 get_realtimeLightmapScaleOffset()
 public void set_realtimeLightmapScaleOffset(Vector4 value)
 public bool get_freeUnusedRenderingResources()
 public void set_freeUnusedRenderingResources(bool value)
+public bool get_keepUnusedRenderingResources()
+public void set_keepUnusedRenderingResources(bool value)
+public bool GetKeepUnusedCameraRenderingResources(int cameraInstanceID)
+public void SetKeepUnusedCameraRenderingResources(int cameraInstanceID, bool keepUnused)
 public ShadowCastingMode get_shadowCastingMode()
 public void set_shadowCastingMode(ShadowCastingMode value)
 public ReflectionProbeUsage get_reflectionProbeUsage()
@@ -367,6 +259,8 @@ public TextureFormat get_compressedHolesTextureFormat()
 public Terrain get_activeTerrain()
 public void SetConnectivityDirty()
 public Terrain[] get_activeTerrains()
+public void GetActiveTerrains(List`1<Terrain> terrainList)
+private void Internal_FillActiveTerrainList(object terrainList)
 public GameObject CreateTerrainGameObject(TerrainData assignTerrain)
 public Terrain get_leftNeighbor()
 public Terrain get_rightNeighbor()
@@ -395,6 +289,16 @@ private float SampleHeight_Injected(Vector3& worldPosition)
 private void AddTreeInstance_Injected(TreeInstance& instance)
 private void GetPosition_Injected(Vector3& ret)
 private void RemoveTrees_Injected(Vector2& position, float radius, int prototypeIndex)
+}
+public UnityEngine.TerrainCallbacks : object {
+private HeightmapChangedCallback heightmapChanged
+private TextureChangedCallback textureChanged
+public void add_heightmapChanged(HeightmapChangedCallback value)
+public void remove_heightmapChanged(HeightmapChangedCallback value)
+public void add_textureChanged(TextureChangedCallback value)
+public void remove_textureChanged(TextureChangedCallback value)
+internal void InvokeHeightmapChangedCallback(TerrainData terrainData, RectInt heightRegion, bool synched)
+internal void InvokeTextureChangedCallback(TerrainData terrainData, string textureName, RectInt texelRegion, bool synched)
 }
 public UnityEngine.TerrainChangedFlags : Enum {
 public int value__
@@ -462,6 +366,7 @@ public int alphamapTextureCount
 public Texture2D[] alphamapTextures
 public SplatPrototype[] splatPrototypes
 public TerrainLayer[] terrainLayers
+internal TextureFormat atlasFormat
 internal Terrain[] users
 private bool SupportsCopyTextureBetweenRTAndTexture
 public string AlphamapTextureName
@@ -538,6 +443,7 @@ public DetailPrototype[] get_detailPrototypes()
 public void set_detailPrototypes(DetailPrototype[] value)
 public Int32[] GetSupportedLayers(int xBase, int yBase, int totalWidth, int totalHeight)
 public Int32[0...,0...] GetDetailLayer(int xBase, int yBase, int width, int height, int layer)
+public DetailInstanceTransform[] ComputeDetailInstanceTransforms(int patchX, int patchY, int layer, float density, Bounds& bounds)
 public void SetDetailLayer(int xBase, int yBase, int layer, Int32[0...,0...] details)
 private void Internal_SetDetailLayer(int xBase, int yBase, int totalWidth, int totalHeight, int detailIndex, Int32[0...,0...] data)
 public TreeInstance[] get_treeInstances()
@@ -589,6 +495,7 @@ private void Internal_SyncHoles()
 private void Internal_MarkAlphamapDirtyRegion(int alphamapIndex, int x, int y, int width, int height)
 private void Internal_ClearAlphamapDirtyRegion(int alphamapIndex)
 private void Internal_SyncAlphamaps()
+internal TextureFormat get_atlasFormat()
 internal Terrain[] get_users()
 private bool get_SupportsCopyTextureBetweenRTAndTexture()
 public void CopyActiveRenderTextureToHeightmap(RectInt sourceRect, Vector2Int dest, TerrainHeightmapSyncControl syncControl)
@@ -690,6 +597,174 @@ public TerrainRenderFlags Trees
 public TerrainRenderFlags Details
 public TerrainRenderFlags All
 }
+public UnityEngine.TerrainTools.BrushTransform : ValueType {
+private Vector2 <brushOrigin>k__BackingField
+private Vector2 <brushU>k__BackingField
+private Vector2 <brushV>k__BackingField
+private Vector2 <targetOrigin>k__BackingField
+private Vector2 <targetX>k__BackingField
+private Vector2 <targetY>k__BackingField
+public Vector2 brushOrigin
+public Vector2 brushU
+public Vector2 brushV
+public Vector2 targetOrigin
+public Vector2 targetX
+public Vector2 targetY
+public Vector2 get_brushOrigin()
+public Vector2 get_brushU()
+public Vector2 get_brushV()
+public Vector2 get_targetOrigin()
+public Vector2 get_targetX()
+public Vector2 get_targetY()
+public void .ctor(Vector2 brushOrigin, Vector2 brushU, Vector2 brushV)
+public Rect GetBrushXYBounds()
+public BrushTransform FromRect(Rect brushRect)
+public Vector2 ToBrushUV(Vector2 targetXY)
+public Vector2 FromBrushUV(Vector2 brushUV)
+}
+public UnityEngine.TerrainTools.PaintContext : object {
+private Terrain <originTerrain>k__BackingField
+private RectInt <pixelRect>k__BackingField
+private int <targetTextureWidth>k__BackingField
+private int <targetTextureHeight>k__BackingField
+private Vector2 <pixelSize>k__BackingField
+private RenderTexture <sourceRenderTexture>k__BackingField
+private RenderTexture <destinationRenderTexture>k__BackingField
+private RenderTexture <oldRenderTexture>k__BackingField
+private List`1<TerrainTile> m_TerrainTiles
+private float m_HeightWorldSpaceMin
+private float m_HeightWorldSpaceMax
+private Action`3<ITerrainInfo, ToolAction, string> onTerrainTileBeforePaint
+internal int k_MinimumResolution
+internal int k_MaximumResolution
+private List`1<PaintedTerrain> s_PaintedTerrain
+public Terrain originTerrain
+public RectInt pixelRect
+public int targetTextureWidth
+public int targetTextureHeight
+public Vector2 pixelSize
+public RenderTexture sourceRenderTexture
+public RenderTexture destinationRenderTexture
+public RenderTexture oldRenderTexture
+public int terrainCount
+public float heightWorldSpaceMin
+public float heightWorldSpaceSize
+public float kNormalizedHeightScale
+public Terrain get_originTerrain()
+public RectInt get_pixelRect()
+public int get_targetTextureWidth()
+public int get_targetTextureHeight()
+public Vector2 get_pixelSize()
+public RenderTexture get_sourceRenderTexture()
+private void set_sourceRenderTexture(RenderTexture value)
+public RenderTexture get_destinationRenderTexture()
+private void set_destinationRenderTexture(RenderTexture value)
+public RenderTexture get_oldRenderTexture()
+private void set_oldRenderTexture(RenderTexture value)
+public int get_terrainCount()
+public Terrain GetTerrain(int terrainIndex)
+public RectInt GetClippedPixelRectInTerrainPixels(int terrainIndex)
+public RectInt GetClippedPixelRectInRenderTexturePixels(int terrainIndex)
+public float get_heightWorldSpaceMin()
+public float get_heightWorldSpaceSize()
+public float get_kNormalizedHeightScale()
+internal void add_onTerrainTileBeforePaint(Action`3<ITerrainInfo, ToolAction, string> value)
+internal void remove_onTerrainTileBeforePaint(Action`3<ITerrainInfo, ToolAction, string> value)
+internal int ClampContextResolution(int resolution)
+public void .ctor(Terrain terrain, RectInt pixelRect, int targetTextureWidth, int targetTextureHeight, bool sharedBoundaryTexel, bool fillOutsideTerrain)
+public PaintContext CreateFromBounds(Terrain terrain, Rect boundsInTerrainSpace, int inputTextureWidth, int inputTextureHeight, int extraBorderPixels, bool sharedBoundaryTexel, bool fillOutsideTerrain)
+private void FindTerrainTilesUnlimited(bool sharedBoundaryTexel, bool fillOutsideTerrain)
+public void CreateRenderTargets(RenderTextureFormat colorFormat)
+public void Cleanup(bool restoreRenderTexture)
+private void GatherInternal(Func`2<ITerrainInfo, Texture> terrainToTexture, Color defaultColor, string operationName, Material blitMaterial, int blitPass, Action`1<ITerrainInfo> beforeBlit, Action`1<ITerrainInfo> afterBlit)
+private void ScatterInternal(Func`2<ITerrainInfo, RenderTexture> terrainToRT, string operationName, Material blitMaterial, int blitPass, Action`1<ITerrainInfo> beforeBlit, Action`1<ITerrainInfo> afterBlit)
+public void Gather(Func`2<ITerrainInfo, Texture> terrainSource, Color defaultColor, Material blitMaterial, int blitPass, Action`1<ITerrainInfo> beforeBlit, Action`1<ITerrainInfo> afterBlit)
+public void Scatter(Func`2<ITerrainInfo, RenderTexture> terrainDest, Material blitMaterial, int blitPass, Action`1<ITerrainInfo> beforeBlit, Action`1<ITerrainInfo> afterBlit)
+public void GatherHeightmap()
+public void ScatterHeightmap(string editorUndoName)
+public void GatherHoles()
+public void ScatterHoles(string editorUndoName)
+public void GatherNormals()
+private SplatmapUserData GetTerrainLayerUserData(ITerrainInfo context, TerrainLayer terrainLayer, bool addLayerIfDoesntExist)
+public void GatherAlphamap(TerrainLayer inputLayer, bool addLayerIfDoesntExist)
+public void ScatterAlphamap(string editorUndoName)
+private void OnTerrainPainted(ITerrainInfo tile, ToolAction action)
+public void ApplyDelayedActions()
+}
+public UnityEngine.TerrainTools.TerrainBuiltinPaintMaterialPasses : Enum {
+public int value__
+public TerrainBuiltinPaintMaterialPasses RaiseLowerHeight
+public TerrainBuiltinPaintMaterialPasses StampHeight
+public TerrainBuiltinPaintMaterialPasses SetHeights
+public TerrainBuiltinPaintMaterialPasses SmoothHeights
+public TerrainBuiltinPaintMaterialPasses PaintTexture
+public TerrainBuiltinPaintMaterialPasses PaintHoles
+}
+public UnityEngine.TerrainTools.TerrainPaintUtility : object {
+private Material s_BuiltinPaintMaterial
+private Material s_BlitMaterial
+private Material s_HeightBlitMaterial
+private Material s_CopyTerrainLayerMaterial
+internal bool paintTextureUsesCopyTexture
+public Material GetBuiltinPaintMaterial()
+public void GetBrushWorldSizeLimits(Single& minBrushWorldSize, Single& maxBrushWorldSize, float terrainTileWorldSize, int terrainTileTextureResolutionPixels, int minBrushResolutionPixels, int maxBrushResolutionPixels)
+public BrushTransform CalculateBrushTransform(Terrain terrain, Vector2 brushCenterTerrainUV, float brushSize, float brushRotationDegrees)
+public void BuildTransformPaintContextUVToPaintContextUV(PaintContext src, PaintContext dst, Vector4& scaleOffset)
+public void SetupTerrainToolMaterialProperties(PaintContext paintContext, BrushTransform& brushXform, Material material)
+internal bool get_paintTextureUsesCopyTexture()
+internal PaintContext InitializePaintContext(Terrain terrain, int targetWidth, int targetHeight, RenderTextureFormat pcFormat, Rect boundsInTerrainSpace, int extraBorderPixels, bool sharedBoundaryTexel, bool fillOutsideTerrain)
+public void ReleaseContextResources(PaintContext ctx)
+public PaintContext BeginPaintHeightmap(Terrain terrain, Rect boundsInTerrainSpace, int extraBorderPixels, bool fillOutsideTerrain)
+public void EndPaintHeightmap(PaintContext ctx, string editorUndoName)
+public PaintContext BeginPaintHoles(Terrain terrain, Rect boundsInTerrainSpace, int extraBorderPixels, bool fillOutsideTerrain)
+public void EndPaintHoles(PaintContext ctx, string editorUndoName)
+public PaintContext CollectNormals(Terrain terrain, Rect boundsInTerrainSpace, int extraBorderPixels, bool fillOutsideTerrain)
+public PaintContext BeginPaintTexture(Terrain terrain, Rect boundsInTerrainSpace, TerrainLayer inputLayer, int extraBorderPixels, bool fillOutsideTerrain)
+public void EndPaintTexture(PaintContext ctx, string editorUndoName)
+public Material GetBlitMaterial()
+public Material GetHeightBlitMaterial()
+public Material GetCopyTerrainLayerMaterial()
+internal void DrawQuad(RectInt destinationPixels, RectInt sourcePixels, Texture sourceTexture)
+internal void DrawQuad2(RectInt destinationPixels, RectInt sourcePixels, Texture sourceTexture, RectInt sourcePixels2, Texture sourceTexture2)
+internal void DrawQuadPadded(RectInt destinationPixels, RectInt destinationPixelsPadded, RectInt sourcePixels, RectInt sourcePixelsPadded, Texture sourceTexture)
+internal RectInt CalcPixelRectFromBounds(Terrain terrain, Rect boundsInTerrainSpace, int textureWidth, int textureHeight, int extraBorderPixels, bool sharedBoundaryTexel)
+public Texture2D GetTerrainAlphaMapChecked(Terrain terrain, int mapIndex)
+public int FindTerrainLayerIndex(Terrain terrain, TerrainLayer inputLayer)
+internal int AddTerrainLayer(Terrain terrain, TerrainLayer inputLayer)
+}
+public UnityEngine.TerrainUtils.TerrainMap : object {
+private Vector3 m_patchSize
+private TerrainMapStatusCode m_errorCode
+private Dictionary`2<TerrainTileCoord, Terrain> m_terrainTiles
+public Dictionary`2<TerrainTileCoord, Terrain> terrainTiles
+public Terrain GetTerrain(int tileX, int tileZ)
+public TerrainMap CreateFromConnectedNeighbors(Terrain originTerrain, Predicate`1<Terrain> filter, bool fullValidation)
+public TerrainMap CreateFromPlacement(Terrain originTerrain, Predicate`1<Terrain> filter, bool fullValidation)
+public TerrainMap CreateFromPlacement(Vector2 gridOrigin, Vector2 gridSize, Predicate`1<Terrain> filter, bool fullValidation)
+public Dictionary`2<TerrainTileCoord, Terrain> get_terrainTiles()
+private void AddTerrainInternal(int x, int z, Terrain terrain)
+private bool TryToAddTerrain(int tileX, int tileZ, Terrain terrain)
+private void ValidateTerrain(int tileX, int tileZ)
+private TerrainMapStatusCode Validate()
+}
+internal UnityEngine.TerrainUtils.TerrainMapStatusCode : Enum {
+public int value__
+public TerrainMapStatusCode OK
+public TerrainMapStatusCode Overlapping
+public TerrainMapStatusCode SizeMismatch
+public TerrainMapStatusCode EdgeAlignmentMismatch
+}
+public UnityEngine.TerrainUtils.TerrainTileCoord : ValueType {
+public int tileX
+public int tileZ
+public void .ctor(int tileX, int tileZ)
+}
+public UnityEngine.TerrainUtils.TerrainUtility : object {
+internal bool ValidTerrainsExist()
+internal void ClearConnectivity()
+internal Dictionary`2<int, TerrainMap> CollectTerrains(bool onlyAutoConnectedTerrains)
+public void AutoConnect()
+}
 public UnityEngine.Tree : Component {
 public ScriptableObject data
 public bool hasSpeedTreeWind
@@ -710,14 +785,20 @@ internal float temporaryDistance
 public UnityEngine.TreePrototype : object {
 internal GameObject m_Prefab
 internal float m_BendFactor
+internal int m_NavMeshLod
 public GameObject prefab
 public float bendFactor
+public int navMeshLod
 public GameObject get_prefab()
 public void set_prefab(GameObject value)
 public float get_bendFactor()
 public void set_bendFactor(float value)
+public int get_navMeshLod()
+public void set_navMeshLod(int value)
 public void .ctor(TreePrototype other)
 public bool Equals(object obj)
 public int GetHashCode()
 private bool Equals(TreePrototype other)
+internal bool Validate(String& errorMessage)
+internal bool ValidateTreePrototype(TreePrototype prototype, String& errorMessage)
 }

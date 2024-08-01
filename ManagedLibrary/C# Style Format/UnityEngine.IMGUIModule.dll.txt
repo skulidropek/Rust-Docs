@@ -63,6 +63,7 @@ public bool PopEvent(Event outEvent)
 public int GetEventCount()
 private void Internal_SetNativeEvent(IntPtr ptr)
 internal void Internal_MakeMasterEventCurrent(int displayIndex)
+internal int GetDoubleClickTime()
 public void .ctor(int displayIndex)
 public void .ctor(Event other)
 protected void Finalize()
@@ -127,13 +128,18 @@ public string FrameSelectedWithLock
 internal UnityEngine.EventInterests : ValueType {
 private bool <wantsMouseMove>k__BackingField
 private bool <wantsMouseEnterLeaveWindow>k__BackingField
+private bool <wantsLessLayoutEvents>k__BackingField
 public bool wantsMouseMove
 public bool wantsMouseEnterLeaveWindow
+public bool wantsLessLayoutEvents
 public bool get_wantsMouseMove()
 public void set_wantsMouseMove(bool value)
 public bool get_wantsMouseEnterLeaveWindow()
 public void set_wantsMouseEnterLeaveWindow(bool value)
+public bool get_wantsLessLayoutEvents()
+public void set_wantsLessLayoutEvents(bool value)
 public bool WantsEvent(EventType type)
+public bool WantsLayoutPass(EventType type)
 }
 public UnityEngine.EventModifiers : Enum {
 public int value__
@@ -167,6 +173,12 @@ public EventType ExecuteCommand
 public EventType ContextClick
 public EventType MouseEnterWindow
 public EventType MouseLeaveWindow
+public EventType TouchDown
+public EventType TouchUp
+public EventType TouchMove
+public EventType TouchEnter
+public EventType TouchLeave
+public EventType TouchStationary
 public EventType mouseDown
 public EventType mouseUp
 public EventType mouseMove
@@ -214,6 +226,7 @@ public bool changed
 public bool enabled
 public int depth
 internal bool usePageScrollbars
+internal bool isInsideList
 internal Material blendMaterial
 internal Material blitMaterial
 internal Material roundedRectMaterial
@@ -239,6 +252,8 @@ public void set_enabled(bool value)
 public int get_depth()
 public void set_depth(int value)
 internal bool get_usePageScrollbars()
+internal bool get_isInsideList()
+internal void set_isInsideList(bool value)
 internal Material get_blendMaterial()
 internal Material get_blitMaterial()
 internal Material get_roundedRectMaterial()
@@ -335,6 +350,7 @@ internal void DoTextField(Rect position, int id, GUIContent content, bool multil
 internal void DoTextField(Rect position, int id, GUIContent content, bool multiline, int maxLength, GUIStyle style, string secureText, char maskChar)
 private void HandleTextFieldEventForTouchscreen(Rect position, int id, GUIContent content, bool multiline, int maxLength, GUIStyle style, string secureText, char maskChar, TextEditor editor)
 private void HandleTextFieldEventForDesktop(Rect position, int id, GUIContent content, bool multiline, int maxLength, GUIStyle style, TextEditor editor)
+private void HandleTextFieldEventForDesktopWithForcedKeyboard(Rect position, int id, GUIContent content, bool multiline, int maxLength, GUIStyle style, string secureText, TextEditor editor)
 public bool Toggle(Rect position, bool value, string text)
 public bool Toggle(Rect position, bool value, Texture image)
 public bool Toggle(Rect position, bool value, GUIContent content)
@@ -358,12 +374,14 @@ public int SelectionGrid(Rect position, int selected, Texture[] images, int xCou
 public int SelectionGrid(Rect position, int selected, GUIContent[] contents, int xCount, GUIStyle style)
 internal void FindStyles(GUIStyle& style, GUIStyle& firstStyle, GUIStyle& midStyle, GUIStyle& lastStyle, string first, string mid, string last)
 internal int CalcTotalHorizSpacing(int xCount, GUIStyle style, GUIStyle firstStyle, GUIStyle midStyle, GUIStyle lastStyle)
-private bool DoControl(Rect position, int id, bool on, bool hover, GUIContent content, GUIStyle style)
+internal bool DoControl(Rect position, int id, bool on, bool hover, GUIContent content, GUIStyle style)
 private void DoLabel(Rect position, GUIContent content, GUIStyle style)
 internal bool DoToggle(Rect position, int id, bool value, GUIContent content, GUIStyle style)
 internal bool DoButton(Rect position, int id, GUIContent content, GUIStyle style)
-private int DoButtonGrid(Rect position, int selected, GUIContent[] contents, String[] controlNames, int xCount, GUIStyle style, GUIStyle firstStyle, GUIStyle midStyle, GUIStyle lastStyle, ToolbarButtonSize buttonSize, Boolean[] contentsEnabled)
-private Rect[] CalcMouseRects(Rect position, GUIContent[] contents, int xCount, float elemWidth, float elemHeight, GUIStyle style, GUIStyle firstStyle, GUIStyle midStyle, GUIStyle lastStyle, bool addBorders, ToolbarButtonSize buttonSize)
+private Rect[] CalcGridRectsFixedWidthFixedMargin(Rect position, int itemCount, int itemsPerRow, float elemWidth, float elemHeight, float spacingHorizontal, float spacingVertical)
+internal int DoCustomSelectionGrid(Rect position, int selected, int itemCount, CustomSelectionGridItemGUI itemGUI, int itemsPerRow, GUIStyle style)
+private int DoButtonGrid(Rect position, int selected, GUIContent[] contents, String[] controlNames, int itemsPerRow, GUIStyle style, GUIStyle firstStyle, GUIStyle midStyle, GUIStyle lastStyle, ToolbarButtonSize buttonSize, Boolean[] contentsEnabled)
+private Rect[] CalcGridRects(Rect position, GUIContent[] contents, int xCount, float elemWidth, float elemHeight, GUIStyle style, GUIStyle firstStyle, GUIStyle midStyle, GUIStyle lastStyle, ToolbarButtonSize buttonSize)
 public float HorizontalSlider(Rect position, float value, float leftValue, float rightValue)
 public float HorizontalSlider(Rect position, float value, float leftValue, float rightValue, GUIStyle slider, GUIStyle thumb)
 public float HorizontalSlider(Rect position, float value, float leftValue, float rightValue, GUIStyle slider, GUIStyle thumb, GUIStyle thumbExtent)
@@ -461,6 +479,7 @@ internal Matrix4x4 GetMatrix()
 internal void SetMatrix(Matrix4x4 m)
 internal Matrix4x4 GetParentMatrix()
 internal void Internal_PushParentClip(Matrix4x4 objectTransform, Rect clipRect)
+internal void Internal_PushParentClip(Matrix4x4 renderTransform, Matrix4x4 inputTransform, Rect clipRect)
 internal void Internal_PopParentClip()
 internal void Push(Rect screenRect, Vector2 scrollOffset, Vector2 renderOffset, bool resetOffset)
 internal void Pop()
@@ -489,7 +508,7 @@ private void Internal_GetAbsoluteMousePosition_Injected(Vector2& ret)
 private void GetMatrix_Injected(Matrix4x4& ret)
 private void SetMatrix_Injected(Matrix4x4& m)
 private void GetParentMatrix_Injected(Matrix4x4& ret)
-private void Internal_PushParentClip_Injected(Matrix4x4& objectTransform, Rect& clipRect)
+private void Internal_PushParentClip_Injected(Matrix4x4& renderTransform, Matrix4x4& inputTransform, Rect& clipRect)
 }
 public UnityEngine.GUIContent : object {
 private string m_Text
@@ -525,6 +544,7 @@ internal GUIContent Temp(string t, Texture i)
 internal void ClearStaticCache()
 internal GUIContent[] Temp(String[] texts)
 internal GUIContent[] Temp(Texture[] images)
+public string ToString()
 }
 internal UnityEngine.GUIDebugger : object {
 public bool active
@@ -742,6 +762,7 @@ protected int m_MarginLeft
 protected int m_MarginRight
 protected int m_MarginTop
 protected int m_MarginBottom
+private GUILayoutEntry none
 public int marginLeft
 public int marginRight
 public int marginTop
@@ -774,12 +795,16 @@ private Dictionary`2<int, LayoutCache> s_StoredLayouts
 private Dictionary`2<int, LayoutCache> s_StoredWindows
 internal LayoutCache current
 internal Rect kDummyRect
+private int <unbalancedgroupscount>k__BackingField
 private GUIStyle s_SpaceStyle
+internal int unbalancedgroupscount
 internal GUILayoutGroup topLevel
 internal GUIStyle spaceStyle
 private Rect Internal_GetWindowRect(int windowID)
 private void Internal_MoveWindow(int windowID, Rect r)
 internal Rect GetWindowsBounds()
+internal int get_unbalancedgroupscount()
+internal void set_unbalancedgroupscount(int value)
 internal void CleanupRoots()
 internal LayoutCache SelectIDList(int instanceID, bool isWindow)
 internal void Begin(int instanceID)
@@ -878,6 +903,7 @@ private GUIStyle m_horizontalSliderThumbExtent
 private GUIStyle m_verticalSlider
 private GUIStyle m_verticalSliderThumb
 private GUIStyle m_verticalSliderThumbExtent
+private GUIStyle m_SliderMixed
 private GUIStyle m_horizontalScrollbar
 private GUIStyle m_horizontalScrollbarThumb
 private GUIStyle m_horizontalScrollbarLeftButton
@@ -904,6 +930,7 @@ public GUIStyle window
 public GUIStyle horizontalSlider
 public GUIStyle horizontalSliderThumb
 internal GUIStyle horizontalSliderThumbExtent
+internal GUIStyle sliderMixed
 public GUIStyle verticalSlider
 public GUIStyle verticalSliderThumb
 internal GUIStyle verticalSliderThumbExtent
@@ -943,6 +970,8 @@ public GUIStyle get_horizontalSliderThumb()
 public void set_horizontalSliderThumb(GUIStyle value)
 internal GUIStyle get_horizontalSliderThumbExtent()
 internal void set_horizontalSliderThumbExtent(GUIStyle value)
+internal GUIStyle get_sliderMixed()
+internal void set_sliderMixed(GUIStyle value)
 public GUIStyle get_verticalSlider()
 public void set_verticalSlider(GUIStyle value)
 public GUIStyle get_verticalSliderThumb()
@@ -1087,6 +1116,7 @@ internal Vector2 Internal_CalcSizeWithConstraints(GUIContent content, Vector2 ma
 private float Internal_CalcHeight(GUIContent content, float width)
 private Vector2 Internal_CalcMinMaxWidth(GUIContent content)
 internal void SetMouseTooltip(string tooltip, Rect screenRect)
+internal bool IsTooltipActive(string tooltip)
 private float Internal_GetCursorFlashOffset()
 internal void SetDefaultFont(Font font)
 public void .ctor(GUIStyle other)
@@ -1204,6 +1234,7 @@ public RectOffset get_border()
 public void set_border(RectOffset value)
 }
 public UnityEngine.GUIUtility : object {
+internal int s_ControlCount
 internal int s_SkinMode
 internal int s_OriginalID
 internal Action takeCapture
@@ -1223,6 +1254,7 @@ internal bool textFieldInput
 internal bool manualTex2SRGBEnabled
 public string systemCopyBuffer
 internal string compositionString
+internal IMECompositionMode imeCompositionMode
 internal Vector2 compositionCursorPos
 internal bool guiIsExiting
 public int hotControl
@@ -1240,6 +1272,7 @@ internal bool get_manualTex2SRGBEnabled()
 internal void set_manualTex2SRGBEnabled(bool value)
 public string get_systemCopyBuffer()
 public void set_systemCopyBuffer(string value)
+private int Internal_GetControlID(int hint, FocusType focusType, Rect rect)
 public int GetControlID(int hint, FocusType focusType, Rect rect)
 internal void BeginContainerFromOwner(ScriptableObject owner)
 internal void BeginContainer(ObjectGUIState objectGUIState)
@@ -1252,6 +1285,8 @@ internal bool HasFocusableControls()
 internal bool OwnsId(int id)
 public Rect AlignRectToDevice(Rect rect, Int32& widthInPixels, Int32& heightInPixels)
 internal string get_compositionString()
+internal IMECompositionMode get_imeCompositionMode()
+internal void set_imeCompositionMode(IMECompositionMode value)
 internal Vector2 get_compositionCursorPos()
 internal void set_compositionCursorPos(Vector2 value)
 internal Vector3 Internal_MultiplyPoint(Vector3 point, Matrix4x4 transform)
@@ -1288,7 +1323,7 @@ public void ExitGUI()
 internal GUISkin GetDefaultSkin(int skinMode)
 internal GUISkin GetDefaultSkin()
 internal GUISkin GetBuiltinSkin(int skin)
-internal bool ProcessEvent(int instanceID, IntPtr nativeEventPtr)
+internal void ProcessEvent(int instanceID, IntPtr nativeEventPtr, Boolean& result)
 internal void EndContainer()
 internal void CleanupRoots()
 internal void BeginGUI(int skinMode, int instanceID, int useGUILayout)
@@ -1312,7 +1347,7 @@ internal bool HitTest(Rect rect, Vector2 point, bool isDirectManipulationDevice)
 internal bool HitTest(Rect rect, Event evt)
 private void get_s_EditorScreenPointOffset_Injected(Vector2& ret)
 private void set_s_EditorScreenPointOffset_Injected(Vector2& value)
-private int GetControlID_Injected(int hint, FocusType focusType, Rect& rect)
+private int Internal_GetControlID_Injected(int hint, FocusType focusType, Rect& rect)
 private void AlignRectToDevice_Injected(Rect& rect, Int32& widthInPixels, Int32& heightInPixels, Rect& ret)
 private void get_compositionCursorPos_Injected(Vector2& ret)
 private void set_compositionCursorPos_Injected(Vector2& value)
@@ -1367,6 +1402,11 @@ public Rect visibleRect
 public Rect viewRect
 public Vector2 scrollPosition
 public bool apply
+public bool isDuringTouchScroll
+public Vector2 touchScrollStartMousePosition
+public Vector2 touchScrollStartPosition
+public Vector2 velocity
+public float previousTimeSinceStartup
 public void ScrollTo(Rect pos)
 public bool ScrollTowards(Rect pos, float maxDelta)
 private Vector2 ScrollNeeded(Rect pos)

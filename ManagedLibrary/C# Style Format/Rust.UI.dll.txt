@@ -59,7 +59,7 @@ public void SetOption(Option option)
 public void SetOptionDefault()
 public void OnLeft()
 public void OnRight()
-protected void ApplyStyle(Group s)
+protected void ApplyStyle(StyleColorSet s)
 public void OnPointerDown(PointerEventData eventData)
 public void OpenMenu()
 }
@@ -125,6 +125,7 @@ private Sprite loadingSprite
 private Sprite missingSprite
 public string Url
 public bool AutosizeHeight
+public bool UseCoverFill
 public bool GenerateMipmaps
 public float MaxWidth
 public float MaxHeight
@@ -138,7 +139,9 @@ public void SetMissingImage()
 public void SetLoadingImage()
 private IEnumerator StartAndWaitForLoad(string url)
 private void AutosizeForTexture(Texture2D texture)
+private void UpdateCoverFill()
 private void SetImageEnabled(bool enabled)
+private void OnRectTransformDimensionsChange()
 private Sprite CreateSprite(Texture2D texture)
 }
 public Rust.UI.Icons : Enum {
@@ -1937,7 +1940,7 @@ private void OnOptionSelected(Option option)
 private IEnumerable`1<Option> GetOptions()
 internal void Popup(RectTransform source)
 private void RestrainToScreen()
-protected void ApplyStyle(Group s)
+protected void ApplyStyle(StyleColorSet s)
 private void <Awake>b__11_0(string x)
 }
 public Rust.UI.Option : ValueType {
@@ -2026,7 +2029,7 @@ private void ToggleTabPanel(bool onOff)
 private void DoUnpressSiblings()
 public void OnPointerUp(PointerEventData eventData)
 protected void OnDisable()
-protected void ApplyStyle(Group s)
+protected void ApplyStyle(StyleColorSet s)
 public float get_minWidth()
 public float get_preferredWidth()
 public float get_flexibleWidth()
@@ -2061,7 +2064,7 @@ public RectTransform rectTransform
 public bool IsDisabled
 public bool IsPressed
 public bool IsHovered
-public Group CurrentStyleCollection
+public StyleColorSet CurrentStyleCollection
 public StyleAsset get_Styles()
 public void set_Styles(StyleAsset value)
 protected void OnEnable()
@@ -2073,9 +2076,9 @@ public void SetPressed(bool value)
 public bool get_IsDisabled()
 public bool get_IsPressed()
 public bool get_IsHovered()
-public Group get_CurrentStyleCollection()
+public StyleColorSet get_CurrentStyleCollection()
 public void ApplyStyles()
-protected void ApplyStyle(Group s)
+protected void ApplyStyle(StyleColorSet s)
 }
 public Rust.UI.RustFlexText : RustText {
 public FlexLength Basis
@@ -2162,7 +2165,7 @@ private void ToggleTabPanel(bool onOff)
 private void DoUnpressSiblings()
 public void OnPointerUp(PointerEventData eventData)
 protected void OnDisable()
-protected void ApplyStyle(Group s)
+protected void ApplyStyle(StyleColorSet s)
 public float get_minWidth()
 public float get_preferredWidth()
 public float get_flexibleWidth()
@@ -2183,15 +2186,15 @@ public RustText Placeholder
 public bool IsFocused
 public string Value
 public string Text
-public Group CurrentStyleCollection
+public StyleColorSet CurrentStyleCollection
 public RustText get_Placeholder()
 public bool get_IsFocused()
 public string get_Value()
 public string get_Text()
 public void set_Text(string value)
 protected void Awake()
-public Group get_CurrentStyleCollection()
-protected void ApplyStyle(Group s)
+public StyleColorSet get_CurrentStyleCollection()
+protected void ApplyStyle(StyleColorSet s)
 private void <Awake>b__15_0(string x)
 private void <Awake>b__15_1(string x)
 private void <Awake>b__15_2(string x)
@@ -2212,6 +2215,7 @@ public RustLayout ParentLayout
 private bool doingLayout
 private bool changedSize
 protected void Awake()
+protected void OnEnable()
 public void SetLayoutHorizontal()
 public void SetLayoutVertical()
 public void DoLayout()
@@ -2238,7 +2242,7 @@ public void SetOption(int i)
 public void SetOptionDefault()
 public void OnLeft()
 public void OnRight()
-protected void ApplyStyle(Group s)
+protected void ApplyStyle(StyleColorSet s)
 }
 public Rust.UI.RustSlider : RustControl {
 public RustInput NumberInput
@@ -2259,7 +2263,7 @@ public float get_ValueNormalized()
 public void set_ValueNormalized(float value)
 public void TextChanged(string text)
 public void SliderChanged(float slider)
-protected void ApplyStyle(Group s)
+protected void ApplyStyle(StyleColorSet s)
 public void OnPointerDown(PointerEventData eventData)
 public void OnPointerUp(PointerEventData eventData)
 public void OnInitializePotentialDrag(PointerEventData eventData)
@@ -2325,15 +2329,22 @@ public void ApplyStyles()
 public Rust.UI.RustWrapper : RustControl {
 public RustText Text
 public RectTransform Canvas
-protected void ApplyStyle(Group s)
+protected void ApplyStyle(StyleColorSet s)
 public void Add(UIBehaviour ui)
 public void AddFlex()
 }
 public Rust.UI.StyleAsset : ScriptableObject {
 public Group Normal
-public Group Hovered
-public Group Pressed
-public Group Disabled
+public OverrideGroup Hovered
+public OverrideGroup Pressed
+public OverrideGroup Disabled
+}
+public Rust.UI.StyleColorSet : ValueType {
+public Color Bg
+public Color Fg
+public Color Icon
+public void .ctor(Group baseColors)
+public void Apply(OverrideGroup overrideColors)
 }
 public Rust.UI.StyleGroup : Enum {
 public int value__
@@ -2357,7 +2368,7 @@ public Image Foreground
 public RustLayout Panel(string name)
 public RustButton Button(string name)
 public void AddTab(string name, Phrase buttontext, Icons icon)
-protected void ApplyStyle(Group s)
+protected void ApplyStyle(StyleColorSet s)
 }
 public Rust.UI.Timeline : RustControl {
 public int StartTime
@@ -2399,7 +2410,7 @@ public void SelectMarker()
 public void OnDrag(PointerEventData eventData)
 public bool get_IsPressed()
 internal void Position(Timeline timeline)
-protected void ApplyStyle(Group s)
+protected void ApplyStyle(StyleColorSet s)
 public void SetTime(int time)
 public void Delete()
 }

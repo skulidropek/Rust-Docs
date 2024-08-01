@@ -194,6 +194,12 @@ public bool op_Inequality(HapticCapabilities a, HapticCapabilities b)
 internal UnityEngine.XR.HashCodeHelper : object {
 private int k_HashCodeMultiplier
 public int Combine(int hash1, int hash2)
+public int Combine(int hash1, int hash2, int hash3)
+public int Combine(int hash1, int hash2, int hash3, int hash4)
+public int Combine(int hash1, int hash2, int hash3, int hash4, int hash5)
+public int Combine(int hash1, int hash2, int hash3, int hash4, int hash5, int hash6)
+public int Combine(int hash1, int hash2, int hash3, int hash4, int hash5, int hash6, int hash7)
+public int Combine(int hash1, int hash2, int hash3, int hash4, int hash5, int hash6, int hash7, int hash8)
 }
 public UnityEngine.XR.InputDevice : ValueType {
 private List`1<XRInputSubsystem> s_InputSubsystemCache
@@ -413,22 +419,39 @@ public MeshChangeState Updated
 public MeshChangeState Removed
 public MeshChangeState Unchanged
 }
+public UnityEngine.XR.MeshGenerationOptions : Enum {
+public int value__
+public MeshGenerationOptions None
+public MeshGenerationOptions ConsumeTransform
+}
 public UnityEngine.XR.MeshGenerationResult : ValueType {
 private MeshId <MeshId>k__BackingField
 private Mesh <Mesh>k__BackingField
 private MeshCollider <MeshCollider>k__BackingField
 private MeshGenerationStatus <Status>k__BackingField
 private MeshVertexAttributes <Attributes>k__BackingField
+private ulong <Timestamp>k__BackingField
+private Vector3 <Position>k__BackingField
+private Quaternion <Rotation>k__BackingField
+private Vector3 <Scale>k__BackingField
 public MeshId MeshId
 public Mesh Mesh
 public MeshCollider MeshCollider
 public MeshGenerationStatus Status
 public MeshVertexAttributes Attributes
+public ulong Timestamp
+public Vector3 Position
+public Quaternion Rotation
+public Vector3 Scale
 public MeshId get_MeshId()
 public Mesh get_Mesh()
 public MeshCollider get_MeshCollider()
 public MeshGenerationStatus get_Status()
 public MeshVertexAttributes get_Attributes()
+public ulong get_Timestamp()
+public Vector3 get_Position()
+public Quaternion get_Rotation()
+public Vector3 get_Scale()
 public bool Equals(object obj)
 public bool Equals(MeshGenerationResult other)
 public bool op_Equality(MeshGenerationResult lhs, MeshGenerationResult rhs)
@@ -475,6 +498,29 @@ public bool op_Equality(MeshInfo lhs, MeshInfo rhs)
 public bool op_Inequality(MeshInfo lhs, MeshInfo rhs)
 public int GetHashCode()
 }
+public UnityEngine.XR.MeshTransform : ValueType {
+private MeshId <MeshId>k__BackingField
+private ulong <Timestamp>k__BackingField
+private Vector3 <Position>k__BackingField
+private Quaternion <Rotation>k__BackingField
+private Vector3 <Scale>k__BackingField
+public MeshId MeshId
+public ulong Timestamp
+public Vector3 Position
+public Quaternion Rotation
+public Vector3 Scale
+public MeshId get_MeshId()
+public ulong get_Timestamp()
+public Vector3 get_Position()
+public Quaternion get_Rotation()
+public Vector3 get_Scale()
+public void .ctor(MeshId& meshId, ulong timestamp, Vector3& position, Quaternion& rotation, Vector3& scale)
+public bool Equals(object obj)
+public bool Equals(MeshTransform other)
+public bool op_Equality(MeshTransform lhs, MeshTransform rhs)
+public bool op_Inequality(MeshTransform lhs, MeshTransform rhs)
+public int GetHashCode()
+}
 public UnityEngine.XR.MeshVertexAttributes : Enum {
 public int value__
 public MeshVertexAttributes None
@@ -500,15 +546,21 @@ public TrackingOriginModeFlags Unknown
 public TrackingOriginModeFlags Device
 public TrackingOriginModeFlags Floor
 public TrackingOriginModeFlags TrackingReference
+public TrackingOriginModeFlags Unbounded
 }
 public UnityEngine.XR.XRDisplaySubsystem : IntegratedSubsystem`1<XRDisplaySubsystemDescriptor> {
 private Action`1<bool> displayFocusChanged
 public bool singlePassRenderingDisabled
 public bool displayOpaque
 public bool contentProtectionEnabled
+public float scaleOfAllViewports
+public float scaleOfAllRenderTargets
 public float zNear
 public float zFar
 public bool sRGB
+public float occlusionMaskScale
+public TextureLayout textureLayout
+public TextureLayout supportedTextureLayouts
 public ReprojectionMode reprojectionMode
 public bool disableLegacyRenderer
 public void add_displayFocusChanged(Action`1<bool> value)
@@ -519,20 +571,35 @@ public void set_singlePassRenderingDisabled(bool value)
 public bool get_displayOpaque()
 public bool get_contentProtectionEnabled()
 public void set_contentProtectionEnabled(bool value)
+public float get_scaleOfAllViewports()
+public void set_scaleOfAllViewports(float value)
+public float get_scaleOfAllRenderTargets()
+public void set_scaleOfAllRenderTargets(float value)
 public float get_zNear()
 public void set_zNear(float value)
 public float get_zFar()
 public void set_zFar(float value)
 public bool get_sRGB()
 public void set_sRGB(bool value)
+public float get_occlusionMaskScale()
+public void set_occlusionMaskScale(float value)
+public void MarkTransformLateLatched(Transform transform, LateLatchNode nodeType)
+public TextureLayout get_textureLayout()
+public void set_textureLayout(TextureLayout value)
+public TextureLayout get_supportedTextureLayouts()
 public ReprojectionMode get_reprojectionMode()
 public void set_reprojectionMode(ReprojectionMode value)
 public void SetFocusPlane(Vector3 point, Vector3 normal, Vector3 velocity)
+public void SetMSAALevel(int level)
 public bool get_disableLegacyRenderer()
 public void set_disableLegacyRenderer(bool value)
 public int GetRenderPassCount()
 public void GetRenderPass(int renderPassIndex, XRRenderPass& renderPass)
 private bool Internal_TryGetRenderPass(int renderPassIndex, XRRenderPass& renderPass)
+public void EndRecordingIfLateLatched(Camera camera)
+private bool Internal_TryEndRecordingIfLateLatched(Camera camera)
+public void BeginRecordingIfLateLatched(Camera camera)
+private bool Internal_TryBeginRecordingIfLateLatched(Camera camera)
 public void GetCullingParameters(Camera camera, int cullingPassIndex, ScriptableCullingParameters& scriptableCullingParameters)
 private bool Internal_TryGetCullingParams(Camera camera, int cullingPassIndex, ScriptableCullingParameters& scriptableCullingParameters)
 public bool TryGetAppGPUTimeLastFrame(Single& gpuTimeLastFrame)
@@ -542,6 +609,7 @@ public bool TryGetFramePresentCount(Int32& framePresentCount)
 public bool TryGetDisplayRefreshRate(Single& displayRefreshRate)
 public bool TryGetMotionToPhoton(Single& motionToPhoton)
 public RenderTexture GetRenderTextureForRenderPass(int renderPass)
+public RenderTexture GetSharedDepthTextureForRenderPass(int renderPass)
 public int GetPreferredMirrorBlitMode()
 public void SetPreferredMirrorBlitMode(int blitMode)
 public bool GetMirrorViewBlitDesc(RenderTexture mirrorRt, XRMirrorViewBlitDesc& outDesc)
@@ -552,7 +620,9 @@ private void SetFocusPlane_Injected(Vector3& point, Vector3& normal, Vector3& ve
 }
 public UnityEngine.XR.XRDisplaySubsystemDescriptor : IntegratedSubsystemDescriptor`1<XRDisplaySubsystem> {
 public bool disablesLegacyVr
+public bool enableBackBufferMSAA
 public bool get_disablesLegacyVr()
+public bool get_enableBackBufferMSAA()
 public int GetAvailableMirrorBlitModeCount()
 public void GetMirrorBlitModeByIndex(int index, XRMirrorViewBlitModeDesc& mode)
 }
@@ -586,20 +656,24 @@ public bool TryGetMeshInfos(List`1<MeshInfo> meshInfosOut)
 private bool GetMeshInfosAsList(List`1<MeshInfo> meshInfos)
 private MeshInfo[] GetMeshInfosAsFixedArray()
 public void GenerateMeshAsync(MeshId meshId, Mesh mesh, MeshCollider meshCollider, MeshVertexAttributes attributes, Action`1<MeshGenerationResult> onMeshGenerationComplete)
+public void GenerateMeshAsync(MeshId meshId, Mesh mesh, MeshCollider meshCollider, MeshVertexAttributes attributes, Action`1<MeshGenerationResult> onMeshGenerationComplete, MeshGenerationOptions options)
 private void InvokeMeshReadyDelegate(MeshGenerationResult result, Action`1<MeshGenerationResult> onMeshGenerationComplete)
 public float get_meshDensity()
 public void set_meshDensity(float value)
 public bool SetBoundingVolume(Vector3 origin, Vector3 extents)
-private void GenerateMeshAsync_Injected(MeshId& meshId, Mesh mesh, MeshCollider meshCollider, MeshVertexAttributes attributes, Action`1<MeshGenerationResult> onMeshGenerationComplete)
+public NativeArray`1<MeshTransform> GetUpdatedMeshTransforms(Allocator allocator)
+private IntPtr GetUpdatedMeshTransforms()
+private void GenerateMeshAsync_Injected(MeshId& meshId, Mesh mesh, MeshCollider meshCollider, MeshVertexAttributes attributes, Action`1<MeshGenerationResult> onMeshGenerationComplete, MeshGenerationOptions options)
 private bool SetBoundingVolume_Injected(Vector3& origin, Vector3& extents)
 }
 public UnityEngine.XR.XRMirrorViewBlitMode : ValueType {
-public int None
+public int Default
 public int LeftEye
 public int RightEye
 public int SideBySide
 public int SideBySideOcclusionMesh
 public int Distort
+public int None
 }
 public UnityEngine.XR.XRMirrorViewBlitModeDesc : ValueType {
 public int blitMode

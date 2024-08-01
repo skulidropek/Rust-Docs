@@ -1,0 +1,1330 @@
+internal Facepunch.Nexus.ApiResult : ValueType {
+private HttpStatusCode <StatusCode>k__BackingField
+public HttpStatusCode StatusCode
+public bool IsSuccess
+public HttpStatusCode get_StatusCode()
+public bool get_IsSuccess()
+public void .ctor(HttpStatusCode statusCode)
+public void EnsureSuccessful()
+}
+internal Facepunch.Nexus.ApiResult`1 : ValueType {
+private HttpStatusCode <StatusCode>k__BackingField
+private T _response
+private bool _hasResponse
+public HttpStatusCode StatusCode
+public bool IsSuccess
+public T Response
+public HttpStatusCode get_StatusCode()
+public bool get_IsSuccess()
+public void .ctor(HttpStatusCode statusCode, T response)
+public void .ctor(HttpStatusCode statusCode)
+public void EnsureSuccessful()
+public void EnsureSuccessfulWithResponse()
+public T get_Response()
+public bool TryGetResponse(T& response)
+}
+public Facepunch.Nexus.BaseNexusClient : NexusAnonymousClient {
+private NexusVariableChangedHandler OnVariableChanged
+private NexusErrorHandler OnError
+protected IClockProvider Clock
+protected CancellationToken CancellationToken
+private CancellationTokenSource _cts
+private double _updateInterval
+private bool _disposed
+private bool _started
+protected bool ShouldUpdateVariables
+public void add_OnVariableChanged(NexusVariableChangedHandler value)
+public void remove_OnVariableChanged(NexusVariableChangedHandler value)
+public void add_OnError(NexusErrorHandler value)
+public void remove_OnError(NexusErrorHandler value)
+protected void .ctor(INexusConnector connector, IClockProvider clock, double updateInterval)
+protected void Finalize()
+public void Dispose()
+protected void Dispose(bool disposing)
+public Task Start()
+protected ValueTask Initialize(CancellationToken ct)
+protected ValueTask Update(CancellationToken ct)
+private Task UpdateLoop(CancellationToken ct)
+protected bool get_ShouldUpdateVariables()
+internal void UpdateVariables(VariableContainer container, Dictionary`2<string, VariableData> updatedData)
+internal void DispatchVariableChanged(string key)
+internal void DispatchError(Exception exception)
+}
+public Facepunch.Nexus.BaseNexusPlayerClient : BaseNexusClient {
+private protected VariableContainer NexusVariables
+private protected VariableContainer ZoneVariables
+private protected VariableContainer PlayerVariables
+private int <NexusId>k__BackingField
+private string <ZoneKey>k__BackingField
+private NexusDetails <Nexus>k__BackingField
+private PlayerDetails <Player>k__BackingField
+public int NexusId
+public string ZoneKey
+public NexusDetails Nexus
+public NexusZoneDetails Zone
+public PlayerDetails Player
+protected bool ShouldUpdateVariables
+public int get_NexusId()
+protected void set_NexusId(int value)
+public string get_ZoneKey()
+protected void set_ZoneKey(string value)
+public NexusDetails get_Nexus()
+protected void set_Nexus(NexusDetails value)
+public NexusZoneDetails get_Zone()
+public PlayerDetails get_Player()
+protected void set_Player(PlayerDetails value)
+internal void .ctor(INexusConnector connector, IClockProvider clock, double updateInterval)
+protected internal ValueTask`1<PlayerDetails> GetPlayerDetails(int nexusId)
+public ValueTask`1<PlayerDetails> SelectNexus(int nexusId)
+protected ValueTask Initialize(CancellationToken ct)
+protected void Reset()
+protected bool get_ShouldUpdateVariables()
+public bool TryGetNexusVariable(string key, Variable& variable)
+public bool TryGetZoneVariable(string key, Variable& variable)
+public bool TryGetPlayerVariable(string key, Variable& variable)
+protected void OnNexusDetailsUpdated(int nexusId, NexusDetails details)
+private NexusZoneDetails FindZone(NexusDetails nexus, string zoneKey)
+}
+internal Facepunch.Nexus.CachedValue : object {
+internal double CacheExpirySeconds
+protected IClockProvider Clock
+protected void .ctor(IClockProvider clock)
+}
+internal Facepunch.Nexus.CachedValue`1 : CachedValue {
+private double _expiryTime
+private bool _hasValue
+private TValue _value
+public void .ctor(IClockProvider clock)
+public bool TryGetValue(TValue& value)
+public TValue& modreq(System.Runtime.InteropServices.InAttribute) Update(TValue& value)
+public void Invalidate()
+}
+internal Facepunch.Nexus.CachedValue`2 : CachedValue {
+private Dictionary`2<TKey, ValueTuple`2<TValue, double>> _values
+public void .ctor(IClockProvider clock)
+public bool TryGetValue(TKey& key, TValue& value)
+public TValue& modreq(System.Runtime.InteropServices.InAttribute) Update(TKey& key, TValue& value)
+public void Invalidate(TKey& key)
+}
+public Facepunch.Nexus.Connector.INexusConnector {
+public Task`1<NexusListing> ListNexuses(string publicKey, NexusRealm realm)
+public Task`1<NexusDetails> GetNexus(int nexusId)
+}
+internal Facepunch.Nexus.Connector.INexusPlayerConnector {
+public Task`1<PlayerDetails> GetPlayerDetails(int nexusId, string playerAuthToken)
+}
+internal Facepunch.Nexus.Connector.INexusSocketConnector {
+public bool IsStarted
+public bool IsConnected
+public bool get_IsStarted()
+public bool get_IsConnected()
+public void Start()
+public bool TryReceive(NexusMessage& message)
+public void Acknowledge(string messageId)
+}
+internal Facepunch.Nexus.Connector.INexusZoneConnector {
+public Task`1<ZoneDetails> GetZoneDetails()
+public Task`1<ZonePlayerDetails> GetPlayerDetails(string playerId)
+public Task`1<ZonePlayerLogin> PlayerLogin(string playerId)
+public Task Assign(string playerId, string toZone)
+public Task RegisterTransfers(string toZone, IEnumerable`1<string> playerIds)
+public Task CompleteTransfers(IEnumerable`1<string> playerIds)
+public Task SendMessage(string toZone, Guid id, string message, Nullable`1<int> ttl, string contentType)
+public Task SendMessage(string toZone, Guid id, Memory`1<byte> message, Nullable`1<int> ttl, string contentType)
+public Task SetNexusVariable(string key, string value, bool transient, bool secret)
+public Task SetNexusVariable(string key, Memory`1<byte> value, bool transient, bool secret)
+public Task SetZoneVariable(string key, string value, bool transient, bool secret)
+public Task SetZoneVariable(string key, Memory`1<byte> value, bool transient, bool secret)
+public Task SetPlayerVariable(string playerId, string key, string value, bool transient, bool secret)
+public Task SetPlayerVariable(string playerId, string key, Memory`1<byte> value, bool transient, bool secret)
+public Task`1<List`1<string>> FindPlayersWithVariable(string key, string value)
+public Task`1<ZoneMapCheckResult> CheckUploadedMap()
+public Task UploadMap(string key, Byte[] pngMapImage)
+public Task`1<ApiResult`1<ClanDetails>> CreateClan(ClanCreateParameters parameters)
+public Task`1<ApiResult`1<ClanDetails>> GetClan(long clanId)
+public Task`1<ApiResult`1<ClanDetails>> GetClanByMember(string playerId)
+public Task`1<ApiResult> DisbandClan(long clanId, string byPlayerId)
+public Task`1<ApiResult`1<ClanDetails>> UpdateClanVariables(long clanId, ClanVariablesUpdate update)
+public Task`1<ApiResult`1<ClanDetails>> CreateRole(long clanId, ClanRoleParameters parameters, string byPlayerId)
+public Task`1<ApiResult`1<ClanDetails>> UpdateRole(long clanId, int roleId, ClanRoleParameters parameters, string byPlayerId)
+public Task`1<ApiResult`1<ClanDetails>> DeleteRole(long clanId, int roleId, string byPlayerId)
+public Task`1<ApiResult`1<ClanDetails>> SwapRoleRanks(long clanId, int roleIdA, int roleIdB, string byPlayerId)
+public Task`1<ApiResult`1<ClanDetails>> CreateInvite(long clanId, string playerId, string byPlayerId)
+public Task`1<ApiResult`1<ClanDetails>> AcceptInvite(long clanId, string playerId)
+public Task`1<ApiResult`1<ClanDetails>> CancelInvite(long clanId, string playerId, string byPlayerId)
+public Task`1<ApiResult`1<ClanDetails>> Kick(long clanId, string playerId, string byPlayerId)
+public Task`1<ApiResult`1<List`1<ClanInvitation>>> ListInvitations(string playerId)
+public Task`1<ApiResult> UpdateLastSeen(long clanId, string playerId)
+public Task`1<ApiResult`1<ClanDetails>> UpdatePlayerClanVariables(long clanId, string playerId, ClanVariablesUpdate update)
+public Task`1<ApiResult`1<ClanDetails>> SetPlayerRole(long clanId, string playerId, int roleId, string byPlayerId)
+public Task`1<ApiResult`1<List`1<ClanLogEntry>>> GetClanLogs(long clanId, string byPlayerId, int limit)
+public Task`1<ApiResult> AddClanLog(long clanId, string eventKey, string arg1, string arg2, string arg3, string arg4)
+}
+internal Facepunch.Nexus.Connector.NexusConnector : object {
+private int MaxRetryCount
+private double BaseRetryDelay
+protected INexusLogger Logger
+protected string BaseUrl
+protected HttpClient HttpClient
+private Task`1<int> CompletedDummyTask
+public void .ctor(INexusLogger logger, string baseUrl)
+public Task`1<NexusListing> ListNexuses(string publicKey, NexusRealm realm)
+public Task`1<NexusDetails> GetNexus(int nexusId)
+protected Task`1<ApiResult`1<TResponse>> GetRequest(string url, string authToken)
+protected Task`1<ApiResult`1<TResponse>> PostRequest(string url, string authToken)
+protected Task`1<ApiResult`1<TResponse>> PostRequest(string url, TRequest requestBody, string authToken)
+protected Task`1<ApiResult`1<TResponse>> DeleteRequest(string url, string authToken)
+protected Task`1<ApiResult> PostRequestWithoutResponse(string url, TRequest requestBody, string authToken)
+protected Task`1<ApiResult> PostRequestWithoutResponse(string url, string authToken)
+protected Task`1<ApiResult> PostRequestRawWithoutResponse(string url, string payload, string payloadMimeType, string authToken)
+protected Task`1<ApiResult> PostRequestRawWithoutResponse(string url, ArraySegment`1<byte> payload, string payloadMimeType, string authToken)
+protected Task`1<ApiResult> DeleteRequestWithoutResponse(string url, string authToken)
+private Task`1<ApiResult`1<TResponse>> SendRequest(Request& request, string authToken)
+private Task`1<ApiResult> SendRequestWithoutResponse(Request request, string authToken)
+private Task`1<ApiResult`1<TResponse>> SendRequestImpl(Request request, string authToken, Func`2<HttpResponseMessage, Task`1<TResponse>> responseReader)
+}
+internal Facepunch.Nexus.Connector.NexusPlayerConnector : NexusConnector {
+private string _playerInfoEndpoint
+public void .ctor(INexusLogger logger, string baseUrl)
+public Task`1<PlayerDetails> GetPlayerDetails(int nexusId, string playerAuthToken)
+}
+internal Facepunch.Nexus.Connector.NexusSocketConnector : object {
+private int MaxMessageIdLength
+private INexusLogger _logger
+private CancellationTokenSource _cts
+private Uri _socketEndpoint
+private string _secretKey
+private Queue`1<NexusMessage> _incoming
+private Channel`1<string> _outgoing
+private bool _started
+private ClientWebSocket _socket
+public bool IsStarted
+public bool IsConnected
+public bool get_IsStarted()
+public bool get_IsConnected()
+public void .ctor(INexusLogger logger, string baseUrl, string secretKey, int lockDuration)
+public void Dispose()
+public void Start()
+public bool TryReceive(NexusMessage& message)
+public void Acknowledge(string messageId)
+private Task ReconnectLoop(CancellationToken ct)
+private Task HandleIncoming(CancellationToken ct)
+private Task HandleOutgoing(CancellationToken ct)
+private Task`1<ClientWebSocket> Connect(CancellationToken ct)
+private Task <Start>b__15_0()
+internal NexusMessage <HandleIncoming>g__ReadMessage|19_0(Byte[] buffer, int length)
+}
+internal Facepunch.Nexus.Connector.NexusZoneConnector : NexusConnector {
+private string _getZoneInfoEndpoint
+private string _getPlayerInfoEndpoint
+private string _playerLoginEndpoint
+private string _assignEndpoint
+private string _registerTransferEndpoint
+private string _completeTransferEndpoint
+private string _messageEndpoint
+private string _setNexusVariableEndpoint
+private string _setZoneVariableEndpoint
+private string _setPlayerVariableEndpoint
+private string _findPlayersWithVariableEndpoint
+private string _mapEndpoint
+private string _clanEndpoint
+public void .ctor(INexusLogger logger, string baseUrl, string secretKey)
+public Task`1<ZoneDetails> GetZoneDetails()
+public Task`1<ZonePlayerDetails> GetPlayerDetails(string playerId)
+public Task`1<ZonePlayerLogin> PlayerLogin(string playerId)
+public Task Assign(string playerId, string toZone)
+public Task RegisterTransfers(string toZone, IEnumerable`1<string> playerIds)
+public Task CompleteTransfers(IEnumerable`1<string> playerIds)
+public Task SendMessage(string toZone, Guid id, string message, Nullable`1<int> ttl, string contentType)
+public Task SendMessage(string toZone, Guid id, Memory`1<byte> message, Nullable`1<int> ttl, string contentType)
+public Task SetNexusVariable(string key, string value, bool transient, bool secret)
+public Task SetNexusVariable(string key, Memory`1<byte> value, bool transient, bool secret)
+public Task SetZoneVariable(string key, string value, bool transient, bool secret)
+public Task SetZoneVariable(string key, Memory`1<byte> value, bool transient, bool secret)
+public Task SetPlayerVariable(string playerId, string key, string value, bool transient, bool secret)
+public Task SetPlayerVariable(string playerId, string key, Memory`1<byte> value, bool transient, bool secret)
+private Task SetVariableImpl(string endpoint, string key, string value, bool transient, bool secret)
+private Task SetVariableImpl(string endpoint, string key, Memory`1<byte> value, bool transient, bool secret)
+public Task`1<List`1<string>> FindPlayersWithVariable(string key, string value)
+public Task`1<ZoneMapCheckResult> CheckUploadedMap()
+public Task UploadMap(string key, Byte[] pngMapImage)
+public Task`1<ApiResult`1<ClanDetails>> CreateClan(ClanCreateParameters parameters)
+public Task`1<ApiResult`1<ClanDetails>> GetClan(long clanId)
+public Task`1<ApiResult`1<ClanDetails>> GetClanByMember(string playerId)
+public Task`1<ApiResult> DisbandClan(long clanId, string byPlayerId)
+public Task`1<ApiResult`1<ClanDetails>> UpdateClanVariables(long clanId, ClanVariablesUpdate update)
+public Task`1<ApiResult`1<ClanDetails>> CreateRole(long clanId, ClanRoleParameters parameters, string byPlayerId)
+public Task`1<ApiResult`1<ClanDetails>> UpdateRole(long clanId, int roleId, ClanRoleParameters parameters, string byPlayerId)
+public Task`1<ApiResult`1<ClanDetails>> DeleteRole(long clanId, int roleId, string byPlayerId)
+public Task`1<ApiResult`1<ClanDetails>> SwapRoleRanks(long clanId, int roleIdA, int roleIdB, string byPlayerId)
+public Task`1<ApiResult`1<ClanDetails>> CreateInvite(long clanId, string playerId, string byPlayerId)
+public Task`1<ApiResult`1<ClanDetails>> AcceptInvite(long clanId, string playerId)
+public Task`1<ApiResult`1<ClanDetails>> CancelInvite(long clanId, string playerId, string byPlayerId)
+public Task`1<ApiResult`1<ClanDetails>> Kick(long clanId, string playerId, string byPlayerId)
+public Task`1<ApiResult`1<List`1<ClanInvitation>>> ListInvitations(string playerId)
+public Task`1<ApiResult> UpdateLastSeen(long clanId, string playerId)
+public Task`1<ApiResult`1<ClanDetails>> UpdatePlayerClanVariables(long clanId, string playerId, ClanVariablesUpdate update)
+public Task`1<ApiResult`1<ClanDetails>> SetPlayerRole(long clanId, string playerId, int roleId, string byPlayerId)
+public Task`1<ApiResult`1<List`1<ClanLogEntry>>> GetClanLogs(long clanId, string byPlayerId, int limit)
+public Task`1<ApiResult> AddClanLog(long clanId, string eventKey, string arg1, string arg2, string arg3, string arg4)
+}
+public Facepunch.Nexus.INexusClanEventListener {
+public void OnDisbanded(ClanDisbandedEvent& modreq(System.Runtime.InteropServices.InAttribute) args)
+public void OnInvitation(ClanInvitedEvent& modreq(System.Runtime.InteropServices.InAttribute) args)
+public void OnJoined(ClanJoinedEvent& modreq(System.Runtime.InteropServices.InAttribute) args)
+public void OnKicked(ClanKickedEvent& modreq(System.Runtime.InteropServices.InAttribute) args)
+public void OnChanged(ClanChangedEvent& modreq(System.Runtime.InteropServices.InAttribute) args)
+public void OnUnload(Int64& modreq(System.Runtime.InteropServices.InAttribute) clanId)
+}
+public Facepunch.Nexus.Logging.ConsoleLogger : object {
+private ConsoleLogger <Instance>k__BackingField
+public ConsoleLogger Instance
+public ConsoleLogger get_Instance()
+public void Log(NexusLogLevel level, string message, Exception exception)
+}
+public Facepunch.Nexus.Logging.INexusLogger {
+public void Log(NexusLogLevel level, string message, Exception exception)
+}
+public Facepunch.Nexus.Logging.NexusLoggerExtensions : object {
+public void LogInfo(INexusLogger logger, string message)
+public void LogWarn(INexusLogger logger, string message, Exception exception)
+public void LogError(INexusLogger logger, string message, Exception exception)
+}
+public Facepunch.Nexus.Logging.NexusLogLevel : Enum {
+public int value__
+public NexusLogLevel Info
+public NexusLogLevel Warn
+public NexusLogLevel Error
+}
+public Facepunch.Nexus.Logging.NullLogger : object {
+private NullLogger <Instance>k__BackingField
+public NullLogger Instance
+public NullLogger get_Instance()
+public void Log(NexusLogLevel level, string message, Exception exception)
+}
+public Facepunch.Nexus.Models.ClanChangedEvent : ValueType {
+private long <ClanId>k__BackingField
+public long ClanId
+public long get_ClanId()
+public void set_ClanId(long value)
+}
+public Facepunch.Nexus.Models.ClanCreateParameters : ValueType {
+private string <ClanName>k__BackingField
+private string <ClanNameNormalized>k__BackingField
+private string <LeaderPlayerId>k__BackingField
+private string <LeaderRoleName>k__BackingField
+private string <MemberRoleName>k__BackingField
+private List`1<VariableUpdate> <ClanVariables>k__BackingField
+private List`1<VariableUpdate> <LeaderRoleVariables>k__BackingField
+private List`1<VariableUpdate> <MemberRoleVariables>k__BackingField
+public string ClanName
+public string ClanNameNormalized
+public string LeaderPlayerId
+public string LeaderRoleName
+public string MemberRoleName
+public List`1<VariableUpdate> ClanVariables
+public List`1<VariableUpdate> LeaderRoleVariables
+public List`1<VariableUpdate> MemberRoleVariables
+public string get_ClanName()
+public void set_ClanName(string value)
+public string get_ClanNameNormalized()
+public void set_ClanNameNormalized(string value)
+public string get_LeaderPlayerId()
+public void set_LeaderPlayerId(string value)
+public string get_LeaderRoleName()
+public void set_LeaderRoleName(string value)
+public string get_MemberRoleName()
+public void set_MemberRoleName(string value)
+public List`1<VariableUpdate> get_ClanVariables()
+public void set_ClanVariables(List`1<VariableUpdate> value)
+public List`1<VariableUpdate> get_LeaderRoleVariables()
+public void set_LeaderRoleVariables(List`1<VariableUpdate> value)
+public List`1<VariableUpdate> get_MemberRoleVariables()
+public void set_MemberRoleVariables(List`1<VariableUpdate> value)
+}
+public Facepunch.Nexus.Models.ClanDetails : ValueType {
+private long <ClanId>k__BackingField
+private string <Name>k__BackingField
+private long <Created>k__BackingField
+private string <Creator>k__BackingField
+private List`1<ClanRole> <Roles>k__BackingField
+private List`1<ClanMember> <Members>k__BackingField
+private int <MaxMemberCount>k__BackingField
+private List`1<ClanInvite> <Invites>k__BackingField
+private VariableDictionary <Variables>k__BackingField
+public long ClanId
+public string Name
+public long Created
+public string Creator
+public List`1<ClanRole> Roles
+public List`1<ClanMember> Members
+public int MaxMemberCount
+public List`1<ClanInvite> Invites
+public VariableDictionary Variables
+public long get_ClanId()
+public void set_ClanId(long value)
+public string get_Name()
+public void set_Name(string value)
+public long get_Created()
+public void set_Created(long value)
+public string get_Creator()
+public void set_Creator(string value)
+public List`1<ClanRole> get_Roles()
+public void set_Roles(List`1<ClanRole> value)
+public List`1<ClanMember> get_Members()
+public void set_Members(List`1<ClanMember> value)
+public int get_MaxMemberCount()
+public void set_MaxMemberCount(int value)
+public List`1<ClanInvite> get_Invites()
+public void set_Invites(List`1<ClanInvite> value)
+public VariableDictionary get_Variables()
+public void set_Variables(VariableDictionary value)
+}
+public Facepunch.Nexus.Models.ClanDisbandedEvent : ValueType {
+private long <ClanId>k__BackingField
+private List`1<string> <Members>k__BackingField
+public long ClanId
+public List`1<string> Members
+public long get_ClanId()
+public void set_ClanId(long value)
+public List`1<string> get_Members()
+public void set_Members(List`1<string> value)
+}
+public Facepunch.Nexus.Models.ClanInvitation : ValueType {
+private long <ClanId>k__BackingField
+private string <RecruiterPlayerId>k__BackingField
+private long <Timestamp>k__BackingField
+public long ClanId
+public string RecruiterPlayerId
+public long Timestamp
+public long get_ClanId()
+public void set_ClanId(long value)
+public string get_RecruiterPlayerId()
+public void set_RecruiterPlayerId(string value)
+public long get_Timestamp()
+public void set_Timestamp(long value)
+}
+public Facepunch.Nexus.Models.ClanInvite : ValueType {
+private string <PlayerId>k__BackingField
+private string <RecruiterPlayerId>k__BackingField
+private long <Created>k__BackingField
+public string PlayerId
+public string RecruiterPlayerId
+public long Created
+public string get_PlayerId()
+public void set_PlayerId(string value)
+public string get_RecruiterPlayerId()
+public void set_RecruiterPlayerId(string value)
+public long get_Created()
+public void set_Created(long value)
+}
+public Facepunch.Nexus.Models.ClanInvitedEvent : ValueType {
+private long <ClanId>k__BackingField
+private string <PlayerId>k__BackingField
+public long ClanId
+public string PlayerId
+public long get_ClanId()
+public void set_ClanId(long value)
+public string get_PlayerId()
+public void set_PlayerId(string value)
+}
+public Facepunch.Nexus.Models.ClanJoinedEvent : ValueType {
+private long <ClanId>k__BackingField
+private string <PlayerId>k__BackingField
+public long ClanId
+public string PlayerId
+public long get_ClanId()
+public void set_ClanId(long value)
+public string get_PlayerId()
+public void set_PlayerId(string value)
+}
+public Facepunch.Nexus.Models.ClanKickedEvent : ValueType {
+private long <ClanId>k__BackingField
+private string <PlayerId>k__BackingField
+public long ClanId
+public string PlayerId
+public long get_ClanId()
+public void set_ClanId(long value)
+public string get_PlayerId()
+public void set_PlayerId(string value)
+}
+public Facepunch.Nexus.Models.ClanLogEntry : ValueType {
+private long <Timestamp>k__BackingField
+private string <EventKey>k__BackingField
+private string <Arg1>k__BackingField
+private string <Arg2>k__BackingField
+private string <Arg3>k__BackingField
+private string <Arg4>k__BackingField
+public long Timestamp
+public string EventKey
+public string Arg1
+public string Arg2
+public string Arg3
+public string Arg4
+public long get_Timestamp()
+public void set_Timestamp(long value)
+public string get_EventKey()
+public void set_EventKey(string value)
+public string get_Arg1()
+public void set_Arg1(string value)
+public string get_Arg2()
+public void set_Arg2(string value)
+public string get_Arg3()
+public void set_Arg3(string value)
+public string get_Arg4()
+public void set_Arg4(string value)
+}
+public Facepunch.Nexus.Models.ClanMember : ValueType {
+private string <PlayerId>k__BackingField
+private int <RoleId>k__BackingField
+private long <Joined>k__BackingField
+private long <LastSeen>k__BackingField
+private VariableDictionary <Variables>k__BackingField
+public string PlayerId
+public int RoleId
+public long Joined
+public long LastSeen
+public VariableDictionary Variables
+public string get_PlayerId()
+public void set_PlayerId(string value)
+public int get_RoleId()
+public void set_RoleId(int value)
+public long get_Joined()
+public void set_Joined(long value)
+public long get_LastSeen()
+public void set_LastSeen(long value)
+public VariableDictionary get_Variables()
+public void set_Variables(VariableDictionary value)
+}
+public Facepunch.Nexus.Models.ClanRole : ValueType {
+private int <RoleId>k__BackingField
+private int <Rank>k__BackingField
+private string <Name>k__BackingField
+private bool <CanInvite>k__BackingField
+private bool <CanKick>k__BackingField
+private bool <CanPromote>k__BackingField
+private bool <CanDemote>k__BackingField
+private bool <CanAccessLogs>k__BackingField
+private VariableDictionary <Variables>k__BackingField
+public int RoleId
+public int Rank
+public string Name
+public bool CanInvite
+public bool CanKick
+public bool CanPromote
+public bool CanDemote
+public bool CanAccessLogs
+public VariableDictionary Variables
+public int get_RoleId()
+public void set_RoleId(int value)
+public int get_Rank()
+public void set_Rank(int value)
+public string get_Name()
+public void set_Name(string value)
+public bool get_CanInvite()
+public void set_CanInvite(bool value)
+public bool get_CanKick()
+public void set_CanKick(bool value)
+public bool get_CanPromote()
+public void set_CanPromote(bool value)
+public bool get_CanDemote()
+public void set_CanDemote(bool value)
+public bool get_CanAccessLogs()
+public void set_CanAccessLogs(bool value)
+public VariableDictionary get_Variables()
+public void set_Variables(VariableDictionary value)
+}
+public Facepunch.Nexus.Models.ClanRoleParameters : ValueType {
+private string <Name>k__BackingField
+private bool <CanInvite>k__BackingField
+private bool <CanKick>k__BackingField
+private bool <CanPromote>k__BackingField
+private bool <CanDemote>k__BackingField
+private bool <CanAccessLogs>k__BackingField
+private List`1<VariableUpdate> <Variables>k__BackingField
+public string Name
+public bool CanInvite
+public bool CanKick
+public bool CanPromote
+public bool CanDemote
+public bool CanAccessLogs
+public List`1<VariableUpdate> Variables
+public string get_Name()
+public void set_Name(string value)
+public bool get_CanInvite()
+public void set_CanInvite(bool value)
+public bool get_CanKick()
+public void set_CanKick(bool value)
+public bool get_CanPromote()
+public void set_CanPromote(bool value)
+public bool get_CanDemote()
+public void set_CanDemote(bool value)
+public bool get_CanAccessLogs()
+public void set_CanAccessLogs(bool value)
+public List`1<VariableUpdate> get_Variables()
+public void set_Variables(List`1<VariableUpdate> value)
+}
+public Facepunch.Nexus.Models.ClanVariablesUpdate : ValueType {
+private List`1<VariableUpdate> <Variables>k__BackingField
+private string <EventKey>k__BackingField
+private string <Arg1>k__BackingField
+private string <Arg2>k__BackingField
+private string <Arg3>k__BackingField
+private string <Arg4>k__BackingField
+public List`1<VariableUpdate> Variables
+public string EventKey
+public string Arg1
+public string Arg2
+public string Arg3
+public string Arg4
+public List`1<VariableUpdate> get_Variables()
+public void set_Variables(List`1<VariableUpdate> value)
+public string get_EventKey()
+public void set_EventKey(string value)
+public string get_Arg1()
+public void set_Arg1(string value)
+public string get_Arg2()
+public void set_Arg2(string value)
+public string get_Arg3()
+public void set_Arg3(string value)
+public string get_Arg4()
+public void set_Arg4(string value)
+}
+internal Facepunch.Nexus.Models.CompleteTransfersRequest : ValueType {
+private IEnumerable`1<string> <PlayerIds>k__BackingField
+public IEnumerable`1<string> PlayerIds
+public IEnumerable`1<string> get_PlayerIds()
+public void set_PlayerIds(IEnumerable`1<string> value)
+}
+internal Facepunch.Nexus.Models.IncomingMessage : ValueType {
+private string <MessageId>k__BackingField
+private string <ContentType>k__BackingField
+private Byte[] <Data>k__BackingField
+public string MessageId
+public Guid Id
+public string ContentType
+public Byte[] Data
+public string get_MessageId()
+public void set_MessageId(string value)
+public Guid get_Id()
+public string get_ContentType()
+public void set_ContentType(string value)
+public Byte[] get_Data()
+public void set_Data(Byte[] value)
+}
+public Facepunch.Nexus.Models.Nexus : object {
+private int <NexusId>k__BackingField
+private string <Name>k__BackingField
+private long <LastReset>k__BackingField
+private int <ZoneCount>k__BackingField
+private int <MaxPlayers>k__BackingField
+private int <OnlinePlayers>k__BackingField
+private int <QueuedPlayers>k__BackingField
+private int <Build>k__BackingField
+private int <Protocol>k__BackingField
+private string <Tags>k__BackingField
+public int NexusId
+public string Name
+public long LastReset
+public int ZoneCount
+public int MaxPlayers
+public int OnlinePlayers
+public int QueuedPlayers
+public int Build
+public int Protocol
+public string Tags
+public int get_NexusId()
+public void set_NexusId(int value)
+public string get_Name()
+public void set_Name(string value)
+public long get_LastReset()
+public void set_LastReset(long value)
+public int get_ZoneCount()
+public void set_ZoneCount(int value)
+public int get_MaxPlayers()
+public void set_MaxPlayers(int value)
+public int get_OnlinePlayers()
+public void set_OnlinePlayers(int value)
+public int get_QueuedPlayers()
+public void set_QueuedPlayers(int value)
+public int get_Build()
+public void set_Build(int value)
+public int get_Protocol()
+public void set_Protocol(int value)
+public string get_Tags()
+public void set_Tags(string value)
+}
+public Facepunch.Nexus.Models.NexusDetails : object {
+private string <Name>k__BackingField
+private long <LastReset>k__BackingField
+private int <MaxPlayers>k__BackingField
+private int <OnlinePlayers>k__BackingField
+private int <QueuedPlayers>k__BackingField
+private int <Build>k__BackingField
+private int <Protocol>k__BackingField
+private List`1<NexusZoneDetails> <Zones>k__BackingField
+private VariableDictionary <Variables>k__BackingField
+public string Name
+public long LastReset
+public int MaxPlayers
+public int OnlinePlayers
+public int QueuedPlayers
+public int Build
+public int Protocol
+public List`1<NexusZoneDetails> Zones
+public VariableDictionary Variables
+public string get_Name()
+public void set_Name(string value)
+public long get_LastReset()
+public void set_LastReset(long value)
+public int get_MaxPlayers()
+public void set_MaxPlayers(int value)
+public int get_OnlinePlayers()
+public void set_OnlinePlayers(int value)
+public int get_QueuedPlayers()
+public void set_QueuedPlayers(int value)
+public int get_Build()
+public void set_Build(int value)
+public int get_Protocol()
+public void set_Protocol(int value)
+public List`1<NexusZoneDetails> get_Zones()
+public void set_Zones(List`1<NexusZoneDetails> value)
+public VariableDictionary get_Variables()
+public void set_Variables(VariableDictionary value)
+}
+public Facepunch.Nexus.Models.NexusListing : ValueType {
+private List`1<Nexus> <Nexuses>k__BackingField
+public List`1<Nexus> Nexuses
+public List`1<Nexus> get_Nexuses()
+public void set_Nexuses(List`1<Nexus> value)
+}
+public Facepunch.Nexus.Models.NexusRealm : Enum {
+public byte value__
+public NexusRealm Development
+public NexusRealm Staging
+public NexusRealm Production
+public NexusRealm Count
+}
+public Facepunch.Nexus.Models.NexusZoneDetails : object {
+private int <Id>k__BackingField
+private string <Key>k__BackingField
+private string <Name>k__BackingField
+private double <PositionX>k__BackingField
+private double <PositionY>k__BackingField
+private string <IpAddress>k__BackingField
+private int <GamePort>k__BackingField
+private int <QueryPort>k__BackingField
+private int <MaxPlayers>k__BackingField
+private int <OnlinePlayers>k__BackingField
+private int <QueuedPlayers>k__BackingField
+private int <Build>k__BackingField
+private int <Protocol>k__BackingField
+private VariableDictionary <Variables>k__BackingField
+public int Id
+public string Key
+public string Name
+public double PositionX
+public double PositionY
+public string IpAddress
+public int GamePort
+public int QueryPort
+public int MaxPlayers
+public int OnlinePlayers
+public int QueuedPlayers
+public int Build
+public int Protocol
+public VariableDictionary Variables
+public int get_Id()
+public void set_Id(int value)
+public string get_Key()
+public void set_Key(string value)
+public string get_Name()
+public void set_Name(string value)
+public double get_PositionX()
+public void set_PositionX(double value)
+public double get_PositionY()
+public void set_PositionY(double value)
+public string get_IpAddress()
+public void set_IpAddress(string value)
+public int get_GamePort()
+public void set_GamePort(int value)
+public int get_QueryPort()
+public void set_QueryPort(int value)
+public int get_MaxPlayers()
+public void set_MaxPlayers(int value)
+public int get_OnlinePlayers()
+public void set_OnlinePlayers(int value)
+public int get_QueuedPlayers()
+public void set_QueuedPlayers(int value)
+public int get_Build()
+public void set_Build(int value)
+public int get_Protocol()
+public void set_Protocol(int value)
+public VariableDictionary get_Variables()
+public void set_Variables(VariableDictionary value)
+}
+public Facepunch.Nexus.Models.PlayerDetails : object {
+private string <PlayerId>k__BackingField
+private long <LastSeen>k__BackingField
+private string <AssignedZoneKey>k__BackingField
+private VariableDictionary <Variables>k__BackingField
+private string <ConnectZoneKey>k__BackingField
+private string <ConnectIpAddress>k__BackingField
+private Nullable`1<int> <ConnectGamePort>k__BackingField
+private Nullable`1<int> <ConnectQueryPort>k__BackingField
+public string PlayerId
+public long LastSeen
+public string AssignedZoneKey
+public VariableDictionary Variables
+public string ConnectZoneKey
+public string ConnectIpAddress
+public Nullable`1<int> ConnectGamePort
+public Nullable`1<int> ConnectQueryPort
+public string get_PlayerId()
+public void set_PlayerId(string value)
+public long get_LastSeen()
+public void set_LastSeen(long value)
+public string get_AssignedZoneKey()
+public void set_AssignedZoneKey(string value)
+public VariableDictionary get_Variables()
+public void set_Variables(VariableDictionary value)
+public string get_ConnectZoneKey()
+public void set_ConnectZoneKey(string value)
+public string get_ConnectIpAddress()
+public void set_ConnectIpAddress(string value)
+public Nullable`1<int> get_ConnectGamePort()
+public void set_ConnectGamePort(Nullable`1<int> value)
+public Nullable`1<int> get_ConnectQueryPort()
+public void set_ConnectQueryPort(Nullable`1<int> value)
+}
+internal Facepunch.Nexus.Models.RegisterTransfersRequest : ValueType {
+private IEnumerable`1<string> <PlayerIds>k__BackingField
+private string <ToZoneKey>k__BackingField
+public IEnumerable`1<string> PlayerIds
+public string ToZoneKey
+public IEnumerable`1<string> get_PlayerIds()
+public void set_PlayerIds(IEnumerable`1<string> value)
+public string get_ToZoneKey()
+public void set_ToZoneKey(string value)
+}
+public Facepunch.Nexus.Models.VariableData : ValueType {
+private string <Value>k__BackingField
+private VariableType <Type>k__BackingField
+private long <LastUpdated>k__BackingField
+public string Value
+public VariableType Type
+public long LastUpdated
+public string get_Value()
+public void set_Value(string value)
+public VariableType get_Type()
+public void set_Type(VariableType value)
+public long get_LastUpdated()
+public void set_LastUpdated(long value)
+}
+public Facepunch.Nexus.Models.VariableType : Enum {
+public byte value__
+public VariableType Binary
+public VariableType String
+}
+public Facepunch.Nexus.Models.VariableUpdate : ValueType {
+private string <Key>k__BackingField
+private VariableType <Type>k__BackingField
+private Nullable`1<bool> <Transient>k__BackingField
+private Nullable`1<bool> <Secret>k__BackingField
+private Memory`1<byte> _binaryValue
+private string _stringValue
+public string Key
+public VariableType Type
+public Nullable`1<bool> Transient
+public Nullable`1<bool> Secret
+public string Value
+public string get_Key()
+public VariableType get_Type()
+public Nullable`1<bool> get_Transient()
+public Nullable`1<bool> get_Secret()
+public string get_Value()
+public void .ctor(string key, Memory`1<byte> value, Nullable`1<bool> transient, Nullable`1<bool> secret)
+public void .ctor(string key, string value, Nullable`1<bool> transient, Nullable`1<bool> secret)
+}
+public Facepunch.Nexus.Models.ZoneDetails : object {
+private int <NexusId>k__BackingField
+private int <ZoneId>k__BackingField
+private string <Key>k__BackingField
+private string <Name>k__BackingField
+private double <PositionX>k__BackingField
+private double <PositionY>k__BackingField
+private VariableDictionary <Variables>k__BackingField
+private string <NexusName>k__BackingField
+private VariableDictionary <NexusVariables>k__BackingField
+public int NexusId
+public int ZoneId
+public string Key
+public string Name
+public double PositionX
+public double PositionY
+public VariableDictionary Variables
+public string NexusName
+public VariableDictionary NexusVariables
+public int get_NexusId()
+public void set_NexusId(int value)
+public int get_ZoneId()
+public void set_ZoneId(int value)
+public string get_Key()
+public void set_Key(string value)
+public string get_Name()
+public void set_Name(string value)
+public double get_PositionX()
+public void set_PositionX(double value)
+public double get_PositionY()
+public void set_PositionY(double value)
+public VariableDictionary get_Variables()
+public void set_Variables(VariableDictionary value)
+public string get_NexusName()
+public void set_NexusName(string value)
+public VariableDictionary get_NexusVariables()
+public void set_NexusVariables(VariableDictionary value)
+}
+public Facepunch.Nexus.Models.ZoneMapCheckResult : object {
+private string <Key>k__BackingField
+private DateTimeOffset <LastUpdated>k__BackingField
+public string Key
+public DateTimeOffset LastUpdated
+public string get_Key()
+public void set_Key(string value)
+public DateTimeOffset get_LastUpdated()
+public void set_LastUpdated(DateTimeOffset value)
+}
+public Facepunch.Nexus.Models.ZonePlayerDetails : object {
+private string <PlayerId>k__BackingField
+private long <LastSeen>k__BackingField
+private Dictionary`2<string, VariableData> <Variables>k__BackingField
+private string <AssignedZoneKey>k__BackingField
+public string PlayerId
+public long LastSeen
+public Dictionary`2<string, VariableData> Variables
+public string AssignedZoneKey
+public string get_PlayerId()
+public void set_PlayerId(string value)
+public long get_LastSeen()
+public void set_LastSeen(long value)
+public Dictionary`2<string, VariableData> get_Variables()
+public void set_Variables(Dictionary`2<string, VariableData> value)
+public string get_AssignedZoneKey()
+public void set_AssignedZoneKey(string value)
+}
+internal Facepunch.Nexus.Models.ZonePlayerLogin : ZonePlayerDetails {
+private string <RedirectIpAddress>k__BackingField
+private Nullable`1<int> <RedirectGamePort>k__BackingField
+private Nullable`1<int> <RedirectQueryPort>k__BackingField
+public string RedirectIpAddress
+public Nullable`1<int> RedirectGamePort
+public Nullable`1<int> RedirectQueryPort
+public string get_RedirectIpAddress()
+public void set_RedirectIpAddress(string value)
+public Nullable`1<int> get_RedirectGamePort()
+public void set_RedirectGamePort(Nullable`1<int> value)
+public Nullable`1<int> get_RedirectQueryPort()
+public void set_RedirectQueryPort(Nullable`1<int> value)
+}
+public Facepunch.Nexus.NexusAnonymousClient : object {
+private INexusConnector _connector
+private CachedValue`1<List`1<Nexus>> _cachedNexusList
+private CachedValue`2<int, NexusDetails> _cachedNexusDetails
+public void .ctor(INexusLogger logger, IClockProvider clock, string baseUrl)
+internal void .ctor(INexusConnector connector, IClockProvider clock)
+public ValueTask`1<IEnumerable`1<Nexus>> GetNexusList(string publicKey, NexusRealm realm)
+public ValueTask`1<NexusDetails> GetNexusDetails(int nexusId)
+protected void OnNexusDetailsUpdated(int nexusId, NexusDetails details)
+}
+public Facepunch.Nexus.NexusClan : object {
+private double RefreshInterval
+private long <ClanId>k__BackingField
+private string <Name>k__BackingField
+private long <Created>k__BackingField
+private string <Creator>k__BackingField
+private List`1<NexusClanRole> <Roles>k__BackingField
+private List`1<NexusClanMember> <Members>k__BackingField
+private int <MaxMemberCount>k__BackingField
+private List`1<ClanInvite> <Invites>k__BackingField
+private NexusZoneClient _client
+private INexusZoneConnector _zoneConnector
+private IClockProvider _clockProvider
+private INexusLogger _logger
+private VariableContainer _variables
+private double _lastRefreshed
+public long ClanId
+public string Name
+public long Created
+public string Creator
+public List`1<NexusClanRole> Roles
+public List`1<NexusClanMember> Members
+public int MaxMemberCount
+public List`1<ClanInvite> Invites
+public IEnumerable`1<KeyValuePair`2<string, Variable>> Variables
+public long get_ClanId()
+public string get_Name()
+private void set_Name(string value)
+public long get_Created()
+private void set_Created(long value)
+public string get_Creator()
+private void set_Creator(string value)
+public List`1<NexusClanRole> get_Roles()
+public List`1<NexusClanMember> get_Members()
+public int get_MaxMemberCount()
+private void set_MaxMemberCount(int value)
+public List`1<ClanInvite> get_Invites()
+internal void .ctor(NexusZoneClient client, INexusZoneConnector zoneConnector, IClockProvider clockProvider, INexusLogger logger, long clanId)
+internal bool UpdateFromModel(ClanDetails& details)
+internal void RefreshIfNeeded()
+internal void Refresh()
+public IEnumerable`1<KeyValuePair`2<string, Variable>> get_Variables()
+public bool TryGetVariable(string key, Variable& variable)
+public Task`1<NexusClanResultCode> UpdateVariables(ClanVariablesUpdate update)
+public Task`1<NexusClanResultCode> UpdatePlayerVariables(string playerId, ClanVariablesUpdate update)
+public Task`1<NexusClanResult`1<List`1<ClanLogEntry>>> GetLogs(string byPlayerId, int limit)
+public Task`1<NexusClanResultCode> AddLog(string eventKey, string arg1, string arg2, string arg3, string arg4)
+public Task`1<NexusClanResultCode> UpdateLastSeen(string playerId)
+public Task`1<NexusClanResultCode> Invite(string playerId, string byPlayerId)
+public Task`1<NexusClanResultCode> CancelInvite(string playerId, string byPlayerId)
+public Task`1<NexusClanResultCode> AcceptInvite(string playerId)
+public Task`1<NexusClanResultCode> Kick(string playerId, string byPlayerId)
+public Task`1<NexusClanResultCode> SetPlayerRole(string playerId, int newRoleId, string byPlayerId)
+public Task`1<NexusClanResultCode> CreateRole(ClanRoleParameters parameters, string byPlayerId)
+public Task`1<NexusClanResultCode> UpdateRole(int roleId, ClanRoleParameters parameters, string byPlayerId)
+public Task`1<NexusClanResultCode> DeleteRole(int roleId, string byPlayerId)
+public Task`1<NexusClanResultCode> SwapRoleRanks(int roleIdA, int roleIdB, string byPlayerId)
+public Task`1<NexusClanResultCode> Disband(string byPlayerId)
+}
+public Facepunch.Nexus.NexusClanMember : object {
+private string <PlayerId>k__BackingField
+private int <RoleId>k__BackingField
+private long <Joined>k__BackingField
+private long <LastSeen>k__BackingField
+private VariableContainer _variables
+public string PlayerId
+public int RoleId
+public long Joined
+public long LastSeen
+public IEnumerable`1<KeyValuePair`2<string, Variable>> Variables
+public string get_PlayerId()
+public void set_PlayerId(string value)
+public int get_RoleId()
+public void set_RoleId(int value)
+public long get_Joined()
+public void set_Joined(long value)
+public long get_LastSeen()
+public void set_LastSeen(long value)
+public void .ctor(ClanMember details)
+public IEnumerable`1<KeyValuePair`2<string, Variable>> get_Variables()
+public bool TryGetVariable(string key, Variable& variable)
+internal bool UpdateFromModel(ClanMember details)
+}
+public Facepunch.Nexus.NexusClanResult`1 : ValueType {
+private NexusClanResultCode <ResultCode>k__BackingField
+private T _response
+private bool _hasResponse
+public NexusClanResultCode ResultCode
+public bool IsSuccess
+public NexusClanResultCode get_ResultCode()
+public bool get_IsSuccess()
+internal void .ctor(NexusClanResultCode resultCode)
+internal void .ctor(T response)
+public bool TryGetResponse(T& response)
+}
+public Facepunch.Nexus.NexusClanResultCode : Enum {
+public int value__
+public NexusClanResultCode Fail
+public NexusClanResultCode Success
+public NexusClanResultCode NoClan
+public NexusClanResultCode NotFound
+public NexusClanResultCode NoPermission
+public NexusClanResultCode DuplicateName
+public NexusClanResultCode RoleNotEmpty
+public NexusClanResultCode CannotSwapLeader
+public NexusClanResultCode CannotDeleteLeader
+public NexusClanResultCode CannotKickLeader
+public NexusClanResultCode CannotDemoteLeader
+public NexusClanResultCode AlreadyInAClan
+public NexusClanResultCode ClanIsFull
+}
+public Facepunch.Nexus.NexusClanRole : object {
+private int <RoleId>k__BackingField
+private int <Rank>k__BackingField
+private string <Name>k__BackingField
+private bool <CanInvite>k__BackingField
+private bool <CanKick>k__BackingField
+private bool <CanPromote>k__BackingField
+private bool <CanDemote>k__BackingField
+private bool <CanAccessLogs>k__BackingField
+private VariableContainer _variables
+public int RoleId
+public int Rank
+public string Name
+public bool CanInvite
+public bool CanKick
+public bool CanPromote
+public bool CanDemote
+public bool CanAccessLogs
+public IEnumerable`1<KeyValuePair`2<string, Variable>> Variables
+public int get_RoleId()
+public void set_RoleId(int value)
+public int get_Rank()
+public void set_Rank(int value)
+public string get_Name()
+public void set_Name(string value)
+public bool get_CanInvite()
+public void set_CanInvite(bool value)
+public bool get_CanKick()
+public void set_CanKick(bool value)
+public bool get_CanPromote()
+public void set_CanPromote(bool value)
+public bool get_CanDemote()
+public void set_CanDemote(bool value)
+public bool get_CanAccessLogs()
+public void set_CanAccessLogs(bool value)
+public void .ctor(ClanRole details)
+public IEnumerable`1<KeyValuePair`2<string, Variable>> get_Variables()
+public bool TryGetVariable(string key, Variable& variable)
+internal bool UpdateFromModel(ClanRole details)
+}
+public Facepunch.Nexus.NexusErrorHandler : MulticastDelegate {
+public void .ctor(object object, IntPtr method)
+public void Invoke(BaseNexusClient sender, Exception exception)
+public IAsyncResult BeginInvoke(BaseNexusClient sender, Exception exception, AsyncCallback callback, object object)
+public void EndInvoke(IAsyncResult result)
+}
+public Facepunch.Nexus.NexusInitializedHandler : MulticastDelegate {
+public void .ctor(object object, IntPtr method)
+public void Invoke(BaseNexusClient sender)
+public IAsyncResult BeginInvoke(BaseNexusClient sender, AsyncCallback callback, object object)
+public void EndInvoke(IAsyncResult result)
+}
+public Facepunch.Nexus.NexusLoginResult : ValueType {
+private ZonePlayerLogin _login
+public string PlayerId
+public long LastSeen
+public Dictionary`2<string, VariableData> Variables
+public string AssignedZoneKey
+public bool IsRedirect
+public string RedirectIpAddress
+public int RedirectGamePort
+public int RedirectQueryPort
+internal void .ctor(ZonePlayerLogin login)
+public string get_PlayerId()
+public long get_LastSeen()
+public Dictionary`2<string, VariableData> get_Variables()
+public string get_AssignedZoneKey()
+public bool get_IsRedirect()
+public string get_RedirectIpAddress()
+public int get_RedirectGamePort()
+public int get_RedirectQueryPort()
+}
+public Facepunch.Nexus.NexusMessage : ValueType {
+private string _stringData
+private Byte[] _binaryData
+private string <MessageId>k__BackingField
+private Uuid <Id>k__BackingField
+private string <ContentType>k__BackingField
+internal string MessageId
+public Uuid Id
+public string ContentType
+public bool IsString
+public bool IsBinary
+public string AsString
+public Byte[] AsBinary
+internal string get_MessageId()
+public Uuid get_Id()
+public string get_ContentType()
+public bool get_IsString()
+public bool get_IsBinary()
+public string get_AsString()
+public Byte[] get_AsBinary()
+internal void .ctor(string messageId, Guid id, string contentType, string data)
+internal void .ctor(string messageId, Guid id, string contentType, Byte[] data)
+}
+public Facepunch.Nexus.NexusPlayer : object {
+private double RefreshInterval
+private INexusLogger _logger
+private INexusZoneConnector _zoneConnector
+private IClockProvider _clockProvider
+private VariableContainer _variables
+private double _lastRefreshed
+private string <PlayerId>k__BackingField
+private string <AssignedZoneKey>k__BackingField
+public string PlayerId
+public string AssignedZoneKey
+public IEnumerable`1<KeyValuePair`2<string, Variable>> Variables
+public string get_PlayerId()
+public string get_AssignedZoneKey()
+private void set_AssignedZoneKey(string value)
+internal void .ctor(INexusLogger logger, INexusZoneConnector zoneConnector, IClockProvider clockProvider, string playerId)
+public bool TryGetVariable(string key, Variable& variable)
+public Task SetVariable(string key, string value, bool isTransient, bool isSecret)
+public Task SetVariable(string key, Byte[] value, bool isTransient, bool isSecret)
+public IEnumerable`1<KeyValuePair`2<string, Variable>> get_Variables()
+internal void RefreshIfNeeded()
+internal void RefreshInBackground()
+internal Task Refresh()
+internal void UpdateZone(string assignedZoneKey)
+internal void UpdateVariables(Dictionary`2<string, VariableData> variables)
+}
+public Facepunch.Nexus.NexusPlayerClient : BaseNexusPlayerClient {
+private INexusPlayerConnector _connector
+private AuthHandler _authHandler
+private CachedValue`2<int, PlayerDetails> _cachedPlayerInfo
+public void .ctor(INexusLogger logger, string baseUrl, AuthHandler authHandler)
+internal void .ctor(INexusPlayerConnector connector, IClockProvider clock, double updateInterval, AuthHandler authHandler)
+protected ValueTask Update(CancellationToken ct)
+protected internal ValueTask`1<PlayerDetails> GetPlayerDetails(int nexusId)
+}
+public Facepunch.Nexus.NexusVariableChangedHandler : MulticastDelegate {
+public void .ctor(object object, IntPtr method)
+public void Invoke(BaseNexusClient sender, string variableKey)
+public IAsyncResult BeginInvoke(BaseNexusClient sender, string variableKey, AsyncCallback callback, object object)
+public void EndInvoke(IAsyncResult result)
+}
+public Facepunch.Nexus.NexusZoneClient : BaseNexusClient {
+private INexusClanEventListener <ClanEventListener>k__BackingField
+private INexusLogger _logger
+private INexusZoneConnector _connector
+private INexusSocketConnector _socket
+private IClockProvider _clock
+private VariableContainer _nexusVariables
+private VariableContainer _zoneVariables
+private CachedValue`1<ZoneDetails> _cachedZoneInfo
+private CachedValue`1<NexusDetails> _cachedNexusInfo
+private Dictionary`2<string, NexusPlayer> _players
+private Dictionary`2<long, NexusClan> _clans
+private ZoneDetails <Zone>k__BackingField
+private NexusDetails <Nexus>k__BackingField
+public INexusClanEventListener ClanEventListener
+public ZoneDetails Zone
+public NexusDetails Nexus
+public INexusClanEventListener get_ClanEventListener()
+public void set_ClanEventListener(INexusClanEventListener value)
+public ValueTask`1<NexusClanResult`1<NexusClan>> GetClan(long clanId)
+public ValueTask`1<NexusClanResult`1<NexusClan>> GetClanByMember(string playerId)
+public bool TryGetClan(long clanId, NexusClan& clan)
+public ValueTask`1<NexusClanResult`1<NexusClan>> CreateClan(ClanCreateParameters parameters)
+public ValueTask`1<NexusClanResult`1<List`1<ClanInvitation>>> ListClanInvitations(string playerId)
+private void HandleClanEvent(NexusMessage& message)
+private void RefreshClan(long clanId)
+internal NexusClan UpsertClan(ClanDetails& details)
+private void UpdateClan(NexusClan clan, ClanDetails& details)
+internal void RemoveClan(long clanId)
+public ZoneDetails get_Zone()
+private void set_Zone(ZoneDetails value)
+public NexusDetails get_Nexus()
+private void set_Nexus(NexusDetails value)
+public void .ctor(INexusLogger logger, string baseUrl, string secretKey, int lockDuration)
+internal void .ctor(INexusLogger logger, INexusZoneConnector connector, INexusSocketConnector socket, IClockProvider clock, double updateInterval)
+protected void Dispose(bool disposing)
+protected ValueTask Initialize(CancellationToken ct)
+protected ValueTask Update(CancellationToken ct)
+public void StartListening()
+public bool TryGetNexusVariable(string key, Variable& variable)
+public bool TryGetZoneVariable(string key, Variable& variable)
+public Task SetNexusVariable(string key, string value, bool isTransient, bool isSecret)
+public Task SetNexusVariable(string key, Byte[] value, bool isTransient, bool isSecret)
+public Task SetZoneVariable(string key, string value, bool isTransient, bool isSecret)
+public Task SetZoneVariable(string key, Byte[] value, bool isTransient, bool isSecret)
+public Task`1<List`1<string>> FindPlayersWithVariable(string key, string value)
+public Task`1<NexusLoginResult> PlayerLogin(string playerId)
+public void PlayerLogout(string playerId)
+public ValueTask`1<NexusPlayer> GetPlayer(string playerId)
+public bool TryGetPlayer(string playerId, NexusPlayer& player)
+public Task Assign(string playerId, string toZone)
+public Task RegisterTransfers(string toZone, IEnumerable`1<string> playerIds)
+public Task CompleteTransfers(IEnumerable`1<string> playerIds)
+public bool TryReceiveMessage(NexusMessage& message)
+public void AcknowledgeMessage(NexusMessage& message)
+public Task SendMessage(string toZone, Uuid id, string message, Nullable`1<int> ttl)
+public Task SendMessage(string toZone, Uuid id, Memory`1<byte> message, Nullable`1<int> ttl)
+public Task`1<ZoneMapCheckResult> CheckUploadedMap()
+public Task UploadMap(string key, Byte[] pngMapImage)
+internal ValueTask`1<ZoneDetails> GetZoneDetails()
+internal ValueTask`1<NexusDetails> GetNexusDetails(int nexusId)
+private void AssertInitialized()
+}
+public Facepunch.Nexus.Time.DefaultClockProvider : object {
+private DefaultClockProvider <Instance>k__BackingField
+public DefaultClockProvider Instance
+public double Timestamp
+public DefaultClockProvider get_Instance()
+public double get_Timestamp()
+public Task Delay(double seconds)
+}
+public Facepunch.Nexus.Time.IClockProvider {
+public double Timestamp
+public double get_Timestamp()
+public Task Delay(double seconds)
+}
+internal Facepunch.Nexus.Util : object {
+public T Update(T& currentValue, T& newValue, Boolean& changed)
+public bool Resize(List`1<T> list, int newCount)
+}
+public Facepunch.Nexus.Uuid : ValueType {
+public Uuid Empty
+private int <NodeId>k__BackingField
+private int <Sequence>k__BackingField
+private ulong <Timestamp>k__BackingField
+private object _syncRoot
+private int _nodeId
+private int _sequence
+private ulong _previousTimestamp
+public int NodeId
+public int Sequence
+public ulong Timestamp
+public int get_NodeId()
+public void set_NodeId(int value)
+public int get_Sequence()
+public void set_Sequence(int value)
+public ulong get_Timestamp()
+public void set_Timestamp(ulong value)
+public void .ctor(int nodeId, int sequence, ulong timestamp)
+public string ToString()
+public Uuid op_Implicit(Guid guid)
+public Guid op_Implicit(Uuid uuid)
+public bool Equals(Uuid other)
+public bool Equals(object obj)
+public int GetHashCode()
+public bool op_Equality(Uuid left, Uuid right)
+public bool op_Inequality(Uuid left, Uuid right)
+public Uuid Generate()
+}
+public Facepunch.Nexus.Variable : object {
+private string _rawValue
+private Byte[] _binaryValue
+private VariableType <Type>k__BackingField
+private long <LastUpdated>k__BackingField
+public VariableType Type
+public long LastUpdated
+public VariableType get_Type()
+private void set_Type(VariableType value)
+public long get_LastUpdated()
+private void set_LastUpdated(long value)
+internal bool Set(string value, long lastUpdated)
+internal bool Set(Byte[] value, long lastUpdated)
+internal bool UpdateFromModel(VariableData data)
+public string GetAsString()
+public Byte[] GetAsBinary()
+public bool op_Equality(Variable variable, string value)
+public bool op_Inequality(Variable variable, string value)
+public bool op_Equality(Variable variable, Byte[] value)
+public bool op_Inequality(Variable variable, Byte[] value)
+}
+internal Facepunch.Nexus.VariableContainer : object {
+private Dictionary`2<string, Variable> _variables
+public int Count
+public int get_Count()
+public bool UpdateFromModel(Dictionary`2<string, VariableData> data, HashSet`1<string> changedKeys)
+public bool UpdateFromModel(string key, VariableData data)
+public bool TryGet(string key, Variable& variable)
+public bool Set(string key, string value)
+public bool Set(string key, Byte[] value)
+public void Remove(string key)
+public void Clear()
+public Enumerator<string, Variable> GetEnumerator()
+private IEnumerator`1<KeyValuePair`2<string, Variable>> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<System.String,Facepunch.Nexus.Variable>>.GetEnumerator()
+private IEnumerator System.Collections.IEnumerable.GetEnumerator()
+}

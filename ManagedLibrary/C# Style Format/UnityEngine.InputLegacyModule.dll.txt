@@ -135,8 +135,8 @@ public bool GetKeyUp(KeyCode key)
 public bool GetKeyUp(string name)
 public bool GetKeyDown(KeyCode key)
 public bool GetKeyDown(string name)
-internal void SimulateTouch(int id, Vector2 position, TouchPhase action)
-private void SimulateTouchInternal(int id, Vector2 position, TouchPhase action, long timestamp)
+internal void SimulateTouch(Touch touch)
+private void SimulateTouchInternal(Touch touch, long timestamp)
 public bool get_simulateMouseWithTouches()
 public void set_simulateMouseWithTouches(bool value)
 public bool get_anyKey()
@@ -173,9 +173,10 @@ private int GetGyroInternal()
 public Gyroscope get_gyro()
 public Touch[] get_touches()
 public AccelerationEvent[] get_accelerationEvents()
+internal bool CheckDisabled()
 private void GetTouch_Injected(int index, Touch& ret)
 private void GetAccelerationEvent_Injected(int index, AccelerationEvent& ret)
-private void SimulateTouchInternal_Injected(int id, Vector2& position, TouchPhase action, long timestamp)
+private void SimulateTouchInternal_Injected(Touch& touch, long timestamp)
 private void get_mousePosition_Injected(Vector3& ret)
 private void get_mouseScrollDelta_Injected(Vector2& ret)
 private void get_compositionCursorPos_Injected(Vector2& ret)
@@ -242,6 +243,11 @@ private HitInfo[] m_LastHit
 private HitInfo[] m_MouseDownHit
 private HitInfo[] m_CurrentHit
 private Camera[] m_Cameras
+public Func`1<KeyValuePair`2<int, Vector2>> s_GetMouseState
+private Vector2 s_MousePosition
+private bool s_MouseButtonPressedThisFrame
+private bool s_MouseButtonIsPressed
+private void UpdateMouse()
 private void SetMouseMoved()
 private void DoSendMouseEvents(int skipRTCameras)
 private void SendEvents(int i, HitInfo hit)

@@ -10,6 +10,8 @@ public void Dispose()
 public UnityEngine.Networking.DownloadHandler : object {
 internal IntPtr m_Ptr
 public bool isDone
+public string error
+public ReadOnly<byte> nativeData
 public Byte[] data
 public string text
 private void Release()
@@ -17,8 +19,12 @@ protected void Finalize()
 public void Dispose()
 public bool get_isDone()
 private bool IsDone()
+public string get_error()
+private string GetErrorMsg()
+public ReadOnly<byte> get_nativeData()
 public Byte[] get_data()
 public string get_text()
+protected NativeArray`1<byte> GetNativeData()
 protected Byte[] GetData()
 protected string GetText()
 private Encoding GetTextEncoder()
@@ -29,13 +35,18 @@ protected void ReceiveContentLength(int contentLength)
 protected void CompleteContent()
 protected float GetProgress()
 protected T GetCheckedDownloader(UnityWebRequest www)
+internal Byte* InternalGetByteArray(DownloadHandler dh, Int32& length)
 internal Byte[] InternalGetByteArray(DownloadHandler dh)
+internal NativeArray`1<byte> InternalGetNativeArray(DownloadHandler dh, NativeArray`1& nativeArray)
+internal void DisposeNativeArray(NativeArray`1& data)
+internal void CreateNativeArrayForNativeData(NativeArray`1& data, Byte* bytes, int length)
 }
 public UnityEngine.Networking.DownloadHandlerBuffer : DownloadHandler {
+private NativeArray`1<byte> m_NativeData
 private IntPtr Create(DownloadHandlerBuffer obj)
 private void InternalCreateBuffer()
-protected Byte[] GetData()
-private Byte[] InternalGetData()
+protected NativeArray`1<byte> GetNativeData()
+public void Dispose()
 public string GetContent(UnityWebRequest www)
 }
 public UnityEngine.Networking.DownloadHandlerFile : DownloadHandler {
@@ -44,6 +55,7 @@ private IntPtr Create(DownloadHandlerFile obj, string path, bool append)
 private void InternalCreateVFS(string path, bool append)
 public void .ctor(string path)
 public void .ctor(string path, bool append)
+protected NativeArray`1<byte> GetNativeData()
 protected Byte[] GetData()
 protected string GetText()
 public bool get_removeFileOnAbort()
@@ -137,6 +149,7 @@ public bool isModifiable
 public bool isDone
 public bool isNetworkError
 public bool isHttpError
+public Result result
 public float downloadProgress
 public ulong uploadedBytes
 public ulong downloadedBytes
@@ -204,6 +217,7 @@ public bool get_isModifiable()
 public bool get_isDone()
 public bool get_isNetworkError()
 public bool get_isHttpError()
+public Result get_result()
 private float GetDownloadProgress()
 public float get_downloadProgress()
 public ulong get_uploadedBytes()
@@ -310,10 +324,13 @@ private IntPtr Create(UploadHandlerFile self, string filePath)
 public void .ctor(string filePath)
 }
 public UnityEngine.Networking.UploadHandlerRaw : UploadHandler {
-private IntPtr Create(UploadHandlerRaw self, Byte[] data)
+private NativeArray`1<byte> m_Payload
+private IntPtr Create(UploadHandlerRaw self, Byte* data, int dataLength)
 public void .ctor(Byte[] data)
-private Byte[] InternalGetData()
+public void .ctor(NativeArray`1<byte> data, bool transferOwnership)
+public void .ctor(ReadOnly<byte> data)
 internal Byte[] GetData()
+public void Dispose()
 }
 public UnityEngine.WWWForm : object {
 private List`1<Byte[]> formData
@@ -322,6 +339,14 @@ private List`1<string> fileNames
 private List`1<string> types
 private Byte[] boundary
 private bool containsFiles
+private Byte[] dDash
+private Byte[] crlf
+private Byte[] contentTypeHeader
+private Byte[] dispositionHeader
+private Byte[] endQuote
+private Byte[] fileNameField
+private Byte[] ampersand
+private Byte[] equal
 internal Encoding DefaultEncoding
 public Dictionary`2<string, string> headers
 public Byte[] data
@@ -346,7 +371,7 @@ private byte qpEscapeChar
 private Byte[] qpSpace
 private Byte[] qpForbidden
 private byte Hex2Byte(Byte[] b, int offset)
-private Byte[] Byte2Hex(byte b, Byte[] hexChars)
+private void Byte2Hex(byte b, Byte[] hexChars, Byte& byte0, Byte& byte1)
 public string URLEncode(string toEncode)
 public string URLEncode(string toEncode, Encoding e)
 public Byte[] URLEncode(Byte[] toEncode)
@@ -371,7 +396,7 @@ private bool ByteSubArrayEquals(Byte[] array, int index, Byte[] comperand)
 public Byte[] Decode(Byte[] input, byte escapeChar, Byte[] space)
 public bool SevenBitClean(string s)
 public bool SevenBitClean(string s, Encoding e)
-public bool SevenBitClean(Byte[] input)
+public bool SevenBitClean(Byte* input, int inputLength)
 }
 internal UnityEngineInternal.WebRequestUtils : object {
 private Regex domainRegex

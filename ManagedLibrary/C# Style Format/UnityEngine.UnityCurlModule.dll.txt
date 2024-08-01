@@ -1,0 +1,32 @@
+internal Unity.Curl.BufferOwnership : Enum {
+public int value__
+public BufferOwnership Copy
+public BufferOwnership Transfer
+public BufferOwnership External
+}
+internal Unity.Curl.CurlEasyHandleFlags : Enum {
+public UInt32 value__
+public CurlEasyHandleFlags kSendBody
+public CurlEasyHandleFlags kReceiveHeaders
+public CurlEasyHandleFlags kReceiveBody
+public CurlEasyHandleFlags kFollowRedirects
+}
+internal Unity.Curl.UnityCurl : object {
+internal IntPtr CreateMultiHandle()
+internal void DestroyMultiHandle(IntPtr handle)
+internal IntPtr CreateEasyHandle(Byte* method, Byte* url, UInt32& curlMethod)
+internal void SetupEasyHandle(IntPtr handle, UInt32 curlMethod, IntPtr headers, ulong contentLen, UInt32 flags)
+internal void DestroyEasyHandle(IntPtr handle)
+internal void QueueRequest(IntPtr multiHandle, IntPtr easyHandle)
+internal IntPtr AppendHeader(IntPtr headerList, Byte* header)
+internal void FreeHeaderList(IntPtr headerList)
+internal int GetRequestErrorCode(IntPtr request)
+internal int GetRequestStatus(IntPtr request)
+internal UInt32 GetRequestStatusCode(IntPtr request)
+internal void GetDownloadSize(IntPtr request, UInt64& downloaded, UInt64& expected)
+internal Byte* GetResponseHeader(IntPtr request, UInt32 index, UInt32& length)
+internal Byte* GetMoreBody(IntPtr handle, Int32& length)
+internal void SendMoreBody(IntPtr handle, Byte* chunk, UInt32 length, BufferOwnership ownership)
+private void SendMoreBody(IntPtr handle, Byte* chunk, UInt32 length, int ownership)
+internal void AbortRequest(IntPtr handle)
+}

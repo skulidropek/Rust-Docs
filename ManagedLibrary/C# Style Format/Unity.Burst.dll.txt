@@ -1,13 +1,19 @@
 public Unity.Burst.BurstCompileAttribute : Attribute {
 private FloatMode <FloatMode>k__BackingField
 private FloatPrecision <FloatPrecision>k__BackingField
-private bool <CompileSynchronously>k__BackingField
-private bool <Debug>k__BackingField
+internal Nullable`1<bool> _compileSynchronously
+internal Nullable`1<bool> _debug
+internal Nullable`1<bool> _disableSafetyChecks
+internal Nullable`1<bool> _disableDirectCall
+private OptimizeFor <OptimizeFor>k__BackingField
 private String[] <Options>k__BackingField
 public FloatMode FloatMode
 public FloatPrecision FloatPrecision
 public bool CompileSynchronously
 public bool Debug
+public bool DisableSafetyChecks
+public bool DisableDirectCall
+public OptimizeFor OptimizeFor
 internal String[] Options
 public FloatMode get_FloatMode()
 public void set_FloatMode(FloatMode value)
@@ -17,46 +23,78 @@ public bool get_CompileSynchronously()
 public void set_CompileSynchronously(bool value)
 public bool get_Debug()
 public void set_Debug(bool value)
+public bool get_DisableSafetyChecks()
+public void set_DisableSafetyChecks(bool value)
+public bool get_DisableDirectCall()
+public void set_DisableDirectCall(bool value)
+public OptimizeFor get_OptimizeFor()
+public void set_OptimizeFor(OptimizeFor value)
 internal String[] get_Options()
 internal void set_Options(String[] value)
 public void .ctor(FloatPrecision floatPrecision, FloatMode floatMode)
+internal void .ctor(String[] options)
 }
 public Unity.Burst.BurstCompiler : object {
-private object GlobalLock
-private BurstCompilerOptions _global
+internal bool _IsEnabled
 public BurstCompilerOptions Options
-public BurstCompilerOptions get_Options()
+internal Action OnCompileILPPMethod
+private MethodInfo DummyMethodInfo
+public bool IsEnabled
+public bool IsLoadAdditionalLibrarySupported()
+public bool get_IsEnabled()
 public void SetExecutionMode(BurstExecutionEnvironment mode)
 public BurstExecutionEnvironment GetExecutionMode()
 internal T CompileDelegate(T delegateMethod)
+private void VerifyDelegateIsNotMulticast(T delegateMethod)
+private void VerifyDelegateHasCorrectUnmanagedFunctionPointerAttribute(T delegateMethod)
+public IntPtr CompileILPPMethod(RuntimeMethodHandle burstMethodHandle, RuntimeMethodHandle managedMethodHandle, RuntimeTypeHandle delegateTypeHandle)
+public Void* GetILPPMethodFunctionPointer(IntPtr ilppMethod)
+public Void* CompileUnsafeStaticMethod(RuntimeMethodHandle handle)
 public FunctionPointer`1<T> CompileFunctionPointer(T delegateMethod)
-private Void* Compile(T delegateObj, bool isFunctionPointer)
+private Void* Compile(object delegateObj, bool isFunctionPointer)
+private Void* Compile(object delegateObj, MethodInfo methodInfo, bool isFunctionPointer, object managedFallbackDelegateObj)
 internal void Shutdown()
 internal void Cancel()
 internal void Enable()
 internal void Disable()
+internal bool IsHostEditorArm()
+internal void TriggerUnsafeStaticMethodRecompilation()
 internal void TriggerRecompilation()
+internal void UnloadAdditionalLibraries()
+internal bool IsApiAvailable(string apiName)
+internal void EagerCompileMethods(List`1<EagerCompilationRequest> requests)
+internal void WaitUntilCompilationFinished()
+internal void ClearEagerCompilationQueues()
+internal void CancelEagerCompilation()
+internal void SetProgressCallback()
+internal void RequestClearJitCache()
+internal void SetProfilerCallbacks()
 internal void Reset()
+private string SendCommandToCompiler(string commandName, string commandArgs)
+private void DummyMethod()
 }
 public Unity.Burst.BurstCompilerOptions : object {
 private string DisableCompilationArg
 private string ForceSynchronousCompilationArg
 internal string DefaultLibraryName
 internal string BurstInitializeName
-internal string DefaultCacheFolder
-internal string DeleteCacheMarkerFileName
+internal string BurstInitializeExternalsName
+internal string BurstInitializeStaticsName
+internal string OptionDoNotEagerCompile
+internal string DoNotEagerCompile
 internal string OptionGroup
 internal string OptionPlatform
 internal string OptionBackend
-internal string OptionSafetyChecks
+internal string OptionGlobalSafetyChecksSetting
 internal string OptionDisableSafetyChecks
 internal string OptionDisableOpt
 internal string OptionFastMath
 internal string OptionTarget
-internal string OptionIROpt
-internal string OptionCpuOpt
+internal string OptionOptLevel
+internal string OptionOptForSize
 internal string OptionFloatPrecision
 internal string OptionFloatMode
+internal string OptionDisableWarnings
 internal string OptionCompilationDefines
 internal string OptionDump
 internal string OptionFormat
@@ -69,16 +107,21 @@ internal string OptionJobMarshalling
 internal string OptionTempDirectory
 internal string OptionEnableDirectExternalLinking
 internal string OptionLinkerOptions
+internal string OptionEnableAutoLayoutFallbackCheck
+internal string OptionGenerateLinkXml
 internal string OptionCacheDirectory
 internal string OptionJitDisableFunctionCaching
 internal string OptionJitDisableAssemblyCaching
 internal string OptionJitEnableAssemblyCachingLogs
 internal string OptionJitEnableSynchronousCompilation
+internal string OptionJitCompilationPriority
 internal string OptionJitLogTimings
 internal string OptionJitIsForFunctionPointer
 internal string OptionJitManagedFunctionPointer
 internal string OptionJitProvider
 internal string OptionJitSkipCheckDiskCache
+internal string OptionJitSkipBurstInitialize
+internal string OptionEnableInterpreter
 internal string OptionAotAssemblyFolder
 internal string OptionRootAssembly
 internal string OptionIncludeRootAssemblyReferences
@@ -95,6 +138,7 @@ internal string OptionAotUsePlatformSDKLinkers
 internal string OptionAotOnlyStaticMethods
 internal string OptionMethodPrefix
 internal string OptionAotNoNativeToolchain
+internal string OptionAotEmitLlvmObjects
 internal string OptionAotKeyFolder
 internal string OptionAotDecodeFolder
 internal string OptionVerbose
@@ -105,22 +149,36 @@ internal string OptionPrintLogOnMissingPInvokeCallbackAttribute
 internal string OptionOutputMode
 internal string OptionAlwaysCreateOutput
 internal string OptionAotPdbSearchPaths
+internal string OptionSafetyChecks
 internal string CompilerCommandShutdown
 internal string CompilerCommandCancel
 internal string CompilerCommandEnableCompiler
 internal string CompilerCommandDisableCompiler
 internal string CompilerCommandTriggerRecompilation
+internal string CompilerCommandEagerCompileMethods
+internal string CompilerCommandWaitUntilCompilationFinished
+internal string CompilerCommandClearEagerCompilationQueues
+internal string CompilerCommandCancelEagerCompilation
 internal string CompilerCommandReset
 internal string CompilerCommandDomainReload
 internal string CompilerCommandUpdateAssemblyFolders
 internal string CompilerCommandVersionNotification
+internal string CompilerCommandSetProgressCallback
+internal string CompilerCommandRequestClearJitCache
+internal string CompilerCommandSetProfileCallbacks
+internal string CompilerCommandUnloadBurstNatives
+internal string CompilerCommandIsNativeApiAvailable
+internal string CompilerCommandILPPCompilation
+internal string CompilerCommandIsArmTestEnv
 internal bool ForceDisableBurstCompilation
 private bool ForceBurstCompilationSynchronously
+internal bool IsSecondaryUnityProcess
 private bool _enableBurstCompilation
 private bool _enableBurstCompileSynchronously
 private bool _enableBurstSafetyChecks
 private bool _enableBurstTimings
 private bool _enableBurstDebug
+private bool _forceEnableBurstSafetyChecks
 private bool <IsGlobal>k__BackingField
 private Action <OptionsChanged>k__BackingField
 private bool IsGlobal
@@ -128,10 +186,12 @@ public bool IsEnabled
 public bool EnableBurstCompilation
 public bool EnableBurstCompileSynchronously
 public bool EnableBurstSafetyChecks
+public bool ForceEnableBurstSafetyChecks
 public bool EnableBurstDebug
 public bool DisableOptimizations
 public bool EnableFastMath
 internal bool EnableBurstTimings
+internal bool RequiresSynchronousCompilation
 internal Action OptionsChanged
 internal void .ctor(bool isGlobal)
 private bool get_IsGlobal()
@@ -142,6 +202,8 @@ public bool get_EnableBurstCompileSynchronously()
 public void set_EnableBurstCompileSynchronously(bool value)
 public bool get_EnableBurstSafetyChecks()
 public void set_EnableBurstSafetyChecks(bool value)
+public bool get_ForceEnableBurstSafetyChecks()
+public void set_ForceEnableBurstSafetyChecks(bool value)
 public bool get_EnableBurstDebug()
 public void set_EnableBurstDebug(bool value)
 public bool get_DisableOptimizations()
@@ -150,18 +212,23 @@ public bool get_EnableFastMath()
 public void set_EnableFastMath(bool value)
 internal bool get_EnableBurstTimings()
 internal void set_EnableBurstTimings(bool value)
+internal bool get_RequiresSynchronousCompilation()
 internal Action get_OptionsChanged()
 internal void set_OptionsChanged(Action value)
 internal BurstCompilerOptions Clone()
-private bool TryGetAttribute(MemberInfo member, BurstCompileAttribute& attribute)
+private bool TryGetAttribute(MemberInfo member, BurstCompileAttribute& attribute, bool isForEagerCompilation)
+private bool TryGetAttribute(Assembly assembly, BurstCompileAttribute& attribute)
 private BurstCompileAttribute GetBurstCompileAttribute(MemberInfo memberInfo)
 internal bool HasBurstCompileAttribute(MemberInfo member)
-internal bool TryGetOptions(MemberInfo member, bool isJit, String& flagsOut)
-internal string GetOptions(bool isJit, BurstCompileAttribute attr)
+internal void MergeAttributes(BurstCompileAttribute& memberAttribute, BurstCompileAttribute& assemblyAttribute)
+internal bool TryGetOptions(MemberInfo member, bool isJit, String& flagsOut, bool isForEagerCompilation, bool isForILPostProcessing)
+internal string GetOptions(bool isJit, BurstCompileAttribute attr, bool isForEagerCompilation, bool isForILPostProcessing)
 private void AddOption(StringBuilder builder, string option)
 internal string GetOption(string optionName, object value)
 private void OnOptionsChanged()
 private void MaybeTriggerRecompilation()
+private void MaybePreventChangingOption()
+private bool CheckIsSecondaryUnityProcess()
 }
 public Unity.Burst.BurstExecutionEnvironment : Enum {
 public int value__
@@ -170,18 +237,20 @@ public BurstExecutionEnvironment NonDeterministic
 public BurstExecutionEnvironment Deterministic
 }
 public Unity.Burst.BurstRuntime : object {
-private NativeLogDelegate ManagedNativeLog
 public int GetHashCode32()
 public int GetHashCode32(Type type)
 public long GetHashCode64()
 public long GetHashCode64(Type type)
 internal int HashStringWithFNV1A32(string text)
 internal long HashStringWithFNV1A64(string text)
-internal void Log(Byte* message, int logType, Byte* fileName, int lineNumber)
-private void ManagedNativeLogImpl(Byte* message, int logType, Byte* filename, int lineNumber)
+public bool LoadAdditionalLibrary(string pathToLibBurstGenerated)
+internal bool LoadAdditionalLibraryInternal(string pathToLibBurstGenerated)
 internal void Initialize()
+internal void Log(Byte* message, int logType, Byte* fileName, int lineNumber)
+public Byte* GetUTF8LiteralPointer(string str, Int32& byteCount)
 }
 internal Unity.Burst.BurstString : object {
+private Char[] SplitByColon
 private Byte[] logTable
 private UInt32[] g_PowerOf10_U32
 private Byte[] InfinityString
@@ -192,27 +261,7 @@ internal int SingleNumberBufferLength
 internal int DoubleNumberBufferLength
 private int SinglePrecisionCustomFormat
 private int DoublePrecisionCustomFormat
-private Char[] SplitByColon
-private UInt32 LogBase2(UInt32 val)
-private int BigInt_Compare(tBigInt& lhs, tBigInt& rhs)
-private void BigInt_Add(tBigInt& pResult, tBigInt& lhs, tBigInt& rhs)
-private void BigInt_Multiply(tBigInt& pResult, tBigInt& lhs, tBigInt& rhs)
-private void BigInt_Multiply(tBigInt& pResult, tBigInt& lhs, UInt32 rhs)
-private void BigInt_Multiply2(tBigInt& pResult, tBigInt& input)
-private void BigInt_Multiply2(tBigInt& pResult)
-private void BigInt_Multiply10(tBigInt& pResult)
-private tBigInt g_PowerOf10_Big(int i)
-private void BigInt_Pow10(tBigInt& pResult, UInt32 exponent)
-private void BigInt_MultiplyPow10(tBigInt& pResult, tBigInt& input, UInt32 exponent)
-private void BigInt_Pow2(tBigInt& pResult, UInt32 exponent)
-private UInt32 BigInt_DivideWithRemainder_MaxQuotient9(tBigInt& pDividend, tBigInt& divisor)
-private void BigInt_ShiftLeft(tBigInt& pResult, UInt32 shift)
-private UInt32 Dragon4(ulong mantissa, int exponent, UInt32 mantissaHighBitIdx, bool hasUnequalMargins, CutoffMode cutoffMode, UInt32 cutoffNumber, Byte* pOutBuffer, UInt32 bufferSize, Int32& pOutExponent)
-private int FormatPositional(Byte* pOutBuffer, UInt32 bufferSize, ulong mantissa, int exponent, UInt32 mantissaHighBitIdx, bool hasUnequalMargins, int precision)
-private int FormatScientific(Byte* pOutBuffer, UInt32 bufferSize, ulong mantissa, int exponent, UInt32 mantissaHighBitIdx, bool hasUnequalMargins, int precision)
-private void FormatInfinityNaN(Byte* dest, Int32& destIndex, int destLength, ulong mantissa, bool isNegative, FormatOptions formatOptions)
-private void ConvertFloatToString(Byte* dest, Int32& destIndex, int destLength, float value, FormatOptions formatOptions)
-private void ConvertDoubleToString(Byte* dest, Int32& destIndex, int destLength, double value, FormatOptions formatOptions)
+public void CopyFixedString(Byte* dest, int destLength, Byte* src, int srcLength)
 public void Format(Byte* dest, Int32& destIndex, int destLength, Byte* src, int srcLength, int formatOptionsRaw)
 public void Format(Byte* dest, Int32& destIndex, int destLength, float value, int formatOptionsRaw)
 public void Format(Byte* dest, Int32& destIndex, int destLength, double value, int formatOptionsRaw)
@@ -232,6 +281,7 @@ private void ConvertIntegerToString(Byte* dest, Int32& destIndex, int destLength
 private void FormatNumber(Byte* dest, Int32& destIndex, int destLength, NumberBuffer& number, int nMaxDigits, FormatOptions options)
 private void FormatDecimalOrHexadecimal(Byte* dest, Int32& destIndex, int destLength, NumberBuffer& number, int zeroPadding, bool outputPositiveSign)
 private byte ValueToIntegerChar(int value, bool uppercase)
+private void OptsSplit(string fullFormat, String& padding, String& format)
 public FormatOptions ParseFormatToFormatOptions(string fullFormat)
 private bool AlignRight(Byte* dest, Int32& destIndex, int destLength, int align, int length)
 private bool AlignLeft(Byte* dest, Int32& destIndex, int destLength, int align, int length)
@@ -239,6 +289,50 @@ private int GetLengthForFormatGeneral(NumberBuffer& number, int nMaxDigits)
 private void FormatGeneral(Byte* dest, Int32& destIndex, int destLength, NumberBuffer& number, int nMaxDigits, byte expChar)
 private void RoundNumber(NumberBuffer& number, int pos, bool isCorrectlyRounded)
 private bool ShouldRoundUp(Byte* dig, int i, bool isCorrectlyRounded)
+private UInt32 LogBase2(UInt32 val)
+private int BigInt_Compare(tBigInt& lhs, tBigInt& rhs)
+private void BigInt_Add(tBigInt& pResult, tBigInt& lhs, tBigInt& rhs)
+private void BigInt_Add_internal(tBigInt& pResult, tBigInt& pLarge, tBigInt& pSmall)
+private void BigInt_Multiply(tBigInt& pResult, tBigInt& lhs, tBigInt& rhs)
+private void BigInt_Multiply_internal(tBigInt& pResult, tBigInt& pLarge, tBigInt& pSmall)
+private void BigInt_Multiply(tBigInt& pResult, tBigInt& lhs, UInt32 rhs)
+private void BigInt_Multiply2(tBigInt& pResult, tBigInt& input)
+private void BigInt_Multiply2(tBigInt& pResult)
+private void BigInt_Multiply10(tBigInt& pResult)
+private tBigInt g_PowerOf10_Big(int i)
+private void BigInt_Pow10(tBigInt& pResult, UInt32 exponent)
+private void BigInt_MultiplyPow10(tBigInt& pResult, tBigInt& input, UInt32 exponent)
+private void BigInt_Pow2(tBigInt& pResult, UInt32 exponent)
+private UInt32 BigInt_DivideWithRemainder_MaxQuotient9(tBigInt& pDividend, tBigInt& divisor)
+private void BigInt_ShiftLeft(tBigInt& pResult, UInt32 shift)
+private UInt32 Dragon4(ulong mantissa, int exponent, UInt32 mantissaHighBitIdx, bool hasUnequalMargins, CutoffMode cutoffMode, UInt32 cutoffNumber, Byte* pOutBuffer, UInt32 bufferSize, Int32& pOutExponent)
+private int FormatPositional(Byte* pOutBuffer, UInt32 bufferSize, ulong mantissa, int exponent, UInt32 mantissaHighBitIdx, bool hasUnequalMargins, int precision)
+private int FormatScientific(Byte* pOutBuffer, UInt32 bufferSize, ulong mantissa, int exponent, UInt32 mantissaHighBitIdx, bool hasUnequalMargins, int precision)
+private void FormatInfinityNaN(Byte* dest, Int32& destIndex, int destLength, ulong mantissa, bool isNegative, FormatOptions formatOptions)
+private void ConvertFloatToString(Byte* dest, Int32& destIndex, int destLength, float value, FormatOptions formatOptions)
+private void ConvertDoubleToString(Byte* dest, Int32& destIndex, int destLength, double value, FormatOptions formatOptions)
+}
+internal Unity.Burst.BurstTargetCpu : Enum {
+public int value__
+public BurstTargetCpu Auto
+public BurstTargetCpu X86_SSE2
+public BurstTargetCpu X86_SSE4
+public BurstTargetCpu X64_SSE2
+public BurstTargetCpu X64_SSE4
+public BurstTargetCpu AVX
+public BurstTargetCpu AVX2
+public BurstTargetCpu WASM32
+public BurstTargetCpu ARMV7A_NEON32
+public BurstTargetCpu ARMV8A_AARCH64
+public BurstTargetCpu THUMB2_NEON32
+public BurstTargetCpu ARMV8A_AARCH64_HALFFP
+}
+internal Unity.Burst.CompilationPriority : Enum {
+public int value__
+public CompilationPriority EagerCompilationSynchronous
+public CompilationPriority Asynchronous
+public CompilationPriority ILPP
+public CompilationPriority EagerCompilationAsynchronous
 }
 public Unity.Burst.CompilerServices.Aliasing : object {
 public void ExpectAliased(Void* a, Void* b)
@@ -254,6 +348,18 @@ public Unity.Burst.CompilerServices.AssumeRangeAttribute : Attribute {
 public void .ctor(long min, long max)
 public void .ctor(ulong min, ulong max)
 }
+public Unity.Burst.CompilerServices.Constant : object {
+public bool IsConstantExpression(T t)
+public bool IsConstantExpression(Void* t)
+}
+public Unity.Burst.CompilerServices.Hint : object {
+public bool Likely(bool condition)
+public bool Unlikely(bool condition)
+public void Assume(bool condition)
+}
+public Unity.Burst.CompilerServices.IgnoreWarningAttribute : Attribute {
+public void .ctor(int warning)
+}
 internal Unity.Burst.DiagnosticId : Enum {
 public int value__
 public DiagnosticId ERR_InternalCompilerErrorInBackend
@@ -264,7 +370,6 @@ public DiagnosticId ERR_UnableToAccessManagedMethod
 public DiagnosticId ERR_UnableToFindInterfaceMethod
 public DiagnosticId ERR_UnexpectedEmptyMethodBody
 public DiagnosticId ERR_ManagedArgumentsNotSupported
-public DiagnosticId ERR_TryConstructionNotSupported
 public DiagnosticId ERR_CatchConstructionNotSupported
 public DiagnosticId ERR_CatchAndFilterConstructionNotSupported
 public DiagnosticId ERR_LdfldaWithFixedArrayExpected
@@ -300,7 +405,6 @@ public DiagnosticId ERR_LoadingFromManagedNonReadonlyStaticFieldNotSupported
 public DiagnosticId ERR_InstructionStfldToManagedObjectNotSupported
 public DiagnosticId ERR_InstructionLdlenNonConstantLengthNotSupported
 public DiagnosticId ERR_StructWithAutoLayoutNotSupported
-public DiagnosticId ERR_StructWithPackNotSupported
 public DiagnosticId ERR_StructWithGenericParametersAndExplicitLayoutNotSupported
 public DiagnosticId ERR_StructSizeNotSupported
 public DiagnosticId ERR_StructZeroSizeNotSupported
@@ -315,7 +419,6 @@ public DiagnosticId ERR_FunctionPointerMethodMissingBurstCompileAttribute
 public DiagnosticId ERR_FunctionPointerTypeMissingBurstCompileAttribute
 public DiagnosticId ERR_FunctionPointerMethodAndTypeMissingBurstCompileAttribute
 public DiagnosticId INF_FunctionPointerMethodAndTypeMissingMonoPInvokeCallbackAttribute
-public DiagnosticId ERR_EntryPointFunctionCannotBeCalledInternally
 public DiagnosticId ERR_MarshalAsOnParameterNotSupported
 public DiagnosticId ERR_MarshalAsOnReturnTypeNotSupported
 public DiagnosticId ERR_TypeNotBlittableForFunctionPointer
@@ -323,6 +426,7 @@ public DiagnosticId ERR_StructByValueNotSupported
 public DiagnosticId ERR_StructsWithNonUnicodeCharsNotSupported
 public DiagnosticId ERR_VectorsByValueNotSupported
 public DiagnosticId ERR_MissingExternBindings
+public DiagnosticId ERR_MarshalAsNativeTypeOnReturnTypeNotSupported
 public DiagnosticId ERR_AssertTypeNotSupported
 public DiagnosticId ERR_StoringToReadOnlyFieldNotAllowed
 public DiagnosticId ERR_StoringToFieldInReadOnlyParameterNotAllowed
@@ -340,6 +444,7 @@ public DiagnosticId ERR_UnexpectedIntegerTypesForBinaryOperation
 public DiagnosticId ERR_BinaryOperationNotSupported
 public DiagnosticId ERR_CalliWithThisNotSupported
 public DiagnosticId ERR_CalliNonCCallingConventionNotSupported
+public DiagnosticId ERR_StringLiteralTooBig
 public DiagnosticId ERR_InstructionTargetCpuFeatureNotAllowedInThisBlock
 public DiagnosticId ERR_AssumeRangeTypeMustBeInteger
 public DiagnosticId ERR_AssumeRangeTypeMustBeSameSign
@@ -368,8 +473,23 @@ public DiagnosticId ERR_StringArrayInvalidArraySize
 public DiagnosticId ERR_StringArrayInvalidControlFlow
 public DiagnosticId ERR_StringArrayInvalidArrayIndex
 public DiagnosticId ERR_StringArrayInvalidArrayIndexOutOfRange
+public DiagnosticId ERR_UnmanagedStringMethodMissing
+public DiagnosticId ERR_UnmanagedStringMethodInvalid
 public DiagnosticId ERR_ManagedStaticConstructor
 public DiagnosticId ERR_StaticConstantArrayInStaticConstructor
+public DiagnosticId WRN_ExceptionThrownInNonSafetyCheckGuardedFunction
+public DiagnosticId WRN_ACallToMethodHasBeenDiscarded
+public DiagnosticId ERR_AccessingNestedManagedArrayNotSupported
+public DiagnosticId ERR_LdobjFromANonPointerNonReference
+public DiagnosticId ERR_StringLiteralRequired
+public DiagnosticId ERR_MultiDimensionalArrayUnsupported
+public DiagnosticId ERR_NonBlittableAndNonManagedSequentialStructNotSupported
+public DiagnosticId ERR_VarArgFunctionNotSupported
+}
+internal Unity.Burst.EagerCompilationRequest : ValueType {
+public string EncodedMethod
+public string Options
+public void .ctor(string encodedMethod, string options)
 }
 public Unity.Burst.FloatMode : Enum {
 public int value__
@@ -392,14 +512,26 @@ public T Invoke
 public bool IsCreated
 public void .ctor(IntPtr ptr)
 public IntPtr get_Value()
+private void CheckIsCreated()
 public T get_Invoke()
 public bool get_IsCreated()
 private IFunctionPointer Unity.Burst.IFunctionPointer.FromIntPtr(IntPtr ptr)
 }
+internal Unity.Burst.GlobalSafetyChecksSettingKind : Enum {
+public int value__
+public GlobalSafetyChecksSettingKind Off
+public GlobalSafetyChecksSettingKind On
+public GlobalSafetyChecksSettingKind ForceOn
+}
 public Unity.Burst.IFunctionPointer {
 public IFunctionPointer FromIntPtr(IntPtr ptr)
 }
+internal Unity.Burst.Intrinsics.BurstTargetCpuAttribute : Attribute {
+public BurstTargetCpu TargetCpu
+public void .ctor(BurstTargetCpu TargetCpu)
+}
 public Unity.Burst.Intrinsics.Common : object {
+public void Pause()
 public ulong umul128(ulong x, ulong y, UInt64& high)
 }
 public Unity.Burst.Intrinsics.v128 : ValueType {
@@ -469,6 +601,8 @@ public float Float2
 public float Float3
 public double Double0
 public double Double1
+public v64 Lo64
+public v64 Hi64
 public void .ctor(byte b)
 public void .ctor(byte a, byte b, byte c, byte d, byte e, byte f, byte g, byte h, byte i, byte j, byte k, byte l, byte m, byte n, byte o, byte p)
 public void .ctor(sbyte b)
@@ -489,6 +623,7 @@ public void .ctor(long f)
 public void .ctor(long a, long b)
 public void .ctor(ulong f)
 public void .ctor(ulong a, ulong b)
+public void .ctor(v64 lo, v64 hi)
 }
 internal Unity.Burst.Intrinsics.V128DebugView : object {
 private v128 m_Value
@@ -695,11 +830,84 @@ public Int64[] get_SLong()
 public UInt64[] get_ULong()
 public Double[] get_Double()
 }
+public Unity.Burst.Intrinsics.v64 : ValueType {
+public byte Byte0
+public byte Byte1
+public byte Byte2
+public byte Byte3
+public byte Byte4
+public byte Byte5
+public byte Byte6
+public byte Byte7
+public sbyte SByte0
+public sbyte SByte1
+public sbyte SByte2
+public sbyte SByte3
+public sbyte SByte4
+public sbyte SByte5
+public sbyte SByte6
+public sbyte SByte7
+public ushort UShort0
+public ushort UShort1
+public ushort UShort2
+public ushort UShort3
+public short SShort0
+public short SShort1
+public short SShort2
+public short SShort3
+public UInt32 UInt0
+public UInt32 UInt1
+public int SInt0
+public int SInt1
+public ulong ULong0
+public long SLong0
+public float Float0
+public float Float1
+public double Double0
+public void .ctor(byte b)
+public void .ctor(byte a, byte b, byte c, byte d, byte e, byte f, byte g, byte h)
+public void .ctor(sbyte b)
+public void .ctor(sbyte a, sbyte b, sbyte c, sbyte d, sbyte e, sbyte f, sbyte g, sbyte h)
+public void .ctor(short v)
+public void .ctor(short a, short b, short c, short d)
+public void .ctor(ushort v)
+public void .ctor(ushort a, ushort b, ushort c, ushort d)
+public void .ctor(int v)
+public void .ctor(int a, int b)
+public void .ctor(UInt32 v)
+public void .ctor(UInt32 a, UInt32 b)
+public void .ctor(float f)
+public void .ctor(float a, float b)
+public void .ctor(double a)
+public void .ctor(long a)
+public void .ctor(ulong a)
+}
+internal Unity.Burst.Intrinsics.V64DebugView : object {
+private v64 m_Value
+public Byte[] Byte
+public SByte[] SByte
+public UInt16[] UShort
+public Int16[] SShort
+public UInt32[] UInt
+public Int32[] SInt
+public Single[] Float
+public Int64[] SLong
+public UInt64[] ULong
+public Double[] Double
+public void .ctor(v64 value)
+public Byte[] get_Byte()
+public SByte[] get_SByte()
+public UInt16[] get_UShort()
+public Int16[] get_SShort()
+public UInt32[] get_UInt()
+public Int32[] get_SInt()
+public Single[] get_Float()
+public Int64[] get_SLong()
+public UInt64[] get_ULong()
+public Double[] get_Double()
+}
 public Unity.Burst.Intrinsics.X86 : object {
-private GetCSRDelegate ManagedGetCSRTrampoline
-private SetCSRDelegate ManagedSetCSRTrampoline
 public MXCSRBits MXCSR
-private void CheckPointerAlignment16(Void* mem_addr)
 private v128 GenericCSharpLoad(Void* ptr)
 private void GenericCSharpStore(Void* ptr, v128 val)
 private sbyte Saturate_To_Int8(int val)
@@ -708,10 +916,8 @@ private short Saturate_To_Int16(int val)
 private ushort Saturate_To_UnsignedInt16(int val)
 private bool IsNaN(UInt32 v)
 private bool IsNaN(ulong v)
-private double RoundDImpl(double d, int roundingMode)
-private void BurstIntrinsicSetCSRFromManaged(int bits)
+private void BurstIntrinsicSetCSRFromManaged(int _)
 private int BurstIntrinsicGetCSRFromManaged()
-internal void CompileManagedCsrAccessors()
 internal int getcsr_raw()
 internal void setcsr_raw(int bits)
 private void DoSetCSRTrampoline(int bits)
@@ -733,10 +939,20 @@ public NativeDumpFlags IRPassAnalysis
 public NativeDumpFlags ILPre
 public NativeDumpFlags All
 }
+public Unity.Burst.OptimizeFor : Enum {
+public int value__
+public OptimizeFor Default
+public OptimizeFor Performance
+public OptimizeFor Size
+public OptimizeFor FastCompilation
+public OptimizeFor Balanced
+}
 internal Unity.Burst.SharedStatic : object {
 private Dictionary`2<long, Type> HashToType
 public Void* GetOrCreateSharedStaticInternal(Type typeContext, Type subTypeContext, UInt32 sizeOf, UInt32 alignment)
 private long GetSafeHashCode64(Type type)
+private void CheckSizeOf(UInt32 sizeOf)
+private void CheckResult(Void* result)
 public Void* GetOrCreateSharedStaticInternal(long getHashCode64, long getSubHashCode64, UInt32 sizeOf, UInt32 alignment)
 }
 public Unity.Burst.SharedStatic`1 : ValueType {

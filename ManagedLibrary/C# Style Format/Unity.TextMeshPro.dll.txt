@@ -614,6 +614,7 @@ public TextElementType Character
 public TextElementType Sprite
 }
 public TMPro.TextMeshPro : TMP_Text {
+private bool m_currentAutoSizeMode
 private bool m_hasFontAssetChanged
 private float m_previousLossyScaleY
 private Renderer m_renderer
@@ -629,7 +630,6 @@ private Matrix4x4 m_EnvMapMatrix
 private Vector3[] m_RectTransformCorners
 private bool m_isRegisteredForEvents
 private int loopCountA
-private bool m_currentAutoSizeMode
 public int sortingLayerID
 public int sortingOrder
 public bool autoSizeTextContainer
@@ -639,6 +639,38 @@ public Renderer renderer
 public Mesh mesh
 public MeshFilter meshFilter
 public MaskingTypes maskType
+public int get_sortingLayerID()
+public void set_sortingLayerID(int value)
+public int get_sortingOrder()
+public void set_sortingOrder(int value)
+public bool get_autoSizeTextContainer()
+public void set_autoSizeTextContainer(bool value)
+public TextContainer get_textContainer()
+public Transform get_transform()
+public Renderer get_renderer()
+public Mesh get_mesh()
+public MeshFilter get_meshFilter()
+public MaskingTypes get_maskType()
+public void set_maskType(MaskingTypes value)
+public void SetMask(MaskingTypes type, Vector4 maskCoords)
+public void SetMask(MaskingTypes type, Vector4 maskCoords, float softnessX, float softnessY)
+public void SetVerticesDirty()
+public void SetLayoutDirty()
+public void SetMaterialDirty()
+public void SetAllDirty()
+public void Rebuild(CanvasUpdate update)
+protected void UpdateMaterial()
+public void UpdateMeshPadding()
+public void ForceMeshUpdate()
+public void ForceMeshUpdate(bool ignoreInactive)
+public TMP_TextInfo GetTextInfo(string text)
+public void ClearMesh(bool updateMesh)
+public void UpdateGeometry(Mesh mesh, int index)
+public void UpdateVertexData(TMP_VertexDataUpdateFlags flags)
+public void UpdateVertexData()
+public void UpdateFontAsset()
+public void CalculateLayoutInputHorizontal()
+public void CalculateLayoutInputVertical()
 protected void Awake()
 protected void OnEnable()
 protected void OnDisable()
@@ -680,40 +712,10 @@ protected void ClearSubMeshObjects()
 protected Bounds GetCompoundBounds()
 private void UpdateSDFScale(float scaleDelta)
 protected void AdjustLineOffset(int startIndex, int endIndex, float offset)
-public int get_sortingLayerID()
-public void set_sortingLayerID(int value)
-public int get_sortingOrder()
-public void set_sortingOrder(int value)
-public bool get_autoSizeTextContainer()
-public void set_autoSizeTextContainer(bool value)
-public TextContainer get_textContainer()
-public Transform get_transform()
-public Renderer get_renderer()
-public Mesh get_mesh()
-public MeshFilter get_meshFilter()
-public MaskingTypes get_maskType()
-public void set_maskType(MaskingTypes value)
-public void SetMask(MaskingTypes type, Vector4 maskCoords)
-public void SetMask(MaskingTypes type, Vector4 maskCoords, float softnessX, float softnessY)
-public void SetVerticesDirty()
-public void SetLayoutDirty()
-public void SetMaterialDirty()
-public void SetAllDirty()
-public void Rebuild(CanvasUpdate update)
-protected void UpdateMaterial()
-public void UpdateMeshPadding()
-public void ForceMeshUpdate()
-public void ForceMeshUpdate(bool ignoreInactive)
-public TMP_TextInfo GetTextInfo(string text)
-public void ClearMesh(bool updateMesh)
-public void UpdateGeometry(Mesh mesh, int index)
-public void UpdateVertexData(TMP_VertexDataUpdateFlags flags)
-public void UpdateVertexData()
-public void UpdateFontAsset()
-public void CalculateLayoutInputHorizontal()
-public void CalculateLayoutInputVertical()
 }
 public TMPro.TextMeshProUGUI : TMP_Text {
+private bool m_isRebuildingLayout
+private Action`1<TMP_TextInfo> OnPreRenderText
 private bool m_hasFontAssetChanged
 protected TMP_SubMeshUI[] m_subTextObjects
 private float m_previousLossyScaleY
@@ -732,13 +734,45 @@ private bool m_isRegisteredForEvents
 private int m_recursiveCountA
 private int loopCountA
 private bool <blockRectTransformChange>k__BackingField
-private bool m_isRebuildingLayout
-public bool blockRectTransformChange
 public Material materialForRendering
 public bool autoSizeTextContainer
 public Mesh mesh
 public CanvasRenderer canvasRenderer
 public Vector4 maskOffset
+public bool blockRectTransformChange
+public Material get_materialForRendering()
+public bool get_autoSizeTextContainer()
+public void set_autoSizeTextContainer(bool value)
+public Mesh get_mesh()
+public CanvasRenderer get_canvasRenderer()
+public void CalculateLayoutInputHorizontal()
+public void CalculateLayoutInputVertical()
+public void SetVerticesDirty()
+public void SetLayoutDirty()
+public void SetMaterialDirty()
+public void SetAllDirty()
+public void Rebuild(CanvasUpdate update)
+private void UpdateSubObjectPivot()
+public Material GetModifiedMaterial(Material baseMaterial)
+protected void UpdateMaterial()
+public Vector4 get_maskOffset()
+public void set_maskOffset(Vector4 value)
+public void RecalculateClipping()
+public void RecalculateMasking()
+public void Cull(Rect clipRect, bool validRect)
+public void add_OnPreRenderText(Action`1<TMP_TextInfo> value)
+public void remove_OnPreRenderText(Action`1<TMP_TextInfo> value)
+public void UpdateMeshPadding()
+protected void InternalCrossFadeColor(Color targetColor, float duration, bool ignoreTimeScale, bool useAlpha)
+protected void InternalCrossFadeAlpha(float alpha, float duration, bool ignoreTimeScale)
+public void ForceMeshUpdate()
+public void ForceMeshUpdate(bool ignoreInactive)
+public TMP_TextInfo GetTextInfo(string text)
+public void ClearMesh()
+public void UpdateGeometry(Mesh mesh, int index)
+public void UpdateVertexData(TMP_VertexDataUpdateFlags flags)
+public void UpdateVertexData()
+public void UpdateFontAsset()
 protected void Awake()
 protected void OnEnable()
 protected void OnDisable()
@@ -778,37 +812,6 @@ protected void SetActiveSubMeshes(bool state)
 protected Bounds GetCompoundBounds()
 private void UpdateSDFScale(float scaleDelta)
 protected void AdjustLineOffset(int startIndex, int endIndex, float offset)
-public Material get_materialForRendering()
-public bool get_autoSizeTextContainer()
-public void set_autoSizeTextContainer(bool value)
-public Mesh get_mesh()
-public CanvasRenderer get_canvasRenderer()
-public void CalculateLayoutInputHorizontal()
-public void CalculateLayoutInputVertical()
-public void SetVerticesDirty()
-public void SetLayoutDirty()
-public void SetMaterialDirty()
-public void SetAllDirty()
-public void Rebuild(CanvasUpdate update)
-private void UpdateSubObjectPivot()
-public Material GetModifiedMaterial(Material baseMaterial)
-protected void UpdateMaterial()
-public Vector4 get_maskOffset()
-public void set_maskOffset(Vector4 value)
-public void RecalculateClipping()
-public void RecalculateMasking()
-public void Cull(Rect clipRect, bool validRect)
-public void UpdateMeshPadding()
-protected void InternalCrossFadeColor(Color targetColor, float duration, bool ignoreTimeScale, bool useAlpha)
-protected void InternalCrossFadeAlpha(float alpha, float duration, bool ignoreTimeScale)
-public void ForceMeshUpdate()
-public void ForceMeshUpdate(bool ignoreInactive)
-public TMP_TextInfo GetTextInfo(string text)
-public void ClearMesh()
-public void UpdateGeometry(Mesh mesh, int index)
-public void UpdateVertexData(TMP_VertexDataUpdateFlags flags)
-public void UpdateVertexData()
-public void UpdateFontAsset()
 }
 public TMPro.TextOverflowModes : Enum {
 public int value__
@@ -1228,6 +1231,7 @@ private bool m_IsStringPositionDirty
 private bool m_IsCaretPositionDirty
 private bool m_forceRectTransformAdjustment
 private Event m_ProcessingEvent
+private bool isRunningSubstitution
 private BaseInput inputSystem
 private string compositionString
 protected Mesh mesh
@@ -1426,6 +1430,7 @@ private IEnumerator MouseDragOutsideRect(PointerEventData eventData)
 public void OnEndDrag(PointerEventData eventData)
 public void OnPointerDown(PointerEventData eventData)
 protected EditState KeyPressed(Event evt)
+protected bool ShouldAcceptReturn()
 protected bool IsValidChar(char c)
 public void ProcessEvent(Event e)
 public void OnUpdateSelected(BaseEventData eventData)
@@ -1440,9 +1445,9 @@ private int LineDownCharacterPosition(int originalPos, bool goToLastChar)
 private int PageUpCharacterPosition(int originalPos, bool goToFirstChar)
 private int PageDownCharacterPosition(int originalPos, bool goToLastChar)
 private void MoveDown(bool shift)
-private void MoveDown(bool shift, bool goToLastChar)
+protected void MoveDown(bool shift, bool goToLastChar)
 private void MoveUp(bool shift)
-private void MoveUp(bool shift, bool goToFirstChar)
+protected void MoveUp(bool shift, bool goToFirstChar)
 private void MovePageUp(bool shift)
 private void MovePageUp(bool shift, bool goToFirstChar)
 private void MovePageDown(bool shift)
@@ -1464,6 +1469,8 @@ protected void SendOnTextSelection()
 protected void SendOnEndTextSelection()
 protected void SendTouchScreenKeyboardStatusChanged()
 protected void UpdateLabel()
+protected bool ApplyStringSubstitutions(String& inputString)
+protected bool OverrideTextSet(string textToDisplay)
 private void UpdateScrollbar()
 private void OnScrollbarValueChange(float value)
 private void AdjustTextPositionRelativeToViewport(float relativePosition)
@@ -2008,6 +2015,7 @@ protected float m_renderedHeight
 protected bool m_isPreferredHeightDirty
 protected bool m_isCalculatingPreferredValues
 private int m_recursiveCount
+private Action`1<TMP_TextInfo> OnPreRenderText
 protected int m_layoutPriority
 protected bool m_isCalculateSizeRequired
 protected bool m_isLayoutDirty
@@ -2303,6 +2311,8 @@ public float get_preferredWidth()
 public float get_preferredHeight()
 public float get_renderedWidth()
 public float get_renderedHeight()
+public void add_OnPreRenderText(Action`1<TMP_TextInfo> value)
+public void remove_OnPreRenderText(Action`1<TMP_TextInfo> value)
 public int get_layoutPriority()
 protected void LoadFontAsset()
 protected void SetSharedMaterial(Material mat)

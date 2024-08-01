@@ -1,5 +1,5 @@
 internal UnityEngine._AndroidJNIHelper : object {
-public IntPtr CreateJavaProxy(IntPtr delegateHandle, AndroidJavaProxy proxy)
+public IntPtr CreateJavaProxy(IntPtr player, IntPtr delegateHandle, AndroidJavaProxy proxy)
 public IntPtr CreateJavaRunnable(AndroidJavaRunnable jrunnable)
 public IntPtr InvokeJavaProxyMethod(AndroidJavaProxy proxy, IntPtr jmethodName, IntPtr jargs)
 public jvalue[] CreateJNIArgArray(Object[] args)
@@ -20,6 +20,180 @@ public IntPtr GetFieldID(IntPtr jclass, string fieldName, string signature, bool
 public string GetSignature(object obj)
 public string GetSignature(Object[] args)
 public string GetSignature(Object[] args)
+}
+public UnityEngine.Android.AndroidAssetPackError : Enum {
+public int value__
+public AndroidAssetPackError NoError
+public AndroidAssetPackError AppUnavailable
+public AndroidAssetPackError PackUnavailable
+public AndroidAssetPackError InvalidRequest
+public AndroidAssetPackError DownloadNotFound
+public AndroidAssetPackError ApiNotAvailable
+public AndroidAssetPackError NetworkError
+public AndroidAssetPackError AccessDenied
+public AndroidAssetPackError InsufficientStorage
+public AndroidAssetPackError PlayStoreNotFound
+public AndroidAssetPackError NetworkUnrestricted
+public AndroidAssetPackError AppNotOwned
+public AndroidAssetPackError InternalError
+}
+public UnityEngine.Android.AndroidAssetPackInfo : object {
+private string <name>k__BackingField
+private AndroidAssetPackStatus <status>k__BackingField
+private ulong <size>k__BackingField
+private ulong <bytesDownloaded>k__BackingField
+private float <transferProgress>k__BackingField
+private AndroidAssetPackError <error>k__BackingField
+public string name
+public AndroidAssetPackStatus status
+public ulong size
+public ulong bytesDownloaded
+public float transferProgress
+public AndroidAssetPackError error
+internal void .ctor(string name, AndroidAssetPackStatus status, ulong size, ulong bytesDownloaded, float transferProgress, AndroidAssetPackError error)
+public string get_name()
+public AndroidAssetPackStatus get_status()
+public ulong get_size()
+public ulong get_bytesDownloaded()
+public float get_transferProgress()
+public AndroidAssetPackError get_error()
+}
+public UnityEngine.Android.AndroidAssetPacks : object {
+public bool coreUnityAssetPacksDownloaded
+internal string dataPackName
+internal string streamingAssetsPackName
+public bool get_coreUnityAssetPacksDownloaded()
+internal string get_dataPackName()
+internal string get_streamingAssetsPackName()
+private bool CoreUnityAssetPacksDownloaded()
+public String[] GetCoreUnityAssetPackNames()
+public void GetAssetPackStateAsync(String[] assetPackNames, Action`2<ulong, AndroidAssetPackState[]> callback)
+public GetAssetPackStateAsyncOperation GetAssetPackStateAsync(String[] assetPackNames)
+public void DownloadAssetPackAsync(String[] assetPackNames, Action`1<AndroidAssetPackInfo> callback)
+public DownloadAssetPackAsyncOperation DownloadAssetPackAsync(String[] assetPackNames)
+public void RequestToUseMobileDataAsync(Action`1<AndroidAssetPackUseMobileDataRequestResult> callback)
+public RequestToUseMobileDataAsyncOperation RequestToUseMobileDataAsync()
+public string GetAssetPackPath(string assetPackName)
+public void CancelAssetPackDownload(String[] assetPackNames)
+public void RemoveAssetPack(string assetPackName)
+private string GetDataPackName()
+private string GetStreamingAssetsPackName()
+}
+public UnityEngine.Android.AndroidAssetPackState : object {
+private string <name>k__BackingField
+private AndroidAssetPackStatus <status>k__BackingField
+private AndroidAssetPackError <error>k__BackingField
+public string name
+public AndroidAssetPackStatus status
+public AndroidAssetPackError error
+internal void .ctor(string name, AndroidAssetPackStatus status, AndroidAssetPackError error)
+public string get_name()
+public AndroidAssetPackStatus get_status()
+public AndroidAssetPackError get_error()
+}
+public UnityEngine.Android.AndroidAssetPackStatus : Enum {
+public int value__
+public AndroidAssetPackStatus Unknown
+public AndroidAssetPackStatus Pending
+public AndroidAssetPackStatus Downloading
+public AndroidAssetPackStatus Transferring
+public AndroidAssetPackStatus Completed
+public AndroidAssetPackStatus Failed
+public AndroidAssetPackStatus Canceled
+public AndroidAssetPackStatus WaitingForWifi
+public AndroidAssetPackStatus NotInstalled
+}
+public UnityEngine.Android.AndroidAssetPackUseMobileDataRequestResult : object {
+private bool <allowed>k__BackingField
+public bool allowed
+internal void .ctor(bool allowed)
+public bool get_allowed()
+}
+public UnityEngine.Android.AndroidDevice : object {
+public AndroidHardwareType hardwareType
+public AndroidHardwareType get_hardwareType()
+public void SetSustainedPerformanceMode(bool enabled)
+}
+public UnityEngine.Android.AndroidHardwareType : Enum {
+public int value__
+public AndroidHardwareType Generic
+public AndroidHardwareType ChromeOS
+}
+internal UnityEngine.Android.Common : object {
+private AndroidJavaObject m_Activity
+public AndroidJavaObject GetActivity()
+}
+public UnityEngine.Android.DiagnosticsReporting : object {
+public void CallReportFullyDrawn()
+}
+public UnityEngine.Android.DownloadAssetPackAsyncOperation : CustomYieldInstruction {
+private Dictionary`2<string, AndroidAssetPackInfo> m_AssetPackInfos
+public bool keepWaiting
+public bool isDone
+public float progress
+public String[] downloadedAssetPacks
+public String[] downloadFailedAssetPacks
+public bool get_keepWaiting()
+public bool get_isDone()
+public float get_progress()
+public String[] get_downloadedAssetPacks()
+public String[] get_downloadFailedAssetPacks()
+internal void .ctor(String[] assetPackNames)
+internal void OnUpdate(AndroidAssetPackInfo info)
+}
+public UnityEngine.Android.GetAssetPackStateAsyncOperation : CustomYieldInstruction {
+private ulong m_Size
+private AndroidAssetPackState[] m_States
+private object m_OperationLock
+public bool keepWaiting
+public bool isDone
+public ulong size
+public AndroidAssetPackState[] states
+public bool get_keepWaiting()
+public bool get_isDone()
+public ulong get_size()
+public AndroidAssetPackState[] get_states()
+internal void OnResult(ulong size, AndroidAssetPackState[] states)
+}
+public UnityEngine.Android.Permission : ValueType {
+public string Camera
+public string Microphone
+public string FineLocation
+public string CoarseLocation
+public string ExternalStorageRead
+public string ExternalStorageWrite
+private AndroidJavaObject m_UnityPermissions
+private AndroidJavaObject GetUnityPermissions()
+public bool HasUserAuthorizedPermission(string permission)
+public void RequestUserPermission(string permission)
+public void RequestUserPermissions(String[] permissions)
+public void RequestUserPermission(string permission, PermissionCallbacks callbacks)
+public void RequestUserPermissions(String[] permissions, PermissionCallbacks callbacks)
+}
+public UnityEngine.Android.PermissionCallbacks : AndroidJavaProxy {
+private Action`1<string> PermissionGranted
+private Action`1<string> PermissionDenied
+private Action`1<string> PermissionDeniedAndDontAskAgain
+public void add_PermissionGranted(Action`1<string> value)
+public void remove_PermissionGranted(Action`1<string> value)
+public void add_PermissionDenied(Action`1<string> value)
+public void remove_PermissionDenied(Action`1<string> value)
+public void add_PermissionDeniedAndDontAskAgain(Action`1<string> value)
+public void remove_PermissionDeniedAndDontAskAgain(Action`1<string> value)
+private void onPermissionGranted(string permissionName)
+private void onPermissionDenied(string permissionName)
+private void onPermissionDeniedAndDontAskAgain(string permissionName)
+}
+public UnityEngine.Android.RequestToUseMobileDataAsyncOperation : CustomYieldInstruction {
+private AndroidAssetPackUseMobileDataRequestResult m_RequestResult
+private object m_OperationLock
+public bool keepWaiting
+public bool isDone
+public AndroidAssetPackUseMobileDataRequestResult result
+public bool get_keepWaiting()
+public bool get_isDone()
+public AndroidAssetPackUseMobileDataRequestResult get_result()
+internal void OnResult(AndroidAssetPackUseMobileDataRequestResult result)
 }
 public UnityEngine.AndroidJavaClass : AndroidJavaObject {
 public void .ctor(string className)
@@ -53,6 +227,7 @@ public FieldType GetStatic(string fieldName)
 public void SetStatic(string fieldName, FieldType val)
 public IntPtr GetRawObject()
 public IntPtr GetRawClass()
+public AndroidJavaObject CloneReference()
 public ReturnType Call(string methodName, T[] args)
 public ReturnType Call(string methodName, Object[] args)
 public ReturnType CallStatic(string methodName, T[] args)
@@ -73,6 +248,7 @@ protected FieldType _GetStatic(string fieldName)
 protected void _SetStatic(string fieldName, FieldType val)
 internal AndroidJavaObject AndroidJavaObjectDeleteLocalRef(IntPtr jobject)
 internal AndroidJavaClass AndroidJavaClassDeleteLocalRef(IntPtr jclass)
+internal ReturnType FromJavaArrayDeleteLocalRef(IntPtr jobject)
 protected IntPtr _GetRawObject()
 protected IntPtr _GetRawClass()
 }
@@ -417,7 +593,7 @@ public IntPtr GetMethodMember(IntPtr jclass, string methodName, string signature
 public IntPtr GetFieldMember(IntPtr jclass, string fieldName, string signature, bool isStatic)
 public IntPtr GetFieldClass(IntPtr field)
 public string GetFieldSignature(IntPtr field)
-public IntPtr NewProxyInstance(IntPtr delegateHandle, IntPtr interfaze)
+public IntPtr NewProxyInstance(IntPtr player, IntPtr delegateHandle, IntPtr interfaze)
 public void SetNativeExceptionOnProxy(IntPtr proxy, Exception e, bool methodNotFound)
 }
 internal UnityEngine.GlobalJavaObjectRef : object {

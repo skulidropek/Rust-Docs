@@ -32,6 +32,9 @@ public void ResetZPosition()
 public UnityEngine.Tilemaps.ITilemap : object {
 internal ITilemap s_Instance
 internal Tilemap m_Tilemap
+internal bool m_AddToList
+internal int m_RefreshCount
+internal NativeArray`1<Vector3Int> m_RefreshPos
 public Vector3Int origin
 public Vector3Int size
 public Bounds localBounds
@@ -50,6 +53,8 @@ public T GetTile(Vector3Int position)
 public void RefreshTile(Vector3Int position)
 public T GetComponent()
 private ITilemap CreateInstance()
+private void FindAllRefreshPositions(ITilemap tilemap, int count, IntPtr oldTilesIntPtr, IntPtr newTilesIntPtr, IntPtr positionsIntPtr)
+private void GetAllTileData(ITilemap tilemap, int count, IntPtr tilesIntPtr, IntPtr positionsIntPtr, IntPtr outTileDataIntPtr)
 }
 public UnityEngine.Tilemaps.Tile : TileBase {
 private Sprite m_Sprite
@@ -98,15 +103,37 @@ public void GetTileData(Vector3Int position, ITilemap tilemap, TileData& tileDat
 private TileData GetTileDataNoRef(Vector3Int position, ITilemap tilemap)
 public bool GetTileAnimationData(Vector3Int position, ITilemap tilemap, TileAnimationData& tileAnimationData)
 private TileAnimationData GetTileAnimationDataNoRef(Vector3Int position, ITilemap tilemap)
+private void GetTileAnimationDataRef(Vector3Int position, ITilemap tilemap, TileAnimationData& tileAnimationData, Boolean& hasAnimation)
 public bool StartUp(Vector3Int position, ITilemap tilemap, GameObject go)
+private void StartUpRef(Vector3Int position, ITilemap tilemap, GameObject go, Boolean& startUpInvokedByUser)
 }
-public UnityEngine.Tilemaps.TileData : ValueType {
-private Sprite m_Sprite
+public UnityEngine.Tilemaps.TileChangeData : ValueType {
+private Vector3Int m_Position
+private Object m_TileAsset
 private Color m_Color
 private Matrix4x4 m_Transform
-private GameObject m_GameObject
+public Vector3Int position
+public TileBase tile
+public Color color
+public Matrix4x4 transform
+public Vector3Int get_position()
+public void set_position(Vector3Int value)
+public TileBase get_tile()
+public void set_tile(TileBase value)
+public Color get_color()
+public void set_color(Color value)
+public Matrix4x4 get_transform()
+public void set_transform(Matrix4x4 value)
+public void .ctor(Vector3Int position, TileBase tile, Color color, Matrix4x4 transform)
+}
+public UnityEngine.Tilemaps.TileData : ValueType {
+private int m_Sprite
+private Color m_Color
+private Matrix4x4 m_Transform
+private int m_GameObject
 private TileFlags m_Flags
 private ColliderType m_ColliderType
+internal TileData Default
 public Sprite sprite
 public Color color
 public Matrix4x4 transform
@@ -125,6 +152,34 @@ public TileFlags get_flags()
 public void set_flags(TileFlags value)
 public ColliderType get_colliderType()
 public void set_colliderType(ColliderType value)
+private TileData CreateDefault()
+}
+internal UnityEngine.Tilemaps.TileDataNative : ValueType {
+private int m_Sprite
+private Color m_Color
+private Matrix4x4 m_Transform
+private int m_GameObject
+private TileFlags m_Flags
+private ColliderType m_ColliderType
+public int sprite
+public Color color
+public Matrix4x4 transform
+public int gameObject
+public TileFlags flags
+public ColliderType colliderType
+public int get_sprite()
+public void set_sprite(int value)
+public Color get_color()
+public void set_color(Color value)
+public Matrix4x4 get_transform()
+public void set_transform(Matrix4x4 value)
+public int get_gameObject()
+public void set_gameObject(int value)
+public TileFlags get_flags()
+public void set_flags(TileFlags value)
+public ColliderType get_colliderType()
+public void set_colliderType(ColliderType value)
+public TileDataNative op_Implicit(TileData td)
 }
 public UnityEngine.Tilemaps.TileFlags : Enum {
 public int value__
@@ -132,6 +187,7 @@ public TileFlags None
 public TileFlags LockColor
 public TileFlags LockTransform
 public TileFlags InstantiateGameObjectRuntimeOnly
+public TileFlags KeepGameObjectRuntimeOnly
 public TileFlags LockAll
 }
 public UnityEngine.Tilemaps.Tilemap : GridLayout {
@@ -171,22 +227,33 @@ public TileBase GetTile(Vector3Int position)
 public T GetTile(Vector3Int position)
 internal Object[] GetTileAssetsBlock(Vector3Int position, Vector3Int blockDimensions)
 public TileBase[] GetTilesBlock(BoundsInt bounds)
+internal int GetTileAssetsBlockNonAlloc(Vector3Int startPosition, Vector3Int endPosition, Object[] tiles)
+public int GetTilesBlockNonAlloc(BoundsInt bounds, TileBase[] tiles)
+public int GetTilesRangeCount(Vector3Int startPosition, Vector3Int endPosition)
+internal int GetTileAssetsRangeNonAlloc(Vector3Int startPosition, Vector3Int endPosition, Vector3Int[] positions, Object[] tiles)
+public int GetTilesRangeNonAlloc(Vector3Int startPosition, Vector3Int endPosition, Vector3Int[] positions, TileBase[] tiles)
 internal void SetTileAsset(Vector3Int position, Object tile)
 public void SetTile(Vector3Int position, TileBase tile)
 internal void SetTileAssets(Vector3Int[] positionArray, Object[] tileArray)
 public void SetTiles(Vector3Int[] positionArray, TileBase[] tileArray)
 private void INTERNAL_CALL_SetTileAssetsBlock(Vector3Int position, Vector3Int blockDimensions, Object[] tileArray)
 public void SetTilesBlock(BoundsInt position, TileBase[] tileArray)
+public void SetTile(TileChangeData tileChangeData, bool ignoreLockFlags)
+public void SetTiles(TileChangeData[] tileChangeDataArray, bool ignoreLockFlags)
 public bool HasTile(Vector3Int position)
 public void RefreshTile(Vector3Int position)
+internal void RefreshTilesNative(Void* positions, int count)
 public void RefreshAllTiles()
 internal void SwapTileAsset(Object changeTile, Object newTile)
 public void SwapTile(TileBase changeTile, TileBase newTile)
 internal bool ContainsTileAsset(Object tileAsset)
 public bool ContainsTile(TileBase tileAsset)
 public int GetUsedTilesCount()
+public int GetUsedSpritesCount()
 public int GetUsedTilesNonAlloc(TileBase[] usedTiles)
+public int GetUsedSpritesNonAlloc(Sprite[] usedSprites)
 internal int Internal_GetUsedTilesNonAlloc(Object[] usedTiles)
+internal int Internal_GetUsedSpritesNonAlloc(Object[] usedSprites)
 public Sprite GetSprite(Vector3Int position)
 public Matrix4x4 GetTransformMatrix(Vector3Int position)
 public void SetTransformMatrix(Vector3Int position, Matrix4x4 transform)
@@ -197,12 +264,22 @@ public void SetTileFlags(Vector3Int position, TileFlags flags)
 public void AddTileFlags(Vector3Int position, TileFlags flags)
 public void RemoveTileFlags(Vector3Int position, TileFlags flags)
 public GameObject GetInstantiatedObject(Vector3Int position)
+public GameObject GetObjectToInstantiate(Vector3Int position)
 public void SetColliderType(Vector3Int position, ColliderType colliderType)
 public ColliderType GetColliderType(Vector3Int position)
+public int GetAnimationFrameCount(Vector3Int position)
+public int GetAnimationFrame(Vector3Int position)
+public void SetAnimationFrame(Vector3Int position, int frame)
+public float GetAnimationTime(Vector3Int position)
+public void SetAnimationTime(Vector3Int position, float time)
 public void FloodFill(Vector3Int position, TileBase tile)
 private void FloodFillTileAsset(Vector3Int position, Object tile)
 public void BoxFill(Vector3Int position, TileBase tile, int startX, int startY, int endX, int endY)
 private void BoxFillTileAsset(Vector3Int position, Object tile, int startX, int startY, int endX, int endY)
+public void InsertCells(Vector3Int position, Vector3Int insertCells)
+public void InsertCells(Vector3Int position, int numColumns, int numRows, int numLayers)
+public void DeleteCells(Vector3Int position, Vector3Int deleteCells)
+public void DeleteCells(Vector3Int position, int numColumns, int numRows, int numLayers)
 public void ClearAllTiles()
 public void ResizeBounds()
 public void CompressBounds()
@@ -220,8 +297,12 @@ private void get_orientationMatrix_Injected(Matrix4x4& ret)
 private void set_orientationMatrix_Injected(Matrix4x4& value)
 private Object GetTileAsset_Injected(Vector3Int& position)
 private Object[] GetTileAssetsBlock_Injected(Vector3Int& position, Vector3Int& blockDimensions)
+private int GetTileAssetsBlockNonAlloc_Injected(Vector3Int& startPosition, Vector3Int& endPosition, Object[] tiles)
+private int GetTilesRangeCount_Injected(Vector3Int& startPosition, Vector3Int& endPosition)
+private int GetTileAssetsRangeNonAlloc_Injected(Vector3Int& startPosition, Vector3Int& endPosition, Vector3Int[] positions, Object[] tiles)
 private void SetTileAsset_Injected(Vector3Int& position, Object tile)
 private void INTERNAL_CALL_SetTileAssetsBlock_Injected(Vector3Int& position, Vector3Int& blockDimensions, Object[] tileArray)
+private void SetTile_Injected(TileChangeData& tileChangeData, bool ignoreLockFlags)
 private void RefreshTile_Injected(Vector3Int& position)
 private Sprite GetSprite_Injected(Vector3Int& position)
 private void GetTransformMatrix_Injected(Vector3Int& position, Matrix4x4& ret)
@@ -233,18 +314,29 @@ private void SetTileFlags_Injected(Vector3Int& position, TileFlags flags)
 private void AddTileFlags_Injected(Vector3Int& position, TileFlags flags)
 private void RemoveTileFlags_Injected(Vector3Int& position, TileFlags flags)
 private GameObject GetInstantiatedObject_Injected(Vector3Int& position)
+private GameObject GetObjectToInstantiate_Injected(Vector3Int& position)
 private void SetColliderType_Injected(Vector3Int& position, ColliderType colliderType)
 private ColliderType GetColliderType_Injected(Vector3Int& position)
+private int GetAnimationFrameCount_Injected(Vector3Int& position)
+private int GetAnimationFrame_Injected(Vector3Int& position)
+private void SetAnimationFrame_Injected(Vector3Int& position, int frame)
+private float GetAnimationTime_Injected(Vector3Int& position)
+private void SetAnimationTime_Injected(Vector3Int& position, float time)
 private void FloodFillTileAsset_Injected(Vector3Int& position, Object tile)
 private void BoxFillTileAsset_Injected(Vector3Int& position, Object tile, int startX, int startY, int endX, int endY)
+private void InsertCells_Injected(Vector3Int& position, int numColumns, int numRows, int numLayers)
+private void DeleteCells_Injected(Vector3Int& position, int numColumns, int numRows, int numLayers)
 }
 public UnityEngine.Tilemaps.TilemapCollider2D : Collider2D {
 public UInt32 maximumTileChangeCount
 public float extrusionFactor
+public bool hasTilemapChanges
 public UInt32 get_maximumTileChangeCount()
 public void set_maximumTileChangeCount(UInt32 value)
 public float get_extrusionFactor()
 public void set_extrusionFactor(float value)
+public bool get_hasTilemapChanges()
+public void ProcessTilemapChanges()
 }
 public UnityEngine.Tilemaps.TilemapRenderer : Renderer {
 public Vector3Int chunkSize

@@ -428,6 +428,8 @@ public AudioRolloffMode Custom
 }
 public UnityEngine.AudioSettings : object {
 private AudioConfigurationChangeHandler OnAudioConfigurationChanged
+private Action OnAudioSystemShuttingDown
+private Action OnAudioSystemStartedUp
 public AudioSpeakerMode driverCapabilities
 public AudioSpeakerMode speakerMode
 internal int profilerCaptureFlags
@@ -451,7 +453,13 @@ public AudioConfiguration GetConfiguration()
 public bool Reset(AudioConfiguration config)
 public void add_OnAudioConfigurationChanged(AudioConfigurationChangeHandler value)
 public void remove_OnAudioConfigurationChanged(AudioConfigurationChangeHandler value)
+internal void add_OnAudioSystemShuttingDown(Action value)
+internal void remove_OnAudioSystemShuttingDown(Action value)
+internal void add_OnAudioSystemStartedUp(Action value)
+internal void remove_OnAudioSystemStartedUp(Action value)
 internal void InvokeOnAudioConfigurationChanged(bool deviceWasChanged)
+internal void InvokeOnAudioSystemShuttingDown()
+internal void InvokeOnAudioSystemStartedUp()
 internal bool get_unityAudioDisabled()
 internal string GetAmbisonicDecoderPluginName()
 private bool SetConfiguration_Injected(AudioConfiguration& config)
@@ -608,7 +616,7 @@ public AudioVelocityUpdateMode Fixed
 public AudioVelocityUpdateMode Dynamic
 }
 internal UnityEngine.Experimental.Audio.AudioClipExtensionsInternal : object {
-public UInt32 Internal_CreateAudioClipSampleProvider(AudioClip audioClip, ulong start, long end, bool loop, bool allowDrop)
+public UInt32 Internal_CreateAudioClipSampleProvider(AudioClip audioClip, ulong start, long end, bool loop, bool allowDrop, bool loopPointIsStart)
 }
 public UnityEngine.Experimental.Audio.AudioSampleProvider : object {
 private ConsumeSampleFramesNativeFunction m_ConsumeSampleFramesNativeFunction
@@ -692,6 +700,10 @@ private void InternalSetEnableSilencePadding(UInt32 id, bool enabled)
 private IntPtr InternalGetConsumeSampleFramesNativeFunctionPtr()
 private UInt32 InternalQueueSampleFrames(UInt32 id, IntPtr interleavedSampleFrames, UInt32 sampleFrameCount)
 }
+internal UnityEngine.Experimental.Audio.AudioSampleProviderExtensionsInternal : object {
+public float GetSpeed(AudioSampleProvider provider)
+private float InternalGetAudioSampleProviderSpeed(UInt32 providerId)
+}
 internal UnityEngine.Experimental.Audio.AudioSourceExtensionsInternal : object {
 public void RegisterSampleProvider(AudioSource source, AudioSampleProvider provider)
 public void UnregisterSampleProvider(AudioSource source, AudioSampleProvider provider)
@@ -709,6 +721,7 @@ public FFTWindow BlackmanHarris
 }
 public UnityEngine.Microphone : object {
 public String[] devices
+internal bool isAnyDeviceRecording
 private int GetMicrophoneDeviceIDFromName(string name)
 private AudioClip StartRecord(int deviceID, bool loop, float lengthSec, int frequency)
 private void EndRecord(int deviceID)
@@ -718,6 +731,7 @@ private void GetDeviceCaps(int deviceID, Int32& minFreq, Int32& maxFreq)
 public AudioClip Start(string deviceName, bool loop, int lengthSec, int frequency)
 public void End(string deviceName)
 public String[] get_devices()
+internal bool get_isAnyDeviceRecording()
 public bool IsRecording(string deviceName)
 public int GetPosition(string deviceName)
 public void GetDeviceCaps(string deviceName, Int32& minFreq, Int32& maxFreq)
@@ -768,37 +782,30 @@ public int value__
 public WebCamKind WideAngle
 public WebCamKind Telephoto
 public WebCamKind ColorAndDepth
+public WebCamKind UltraWideAngle
 }
 public UnityEngine.WebCamTexture : Texture {
-public Nullable`1<Vector2> autoFocusPoint
-internal Vector2 internalAutoFocusPoint
-public bool isDepth
+public WebCamDevice[] devices
 public bool isPlaying
 public string deviceName
 public float requestedFPS
 public int requestedWidth
 public int requestedHeight
-public WebCamDevice[] devices
 public int videoRotationAngle
 public bool videoVerticallyMirrored
 public bool didUpdateThisFrame
-public Nullable`1<Vector2> get_autoFocusPoint()
-public void set_autoFocusPoint(Nullable`1<Vector2> value)
-internal Vector2 get_internalAutoFocusPoint()
-internal void set_internalAutoFocusPoint(Vector2 value)
-public bool get_isDepth()
-private void Internal_CreateWebCamTexture(WebCamTexture self, string scriptingDevice, int requestedWidth, int requestedHeight, int maxFramerate)
+public Nullable`1<Vector2> autoFocusPoint
+internal Vector2 internalAutoFocusPoint
+public bool isDepth
+public WebCamDevice[] get_devices()
 public void .ctor(string deviceName, int requestedWidth, int requestedHeight, int requestedFPS)
 public void .ctor(string deviceName, int requestedWidth, int requestedHeight)
 public void .ctor(string deviceName)
 public void .ctor(int requestedWidth, int requestedHeight, int requestedFPS)
 public void .ctor(int requestedWidth, int requestedHeight)
 public void Play()
-private void INTERNAL_CALL_Play(WebCamTexture self)
 public void Pause()
-private void INTERNAL_CALL_Pause(WebCamTexture self)
 public void Stop()
-private void INTERNAL_CALL_Stop(WebCamTexture self)
 public bool get_isPlaying()
 public string get_deviceName()
 public void set_deviceName(string value)
@@ -808,16 +815,21 @@ public int get_requestedWidth()
 public void set_requestedWidth(int value)
 public int get_requestedHeight()
 public void set_requestedHeight(int value)
-public WebCamDevice[] get_devices()
-public Color GetPixel(int x, int y)
-private void INTERNAL_CALL_GetPixel(WebCamTexture self, int x, int y, Color& value)
-public Color[] GetPixels()
-public Color[] GetPixels(int x, int y, int blockWidth, int blockHeight)
-public Color32[] GetPixels32(Color32[] colors)
-public Color32[] GetPixels32()
 public int get_videoRotationAngle()
 public bool get_videoVerticallyMirrored()
 public bool get_didUpdateThisFrame()
+public Color GetPixel(int x, int y)
+public Color[] GetPixels()
+public Color[] GetPixels(int x, int y, int blockWidth, int blockHeight)
+public Color32[] GetPixels32()
+public Color32[] GetPixels32(Color32[] colors)
+public Nullable`1<Vector2> get_autoFocusPoint()
+public void set_autoFocusPoint(Nullable`1<Vector2> value)
+internal Vector2 get_internalAutoFocusPoint()
+internal void set_internalAutoFocusPoint(Vector2 value)
+public bool get_isDepth()
+private void Internal_CreateWebCamTexture(WebCamTexture self, string scriptingDevice, int requestedWidth, int requestedHeight, int maxFramerate)
+private void GetPixel_Injected(int x, int y, Color& ret)
 private void get_internalAutoFocusPoint_Injected(Vector2& ret)
 private void set_internalAutoFocusPoint_Injected(Vector2& value)
 }

@@ -1,0 +1,153 @@
+public ClanData : ValueType {
+public string Name
+public long Created
+public ulong Creator
+public string Motd
+public long MotdTimestamp
+public ulong MotdAuthor
+public Byte[] Logo
+public long LogoTimestamp
+public Color32 Color
+}
+internal DBError : object {
+public int UniqueConstraintViolation
+public int ForeignKeyConstraintViolation
+public int TriggerConstraintViolation
+}
+public LocalClan : object {
+private int MaxChatScrollback
+private long <ClanId>k__BackingField
+private string <Name>k__BackingField
+private long <Created>k__BackingField
+private ulong <Creator>k__BackingField
+private string <Motd>k__BackingField
+private long <MotdTimestamp>k__BackingField
+private ulong <MotdAuthor>k__BackingField
+private Byte[] <Logo>k__BackingField
+private Color32 <Color>k__BackingField
+private LocalClanBackend _backend
+private List`1<ClanRole> _roles
+private List`1<ClanMember> _members
+private List`1<ClanInvite> _invites
+private List`1<ClanChatEntry> _chatHistory
+public long ClanId
+public string Name
+public long Created
+public ulong Creator
+public string Motd
+public long MotdTimestamp
+public ulong MotdAuthor
+public Byte[] Logo
+public Color32 Color
+public IReadOnlyList`1<ClanRole> Roles
+public IReadOnlyList`1<ClanMember> Members
+public int MaxMemberCount
+public IReadOnlyList`1<ClanInvite> Invites
+public long get_ClanId()
+public string get_Name()
+private void set_Name(string value)
+public long get_Created()
+private void set_Created(long value)
+public ulong get_Creator()
+private void set_Creator(ulong value)
+public string get_Motd()
+private void set_Motd(string value)
+public long get_MotdTimestamp()
+private void set_MotdTimestamp(long value)
+public ulong get_MotdAuthor()
+private void set_MotdAuthor(ulong value)
+public Byte[] get_Logo()
+private void set_Logo(Byte[] value)
+public Color32 get_Color()
+private void set_Color(Color32 value)
+public IReadOnlyList`1<ClanRole> get_Roles()
+public IReadOnlyList`1<ClanMember> get_Members()
+public int get_MaxMemberCount()
+public IReadOnlyList`1<ClanInvite> get_Invites()
+public void .ctor(LocalClanBackend backend, long clanId)
+public bool Refresh(ClanDataSource sources)
+public ValueTask`1<ClanValueResult`1<ClanLogs>> GetLogs(int limit, ulong bySteamId)
+public ValueTask`1<ClanResult> UpdateLastSeen(ulong steamId)
+public ValueTask`1<ClanResult> SetMotd(string newMotd, ulong bySteamId)
+public ValueTask`1<ClanResult> SetLogo(Byte[] newLogo, ulong bySteamId)
+public ValueTask`1<ClanResult> SetColor(Color32 newColor, ulong bySteamId)
+public ValueTask`1<ClanResult> Invite(ulong steamId, ulong bySteamId)
+public ValueTask`1<ClanResult> CancelInvite(ulong steamId, ulong bySteamId)
+public ValueTask`1<ClanResult> AcceptInvite(ulong steamId)
+public ValueTask`1<ClanResult> Kick(ulong steamId, ulong bySteamId)
+public ValueTask`1<ClanResult> SetPlayerRole(ulong steamId, int newRoleId, ulong bySteamId)
+public ValueTask`1<ClanResult> SetPlayerNotes(ulong steamId, string newNotes, ulong bySteamId)
+public ValueTask`1<ClanResult> CreateRole(ClanRole role, ulong bySteamId)
+public ValueTask`1<ClanResult> UpdateRole(ClanRole role, ulong bySteamId)
+public ValueTask`1<ClanResult> SwapRoleRanks(int roleIdA, int roleIdB, ulong bySteamId)
+public ValueTask`1<ClanResult> DeleteRole(int roleId, ulong bySteamId)
+public ValueTask`1<ClanResult> Disband(ulong bySteamId)
+public ValueTask`1<ClanValueResult`1<ClanChatScrollback>> GetChatScrollback()
+public ValueTask`1<ClanResult> SendChatMessage(string name, string message, ulong bySteamId)
+private int OtherLeaderCount(ulong excludeSteamId)
+private bool CheckRole(ulong steamId, Func`2<ClanRole, bool> roleTest)
+private bool TryGetRank(ulong steamId, Int32& rank)
+private void Changed(ClanDataSource dataSources)
+}
+public LocalClanBackend : object {
+private string _rootFolder
+public int MaxMemberCount
+private Dictionary`2<long, LocalClan> _clans
+private IClanChangeSink _changeSink
+public LocalClanDatabase Database
+public void .ctor(string rootFolder, int maxMemberCount)
+public ValueTask Initialize(IClanChangeSink changeSink)
+public void Dispose()
+public ValueTask`1<ClanValueResult`1<IClan>> Get(long clanId)
+public bool TryGet(long clanId, IClan& clan)
+public ValueTask`1<ClanValueResult`1<IClan>> GetByMember(ulong steamId)
+public ValueTask`1<ClanValueResult`1<IClan>> Create(ulong leaderSteamId, string name)
+public ValueTask`1<ClanValueResult`1<List`1<ClanInvitation>>> ListInvitations(ulong steamId)
+private bool TryGetClan(long clanId, LocalClan& clan)
+public void ClanChanged(long clanId, ClanDataSource dataSources)
+public void ClanDisbanded(long clanId)
+public void InvitationCreated(ulong steamId, long clanId)
+public void MembershipChanged(ulong steamId, Nullable`1<long> clanId)
+public void ClanChatMessage(long clanId, ClanChatEntry entry)
+}
+public LocalClanDatabase : Database {
+private int Version
+private void CreateClansTable()
+public Nullable`1<long> CreateClan(string name, ulong creatorSteamId)
+public Nullable`1<ClanData> ReadClan(long clanId)
+public bool UpdateClanMotd(long clanId, string newMotd, ulong authorSteamId)
+public bool UpdateClanLogo(long clanId, Byte[] newLogo)
+public bool UpdateClanColor(long clanId, Color32 newColor)
+public bool DeleteClan(long clanId)
+public Nullable`1<long> FindClanByMember(ulong memberSteamId)
+private void CreateInvitesTable()
+public bool CreateInvite(long clanId, ulong steamId, ulong recruiterSteamId)
+public bool AcceptInvite(long clanId, ulong steamId)
+public List`1<ClanInvite> ListInvites(long clanId)
+public List`1<ClanInvitation> ListInvitationsForPlayer(ulong steamId)
+public bool DeleteInvite(long clanId, ulong steamId)
+public void DeleteAllInvites(ulong steamId)
+private void CreateLogsTable()
+public void AppendLog(long clanId, string eventKey)
+public void AppendLog(long clanId, string eventKey, T1 arg1)
+public void AppendLog(long clanId, string eventKey, T1 arg1, T2 arg2)
+public void AppendLog(long clanId, string eventKey, T1 arg1, T2 arg2, T3 arg3)
+public void AppendLog(long clanId, string eventKey, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
+public List`1<ClanLogEntry> ReadLogs(long clanId, int limit)
+private void CreateMembersTable()
+public bool CreateMember(long clanId, ulong steamId)
+public bool CreateMember(long clanId, ulong steamId, int roleId)
+public List`1<ClanMember> ListMembers(long clanId)
+public bool UpdateMemberLastSeen(long clanId, ulong steamId)
+public bool UpdateMemberRole(long clanId, ulong steamId, int newRoleId)
+public bool UpdateMemberNotes(long clanId, ulong steamId, string newNotes)
+public bool DeleteMember(long clanId, ulong steamId)
+private void CreateRolesTable()
+public Nullable`1<int> CreateRole(long clanId, ClanRole role)
+public List`1<ClanRole> ListRoles(long clanId)
+public bool UpdateRole(long clanId, ClanRole role)
+public bool UpdateRoleName(long clanId, int roleId, string newRoleName)
+public bool SwapRoleRanks(long clanId, int roleIdA, int roleIdB)
+public bool DeleteRole(long clanId, int roleId)
+public void Open(string rootFolder)
+}

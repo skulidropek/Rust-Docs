@@ -1,9 +1,9 @@
 internal Consts : object {
+public string MonoCorlibVersion
 public string MonoVersion
 public string MonoCompany
 public string MonoProduct
 public string MonoCopyright
-public int MonoCorlibVersion
 public string FxVersion
 public string FxFileVersion
 public string EnvironmentVersion
@@ -41,6 +41,16 @@ public string AssemblyPresentationCore_4_0
 public string AssemblyPresentationFramework_3_5
 public string AssemblySystemServiceModel_3_0
 }
+internal Microsoft.Win32.SafeHandles.SafeBrotliDecoderHandle : SafeHandle {
+public bool IsInvalid
+protected bool ReleaseHandle()
+public bool get_IsInvalid()
+}
+internal Microsoft.Win32.SafeHandles.SafeBrotliEncoderHandle : SafeHandle {
+public bool IsInvalid
+protected bool ReleaseHandle()
+public bool get_IsInvalid()
+}
 internal SR : object {
 public string ArgumentOutOfRange_Enum
 public string ArgumentOutOfRange_NeedPosNum
@@ -63,10 +73,6 @@ public string ZLibErrorIncorrectInitParameters
 public string ZLibErrorNotEnoughMemory
 public string ZLibErrorVersionMismatch
 public string ZLibErrorUnexpected
-public string CorruptedGZipHeader
-public string UnknownCompressionMode
-public string InvalidCRC
-public string InvalidStreamSize
 public string ArgumentNeedNonNegative
 public string CannotBeEmpty
 public string CDCorrupt
@@ -111,7 +117,21 @@ public string UpdateModeOneStream
 public string WritingNotSupported
 public string Zip64EOCDNotWhereExpected
 public string Argument_InvalidPathChars
-public string FileNameContainsInvalidCharacters
+public string Stream_FalseCanRead
+public string Stream_FalseCanWrite
+public string BrotliEncoder_Create
+public string BrotliEncoder_Disposed
+public string BrotliEncoder_Quality
+public string BrotliEncoder_Window
+public string BrotliEncoder_InvalidSetParameter
+public string BrotliDecoder_Create
+public string BrotliDecoder_Error
+public string BrotliDecoder_Disposed
+public string BrotliStream_Compress_UnsupportedOperation
+public string BrotliStream_Compress_InvalidData
+public string BrotliStream_Decompress_UnsupportedOperation
+public string BrotliStream_Decompress_InvalidData
+public string BrotliStream_Decompress_InvalidStream
 internal string GetString(string name, Object[] args)
 internal string GetString(CultureInfo culture, string name, Object[] args)
 internal string GetString(string name)
@@ -119,13 +139,128 @@ internal string GetString(CultureInfo culture, string name)
 internal string Format(string resourceFormat, Object[] args)
 internal string Format(string resourceFormat, object p1)
 internal string Format(string resourceFormat, object p1, object p2)
+internal string Format(CultureInfo ci, string resourceFormat, object p1, object p2)
 internal string Format(string resourceFormat, object p1, object p2, object p3)
+internal string GetResourceString(string str)
 }
 internal System.IO.Compression.BlockType : Enum {
 public int value__
 public BlockType Uncompressed
 public BlockType Static
 public BlockType Dynamic
+}
+public System.IO.Compression.BrotliDecoder : ValueType {
+private SafeBrotliDecoderHandle _state
+private bool _disposed
+internal void InitializeDecoder()
+internal void EnsureInitialized()
+public void Dispose()
+private void EnsureNotDisposed()
+public OperationStatus Decompress(ReadOnlySpan`1<byte> source, Span`1<byte> destination, Int32& bytesConsumed, Int32& bytesWritten)
+public bool TryDecompress(ReadOnlySpan`1<byte> source, Span`1<byte> destination, Int32& bytesWritten)
+}
+public System.IO.Compression.BrotliEncoder : ValueType {
+internal SafeBrotliEncoderHandle _state
+private bool _disposed
+public void .ctor(int quality, int window)
+internal void InitializeEncoder()
+internal void EnsureInitialized()
+public void Dispose()
+private void EnsureNotDisposed()
+internal void SetQuality(int quality)
+internal void SetWindow(int window)
+public int GetMaxCompressedLength(int length)
+internal OperationStatus Flush(Memory`1<byte> destination, Int32& bytesWritten)
+public OperationStatus Flush(Span`1<byte> destination, Int32& bytesWritten)
+internal OperationStatus Compress(ReadOnlyMemory`1<byte> source, Memory`1<byte> destination, Int32& bytesConsumed, Int32& bytesWritten, bool isFinalBlock)
+public OperationStatus Compress(ReadOnlySpan`1<byte> source, Span`1<byte> destination, Int32& bytesConsumed, Int32& bytesWritten, bool isFinalBlock)
+internal OperationStatus Compress(ReadOnlySpan`1<byte> source, Span`1<byte> destination, Int32& bytesConsumed, Int32& bytesWritten, BrotliEncoderOperation operation)
+public bool TryCompress(ReadOnlySpan`1<byte> source, Span`1<byte> destination, Int32& bytesWritten)
+public bool TryCompress(ReadOnlySpan`1<byte> source, Span`1<byte> destination, Int32& bytesWritten, int quality, int window)
+}
+internal System.IO.Compression.BrotliEncoderOperation : Enum {
+public int value__
+public BrotliEncoderOperation Process
+public BrotliEncoderOperation Flush
+public BrotliEncoderOperation Finish
+public BrotliEncoderOperation EmitMetadata
+}
+internal System.IO.Compression.BrotliEncoderParameter : Enum {
+public int value__
+public BrotliEncoderParameter Mode
+public BrotliEncoderParameter Quality
+public BrotliEncoderParameter LGWin
+public BrotliEncoderParameter LGBlock
+public BrotliEncoderParameter LCModeling
+public BrotliEncoderParameter SizeHint
+}
+public System.IO.Compression.BrotliStream : Stream {
+private int DefaultInternalBufferSize
+private Stream _stream
+private Byte[] _buffer
+private bool _leaveOpen
+private CompressionMode _mode
+private int _activeAsyncOperation
+private BrotliDecoder _decoder
+private int _bufferOffset
+private int _bufferCount
+private BrotliEncoder _encoder
+public Stream BaseStream
+public bool CanRead
+public bool CanWrite
+public bool CanSeek
+public long Length
+public long Position
+private bool AsyncOperationIsActive
+public void .ctor(Stream stream, CompressionMode mode)
+public void .ctor(Stream stream, CompressionMode mode, bool leaveOpen)
+private void EnsureNotDisposed()
+protected void Dispose(bool disposing)
+private void ValidateParameters(Byte[] array, int offset, int count)
+public Stream get_BaseStream()
+public bool get_CanRead()
+public bool get_CanWrite()
+public bool get_CanSeek()
+public long Seek(long offset, SeekOrigin origin)
+public long get_Length()
+public long get_Position()
+public void set_Position(long value)
+public void SetLength(long value)
+private bool get_AsyncOperationIsActive()
+private void EnsureNoActiveAsyncOperation()
+private void AsyncOperationStarting()
+private void AsyncOperationCompleting()
+private void ThrowInvalidBeginCall()
+public int Read(Byte[] buffer, int offset, int count)
+public int Read(Span`1<byte> buffer)
+public IAsyncResult BeginRead(Byte[] buffer, int offset, int count, AsyncCallback asyncCallback, object asyncState)
+public int EndRead(IAsyncResult asyncResult)
+public Task`1<int> ReadAsync(Byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+public ValueTask`1<int> ReadAsync(Memory`1<byte> buffer, CancellationToken cancellationToken)
+private ValueTask`1<int> FinishReadAsyncMemory(Memory`1<byte> buffer, CancellationToken cancellationToken)
+public void .ctor(Stream stream, CompressionLevel compressionLevel)
+public void .ctor(Stream stream, CompressionLevel compressionLevel, bool leaveOpen)
+public void Write(Byte[] buffer, int offset, int count)
+public void Write(ReadOnlySpan`1<byte> buffer)
+internal void WriteCore(ReadOnlySpan`1<byte> buffer, bool isFinalBlock)
+public IAsyncResult BeginWrite(Byte[] buffer, int offset, int count, AsyncCallback asyncCallback, object asyncState)
+public void EndWrite(IAsyncResult asyncResult)
+public Task WriteAsync(Byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+public ValueTask WriteAsync(ReadOnlyMemory`1<byte> buffer, CancellationToken cancellationToken)
+private Task WriteAsyncMemoryCore(ReadOnlyMemory`1<byte> buffer, CancellationToken cancellationToken)
+public void Flush()
+public Task FlushAsync(CancellationToken cancellationToken)
+private Task FlushAsyncCore(CancellationToken cancellationToken)
+}
+internal System.IO.Compression.BrotliUtils : object {
+public int WindowBits_Min
+public int WindowBits_Default
+public int WindowBits_Max
+public int Quality_Min
+public int Quality_Default
+public int Quality_Max
+public int MaxInputSize
+internal int GetQualityFromCompressionLevel(CompressionLevel level)
 }
 internal System.IO.Compression.CheckSumAndSizeWriteStream : Stream {
 private Stream _baseStream
@@ -768,6 +903,7 @@ private Nullable`1<CompressionLevel> _compressionLevel
 private bool s_allowLargeZipArchiveEntriesInUpdateMode
 internal ZipVersionMadeByPlatform CurrentZipPlatform
 public ZipArchive Archive
+public UInt32 Crc32
 public long CompressedLength
 public int ExternalAttributes
 public string FullName
@@ -782,6 +918,7 @@ internal void .ctor(ZipArchive archive, ZipCentralDirectoryFileHeader cd)
 internal void .ctor(ZipArchive archive, string entryName, CompressionLevel compressionLevel)
 internal void .ctor(ZipArchive archive, string entryName)
 public ZipArchive get_Archive()
+public UInt32 get_Crc32()
 public long get_CompressedLength()
 public int get_ExternalAttributes()
 public void set_ExternalAttributes(int value)

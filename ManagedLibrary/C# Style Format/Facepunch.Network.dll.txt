@@ -156,6 +156,7 @@ public bool StartRecording(string targetFilename, IDemoHeader header)
 public void StopRecording()
 }
 public Network.Connection : object {
+private object recordLock
 private MemoryStream reusableStream
 protected MemoryStream recordStream
 protected BinaryWriter recordWriter
@@ -172,7 +173,10 @@ public bool trusted
 public bool rejected
 public string authStatus
 public Byte[] token
+public string anticheatId
+public string anticheatToken
 public bool hasRequestedWorld
+public bool globalNetworking
 public ulong guid
 public ulong userid
 public ulong ownerid
@@ -207,6 +211,7 @@ public void AddPacketsPerSecond(int index)
 public ulong GetPacketsPerSecond(Type message)
 public ulong GetPacketsPerSecond(int index)
 public float GetSecondsConnected()
+public bool IsDevelopmentBuild()
 public string ToString()
 }
 public Network.Defines : object {
@@ -277,13 +282,13 @@ public bool CanWrite
 public long Length
 public long Position
 public bool CanSeek
+private bool Init(IntPtr data, int length)
 public void EnterPool()
 public void LeavePool()
 public bool Start(ulong guid, string ipaddress, IntPtr data, int length)
 public bool Start(Connection connection, IntPtr data, int length)
 public bool Start(Connection connection, ulong guid, IntPtr data, int length)
 public bool Start(Connection connection, ulong guid, string ipaddress, IntPtr data, int length)
-private bool Init(IntPtr data, int length)
 public int get_Unread()
 public string String(int maxLength)
 public string StringMultiLine(int maxLength)
@@ -318,6 +323,7 @@ public Vector3 Vector3()
 public Quaternion Quaternion()
 public Ray Ray()
 public Color Color()
+public Color32 Color32()
 public int Read(Byte[] buffer, int offset, int count)
 public long get_Length()
 public long get_Position()
@@ -405,6 +411,7 @@ public void Vector3(Vector3& obj)
 public void Quaternion(Quaternion& obj)
 public void Ray(Ray& obj)
 public void Color(Color& obj)
+public void Color32(Color32& obj)
 public void EntityID(NetworkableId id)
 public void ItemContainerID(ItemContainerId id)
 public void ItemID(ItemId id)

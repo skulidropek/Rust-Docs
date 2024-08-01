@@ -1,0 +1,184 @@
+public Oxide.Ext.NoSteam.Core : object {
+internal HarmonyInstance HarmonyInstance
+internal Dictionary`2<ulong, BeginAuthResult> StatusPlayers
+internal void Start()
+private void DoPatch()
+internal int CountSteamPlayer()
+internal bool CheckIsSteamConnection(Connection connection)
+internal void CheckServerParameters()
+internal bool CheckIsSteamConnection(ulong userid)
+internal bool CheckIsValidConnection(ulong userid, SteamTicket steamTicket)
+}
+internal Oxide.Ext.NoSteam.Language.Messages : object {
+internal object AdvertMessage
+}
+internal Oxide.Ext.NoSteam.Language.MessageService : object {
+private Lang Lang
+private List`1<Message> MessagesList
+private void InitLocals()
+internal string Get(ulong userId, string id)
+internal string GetEng(ulong userId, string id)
+private void ParseMessages()
+}
+internal Oxide.Ext.NoSteam.Loader.NoSteam : CSPlugin {
+internal void .ctor(NoSteamExtension extension)
+internal void InitPlugin()
+private void Init()
+internal void Output(string text)
+}
+public Oxide.Ext.NoSteam.NoSteamExtension : Extension {
+private bool _loaded
+public bool DEBUG
+private NoSteamExtension <Instance>k__BackingField
+public string Name
+public VersionNumber Version
+public string Author
+public NoSteamExtension Instance
+public void .ctor(ExtensionManager manager)
+public string get_Name()
+public VersionNumber get_Version()
+public string get_Author()
+public NoSteamExtension get_Instance()
+private void set_Instance(NoSteamExtension value)
+public void Load()
+public void LoadConfig()
+private void Update()
+private string GetVersion(WebClient webClient)
+private void DownloadPlugin(WebClient webClient)
+private bool CheckIsOutdated(string version)
+public void OnModLoad()
+}
+public Oxide.Ext.NoSteam.Patches.BasePlayerPatch : object {
+private DateTime lastTime
+private Random rnd
+}
+internal Oxide.Ext.NoSteam.Patches.EacPatch : object {
+internal MethodInfo OnAuthenticatedLocal
+internal MethodInfo OnAuthenticatedRemote
+}
+internal Oxide.Ext.NoSteam.Patches.OxidePatch : object {
+private OxideHook OnHookOxide
+private bool IsSteamPlayer(ulong steamId)
+internal void add_OnHookOxide(OxideHook value)
+internal void remove_OnHookOxide(OxideHook value)
+private bool OxidePatch_OnHookOxide(Object& __result, string hookname, Object[] args)
+private bool HandleIsSteam(Object& __result, Object[] args)
+}
+internal Oxide.Ext.NoSteam.Patches.SteamPatch : object {
+private Random rnd
+private Regex steamCountRegex
+private Dictionary`2<ulong, BeginAuthResult> StatusPlayers
+private Dictionary`2<ulong, BeginAuthResult> get_StatusPlayers()
+internal void PatchSteamBeginPlayer()
+internal void PatchSteamServerTags()
+}
+internal Oxide.Ext.NoSteam.Utils.Config : object {
+internal ConfigData configData
+internal void LoadConfig()
+internal void LoadDefaultConfig(ConfigData OldConfigData)
+internal void CheckConfig()
+internal void SaveConfig()
+}
+public Oxide.Ext.NoSteam.Utils.Logger : object {
+public void Print(string text)
+}
+internal Oxide.Ext.NoSteam.Utils.MD5Hash : object {
+public string Calculate(string input)
+}
+public Oxide.Ext.NoSteam.Utils.Steam.Convertor : object {
+public Byte[] Serialize(T structure)
+public T Deserialize(Byte[] bytes)
+}
+public Oxide.Ext.NoSteam.Utils.Steam.SteamTicket : object {
+public ulong SteamId
+public Ticket Ticket
+public Byte[] Token
+public string Username
+public string Version
+public ClientVersion clientVersion
+private bool IsCrack
+private bool IsLicense
+public void .ctor(Connection connection)
+public void .ctor(Byte[] authToken)
+private bool get_IsCrack()
+private bool get_IsLicense()
+private void GetClientVersion()
+public string ToString()
+}
+public Oxide.Ext.NoSteam.Utils.Steam.Steamworks.AuthResponse : Enum {
+public int value__
+public AuthResponse OK
+public AuthResponse UserNotConnectedToSteam
+public AuthResponse NoLicenseOrExpired
+public AuthResponse VACBanned
+public AuthResponse LoggedInElseWhere
+public AuthResponse VACCheckTimedOut
+public AuthResponse AuthTicketCanceled
+public AuthResponse AuthTicketInvalidAlreadyUsed
+public AuthResponse AuthTicketInvalid
+public AuthResponse PublisherIssuedBan
+}
+public Oxide.Ext.NoSteam.Utils.Steam.Steamworks.BeginAuthResult : Enum {
+public int value__
+public BeginAuthResult OK
+public BeginAuthResult InvalidTicket
+public BeginAuthResult DuplicateRequest
+public BeginAuthResult InvalidVersion
+public BeginAuthResult GameMismatch
+public BeginAuthResult ExpiredTicket
+}
+public Oxide.Ext.NoSteam.Utils.Steam.Steamworks.SteamId : ValueType {
+public ulong Value
+public UInt32 AccountId
+public bool IsValid
+public UInt32 get_AccountId()
+public bool get_IsValid()
+public SteamId op_Implicit(ulong value)
+public ulong op_Implicit(SteamId value)
+public string ToString()
+}
+public Oxide.Ext.NoSteam.Utils.Steam.Structures.SteamSession : ValueType {
+public UInt32 Length
+public UInt32 Unknown0x1C
+public UInt32 Unknown0x20
+public UInt32 Unknown0x24
+public UInt32 Unknown0x28
+public UInt32 SessionID
+public UInt32 ConnectNumber
+}
+public Oxide.Ext.NoSteam.Utils.Steam.Structures.SteamTokendata : ValueType {
+public int Length
+public int Unknown0x38
+public int Unknown0x3C
+public ulong UserID
+public int AppID
+public int Unknown0x4C
+public byte Unknown0x50
+public byte Unknown0x51
+public byte Unknown0x52
+public byte Unknown0x53
+public UInt32 Unknown0x54
+public UInt32 StartTime
+public UInt32 EndedTime
+public byte Unknown0x60
+public byte Unknown0x61
+public byte Unknown0x62
+public byte Unknown0x63
+public short Unknown0x64
+public short Unknown0x66
+public short Unknown0x68
+public Byte[] SHA128
+}
+public Oxide.Ext.NoSteam.Utils.Steam.Structures.Ticket : ValueType {
+public UInt32 Length
+public ulong ID
+public ulong SteamID
+public UInt32 ConnectionTime
+public SteamSession Session
+public SteamTokendata Token
+}
+internal Oxide.Ext.NoSteam.Utils.SteamworksLoader : object {
+internal Assembly Assembly
+private void LoadSteamworks()
+private void LoadSteamworks(string path)
+}

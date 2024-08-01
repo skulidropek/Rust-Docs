@@ -385,7 +385,8 @@ public void OnBehaviourPlay(Playable playable, FrameData info)
 public void OnBehaviourPause(Playable playable, FrameData info)
 public void ProcessFrame(Playable playable, FrameData info, object playerData)
 private void SyncSpeed(double speed)
-private void SyncPlayState(PlayableGraph graph, double playableTime)
+private void SyncStart(PlayableGraph graph, double time)
+private void SyncStop(PlayableGraph graph, double time)
 private bool DetectDiscontinuity(Playable playable, FrameData info)
 private bool DetectOutOfSync(Playable playable)
 private void UpdateTime(Playable playable)
@@ -441,25 +442,6 @@ internal UnityEngine.Timeline.Extrapolation : object {
 internal double kMinExtrapolationTime
 internal void CalculateExtrapolationTimes(TrackAsset asset)
 private TimelineClip[] SortClipsByStartTime(TimelineClip[] clips)
-}
-internal UnityEngine.Timeline.FrameRate : ValueType {
-public double rate
-public FrameRate k_23_976Fps
-public FrameRate k_24Fps
-public FrameRate k_25Fps
-public FrameRate k_30Fps
-public FrameRate k_29_97Fps
-public FrameRate k_50Fps
-public FrameRate k_59_94Fps
-public FrameRate k_60Fps
-private void .ctor(double framerate)
-public bool IsValid()
-public bool Equals(FrameRate other)
-public bool Equals(object obj)
-public int GetHashCode()
-public bool op_Equality(FrameRate a, FrameRate b)
-public bool op_Inequality(FrameRate a, FrameRate b)
-public FrameRate DoubleToFrameRate(double rate)
 }
 public UnityEngine.Timeline.GroupTrack : TrackAsset {
 public IEnumerable`1<PlayableBinding> outputs
@@ -652,7 +634,7 @@ public NotificationFlags Retroactive
 public NotificationFlags TriggerOnce
 }
 internal UnityEngine.Timeline.NotificationUtilities : object {
-public ScriptPlayable`1<TimeNotificationBehaviour> CreateNotificationsPlayable(PlayableGraph graph, IEnumerable`1<IMarker> markers, GameObject go)
+public ScriptPlayable`1<TimeNotificationBehaviour> CreateNotificationsPlayable(PlayableGraph graph, IEnumerable`1<IMarker> markers, double duration, DirectorWrapMode extrapolationMode)
 public bool TrackTypeSupportsNotifications(Type type)
 }
 public UnityEngine.Timeline.ParticleControlPlayable : PlayableBehaviour {
@@ -892,7 +874,7 @@ public T CreateTrack()
 public bool DeleteClip(TimelineClip clip)
 public bool DeleteTrack(TrackAsset track)
 internal void MoveLastTrackBefore(TrackAsset asset)
-internal TrackAsset AllocateTrack(TrackAsset trackAssetParent, string trackName, Type trackType)
+private TrackAsset AllocateTrack(TrackAsset trackAssetParent, string trackName, Type trackType)
 private void DeleteRecordedAnimation(TrackAsset track)
 private void DeleteRecordedAnimation(TimelineClip clip)
 }

@@ -3,44 +3,51 @@ private IntPtr _connection
 private bool <IsConnectionOpen>k__BackingField
 private bool IsConnectionOpen
 public int AffectedRows
+public long LastInsertRowId
 private bool get_IsConnectionOpen()
 private void set_IsConnectionOpen(bool value)
 public void Open(string path, bool fastMode)
-public bool TableExists(string name)
+public bool TableExists(string tableName)
 public bool IndexExists(string tableName, string indexName)
 public bool ColumnExists(string tableName, string columnName)
 public void Close()
 public int get_AffectedRows()
+public long get_LastInsertRowId()
 public void Execute(string query)
 public void Execute(string query, T1 arg1)
 public void Execute(string query, T1 arg1, T2 arg2)
 public void Execute(string query, T1 arg1, T2 arg2, T3 arg3)
 public void Execute(string query, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
 public void Execute(string query, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5)
-protected void Bind(IntPtr stmHandle, int index, T value)
-protected T GetColumnValue(IntPtr stmHandle, int i)
-public int QueryInt(string query)
-public int QueryInt(string query, T1 arg1)
-public int QueryInt(string query, T1 arg1, T2 arg2)
-public long QueryLong(string query)
-public string QueryString(string query, T1 arg1)
-public string QueryString(string query, T1 arg1, T2 arg2)
-public Byte[] QueryBlob(string query, T1 arg1)
-public Byte[] QueryBlob(string query, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
+public TOut Query(string query)
+public void Execute(string query, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6)
+public TOut Query(string query, T1 arg1)
+public void Execute(string query, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7)
+public TOut Query(string query, T1 arg1, T2 arg2)
+public TOut Query(string query, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
+public TOut Query(string query, T1 arg1, T2 arg2, T3 arg3)
 public void BeginTransaction()
 public void Commit()
+public string QueryString(string query, T1 arg1, T2 arg2)
 public void Rollback()
 protected void ExecuteQuery(IntPtr stmHandle, bool finalize)
+protected void Bind(IntPtr stmHandle, int index, T value)
+protected T GetColumnValue(IntPtr stmHandle, int i)
 protected T ExecuteAndReadQueryResult(IntPtr stmHandle, bool finalize)
+protected Nullable`1<T> ExecuteAndReadQueryResult(IntPtr stmHandle, Func`2<IntPtr, T> rowReader, bool finalize)
 protected IEnumerable`1<T> ExecuteAndReadQueryResults(IntPtr stmHandle, Func`2<IntPtr, T> rowReader, bool finalize)
+protected int ExecuteAndReadQueryResults(IntPtr stmHandle, List`1<T> results, Func`2<IntPtr, T> rowReader, bool finalize)
+private Exception ExecuteError(int result)
 protected IntPtr Prepare(string query)
 private void FinalizeOrReset(IntPtr stmHandle, bool finalize)
 protected void Finalize(IntPtr stmHandle)
 protected void Reset(IntPtr stmHandle)
-internal Exception <GetColumnValue>g__TypeError|19_0(<>c__DisplayClass19_0`1& )
+protected void DebugLogColumns(IntPtr stmHandle)
+internal Exception <GetColumnValue>g__TypeError|33_0(<>c__DisplayClass33_0`1& )
 }
 internal Facepunch.Sqlite.Interop : object {
 internal int SQLITE_OK
+internal int SQLITE_BUSY
 internal int SQLITE_ROW
 internal int SQLITE_DONE
 internal int SQLITE_INTEGER
@@ -59,6 +66,7 @@ internal int sqlite3_finalize(IntPtr stmHandle)
 internal int sqlite3_reset(IntPtr stmHandle)
 internal IntPtr sqlite3_errmsg(IntPtr db)
 internal int sqlite3_changes(IntPtr db)
+internal long sqlite3_last_insert_rowid(IntPtr db)
 internal int sqlite3_column_count(IntPtr stmHandle)
 internal IntPtr sqlite3_column_name(IntPtr stmHandle, int iCol)
 internal int sqlite3_column_type(IntPtr stmHandle, int iCol)
@@ -75,5 +83,8 @@ internal int sqlite3_bind_null(IntPtr stmHandle, int i)
 public string GetTypeName(int sqliteType)
 }
 public Facepunch.Sqlite.SqliteException : Exception {
-public void .ctor(string message)
+private int <Result>k__BackingField
+public int Result
+public int get_Result()
+public void .ctor(int result, string message)
 }

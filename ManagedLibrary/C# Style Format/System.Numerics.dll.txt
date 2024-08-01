@@ -1,9 +1,9 @@
 internal Consts : object {
+public string MonoCorlibVersion
 public string MonoVersion
 public string MonoCompany
 public string MonoProduct
 public string MonoCopyright
-public int MonoCorlibVersion
 public string FxVersion
 public string FxFileVersion
 public string EnvironmentVersion
@@ -60,6 +60,8 @@ public string Arg_ArgumentOutOfRangeException
 public string Arg_ElementsInSourceIsGreaterThanDestination
 public string Arg_NullArgumentNullRef
 public string Arg_TypeNotSupported
+public string ArgumentException_BufferNotFromPool
+public string Overflow_Negative_Unsigned
 internal string GetString(string name, Object[] args)
 internal string GetString(CultureInfo culture, string name, Object[] args)
 internal string GetString(string name)
@@ -67,22 +69,13 @@ internal string GetString(CultureInfo culture, string name)
 internal string Format(string resourceFormat, Object[] args)
 internal string Format(string resourceFormat, object p1)
 internal string Format(string resourceFormat, object p1, object p2)
+internal string Format(CultureInfo ci, string resourceFormat, object p1, object p2)
 internal string Format(string resourceFormat, object p1, object p2, object p3)
+internal string GetResourceString(string str)
 }
 internal System.Globalization.FormatProvider : object {
-internal string FormatBigInteger(int precision, int scale, bool sign, string format, NumberFormatInfo numberFormatInfo, Char[] digits, int startIndex)
+internal void FormatBigInteger(ValueStringBuilder& sb, int precision, int scale, bool sign, ReadOnlySpan`1<char> format, NumberFormatInfo numberFormatInfo, Char[] digits, int startIndex)
 internal bool TryStringToBigInteger(ReadOnlySpan`1<char> s, NumberStyles styles, NumberFormatInfo numberFormatInfo, StringBuilder receiver, Int32& precision, Int32& scale, Boolean& sign)
-}
-internal System.MathF : object {
-public float PI
-public float Abs(float x)
-public float Acos(float x)
-public float Cos(float x)
-public float IEEERemainder(float x, float y)
-public float Pow(float x, float y)
-public float Sin(float x)
-public float Sqrt(float x)
-public float Tan(float x)
 }
 public System.Numerics.BigInteger : ValueType {
 private int knMaskHighBit
@@ -114,7 +107,7 @@ public void .ctor(float value)
 public void .ctor(double value)
 public void .ctor(decimal value)
 public void .ctor(Byte[] value)
-public void .ctor(ReadOnlySpan`1<byte> value)
+public void .ctor(ReadOnlySpan`1<byte> value, bool isUnsigned, bool isBigEndian)
 internal void .ctor(int n, UInt32[] rgu)
 internal void .ctor(UInt32[] value, bool negative)
 private void .ctor(UInt32[] value)
@@ -133,7 +126,8 @@ public BigInteger Parse(string value, NumberStyles style, IFormatProvider provid
 public bool TryParse(string value, BigInteger& result)
 public bool TryParse(string value, NumberStyles style, IFormatProvider provider, BigInteger& result)
 public BigInteger Parse(ReadOnlySpan`1<char> value, NumberStyles style, IFormatProvider provider)
-public bool TryParse(ReadOnlySpan`1<char> value, BigInteger& result, NumberStyles style, IFormatProvider provider)
+public bool TryParse(ReadOnlySpan`1<char> value, BigInteger& result)
+public bool TryParse(ReadOnlySpan`1<char> value, NumberStyles style, IFormatProvider provider, BigInteger& result)
 public int Compare(BigInteger left, BigInteger right)
 public BigInteger Abs(BigInteger value)
 public BigInteger Add(BigInteger left, BigInteger right)
@@ -162,14 +156,17 @@ public int CompareTo(ulong other)
 public int CompareTo(BigInteger other)
 public int CompareTo(object obj)
 public Byte[] ToByteArray()
-public bool TryWriteBytes(Span`1<byte> destination, Int32& bytesWritten)
-public int GetByteCount()
-private Byte[] TryGetBytes(GetBytesMode mode, Span`1<byte> destination, Int32& bytesWritten)
+public Byte[] ToByteArray(bool isUnsigned, bool isBigEndian)
+public bool TryWriteBytes(Span`1<byte> destination, Int32& bytesWritten, bool isUnsigned, bool isBigEndian)
+internal bool TryWriteOrCountBytes(Span`1<byte> destination, Int32& bytesWritten, bool isUnsigned, bool isBigEndian)
+public int GetByteCount(bool isUnsigned)
+private Byte[] TryGetBytes(GetBytesMode mode, Span`1<byte> destination, bool isUnsigned, bool isBigEndian, Int32& bytesWritten)
 private UInt32[] ToUInt32Array()
 public string ToString()
 public string ToString(IFormatProvider provider)
 public string ToString(string format)
 public string ToString(string format, IFormatProvider provider)
+public bool TryFormat(Span`1<char> destination, Int32& charsWritten, ReadOnlySpan`1<char> format, IFormatProvider provider)
 private BigInteger Add(UInt32[] leftBits, int leftSign, UInt32[] rightBits, int rightSign)
 public BigInteger op_Subtraction(BigInteger left, BigInteger right)
 private BigInteger Subtract(UInt32[] leftBits, int leftSign, UInt32[] rightBits, int rightSign)
@@ -313,13 +310,14 @@ internal bool TryValidateParseStyleInteger(NumberStyles style, ArgumentException
 internal bool TryParseBigInteger(string value, NumberStyles style, NumberFormatInfo info, BigInteger& result)
 internal bool TryParseBigInteger(ReadOnlySpan`1<char> value, NumberStyles style, NumberFormatInfo info, BigInteger& result)
 internal BigInteger ParseBigInteger(string value, NumberStyles style, NumberFormatInfo info)
-private ReadOnlySpan`1<char> AsReadOnlySpan(string s)
 internal BigInteger ParseBigInteger(ReadOnlySpan`1<char> value, NumberStyles style, NumberFormatInfo info)
 private bool HexNumberToBigInteger(BigNumberBuffer& number, BigInteger& value)
 private bool NumberToBigInteger(BigNumberBuffer& number, BigInteger& value)
-internal char ParseFormatSpecifier(string format, Int32& digits)
-private string FormatBigIntegerToHexString(BigInteger value, char format, int digits, NumberFormatInfo info)
+internal char ParseFormatSpecifier(ReadOnlySpan`1<char> format, Int32& digits)
+private string FormatBigIntegerToHex(bool targetSpan, BigInteger value, char format, int digits, NumberFormatInfo info, Span`1<char> destination, Int32& charsWritten, Boolean& spanSuccess)
 internal string FormatBigInteger(BigInteger value, string format, NumberFormatInfo info)
+internal bool TryFormatBigInteger(BigInteger value, ReadOnlySpan`1<char> format, NumberFormatInfo info, Span`1<char> destination, Int32& charsWritten)
+private string FormatBigInteger(bool targetSpan, BigInteger value, string formatString, ReadOnlySpan`1<char> formatSpan, NumberFormatInfo info, Span`1<char> destination, Int32& charsWritten, Boolean& spanSuccess)
 }
 public System.Numerics.Complex : ValueType {
 public Complex Zero
@@ -604,10 +602,6 @@ public bool Equals(object obj)
 public string ToString()
 public int GetHashCode()
 }
-internal System.Numerics.Vector : object {
-public bool IsHardwareAccelerated
-public bool get_IsHardwareAccelerated()
-}
 public System.Numerics.Vector2 : ValueType {
 public float X
 public float Y
@@ -792,4 +786,38 @@ public Vector4 op_Division(Vector4 value1, float value2)
 public Vector4 op_UnaryNegation(Vector4 value)
 public bool op_Equality(Vector4 left, Vector4 right)
 public bool op_Inequality(Vector4 left, Vector4 right)
+}
+internal System.Text.ValueStringBuilder : ValueType {
+private Char[] _arrayToReturnToPool
+private Span`1<char> _chars
+private int _pos
+public int Length
+public int Capacity
+public Char& Item
+public Span`1<char> RawChars
+public void .ctor(Span`1<char> initialBuffer)
+public int get_Length()
+public void set_Length(int value)
+public int get_Capacity()
+public void EnsureCapacity(int capacity)
+public Char& GetPinnableReference(bool terminate)
+public Char& get_Item(int index)
+public string ToString()
+public Span`1<char> get_RawChars()
+public ReadOnlySpan`1<char> AsSpan(bool terminate)
+public ReadOnlySpan`1<char> AsSpan()
+public ReadOnlySpan`1<char> AsSpan(int start)
+public ReadOnlySpan`1<char> AsSpan(int start, int length)
+public bool TryCopyTo(Span`1<char> destination, Int32& charsWritten)
+public void Insert(int index, char value, int count)
+public void Append(char c)
+public void Append(string s)
+private void AppendSlow(string s)
+public void Append(char c, int count)
+public void Append(Char* value, int length)
+public void Append(ReadOnlySpan`1<char> value)
+public Span`1<char> AppendSpan(int length)
+private void GrowAndAppend(char c)
+private void Grow(int requiredAdditionalCapacity)
+public void Dispose()
 }

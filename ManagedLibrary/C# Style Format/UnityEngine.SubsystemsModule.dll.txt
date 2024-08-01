@@ -1,18 +1,20 @@
 public UnityEngine.IntegratedSubsystem : object {
 internal IntPtr m_Ptr
-internal ISubsystemDescriptor m_subsystemDescriptor
+internal ISubsystemDescriptor m_SubsystemDescriptor
 public bool running
 internal bool valid
-internal void SetHandle(IntegratedSubsystem inst)
+internal void SetHandle(IntegratedSubsystem subsystem)
 public void Start()
 public void Stop()
 public void Destroy()
 public bool get_running()
 internal bool get_valid()
-internal bool Internal_IsRunning()
+internal bool IsRunning()
 }
 public UnityEngine.IntegratedSubsystem`1 : IntegratedSubsystem {
+public TSubsystemDescriptor subsystemDescriptor
 public TSubsystemDescriptor SubsystemDescriptor
+public TSubsystemDescriptor get_subsystemDescriptor()
 public TSubsystemDescriptor get_SubsystemDescriptor()
 }
 public UnityEngine.IntegratedSubsystemDescriptor : object {
@@ -30,30 +32,14 @@ internal ISubsystem CreateImpl()
 public TSubsystem Create()
 }
 internal UnityEngine.Internal_SubsystemDescriptors : object {
-internal List`1<ISubsystemDescriptorImpl> s_IntegratedSubsystemDescriptors
-internal List`1<ISubsystemDescriptor> s_StandaloneSubsystemDescriptors
-internal bool Internal_AddDescriptor(SubsystemDescriptor descriptor)
-internal void Internal_InitializeManagedDescriptor(IntPtr ptr, ISubsystemDescriptorImpl desc)
-internal void Internal_ClearManagedDescriptors()
-public IntPtr Create(IntPtr descriptorPtr)
-public string GetId(IntPtr descriptorPtr)
-}
-internal UnityEngine.Internal_SubsystemInstances : object {
-internal List`1<ISubsystem> s_IntegratedSubsystemInstances
-internal List`1<ISubsystem> s_StandaloneSubsystemInstances
-internal void Internal_InitializeManagedInstance(IntPtr ptr, IntegratedSubsystem inst)
-internal void Internal_ClearManagedInstances()
-internal void Internal_RemoveInstanceByPtr(IntPtr ptr)
-internal IntegratedSubsystem Internal_GetInstanceByPtr(IntPtr ptr)
-internal void Internal_AddStandaloneSubsystem(Subsystem inst)
-internal Subsystem Internal_FindStandaloneSubsystemInstanceGivenDescriptor(SubsystemDescriptor descriptor)
+internal void Internal_AddDescriptor(SubsystemDescriptor descriptor)
 }
 public UnityEngine.ISubsystem {
 public bool running
+public bool get_running()
 public void Start()
 public void Stop()
 public void Destroy()
-public bool get_running()
 }
 public UnityEngine.ISubsystemDescriptor {
 public string id
@@ -66,17 +52,20 @@ public IntPtr get_ptr()
 public void set_ptr(IntPtr value)
 }
 public UnityEngine.Subsystem : object {
-internal ISubsystemDescriptor m_subsystemDescriptor
+internal ISubsystemDescriptor m_SubsystemDescriptor
 public bool running
+public bool get_running()
 public void Start()
 public void Stop()
 public void Destroy()
-public bool get_running()
 protected void OnDestroy()
 }
 public UnityEngine.Subsystem`1 : Subsystem {
 public TSubsystemDescriptor SubsystemDescriptor
 public TSubsystemDescriptor get_SubsystemDescriptor()
+}
+internal UnityEngine.SubsystemBindings : object {
+internal void DestroySubsystem(IntPtr nativePtr)
 }
 public UnityEngine.SubsystemDescriptor : object {
 private string <id>k__BackingField
@@ -94,21 +83,45 @@ public UnityEngine.SubsystemDescriptor`1 : SubsystemDescriptor {
 internal ISubsystem CreateImpl()
 public TSubsystem Create()
 }
+internal UnityEngine.SubsystemDescriptorBindings : object {
+public IntPtr Create(IntPtr descriptorPtr)
+public string GetId(IntPtr descriptorPtr)
+}
 public UnityEngine.SubsystemManager : object {
+private Action beforeReloadSubsystems
+private Action afterReloadSubsystems
+private List`1<IntegratedSubsystem> s_IntegratedSubsystems
+private List`1<SubsystemWithProvider> s_StandaloneSubsystems
+private List`1<Subsystem> s_DeprecatedSubsystems
 private Action reloadSubsytemsStarted
 private Action reloadSubsytemsCompleted
-public void GetAllSubsystemDescriptors(List`1<ISubsystemDescriptor> descriptors)
+private void ReloadSubsystemsStarted()
+private void ReloadSubsystemsCompleted()
+private void InitializeIntegratedSubsystem(IntPtr ptr, IntegratedSubsystem subsystem)
+private void ClearSubsystems()
+private void StaticConstructScriptingClassMap()
 internal void ReportSingleSubsystemAnalytics(string id)
+public void GetAllSubsystemDescriptors(List`1<ISubsystemDescriptor> descriptors)
 public void GetSubsystemDescriptors(List`1<T> descriptors)
-public void GetInstances(List`1<T> instances)
-internal void DestroyInstance_Internal(IntPtr instancePtr)
-internal void StaticConstructScriptingClassMap()
+public void GetSubsystems(List`1<T> subsystems)
+private void AddSubsystemSubset(List`1<TBaseTypeInList> copyFrom, List`1<TQueryType> copyTo)
+public void add_beforeReloadSubsystems(Action value)
+public void remove_beforeReloadSubsystems(Action value)
+public void add_afterReloadSubsystems(Action value)
+public void remove_afterReloadSubsystems(Action value)
+internal IntegratedSubsystem GetIntegratedSubsystemByPtr(IntPtr ptr)
+internal void RemoveIntegratedSubsystemByPtr(IntPtr ptr)
+internal void AddStandaloneSubsystem(SubsystemWithProvider subsystem)
+internal bool RemoveStandaloneSubsystem(SubsystemWithProvider subsystem)
+internal SubsystemWithProvider FindStandaloneSubsystemByDescriptor(SubsystemDescriptorWithProvider descriptor)
+public void GetInstances(List`1<T> subsystems)
+internal void AddDeprecatedSubsystem(Subsystem subsystem)
+internal bool RemoveDeprecatedSubsystem(Subsystem subsystem)
+internal Subsystem FindDeprecatedSubsystemByDescriptor(SubsystemDescriptor descriptor)
 public void add_reloadSubsytemsStarted(Action value)
 public void remove_reloadSubsytemsStarted(Action value)
-private void Internal_ReloadSubsystemsStarted()
 public void add_reloadSubsytemsCompleted(Action value)
 public void remove_reloadSubsytemsCompleted(Action value)
-private void Internal_ReloadSubsystemsCompleted()
 }
 public UnityEngine.Subsystems.ExampleSubsystem : IntegratedSubsystem`1<ExampleSubsystemDescriptor> {
 public void PrintExample()
@@ -123,4 +136,105 @@ public bool get_supportsEditorMode()
 public bool get_disableBackbufferMSAA()
 public bool get_stereoscopicBackbuffer()
 public bool get_usePBufferEGL()
+}
+public UnityEngine.SubsystemsImplementation.Extensions.SubsystemDescriptorExtensions : object {
+public SubsystemProxy`2<TSubsystem, TProvider> CreateProxy(SubsystemDescriptorWithProvider`2<TSubsystem, TProvider> descriptor)
+}
+public UnityEngine.SubsystemsImplementation.Extensions.SubsystemExtensions : object {
+public TProvider GetProvider(SubsystemWithProvider`3<TSubsystem, TDescriptor, TProvider> subsystem)
+}
+public UnityEngine.SubsystemsImplementation.SubsystemDescriptorStore : object {
+private List`1<IntegratedSubsystemDescriptor> s_IntegratedDescriptors
+private List`1<SubsystemDescriptorWithProvider> s_StandaloneDescriptors
+private List`1<SubsystemDescriptor> s_DeprecatedDescriptors
+internal void InitializeManagedDescriptor(IntPtr ptr, IntegratedSubsystemDescriptor desc)
+internal void ClearManagedDescriptors()
+private void ReportSingleSubsystemAnalytics(string id)
+public void RegisterDescriptor(SubsystemDescriptorWithProvider descriptor)
+internal void GetAllSubsystemDescriptors(List`1<ISubsystemDescriptor> descriptors)
+private void AddDescriptorSubset(List`1<TBaseTypeInList> copyFrom, List`1<ISubsystemDescriptor> copyTo)
+internal void GetSubsystemDescriptors(List`1<T> descriptors)
+private void AddDescriptorSubset(List`1<TBaseTypeInList> copyFrom, List`1<TQueryType> copyTo)
+internal void RegisterDescriptor(TDescriptor descriptor, List`1<TBaseTypeInList> storeInList)
+internal void RegisterDeprecatedDescriptor(SubsystemDescriptor descriptor)
+}
+public UnityEngine.SubsystemsImplementation.SubsystemDescriptorWithProvider : object {
+private string <id>k__BackingField
+private Type <providerType>k__BackingField
+private Type <subsystemTypeOverride>k__BackingField
+public string id
+protected internal Type providerType
+protected internal Type subsystemTypeOverride
+public string get_id()
+public void set_id(string value)
+protected internal Type get_providerType()
+protected internal void set_providerType(Type value)
+protected internal Type get_subsystemTypeOverride()
+protected internal void set_subsystemTypeOverride(Type value)
+internal ISubsystem CreateImpl()
+private ISubsystem UnityEngine.ISubsystemDescriptor.Create()
+internal void ThrowIfInvalid()
+}
+public UnityEngine.SubsystemsImplementation.SubsystemDescriptorWithProvider`2 : SubsystemDescriptorWithProvider {
+internal ISubsystem CreateImpl()
+public TSubsystem Create()
+internal void ThrowIfInvalid()
+internal TProvider CreateProvider()
+}
+public UnityEngine.SubsystemsImplementation.SubsystemProvider : object {
+internal bool m_Running
+public bool running
+public bool get_running()
+}
+public UnityEngine.SubsystemsImplementation.SubsystemProvider`1 : SubsystemProvider {
+protected internal bool TryInitialize()
+public void Start()
+public void Stop()
+public void Destroy()
+}
+public UnityEngine.SubsystemsImplementation.SubsystemProxy`2 : object {
+private TProvider <provider>k__BackingField
+public TProvider provider
+public bool running
+public TProvider get_provider()
+private void set_provider(TProvider value)
+public bool get_running()
+public void set_running(bool value)
+internal void .ctor(TProvider provider)
+}
+public UnityEngine.SubsystemsImplementation.SubsystemWithProvider : object {
+private bool <running>k__BackingField
+private SubsystemProvider <providerBase>k__BackingField
+public bool running
+internal SubsystemProvider providerBase
+internal SubsystemDescriptorWithProvider descriptor
+public void Start()
+protected void OnStart()
+public void Stop()
+protected void OnStop()
+public void Destroy()
+protected void OnDestroy()
+public bool get_running()
+private void set_running(bool value)
+internal SubsystemProvider get_providerBase()
+internal void set_providerBase(SubsystemProvider value)
+internal void Initialize(SubsystemDescriptorWithProvider descriptor, SubsystemProvider subsystemProvider)
+internal SubsystemDescriptorWithProvider get_descriptor()
+}
+public UnityEngine.SubsystemsImplementation.SubsystemWithProvider`3 : SubsystemWithProvider {
+private TSubsystemDescriptor <subsystemDescriptor>k__BackingField
+private TProvider <provider>k__BackingField
+public TSubsystemDescriptor subsystemDescriptor
+protected internal TProvider provider
+internal SubsystemDescriptorWithProvider descriptor
+public TSubsystemDescriptor get_subsystemDescriptor()
+private void set_subsystemDescriptor(TSubsystemDescriptor value)
+protected internal TProvider get_provider()
+private void set_provider(TProvider value)
+protected void OnCreate()
+protected void OnStart()
+protected void OnStop()
+protected void OnDestroy()
+internal void Initialize(SubsystemDescriptorWithProvider descriptor, SubsystemProvider provider)
+internal SubsystemDescriptorWithProvider get_descriptor()
 }
