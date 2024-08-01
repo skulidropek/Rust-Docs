@@ -70,6 +70,15 @@ internal Locale : object {
 public string GetText(string msg)
 public string GetText(string fmt, Object[] args)
 }
+internal Microsoft.Reflection.ReflectionExtensions : object {
+public bool IsEnum(Type type)
+public bool IsAbstract(Type type)
+public bool IsSealed(Type type)
+public Type BaseType(Type type)
+public Assembly Assembly(Type type)
+public TypeCode GetTypeCode(Type type)
+public bool ReflectionOnly(Assembly assm)
+}
 internal Microsoft.Win32.ExpandString : object {
 private string value
 public void .ctor(string s)
@@ -411,6 +420,7 @@ internal int ERROR_TRUSTED_RELATIONSHIP_FAILURE
 internal FileAttributes FILE_ATTRIBUTE_DIRECTORY
 public string GetMessage(int hr)
 public int MakeHRFromErrorCode(int errorCode)
+internal UInt32 GetCurrentProcessId()
 }
 internal Microsoft.Win32.Win32RegistryApi : object {
 private int OpenRegKeyRead
@@ -3446,6 +3456,8 @@ private void System.Runtime.InteropServices._Activator.GetTypeInfoCount(UInt32& 
 private void System.Runtime.InteropServices._Activator.GetTypeInfo(UInt32 iTInfo, UInt32 lcid, IntPtr ppTInfo)
 private void System.Runtime.InteropServices._Activator.GetIDsOfNames(Guid& riid, IntPtr rgszNames, UInt32 cNames, UInt32 lcid, IntPtr rgDispId)
 private void System.Runtime.InteropServices._Activator.Invoke(UInt32 dispIdMember, Guid& riid, UInt32 lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
+public ObjectHandle CreateInstance(ActivationContext activationContext)
+public ObjectHandle CreateInstance(ActivationContext activationContext, String[] activationCustomData)
 }
 public System.AggregateException : Exception {
 private ReadOnlyCollection`1<Exception> m_innerExceptions
@@ -8454,6 +8466,217 @@ public Guid SMC
 public System.Diagnostics.SymbolStore.SymLanguageVendor : object {
 public Guid Microsoft
 }
+internal System.Diagnostics.Tracing.ActivityFilter : object {
+private ConcurrentDictionary`2<Guid, int> m_activeActivities
+private ConcurrentDictionary`2<Guid, Tuple`2<Guid, int>> m_rootActiveActivities
+private Guid m_providerGuid
+private int m_eventId
+private int m_samplingFreq
+private int m_curSampleCount
+private int m_perEventSourceSessionId
+private int MaxActivityTrackCount
+private ActivityFilter m_next
+private Action`1<Guid> m_myActivityDelegate
+public void DisableFilter(ActivityFilter& filterList, EventSource source)
+public void UpdateFilter(ActivityFilter& filterList, EventSource source, int perEventSourceSessionId, string startEvents)
+public ActivityFilter GetFilter(ActivityFilter filterList, EventSource source)
+public bool PassesActivityFilter(ActivityFilter filterList, Guid* childActivityID, bool triggeringEvent, EventSource source, int eventId)
+public bool IsCurrentActivityActive(ActivityFilter filterList)
+public void FlowActivityIfNeeded(ActivityFilter filterList, Guid* currentActivityId, Guid* childActivityID)
+public void UpdateKwdTriggers(ActivityFilter activityFilter, Guid sourceGuid, EventSource source, EventKeywords sessKeywords)
+public IEnumerable`1<Tuple`2<int, int>> GetFilterAsTuple(Guid sourceGuid)
+public void Dispose()
+private void .ctor(EventSource source, int perEventSourceSessionId, int eventId, int samplingFreq, ActivityFilter existingFilter)
+private void EnsureActivityCleanupDelegate(ActivityFilter filterList)
+private Action`1<Guid> GetActivityDyingDelegate(ActivityFilter filterList)
+private bool EnableFilter(ActivityFilter& filterList, EventSource source, int perEventSourceSessionId, int eventId, int samplingFreq)
+private void TrimActiveActivityStore(ConcurrentDictionary`2<Guid, int> activities)
+private ConcurrentDictionary`2<Guid, int> GetActiveActivities(ActivityFilter filterList)
+}
+internal System.Diagnostics.Tracing.ActivityTracker : object {
+private AsyncLocal`1<ActivityInfo> m_current
+private bool m_checkedForEnable
+private ActivityTracker s_activityTrackerInstance
+private long m_nextId
+private ushort MAX_ACTIVITY_DEPTH
+public ActivityTracker Instance
+private Guid CurrentActivityId
+public void OnStart(string providerName, string activityName, int task, Guid& activityId, Guid& relatedActivityId, EventActivityOptions options)
+public void OnStop(string providerName, string activityName, int task, Guid& activityId)
+public void Enable()
+public ActivityTracker get_Instance()
+private Guid get_CurrentActivityId()
+private ActivityInfo FindActiveActivity(string name, ActivityInfo startLocation)
+private string NormalizeActivityName(string providerName, string activityName, int task)
+private void ActivityChanging(AsyncLocalValueChangedArgs`1<ActivityInfo> args)
+}
+internal System.Diagnostics.Tracing.ArrayTypeInfo`1 : TraceLoggingTypeInfo`1<ElementType[]> {
+private TraceLoggingTypeInfo`1<ElementType> elementInfo
+public void .ctor(TraceLoggingTypeInfo`1<ElementType> elementInfo)
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, ElementType[]& value)
+public object GetData(object value)
+}
+internal System.Diagnostics.Tracing.BooleanArrayTypeInfo : TraceLoggingTypeInfo`1<Boolean[]> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, Boolean[]& value)
+}
+internal System.Diagnostics.Tracing.BooleanTypeInfo : TraceLoggingTypeInfo`1<bool> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, Boolean& value)
+}
+internal System.Diagnostics.Tracing.ByteArrayTypeInfo : TraceLoggingTypeInfo`1<Byte[]> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, Byte[]& value)
+}
+internal System.Diagnostics.Tracing.ByteTypeInfo : TraceLoggingTypeInfo`1<byte> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, Byte& value)
+}
+internal System.Diagnostics.Tracing.CharArrayTypeInfo : TraceLoggingTypeInfo`1<Char[]> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, Char[]& value)
+}
+internal System.Diagnostics.Tracing.CharTypeInfo : TraceLoggingTypeInfo`1<char> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, Char& value)
+}
+internal System.Diagnostics.Tracing.ClassPropertyWriter`2 : PropertyAccessor`1<ContainerType> {
+private TraceLoggingTypeInfo`1<ValueType> valueTypeInfo
+private Getter<ContainerType, ValueType> getter
+public void .ctor(PropertyAnalysis property)
+public void Write(TraceLoggingDataCollector collector, ContainerType& container)
+public object GetData(ContainerType container)
+}
+internal System.Diagnostics.Tracing.ConcurrentSet`2 : ValueType {
+private ItemType[] items
+public ItemType TryGet(KeyType key)
+public ItemType GetOrAdd(ItemType newItem)
+}
+internal System.Diagnostics.Tracing.ConcurrentSetItem`2 : object {
+public int Compare(ItemType other)
+public int Compare(KeyType key)
+}
+internal System.Diagnostics.Tracing.ControllerCommand : Enum {
+public int value__
+public ControllerCommand Update
+public ControllerCommand SendManifest
+public ControllerCommand Enable
+public ControllerCommand Disable
+}
+internal System.Diagnostics.Tracing.DataCollector : ValueType {
+internal DataCollector ThreadInstance
+private Byte* scratchEnd
+private EventData* datasEnd
+private GCHandle* pinsEnd
+private EventData* datasStart
+private Byte* scratch
+private EventData* datas
+private GCHandle* pins
+private Byte[] buffer
+private int bufferPos
+private int bufferNesting
+private bool writingScalars
+internal void Enable(Byte* scratch, int scratchSize, EventData* datas, int dataCount, GCHandle* pins, int pinCount)
+internal void Disable()
+internal EventData* Finish()
+internal void AddScalar(Void* value, int size)
+internal void AddBinary(string value, int size)
+internal void AddBinary(Array value, int size)
+internal void AddArray(Array value, int length, int itemSize)
+internal int BeginBufferedArray()
+internal void EndBufferedArray(int bookmark, int count)
+internal void BeginBuffered()
+internal void EndBuffered()
+private void EnsureBuffer()
+private void EnsureBuffer(int additionalSize)
+private void GrowBuffer(int required)
+private void PinArray(object value, int size)
+private void ScalarsBegin()
+private void ScalarsEnd()
+}
+internal System.Diagnostics.Tracing.DateTimeOffsetTypeInfo : TraceLoggingTypeInfo`1<DateTimeOffset> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, DateTimeOffset& value)
+}
+internal System.Diagnostics.Tracing.DateTimeTypeInfo : TraceLoggingTypeInfo`1<DateTime> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, DateTime& value)
+}
+internal System.Diagnostics.Tracing.DecimalTypeInfo : TraceLoggingTypeInfo`1<decimal> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, Decimal& value)
+}
+internal System.Diagnostics.Tracing.DoubleArrayTypeInfo : TraceLoggingTypeInfo`1<Double[]> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, Double[]& value)
+}
+internal System.Diagnostics.Tracing.DoubleTypeInfo : TraceLoggingTypeInfo`1<double> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, Double& value)
+}
+internal System.Diagnostics.Tracing.EnumByteTypeInfo`1 : TraceLoggingTypeInfo`1<EnumType> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, EnumType& value)
+public object GetData(object value)
+}
+internal System.Diagnostics.Tracing.EnumerableTypeInfo`2 : TraceLoggingTypeInfo`1<IterableType> {
+private TraceLoggingTypeInfo`1<ElementType> elementInfo
+public void .ctor(TraceLoggingTypeInfo`1<ElementType> elementInfo)
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, IterableType& value)
+public object GetData(object value)
+}
+internal System.Diagnostics.Tracing.EnumHelper`1 : object {
+private MethodInfo IdentityInfo
+public UnderlyingType Cast(ValueType value)
+internal UnderlyingType Identity(UnderlyingType value)
+}
+internal System.Diagnostics.Tracing.EnumInt16TypeInfo`1 : TraceLoggingTypeInfo`1<EnumType> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, EnumType& value)
+public object GetData(object value)
+}
+internal System.Diagnostics.Tracing.EnumInt32TypeInfo`1 : TraceLoggingTypeInfo`1<EnumType> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, EnumType& value)
+public object GetData(object value)
+}
+internal System.Diagnostics.Tracing.EnumInt64TypeInfo`1 : TraceLoggingTypeInfo`1<EnumType> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, EnumType& value)
+public object GetData(object value)
+}
+internal System.Diagnostics.Tracing.EnumSByteTypeInfo`1 : TraceLoggingTypeInfo`1<EnumType> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, EnumType& value)
+public object GetData(object value)
+}
+internal System.Diagnostics.Tracing.EnumUInt16TypeInfo`1 : TraceLoggingTypeInfo`1<EnumType> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, EnumType& value)
+public object GetData(object value)
+}
+internal System.Diagnostics.Tracing.EnumUInt32TypeInfo`1 : TraceLoggingTypeInfo`1<EnumType> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, EnumType& value)
+public object GetData(object value)
+}
+internal System.Diagnostics.Tracing.EnumUInt64TypeInfo`1 : TraceLoggingTypeInfo`1<EnumType> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, EnumType& value)
+public object GetData(object value)
+}
+internal System.Diagnostics.Tracing.EtwSession : object {
+public int m_etwSessionId
+public ActivityFilter m_activityFilter
+private List`1<WeakReference`1<EtwSession>> s_etwSessions
+private int s_thrSessionCount
+public EtwSession GetEtwSession(int etwSessionId, bool bCreateIfNeeded)
+public void RemoveEtwSession(EtwSession etwSession)
+private void TrimGlobalList()
+private void .ctor(int etwSessionId)
+}
 public System.Diagnostics.Tracing.EventActivityOptions : Enum {
 public int value__
 public EventActivityOptions None
@@ -8463,46 +8686,49 @@ public EventActivityOptions Detachable
 }
 public System.Diagnostics.Tracing.EventAttribute : Attribute {
 private int <EventId>k__BackingField
-private EventActivityOptions <ActivityOptions>k__BackingField
 private EventLevel <Level>k__BackingField
 private EventKeywords <Keywords>k__BackingField
-private EventOpcode <Opcode>k__BackingField
-private EventChannel <Channel>k__BackingField
-private string <Message>k__BackingField
 private EventTask <Task>k__BackingField
-private EventTags <Tags>k__BackingField
+private EventChannel <Channel>k__BackingField
 private byte <Version>k__BackingField
+private string <Message>k__BackingField
+private EventTags <Tags>k__BackingField
+private EventActivityOptions <ActivityOptions>k__BackingField
+private EventOpcode m_opcode
+private bool m_opcodeSet
 public int EventId
-public EventActivityOptions ActivityOptions
 public EventLevel Level
 public EventKeywords Keywords
 public EventOpcode Opcode
-public EventChannel Channel
-public string Message
+internal bool IsOpcodeSet
 public EventTask Task
-public EventTags Tags
+public EventChannel Channel
 public byte Version
+public string Message
+public EventTags Tags
+public EventActivityOptions ActivityOptions
 public void .ctor(int eventId)
 public int get_EventId()
 private void set_EventId(int value)
-public EventActivityOptions get_ActivityOptions()
-public void set_ActivityOptions(EventActivityOptions value)
 public EventLevel get_Level()
 public void set_Level(EventLevel value)
 public EventKeywords get_Keywords()
 public void set_Keywords(EventKeywords value)
 public EventOpcode get_Opcode()
 public void set_Opcode(EventOpcode value)
-public EventChannel get_Channel()
-public void set_Channel(EventChannel value)
-public string get_Message()
-public void set_Message(string value)
+internal bool get_IsOpcodeSet()
 public EventTask get_Task()
 public void set_Task(EventTask value)
-public EventTags get_Tags()
-public void set_Tags(EventTags value)
+public EventChannel get_Channel()
+public void set_Channel(EventChannel value)
 public byte get_Version()
 public void set_Version(byte value)
+public string get_Message()
+public void set_Message(string value)
+public EventTags get_Tags()
+public void set_Tags(EventTags value)
+public EventActivityOptions get_ActivityOptions()
+public void set_ActivityOptions(EventActivityOptions value)
 }
 public System.Diagnostics.Tracing.EventChannel : Enum {
 public byte value__
@@ -8520,39 +8746,189 @@ public EventCommand Enable
 public EventCommand Disable
 }
 public System.Diagnostics.Tracing.EventCommandEventArgs : EventArgs {
-public IDictionary`2<string, string> Arguments
+private EventCommand <Command>k__BackingField
+private IDictionary`2<string, string> <Arguments>k__BackingField
+internal EventSource eventSource
+internal EventDispatcher dispatcher
+internal EventListener listener
+internal int perEventSourceSessionId
+internal int etwSessionId
+internal bool enable
+internal EventLevel level
+internal EventKeywords matchAnyKeyword
+internal EventCommandEventArgs nextCommand
 public EventCommand Command
-public IDictionary`2<string, string> get_Arguments()
+public IDictionary`2<string, string> Arguments
 public EventCommand get_Command()
-public bool DisableEvent(int eventId)
+internal void set_Command(EventCommand value)
+public IDictionary`2<string, string> get_Arguments()
+internal void set_Arguments(IDictionary`2<string, string> value)
 public bool EnableEvent(int eventId)
+public bool DisableEvent(int eventId)
+internal void .ctor(EventCommand command, IDictionary`2<string, string> arguments, EventSource eventSource, EventListener listener, int perEventSourceSessionId, int etwSessionId, bool enable, EventLevel level, EventKeywords matchAnyKeyword)
 }
 public System.Diagnostics.Tracing.EventCounter : object {
+private string _name
+private EventCounterGroup _group
+private int BufferedSize
+private float UnusedBufferSlotValue
+private int UnsetIndex
+private Single[] modreq(System.Runtime.CompilerServices.IsVolatile) _bufferedValues
+private Int32 modreq(System.Runtime.CompilerServices.IsVolatile) _bufferedValuesIndex
+private int _count
+private float _sum
+private float _sumSquared
+private float _min
+private float _max
+private object MyLock
 public void .ctor(string name, EventSource eventSource)
 public void WriteMetric(float value)
+public void Dispose()
+public string ToString()
+private object get_MyLock()
+private void InitializeBuffer()
+private void Enqueue(float value)
+private void Flush()
+private void OnMetricWritten(float value)
+internal EventCounterPayload GetEventCounterPayload()
+private void ResetStatistics()
 }
-public System.Diagnostics.Tracing.EventDataAttribute : Attribute {
+internal System.Diagnostics.Tracing.EventCounterGroup : object {
+private EventSource _eventSource
+private List`1<EventCounter> _eventCounters
+private WeakReference`1[] s_eventCounterGroups
+private object s_eventCounterGroupsLock
+private DateTime _timeStampSinceCollectionStarted
+private int _pollingIntervalInMilliseconds
+private Timer _pollingTimer
+internal void .ctor(EventSource eventSource)
+internal void Add(EventCounter eventCounter)
+internal void Remove(EventCounter eventCounter)
+private void RegisterCommandCallback()
+private void OnEventSourceCommand(object sender, EventCommandEventArgs e)
+private void EnsureEventSourceIndexAvailable(int eventSourceIndex)
+internal EventCounterGroup GetEventCounterGroup(EventSource eventSource)
+private void DisposeTimer()
+private void EnableTimer(float pollingIntervalInSeconds)
+private void OnTimer(object state)
+}
+internal System.Diagnostics.Tracing.EventCounterPayload : object {
+private string <Name>k__BackingField
+private float <Mean>k__BackingField
+private float <StandardDeviation>k__BackingField
+private int <Count>k__BackingField
+private float <Min>k__BackingField
+private float <Max>k__BackingField
+private float <IntervalSec>k__BackingField
 public string Name
+public float Mean
+public float StandardDeviation
+public int Count
+public float Min
+public float Max
+public float IntervalSec
+private IEnumerable`1<KeyValuePair`2<string, object>> ForEnumeration
 public string get_Name()
 public void set_Name(string value)
+public float get_Mean()
+public void set_Mean(float value)
+public float get_StandardDeviation()
+public void set_StandardDeviation(float value)
+public int get_Count()
+public void set_Count(int value)
+public float get_Min()
+public void set_Min(float value)
+public float get_Max()
+public void set_Max(float value)
+public float get_IntervalSec()
+internal void set_IntervalSec(float value)
+public IEnumerator`1<KeyValuePair`2<string, object>> GetEnumerator()
+private IEnumerator System.Collections.IEnumerable.GetEnumerator()
+private IEnumerable`1<KeyValuePair`2<string, object>> get_ForEnumeration()
+}
+public System.Diagnostics.Tracing.EventDataAttribute : Attribute {
+private EventLevel level
+private EventOpcode opcode
+private string <Name>k__BackingField
+private EventKeywords <Keywords>k__BackingField
+private EventTags <Tags>k__BackingField
+public string Name
+internal EventLevel Level
+internal EventOpcode Opcode
+internal EventKeywords Keywords
+internal EventTags Tags
+public string get_Name()
+public void set_Name(string value)
+internal EventLevel get_Level()
+internal void set_Level(EventLevel value)
+internal EventOpcode get_Opcode()
+internal void set_Opcode(EventOpcode value)
+internal EventKeywords get_Keywords()
+internal void set_Keywords(EventKeywords value)
+internal EventTags get_Tags()
+internal void set_Tags(EventTags value)
+}
+internal System.Diagnostics.Tracing.EventDescriptor : ValueType {
+private int m_traceloggingId
+private ushort m_id
+private byte m_version
+private byte m_channel
+private byte m_level
+private byte m_opcode
+private ushort m_task
+private long m_keywords
+public int EventId
+public byte Version
+public byte Channel
+public byte Level
+public byte Opcode
+public int Task
+public long Keywords
+public void .ctor(int traceloggingId, byte level, byte opcode, long keywords)
+public void .ctor(int id, byte version, byte channel, byte level, byte opcode, int task, long keywords)
+public int get_EventId()
+public byte get_Version()
+public byte get_Channel()
+public byte get_Level()
+public byte get_Opcode()
+public int get_Task()
+public long get_Keywords()
+public bool Equals(object obj)
+public int GetHashCode()
+public bool Equals(EventDescriptor other)
+public bool op_Equality(EventDescriptor event1, EventDescriptor event2)
+public bool op_Inequality(EventDescriptor event1, EventDescriptor event2)
+}
+internal System.Diagnostics.Tracing.EventDispatcher : object {
+internal EventListener m_Listener
+internal Boolean[] m_EventEnabled
+internal bool m_activityFilteringEnabled
+internal EventDispatcher m_Next
+internal void .ctor(EventDispatcher next, Boolean[] eventEnabled, EventListener listener)
 }
 public System.Diagnostics.Tracing.EventFieldAttribute : Attribute {
-public EventFieldFormat Format
+private EventFieldTags <Tags>k__BackingField
+private string <Name>k__BackingField
+private EventFieldFormat <Format>k__BackingField
 public EventFieldTags Tags
-public EventFieldFormat get_Format()
-public void set_Format(EventFieldFormat value)
+internal string Name
+public EventFieldFormat Format
 public EventFieldTags get_Tags()
 public void set_Tags(EventFieldTags value)
+internal string get_Name()
+internal void set_Name(string value)
+public EventFieldFormat get_Format()
+public void set_Format(EventFieldFormat value)
 }
 public System.Diagnostics.Tracing.EventFieldFormat : Enum {
 public int value__
-public EventFieldFormat Boolean
 public EventFieldFormat Default
-public EventFieldFormat Hexadecimal
-public EventFieldFormat HResult
-public EventFieldFormat Json
 public EventFieldFormat String
+public EventFieldFormat Boolean
+public EventFieldFormat Hexadecimal
 public EventFieldFormat Xml
+public EventFieldFormat Json
+public EventFieldFormat HResult
 }
 public System.Diagnostics.Tracing.EventFieldTags : Enum {
 public int value__
@@ -8581,26 +8957,49 @@ public EventLevel Informational
 public EventLevel Verbose
 }
 public System.Diagnostics.Tracing.EventListener : object {
-public int EventSourceIndex(EventSource eventSource)
-public void EnableEvents(EventSource eventSource, EventLevel level)
-public void EnableEvents(EventSource eventSource, EventLevel level, EventKeywords matchAnyKeyword)
-public void EnableEvents(EventSource eventSource, EventLevel level, EventKeywords matchAnyKeyword, IDictionary`2<string, string> arguments)
-public void DisableEvents(EventSource eventSource)
-protected internal void OnEventSourceCreated(EventSource eventSource)
-protected internal void OnEventWritten(EventWrittenEventArgs eventData)
-public void Dispose()
+private object s_EventSourceCreatedLock
+private EventHandler`1<EventSourceCreatedEventArgs> _EventSourceCreated
+private EventHandler`1<EventWrittenEventArgs> EventWritten
+internal EventListener modreq(System.Runtime.CompilerServices.IsVolatile) m_Next
+internal ActivityFilter m_activityFilter
+internal EventListener s_Listeners
+internal List`1<WeakReference> s_EventSources
+private bool s_CreatingListener
+private bool s_EventSourceShutdownRegistered
+internal object EventListenersLock
+private void add__EventSourceCreated(EventHandler`1<EventSourceCreatedEventArgs> value)
+private void remove__EventSourceCreated(EventHandler`1<EventSourceCreatedEventArgs> value)
 public void add_EventSourceCreated(EventHandler`1<EventSourceCreatedEventArgs> value)
 public void remove_EventSourceCreated(EventHandler`1<EventSourceCreatedEventArgs> value)
 public void add_EventWritten(EventHandler`1<EventWrittenEventArgs> value)
 public void remove_EventWritten(EventHandler`1<EventWrittenEventArgs> value)
+public void Dispose()
+public void EnableEvents(EventSource eventSource, EventLevel level)
+public void EnableEvents(EventSource eventSource, EventLevel level, EventKeywords matchAnyKeyword)
+public void EnableEvents(EventSource eventSource, EventLevel level, EventKeywords matchAnyKeyword, IDictionary`2<string, string> arguments)
+public void DisableEvents(EventSource eventSource)
+public int EventSourceIndex(EventSource eventSource)
+protected internal void OnEventSourceCreated(EventSource eventSource)
+protected internal void OnEventWritten(EventWrittenEventArgs eventData)
+internal void AddEventSource(EventSource newEventSource)
+private void DisposeOnShutdown(object sender, EventArgs e)
+private void RemoveReferencesToListenerInEventSources(EventListener listenerToRemove)
+internal void Validate()
+internal object get_EventListenersLock()
+private void CallBackForExistingEventSources(bool addToListenersList, EventHandler`1<EventSourceCreatedEventArgs> callback)
+private void <.ctor>b__10_0(object obj, EventSourceCreatedEventArgs args)
+}
+internal System.Diagnostics.Tracing.EventListenerHelper : EventListener {
+public int EventSourceIndex(EventSource eventSource)
+protected internal void OnEventWritten(EventWrittenEventArgs eventData)
 }
 public System.Diagnostics.Tracing.EventManifestOptions : Enum {
 public int value__
-public EventManifestOptions AllCultures
-public EventManifestOptions AllowEventSourceOverride
 public EventManifestOptions None
-public EventManifestOptions OnlyIfNeededForRegistration
 public EventManifestOptions Strict
+public EventManifestOptions AllCultures
+public EventManifestOptions OnlyIfNeededForRegistration
+public EventManifestOptions AllowEventSourceOverride
 }
 public System.Diagnostics.Tracing.EventOpcode : Enum {
 public int value__
@@ -8616,90 +9015,307 @@ public EventOpcode Suspend
 public EventOpcode Send
 public EventOpcode Receive
 }
+internal System.Diagnostics.Tracing.EventPayload : object {
+private List`1<string> m_names
+private List`1<object> m_values
+public ICollection`1<string> Keys
+public ICollection`1<object> Values
+public object Item
+public int Count
+public bool IsReadOnly
+internal void .ctor(List`1<string> payloadNames, List`1<object> payloadValues)
+public ICollection`1<string> get_Keys()
+public ICollection`1<object> get_Values()
+public object get_Item(string key)
+public void set_Item(string key, object value)
+public void Add(string key, object value)
+public void Add(KeyValuePair`2<string, object> payloadEntry)
+public void Clear()
+public bool Contains(KeyValuePair`2<string, object> entry)
+public bool ContainsKey(string key)
+public int get_Count()
+public bool get_IsReadOnly()
+public IEnumerator`1<KeyValuePair`2<string, object>> GetEnumerator()
+private IEnumerator System.Collections.IEnumerable.GetEnumerator()
+public void CopyTo(KeyValuePair`2[] payloadEntries, int count)
+public bool Remove(string key)
+public bool Remove(KeyValuePair`2<string, object> entry)
+public bool TryGetValue(string key, Object& value)
+}
+internal System.Diagnostics.Tracing.EventProvider : object {
+private bool m_setInformationMissing
+private EtwEnableCallback m_etwCallback
+private GCHandle m_thisGCHandle
+private long m_regHandle
+private byte m_level
+private long m_anyKeywordMask
+private long m_allKeywordMask
+private List`1<SessionInfo> m_liveSessions
+private bool m_enabled
+private Guid m_providerId
+internal bool m_disposed
+private WriteEventErrorCode s_returnCode
+private int s_basicTypeAllocationBufferSize
+private int s_etwMaxNumberArguments
+private int s_etwAPIMaxRefObjCount
+private int s_maxEventDataDescriptors
+private int s_traceEventMaximumSize
+private int s_traceEventMaximumStringSize
+private Int32[] nibblebits
+protected EventLevel Level
+protected EventKeywords MatchAnyKeyword
+protected EventKeywords MatchAllKeyword
+protected void .ctor(Guid providerGuid)
+internal void Register(Guid providerGuid)
+internal int SetInformation(EVENT_INFO_CLASS eventInfoClass, Void* data, int dataSize)
+public void Dispose()
+protected void Dispose(bool disposing)
+public void Close()
+protected void Finalize()
+private void Deregister()
+private void EtwEnableCallBack(Guid& sourceId, int controlCode, byte setLevel, long anyKeyword, long allKeyword, EVENT_FILTER_DESCRIPTOR* filterData, Void* callbackContext)
+private void EtwEnableCallBackImpl(int controlCode, byte setLevel, long anyKeyword, long allKeyword, EVENT_FILTER_DESCRIPTOR* filterData)
+protected void OnControllerCommand(ControllerCommand command, IDictionary`2<string, string> arguments, int sessionId, int etwSessionId)
+protected EventLevel get_Level()
+protected void set_Level(EventLevel value)
+protected EventKeywords get_MatchAnyKeyword()
+protected void set_MatchAnyKeyword(EventKeywords value)
+protected EventKeywords get_MatchAllKeyword()
+protected void set_MatchAllKeyword(EventKeywords value)
+private int FindNull(Byte[] buffer, int idx)
+private List`1<Tuple`2<SessionInfo, bool>> GetSessions()
+private void GetSessionInfoCallback(int etwSessionId, long matchAllKeywords, List`1& sessionList)
+private void GetSessionInfo(Action`2<int, long> action)
+private int IndexOfSessionInList(List`1<SessionInfo> sessions, int etwSessionId)
+private bool GetDataFromController(int etwSessionId, EVENT_FILTER_DESCRIPTOR* filterData, ControllerCommand& command, Byte[]& data, Int32& dataStart)
+public bool IsEnabled()
+public bool IsEnabled(byte level, long keywords)
+internal bool IsValid()
+public WriteEventErrorCode GetLastWriteEventError()
+private void SetLastError(int error)
+private object EncodeObject(Object& data, EventData*& dataDescriptor, Byte*& dataBuffer, UInt32& totalEventSize)
+internal bool WriteEvent(EventDescriptor& eventDescriptor, Guid* activityID, Guid* childActivityID, Object[] eventPayload)
+protected internal bool WriteEvent(EventDescriptor& eventDescriptor, Guid* activityID, Guid* childActivityID, int dataCount, IntPtr data)
+internal bool WriteEventRaw(EventDescriptor& eventDescriptor, Guid* activityID, Guid* relatedActivityID, int dataCount, IntPtr data)
+private UInt32 EventUnregister()
+private int bitcount(UInt32 n)
+private int bitindex(UInt32 n)
+}
 public System.Diagnostics.Tracing.EventSource : object {
-private string <Name>k__BackingField
-private EventSourceSettings <Settings>k__BackingField
-public Exception ConstructionException
-public Guid CurrentThreadActivityId
-public Guid Guid
+private Byte[] providerMetadata
+private string m_name
+internal int m_id
+private Guid m_guid
+internal EventMetadata[] modreq(System.Runtime.CompilerServices.IsVolatile) m_eventData
+private Byte[] modreq(System.Runtime.CompilerServices.IsVolatile) m_rawManifest
+private EventHandler`1<EventCommandEventArgs> m_eventCommandExecuted
+private EventSourceSettings m_config
+private bool m_eventSourceEnabled
+internal EventLevel m_level
+internal EventKeywords m_matchAnyKeyword
+internal EventDispatcher modreq(System.Runtime.CompilerServices.IsVolatile) m_Dispatchers
+private OverideEventProvider modreq(System.Runtime.CompilerServices.IsVolatile) m_provider
+private bool m_completelyInited
+private Exception m_constructionException
+private byte m_outOfBandMessageCount
+private EventCommandEventArgs m_deferredCommands
+private String[] m_traits
+internal UInt32 s_currentPid
+private byte m_EventSourceExceptionRecurenceCount
+private SessionMask m_curLiveSessions
+private EtwSession[] m_etwSessionIdMap
+private List`1<EtwSession> m_legacySessions
+internal long m_keywordTriggers
+internal SessionMask m_activityFilteringForETWEnabled
+internal Action`1<Guid> s_activityDying
+private ActivityTracker m_activityTracker
+internal string s_ActivityStartSuffix
+internal string s_ActivityStopSuffix
+private Byte[] namespaceBytes
+private Guid AspNetEventSourceGuid
 public string Name
+public Guid Guid
 public EventSourceSettings Settings
-protected void .ctor(bool throwOnEventWriteErrors)
-protected void .ctor(EventSourceSettings settings)
-protected void .ctor(EventSourceSettings settings, String[] traits)
+public Guid CurrentThreadActivityId
+internal Guid InternalCurrentThreadActivityId
+internal Guid FallbackActivityId
+public Exception ConstructionException
+private bool IsDisposed
+private bool ThrowOnEventWriteErrors
+private bool SelfDescribingEvents
 public void .ctor(string eventSourceName)
 public void .ctor(string eventSourceName, EventSourceSettings config)
 public void .ctor(string eventSourceName, EventSourceSettings config, String[] traits)
-protected void Finalize()
-public Exception get_ConstructionException()
-public Guid get_CurrentThreadActivityId()
-public Guid get_Guid()
-public string get_Name()
-private void set_Name(string value)
-public EventSourceSettings get_Settings()
-private void set_Settings(EventSourceSettings value)
-public bool IsEnabled()
-public bool IsEnabled(EventLevel level, EventKeywords keywords)
-public bool IsEnabled(EventLevel level, EventKeywords keywords, EventChannel channel)
-public void Dispose()
-public string GetTrait(string key)
 public void Write(string eventName)
 public void Write(string eventName, EventSourceOptions options)
 public void Write(string eventName, T data)
 public void Write(string eventName, EventSourceOptions options, T data)
 public void Write(string eventName, EventSourceOptions& options, T& data)
 public void Write(string eventName, EventSourceOptions& options, Guid& activityId, Guid& relatedActivityId, T& data)
-protected void Dispose(bool disposing)
-protected void OnEventCommand(EventCommandEventArgs command)
-protected void WriteEvent(int eventId)
-protected void WriteEvent(int eventId, Byte[] arg1)
-protected void WriteEvent(int eventId, int arg1)
-protected void WriteEvent(int eventId, string arg1)
-protected void WriteEvent(int eventId, int arg1, int arg2)
-protected void WriteEvent(int eventId, int arg1, int arg2, int arg3)
-protected void WriteEvent(int eventId, int arg1, string arg2)
-protected void WriteEvent(int eventId, long arg1)
-protected void WriteEvent(int eventId, long arg1, Byte[] arg2)
-protected void WriteEvent(int eventId, long arg1, long arg2)
-protected void WriteEvent(int eventId, long arg1, long arg2, long arg3)
-protected void WriteEvent(int eventId, long arg1, string arg2)
-protected void WriteEvent(int eventId, Object[] args)
-protected void WriteEvent(int eventId, string arg1, int arg2)
-protected void WriteEvent(int eventId, string arg1, int arg2, int arg3)
-protected void WriteEvent(int eventId, string arg1, long arg2)
-protected void WriteEvent(int eventId, string arg1, string arg2)
-protected void WriteEvent(int eventId, string arg1, string arg2, string arg3)
-protected void WriteEventCore(int eventId, int eventDataCount, EventData* data)
-protected void WriteEventWithRelatedActivityId(int eventId, Guid relatedActivityId, Object[] args)
-protected void WriteEventWithRelatedActivityIdCore(int eventId, Guid* relatedActivityId, int eventDataCount, EventData* data)
-public void add_EventCommandExecuted(EventHandler`1<EventCommandEventArgs> value)
-public void remove_EventCommandExecuted(EventHandler`1<EventCommandEventArgs> value)
-public string GenerateManifest(Type eventSourceType, string assemblyPathToIncludeInManifest)
-public string GenerateManifest(Type eventSourceType, string assemblyPathToIncludeInManifest, EventManifestOptions flags)
+private void WriteMultiMerge(string eventName, EventSourceOptions& options, TraceLoggingEventTypes eventTypes, Guid* activityID, Guid* childActivityID, Object[] values)
+private void WriteMultiMergeInner(string eventName, EventSourceOptions& options, TraceLoggingEventTypes eventTypes, Guid* activityID, Guid* childActivityID, Object[] values)
+internal void WriteMultiMerge(string eventName, EventSourceOptions& options, TraceLoggingEventTypes eventTypes, Guid* activityID, Guid* childActivityID, EventData* data)
+private void WriteImpl(string eventName, EventSourceOptions& options, T& data, Guid* pActivityId, Guid* pRelatedActivityId)
+private void WriteToAllListeners(string eventName, EventDescriptor& eventDescriptor, EventTags tags, Guid* pActivityId, EventPayload payload)
+private void WriteCleanup(GCHandle* pPins, int cPins)
+private void InitializeProviderMetadata()
+private int AddValueToMetaData(List`1<byte> metaData, string value)
+private int HexDigit(char c)
+private NameInfo UpdateDescriptor(string name, TraceLoggingEventTypes eventInfo, EventSourceOptions& options, EventDescriptor& descriptor)
+public string get_Name()
+public Guid get_Guid()
+public bool IsEnabled()
+public bool IsEnabled(EventLevel level, EventKeywords keywords)
+public bool IsEnabled(EventLevel level, EventKeywords keywords, EventChannel channel)
+public EventSourceSettings get_Settings()
 public Guid GetGuid(Type eventSourceType)
 public string GetName(Type eventSourceType)
+public string GenerateManifest(Type eventSourceType, string assemblyPathToIncludeInManifest)
+public string GenerateManifest(Type eventSourceType, string assemblyPathToIncludeInManifest, EventManifestOptions flags)
 public IEnumerable`1<EventSource> GetSources()
 public void SendCommand(EventSource eventSource, EventCommand command, IDictionary`2<string, string> commandArguments)
 public void SetCurrentThreadActivityId(Guid activityId)
 public void SetCurrentThreadActivityId(Guid activityId, Guid& oldActivityThatWillContinue)
+public Guid get_CurrentThreadActivityId()
+internal Guid get_InternalCurrentThreadActivityId()
+internal Guid get_FallbackActivityId()
+public Exception get_ConstructionException()
+public string GetTrait(string key)
+public string ToString()
+public void add_EventCommandExecuted(EventHandler`1<EventCommandEventArgs> value)
+public void remove_EventCommandExecuted(EventHandler`1<EventCommandEventArgs> value)
+protected void .ctor(bool throwOnEventWriteErrors)
+protected void .ctor(EventSourceSettings settings)
+protected void .ctor(EventSourceSettings settings, String[] traits)
+protected void OnEventCommand(EventCommandEventArgs command)
+protected void WriteEvent(int eventId)
+protected void WriteEvent(int eventId, int arg1)
+protected void WriteEvent(int eventId, int arg1, int arg2)
+protected void WriteEvent(int eventId, int arg1, int arg2, int arg3)
+protected void WriteEvent(int eventId, long arg1)
+protected void WriteEvent(int eventId, long arg1, long arg2)
+protected void WriteEvent(int eventId, long arg1, long arg2, long arg3)
+protected void WriteEvent(int eventId, string arg1)
+protected void WriteEvent(int eventId, string arg1, string arg2)
+protected void WriteEvent(int eventId, string arg1, string arg2, string arg3)
+protected void WriteEvent(int eventId, string arg1, int arg2)
+protected void WriteEvent(int eventId, string arg1, int arg2, int arg3)
+protected void WriteEvent(int eventId, string arg1, long arg2)
+protected void WriteEvent(int eventId, long arg1, string arg2)
+protected void WriteEvent(int eventId, int arg1, string arg2)
+protected void WriteEvent(int eventId, Byte[] arg1)
+protected void WriteEvent(int eventId, long arg1, Byte[] arg2)
+protected void WriteEventCore(int eventId, int eventDataCount, EventData* data)
+protected void WriteEventWithRelatedActivityIdCore(int eventId, Guid* relatedActivityId, int eventDataCount, EventData* data)
+protected void WriteEvent(int eventId, Object[] args)
+protected void WriteEventWithRelatedActivityId(int eventId, Guid relatedActivityId, Object[] args)
+public void Dispose()
+protected void Dispose(bool disposing)
+protected void Finalize()
+internal void WriteStringToListener(EventListener listener, string msg, SessionMask m)
+private void WriteEventRaw(string eventName, EventDescriptor& eventDescriptor, Guid* activityID, Guid* relatedActivityID, int dataCount, IntPtr data)
+internal void .ctor(Guid eventSourceGuid, string eventSourceName)
+internal void .ctor(Guid eventSourceGuid, string eventSourceName, EventSourceSettings settings, String[] traits)
+private void Initialize(Guid eventSourceGuid, string eventSourceName, String[] traits)
+private string GetName(Type eventSourceType, EventManifestOptions flags)
+private Guid GenerateGuidFromName(string name)
+private object DecodeObject(int eventId, int parameterId, EventData*& data)
+private EventDispatcher GetDispatcher(EventListener listener)
+private void WriteEventVarargs(int eventId, Guid* childActivityID, Object[] args)
+private Object[] SerializeEventArgs(int eventId, Object[] args)
+private void LogEventArgsMismatches(ParameterInfo[] infos, Object[] args)
+private int GetParamLengthIncludingByteArray(ParameterInfo[] parameters)
+private void WriteToAllListeners(int eventId, Guid* childActivityID, int eventDataCount, EventData* data)
+private void WriteToAllListeners(int eventId, Guid* childActivityID, Object[] args)
+private void DispatchToAllListeners(int eventId, Guid* childActivityID, EventWrittenEventArgs eventCallbackArgs)
+private void WriteEventString(EventLevel level, long keywords, string msgString)
+private void WriteStringToAllListeners(string eventName, string msg)
+private SessionMask GetEtwSessionMask(int eventId, Guid* childActivityID)
+private bool IsEnabledByDefault(int eventNum, bool enable, EventLevel currentLevel, EventKeywords currentMatchAnyKeyword)
+private bool IsEnabledCommon(bool enabled, EventLevel currentLevel, EventKeywords currentMatchAnyKeyword, EventLevel eventLevel, EventKeywords eventKeywords, EventChannel eventChannel)
+private void ThrowEventSourceException(string eventName, Exception innerEx)
+private void ValidateEventOpcodeForTransfer(EventMetadata& eventData, string eventName)
+internal EventOpcode GetOpcodeWithDefault(EventOpcode opcode, string eventName)
+internal void SendCommand(EventListener listener, int perEventSourceSessionId, int etwSessionId, EventCommand command, bool enable, EventLevel level, EventKeywords matchAnyKeyword, IDictionary`2<string, string> commandArguments)
+internal void DoCommand(EventCommandEventArgs commandArgs)
+internal void UpdateEtwSession(int sessionIdBit, int etwSessionId, bool bEnable, string activityFilters, bool participateInSampling)
+internal bool ParseCommandArgs(IDictionary`2<string, string> commandArguments, Boolean& participateInSampling, String& activityFilters, Int32& sessionIdBit)
+internal void UpdateKwdTriggers(bool enable)
+internal bool EnableEventForDispatcher(EventDispatcher dispatcher, int eventId, bool value)
+private bool AnyEventEnabled()
+private bool get_IsDisposed()
+private void EnsureDescriptorsInitialized()
+private bool SendManifest(Byte[] rawManifest)
+internal Attribute GetCustomAttributeHelper(MemberInfo member, Type attributeType, EventManifestOptions flags)
+private bool AttributeTypeNamesMatch(Type attributeType, Type reflectedAttributeType)
+private Type GetEventSourceBaseType(Type eventSourceType, bool allowEventSourceOverride, bool reflectionOnly)
+private Byte[] CreateManifestAndDescriptors(Type eventSourceType, string eventSourceDllName, EventSource source, EventManifestOptions flags)
+private bool RemoveFirstArgIfRelatedActivityId(ParameterInfo[]& args)
+private void AddProviderEnumKind(ManifestBuilder manifest, FieldInfo staticField, string providerEnumKind)
+private void AddEventDescriptor(EventMetadata[]& eventData, string eventName, EventAttribute eventAttribute, ParameterInfo[] eventParameters, bool hasRelatedActivityID)
+private void TrimEventDescriptors(EventMetadata[]& eventData)
+internal void AddListener(EventListener listener)
+private void DebugCheckEvent(Dictionary`2& eventsByName, EventMetadata[] eventData, MethodInfo method, EventAttribute eventAttribute, ManifestBuilder manifest, EventManifestOptions options)
+private int GetHelperCallFirstArg(MethodInfo method)
+internal void ReportOutOfBandMessage(string msg, bool flush)
+private EventSourceSettings ValidateSettings(EventSourceSettings settings)
+private bool get_ThrowOnEventWriteErrors()
+private void set_ThrowOnEventWriteErrors(bool value)
+private bool get_SelfDescribingEvents()
+private void set_SelfDescribingEvents(bool value)
+private void ReportActivitySamplingInfo(EventListener listener, SessionMask sessions)
+}
+internal System.Diagnostics.Tracing.EventSourceActivity : object {
+private EventSource eventSource
+private EventSourceOptions startStopOptions
+internal Guid activityId
+private State state
+private string eventName
+internal Guid s_empty
+public EventSource EventSource
+public Guid Id
+private bool StartEventWasFired
+public void .ctor(EventSource eventSource)
+public EventSourceActivity op_Implicit(EventSource eventSource)
+public EventSource get_EventSource()
+public Guid get_Id()
+public EventSourceActivity Start(string eventName, EventSourceOptions options, T data)
+public EventSourceActivity Start(string eventName)
+public EventSourceActivity Start(string eventName, EventSourceOptions options)
+public EventSourceActivity Start(string eventName, T data)
+public void Stop(T data)
+public void Stop(string eventName)
+public void Stop(string eventName, T data)
+public void Write(string eventName, EventSourceOptions options, T data)
+public void Write(string eventName, T data)
+public void Write(string eventName, EventSourceOptions options)
+public void Write(string eventName)
+public void Write(EventSource source, string eventName, EventSourceOptions options, T data)
+public void Dispose()
+private EventSourceActivity Start(string eventName, EventSourceOptions& options, T& data)
+private void Write(EventSource eventSource, string eventName, EventSourceOptions& options, T& data)
+private void Stop(string eventName, T& data)
+private bool get_StartEventWasFired()
 }
 public System.Diagnostics.Tracing.EventSourceAttribute : Attribute {
+private string <Name>k__BackingField
 private string <Guid>k__BackingField
 private string <LocalizationResources>k__BackingField
-private string <Name>k__BackingField
+public string Name
 public string Guid
 public string LocalizationResources
-public string Name
+public string get_Name()
+public void set_Name(string value)
 public string get_Guid()
 public void set_Guid(string value)
 public string get_LocalizationResources()
 public void set_LocalizationResources(string value)
-public string get_Name()
-public void set_Name(string value)
 }
 public System.Diagnostics.Tracing.EventSourceCreatedEventArgs : EventArgs {
+private EventSource <EventSource>k__BackingField
 public EventSource EventSource
 public EventSource get_EventSource()
+internal void set_EventSource(EventSource value)
 }
 public System.Diagnostics.Tracing.EventSourceException : Exception {
 public void .ctor(string message)
@@ -8754,50 +9370,551 @@ public EventTask None
 }
 public System.Diagnostics.Tracing.EventWrittenEventArgs : EventArgs {
 private int <EventId>k__BackingField
-private string <EventName>k__BackingField
-private EventSource <EventSource>k__BackingField
-private string <Message>k__BackingField
-private ReadOnlyCollection`1<object> <Payload>k__BackingField
-private ReadOnlyCollection`1<string> <PayloadNames>k__BackingField
 private Guid <RelatedActivityId>k__BackingField
-public Guid ActivityId
-public EventChannel Channel
-public int EventId
+private ReadOnlyCollection`1<object> <Payload>k__BackingField
+private string m_message
+private string m_eventName
+private EventSource m_eventSource
+private ReadOnlyCollection`1<string> m_payloadNames
+internal EventTags m_tags
+internal EventOpcode m_opcode
+internal EventKeywords m_keywords
 public string EventName
-public EventSource EventSource
-public EventKeywords Keywords
-public EventLevel Level
-public string Message
-public EventOpcode Opcode
+public int EventId
+public Guid ActivityId
+public Guid RelatedActivityId
 public ReadOnlyCollection`1<object> Payload
 public ReadOnlyCollection`1<string> PayloadNames
-public Guid RelatedActivityId
-public EventTags Tags
+public EventSource EventSource
+public EventKeywords Keywords
+public EventOpcode Opcode
 public EventTask Task
+public EventTags Tags
+public string Message
+public EventChannel Channel
 public byte Version
-internal void .ctor(EventSource eventSource)
-public Guid get_ActivityId()
-public EventChannel get_Channel()
-public int get_EventId()
-internal void set_EventId(int value)
+public EventLevel Level
 public string get_EventName()
 internal void set_EventName(string value)
-public EventSource get_EventSource()
-private void set_EventSource(EventSource value)
-public EventKeywords get_Keywords()
-public EventLevel get_Level()
-public string get_Message()
-internal void set_Message(string value)
-public EventOpcode get_Opcode()
+public int get_EventId()
+internal void set_EventId(int value)
+public Guid get_ActivityId()
+public Guid get_RelatedActivityId()
+internal void set_RelatedActivityId(Guid value)
 public ReadOnlyCollection`1<object> get_Payload()
 internal void set_Payload(ReadOnlyCollection`1<object> value)
 public ReadOnlyCollection`1<string> get_PayloadNames()
 internal void set_PayloadNames(ReadOnlyCollection`1<string> value)
-public Guid get_RelatedActivityId()
-internal void set_RelatedActivityId(Guid value)
-public EventTags get_Tags()
+public EventSource get_EventSource()
+public EventKeywords get_Keywords()
+public EventOpcode get_Opcode()
 public EventTask get_Task()
+public EventTags get_Tags()
+public string get_Message()
+internal void set_Message(string value)
+public EventChannel get_Channel()
 public byte get_Version()
+public EventLevel get_Level()
+internal void .ctor(EventSource eventSource)
+}
+internal System.Diagnostics.Tracing.FieldMetadata : object {
+private string name
+private int nameSize
+private EventFieldTags tags
+private Byte[] custom
+private ushort fixedCount
+private byte inType
+private byte outType
+public void .ctor(string name, TraceLoggingDataType type, EventFieldTags tags, bool variableCount)
+public void .ctor(string name, TraceLoggingDataType type, EventFieldTags tags, ushort fixedCount)
+public void .ctor(string name, TraceLoggingDataType type, EventFieldTags tags, Byte[] custom)
+private void .ctor(string name, TraceLoggingDataType dataType, EventFieldTags tags, byte countFlags, ushort fixedCount, Byte[] custom)
+public void IncrementStructFieldCount()
+public void Encode(Int32& pos, Byte[] metadata)
+}
+internal System.Diagnostics.Tracing.GuidArrayTypeInfo : TraceLoggingTypeInfo`1<Guid[]> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, Guid[]& value)
+}
+internal System.Diagnostics.Tracing.GuidTypeInfo : TraceLoggingTypeInfo`1<Guid> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, Guid& value)
+}
+internal System.Diagnostics.Tracing.Int16ArrayTypeInfo : TraceLoggingTypeInfo`1<Int16[]> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, Int16[]& value)
+}
+internal System.Diagnostics.Tracing.Int16TypeInfo : TraceLoggingTypeInfo`1<short> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, Int16& value)
+}
+internal System.Diagnostics.Tracing.Int32ArrayTypeInfo : TraceLoggingTypeInfo`1<Int32[]> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, Int32[]& value)
+}
+internal System.Diagnostics.Tracing.Int32TypeInfo : TraceLoggingTypeInfo`1<int> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, Int32& value)
+}
+internal System.Diagnostics.Tracing.Int64ArrayTypeInfo : TraceLoggingTypeInfo`1<Int64[]> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, Int64[]& value)
+}
+internal System.Diagnostics.Tracing.Int64TypeInfo : TraceLoggingTypeInfo`1<long> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, Int64& value)
+}
+internal System.Diagnostics.Tracing.Internal.Environment : object {
+public string NewLine
+private ResourceManager rm
+public int TickCount
+public int get_TickCount()
+public string GetResourceString(string key, Object[] args)
+public string GetRuntimeResourceString(string key, Object[] args)
+}
+internal System.Diagnostics.Tracing.IntPtrArrayTypeInfo : TraceLoggingTypeInfo`1<IntPtr[]> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, IntPtr[]& value)
+}
+internal System.Diagnostics.Tracing.IntPtrTypeInfo : TraceLoggingTypeInfo`1<IntPtr> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, IntPtr& value)
+}
+internal System.Diagnostics.Tracing.InvokeTypeInfo`1 : TraceLoggingTypeInfo`1<ContainerType> {
+private PropertyAnalysis[] properties
+private PropertyAccessor`1[] accessors
+public void .ctor(TypeAnalysis typeAnalysis)
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, ContainerType& value)
+public object GetData(object value)
+public void WriteObjectData(TraceLoggingDataCollector collector, object valueObj)
+}
+internal System.Diagnostics.Tracing.KeyValuePairTypeInfo`2 : TraceLoggingTypeInfo`1<KeyValuePair`2<K, V>> {
+private TraceLoggingTypeInfo`1<K> keyInfo
+private TraceLoggingTypeInfo`1<V> valueInfo
+public void .ctor(List`1<Type> recursionCheck)
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, KeyValuePair`2& value)
+public object GetData(object value)
+}
+internal System.Diagnostics.Tracing.ManifestBuilder : object {
+private Dictionary`2<int, string> opcodeTab
+private Dictionary`2<int, string> taskTab
+private Dictionary`2<ulong, string> keywordTab
+private Dictionary`2<string, Type> mapsTab
+private Dictionary`2<string, string> stringTab
+private StringBuilder sb
+private StringBuilder events
+private StringBuilder templates
+private ResourceManager resources
+private EventManifestOptions flags
+private IList`1<string> errors
+private Dictionary`2<string, List`1<int>> perEventByteArrayArgIndices
+private string eventName
+private int numParams
+private List`1<int> byteArrArgIndices
+public IList`1<string> Errors
+public void .ctor(string providerName, Guid providerGuid, string dllName, ResourceManager resources, EventManifestOptions flags)
+public void AddOpcode(string name, int value)
+public void AddTask(string name, int value)
+public void AddKeyword(string name, ulong value)
+public void StartEvent(string eventName, EventAttribute eventAttribute)
+public void AddEventParameter(Type type, string name)
+public void EndEvent()
+public Byte[] CreateManifest()
+public IList`1<string> get_Errors()
+public void ManifestError(string msg, bool runtimeCritical)
+private string CreateManifestString()
+private void WriteNameAndMessageAttribs(StringBuilder stringBuilder, string elementName, string name)
+private void WriteMessageAttrib(StringBuilder stringBuilder, string elementName, string name, string value)
+internal string GetLocalizedMessage(string key, CultureInfo ci, bool etwFormat)
+private List`1<CultureInfo> GetSupportedCultures(ResourceManager resources)
+private string GetLevelName(EventLevel level)
+private string GetTaskName(EventTask task, string eventName)
+private string GetOpcodeName(EventOpcode opcode, string eventName)
+private string GetKeywords(ulong keywords, string eventName)
+private string GetTypeName(Type type)
+private void UpdateStringBuilder(StringBuilder& stringBuilder, string eventMessage, int startIndex, int count)
+private string TranslateToManifestConvention(string eventMessage, string evtName)
+private int TranslateIndexToManifestConvention(int idx, string evtName)
+}
+internal System.Diagnostics.Tracing.ManifestEnvelope : ValueType {
+public int MaxChunkSize
+public ManifestFormats Format
+public byte MajorVersion
+public byte MinorVersion
+public byte Magic
+public ushort TotalChunks
+public ushort ChunkNumber
+}
+internal System.Diagnostics.Tracing.NameInfo : ConcurrentSetItem`2<KeyValuePair`2<string, EventTags>, NameInfo> {
+private int lastIdentity
+internal string name
+internal EventTags tags
+internal int identity
+internal Byte[] nameMetadata
+internal void ReserveEventIDsBelow(int eventId)
+public void .ctor(string name, EventTags tags, int typeMetadataSize)
+public int Compare(NameInfo other)
+public int Compare(KeyValuePair`2<string, EventTags> key)
+private int Compare(string otherName, EventTags otherTags)
+}
+internal System.Diagnostics.Tracing.NonGenericProperytWriter`1 : PropertyAccessor`1<ContainerType> {
+private TraceLoggingTypeInfo typeInfo
+private MethodInfo getterInfo
+public void .ctor(PropertyAnalysis property)
+public void Write(TraceLoggingDataCollector collector, ContainerType& container)
+public object GetData(ContainerType container)
+}
+internal System.Diagnostics.Tracing.NullableTypeInfo`1 : TraceLoggingTypeInfo`1<Nullable`1<T>> {
+private TraceLoggingTypeInfo`1<T> valueInfo
+public void .ctor(List`1<Type> recursionCheck)
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, Nullable`1& value)
+}
+internal System.Diagnostics.Tracing.NullTypeInfo`1 : TraceLoggingTypeInfo`1<DataType> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, DataType& value)
+public object GetData(object value)
+}
+internal System.Diagnostics.Tracing.PropertyAccessor`1 : object {
+public void Write(TraceLoggingDataCollector collector, ContainerType& value)
+public object GetData(ContainerType value)
+public PropertyAccessor`1<ContainerType> Create(PropertyAnalysis property)
+}
+internal System.Diagnostics.Tracing.PropertyAnalysis : object {
+internal string name
+internal MethodInfo getterInfo
+internal TraceLoggingTypeInfo typeInfo
+internal EventFieldAttribute fieldAttribute
+public void .ctor(string name, MethodInfo getterInfo, TraceLoggingTypeInfo typeInfo, EventFieldAttribute fieldAttribute)
+}
+internal System.Diagnostics.Tracing.SByteArrayTypeInfo : TraceLoggingTypeInfo`1<SByte[]> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, SByte[]& value)
+}
+internal System.Diagnostics.Tracing.SByteTypeInfo : TraceLoggingTypeInfo`1<sbyte> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, SByte& value)
+}
+internal System.Diagnostics.Tracing.SessionMask : ValueType {
+private UInt32 m_mask
+internal int SHIFT_SESSION_TO_KEYWORD
+internal UInt32 MASK
+internal UInt32 MAX
+public SessionMask All
+public bool Item
+public void .ctor(SessionMask m)
+public void .ctor(UInt32 mask)
+public bool IsEqualOrSupersetOf(SessionMask m)
+public SessionMask get_All()
+public SessionMask FromId(int perEventSourceSessionId)
+public ulong ToEventKeywords()
+public SessionMask FromEventKeywords(ulong m)
+public bool get_Item(int perEventSourceSessionId)
+public void set_Item(int perEventSourceSessionId, bool value)
+public SessionMask op_BitwiseOr(SessionMask m1, SessionMask m2)
+public SessionMask op_BitwiseAnd(SessionMask m1, SessionMask m2)
+public SessionMask op_ExclusiveOr(SessionMask m1, SessionMask m2)
+public SessionMask op_OnesComplement(SessionMask m)
+public ulong op_Explicit(SessionMask m)
+public UInt32 op_Explicit(SessionMask m)
+}
+internal System.Diagnostics.Tracing.SimpleEventTypes`1 : TraceLoggingEventTypes {
+private SimpleEventTypes`1<T> instance
+internal TraceLoggingTypeInfo`1<T> typeInfo
+public SimpleEventTypes`1<T> Instance
+private void .ctor(TraceLoggingTypeInfo`1<T> typeInfo)
+public SimpleEventTypes`1<T> get_Instance()
+private SimpleEventTypes`1<T> InitInstance()
+}
+internal System.Diagnostics.Tracing.SingleArrayTypeInfo : TraceLoggingTypeInfo`1<Single[]> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, Single[]& value)
+}
+internal System.Diagnostics.Tracing.SingleTypeInfo : TraceLoggingTypeInfo`1<float> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, Single& value)
+}
+internal System.Diagnostics.Tracing.Statics : object {
+public byte DefaultLevel
+public byte TraceLoggingChannel
+public byte InTypeMask
+public byte InTypeFixedCountFlag
+public byte InTypeVariableCountFlag
+public byte InTypeCustomCountFlag
+public byte InTypeCountMask
+public byte InTypeChainFlag
+public byte OutTypeMask
+public byte OutTypeChainFlag
+public EventTags EventTagsMask
+public TraceLoggingDataType IntPtrType
+public TraceLoggingDataType UIntPtrType
+public TraceLoggingDataType HexIntPtrType
+public Byte[] MetadataForString(string name, int prefixSize, int suffixSize, int additionalSize)
+public void EncodeTags(int tags, Int32& pos, Byte[] metadata)
+public byte Combine(int settingValue, byte defaultValue)
+public byte Combine(int settingValue1, int settingValue2, byte defaultValue)
+public int Combine(int settingValue1, int settingValue2)
+public void CheckName(string name)
+public bool ShouldOverrideFieldName(string fieldName)
+public TraceLoggingDataType MakeDataType(TraceLoggingDataType baseType, EventFieldFormat format)
+public TraceLoggingDataType Format8(EventFieldFormat format, TraceLoggingDataType native)
+public TraceLoggingDataType Format16(EventFieldFormat format, TraceLoggingDataType native)
+public TraceLoggingDataType Format32(EventFieldFormat format, TraceLoggingDataType native)
+public TraceLoggingDataType Format64(EventFieldFormat format, TraceLoggingDataType native)
+public TraceLoggingDataType FormatPtr(EventFieldFormat format, TraceLoggingDataType native)
+public object CreateInstance(Type type, Object[] parameters)
+public bool IsValueType(Type type)
+public bool IsEnum(Type type)
+public IEnumerable`1<PropertyInfo> GetProperties(Type type)
+public MethodInfo GetGetMethod(PropertyInfo propInfo)
+public MethodInfo GetDeclaredStaticMethod(Type declaringType, string name)
+public bool HasCustomAttribute(PropertyInfo propInfo, Type attributeType)
+public AttributeType GetCustomAttribute(PropertyInfo propInfo)
+public AttributeType GetCustomAttribute(Type type)
+public Type[] GetGenericArguments(Type type)
+public Type FindEnumerableElementType(Type type)
+public bool IsGenericMatch(Type type, object openType)
+public Delegate CreateDelegate(Type delegateType, MethodInfo methodInfo)
+public TraceLoggingTypeInfo GetTypeInfoInstance(Type dataType, List`1<Type> recursionCheck)
+public TraceLoggingTypeInfo`1<DataType> CreateDefaultTypeInfo(List`1<Type> recursionCheck)
+}
+internal System.Diagnostics.Tracing.StringTypeInfo : TraceLoggingTypeInfo`1<string> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, String& value)
+public object GetData(object value)
+}
+internal System.Diagnostics.Tracing.StructPropertyWriter`2 : PropertyAccessor`1<ContainerType> {
+private TraceLoggingTypeInfo`1<ValueType> valueTypeInfo
+private Getter<ContainerType, ValueType> getter
+public void .ctor(PropertyAnalysis property)
+public void Write(TraceLoggingDataCollector collector, ContainerType& container)
+public object GetData(ContainerType container)
+}
+internal System.Diagnostics.Tracing.TimeSpanTypeInfo : TraceLoggingTypeInfo`1<TimeSpan> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, TimeSpan& value)
+}
+internal System.Diagnostics.Tracing.TplEtwProvider : EventSource {
+public TplEtwProvider Log
+public bool Debug
+public bool get_Debug()
+public void DebugFacilityMessage(string Facility, string Message)
+public void DebugFacilityMessage1(string Facility, string Message, string Arg)
+public void SetActivityId(Guid Id)
+}
+internal System.Diagnostics.Tracing.TraceLoggingDataCollector : object {
+internal TraceLoggingDataCollector Instance
+public int BeginBufferedArray()
+public void EndBufferedArray(int bookmark, int count)
+public TraceLoggingDataCollector AddGroup()
+public void AddScalar(bool value)
+public void AddScalar(sbyte value)
+public void AddScalar(byte value)
+public void AddScalar(short value)
+public void AddScalar(ushort value)
+public void AddScalar(int value)
+public void AddScalar(UInt32 value)
+public void AddScalar(long value)
+public void AddScalar(ulong value)
+public void AddScalar(IntPtr value)
+public void AddScalar(UIntPtr value)
+public void AddScalar(float value)
+public void AddScalar(double value)
+public void AddScalar(char value)
+public void AddScalar(Guid value)
+public void AddBinary(string value)
+public void AddBinary(Byte[] value)
+public void AddArray(Boolean[] value)
+public void AddArray(SByte[] value)
+public void AddArray(Int16[] value)
+public void AddArray(UInt16[] value)
+public void AddArray(Int32[] value)
+public void AddArray(UInt32[] value)
+public void AddArray(Int64[] value)
+public void AddArray(UInt64[] value)
+public void AddArray(IntPtr[] value)
+public void AddArray(UIntPtr[] value)
+public void AddArray(Single[] value)
+public void AddArray(Double[] value)
+public void AddArray(Char[] value)
+public void AddArray(Guid[] value)
+public void AddCustom(Byte[] value)
+}
+internal System.Diagnostics.Tracing.TraceLoggingDataType : Enum {
+public int value__
+public TraceLoggingDataType Nil
+public TraceLoggingDataType Utf16String
+public TraceLoggingDataType MbcsString
+public TraceLoggingDataType Int8
+public TraceLoggingDataType UInt8
+public TraceLoggingDataType Int16
+public TraceLoggingDataType UInt16
+public TraceLoggingDataType Int32
+public TraceLoggingDataType UInt32
+public TraceLoggingDataType Int64
+public TraceLoggingDataType UInt64
+public TraceLoggingDataType Float
+public TraceLoggingDataType Double
+public TraceLoggingDataType Boolean32
+public TraceLoggingDataType Binary
+public TraceLoggingDataType Guid
+public TraceLoggingDataType FileTime
+public TraceLoggingDataType SystemTime
+public TraceLoggingDataType HexInt32
+public TraceLoggingDataType HexInt64
+public TraceLoggingDataType CountedUtf16String
+public TraceLoggingDataType CountedMbcsString
+public TraceLoggingDataType Struct
+public TraceLoggingDataType Char16
+public TraceLoggingDataType Char8
+public TraceLoggingDataType Boolean8
+public TraceLoggingDataType HexInt8
+public TraceLoggingDataType HexInt16
+public TraceLoggingDataType Utf16Xml
+public TraceLoggingDataType MbcsXml
+public TraceLoggingDataType CountedUtf16Xml
+public TraceLoggingDataType CountedMbcsXml
+public TraceLoggingDataType Utf16Json
+public TraceLoggingDataType MbcsJson
+public TraceLoggingDataType CountedUtf16Json
+public TraceLoggingDataType CountedMbcsJson
+public TraceLoggingDataType HResult
+}
+internal System.Diagnostics.Tracing.TraceLoggingEventTypes : object {
+internal TraceLoggingTypeInfo[] typeInfos
+internal string name
+internal EventTags tags
+internal byte level
+internal byte opcode
+internal EventKeywords keywords
+internal Byte[] typeMetadata
+internal int scratchSize
+internal int dataCount
+internal int pinCount
+private ConcurrentSet`2<KeyValuePair`2<string, EventTags>, NameInfo> nameInfos
+internal string Name
+internal EventLevel Level
+internal EventOpcode Opcode
+internal EventKeywords Keywords
+internal EventTags Tags
+internal void .ctor(string name, EventTags tags, Type[] types)
+internal void .ctor(string name, EventTags tags, TraceLoggingTypeInfo[] typeInfos)
+internal void .ctor(string name, EventTags tags, ParameterInfo[] paramInfos)
+private void .ctor(EventTags tags, string defaultName, TraceLoggingTypeInfo[] typeInfos)
+internal string get_Name()
+internal EventLevel get_Level()
+internal EventOpcode get_Opcode()
+internal EventKeywords get_Keywords()
+internal EventTags get_Tags()
+internal NameInfo GetNameInfo(string name, EventTags tags)
+private TraceLoggingTypeInfo[] MakeArray(ParameterInfo[] paramInfos)
+private TraceLoggingTypeInfo[] MakeArray(Type[] types)
+private TraceLoggingTypeInfo[] MakeArray(TraceLoggingTypeInfo[] typeInfos)
+}
+internal System.Diagnostics.Tracing.TraceLoggingMetadataCollector : object {
+private Impl impl
+private FieldMetadata currentGroup
+private int bufferedArrayFieldCount
+private EventFieldTags <Tags>k__BackingField
+internal EventFieldTags Tags
+internal int ScratchSize
+internal int DataCount
+internal int PinCount
+private bool BeginningBufferedArray
+private void .ctor(TraceLoggingMetadataCollector other, FieldMetadata group)
+internal EventFieldTags get_Tags()
+internal void set_Tags(EventFieldTags value)
+internal int get_ScratchSize()
+internal int get_DataCount()
+internal int get_PinCount()
+private bool get_BeginningBufferedArray()
+public TraceLoggingMetadataCollector AddGroup(string name)
+public void AddScalar(string name, TraceLoggingDataType type)
+public void AddBinary(string name, TraceLoggingDataType type)
+public void AddArray(string name, TraceLoggingDataType type)
+public void BeginBufferedArray()
+public void EndBufferedArray()
+public void AddCustom(string name, TraceLoggingDataType type, Byte[] metadata)
+internal Byte[] GetMetadata()
+private void AddField(FieldMetadata fieldMetadata)
+}
+internal System.Diagnostics.Tracing.TraceLoggingTypeInfo : object {
+private string name
+private EventKeywords keywords
+private EventLevel level
+private EventOpcode opcode
+private EventTags tags
+private Type dataType
+public string Name
+public EventLevel Level
+public EventOpcode Opcode
+public EventKeywords Keywords
+public EventTags Tags
+internal Type DataType
+internal void .ctor(Type dataType)
+internal void .ctor(Type dataType, string name, EventLevel level, EventOpcode opcode, EventKeywords keywords, EventTags tags)
+public string get_Name()
+public EventLevel get_Level()
+public EventOpcode get_Opcode()
+public EventKeywords get_Keywords()
+public EventTags get_Tags()
+internal Type get_DataType()
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteObjectData(TraceLoggingDataCollector collector, object value)
+public object GetData(object value)
+}
+internal System.Diagnostics.Tracing.TraceLoggingTypeInfo`1 : TraceLoggingTypeInfo {
+private TraceLoggingTypeInfo`1<DataType> instance
+public TraceLoggingTypeInfo`1<DataType> Instance
+protected void .ctor(string name, EventLevel level, EventOpcode opcode, EventKeywords keywords, EventTags tags)
+public TraceLoggingTypeInfo`1<DataType> get_Instance()
+public void WriteData(TraceLoggingDataCollector collector, DataType& value)
+public void WriteObjectData(TraceLoggingDataCollector collector, object value)
+internal TraceLoggingTypeInfo`1<DataType> GetInstance(List`1<Type> recursionCheck)
+private TraceLoggingTypeInfo`1<DataType> InitInstance()
+}
+internal System.Diagnostics.Tracing.TypeAnalysis : object {
+internal PropertyAnalysis[] properties
+internal string name
+internal EventKeywords keywords
+internal EventLevel level
+internal EventOpcode opcode
+internal EventTags tags
+public void .ctor(Type dataType, EventDataAttribute eventAttrib, List`1<Type> recursionCheck)
+}
+internal System.Diagnostics.Tracing.UInt16ArrayTypeInfo : TraceLoggingTypeInfo`1<UInt16[]> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, UInt16[]& value)
+}
+internal System.Diagnostics.Tracing.UInt16TypeInfo : TraceLoggingTypeInfo`1<ushort> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, UInt16& value)
+}
+internal System.Diagnostics.Tracing.UInt32ArrayTypeInfo : TraceLoggingTypeInfo`1<UInt32[]> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, UInt32[]& value)
+}
+internal System.Diagnostics.Tracing.UInt32TypeInfo : TraceLoggingTypeInfo`1<UInt32> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, UInt32& value)
+}
+internal System.Diagnostics.Tracing.UInt64ArrayTypeInfo : TraceLoggingTypeInfo`1<UInt64[]> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, UInt64[]& value)
+}
+internal System.Diagnostics.Tracing.UInt64TypeInfo : TraceLoggingTypeInfo`1<ulong> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, UInt64& value)
+}
+internal System.Diagnostics.Tracing.UIntPtrArrayTypeInfo : TraceLoggingTypeInfo`1<UIntPtr[]> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, UIntPtr[]& value)
+}
+internal System.Diagnostics.Tracing.UIntPtrTypeInfo : TraceLoggingTypeInfo`1<UIntPtr> {
+public void WriteMetadata(TraceLoggingMetadataCollector collector, string name, EventFieldFormat format)
+public void WriteData(TraceLoggingDataCollector collector, UIntPtr& value)
 }
 public System.DivideByZeroException : ArithmeticException {
 public void .ctor(string message)
@@ -9166,6 +10283,7 @@ internal string GetMessageFromNativeResources(ExceptionMessageKind kind)
 internal void SetMessage(string s)
 internal void SetStackTrace(string s)
 internal Exception FixRemotingException()
+internal void ReportUnhandledException(Exception exception)
 }
 internal System.ExceptionArgument : Enum {
 public int value__
@@ -33272,6 +34390,11 @@ private bool AllIgnored()
 internal PermissionSet CreateFromBinaryFormat(Byte[] data)
 internal int ReadEncodedInt(Byte[] data, Int32& position)
 internal IPermission ProcessAttribute(Byte[] data, Int32& position)
+protected IPermission AddPermissionImpl(IPermission perm)
+protected IEnumerator GetEnumeratorImpl()
+protected IPermission GetPermissionImpl(Type permClass)
+protected IPermission RemovePermissionImpl(Type permClass)
+protected IPermission SetPermissionImpl(IPermission perm)
 }
 public System.Security.Policy.AllMembershipCondition : object {
 private int version
@@ -33555,6 +34678,7 @@ public void Merge(Evidence evidence)
 public void RemoveType(Type t)
 private bool IsAuthenticodePresent(Assembly a)
 internal Evidence GetDefaultHostEvidence(Assembly a)
+public void .ctor(EvidenceBase[] hostEvidence, EvidenceBase[] assemblyEvidence)
 public void AddAssemblyEvidence(T evidence)
 public void AddHostEvidence(T evidence)
 public T GetAssemblyEvidence()
@@ -34415,6 +35539,7 @@ internal String[] _GetRoles(IntPtr token)
 internal IntPtr GetCurrentToken()
 private string GetTokenName(IntPtr token)
 private IntPtr GetUserToken(string username)
+protected void .ctor(WindowsIdentity identity)
 public IEnumerable`1<Claim> get_DeviceClaims()
 public IEnumerable`1<Claim> get_UserClaims()
 }
@@ -39813,12 +40938,14 @@ private List`1<AdjustmentRule> CreateAdjustmentRule(int year, Int64[]& data, Str
 private TimeZoneInfo CreateLocalUnity()
 internal UInt32 EnumDynamicTimeZoneInformation(UInt32 dwIndex, DYNAMIC_TIME_ZONE_INFORMATION& lpTimeZoneInformation)
 internal UInt32 GetDynamicTimeZoneInformation(DYNAMIC_TIME_ZONE_INFORMATION& pTimeZoneInformation)
+internal UInt32 GetDynamicTimeZoneInformationWin32(DYNAMIC_TIME_ZONE_INFORMATION& pTimeZoneInformation)
 internal UInt32 GetDynamicTimeZoneInformationEffectiveYears(DYNAMIC_TIME_ZONE_INFORMATION& lpTimeZoneInformation, UInt32& FirstYear, UInt32& LastYear)
 internal bool GetTimeZoneInformationForYear(ushort wYear, DYNAMIC_TIME_ZONE_INFORMATION& pdtzi, TIME_ZONE_INFORMATION& ptzi)
 internal AdjustmentRule CreateAdjustmentRuleFromTimeZoneInformation(DYNAMIC_TIME_ZONE_INFORMATION& timeZoneInformation, DateTime startDate, DateTime endDate, int defaultBaseUtcOffset)
 private bool TransitionTimeFromTimeZoneInformation(DYNAMIC_TIME_ZONE_INFORMATION timeZoneInformation, TransitionTime& transitionTime, bool readStartDate)
 internal TimeZoneInfo TryCreateTimeZone(DYNAMIC_TIME_ZONE_INFORMATION timeZoneInformation)
 internal TimeZoneInfo GetLocalTimeZoneInfoWinRTFallback()
+internal string GetLocalTimeZoneKeyNameWin32Fallback()
 internal TimeZoneInfo FindSystemTimeZoneByIdWinRTFallback(string id)
 internal List`1<TimeZoneInfo> GetSystemTimeZonesWinRTFallback()
 public TimeSpan get_BaseUtcOffset()

@@ -3,6 +3,7 @@ public string MonoVersion
 public string MonoCompany
 public string MonoProduct
 public string MonoCopyright
+public int MonoCorlibVersion
 public string FxVersion
 public string FxFileVersion
 public string EnvironmentVersion
@@ -76,8 +77,8 @@ private bool System.IAsyncResult.CompletedSynchronously
 private bool System.IAsyncResult.IsCompleted
 public void .ctor(TimeSpan timeout)
 public void .ctor(TransactionOptions options)
-public IAsyncResult BeginCommit(AsyncCallback callback, object user_defined_state)
-public void EndCommit(IAsyncResult ar)
+public IAsyncResult BeginCommit(AsyncCallback asyncCallback, object asyncState)
+public void EndCommit(IAsyncResult asyncResult)
 private void CommitCallback(IAsyncResult ar)
 public void Commit()
 private void System.Runtime.Serialization.ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
@@ -119,6 +120,19 @@ internal bool get_Completed()
 public void Complete()
 private void System.Runtime.Serialization.ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
 }
+public System.Transactions.DistributedTransactionPermission : CodeAccessPermission {
+public void .ctor(PermissionState state)
+public IPermission Copy()
+public void FromXml(SecurityElement securityElement)
+public IPermission Intersect(IPermission target)
+public bool IsSubsetOf(IPermission target)
+public bool IsUnrestricted()
+public SecurityElement ToXml()
+}
+public System.Transactions.DistributedTransactionPermissionAttribute : CodeAccessSecurityAttribute {
+public void .ctor(SecurityAction action)
+public IPermission CreatePermission()
+}
 public System.Transactions.Enlistment : object {
 internal bool done
 public void Done()
@@ -142,9 +156,9 @@ public IAsyncResult BeginInvoke(AsyncCallback callback, object object)
 public Transaction EndInvoke(IAsyncResult result)
 }
 public System.Transactions.IDtcTransaction {
-public void Abort(IntPtr manager, int whatever, int whatever2)
-public void Commit(int whatever, int whatever2, int whatever3)
-public void GetTransactionInfo(IntPtr whatever)
+public void Abort(IntPtr reason, int retaining, int async)
+public void Commit(int retaining, int commitType, int reserved)
+public void GetTransactionInfo(IntPtr transactionInformation)
 }
 public System.Transactions.IEnlistmentNotification {
 public void Commit(Enlistment enlistment)
@@ -154,14 +168,14 @@ public void Rollback(Enlistment enlistment)
 }
 public System.Transactions.IPromotableSinglePhaseNotification {
 public void Initialize()
-public void Rollback(SinglePhaseEnlistment enlistment)
-public void SinglePhaseCommit(SinglePhaseEnlistment enlistment)
+public void Rollback(SinglePhaseEnlistment singlePhaseEnlistment)
+public void SinglePhaseCommit(SinglePhaseEnlistment singlePhaseEnlistment)
 }
 public System.Transactions.ISimpleTransactionSuperior {
 public void Rollback()
 }
 public System.Transactions.ISinglePhaseNotification {
-public void SinglePhaseCommit(SinglePhaseEnlistment enlistment)
+public void SinglePhaseCommit(SinglePhaseEnlistment singlePhaseEnlistment)
 }
 public System.Transactions.IsolationLevel : Enum {
 public int value__
@@ -189,7 +203,7 @@ internal Exception Exception
 internal void .ctor(Transaction tx, IEnlistmentNotification enlisted)
 public void ForceRollback()
 internal void InternalOnDone()
-public void ForceRollback(Exception ex)
+public void ForceRollback(Exception e)
 public void Prepared()
 public Byte[] RecoveryInformation()
 internal bool get_IsPrepared()
@@ -209,7 +223,7 @@ public void InDoubt()
 public void InDoubt(Exception e)
 }
 public System.Transactions.SubordinateTransaction : Transaction {
-public void .ctor(IsolationLevel level, ISimpleTransactionSuperior superior)
+public void .ctor(IsolationLevel isoLevel, ISimpleTransactionSuperior superior)
 }
 public System.Transactions.Transaction : object {
 private Transaction ambient
@@ -234,12 +248,13 @@ public Transaction Current
 internal Transaction CurrentInternal
 public IsolationLevel IsolationLevel
 public TransactionInformation TransactionInformation
+public Guid PromoterType
 private bool Aborted
 internal TransactionScope Scope
-internal void .ctor(Transaction other)
 internal List`1<IEnlistmentNotification> get_Volatiles()
 internal List`1<ISinglePhaseNotification> get_Durables()
 internal IPromotableSinglePhaseNotification get_Pspe()
+internal void .ctor(Transaction other)
 private void System.Runtime.Serialization.ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
 public void add_TransactionCompleted(TransactionCompletedEventHandler value)
 public void remove_TransactionCompleted(TransactionCompletedEventHandler value)
@@ -251,20 +266,25 @@ public IsolationLevel get_IsolationLevel()
 public TransactionInformation get_TransactionInformation()
 public Transaction Clone()
 public void Dispose()
-public DependentTransaction DependentClone(DependentCloneOption option)
-public Enlistment EnlistDurable(Guid manager, IEnlistmentNotification notification, EnlistmentOptions options)
-public Enlistment EnlistDurable(Guid manager, ISinglePhaseNotification notification, EnlistmentOptions options)
-public bool EnlistPromotableSinglePhase(IPromotableSinglePhaseNotification notification)
-public Enlistment EnlistVolatile(IEnlistmentNotification notification, EnlistmentOptions options)
-public Enlistment EnlistVolatile(ISinglePhaseNotification notification, EnlistmentOptions options)
+public DependentTransaction DependentClone(DependentCloneOption cloneOption)
+public Enlistment EnlistDurable(Guid resourceManagerIdentifier, IEnlistmentNotification enlistmentNotification, EnlistmentOptions enlistmentOptions)
+public Enlistment EnlistDurable(Guid resourceManagerIdentifier, ISinglePhaseNotification singlePhaseNotification, EnlistmentOptions enlistmentOptions)
+public bool EnlistPromotableSinglePhase(IPromotableSinglePhaseNotification promotableSinglePhaseNotification)
+public void SetDistributedTransactionIdentifier(IPromotableSinglePhaseNotification promotableNotification, Guid distributedTransactionIdentifier)
+public bool EnlistPromotableSinglePhase(IPromotableSinglePhaseNotification promotableSinglePhaseNotification, Guid promoterType)
+public Byte[] GetPromotedToken()
+public Guid get_PromoterType()
+public Enlistment EnlistVolatile(IEnlistmentNotification enlistmentNotification, EnlistmentOptions enlistmentOptions)
+public Enlistment EnlistVolatile(ISinglePhaseNotification singlePhaseNotification, EnlistmentOptions enlistmentOptions)
 private Enlistment EnlistVolatileInternal(IEnlistmentNotification notification, EnlistmentOptions options)
+public Enlistment PromoteAndEnlistDurable(Guid manager, IPromotableSinglePhaseNotification promotableNotification, ISinglePhaseNotification notification, EnlistmentOptions options)
 public bool Equals(object obj)
 private bool Equals(Transaction t)
 public bool op_Equality(Transaction x, Transaction y)
 public bool op_Inequality(Transaction x, Transaction y)
 public int GetHashCode()
 public void Rollback()
-public void Rollback(Exception ex)
+public void Rollback(Exception e)
 internal void Rollback(Exception ex, object abortingEnlisted)
 private bool get_Aborted()
 private void set_Aborted(bool value)
@@ -292,8 +312,8 @@ protected void .ctor(SerializationInfo info, StreamingContext context)
 }
 public System.Transactions.TransactionCompletedEventHandler : MulticastDelegate {
 public void .ctor(object object, IntPtr method)
-public void Invoke(object o, TransactionEventArgs e)
-public IAsyncResult BeginInvoke(object o, TransactionEventArgs e, AsyncCallback callback, object object)
+public void Invoke(object sender, TransactionEventArgs e)
+public IAsyncResult BeginInvoke(object sender, TransactionEventArgs e, AsyncCallback callback, object object)
 public void EndInvoke(IAsyncResult result)
 }
 public System.Transactions.TransactionEventArgs : EventArgs {
@@ -331,11 +351,12 @@ internal void set_Status(TransactionStatus value)
 internal TransactionInformation Clone(TransactionInformation other)
 }
 public System.Transactions.TransactionInterop : object {
+public Guid PromoterTypeDtc
 public IDtcTransaction GetDtcTransaction(Transaction transaction)
-public Byte[] GetExportCookie(Transaction transaction, Byte[] exportCookie)
-public Transaction GetTransactionFromDtcTransaction(IDtcTransaction dtc)
-public Transaction GetTransactionFromExportCookie(Byte[] exportCookie)
-public Transaction GetTransactionFromTransmitterPropagationToken(Byte[] token)
+public Byte[] GetExportCookie(Transaction transaction, Byte[] whereabouts)
+public Transaction GetTransactionFromDtcTransaction(IDtcTransaction transactionNative)
+public Transaction GetTransactionFromExportCookie(Byte[] cookie)
+public Transaction GetTransactionFromTransmitterPropagationToken(Byte[] propagationToken)
 public Byte[] GetTransmitterPropagationToken(Transaction transaction)
 public Byte[] GetWhereabouts()
 }
@@ -352,8 +373,8 @@ public TimeSpan get_DefaultTimeout()
 public HostCurrentTransactionCallback get_HostCurrentCallback()
 public void set_HostCurrentCallback(HostCurrentTransactionCallback value)
 public TimeSpan get_MaximumTimeout()
-public void RecoveryComplete(Guid manager)
-public Enlistment Reenlist(Guid manager, Byte[] recoveryInfo, IEnlistmentNotification notification)
+public void RecoveryComplete(Guid resourceManagerIdentifier)
+public Enlistment Reenlist(Guid resourceManagerIdentifier, Byte[] recoveryInformation, IEnlistmentNotification enlistmentNotification)
 public void add_DistributedTransactionStarted(TransactionStartedEventHandler value)
 public void remove_DistributedTransactionStarted(TransactionStartedEventHandler value)
 }
@@ -372,8 +393,8 @@ public IsolationLevel get_IsolationLevel()
 public void set_IsolationLevel(IsolationLevel value)
 public TimeSpan get_Timeout()
 public void set_Timeout(TimeSpan value)
-public bool op_Equality(TransactionOptions o1, TransactionOptions o2)
-public bool op_Inequality(TransactionOptions o1, TransactionOptions o2)
+public bool op_Equality(TransactionOptions x, TransactionOptions y)
+public bool op_Inequality(TransactionOptions x, TransactionOptions y)
 public bool Equals(object obj)
 public int GetHashCode()
 }
@@ -395,17 +416,20 @@ private bool isRoot
 private bool asyncFlowEnabled
 internal bool IsComplete
 internal TimeSpan Timeout
-public void .ctor(TransactionScopeAsyncFlowOption asyncFlow)
-public void .ctor(Transaction transaction)
-public void .ctor(Transaction transaction, TimeSpan timeout)
-public void .ctor(Transaction transaction, TimeSpan timeout, EnterpriseServicesInteropOption opt)
-public void .ctor(TransactionScopeOption option)
-public void .ctor(TransactionScopeOption option, TimeSpan timeout)
+public void .ctor(TransactionScopeAsyncFlowOption asyncFlowOption)
+public void .ctor(Transaction transactionToUse)
+public void .ctor(Transaction transactionToUse, TimeSpan scopeTimeout)
+public void .ctor(Transaction transactionToUse, TimeSpan scopeTimeout, EnterpriseServicesInteropOption interopOption)
+public void .ctor(TransactionScopeOption scopeOption)
+public void .ctor(TransactionScopeOption scopeOption, TimeSpan scopeTimeout)
 public void .ctor(TransactionScopeOption option, TransactionScopeAsyncFlowOption asyncFlow)
-public void .ctor(TransactionScopeOption option, TimeSpan timeout, TransactionScopeAsyncFlowOption asyncFlow)
-public void .ctor(TransactionScopeOption scopeOption, TransactionOptions options)
-public void .ctor(TransactionScopeOption scopeOption, TransactionOptions options, EnterpriseServicesInteropOption opt)
-private void Initialize(TransactionScopeOption scopeOption, Transaction tx, TransactionOptions options, EnterpriseServicesInteropOption interop, TimeSpan timeout, TransactionScopeAsyncFlowOption asyncFlow)
+public void .ctor(TransactionScopeOption scopeOption, TimeSpan scopeTimeout, TransactionScopeAsyncFlowOption asyncFlow)
+public void .ctor(TransactionScopeOption scopeOption, TransactionOptions transactionOptions)
+public void .ctor(TransactionScopeOption scopeOption, TransactionOptions transactionOptions, EnterpriseServicesInteropOption interopOption)
+public void .ctor(Transaction transactionToUse, TransactionScopeAsyncFlowOption asyncFlowOption)
+public void .ctor(Transaction transactionToUse, TimeSpan scopeTimeout, TransactionScopeAsyncFlowOption asyncFlowOption)
+public void .ctor(TransactionScopeOption scopeOption, TransactionOptions transactionOptions, TransactionScopeAsyncFlowOption asyncFlowOption)
+private void Initialize(TransactionScopeOption scopeOption, Transaction tx, TransactionOptions options, EnterpriseServicesInteropOption interop, TimeSpan scopeTimeout, TransactionScopeAsyncFlowOption asyncFlow)
 private Transaction InitTransaction(Transaction tx, TransactionScopeOption scopeOption)
 public void Complete()
 internal bool get_IsComplete()
@@ -425,8 +449,8 @@ public TransactionScopeOption Suppress
 }
 public System.Transactions.TransactionStartedEventHandler : MulticastDelegate {
 public void .ctor(object object, IntPtr method)
-public void Invoke(object o, TransactionEventArgs e)
-public IAsyncResult BeginInvoke(object o, TransactionEventArgs e, AsyncCallback callback, object object)
+public void Invoke(object sender, TransactionEventArgs e)
+public IAsyncResult BeginInvoke(object sender, TransactionEventArgs e, AsyncCallback callback, object object)
 public void EndInvoke(IAsyncResult result)
 }
 public System.Transactions.TransactionStatus : Enum {
@@ -435,4 +459,7 @@ public TransactionStatus Active
 public TransactionStatus Committed
 public TransactionStatus Aborted
 public TransactionStatus InDoubt
+}
+internal Unity.ThrowStub : ObjectDisposedException {
+public void ThrowNotSupportedException()
 }

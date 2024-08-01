@@ -10,28 +10,27 @@ public bool get_configured()
 public bool TryGetGeometry(List`1<Vector3> geometry)
 public bool TryGetGeometry(List`1<Vector3> geometry, Type boundaryType)
 private bool TryGetGeometryScriptingInternal(List`1<Vector3> geometry, Type boundaryType)
-private Vector3[] TryGetGeometryArrayInternal(Type boundaryType)
 }
 public UnityEngine.Internal.VR.VRTestMock : object {
 public void Reset()
 public void AddTrackedDevice(XRNode nodeType)
 public void UpdateTrackedDevice(XRNode nodeType, Vector3 position, Quaternion rotation)
-private void INTERNAL_CALL_UpdateTrackedDevice(XRNode nodeType, Vector3& position, Quaternion& rotation)
 public void UpdateLeftEye(Vector3 position, Quaternion rotation)
-private void INTERNAL_CALL_UpdateLeftEye(Vector3& position, Quaternion& rotation)
 public void UpdateRightEye(Vector3 position, Quaternion rotation)
-private void INTERNAL_CALL_UpdateRightEye(Vector3& position, Quaternion& rotation)
 public void UpdateCenterEye(Vector3 position, Quaternion rotation)
-private void INTERNAL_CALL_UpdateCenterEye(Vector3& position, Quaternion& rotation)
 public void UpdateHead(Vector3 position, Quaternion rotation)
-private void INTERNAL_CALL_UpdateHead(Vector3& position, Quaternion& rotation)
 public void UpdateLeftHand(Vector3 position, Quaternion rotation)
-private void INTERNAL_CALL_UpdateLeftHand(Vector3& position, Quaternion& rotation)
 public void UpdateRightHand(Vector3 position, Quaternion rotation)
-private void INTERNAL_CALL_UpdateRightHand(Vector3& position, Quaternion& rotation)
 public void AddController(string controllerName)
 public void UpdateControllerAxis(string controllerName, int axis, float value)
 public void UpdateControllerButton(string controllerName, int button, bool pressed)
+private void UpdateTrackedDevice_Injected(XRNode nodeType, Vector3& position, Quaternion& rotation)
+private void UpdateLeftEye_Injected(Vector3& position, Quaternion& rotation)
+private void UpdateRightEye_Injected(Vector3& position, Quaternion& rotation)
+private void UpdateCenterEye_Injected(Vector3& position, Quaternion& rotation)
+private void UpdateHead_Injected(Vector3& position, Quaternion& rotation)
+private void UpdateLeftHand_Injected(Vector3& position, Quaternion& rotation)
+private void UpdateRightHand_Injected(Vector3& position, Quaternion& rotation)
 }
 public UnityEngine.VR.InputTracking : object {
 public bool disablePositionalTracking
@@ -162,6 +161,7 @@ public float get_gpuTimeLastFrame()
 }
 public UnityEngine.XR.GameViewRenderMode : Enum {
 public int value__
+public GameViewRenderMode None
 public GameViewRenderMode LeftEye
 public GameViewRenderMode RightEye
 public GameViewRenderMode BothEyes
@@ -191,27 +191,33 @@ public EmulationMode None
 public EmulationMode RemoteDevice
 public EmulationMode Simulated
 }
-internal UnityEngine.XR.WSA.GestureHand : Enum {
+internal UnityEngine.XR.WSA.Handedness : Enum {
 public int value__
-public GestureHand Left
-public GestureHand Right
+public Handedness Unknown
+public Handedness Left
+public Handedness Right
 }
 internal UnityEngine.XR.WSA.HolographicAutomation : object {
 private SimulatedBody s_Body
 private SimulatedHead s_Head
 private SimulatedHand s_LeftHand
 private SimulatedHand s_RightHand
+private SimulatedSpatialController s_LeftController
+private SimulatedSpatialController s_RightController
 public SimulatedBody simulatedBody
 public SimulatedHead simulatedHead
 public SimulatedHand simulatedLeftHand
 public SimulatedHand simulatedRightHand
+public SimulatedSpatialController simulatedLeftController
+public SimulatedSpatialController simulatedRightController
 internal void Initialize()
 internal void Shutdown()
 internal void LoadRoom(string id)
 internal void SetEmulationMode(EmulationMode mode)
-internal void SetGestureHand(GestureHand hand)
+internal void SetPlaymodeInputType(PlaymodeInputType inputType)
 internal void Reset()
-internal void PerformGesture(GestureHand hand, SimulatedGesture gesture)
+internal void PerformGesture(Handedness hand, SimulatedGesture gesture)
+internal void PerformButtonPress(Handedness hand, SimulatedControllerPress buttonPress)
 internal Vector3 GetBodyPosition()
 internal void SetBodyPosition(Vector3 position)
 internal float GetBodyRotation()
@@ -222,22 +228,36 @@ internal Vector3 GetHeadRotation()
 internal void SetHeadRotation(Vector3 degrees)
 internal float GetHeadDiameter()
 internal void SetHeadDiameter(float degrees)
-internal Vector3 GetHandPosition(GestureHand hand)
-internal void SetHandPosition(GestureHand hand, Vector3 position)
-internal bool GetHandActivated(GestureHand hand)
-internal void SetHandActivated(GestureHand hand, bool activated)
-internal bool GetHandVisible(GestureHand hand)
-internal void EnsureHandVisible(GestureHand hand)
+internal Vector3 GetHandPosition(Handedness hand)
+internal void SetHandPosition(Handedness hand, Vector3 position)
+internal Quaternion GetHandOrientation(Handedness hand)
+internal bool TrySetHandOrientation(Handedness hand, Quaternion orientation)
+internal bool GetHandActivated(Handedness hand)
+internal void SetHandActivated(Handedness hand, bool activated)
+internal bool GetHandVisible(Handedness hand)
+internal void EnsureHandVisible(Handedness hand)
+internal Vector3 GetControllerPosition(Handedness hand)
+internal bool TrySetControllerPosition(Handedness hand, Vector3 position)
+internal bool GetControllerActivated(Handedness hand)
+internal bool TrySetControllerActivated(Handedness hand, bool activated)
+internal bool GetControllerVisible(Handedness hand)
+internal bool TryEnsureControllerVisible(Handedness hand)
 public SimulatedBody get_simulatedBody()
 public SimulatedHead get_simulatedHead()
 public SimulatedHand get_simulatedLeftHand()
 public SimulatedHand get_simulatedRightHand()
+public SimulatedSpatialController get_simulatedLeftController()
+public SimulatedSpatialController get_simulatedRightController()
 private void GetBodyPosition_Injected(Vector3& ret)
 private void SetBodyPosition_Injected(Vector3& position)
 private void GetHeadRotation_Injected(Vector3& ret)
 private void SetHeadRotation_Injected(Vector3& degrees)
-private void GetHandPosition_Injected(GestureHand hand, Vector3& ret)
-private void SetHandPosition_Injected(GestureHand hand, Vector3& position)
+private void GetHandPosition_Injected(Handedness hand, Vector3& ret)
+private void SetHandPosition_Injected(Handedness hand, Vector3& position)
+private void GetHandOrientation_Injected(Handedness hand, Quaternion& ret)
+private bool TrySetHandOrientation_Injected(Handedness hand, Quaternion& orientation)
+private void GetControllerPosition_Injected(Handedness hand, Vector3& ret)
+private bool TrySetControllerPosition_Injected(Handedness hand, Vector3& position)
 }
 internal UnityEngine.XR.WSA.HolographicEmulationHelper : object {
 internal EmulationMode GetEmulationMode()
@@ -252,6 +272,7 @@ public UnityEngine.XR.WSA.HolographicRemoting : object {
 public HolographicStreamerConnectionState ConnectionState
 public HolographicStreamerConnectionState get_ConnectionState()
 public void Connect(string clientName, int maxBitRate)
+public void Connect(string clientName, int maxBitRate, RemoteDeviceVersion deviceVersion)
 public void Disconnect()
 }
 public UnityEngine.XR.WSA.HolographicSettings : object {
@@ -280,10 +301,24 @@ public UnityEngine.XR.WSA.HolographicStreamerConnectionFailureReason : Enum {
 public int value__
 public HolographicStreamerConnectionFailureReason None
 public HolographicStreamerConnectionFailureReason Unknown
-public HolographicStreamerConnectionFailureReason Unreachable
+public HolographicStreamerConnectionFailureReason NoServerCertificate
+public HolographicStreamerConnectionFailureReason HandshakePortBusy
+public HolographicStreamerConnectionFailureReason HandshakeUnreachable
+public HolographicStreamerConnectionFailureReason HandshakeConnectionFailed
+public HolographicStreamerConnectionFailureReason AuthenticationFailed
+public HolographicStreamerConnectionFailureReason RemotingVersionMismatch
+public HolographicStreamerConnectionFailureReason IncompatibleTransportProtocols
 public HolographicStreamerConnectionFailureReason HandshakeFailed
+public HolographicStreamerConnectionFailureReason TransportPortBusy
+public HolographicStreamerConnectionFailureReason TransportUnreachable
+public HolographicStreamerConnectionFailureReason TransportConnectionFailed
 public HolographicStreamerConnectionFailureReason ProtocolVersionMismatch
+public HolographicStreamerConnectionFailureReason ProtocolError
+public HolographicStreamerConnectionFailureReason VideoCodecNotAvailable
+public HolographicStreamerConnectionFailureReason Canceled
 public HolographicStreamerConnectionFailureReason ConnectionLost
+public HolographicStreamerConnectionFailureReason DeviceLost
+public HolographicStreamerConnectionFailureReason DisconnectRequest
 }
 public UnityEngine.XR.WSA.HolographicStreamerConnectionState : Enum {
 public int value__
@@ -292,6 +327,7 @@ public HolographicStreamerConnectionState Connecting
 public HolographicStreamerConnectionState Connected
 }
 internal UnityEngine.XR.WSA.PerceptionRemoting : object {
+internal void SetRemoteDeviceVersion(RemoteDeviceVersion remoteDeviceVersion)
 internal void Connect(string clientName)
 internal void Disconnect()
 internal HolographicStreamerConnectionFailureReason CheckForDisconnect()
@@ -299,6 +335,18 @@ internal HolographicStreamerConnectionState GetConnectionState()
 internal void SetEnableAudio(bool enable)
 internal void SetEnableVideo(bool enable)
 internal void SetVideoEncodingParameters(int maxBitRate)
+}
+internal UnityEngine.XR.WSA.PlaymodeInputType : Enum {
+public int value__
+public PlaymodeInputType LeftHand
+public PlaymodeInputType RightHand
+public PlaymodeInputType LeftController
+public PlaymodeInputType RightController
+}
+public UnityEngine.XR.WSA.RemoteDeviceVersion : Enum {
+public int value__
+public RemoteDeviceVersion V1
+public RemoteDeviceVersion V2
 }
 internal UnityEngine.XR.WSA.SimulatedBody : object {
 public Vector3 position
@@ -311,17 +359,27 @@ public void set_rotation(float value)
 public float get_height()
 public void set_height(float value)
 }
+internal UnityEngine.XR.WSA.SimulatedControllerPress : Enum {
+public int value__
+public SimulatedControllerPress PressButton
+public SimulatedControllerPress ReleaseButton
+public SimulatedControllerPress Grip
+public SimulatedControllerPress TouchPadPress
+public SimulatedControllerPress Select
+public SimulatedControllerPress TouchPadTouch
+public SimulatedControllerPress ThumbStick
+}
 internal UnityEngine.XR.WSA.SimulatedGesture : Enum {
 public int value__
 public SimulatedGesture FingerPressed
 public SimulatedGesture FingerReleased
 }
 internal UnityEngine.XR.WSA.SimulatedHand : object {
-public GestureHand m_Hand
+public Handedness m_Hand
 public Vector3 position
 public bool activated
 public bool visible
-internal void .ctor(GestureHand hand)
+internal void .ctor(Handedness hand)
 public Vector3 get_position()
 public void set_position(Vector3 value)
 public bool get_activated()
@@ -337,6 +395,33 @@ public float get_diameter()
 public void set_diameter(float value)
 public Vector3 get_eulerAngles()
 public void set_eulerAngles(Vector3 value)
+}
+internal UnityEngine.XR.WSA.SimulatedSpatialController : object {
+public Handedness m_ControllerHandednss
+public Quaternion orientation
+public Vector3 position
+public bool activated
+public bool visible
+internal void .ctor(Handedness controller)
+public Quaternion get_orientation()
+public void set_orientation(Quaternion value)
+public Vector3 get_position()
+public void set_position(Vector3 value)
+public bool get_activated()
+public void set_activated(bool value)
+public bool get_visible()
+public void EnsureVisible()
+public void PerformControllerPress(SimulatedControllerPress button)
+}
+public UnityEngine.XR.WSA.WorldAnchor : Component {
+private OnTrackingChangedDelegate OnTrackingChanged
+public bool isLocated
+public void add_OnTrackingChanged(OnTrackingChangedDelegate value)
+public void remove_OnTrackingChanged(OnTrackingChangedDelegate value)
+public bool get_isLocated()
+public void SetNativeSpatialAnchorPtr(IntPtr spatialAnchorPtr)
+public IntPtr GetNativeSpatialAnchorPtr()
+private void Internal_TriggerEventOnTrackingLost(WorldAnchor worldAnchor, bool located)
 }
 public UnityEngine.XR.XRDevice : object {
 private Action`1<string> deviceLoaded
@@ -356,6 +441,7 @@ public IntPtr GetNativePtr()
 public TrackingSpaceType GetTrackingSpaceType()
 public bool SetTrackingSpaceType(TrackingSpaceType trackingSpaceType)
 public void DisableAutoXRCameraTracking(Camera camera, bool disabled)
+public void UpdateEyeTextureMSAASetting()
 public float get_fovZoomFactor()
 public void set_fovZoomFactor(float value)
 public TrackingOriginMode get_trackingOriginMode()
@@ -373,6 +459,7 @@ public float eyeTextureResolutionScale
 public int eyeTextureWidth
 public int eyeTextureHeight
 public RenderTextureDescriptor eyeTextureDesc
+public TextureDimension deviceEyeTextureDimension
 public float renderViewportScale
 internal float renderViewportScaleInternal
 public float occlusionMaskScale
@@ -394,6 +481,7 @@ public void set_eyeTextureResolutionScale(float value)
 public int get_eyeTextureWidth()
 public int get_eyeTextureHeight()
 public RenderTextureDescriptor get_eyeTextureDesc()
+public TextureDimension get_deviceEyeTextureDimension()
 public float get_renderViewportScale()
 public void set_renderViewportScale(float value)
 internal float get_renderViewportScaleInternal()
@@ -415,4 +503,8 @@ public bool TryGetGPUTimeLastFrame(Single& gpuTimeLastFrame)
 public bool TryGetDroppedFrameCount(Int32& droppedFrameCount)
 public bool TryGetFramePresentCount(Int32& framePresentCount)
 public float get_gpuTimeLastFrame()
+}
+public UnityEngineInternal.XR.WSA.RemoteSpeechAccess : object {
+public void EnableRemoteSpeech(RemoteDeviceVersion remoteDeviceVersion)
+public void DisableRemoteSpeech()
 }

@@ -1,0 +1,269 @@
+public AuthResponse : Enum {
+public int value__
+public AuthResponse Invalid
+public AuthResponse TimedOut
+public AuthResponse OK
+public AuthResponse VACBanned
+public AuthResponse PublisherBanned
+public AuthResponse InvalidAuthSession
+}
+public AvatarCache : object {
+private Dictionary`2<ulong, Entry> _entries
+private Action`2<ulong, Texture2D> _loadAvatar
+public void .ctor(Action`2<ulong, Texture2D> loadAvatar)
+public Texture2D Get(ulong userId)
+}
+public IAchievement {
+public string Key
+public bool IsUnlocked
+public string get_Key()
+public bool get_IsUnlocked()
+public void Unlock()
+}
+public IAuthTicket {
+public string Token
+public Byte[] Data
+public string get_Token()
+public Byte[] get_Data()
+}
+public IDownloadableContent {
+public int AppId
+public bool IsInstalled
+public int get_AppId()
+public bool get_IsInstalled()
+}
+public IPlatformHooks {
+public UInt32 SteamAppId
+public Nullable`1<ServerParameters> ServerParameters
+public UInt32 get_SteamAppId()
+public void Abort()
+public void OnItemDefinitionsChanged()
+public Nullable`1<ServerParameters> get_ServerParameters()
+public void AuthSessionValidated(ulong userId, ulong ownerUserId, AuthResponse response)
+}
+public IPlatformService {
+public bool IsValid
+public IReadOnlyList`1<IPlayerItemDefinition> ItemDefinitions
+public bool Initialize(IPlatformHooks hooks)
+public void Shutdown()
+public void Update()
+public bool get_IsValid()
+public IReadOnlyList`1<IPlayerItemDefinition> get_ItemDefinitions()
+public void RefreshItemDefinitions()
+public IPlayerItemDefinition GetItemDefinition(int definitionId)
+public Task`1<IPlayerInventory> DeserializeInventory(Byte[] data)
+public bool PlayerOwnsDownloadableContent(ulong userId, int appId)
+public Task`1<bool> LoadPlayerStats(ulong userId)
+public Task`1<bool> SavePlayerStats(ulong userId)
+public long GetPlayerStatInt(ulong userId, string key, long defaultValue)
+public bool SetPlayerStatInt(ulong userId, string key, long value)
+public bool BeginPlayerSession(ulong userId, Byte[] authToken)
+public void UpdatePlayerSession(ulong userId, string userName)
+public void EndPlayerSession(ulong userId)
+}
+public IPlayerInfo {
+public ulong UserId
+public string UserName
+public bool IsOnline
+public bool IsMe
+public bool IsFriend
+public bool IsPlayingThisGame
+public string ServerEndpoint
+public ulong get_UserId()
+public string get_UserName()
+public bool get_IsOnline()
+public bool get_IsMe()
+public bool get_IsFriend()
+public bool get_IsPlayingThisGame()
+public string get_ServerEndpoint()
+}
+public IPlayerInventory {
+public IReadOnlyList`1<IPlayerItem> Items
+public bool BelongsTo(ulong userId)
+public IReadOnlyList`1<IPlayerItem> get_Items()
+public Byte[] Serialize()
+}
+public IPlayerItem {
+public int DefinitionId
+public int Quantity
+public DateTimeOffset Acquired
+public ulong WorkshopId
+public string ItemShortName
+public int get_DefinitionId()
+public int get_Quantity()
+public DateTimeOffset get_Acquired()
+public ulong get_WorkshopId()
+public string get_ItemShortName()
+}
+public IPlayerItemDefinition {
+public int DefinitionId
+public string Name
+public string Description
+public string Type
+public string IconUrl
+public int LocalPrice
+public string LocalPriceFormatted
+public string PriceCategory
+public bool IsGenerator
+public bool IsMarketable
+public string ItemShortName
+public ulong WorkshopId
+public ulong WorkshopDownload
+public int get_DefinitionId()
+public string get_Name()
+public string get_Description()
+public string get_Type()
+public string get_IconUrl()
+public int get_LocalPrice()
+public string get_LocalPriceFormatted()
+public string get_PriceCategory()
+public bool get_IsGenerator()
+public bool get_IsMarketable()
+public string get_ItemShortName()
+public ulong get_WorkshopId()
+public ulong get_WorkshopDownload()
+public IEnumerable`1<PlayerItemRecipe> GetRecipesContainingThis()
+}
+public IServerQuery {
+public ServerQuerySet QuerySet
+public IReadOnlyList`1<ServerInfo> Servers
+public ServerQuerySet get_QuerySet()
+public IReadOnlyList`1<ServerInfo> get_Servers()
+public void add_OnServerFound(Action`1<ServerInfo> value)
+public void remove_OnServerFound(Action`1<ServerInfo> value)
+public void AddFilter(string key, string value)
+public Task RunQueryAsync(double timeoutInSeconds)
+}
+public IWorkshopContent {
+public ulong WorkshopId
+public string Title
+public string Description
+public IEnumerable`1<string> Tags
+public string Url
+public string PreviewImageUrl
+public ulong OwnerId
+public IPlayerInfo Owner
+public bool IsInstalled
+public bool IsDownloadPending
+public bool IsDownloading
+public string Directory
+public ulong get_WorkshopId()
+public string get_Title()
+public string get_Description()
+public IEnumerable`1<string> get_Tags()
+public string get_Url()
+public string get_PreviewImageUrl()
+public ulong get_OwnerId()
+public IPlayerInfo get_Owner()
+public bool get_IsInstalled()
+public bool get_IsDownloadPending()
+public bool get_IsDownloading()
+public string get_Directory()
+public bool Download()
+}
+public PlayerItemRecipe : ValueType {
+private IReadOnlyList`1<Ingredient> <Ingredients>k__BackingField
+private IPlayerItemDefinition <Result>k__BackingField
+public IReadOnlyList`1<Ingredient> Ingredients
+public IPlayerItemDefinition Result
+public IReadOnlyList`1<Ingredient> get_Ingredients()
+public IPlayerItemDefinition get_Result()
+public void .ctor(IReadOnlyList`1<Ingredient> ingredients, IPlayerItemDefinition result)
+public bool Equals(PlayerItemRecipe other)
+public bool Equals(object obj)
+public int GetHashCode()
+public bool op_Equality(PlayerItemRecipe left, PlayerItemRecipe right)
+public bool op_Inequality(PlayerItemRecipe left, PlayerItemRecipe right)
+}
+public Rust.Platform.Common.ServerParameters : ValueType {
+private string <ShortName>k__BackingField
+private string <FullName>k__BackingField
+private string <Version>k__BackingField
+private bool <IsSecure>k__BackingField
+private IPAddress <Address>k__BackingField
+private ushort <GamePort>k__BackingField
+private ushort <QueryPort>k__BackingField
+public string ShortName
+public string FullName
+public string Version
+public bool IsSecure
+public IPAddress Address
+public ushort GamePort
+public ushort QueryPort
+public string get_ShortName()
+public string get_FullName()
+public string get_Version()
+public bool get_IsSecure()
+public IPAddress get_Address()
+public ushort get_GamePort()
+public ushort get_QueryPort()
+public void .ctor(string shortName, string fullName, string version, bool isSecure, IPAddress address, ushort gamePort, ushort queryPort)
+}
+public ServerInfo : ValueType {
+private UInt32 <AppId>k__BackingField
+private string <Name>k__BackingField
+private IPAddress <Address>k__BackingField
+private UInt32 <AddressRaw>k__BackingField
+private int <ConnectionPort>k__BackingField
+private int <QueryPort>k__BackingField
+private string <Map>k__BackingField
+private string <TagString>k__BackingField
+private bool <IsSecure>k__BackingField
+private int <Players>k__BackingField
+private int <MaxPlayers>k__BackingField
+private UInt32 <LastTimePlayed>k__BackingField
+private int <Ping>k__BackingField
+private ulong <SteamId>k__BackingField
+private UInt32 <Born>k__BackingField
+private IReadOnlyList`1<string> <Tags>k__BackingField
+private string <ConnectionProtocol>k__BackingField
+private string <ConnectionString>k__BackingField
+public UInt32 AppId
+public string Name
+public IPAddress Address
+public UInt32 AddressRaw
+public int ConnectionPort
+public int QueryPort
+public string Map
+public string TagString
+public bool IsSecure
+public int Players
+public int MaxPlayers
+public UInt32 LastTimePlayed
+public int Ping
+public ulong SteamId
+public UInt32 Born
+public IReadOnlyList`1<string> Tags
+public string ConnectionProtocol
+public string ConnectionString
+public UInt32 get_AppId()
+public string get_Name()
+public IPAddress get_Address()
+public UInt32 get_AddressRaw()
+public int get_ConnectionPort()
+public int get_QueryPort()
+public string get_Map()
+public string get_TagString()
+public bool get_IsSecure()
+public int get_Players()
+public int get_MaxPlayers()
+public UInt32 get_LastTimePlayed()
+public int get_Ping()
+public ulong get_SteamId()
+public UInt32 get_Born()
+public IReadOnlyList`1<string> get_Tags()
+public string get_ConnectionProtocol()
+public string get_ConnectionString()
+public void .ctor(UInt32 appId, string name, IPAddress address, int connectionPort, int queryPort, string map, string tagString, bool isSecure, int players, int maxPlayers, UInt32 lastTimePlayed, int ping, ulong steamId)
+private UInt32 AddressToUInt32(IPAddress address)
+private UInt32 Swap(UInt32 x)
+}
+public ServerQuerySet : Enum {
+public int value__
+public ServerQuerySet Whitelist
+public ServerQuerySet Internet
+public ServerQuerySet LocalNetwork
+public ServerQuerySet Friends
+public ServerQuerySet Favorites
+public ServerQuerySet History
+}

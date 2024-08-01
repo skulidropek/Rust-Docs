@@ -1213,6 +1213,13 @@ protected void SerializePropertiesToResources(IDesignerSerializationManager mana
 protected void SerializeResource(IDesignerSerializationManager manager, string resourceName, object value)
 protected void SerializeResourceInvariant(IDesignerSerializationManager manager, string resourceName, object value)
 protected void DeserializePropertiesFromResources(IDesignerSerializationManager manager, object value, Attribute[] filter)
+protected AttributeCollection GetAttributesFromTypeHelper(IDesignerSerializationManager manager, Type type)
+protected AttributeCollection GetAttributesHelper(IDesignerSerializationManager manager, object instance)
+protected EventDescriptorCollection GetEventsHelper(IDesignerSerializationManager manager, object instance, Attribute[] attributes)
+protected PropertyDescriptorCollection GetPropertiesHelper(IDesignerSerializationManager manager, object instance, Attribute[] attributes)
+protected Type GetReflectionTypeFromTypeHelper(IDesignerSerializationManager manager, Type type)
+protected Type GetReflectionTypeHelper(IDesignerSerializationManager manager, object instance)
+protected TypeDescriptionProvider GetTargetFrameworkProvider(IServiceProvider provider, object instance)
 }
 public System.ComponentModel.Design.Serialization.CodeDomSerializerException : SystemException {
 private CodeLinePragma linePragma
@@ -1486,6 +1493,7 @@ public string GetProviderName(string inputFileContent)
 public string GetProviderName(string inputFileContent, string tableName)
 public void Generate(string inputFileContent, CodeCompileUnit compileUnit, CodeNamespace mainNamespace, CodeDomProvider codeProvider, Hashtable customDBProviders, GenerateOption option, string dataSetNamespace)
 public void Generate(string inputFileContent, CodeCompileUnit compileUnit, CodeNamespace mainNamespace, CodeDomProvider codeProvider, Hashtable customDBProviders, GenerateOption option, string dataSetNamespace, string basePath)
+public string Generate(string inputFileContent, CodeCompileUnit compileUnit, CodeNamespace mainNamespace, CodeDomProvider codeProvider, GenerateOption option, string dataSetNamespace)
 public string Generate(string inputFileContent, CodeCompileUnit compileUnit, CodeNamespace mainNamespace, CodeDomProvider codeProvider, GenerateOption option, string dataSetNamespace, string basePath)
 }
 public System.Data.Design.TypedDataSetGeneratorException : DataException {
@@ -1600,6 +1608,7 @@ public System.Web.UI.Design.ContainerControlDesigner : ControlDesigner {
 public bool AllowResize
 public string FrameCaption
 public Style FrameStyle
+protected bool NoWrap
 public bool get_AllowResize()
 public string get_FrameCaption()
 public Style get_FrameStyle()
@@ -1609,6 +1618,7 @@ public string GetDesignTimeHtml(DesignerRegionCollection regions)
 public string GetEditableDesignerRegionContent(EditableDesignerRegion region)
 public string GetPersistenceContent()
 public void SetEditableDesignerRegionContent(EditableDesignerRegion region, string content)
+protected bool get_NoWrap()
 }
 public System.Web.UI.Design.ContentDefinition : object {
 private string id
@@ -1646,6 +1656,7 @@ public TemplateGroupCollection TemplateGroups
 public Control ViewControl
 public bool ViewControlCreated
 protected bool UsePreviewControl
+protected bool Visible
 protected string CreatePlaceHolderDesignTimeHtml()
 protected string CreatePlaceHolderDesignTimeHtml(string instruction)
 public string GetDesignTimeHtml()
@@ -1708,6 +1719,7 @@ public void set_ViewControl(Control value)
 public bool get_ViewControlCreated()
 public void set_ViewControlCreated(bool value)
 protected bool get_UsePreviewControl()
+protected bool get_Visible()
 }
 public System.Web.UI.Design.ControlDesignerState : object {
 public object Item
@@ -2783,6 +2795,7 @@ public void set_DataSourceID(string value)
 public DesignerDataSourceView get_DesignerView()
 private bool System.Web.UI.Design.IDataBindingSchemaProvider.get_CanRefreshSchema()
 private IDataSourceViewSchema System.Web.UI.Design.IDataBindingSchemaProvider.get_Schema()
+protected void OnSchemaRefreshed()
 private void System.Web.UI.Design.IDataBindingSchemaProvider.RefreshSchema(bool preferSilent)
 }
 public System.Web.UI.Design.WebControls.BaseValidatorDesigner : ControlDesigner {
@@ -2797,6 +2810,8 @@ protected void OnDelayLoadActions()
 protected void OnActivated(object source, EventArgs e)
 protected void OnOKClicked(object source, EventArgs e)
 protected void OnSelChangedScheme(object source, EventArgs e)
+protected void DoDelayLoadActions()
+protected void SaveComponent()
 }
 public System.Web.UI.Design.WebControls.CalendarDesigner : ControlDesigner {
 public DesignerVerbCollection Verbs
@@ -2857,13 +2872,19 @@ private IDataSourceViewSchema System.Web.UI.Design.IDataBindingSchemaProvider.ge
 }
 public System.Web.UI.Design.WebControls.DataControlFieldDesigner : object {
 public string DefaultNodeText
+protected IServiceProvider ServiceProvider
 public bool UsesSchema
 public string get_DefaultNodeText()
+protected IServiceProvider get_ServiceProvider()
 public bool get_UsesSchema()
 public DataControlField CreateField()
 public DataControlField CreateField(IDataSourceFieldSchema fieldSchema)
 public TemplateField CreateTemplateField(DataControlField dataControlField, DataBoundControl dataBoundControl)
+protected string GetNewDataSourceName(Type controlType, DataBoundControlMode mode)
 public string GetNodeText(DataControlField dataControlField)
+protected object GetService(Type serviceType)
+protected ITemplate GetTemplate(DataBoundControl control, string templateContent)
+protected TemplateField GetTemplateField(DataControlField dataControlField, DataBoundControl dataBoundControl)
 public bool IsEnabled(DataBoundControl parent)
 }
 public System.Web.UI.Design.WebControls.DataGridComponentEditor : BaseDataListComponentEditor {
@@ -2883,6 +2904,8 @@ public bool EditComponent(ITypeDescriptorContext context, object obj, IWin32Wind
 protected Type[] GetComponentEditorPages()
 }
 public System.Web.UI.Design.WebControls.DataListDesigner : BaseDataListDesigner {
+protected bool TemplatesExist
+protected bool get_TemplatesExist()
 protected ITemplateEditingFrame CreateTemplateEditingFrame(TemplateEditingVerb verb)
 protected TemplateEditingVerb[] GetCachedTemplateEditingVerbs()
 public string GetTemplateContent(ITemplateEditingFrame editingFrame, string templateName, Boolean& allowEditing)
@@ -2972,8 +2995,13 @@ public bool get_RenderOuterTable()
 public void set_RenderOuterTable(bool value)
 }
 public System.Web.UI.Design.WebControls.MenuDesigner : HierarchicalDataBoundControlDesigner {
+protected bool CanRefreshSchema
+protected IDataSourceViewSchema Schema
+protected bool get_CanRefreshSchema()
+protected IDataSourceViewSchema get_Schema()
 private bool System.Web.UI.Design.IDataBindingSchemaProvider.get_CanRefreshSchema()
 private IDataSourceViewSchema System.Web.UI.Design.IDataBindingSchemaProvider.get_Schema()
+protected void RefreshSchema(bool preferSilent)
 private void System.Web.UI.Design.IDataBindingSchemaProvider.RefreshSchema(bool preferSilent)
 }
 public System.Web.UI.Design.WebControls.MenuItemStyleCollectionEditor : CollectionEditor {
@@ -3009,6 +3037,7 @@ public void remove_ParametersChanged(EventHandler value)
 public void AddParameters(Parameter[] parameters)
 public void ClearParameters()
 public Parameter[] GetParameters()
+protected void OnParametersChanged(object sender, EventArgs e)
 public void SetAllowCollectionChanges(bool allowChanges)
 }
 public System.Web.UI.Design.WebControls.PasswordRecoveryDesigner : ControlDesigner {
@@ -3029,6 +3058,11 @@ protected void LstStandardExpressions_SelectedIndexChanged(object sender, EventA
 protected void RegexTypeEditor_Activated(object sender, EventArgs e)
 protected void TxtExpression_Changed(object sender, EventArgs e)
 public void .ctor(ISite site)
+protected void cmdHelp_Click(object sender, EventArgs e)
+protected void cmdOK_Click(object sender, EventArgs e)
+protected void cmdTestValidate_Click(object sender, EventArgs args)
+protected void lstStandardExpressions_SelectedIndexChanged(object sender, EventArgs e)
+protected void txtExpression_TextChanged(object sender, EventArgs e)
 }
 public System.Web.UI.Design.WebControls.RegexTypeEditor : UITypeEditor {
 public object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value)
@@ -3064,6 +3098,7 @@ public IDataSourceDesigner get_DataSourceDesigner()
 public string get_DataSourceID()
 public void set_DataSourceID(string value)
 public DesignerDataSourceView get_DesignerView()
+protected void ExecuteChooseDataSourcePostSteps()
 }
 public System.Web.UI.Design.WebControls.RoleGroupCollectionEditor : CollectionEditor {
 public void .ctor(Type type)
@@ -3111,6 +3146,10 @@ public DataSourceOperation get_SelectQuery()
 public void set_SelectQuery(DataSourceOperation value)
 public DataSourceOperation get_UpdateQuery()
 public void set_UpdateQuery(DataSourceOperation value)
+protected SqlDesignerDataSourceView CreateView(string viewName)
+protected void DeriveParameters(string providerName, DbCommand command)
+protected string GetConnectionString()
+protected internal Parameter[] InferParameterNames(DesignerDataConnection connection, string commandText, SqlDataSourceCommandType commandType)
 }
 public System.Web.UI.Design.WebControls.SqlDesignerDataSourceView : DesignerDataSourceView {
 public void .ctor(SqlDataSourceDesigner owner, string viewName)
@@ -3138,9 +3177,27 @@ protected object CreateInstance(Type itemType)
 public System.Web.UI.Design.WebControls.TreeNodeStyleCollectionEditor : StyleCollectionEditor {
 public void .ctor(Type type)
 }
+public System.Web.UI.Design.WebControls.TreeViewDesigner : HierarchicalDataBoundControlDesigner {
+protected void CreateLineImages()
+protected void EditBindings()
+protected void EditNodes()
+}
 public System.Web.UI.Design.WebControls.ViewDesigner : ContainerControlDesigner {
 protected bool NoWrap
 protected bool get_NoWrap()
+}
+public System.Web.UI.Design.WebControls.WebParts.ToolZoneDesigner : WebZoneDesigner {
+protected bool ViewInBrowseMode
+protected bool get_ViewInBrowseMode()
+}
+public System.Web.UI.Design.WebControls.WizardDesigner : CompositeControlDesigner {
+protected bool DisplaySideBar
+protected bool get_DisplaySideBar()
+protected void set_DisplaySideBar(bool value)
+protected void AddDesignerRegions(DesignerRegionCollection regions)
+protected void ConvertToCustomNavigationTemplate()
+protected void ConvertToTemplate(string description, IComponent component, string templateName, String[] keys)
+protected void ResetTemplate(string description, IComponent component, string templateName)
 }
 public System.Web.UI.Design.WebControls.WizardStepCollectionEditor : CollectionEditor {
 public void .ctor(Type type)
@@ -4122,6 +4179,7 @@ protected Control GetParentForComponent(IComponent component)
 protected ControlBodyGlyph GetControlGlyph(GlyphSelectionType selectionType)
 public GlyphCollection GetGlyphs(GlyphSelectionType selectionType)
 protected Rectangle GetUpdatedRect(Rectangle originalRect, Rectangle dragRect, bool updateSize)
+protected internal bool CanAddComponent(IComponent component)
 }
 public System.Windows.Forms.Design.ScrollableControlDesigner : ParentControlDesigner {
 private int HTHSCROLL

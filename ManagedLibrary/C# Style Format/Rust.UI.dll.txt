@@ -1,4 +1,8 @@
-public Rust.UI.Debug.NetGraph : SingletonComponent`1<NetGraph> {
+public Rust.UI.Blocker : RustControl {
+public void OnPointerDown(PointerEventData eventData)
+public void AddToCanvasOf(RectTransform rt)
+}
+public Rust.UI.Debugging.NetGraph : SingletonComponent`1<NetGraph> {
 public CanvasGroup group
 private NetGraphRow[] rows
 public bool Enabled
@@ -6,7 +10,7 @@ public void Start()
 public void set_Enabled(bool value)
 public void UpdateFrom(Stats incomingStats)
 }
-public Rust.UI.Debug.NetGraphItem : MonoBehaviour {
+public Rust.UI.Debugging.NetGraphItem : MonoBehaviour {
 public CanvasGroup group
 public LayoutElement element
 public Text countTotal
@@ -15,7 +19,7 @@ public Text bytes
 internal void Hide()
 internal void UpdateFrom(KeyValuePair`2<string, Node> node)
 }
-public Rust.UI.Debug.NetGraphRow : MonoBehaviour {
+public Rust.UI.Debugging.NetGraphRow : MonoBehaviour {
 public CanvasGroup group
 public Text countTotal
 public Text countUnique
@@ -27,6 +31,27 @@ public GameObject RowSpacer
 private void Awake()
 internal void Hide()
 internal void UpdateFrom(KeyValuePair`2<string, Node> node)
+}
+public Rust.UI.Dropdown : RustControl {
+public RustIcon Icon
+public RustText Text
+public RustIcon OptionIcon
+public Option[] Options
+private int CurrentOption
+public ChangedEvent OnChanged
+public Option Value
+public Option get_Value()
+protected void Awake()
+public void SetOptions(Option[] options)
+protected void SetOptionFromUser(Option option)
+public void SetOption(int i)
+public void SetOption(Option option)
+public void SetOptionDefault()
+public void OnLeft()
+public void OnRight()
+protected void ApplyStyle(Group s)
+public void OnPointerDown(PointerEventData eventData)
+public void OpenMenu()
 }
 public Rust.UI.FileDialog : MonoBehaviour {
 public string result
@@ -52,6 +77,7 @@ private long maxSize
 private bool saveLastPath
 public IEnumerator Open(string path, string allowedExtensions, string windowName, Sprite windowIcon, long maxSize, bool saveLastPath)
 public IEnumerator Save(string path, string allowedExtensions, string windowName, Sprite windowIcon, bool saveLastPath)
+public Task`1<string> SaveAsync(string path, string allowedExtensions, string windowName, Sprite windowIcon, bool saveLastPath)
 private void Hide()
 public void GoUp()
 public void GoTo(string newPath)
@@ -67,7 +93,7 @@ private void UpdateElements()
 private void UpdateDrivesList()
 private string GetFileSizeText(long size)
 private void UpdateFilesList()
-private bool <UpdateFilesList>b__38_0(FileInfo f)
+private bool <UpdateFilesList>b__39_0(FileInfo f)
 }
 public Rust.UI.FileListElement : MonoBehaviour {
 public Image icon
@@ -81,13 +107,1758 @@ public void OnClick()
 public Rust.UI.HttpImage : MonoBehaviour {
 public Dictionary`2<string, UnityWebRequest> RequestCache
 public Dictionary`2<string, Texture2D> TextureCache
+public Texture2D LoadingImage
+public Texture2D MissingImage
 private RawImage image
 public string Url
+public bool PreserveAspectHeight
+public float MaxWidth
+public float MaxHeight
 private void Init()
 private void OnEnable()
-public void Load(string url)
+public bool Load(string url)
 private IEnumerator WaitForLoad(string url)
+private void UpdateImageTexture(Texture2D tex)
+public void SetMissingImage()
+public void SetLoadingImage()
 private IEnumerator StartAndWaitForLoad(string url)
+}
+public Rust.UI.Icons : Enum {
+public int value__
+public Icons None
+public Icons Abacus
+public Icons Acorn
+public Icons Ad
+public Icons AddressBook
+public Icons AddressCard
+public Icons Adjust
+public Icons AirFreshener
+public Icons AlarmClock
+public Icons AlarmExclamation
+public Icons AlarmPlus
+public Icons AlarmSnooze
+public Icons Album
+public Icons AlbumCollection
+public Icons Alicorn
+public Icons AlignCenter
+public Icons AlignJustify
+public Icons AlignLeft
+public Icons AlignRight
+public Icons AlignSlash
+public Icons Allergies
+public Icons Ambulance
+public Icons AmericanSignLanguageInterpreting
+public Icons AmpGuitar
+public Icons Analytics
+public Icons Anchor
+public Icons Angel
+public Icons AngleDoubleDown
+public Icons AngleDoubleLeft
+public Icons AngleDoubleRight
+public Icons AngleDoubleUp
+public Icons AngleDown
+public Icons AngleLeft
+public Icons AngleRight
+public Icons AngleUp
+public Icons Angry
+public Icons Ankh
+public Icons AppleAlt
+public Icons AppleCrate
+public Icons Archive
+public Icons Archway
+public Icons ArrowAltCircleDown
+public Icons ArrowAltCircleLeft
+public Icons ArrowAltCircleRight
+public Icons ArrowAltCircleUp
+public Icons ArrowAltDown
+public Icons ArrowAltFromBottom
+public Icons ArrowAltFromLeft
+public Icons ArrowAltFromRight
+public Icons ArrowAltFromTop
+public Icons ArrowAltLeft
+public Icons ArrowAltRight
+public Icons ArrowAltSquareDown
+public Icons ArrowAltSquareLeft
+public Icons ArrowAltSquareRight
+public Icons ArrowAltSquareUp
+public Icons ArrowAltToBottom
+public Icons ArrowAltToLeft
+public Icons ArrowAltToRight
+public Icons ArrowAltToTop
+public Icons ArrowAltUp
+public Icons ArrowCircleDown
+public Icons ArrowCircleLeft
+public Icons ArrowCircleRight
+public Icons ArrowCircleUp
+public Icons ArrowDown
+public Icons ArrowFromBottom
+public Icons ArrowFromLeft
+public Icons ArrowFromRight
+public Icons ArrowFromTop
+public Icons ArrowLeft
+public Icons ArrowRight
+public Icons ArrowSquareDown
+public Icons ArrowSquareLeft
+public Icons ArrowSquareRight
+public Icons ArrowSquareUp
+public Icons ArrowToBottom
+public Icons ArrowToLeft
+public Icons ArrowToRight
+public Icons ArrowToTop
+public Icons ArrowUp
+public Icons Arrows
+public Icons ArrowsAlt
+public Icons ArrowsAltH
+public Icons ArrowsAltV
+public Icons ArrowsH
+public Icons ArrowsV
+public Icons AssistiveListeningSystems
+public Icons Asterisk
+public Icons At
+public Icons Atlas
+public Icons Atom
+public Icons AtomAlt
+public Icons AudioDescription
+public Icons Award
+public Icons Axe
+public Icons AxeBattle
+public Icons Baby
+public Icons BabyCarriage
+public Icons Backpack
+public Icons Backspace
+public Icons Backward
+public Icons Bacon
+public Icons Badge
+public Icons BadgeCheck
+public Icons BadgeDollar
+public Icons BadgePercent
+public Icons BadgeSheriff
+public Icons BadgerHoney
+public Icons BagsShopping
+public Icons BalanceScale
+public Icons BalanceScaleLeft
+public Icons BalanceScaleRight
+public Icons BallPile
+public Icons Ballot
+public Icons BallotCheck
+public Icons Ban
+public Icons BandAid
+public Icons Banjo
+public Icons Barcode
+public Icons BarcodeAlt
+public Icons BarcodeRead
+public Icons BarcodeScan
+public Icons Bars
+public Icons Baseball
+public Icons BaseballBall
+public Icons BasketballBall
+public Icons BasketballHoop
+public Icons Bat
+public Icons Bath
+public Icons BatteryBolt
+public Icons BatteryEmpty
+public Icons BatteryFull
+public Icons BatteryHalf
+public Icons BatteryQuarter
+public Icons BatterySlash
+public Icons BatteryThreeQuarters
+public Icons Bed
+public Icons Beer
+public Icons Bell
+public Icons BellExclamation
+public Icons BellPlus
+public Icons BellSchool
+public Icons BellSchoolSlash
+public Icons BellSlash
+public Icons Bells
+public Icons Betamax
+public Icons BezierCurve
+public Icons Bible
+public Icons Bicycle
+public Icons Biking
+public Icons BikingMountain
+public Icons Binoculars
+public Icons Biohazard
+public Icons BirthdayCake
+public Icons Blanket
+public Icons Blender
+public Icons BlenderPhone
+public Icons Blind
+public Icons Blog
+public Icons Bold
+public Icons Bolt
+public Icons Bomb
+public Icons Bone
+public Icons BoneBreak
+public Icons Bong
+public Icons Book
+public Icons BookAlt
+public Icons BookDead
+public Icons BookHeart
+public Icons BookMedical
+public Icons BookOpen
+public Icons BookReader
+public Icons BookSpells
+public Icons BookUser
+public Icons Bookmark
+public Icons Books
+public Icons BooksMedical
+public Icons Boombox
+public Icons Boot
+public Icons BoothCurtain
+public Icons BorderAll
+public Icons BorderBottom
+public Icons BorderCenterH
+public Icons BorderCenterV
+public Icons BorderInner
+public Icons BorderLeft
+public Icons BorderNone
+public Icons BorderOuter
+public Icons BorderRight
+public Icons BorderStyle
+public Icons BorderStyleAlt
+public Icons BorderTop
+public Icons BowArrow
+public Icons BowlingBall
+public Icons BowlingPins
+public Icons Box
+public Icons BoxAlt
+public Icons BoxBallot
+public Icons BoxCheck
+public Icons BoxFragile
+public Icons BoxFull
+public Icons BoxHeart
+public Icons BoxOpen
+public Icons BoxUp
+public Icons BoxUsd
+public Icons Boxes
+public Icons BoxesAlt
+public Icons BoxingGlove
+public Icons Brackets
+public Icons BracketsCurly
+public Icons Braille
+public Icons Brain
+public Icons BreadLoaf
+public Icons BreadSlice
+public Icons Briefcase
+public Icons BriefcaseMedical
+public Icons BringForward
+public Icons BringFront
+public Icons BroadcastTower
+public Icons Broom
+public Icons Browser
+public Icons Brush
+public Icons Bug
+public Icons Building
+public Icons Bullhorn
+public Icons Bullseye
+public Icons BullseyeArrow
+public Icons BullseyePointer
+public Icons BurgerSoda
+public Icons Burn
+public Icons Burrito
+public Icons Bus
+public Icons BusAlt
+public Icons BusSchool
+public Icons BusinessTime
+public Icons CabinetFiling
+public Icons Cactus
+public Icons Calculator
+public Icons CalculatorAlt
+public Icons Calendar
+public Icons CalendarAlt
+public Icons CalendarCheck
+public Icons CalendarDay
+public Icons CalendarEdit
+public Icons CalendarExclamation
+public Icons CalendarMinus
+public Icons CalendarPlus
+public Icons CalendarStar
+public Icons CalendarTimes
+public Icons CalendarWeek
+public Icons Camcorder
+public Icons Camera
+public Icons CameraAlt
+public Icons CameraMovie
+public Icons CameraPolaroid
+public Icons CameraRetro
+public Icons Campfire
+public Icons Campground
+public Icons CandleHolder
+public Icons CandyCane
+public Icons CandyCorn
+public Icons Cannabis
+public Icons Capsules
+public Icons Car
+public Icons CarAlt
+public Icons CarBattery
+public Icons CarBuilding
+public Icons CarBump
+public Icons CarBus
+public Icons CarCrash
+public Icons CarGarage
+public Icons CarMechanic
+public Icons CarSide
+public Icons CarTilt
+public Icons CarWash
+public Icons CaretCircleDown
+public Icons CaretCircleLeft
+public Icons CaretCircleRight
+public Icons CaretCircleUp
+public Icons CaretDown
+public Icons CaretLeft
+public Icons CaretRight
+public Icons CaretSquareDown
+public Icons CaretSquareLeft
+public Icons CaretSquareRight
+public Icons CaretSquareUp
+public Icons CaretUp
+public Icons Carrot
+public Icons Cars
+public Icons CartArrowDown
+public Icons CartPlus
+public Icons CashRegister
+public Icons CassetteTape
+public Icons Cat
+public Icons Cauldron
+public Icons Cctv
+public Icons Certificate
+public Icons Chair
+public Icons ChairOffice
+public Icons Chalkboard
+public Icons ChalkboardTeacher
+public Icons ChargingStation
+public Icons ChartArea
+public Icons ChartBar
+public Icons ChartLine
+public Icons ChartLineDown
+public Icons ChartNetwork
+public Icons ChartPie
+public Icons ChartPieAlt
+public Icons ChartScatter
+public Icons Check
+public Icons CheckCircle
+public Icons CheckDouble
+public Icons CheckSquare
+public Icons Cheese
+public Icons CheeseSwiss
+public Icons Cheeseburger
+public Icons Chess
+public Icons ChessBishop
+public Icons ChessBishopAlt
+public Icons ChessBoard
+public Icons ChessClock
+public Icons ChessClockAlt
+public Icons ChessKing
+public Icons ChessKingAlt
+public Icons ChessKnight
+public Icons ChessKnightAlt
+public Icons ChessPawn
+public Icons ChessPawnAlt
+public Icons ChessQueen
+public Icons ChessQueenAlt
+public Icons ChessRook
+public Icons ChessRookAlt
+public Icons ChevronCircleDown
+public Icons ChevronCircleLeft
+public Icons ChevronCircleRight
+public Icons ChevronCircleUp
+public Icons ChevronDoubleDown
+public Icons ChevronDoubleLeft
+public Icons ChevronDoubleRight
+public Icons ChevronDoubleUp
+public Icons ChevronDown
+public Icons ChevronLeft
+public Icons ChevronRight
+public Icons ChevronSquareDown
+public Icons ChevronSquareLeft
+public Icons ChevronSquareRight
+public Icons ChevronSquareUp
+public Icons ChevronUp
+public Icons Child
+public Icons Chimney
+public Icons Church
+public Icons Circle
+public Icons CircleNotch
+public Icons City
+public Icons Clarinet
+public Icons ClawMarks
+public Icons ClinicMedical
+public Icons Clipboard
+public Icons ClipboardCheck
+public Icons ClipboardList
+public Icons ClipboardListCheck
+public Icons ClipboardPrescription
+public Icons ClipboardUser
+public Icons Clock
+public Icons Clone
+public Icons ClosedCaptioning
+public Icons Cloud
+public Icons CloudDownload
+public Icons CloudDownloadAlt
+public Icons CloudDrizzle
+public Icons CloudHail
+public Icons CloudHailMixed
+public Icons CloudMeatball
+public Icons CloudMoon
+public Icons CloudMoonRain
+public Icons CloudMusic
+public Icons CloudRain
+public Icons CloudRainbow
+public Icons CloudShowers
+public Icons CloudShowersHeavy
+public Icons CloudSleet
+public Icons CloudSnow
+public Icons CloudSun
+public Icons CloudSunRain
+public Icons CloudUpload
+public Icons CloudUploadAlt
+public Icons Clouds
+public Icons CloudsMoon
+public Icons CloudsSun
+public Icons Club
+public Icons Cocktail
+public Icons Code
+public Icons CodeBranch
+public Icons CodeCommit
+public Icons CodeMerge
+public Icons Coffee
+public Icons CoffeeTogo
+public Icons Coffin
+public Icons Cog
+public Icons Cogs
+public Icons Coin
+public Icons Coins
+public Icons Columns
+public Icons Comment
+public Icons CommentAlt
+public Icons CommentAltCheck
+public Icons CommentAltDollar
+public Icons CommentAltDots
+public Icons CommentAltEdit
+public Icons CommentAltExclamation
+public Icons CommentAltLines
+public Icons CommentAltMedical
+public Icons CommentAltMinus
+public Icons CommentAltMusic
+public Icons CommentAltPlus
+public Icons CommentAltSlash
+public Icons CommentAltSmile
+public Icons CommentAltTimes
+public Icons CommentCheck
+public Icons CommentDollar
+public Icons CommentDots
+public Icons CommentEdit
+public Icons CommentExclamation
+public Icons CommentLines
+public Icons CommentMedical
+public Icons CommentMinus
+public Icons CommentMusic
+public Icons CommentPlus
+public Icons CommentSlash
+public Icons CommentSmile
+public Icons CommentTimes
+public Icons Comments
+public Icons CommentsAlt
+public Icons CommentsAltDollar
+public Icons CommentsDollar
+public Icons CompactDisc
+public Icons Compass
+public Icons CompassSlash
+public Icons Compress
+public Icons CompressAlt
+public Icons CompressArrowsAlt
+public Icons CompressWide
+public Icons ComputerClassic
+public Icons ComputerSpeaker
+public Icons ConciergeBell
+public Icons Construction
+public Icons ContainerStorage
+public Icons ConveyorBelt
+public Icons ConveyorBeltAlt
+public Icons Cookie
+public Icons CookieBite
+public Icons Copy
+public Icons Copyright
+public Icons Corn
+public Icons Couch
+public Icons Cow
+public Icons Cowbell
+public Icons CowbellMore
+public Icons CreditCard
+public Icons CreditCardBlank
+public Icons CreditCardFront
+public Icons Cricket
+public Icons Croissant
+public Icons Crop
+public Icons CropAlt
+public Icons Cross
+public Icons Crosshairs
+public Icons Crow
+public Icons Crown
+public Icons Crutch
+public Icons Crutches
+public Icons Cube
+public Icons Cubes
+public Icons Curling
+public Icons Cut
+public Icons Dagger
+public Icons Database
+public Icons Deaf
+public Icons Debug
+public Icons Deer
+public Icons DeerRudolph
+public Icons Democrat
+public Icons Desktop
+public Icons DesktopAlt
+public Icons Dewpoint
+public Icons Dharmachakra
+public Icons Diagnoses
+public Icons Diamond
+public Icons Dice
+public Icons DiceD10
+public Icons DiceD12
+public Icons DiceD20
+public Icons DiceD4
+public Icons DiceD6
+public Icons DiceD8
+public Icons DiceFive
+public Icons DiceFour
+public Icons DiceOne
+public Icons DiceSix
+public Icons DiceThree
+public Icons DiceTwo
+public Icons Digging
+public Icons DigitalTachograph
+public Icons Diploma
+public Icons Directions
+public Icons DiscDrive
+public Icons Disease
+public Icons Divide
+public Icons Dizzy
+public Icons Dna
+public Icons DoNotEnter
+public Icons Dog
+public Icons DogLeashed
+public Icons DollarSign
+public Icons Dolly
+public Icons DollyEmpty
+public Icons DollyFlatbed
+public Icons DollyFlatbedAlt
+public Icons DollyFlatbedEmpty
+public Icons Donate
+public Icons DoorClosed
+public Icons DoorOpen
+public Icons DotCircle
+public Icons Dove
+public Icons Download
+public Icons DraftingCompass
+public Icons Dragon
+public Icons DrawCircle
+public Icons DrawPolygon
+public Icons DrawSquare
+public Icons Dreidel
+public Icons Drone
+public Icons DroneAlt
+public Icons Drum
+public Icons DrumSteelpan
+public Icons Drumstick
+public Icons DrumstickBite
+public Icons Dryer
+public Icons DryerAlt
+public Icons Duck
+public Icons Dumbbell
+public Icons Dumpster
+public Icons DumpsterFire
+public Icons Dungeon
+public Icons Ear
+public Icons EarMuffs
+public Icons Eclipse
+public Icons EclipseAlt
+public Icons Edit
+public Icons Egg
+public Icons EggFried
+public Icons Eject
+public Icons Elephant
+public Icons EllipsisH
+public Icons EllipsisHAlt
+public Icons EllipsisV
+public Icons EllipsisVAlt
+public Icons EmptySet
+public Icons EngineWarning
+public Icons Envelope
+public Icons EnvelopeOpen
+public Icons EnvelopeOpenDollar
+public Icons EnvelopeOpenText
+public Icons EnvelopeSquare
+public Icons Equals
+public Icons Eraser
+public Icons Ethernet
+public Icons EuroSign
+public Icons Exchange
+public Icons ExchangeAlt
+public Icons Exclamation
+public Icons ExclamationCircle
+public Icons ExclamationSquare
+public Icons ExclamationTriangle
+public Icons Expand
+public Icons ExpandAlt
+public Icons ExpandArrows
+public Icons ExpandArrowsAlt
+public Icons ExpandWide
+public Icons ExternalLink
+public Icons ExternalLinkAlt
+public Icons ExternalLinkSquare
+public Icons ExternalLinkSquareAlt
+public Icons Eye
+public Icons EyeDropper
+public Icons EyeEvil
+public Icons EyeSlash
+public Icons Fan
+public Icons Farm
+public Icons FastBackward
+public Icons FastForward
+public Icons Fax
+public Icons Feather
+public Icons FeatherAlt
+public Icons Female
+public Icons FieldHockey
+public Icons FighterJet
+public Icons File
+public Icons FileAlt
+public Icons FileArchive
+public Icons FileAudio
+public Icons FileCertificate
+public Icons FileChartLine
+public Icons FileChartPie
+public Icons FileCheck
+public Icons FileCode
+public Icons FileContract
+public Icons FileCsv
+public Icons FileDownload
+public Icons FileEdit
+public Icons FileExcel
+public Icons FileExclamation
+public Icons FileExport
+public Icons FileImage
+public Icons FileImport
+public Icons FileInvoice
+public Icons FileInvoiceDollar
+public Icons FileMedical
+public Icons FileMedicalAlt
+public Icons FileMinus
+public Icons FileMusic
+public Icons FilePdf
+public Icons FilePlus
+public Icons FilePowerpoint
+public Icons FilePrescription
+public Icons FileSearch
+public Icons FileSignature
+public Icons FileSpreadsheet
+public Icons FileTimes
+public Icons FileUpload
+public Icons FileUser
+public Icons FileVideo
+public Icons FileWord
+public Icons FilesMedical
+public Icons Fill
+public Icons FillDrip
+public Icons Film
+public Icons FilmAlt
+public Icons FilmCanister
+public Icons Filter
+public Icons Fingerprint
+public Icons Fire
+public Icons FireAlt
+public Icons FireExtinguisher
+public Icons FireSmoke
+public Icons Fireplace
+public Icons FirstAid
+public Icons Fish
+public Icons FishCooked
+public Icons FistRaised
+public Icons Flag
+public Icons FlagAlt
+public Icons FlagCheckered
+public Icons FlagUsa
+public Icons Flame
+public Icons Flashlight
+public Icons Flask
+public Icons FlaskPoison
+public Icons FlaskPotion
+public Icons Flower
+public Icons FlowerDaffodil
+public Icons FlowerTulip
+public Icons Flushed
+public Icons Flute
+public Icons FluxCapacitor
+public Icons Fog
+public Icons Folder
+public Icons FolderMinus
+public Icons FolderOpen
+public Icons FolderPlus
+public Icons FolderTimes
+public Icons FolderTree
+public Icons Folders
+public Icons Font
+public Icons FontAwesomeLogoFull
+public Icons FontCase
+public Icons FootballBall
+public Icons FootballHelmet
+public Icons Forklift
+public Icons Forward
+public Icons Fragile
+public Icons FrenchFries
+public Icons Frog
+public Icons FrostyHead
+public Icons Frown
+public Icons FrownOpen
+public Icons Function
+public Icons FunnelDollar
+public Icons Futbol
+public Icons GameBoard
+public Icons GameBoardAlt
+public Icons GameConsoleHandheld
+public Icons Gamepad
+public Icons GamepadAlt
+public Icons GasPump
+public Icons GasPumpSlash
+public Icons Gavel
+public Icons Gem
+public Icons Genderless
+public Icons Ghost
+public Icons Gift
+public Icons GiftCard
+public Icons Gifts
+public Icons GingerbreadMan
+public Icons Glass
+public Icons GlassChampagne
+public Icons GlassCheers
+public Icons GlassCitrus
+public Icons GlassMartini
+public Icons GlassMartiniAlt
+public Icons GlassWhiskey
+public Icons GlassWhiskeyRocks
+public Icons Glasses
+public Icons GlassesAlt
+public Icons Globe
+public Icons GlobeAfrica
+public Icons GlobeAmericas
+public Icons GlobeAsia
+public Icons GlobeEurope
+public Icons GlobeSnow
+public Icons GlobeStand
+public Icons GolfBall
+public Icons GolfClub
+public Icons Gopuram
+public Icons GraduationCap
+public Icons Gramophone
+public Icons GreaterThan
+public Icons GreaterThanEqual
+public Icons Grimace
+public Icons Grin
+public Icons GrinAlt
+public Icons GrinBeam
+public Icons GrinBeamSweat
+public Icons GrinHearts
+public Icons GrinSquint
+public Icons GrinSquintTears
+public Icons GrinStars
+public Icons GrinTears
+public Icons GrinTongue
+public Icons GrinTongueSquint
+public Icons GrinTongueWink
+public Icons GrinWink
+public Icons GripHorizontal
+public Icons GripLines
+public Icons GripLinesVertical
+public Icons GripVertical
+public Icons Guitar
+public Icons GuitarElectric
+public Icons Guitars
+public Icons HSquare
+public Icons H1
+public Icons H2
+public Icons H3
+public Icons H4
+public Icons Hamburger
+public Icons Hammer
+public Icons HammerWar
+public Icons Hamsa
+public Icons HandHeart
+public Icons HandHolding
+public Icons HandHoldingBox
+public Icons HandHoldingHeart
+public Icons HandHoldingMagic
+public Icons HandHoldingSeedling
+public Icons HandHoldingUsd
+public Icons HandHoldingWater
+public Icons HandLizard
+public Icons HandMiddleFinger
+public Icons HandPaper
+public Icons HandPeace
+public Icons HandPointDown
+public Icons HandPointLeft
+public Icons HandPointRight
+public Icons HandPointUp
+public Icons HandPointer
+public Icons HandReceiving
+public Icons HandRock
+public Icons HandScissors
+public Icons HandSpock
+public Icons Hands
+public Icons HandsHeart
+public Icons HandsHelping
+public Icons HandsUsd
+public Icons Handshake
+public Icons HandshakeAlt
+public Icons Hanukiah
+public Icons HardHat
+public Icons Hashtag
+public Icons HatChef
+public Icons HatCowboy
+public Icons HatCowboySide
+public Icons HatSanta
+public Icons HatWinter
+public Icons HatWitch
+public Icons HatWizard
+public Icons Haykal
+public Icons Hdd
+public Icons HeadSide
+public Icons HeadSideBrain
+public Icons HeadSideHeadphones
+public Icons HeadSideMedical
+public Icons HeadVr
+public Icons Heading
+public Icons Headphones
+public Icons HeadphonesAlt
+public Icons Headset
+public Icons Heart
+public Icons HeartBroken
+public Icons HeartCircle
+public Icons HeartRate
+public Icons HeartSquare
+public Icons Heartbeat
+public Icons Helicopter
+public Icons HelmetBattle
+public Icons Hexagon
+public Icons Highlighter
+public Icons Hiking
+public Icons Hippo
+public Icons History
+public Icons HockeyMask
+public Icons HockeyPuck
+public Icons HockeySticks
+public Icons HollyBerry
+public Icons Home
+public Icons HomeAlt
+public Icons HomeHeart
+public Icons HomeLg
+public Icons HomeLgAlt
+public Icons HoodCloak
+public Icons HorizontalRule
+public Icons Horse
+public Icons HorseHead
+public Icons HorseSaddle
+public Icons Hospital
+public Icons HospitalAlt
+public Icons HospitalSymbol
+public Icons HospitalUser
+public Icons Hospitals
+public Icons HotTub
+public Icons Hotdog
+public Icons Hotel
+public Icons Hourglass
+public Icons HourglassEnd
+public Icons HourglassHalf
+public Icons HourglassStart
+public Icons HouseDamage
+public Icons HouseFlood
+public Icons Hryvnia
+public Icons Humidity
+public Icons Hurricane
+public Icons ICursor
+public Icons IceCream
+public Icons IceSkate
+public Icons Icicles
+public Icons Icons
+public Icons IconsAlt
+public Icons IdBadge
+public Icons IdCard
+public Icons IdCardAlt
+public Icons Igloo
+public Icons Image
+public Icons ImagePolaroid
+public Icons Images
+public Icons Inbox
+public Icons InboxIn
+public Icons InboxOut
+public Icons Indent
+public Icons Industry
+public Icons IndustryAlt
+public Icons Infinity
+public Icons Info
+public Icons InfoCircle
+public Icons InfoSquare
+public Icons Inhaler
+public Icons Integral
+public Icons Intersection
+public Icons Inventory
+public Icons IslandTropical
+public Icons Italic
+public Icons JackOLantern
+public Icons Jedi
+public Icons Joint
+public Icons JournalWhills
+public Icons Joystick
+public Icons Jug
+public Icons Kaaba
+public Icons Kazoo
+public Icons Kerning
+public Icons Key
+public Icons KeySkeleton
+public Icons Keyboard
+public Icons Keynote
+public Icons Khanda
+public Icons Kidneys
+public Icons Kiss
+public Icons KissBeam
+public Icons KissWinkHeart
+public Icons Kite
+public Icons KiwiBird
+public Icons KnifeKitchen
+public Icons Lambda
+public Icons Lamp
+public Icons Landmark
+public Icons LandmarkAlt
+public Icons Language
+public Icons Laptop
+public Icons LaptopCode
+public Icons LaptopMedical
+public Icons Lasso
+public Icons Laugh
+public Icons LaughBeam
+public Icons LaughSquint
+public Icons LaughWink
+public Icons LayerGroup
+public Icons LayerMinus
+public Icons LayerPlus
+public Icons Leaf
+public Icons LeafHeart
+public Icons LeafMaple
+public Icons LeafOak
+public Icons Lemon
+public Icons LessThan
+public Icons LessThanEqual
+public Icons LevelDown
+public Icons LevelDownAlt
+public Icons LevelUp
+public Icons LevelUpAlt
+public Icons LifeRing
+public Icons Lightbulb
+public Icons LightbulbDollar
+public Icons LightbulbExclamation
+public Icons LightbulbOn
+public Icons LightbulbSlash
+public Icons LightsHoliday
+public Icons LineColumns
+public Icons LineHeight
+public Icons Link
+public Icons Lips
+public Icons LiraSign
+public Icons List
+public Icons ListAlt
+public Icons ListMusic
+public Icons ListOl
+public Icons ListUl
+public Icons Location
+public Icons LocationArrow
+public Icons LocationCircle
+public Icons LocationSlash
+public Icons Lock
+public Icons LockAlt
+public Icons LockOpen
+public Icons LockOpenAlt
+public Icons LongArrowAltDown
+public Icons LongArrowAltLeft
+public Icons LongArrowAltRight
+public Icons LongArrowAltUp
+public Icons LongArrowDown
+public Icons LongArrowLeft
+public Icons LongArrowRight
+public Icons LongArrowUp
+public Icons Loveseat
+public Icons LowVision
+public Icons Luchador
+public Icons LuggageCart
+public Icons Lungs
+public Icons Mace
+public Icons Magic
+public Icons Magnet
+public Icons MailBulk
+public Icons Mailbox
+public Icons Male
+public Icons Mandolin
+public Icons Map
+public Icons MapMarked
+public Icons MapMarkedAlt
+public Icons MapMarker
+public Icons MapMarkerAlt
+public Icons MapMarkerAltSlash
+public Icons MapMarkerCheck
+public Icons MapMarkerEdit
+public Icons MapMarkerExclamation
+public Icons MapMarkerMinus
+public Icons MapMarkerPlus
+public Icons MapMarkerQuestion
+public Icons MapMarkerSlash
+public Icons MapMarkerSmile
+public Icons MapMarkerTimes
+public Icons MapPin
+public Icons MapSigns
+public Icons Marker
+public Icons Mars
+public Icons MarsDouble
+public Icons MarsStroke
+public Icons MarsStrokeH
+public Icons MarsStrokeV
+public Icons Mask
+public Icons Meat
+public Icons Medal
+public Icons Medkit
+public Icons Megaphone
+public Icons Meh
+public Icons MehBlank
+public Icons MehRollingEyes
+public Icons Memory
+public Icons Menorah
+public Icons Mercury
+public Icons Meteor
+public Icons Microchip
+public Icons Microphone
+public Icons MicrophoneAlt
+public Icons MicrophoneAltSlash
+public Icons MicrophoneSlash
+public Icons MicrophoneStand
+public Icons Microscope
+public Icons MindShare
+public Icons Minus
+public Icons MinusCircle
+public Icons MinusHexagon
+public Icons MinusOctagon
+public Icons MinusSquare
+public Icons Mistletoe
+public Icons Mitten
+public Icons Mobile
+public Icons MobileAlt
+public Icons MobileAndroid
+public Icons MobileAndroidAlt
+public Icons MoneyBill
+public Icons MoneyBillAlt
+public Icons MoneyBillWave
+public Icons MoneyBillWaveAlt
+public Icons MoneyCheck
+public Icons MoneyCheckAlt
+public Icons MoneyCheckEdit
+public Icons MoneyCheckEditAlt
+public Icons MonitorHeartRate
+public Icons Monkey
+public Icons Monument
+public Icons Moon
+public Icons MoonCloud
+public Icons MoonStars
+public Icons MortarPestle
+public Icons Mosque
+public Icons Motorcycle
+public Icons Mountain
+public Icons Mountains
+public Icons Mouse
+public Icons MouseAlt
+public Icons MousePointer
+public Icons Mp3Player
+public Icons Mug
+public Icons MugHot
+public Icons MugMarshmallows
+public Icons MugTea
+public Icons Music
+public Icons MusicAlt
+public Icons MusicAltSlash
+public Icons MusicSlash
+public Icons Narwhal
+public Icons NetworkWired
+public Icons Neuter
+public Icons Newspaper
+public Icons NotEqual
+public Icons NotesMedical
+public Icons ObjectGroup
+public Icons ObjectUngroup
+public Icons Octagon
+public Icons OilCan
+public Icons OilTemp
+public Icons Om
+public Icons Omega
+public Icons Ornament
+public Icons Otter
+public Icons Outdent
+public Icons Overline
+public Icons PageBreak
+public Icons Pager
+public Icons PaintBrush
+public Icons PaintBrushAlt
+public Icons PaintRoller
+public Icons Palette
+public Icons Pallet
+public Icons PalletAlt
+public Icons PaperPlane
+public Icons Paperclip
+public Icons ParachuteBox
+public Icons Paragraph
+public Icons ParagraphRtl
+public Icons Parking
+public Icons ParkingCircle
+public Icons ParkingCircleSlash
+public Icons ParkingSlash
+public Icons Passport
+public Icons Pastafarianism
+public Icons Paste
+public Icons Pause
+public Icons PauseCircle
+public Icons Paw
+public Icons PawAlt
+public Icons PawClaws
+public Icons Peace
+public Icons Pegasus
+public Icons Pen
+public Icons PenAlt
+public Icons PenFancy
+public Icons PenNib
+public Icons PenSquare
+public Icons Pencil
+public Icons PencilAlt
+public Icons PencilPaintbrush
+public Icons PencilRuler
+public Icons Pennant
+public Icons PeopleCarry
+public Icons PepperHot
+public Icons Percent
+public Icons Percentage
+public Icons PersonBooth
+public Icons PersonCarry
+public Icons PersonDolly
+public Icons PersonDollyEmpty
+public Icons PersonSign
+public Icons Phone
+public Icons PhoneAlt
+public Icons PhoneLaptop
+public Icons PhoneOffice
+public Icons PhonePlus
+public Icons PhoneRotary
+public Icons PhoneSlash
+public Icons PhoneSquare
+public Icons PhoneSquareAlt
+public Icons PhoneVolume
+public Icons PhotoVideo
+public Icons Pi
+public Icons Piano
+public Icons PianoKeyboard
+public Icons Pie
+public Icons Pig
+public Icons PiggyBank
+public Icons Pills
+public Icons Pizza
+public Icons PizzaSlice
+public Icons PlaceOfWorship
+public Icons Plane
+public Icons PlaneAlt
+public Icons PlaneArrival
+public Icons PlaneDeparture
+public Icons Play
+public Icons PlayCircle
+public Icons Plug
+public Icons Plus
+public Icons PlusCircle
+public Icons PlusHexagon
+public Icons PlusOctagon
+public Icons PlusSquare
+public Icons Podcast
+public Icons Podium
+public Icons PodiumStar
+public Icons Poll
+public Icons PollH
+public Icons PollPeople
+public Icons Poo
+public Icons PooStorm
+public Icons Poop
+public Icons Popcorn
+public Icons Portrait
+public Icons PoundSign
+public Icons PowerOff
+public Icons Pray
+public Icons PrayingHands
+public Icons Prescription
+public Icons PrescriptionBottle
+public Icons PrescriptionBottleAlt
+public Icons Presentation
+public Icons Print
+public Icons PrintSearch
+public Icons PrintSlash
+public Icons Procedures
+public Icons ProjectDiagram
+public Icons Projector
+public Icons Pumpkin
+public Icons PuzzlePiece
+public Icons Qrcode
+public Icons Question
+public Icons QuestionCircle
+public Icons QuestionSquare
+public Icons Quidditch
+public Icons QuoteLeft
+public Icons QuoteRight
+public Icons Quran
+public Icons Rabbit
+public Icons RabbitFast
+public Icons Racquet
+public Icons Radiation
+public Icons RadiationAlt
+public Icons Radio
+public Icons RadioAlt
+public Icons Rainbow
+public Icons Raindrops
+public Icons Ram
+public Icons RampLoading
+public Icons Random
+public Icons Receipt
+public Icons RecordVinyl
+public Icons RectangleLandscape
+public Icons RectanglePortrait
+public Icons RectangleWide
+public Icons Recycle
+public Icons Redo
+public Icons RedoAlt
+public Icons Registered
+public Icons RemoveFormat
+public Icons Repeat
+public Icons Repeat1
+public Icons Repeat1Alt
+public Icons RepeatAlt
+public Icons Reply
+public Icons ReplyAll
+public Icons Republican
+public Icons Restroom
+public Icons Retweet
+public Icons RetweetAlt
+public Icons Ribbon
+public Icons Ring
+public Icons RingsWedding
+public Icons Road
+public Icons Robot
+public Icons Rocket
+public Icons Route
+public Icons RouteHighway
+public Icons RouteInterstate
+public Icons Router
+public Icons Rss
+public Icons RssSquare
+public Icons RubleSign
+public Icons Ruler
+public Icons RulerCombined
+public Icons RulerHorizontal
+public Icons RulerTriangle
+public Icons RulerVertical
+public Icons Running
+public Icons RupeeSign
+public Icons Rv
+public Icons Sack
+public Icons SackDollar
+public Icons SadCry
+public Icons SadTear
+public Icons Salad
+public Icons Sandwich
+public Icons Satellite
+public Icons SatelliteDish
+public Icons Sausage
+public Icons Save
+public Icons SaxHot
+public Icons Saxophone
+public Icons Scalpel
+public Icons ScalpelPath
+public Icons Scanner
+public Icons ScannerImage
+public Icons ScannerKeyboard
+public Icons ScannerTouchscreen
+public Icons Scarecrow
+public Icons Scarf
+public Icons School
+public Icons Screwdriver
+public Icons Scroll
+public Icons ScrollOld
+public Icons Scrubber
+public Icons Scythe
+public Icons SdCard
+public Icons Search
+public Icons SearchDollar
+public Icons SearchLocation
+public Icons SearchMinus
+public Icons SearchPlus
+public Icons Seedling
+public Icons SendBack
+public Icons SendBackward
+public Icons Server
+public Icons Shapes
+public Icons Share
+public Icons ShareAll
+public Icons ShareAlt
+public Icons ShareAltSquare
+public Icons ShareSquare
+public Icons Sheep
+public Icons ShekelSign
+public Icons Shield
+public Icons ShieldAlt
+public Icons ShieldCheck
+public Icons ShieldCross
+public Icons Ship
+public Icons ShippingFast
+public Icons ShippingTimed
+public Icons ShishKebab
+public Icons ShoePrints
+public Icons ShoppingBag
+public Icons ShoppingBasket
+public Icons ShoppingCart
+public Icons Shovel
+public Icons ShovelSnow
+public Icons Shower
+public Icons Shredder
+public Icons ShuttleVan
+public Icons Shuttlecock
+public Icons Sickle
+public Icons Sigma
+public Icons Sign
+public Icons SignIn
+public Icons SignInAlt
+public Icons SignLanguage
+public Icons SignOut
+public Icons SignOutAlt
+public Icons Signal
+public Icons Signal1
+public Icons Signal2
+public Icons Signal3
+public Icons Signal4
+public Icons SignalAlt
+public Icons SignalAlt1
+public Icons SignalAlt2
+public Icons SignalAlt3
+public Icons SignalAltSlash
+public Icons SignalSlash
+public Icons SignalStream
+public Icons Signature
+public Icons SimCard
+public Icons Sitemap
+public Icons Skating
+public Icons Skeleton
+public Icons SkiJump
+public Icons SkiLift
+public Icons Skiing
+public Icons SkiingNordic
+public Icons Skull
+public Icons SkullCow
+public Icons SkullCrossbones
+public Icons Slash
+public Icons Sledding
+public Icons Sleigh
+public Icons SlidersH
+public Icons SlidersHSquare
+public Icons SlidersV
+public Icons SlidersVSquare
+public Icons Smile
+public Icons SmileBeam
+public Icons SmilePlus
+public Icons SmileWink
+public Icons Smog
+public Icons Smoke
+public Icons Smoking
+public Icons SmokingBan
+public Icons Sms
+public Icons Snake
+public Icons Snooze
+public Icons SnowBlowing
+public Icons Snowboarding
+public Icons Snowflake
+public Icons Snowflakes
+public Icons Snowman
+public Icons Snowmobile
+public Icons Snowplow
+public Icons Socks
+public Icons SolarPanel
+public Icons Sort
+public Icons SortAlphaDown
+public Icons SortAlphaDownAlt
+public Icons SortAlphaUp
+public Icons SortAlphaUpAlt
+public Icons SortAlt
+public Icons SortAmountDown
+public Icons SortAmountDownAlt
+public Icons SortAmountUp
+public Icons SortAmountUpAlt
+public Icons SortDown
+public Icons SortNumericDown
+public Icons SortNumericDownAlt
+public Icons SortNumericUp
+public Icons SortNumericUpAlt
+public Icons SortShapesDown
+public Icons SortShapesDownAlt
+public Icons SortShapesUp
+public Icons SortShapesUpAlt
+public Icons SortSizeDown
+public Icons SortSizeDownAlt
+public Icons SortSizeUp
+public Icons SortSizeUpAlt
+public Icons SortUp
+public Icons Soup
+public Icons Spa
+public Icons SpaceShuttle
+public Icons Spade
+public Icons Sparkles
+public Icons Speaker
+public Icons Speakers
+public Icons SpellCheck
+public Icons Spider
+public Icons SpiderBlackWidow
+public Icons SpiderWeb
+public Icons Spinner
+public Icons SpinnerThird
+public Icons Splotch
+public Icons SprayCan
+public Icons Square
+public Icons SquareFull
+public Icons SquareRoot
+public Icons SquareRootAlt
+public Icons Squirrel
+public Icons Staff
+public Icons Stamp
+public Icons Star
+public Icons StarAndCrescent
+public Icons StarChristmas
+public Icons StarExclamation
+public Icons StarHalf
+public Icons StarHalfAlt
+public Icons StarOfDavid
+public Icons StarOfLife
+public Icons Stars
+public Icons Steak
+public Icons SteeringWheel
+public Icons StepBackward
+public Icons StepForward
+public Icons Stethoscope
+public Icons StickyNote
+public Icons Stocking
+public Icons Stomach
+public Icons Stop
+public Icons StopCircle
+public Icons Stopwatch
+public Icons Store
+public Icons StoreAlt
+public Icons Stream
+public Icons StreetView
+public Icons Stretcher
+public Icons Strikethrough
+public Icons Stroopwafel
+public Icons Subscript
+public Icons Subway
+public Icons Suitcase
+public Icons SuitcaseRolling
+public Icons Sun
+public Icons SunCloud
+public Icons SunDust
+public Icons SunHaze
+public Icons Sunglasses
+public Icons Sunrise
+public Icons Sunset
+public Icons Superscript
+public Icons Surprise
+public Icons Swatchbook
+public Icons Swimmer
+public Icons SwimmingPool
+public Icons Sword
+public Icons Swords
+public Icons Synagogue
+public Icons Sync
+public Icons SyncAlt
+public Icons Syringe
+public Icons Table
+public Icons TableTennis
+public Icons Tablet
+public Icons TabletAlt
+public Icons TabletAndroid
+public Icons TabletAndroidAlt
+public Icons TabletRugged
+public Icons Tablets
+public Icons Tachometer
+public Icons TachometerAlt
+public Icons TachometerAltAverage
+public Icons TachometerAltFast
+public Icons TachometerAltFastest
+public Icons TachometerAltSlow
+public Icons TachometerAltSlowest
+public Icons TachometerAverage
+public Icons TachometerFast
+public Icons TachometerFastest
+public Icons TachometerSlow
+public Icons TachometerSlowest
+public Icons Taco
+public Icons Tag
+public Icons Tags
+public Icons Tally
+public Icons Tanakh
+public Icons Tape
+public Icons Tasks
+public Icons TasksAlt
+public Icons Taxi
+public Icons Teeth
+public Icons TeethOpen
+public Icons TemperatureFrigid
+public Icons TemperatureHigh
+public Icons TemperatureHot
+public Icons TemperatureLow
+public Icons Tenge
+public Icons TennisBall
+public Icons Terminal
+public Icons Text
+public Icons TextHeight
+public Icons TextSize
+public Icons TextWidth
+public Icons Th
+public Icons ThLarge
+public Icons ThList
+public Icons TheaterMasks
+public Icons Thermometer
+public Icons ThermometerEmpty
+public Icons ThermometerFull
+public Icons ThermometerHalf
+public Icons ThermometerQuarter
+public Icons ThermometerThreeQuarters
+public Icons Theta
+public Icons ThumbsDown
+public Icons ThumbsUp
+public Icons Thumbtack
+public Icons Thunderstorm
+public Icons ThunderstormMoon
+public Icons ThunderstormSun
+public Icons Ticket
+public Icons TicketAlt
+public Icons Tilde
+public Icons Times
+public Icons TimesCircle
+public Icons TimesHexagon
+public Icons TimesOctagon
+public Icons TimesSquare
+public Icons Tint
+public Icons TintSlash
+public Icons Tire
+public Icons TireFlat
+public Icons TirePressureWarning
+public Icons TireRugged
+public Icons Tired
+public Icons ToggleOff
+public Icons ToggleOn
+public Icons Toilet
+public Icons ToiletPaper
+public Icons ToiletPaperAlt
+public Icons Tombstone
+public Icons TombstoneAlt
+public Icons Toolbox
+public Icons Tools
+public Icons Tooth
+public Icons Toothbrush
+public Icons Torah
+public Icons ToriiGate
+public Icons Tornado
+public Icons Tractor
+public Icons Trademark
+public Icons TrafficCone
+public Icons TrafficLight
+public Icons TrafficLightGo
+public Icons TrafficLightSlow
+public Icons TrafficLightStop
+public Icons Train
+public Icons Tram
+public Icons Transgender
+public Icons TransgenderAlt
+public Icons Trash
+public Icons TrashAlt
+public Icons TrashRestore
+public Icons TrashRestoreAlt
+public Icons TrashUndo
+public Icons TrashUndoAlt
+public Icons TreasureChest
+public Icons Tree
+public Icons TreeAlt
+public Icons TreeChristmas
+public Icons TreeDecorated
+public Icons TreeLarge
+public Icons TreePalm
+public Icons Trees
+public Icons Triangle
+public Icons TriangleMusic
+public Icons Trophy
+public Icons TrophyAlt
+public Icons Truck
+public Icons TruckContainer
+public Icons TruckCouch
+public Icons TruckLoading
+public Icons TruckMonster
+public Icons TruckMoving
+public Icons TruckPickup
+public Icons TruckPlow
+public Icons TruckRamp
+public Icons Trumpet
+public Icons Tshirt
+public Icons Tty
+public Icons Turkey
+public Icons Turntable
+public Icons Turtle
+public Icons Tv
+public Icons TvAlt
+public Icons TvMusic
+public Icons TvRetro
+public Icons Typewriter
+public Icons Umbrella
+public Icons UmbrellaBeach
+public Icons Underline
+public Icons Undo
+public Icons UndoAlt
+public Icons Unicorn
+public Icons Union
+public Icons UniversalAccess
+public Icons University
+public Icons Unlink
+public Icons Unlock
+public Icons UnlockAlt
+public Icons Upload
+public Icons UsbDrive
+public Icons UsdCircle
+public Icons UsdSquare
+public Icons User
+public Icons UserAlt
+public Icons UserAltSlash
+public Icons UserAstronaut
+public Icons UserChart
+public Icons UserCheck
+public Icons UserCircle
+public Icons UserClock
+public Icons UserCog
+public Icons UserCowboy
+public Icons UserCrown
+public Icons UserEdit
+public Icons UserFriends
+public Icons UserGraduate
+public Icons UserHardHat
+public Icons UserHeadset
+public Icons UserInjured
+public Icons UserLock
+public Icons UserMd
+public Icons UserMdChat
+public Icons UserMinus
+public Icons UserMusic
+public Icons UserNinja
+public Icons UserNurse
+public Icons UserPlus
+public Icons UserSecret
+public Icons UserShield
+public Icons UserSlash
+public Icons UserTag
+public Icons UserTie
+public Icons UserTimes
+public Icons Users
+public Icons UsersClass
+public Icons UsersCog
+public Icons UsersCrown
+public Icons UsersMedical
+public Icons UtensilFork
+public Icons UtensilKnife
+public Icons UtensilSpoon
+public Icons Utensils
+public Icons UtensilsAlt
+public Icons ValueAbsolute
+public Icons VectorSquare
+public Icons Venus
+public Icons VenusDouble
+public Icons VenusMars
+public Icons Vhs
+public Icons Vial
+public Icons Vials
+public Icons Video
+public Icons VideoPlus
+public Icons VideoSlash
+public Icons Vihara
+public Icons Violin
+public Icons Voicemail
+public Icons Volcano
+public Icons VolleyballBall
+public Icons Volume
+public Icons VolumeDown
+public Icons VolumeMute
+public Icons VolumeOff
+public Icons VolumeSlash
+public Icons VolumeUp
+public Icons VoteNay
+public Icons VoteYea
+public Icons VrCardboard
+public Icons WagonCovered
+public Icons Walker
+public Icons WalkieTalkie
+public Icons Walking
+public Icons Wallet
+public Icons Wand
+public Icons WandMagic
+public Icons Warehouse
+public Icons WarehouseAlt
+public Icons Washer
+public Icons Watch
+public Icons WatchCalculator
+public Icons WatchFitness
+public Icons Water
+public Icons WaterLower
+public Icons WaterRise
+public Icons WaveSine
+public Icons WaveSquare
+public Icons WaveTriangle
+public Icons Waveform
+public Icons WaveformPath
+public Icons Webcam
+public Icons WebcamSlash
+public Icons Weight
+public Icons WeightHanging
+public Icons Whale
+public Icons Wheat
+public Icons Wheelchair
+public Icons Whistle
+public Icons Wifi
+public Icons Wifi1
+public Icons Wifi2
+public Icons WifiSlash
+public Icons Wind
+public Icons WindTurbine
+public Icons WindWarning
+public Icons Window
+public Icons WindowAlt
+public Icons WindowClose
+public Icons WindowMaximize
+public Icons WindowMinimize
+public Icons WindowRestore
+public Icons Windsock
+public Icons WineBottle
+public Icons WineGlass
+public Icons WineGlassAlt
+public Icons WonSign
+public Icons Wreath
+public Icons Wrench
+public Icons XRay
+public Icons YenSign
+public Icons YinYang
+}
+public Rust.UI.LabelAttribute : Attribute {
+public Phrase Phrase
+public void .ctor(string token, string english)
 }
 public Rust.UI.LoadingBar : MonoBehaviour {
 public CanvasGroup Canvas
@@ -103,9 +1874,429 @@ public void set_Progress(float value)
 public void set_Text(string value)
 public void set_SubText(string value)
 }
+public Rust.UI.Make : object {
+public string PrefabRoot
+public Phrase phrase_on
+public Phrase phrase_off
+public Phrase phrase_enabled
+public Phrase phrase_disabled
+public LayoutElement Flex()
+public RustButton Button(Phrase label, Icons icon, bool toggle, string style, bool autoSize)
+public RustButton MenuOption(Phrase label, Icons icon, string style)
+public Menu Menu(Option[] options, Nullable`1<Option> selectedOption, bool AllowFiltering, string style)
+public Video Video(string style)
+public RustButton HeaderButton(Phrase label, Phrase subtitle, string style)
+public RustOption Option(Option[] enumOptions, string style)
+public RustButtonGroup ButtonGroup(Option[] enumOptions, string style)
+public Dropdown Dropdown(Option[] enumOptions, string style)
+public RustInput Input(Phrase placeholder, string style)
+public RustIcon Icon(Icons icon, string style)
+public RustSlider Slider(float minValue, float maxValue, float currentValue, bool integer, string style)
+public RustToggle Toggle(Phrase on, Phrase off, string style)
+public Blocker Blocker(string style)
+public RustToggle ToggleOnOff(string style)
+public RustToggle ToggleEnabledDisabled(string style)
+}
+public Rust.UI.Manager : object {
+private Dictionary`2<string, GameObject> Prefabs
+internal GameObject CreatePrefab(string name)
+internal T Create(string prefabName)
+}
+public Rust.UI.Menu : RustControl {
+public bool AllowFiltering
+public int MaxResults
+public Image Border
+public Image Background
+public Option[] Options
+public RectTransform OptionCanvas
+public RustInput FilterField
+public Option SelectedOption
+public ChangedEvent OnSelected
+public Blocker Blocker
+protected void Awake()
+public void Build()
+private void OnOptionSelected(Option option)
+private IEnumerable`1<Option> GetOptions()
+internal void Popup(RectTransform source)
+private void RestrainToScreen()
+protected void ApplyStyle(Group s)
+private void <Awake>b__11_0(string x)
+}
+public Rust.UI.Option : ValueType {
+public Icons Icon
+public string Value
+public Phrase Label
+public bool Default
+public void .ctor(string token, string english, string value, bool isdefault, Icons icon)
+public void .ctor(Phrase phrase, string value, bool isdefault, Icons icon)
+public void .ctor(Icons icon, string value, bool isdefault)
+}
+public Rust.UI.OptionAttribute : Attribute {
+public Icons Icon
+public Phrase Label
+public string Value
+public bool Default
+public void .ctor(string token, string english, string value, bool isdefault, Icons icon)
+public void .ctor(Icons icon, string value, bool isdefault)
+public Option GetOption()
+}
+public Rust.UI.Properties : object {
+private object Parent
+private RectTransform Canvas
+private Action UpdateControlsFromValues
+public List`1<FieldInfo> Fields
+private bool <IsDirty>k__BackingField
+public bool IsDirty
+public void add_UpdateControlsFromValues(Action value)
+public void remove_UpdateControlsFromValues(Action value)
+public void .ctor(object Parent, RectTransform Canvas)
+public void CreateControls()
+private void AddControl(RustControl ctrl, LabelAttribute label)
+private bool CreateControl(FieldInfo f)
+private bool CreateReadOnlyControl(FieldInfo f)
+private bool CreateStringControl(FieldInfo f)
+private bool CreateBooleanControl(FieldInfo f)
+private bool CreateNumericControl(FieldInfo f)
+public void SyncControls()
+public Dictionary`2<string, object> GetValues()
+public void SetValues(Dictionary`2<string, object> d)
+public void SetValues(Dictionary`2<string, object> a, Dictionary`2<string, object> b, float delta)
+public bool get_IsDirty()
+public void set_IsDirty(bool value)
+private void MarkDirty()
+public void Load(JProperty entry)
+}
+public Rust.UI.Renderer.TickRenderer : MaskableGraphic {
+public List`1<Tick> Ticks
+private UIVertex[] quad
+protected void OnPopulateMesh(VertexHelper vh)
+}
+public Rust.UI.RustButton : RustControl {
+public Image Background
+public RustText Text
+public RustText SubText
+public RustIcon Icon
+public UnityEvent OnPressed
+public UnityEvent OnReleased
+public bool IsToggle
+public bool UnpressSiblings
+public bool PreventToggleOff
+public Transform TabPanelTarget
+public Vector4 TextMargin
+public Vector4 TextMarginNoIcon
+public bool Value
+public bool AutoSize
+public float minWidth
+public float preferredWidth
+public float flexibleWidth
+public float minHeight
+public float preferredHeight
+public float flexibleHeight
+public int layoutPriority
+public bool get_Value()
+public void set_Value(bool value)
+public bool get_AutoSize()
+public void set_AutoSize(bool value)
+public void Press()
+public void Unpress()
+public void OnPointerDown(PointerEventData eventData)
+public void Toggle(bool v, bool forced)
+private void ToggleTabPanel(bool onOff)
+private void DoUnpressSiblings()
+public void OnPointerUp(PointerEventData eventData)
+protected void OnDisable()
+protected void ApplyStyle(Group s)
+public float get_minWidth()
+public float get_preferredWidth()
+public float get_flexibleWidth()
+public float get_minHeight()
+public float get_preferredHeight()
+public float get_flexibleHeight()
+public int get_layoutPriority()
+public void CalculateLayoutInputHorizontal()
+public void CalculateLayoutInputVertical()
+}
+public Rust.UI.RustButtonGroup : RustControl {
+public Option[] Options
+public string ButtonStyle
+private int CurrentOption
+public ChangedEvent OnChanged
+public Option Value
+public Option get_Value()
+protected void Awake()
+public void SetOption(int i)
+public void SetOption(string value)
+private void ButtonPressed(int i)
+public void SetOptionDefault()
+public void BuildContents()
+}
+public Rust.UI.RustControl : UIBehaviour {
+protected bool IsDragging
+protected StyleAsset _styles
+public RustWrapper FormField
+public State CurrentState
+public StyleAsset Styles
+public RectTransform rectTransform
+public bool IsDisabled
+public bool IsPressed
+public bool IsHovered
+public Group CurrentStyleCollection
+public StyleAsset get_Styles()
+public void set_Styles(StyleAsset value)
+protected void OnEnable()
+public RectTransform get_rectTransform()
+public void OnPointerEnter(PointerEventData eventData)
+public void OnPointerExit(PointerEventData eventData)
+public void SetDisabled(bool value)
+public void SetPressed(bool value)
+public bool get_IsDisabled()
+public bool get_IsPressed()
+public bool get_IsHovered()
+public Group get_CurrentStyleCollection()
+public void ApplyStyles()
+protected void ApplyStyle(Group s)
+}
+public Rust.UI.RustIcon : TextMeshProUGUI {
+private Icons _icon
+public Icons Icon
+public Icons get_Icon()
+public void set_Icon(Icons value)
+}
+public Rust.UI.RustInput : RustControl {
+public TMP_InputField InputField
+public Image Background
+public ChangedEvent OnValueChanged
+public ChangedEvent OnEndEdit
+public ChangedEvent OnSubmit
+public RustText Placeholder
+public bool IsFocused
+public string Value
+public string Text
+public Group CurrentStyleCollection
+public RustText get_Placeholder()
+public bool get_IsFocused()
+public string get_Value()
+public string get_Text()
+public void set_Text(string value)
+protected void Awake()
+public Group get_CurrentStyleCollection()
+protected void ApplyStyle(Group s)
+private void <Awake>b__15_0(string x)
+private void <Awake>b__15_1(string x)
+private void <Awake>b__15_2(string x)
+private void <Awake>b__15_3(string x)
+private void <Awake>b__15_4(string x)
+}
+public Rust.UI.RustLayout : UIBehaviour {
+public LayoutMode Mode
+public bool ReverseOrder
+public float Spacing
+public RectOffset Padding
+public bool ChildrenFill
+public bool ResizeToChildren
+public RectTransform[] IgnoreLayout
+public int MaxHeight
+public RustLayout ParentLayout
+private bool doingLayout
+private bool changedSize
+protected void Awake()
+public void SetLayoutHorizontal()
+public void SetLayoutVertical()
+public void DoLayout()
+protected void OnTransformParentChanged()
+private void DoHorizontalLayout(Edge edge)
+private void DoTopLayout(Edge edge)
+private bool Ignoring(RectTransform child)
+protected void SetDirty()
+protected void OnRectTransformDimensionsChange()
+protected void OnTransformChildrenChanged()
+}
+public Rust.UI.RustOption : RustControl {
+public RustButton Left
+public RustButton Right
+public RustText Text
+public Option[] Options
+private int CurrentOption
+public ChangedEvent OnChanged
+public Option Value
+public Option get_Value()
+protected void Awake()
+public void SetOptions(Option[] options)
+public void SetOption(int i)
+public void SetOptionDefault()
+public void OnLeft()
+public void OnRight()
+protected void ApplyStyle(Group s)
+}
+public Rust.UI.RustSlider : RustControl {
+public RustInput NumberInput
+public Image SliderCanvas
+public string DecimalFormat
+public float MinValue
+public float MaxValue
+public bool Integer
+public float ValueInternal
+public ChangedEvent OnChanged
+private float lastCallbackValue
+public float Value
+public float ValueNormalized
+protected void Awake()
+public float get_Value()
+public void set_Value(float value)
+public float get_ValueNormalized()
+public void set_ValueNormalized(float value)
+public void TextChanged(string text)
+public void SliderChanged(float slider)
+protected void ApplyStyle(Group s)
+public void OnPointerDown(PointerEventData eventData)
+public void OnPointerUp(PointerEventData eventData)
+public void OnInitializePotentialDrag(PointerEventData eventData)
+public void OnDrag(PointerEventData eventData)
+private void UpdateDrag(Vector2 pos, Camera cam)
+}
+public Rust.UI.RustStyler : MonoBehaviour {
+protected StyleAsset _styles
+protected StyleGroup _group
+public Graphic[] Foreground
+public Graphic[] Background
+public Graphic[] Icon
+public StyleAsset Styles
+public StyleGroup Group
+public StyleAsset get_Styles()
+public void set_Styles(StyleAsset value)
+public StyleGroup get_Group()
+public void set_Group(StyleGroup value)
+private void ApplyStyles()
+private Group GetStyleGroup()
+}
+public Rust.UI.RustText : TextMeshProUGUI {
+public bool IsLocalized
+public string Token
+public string English
+public Phrase Phrase
+public bool AutoSetWidth
+public bool AutoSetHeight
+public bool AutoSizeParent
+public float MinWidth
+private Object[] localizationArguments
+public string LanguageToken
+public string LanguageEnglish
+public string get_LanguageToken()
+public string get_LanguageEnglish()
+public void SetPhrase(Phrase phrase)
+protected void Awake()
+public void SetPhraseArguments(Object[] args)
+public void SetText(string str)
+public void DoAutoSize()
+public void Rebuild(CanvasUpdate update)
+private string GetLocalizedText(bool englishVersion)
+private void UpdateLocalizedText(bool forceEnglish)
+public void OnLanguageChanged()
+}
+public Rust.UI.RustToggle : RustControl {
+public StyleAsset StyleOff
+public Image Handle
+public RustText TextOn
+public RustText TextOff
+public bool Value
+public float SliderWidth
+public ChangedEvent OnChanged
+private Coroutine anim
+public StyleAsset Styles
+public StyleAsset get_Styles()
+public void SetValue(bool value)
+public void OnPointerDown(PointerEventData eventData)
+private IEnumerator AnimateTo()
+public void ApplyStyles()
+}
+public Rust.UI.RustWrapper : RustControl {
+public RustText Text
+public RectTransform Canvas
+protected void ApplyStyle(Group s)
+public void Add(UIBehaviour ui)
+public void AddFlex()
+}
+public Rust.UI.StyleAsset : ScriptableObject {
+public Group Normal
+public Group Hovered
+public Group Pressed
+public Group Disabled
+}
+public Rust.UI.StyleGroup : Enum {
+public int value__
+public StyleGroup Normal
+public StyleGroup Hovered
+public StyleGroup Presed
+public StyleGroup Disabled
+}
 public Rust.UI.SuppressMenu : ListComponent`1<SuppressMenu> {
 public bool Any
 public bool get_Any()
+}
+public Rust.UI.TabControl : RustControl {
+public RectTransform TabContainer
+public RectTransform PanelContainer
+public RustButton ButtonControl
+public float InnerPadding
+public bool AllowCloseAll
+public Image Background
+public Image Foreground
+public RustLayout Panel(string name)
+public RustButton Button(string name)
+public void AddTab(string name, Phrase buttontext, Icons icon)
+protected void ApplyStyle(Group s)
+}
+public Rust.UI.Timeline : RustControl {
+public int StartTime
+public int EndTime
+public int CurrentPosition
+public TimeRuler TimeRuler
+public RectTransform IndicatorCurrent
+public UnityEvent OnStartScrub
+public UnityEvent OnEndScrub
+public ScrubEvent OnScrubToTime
+public List`1<TimelineMarker> Markers
+private TimelineMarker <SelectedMarker>k__BackingField
+public TimelineMarker SelectedMarker
+public TimelineMarker get_SelectedMarker()
+public void set_SelectedMarker(TimelineMarker value)
+internal void SelectMarker(TimelineMarker marker)
+internal void DragMarker(TimelineMarker marker, PointerEventData eventData)
+internal void DeleteMarker(TimelineMarker timelineMarker)
+protected void Awake()
+public void Rebuild()
+public void AddMarker(TimelineMarker marker)
+public void SetCurrentPosition(int pos)
+public float GetX(int time)
+public int GetTime(float x)
+public void OnPointerDown(PointerEventData eventData)
+public void OnPointerUp(PointerEventData eventData)
+public void Scrubbed(int time)
+public void OnDrag(PointerEventData eventData)
+}
+public Rust.UI.TimelineMarker : RustControl {
+public int CurrentPosition
+public Image Background
+private Timeline Parent
+private bool hasDragged
+public bool IsPressed
+public void OnPointerDown(PointerEventData eventData)
+public void OnPointerUp(PointerEventData eventData)
+public void SelectMarker()
+public void OnDrag(PointerEventData eventData)
+public bool get_IsPressed()
+internal void Position(Timeline timeline)
+protected void ApplyStyle(Group s)
+public void SetTime(int time)
+public void Delete()
+}
+public Rust.UI.TimeRuler : RustControl {
+public int StartTime
+public int EndTime
+public RustText TextPrefab
+public TickRenderer TickRenderer
+public void Rebuild()
+public float TimeToPos(int time)
 }
 internal Rust.UI.Utility.ToggleGameObject : MonoBehaviour {
 public GameObject Target
@@ -114,4 +2305,53 @@ public void OnEnable()
 public void OnDisable()
 public void Update()
 public void OnToggled(bool value)
+}
+public Rust.UI.Video : RustControl {
+public RawImage VideoCanvas
+public VideoPlayer VideoPlayer
+public CanvasGroup CanvasGroup
+public float FadeIn
+private UInt32 textureWidth
+private UInt32 textureHeight
+private Vector2 playerSize
+protected void Awake()
+private void VideoPlayer_errorReceived(VideoPlayer source, string message)
+public void PlayUrl(string video)
+public void LateUpdate()
+private void Cover()
+public void Stop()
+}
+public RustUiTest : MonoBehaviour {
+private Option[] enumOptions
+private Option[] enumOptionsJustIcons
+private Option[] enumOptionsWithIcons
+private void Awake()
+}
+public UnityEngine.RectTransformEx : object {
+public void AnchorToCorners(RectTransform transform)
+public void Fill(RectTransform tx, float l, float t, float r, float b)
+public void AnchorTopRight(RectTransform tx)
+public RectTransform AlignRight(RectTransform tx, float offset)
+public RectTransform AlignLeft(RectTransform tx, float offset)
+public RectTransform AlignTop(RectTransform tx, float offset)
+public Rect GetScreenRect(RectTransform transform)
+public void SetPivotAndAnchors(RectTransform trans, Vector2 aVec)
+public Vector2 GetSize(RectTransform trans)
+public float GetWidth(RectTransform trans)
+public float GetHeight(RectTransform trans)
+public bool SetSize(RectTransform trans, Vector2 newSize)
+public bool SetWidth(RectTransform trans, float newSize)
+public void MoveY(RectTransform trans, float amount)
+public void Move(RectTransform trans, Vector2 move)
+public bool SetHeight(RectTransform trans, float newSize)
+public void SetBottomLeftPosition(RectTransform trans, Vector2 newPos)
+public void SetTopLeftPosition(RectTransform trans, Vector2 newPos)
+public void SetBottomRightPosition(RectTransform trans, Vector2 newPos)
+public void SetRightTopPosition(RectTransform trans, Vector2 newPos)
+}
+public UnityEngine.UIBehaviourEx : object {
+public void SetParent(UIBehaviour self, Transform parent)
+public void SetParent(UIBehaviour self, Canvas parent)
+public void SetParent(UIBehaviour self, UIBehaviour parent)
+public void SetParentRootCanvas(UIBehaviour self, Transform tx)
 }

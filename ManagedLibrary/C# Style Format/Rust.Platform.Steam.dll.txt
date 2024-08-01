@@ -1,0 +1,195 @@
+public Rust.Platform.Steam.SteamAchievement : object {
+private Achievement _achievement
+public string Key
+public bool IsUnlocked
+public string get_Key()
+public bool get_IsUnlocked()
+internal void .ctor(Achievement achievement)
+public void Unlock()
+}
+public Rust.Platform.Steam.SteamAuthTicket : object {
+private AuthTicket _ticket
+private string <Token>k__BackingField
+private Byte[] <Data>k__BackingField
+public string Token
+public Byte[] Data
+public string get_Token()
+public Byte[] get_Data()
+internal void .ctor(AuthTicket ticket)
+public void Dispose()
+}
+public Rust.Platform.Steam.SteamDownloadableContent : object {
+private int <AppId>k__BackingField
+public int AppId
+public bool IsInstalled
+public int get_AppId()
+public bool get_IsInstalled()
+public void .ctor(int appId)
+}
+public Rust.Platform.Steam.SteamInventory : object {
+private InventoryResult <Value>k__BackingField
+private IReadOnlyList`1<IPlayerItem> <Items>k__BackingField
+public InventoryResult Value
+public IReadOnlyList`1<IPlayerItem> Items
+public InventoryResult get_Value()
+public IReadOnlyList`1<IPlayerItem> get_Items()
+internal void .ctor(InventoryResult inventory)
+public void Dispose()
+public bool BelongsTo(ulong userId)
+public Byte[] Serialize()
+}
+public Rust.Platform.Steam.SteamItem : object {
+public InventoryItem Value
+public int DefinitionId
+public int Quantity
+public DateTimeOffset Acquired
+public ulong WorkshopId
+public string ItemShortName
+public void .ctor(InventoryItem item)
+public int get_DefinitionId()
+public int get_Quantity()
+public DateTimeOffset get_Acquired()
+public ulong get_WorkshopId()
+public string get_ItemShortName()
+}
+public Rust.Platform.Steam.SteamItemDefinition : object {
+private InventoryDef <Value>k__BackingField
+public InventoryDef Value
+public int DefinitionId
+public string Name
+public string Description
+public string Type
+public string IconUrl
+public int LocalPrice
+public string LocalPriceFormatted
+public string PriceCategory
+public bool IsGenerator
+public bool IsMarketable
+public string ItemShortName
+public ulong WorkshopId
+public ulong WorkshopDownload
+public InventoryDef get_Value()
+internal void .ctor(InventoryDef value)
+public int get_DefinitionId()
+public string get_Name()
+public string get_Description()
+public string get_Type()
+public string get_IconUrl()
+public int get_LocalPrice()
+public string get_LocalPriceFormatted()
+public string get_PriceCategory()
+public bool get_IsGenerator()
+public bool get_IsMarketable()
+public string get_ItemShortName()
+public ulong get_WorkshopId()
+public ulong get_WorkshopDownload()
+public IEnumerable`1<PlayerItemRecipe> GetRecipesContainingThis()
+private PlayerItemRecipe SteamToPlatformRecipe(InventoryRecipe recipe)
+public bool Equals(IPlayerItemDefinition other)
+public bool Equals(object obj)
+public int GetHashCode()
+}
+public Rust.Platform.Steam.SteamPlatform : object {
+private IReadOnlyList`1<IPlayerItemDefinition> <ItemDefinitions>k__BackingField
+private IPlatformHooks _hooks
+private bool _initialized
+public IReadOnlyList`1<IPlayerItemDefinition> ItemDefinitions
+public bool IsValid
+public bool PlayerOwnsDownloadableContent(ulong userId, int appId)
+public IReadOnlyList`1<IPlayerItemDefinition> get_ItemDefinitions()
+private void set_ItemDefinitions(IReadOnlyList`1<IPlayerItemDefinition> value)
+public void RefreshItemDefinitions()
+public IPlayerItemDefinition GetItemDefinition(int definitionId)
+private void OnDefinitionsUpdated()
+public Task`1<IPlayerInventory> DeserializeInventory(Byte[] data)
+private void StartSteamServer()
+private void OnSteamServersDisconnected(Result result)
+private void OnSteamConnected()
+private void OnSteamConnectionFailure(Result result, bool stilltrying)
+public bool BeginPlayerSession(ulong userId, Byte[] authToken)
+public void UpdatePlayerSession(ulong userId, string userName)
+public void EndPlayerSession(ulong userId)
+internal ServerInfo ToPlatformServer(ServerInfo info)
+internal ServerInfo ToSteamServer(ServerInfo server)
+public Task`1<bool> LoadPlayerStats(ulong userId)
+public Task`1<bool> SavePlayerStats(ulong userId)
+public long GetPlayerStatInt(ulong userId, string key, long defaultValue)
+public bool SetPlayerStatInt(ulong userId, string key, long value)
+public bool get_IsValid()
+public bool Initialize(IPlatformHooks hooks)
+public void Shutdown()
+public void Update()
+private AuthResponse RemapAuthResponse(AuthResponse response)
+private void DebugPrintSteamCallback(CallbackType type, string content, bool isServer)
+private void <StartSteamServer>b__9_0(SteamId steamId, SteamId ownerSteamId, AuthResponse response)
+}
+public Rust.Platform.Steam.SteamPlayer : object {
+private Friend <Value>k__BackingField
+public Friend Value
+public ulong UserId
+public string UserName
+public bool IsOnline
+public bool IsMe
+public bool IsFriend
+public bool IsPlayingThisGame
+public string ServerEndpoint
+public Friend get_Value()
+public ulong get_UserId()
+public string get_UserName()
+public bool get_IsOnline()
+public bool get_IsMe()
+public bool get_IsFriend()
+public bool get_IsPlayingThisGame()
+public string get_ServerEndpoint()
+public void .ctor(Friend value)
+}
+public Rust.Platform.Steam.SteamServerQuery : object {
+private ServerQuerySet <QuerySet>k__BackingField
+private Base <Query>k__BackingField
+private IReadOnlyList`1<ServerInfo> <Servers>k__BackingField
+private Action`1<ServerInfo> OnServerFound
+public ServerQuerySet QuerySet
+public Base Query
+public IReadOnlyList`1<ServerInfo> Servers
+public ServerQuerySet get_QuerySet()
+public Base get_Query()
+private void set_Query(Base value)
+public IReadOnlyList`1<ServerInfo> get_Servers()
+public void add_OnServerFound(Action`1<ServerInfo> value)
+public void remove_OnServerFound(Action`1<ServerInfo> value)
+public void .ctor(ServerQuerySet set, Base query)
+public void Dispose()
+public void AddFilter(string key, string value)
+public Task RunQueryAsync(double timeoutInSeconds)
+}
+public Rust.Platform.Steam.SteamWorkshopContent : object {
+private Item <Value>k__BackingField
+public Item Value
+public ulong WorkshopId
+public string Title
+public string Description
+public IEnumerable`1<string> Tags
+public string Url
+public string PreviewImageUrl
+public ulong OwnerId
+public IPlayerInfo Owner
+public bool IsInstalled
+public bool IsDownloadPending
+public bool IsDownloading
+public string Directory
+public Item get_Value()
+public ulong get_WorkshopId()
+public string get_Title()
+public string get_Description()
+public IEnumerable`1<string> get_Tags()
+public string get_Url()
+public string get_PreviewImageUrl()
+public ulong get_OwnerId()
+public IPlayerInfo get_Owner()
+public bool get_IsInstalled()
+public bool get_IsDownloadPending()
+public bool get_IsDownloading()
+public string get_Directory()
+public void .ctor(Item item)
+public bool Download()
+}

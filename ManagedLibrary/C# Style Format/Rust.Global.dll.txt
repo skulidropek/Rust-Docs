@@ -4,6 +4,7 @@ public Vector3 extents
 public void .ctor(Vector3 position, Vector3 size)
 public bool Contains(Vector3 target)
 public Vector3 ClosestPoint(Vector3 target)
+public bool Trace(Ray ray, RaycastHit& hit, float radius, float maxDistance)
 }
 public ArrayIndexIsEnum : PropertyAttribute {
 public Type enumType
@@ -27,6 +28,7 @@ public void .ctor(Vector3 position, float radius, float extent)
 public bool Contains(Vector3 target)
 public Vector3 ClosestPoint(Vector3 target)
 public void Move(Vector3 direction, float distance, int layerMask)
+public bool Trace(Ray ray, RaycastHit& hit, float rayRadius, float maxDistance)
 }
 public CRC : object {
 private Byte[] byteBuffer
@@ -101,6 +103,22 @@ public HorizontalAttribute : PropertyAttribute {
 public int count
 public int label
 public void .ctor(int count, int label)
+}
+public IClientComponentEx {
+public void PreClientComponentCull(IPrefabProcessor p)
+}
+public IPrefabPostProcess {
+public void PostProcess(IPrefabProcessor preProcess, GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
+}
+public IPrefabPreProcess {
+public void PreProcess(IPrefabProcessor preProcess, GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
+}
+public IPrefabProcessor {
+public void RemoveComponent(Component component)
+public void NominateForDeletion(GameObject obj)
+}
+public IServerComponentEx {
+public void PreServerComponentCull(IPrefabProcessor p)
 }
 public Line : ValueType {
 public Vector3 point0
@@ -183,6 +201,7 @@ public bool Intersects(Ray ray)
 public bool Trace(Ray ray, RaycastHit& hit, float maxDistance)
 public Vector3 ClosestPoint(Vector3 target)
 public float Distance(OBB other)
+public float Distance(Vector3 position)
 }
 public ObjectWorkQueue`1 : object {
 protected Queue`1<T> queue
@@ -214,6 +233,7 @@ public AmmoTypes BOW_ARROW
 public AmmoTypes HANDMADE_SHELL
 public AmmoTypes ROCKET
 public AmmoTypes NAILS
+public AmmoTypes AMMO_40MM
 }
 public Rust.Application : object {
 public bool isQuitting
@@ -291,23 +311,18 @@ public UnityEvent Action
 private void OnEnable()
 }
 public Rust.Global : object {
-private Client <SteamClient>k__BackingField
-private Server <SteamServer>k__BackingField
+public Func`2<string, GameObject> LoadPrefab
 public Func`2<string, GameObject> FindPrefab
 public Func`2<string, GameObject> CreatePrefab
 public Action OpenMainMenu
 private MonoBehaviour _runner
-private Process _process
-public Client SteamClient
-public Server SteamServer
+private int <LaunchCountThisVersion>k__BackingField
 public MonoBehaviour Runner
-public Process Process
-public Client get_SteamClient()
-public void set_SteamClient(Client value)
-public Server get_SteamServer()
-public void set_SteamServer(Server value)
+public int LaunchCountThisVersion
 public MonoBehaviour get_Runner()
-public Process get_Process()
+public int get_LaunchCountThisVersion()
+private void set_LaunchCountThisVersion(int value)
+public void Init()
 }
 public Rust.IEntity {
 public bool IsDestroyed
@@ -334,9 +349,9 @@ public Layer Ragdoll
 public Layer Invisible
 public Layer AI
 public Layer Player_Movement
-public Layer Vehicle_Movement
+public Layer Vehicle_Detailed
 public Layer Game_Trace
-public Layer Reflections
+public Layer Vehicle_World
 public Layer World
 public Layer Player_Server
 public Layer Trigger
@@ -363,13 +378,17 @@ public int ConstructionSocket
 public int Craters
 public int GameTrace
 public int Trigger
+public int VehiclesDetailed
 public int RainFall
 public int Deploy
 public int DefaultDeployVolumeCheck
 public int BuildLineOfSightCheck
 public int ProjectileLineOfSightCheck
+public int ProjectileLineOfSightCheckTerrain
 public int MeleeLineOfSightCheck
+public int MeleeLineOfSightCheckTerrain
 public int EyeLineOfSightCheck
+public int EyeLineOfSightCheckTerrain
 public int EntityLineOfSightCheck
 public int PlayerBuildings
 public int PlannerPlacement
@@ -379,6 +398,8 @@ public int AltitudeCheck
 public int HABGroundEffect
 public int AILineOfSight
 public int DismountCheck
+public int AIPlacement
+public int WheelRay
 }
 public Rust.PropRenderer : MonoBehaviour {
 public bool HideLowLods
@@ -398,10 +419,18 @@ public void CreateIcon()
 public void CreateRender()
 private float DefaultLightIntensityScale(float intensity)
 public void CreateScreenshot(string filename, int width, int height, int SuperSampleSize, LightIntensityScale lightIntensityScale)
-public void RenderScreenshot(GameObject prefab, string filename, int width, int height, int SuperSampleSize)
+public bool RenderScreenshot(GameObject prefab, string filename, int width, int height, int SuperSampleSize)
 }
 public Rust.PropRendererDebug : MonoBehaviour {
 public void Update()
+}
+public Rust.Protocol : object {
+public int network
+public int save
+public int report
+public int persistance
+public string printable
+public string get_printable()
 }
 public Rust.Rarity : Enum {
 public int value__
@@ -412,7 +441,10 @@ public Rarity Rare
 public Rarity VeryRare
 }
 public Rust.Registry.Entity : object {
-private Dictionary`2<GameObject, IEntity> _dict
+private Dictionary`2<Transform, IEntity> _dict
+public void Register(Transform t, IEntity entity)
+public IEntity Get(Transform t)
+public void Unregister(Transform t)
 public void Register(GameObject obj, IEntity entity)
 public IEntity Get(GameObject obj)
 public void Unregister(GameObject obj)
@@ -507,28 +539,47 @@ public float SnapTo(float val, float snapValue)
 public bool QuadTest(Ray ray, Vector3 planeCenter, Quaternion planeRot, Vector2 planeSize, Vector3& hitPosition, float gridSize)
 }
 public UnityEngine.StringEx : object {
+private Regex regexNumeric
+private Regex regexAlphaNumeric
 public string Replace(string originalString, string oldValue, string newValue, StringComparison comparisonType)
 public bool Contains(string haystack, string needle, CompareOptions options)
 public bool IsLower(string str)
 public string ToPrintable(string str, int maxLength)
+public bool IsNumeric(string str)
+public bool IsAlphaNumeric(string str)
+public string EscapeRichText(string str)
 public IEnumerable`1<string> SplitToLines(string input)
 public IEnumerable`1<string> SplitToChunks(string str, int chunkLength)
 public UInt32 ManifestHash(string str)
 }
 public UnityEngine.Vector2Ex : object {
+public Vector2 WithX(Vector2 v, float x)
+public Vector2 WithY(Vector2 v, float y)
 public Vector2 Parse(string p)
 public Vector2 Rotate(Vector2 v, float degrees)
+public float Length(float x, float y)
+public float Length(Vector2 vec)
+public Vector2 X(Vector2 v, float x)
+public Vector2 Y(Vector2 v, float y)
+public Vector2 ToCanvas(Vector2 v, RectTransform target, Camera cam)
 }
 public UnityEngine.Vector3Ex : object {
+public Vector3 WithX(Vector3 v, float x)
+public Vector3 WithY(Vector3 v, float y)
+public Vector3 WithZ(Vector3 v, float z)
 public Vector3 XZ(Vector3 v)
 public float Distance2D(Vector3 a, Vector3 b)
+public float HeightDelta(Vector3 a, Vector3 b)
 public Vector3 Direction2D(Vector3 aimAt, Vector3 aimFrom)
+public Vector3 Direction(Vector3 aimAt, Vector3 aimFrom)
 public Vector3 Range(float x, float y)
 public Vector3 Scale(Vector3 vector, float x, float y, float z)
 public Vector3 SnapTo(Vector3 vector, float snapValue)
 public Vector3 Inverse(Vector3 v)
 public float SignedAngle(Vector3 v1, Vector3 v2, Vector3 n)
 public void FastRenormalize(Vector3 n, float scale)
+public void ToDirectionAndMagnitude(Vector3 value, Vector3& direction, Single& magnitude)
+public Vector3 BlendNormals(Vector3 n1, Vector3 n2)
 public bool IsNaNOrInfinity(Vector3 v)
 public float DotRadians(Vector3 a, Vector3 b)
 public float DotDegrees(Vector3 a, Vector3 b)
@@ -556,96 +607,6 @@ public Vector4 Abs(Vector4 v)
 public Vector3 Abs(Vector3 v)
 public Vector2 Abs(Vector2 v)
 public Vector3 Parse(string p)
-}
-public Vector2b : ValueType {
-public Vector2b alltrue
-public Vector2b allfalse
-public bool x
-public bool y
-public void .ctor(bool x, bool y)
-public bool op_Equality(Vector2b a, Vector2b b)
-public bool op_Inequality(Vector2b a, Vector2b b)
-public bool Equals(Vector2b o)
-public int GetHashCode()
-public bool Equals(object o)
-public string ToString()
-}
-public Vector2i : ValueType {
-public Vector2i zero
-public Vector2i one
-public Vector2i left
-public Vector2i right
-public Vector2i forward
-public Vector2i back
-public int x
-public int y
-public void .ctor(int x, int y)
-public Vector2i op_RightShift(Vector2i v, int shift)
-public Vector2i op_LeftShift(Vector2i v, int shift)
-public Vector2i op_UnaryPlus(Vector2i v)
-public Vector2i op_UnaryNegation(Vector2i v)
-public Vector2i op_Addition(Vector2i a, Vector2i b)
-public Vector2i op_Subtraction(Vector2i a, Vector2i b)
-public Vector2i op_Multiply(Vector2i v, int multiplier)
-public Vector2i op_Division(Vector2i v, int divisor)
-public Vector2 op_Multiply(Vector2i v, float multiplier)
-public Vector2 op_Division(Vector2i v, float divisor)
-public Vector2i op_Modulus(Vector2i v, int mod)
-public Vector2 op_Implicit(Vector2i other)
-public Vector2i op_Explicit(Vector2 other)
-public bool op_Equality(Vector2i a, Vector2i b)
-public bool op_Inequality(Vector2i a, Vector2i b)
-public bool Equals(Vector2i o)
-public int GetHashCode()
-public bool Equals(object o)
-public string ToString()
-}
-public Vector3b : ValueType {
-public Vector3b alltrue
-public Vector3b allfalse
-public bool x
-public bool y
-public bool z
-public void .ctor(bool x, bool y, bool z)
-public bool op_Equality(Vector3b a, Vector3b b)
-public bool op_Inequality(Vector3b a, Vector3b b)
-public bool Equals(Vector3b o)
-public int GetHashCode()
-public bool Equals(object o)
-public string ToString()
-}
-public Vector3i : ValueType {
-public Vector3i zero
-public Vector3i one
-public Vector3i forward
-public Vector3i back
-public Vector3i up
-public Vector3i down
-public Vector3i right
-public Vector3i left
-public int x
-public int y
-public int z
-public void .ctor(int x, int y, int z)
-public Vector3i op_RightShift(Vector3i v, int shift)
-public Vector3i op_LeftShift(Vector3i v, int shift)
-public Vector3i op_UnaryPlus(Vector3i v)
-public Vector3i op_UnaryNegation(Vector3i v)
-public Vector3i op_Addition(Vector3i a, Vector3i b)
-public Vector3i op_Subtraction(Vector3i a, Vector3i b)
-public Vector3i op_Multiply(Vector3i v, int multiplier)
-public Vector3i op_Division(Vector3i v, int divisor)
-public Vector3 op_Multiply(Vector3i v, float multiplier)
-public Vector3 op_Division(Vector3i v, float divisor)
-public Vector3i op_Modulus(Vector3i v, int mod)
-public Vector3 op_Implicit(Vector3i other)
-public Vector3i op_Explicit(Vector3 other)
-public bool op_Equality(Vector3i a, Vector3i b)
-public bool op_Inequality(Vector3i a, Vector3i b)
-public bool Equals(Vector3i o)
-public int GetHashCode()
-public bool Equals(object o)
-public string ToString()
 }
 public WorldSpaceGrid`1 : object {
 public T[] Cells

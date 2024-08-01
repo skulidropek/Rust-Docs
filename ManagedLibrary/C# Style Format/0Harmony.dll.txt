@@ -1,0 +1,632 @@
+public Harmony.AccessCache : object {
+private Dictionary`2<Type, Dictionary`2<string, FieldInfo>> fields
+private Dictionary`2<Type, Dictionary`2<string, PropertyInfo>> properties
+private Dictionary`2<Type, Dictionary`2<string, Dictionary`2<int, MethodBase>>> methods
+public FieldInfo GetFieldInfo(Type type, string name)
+public PropertyInfo GetPropertyInfo(Type type, string name)
+private int CombinedHashCode(IEnumerable`1<object> objects)
+public MethodBase GetMethodInfo(Type type, string name, Type[] arguments)
+}
+public Harmony.AccessTools : object {
+public BindingFlags all
+public Type TypeByName(string name)
+public T FindIncludingBaseTypes(Type type, Func`2<Type, T> action)
+public T FindIncludingInnerTypes(Type type, Func`2<Type, T> action)
+public FieldInfo Field(Type type, string name)
+public FieldInfo Field(Type type, int idx)
+public PropertyInfo DeclaredProperty(Type type, string name)
+public PropertyInfo Property(Type type, string name)
+public MethodInfo DeclaredMethod(Type type, string name, Type[] parameters, Type[] generics)
+public MethodInfo Method(Type type, string name, Type[] parameters, Type[] generics)
+public MethodInfo Method(string typeColonMethodname, Type[] parameters, Type[] generics)
+public List`1<string> GetMethodNames(Type type)
+public List`1<string> GetMethodNames(object instance)
+public ConstructorInfo DeclaredConstructor(Type type, Type[] parameters)
+public ConstructorInfo Constructor(Type type, Type[] parameters)
+public List`1<ConstructorInfo> GetDeclaredConstructors(Type type)
+public List`1<MethodInfo> GetDeclaredMethods(Type type)
+public List`1<PropertyInfo> GetDeclaredProperties(Type type)
+public List`1<FieldInfo> GetDeclaredFields(Type type)
+public Type GetReturnedType(MethodBase method)
+public Type Inner(Type type, string name)
+public Type FirstInner(Type type, Func`2<Type, bool> predicate)
+public MethodInfo FirstMethod(Type type, Func`2<MethodInfo, bool> predicate)
+public ConstructorInfo FirstConstructor(Type type, Func`2<ConstructorInfo, bool> predicate)
+public PropertyInfo FirstProperty(Type type, Func`2<PropertyInfo, bool> predicate)
+public Type[] GetTypes(Object[] parameters)
+public List`1<string> GetFieldNames(Type type)
+public List`1<string> GetFieldNames(object instance)
+public List`1<string> GetPropertyNames(Type type)
+public List`1<string> GetPropertyNames(object instance)
+public FieldRef`2<T, U> FieldRefAccess(string fieldName)
+public U& FieldRefAccess(T instance, string fieldName)
+public void ThrowMissingMemberException(Type type, String[] names)
+public object GetDefaultValue(Type type)
+public object CreateInstance(Type type)
+public object MakeDeepCopy(object source, Type resultType, Func`4<string, Traverse, Traverse, object> processor, string pathRoot)
+public void MakeDeepCopy(object source, T& result, Func`4<string, Traverse, Traverse, object> processor, string pathRoot)
+public bool IsStruct(Type type)
+public bool IsClass(Type type)
+public bool IsValue(Type type)
+public bool IsVoid(Type type)
+}
+public Harmony.ArgumentType : Enum {
+public int value__
+public ArgumentType Normal
+public ArgumentType Ref
+public ArgumentType Out
+public ArgumentType Pointer
+}
+public Harmony.CodeInstruction : object {
+public OpCode opcode
+public object operand
+public List`1<Label> labels
+public List`1<ExceptionBlock> blocks
+public void .ctor(OpCode opcode, object operand)
+public void .ctor(CodeInstruction instruction)
+public CodeInstruction Clone()
+public CodeInstruction Clone(OpCode opcode)
+public CodeInstruction Clone(OpCode opcode, object operand)
+public string ToString()
+}
+public Harmony.CodeTranspiler : object {
+private IEnumerable`1<CodeInstruction> codeInstructions
+private List`1<MethodInfo> transpilers
+private Dictionary`2<OpCode, OpCode> allJumpCodes
+public void .ctor(List`1<ILInstruction> ilInstructions)
+public void Add(MethodInfo transpiler)
+public object ConvertInstruction(Type type, object op, Dictionary`2& unassigned)
+public bool ShouldAddExceptionInfo(object op, int opIndex, List`1<object> originalInstructions, List`1<object> newInstructions, Dictionary`2<object, Dictionary`2<string, object>> unassignedValues)
+public IEnumerable ConvertInstructionsAndUnassignedValues(Type type, IEnumerable enumerable, Dictionary`2& unassignedValues)
+public IEnumerable ConvertToOurInstructions(IEnumerable instructions, List`1<object> originalInstructions, Dictionary`2<object, Dictionary`2<string, object>> unassignedValues)
+public IEnumerable ConvertToGeneralInstructions(MethodInfo transpiler, IEnumerable enumerable, Dictionary`2& unassignedValues)
+public List`1<object> GetTranspilerCallParameters(ILGenerator generator, MethodInfo transpiler, MethodBase method, IEnumerable instructions)
+public List`1<CodeInstruction> GetResult(ILGenerator generator, MethodBase method)
+private OpCode ReplaceShortJumps(OpCode opcode)
+}
+public Harmony.CollectionExtensions : object {
+public void Do(IEnumerable`1<T> sequence, Action`1<T> action)
+public void DoIf(IEnumerable`1<T> sequence, Func`2<T, bool> condition, Action`1<T> action)
+public IEnumerable`1<T> Add(IEnumerable`1<T> sequence, T item)
+public T[] AddRangeToArray(T[] sequence, T[] items)
+public T[] AddToArray(T[] sequence, T item)
+}
+public Harmony.DelegateTypeFactory : object {
+private ModuleBuilder module
+private int counter
+public Type CreateDelegateType(MethodInfo method)
+}
+public Harmony.DynamicTools : object {
+public DynamicMethod CreateDynamicMethod(MethodBase original, string suffix)
+public ILGenerator CreateSaveableMethod(MethodBase original, string suffix, AssemblyBuilder& assemblyBuilder, TypeBuilder& typeBuilder)
+public void SaveMethod(AssemblyBuilder assemblyBuilder, TypeBuilder typeBuilder)
+public LocalBuilder[] DeclareLocalVariables(MethodBase original, ILGenerator il, bool logOutput)
+public LocalBuilder DeclareLocalVariable(ILGenerator il, Type type)
+public void PrepareDynamicMethod(DynamicMethod method)
+}
+public Harmony.FastAccess : object {
+public InstantiationHandler CreateInstantiationHandler(Type type)
+public GetterHandler CreateGetterHandler(PropertyInfo propertyInfo)
+public GetterHandler CreateGetterHandler(FieldInfo fieldInfo)
+public GetterHandler CreateFieldGetter(Type type, String[] names)
+public SetterHandler CreateSetterHandler(PropertyInfo propertyInfo)
+public SetterHandler CreateSetterHandler(FieldInfo fieldInfo)
+private DynamicMethod CreateGetDynamicMethod(Type type)
+private DynamicMethod CreateSetDynamicMethod(Type type)
+private void BoxIfNeeded(Type type, ILGenerator generator)
+private void UnboxIfNeeded(Type type, ILGenerator generator)
+}
+public Harmony.FastInvokeHandler : MulticastDelegate {
+public void .ctor(object object, IntPtr method)
+public object Invoke(object target, Object[] paramters)
+public IAsyncResult BeginInvoke(object target, Object[] paramters, AsyncCallback callback, object object)
+public object EndInvoke(IAsyncResult result)
+}
+public Harmony.FileLog : object {
+public string logPath
+public char indentChar
+public int indentLevel
+private List`1<string> buffer
+private string IndentString()
+public void ChangeIndent(int delta)
+public void LogBuffered(string str)
+public void FlushBuffer()
+public void Log(string str)
+public void Reset()
+public void LogBytes(long ptr, int len)
+}
+public Harmony.GeneralExtensions : object {
+public string Join(IEnumerable`1<T> enumeration, Func`2<T, string> converter, string delimiter)
+public string Description(Type[] parameters)
+public string FullDescription(MethodBase method)
+public Type[] Types(ParameterInfo[] pinfo)
+public T GetValueSafe(Dictionary`2<S, T> dictionary, S key)
+public T GetTypedValue(Dictionary`2<string, object> dictionary, string key)
+}
+public Harmony.GetterHandler : MulticastDelegate {
+public void .ctor(object object, IntPtr method)
+public object Invoke(object source)
+public IAsyncResult BeginInvoke(object source, AsyncCallback callback, object object)
+public object EndInvoke(IAsyncResult result)
+}
+public Harmony.HarmonyAfter : HarmonyAttribute {
+public void .ctor(String[] after)
+}
+public Harmony.HarmonyArgument : Attribute {
+private string <OriginalName>k__BackingField
+private int <Index>k__BackingField
+private string <NewName>k__BackingField
+public string OriginalName
+public int Index
+public string NewName
+public string get_OriginalName()
+private void set_OriginalName(string value)
+public int get_Index()
+private void set_Index(int value)
+public string get_NewName()
+private void set_NewName(string value)
+public void .ctor(string originalName)
+public void .ctor(int index)
+public void .ctor(string originalName, string newName)
+public void .ctor(int index, string name)
+}
+public Harmony.HarmonyAttribute : Attribute {
+public HarmonyMethod info
+}
+public Harmony.HarmonyBefore : HarmonyAttribute {
+public void .ctor(String[] before)
+}
+public Harmony.HarmonyInstance : object {
+private string id
+public bool DEBUG
+private bool selfPatchingDone
+public string Id
+public string get_Id()
+private void .ctor(string id)
+public HarmonyInstance Create(string id)
+private MethodBase GetOutsideCaller()
+public void PatchAll()
+public void PatchAll(Assembly assembly)
+public DynamicMethod Patch(MethodBase original, HarmonyMethod prefix, HarmonyMethod postfix, HarmonyMethod transpiler)
+public void UnpatchAll(string harmonyID)
+public void Unpatch(MethodBase original, HarmonyPatchType type, string harmonyID)
+public void Unpatch(MethodBase original, MethodInfo patch)
+public bool HasAnyPatches(string harmonyID)
+public Patches GetPatchInfo(MethodBase method)
+public IEnumerable`1<MethodBase> GetPatchedMethods()
+public Dictionary`2<string, Version> VersionInfo(Version& currentVersion)
+private void <PatchAll>b__9_0(Type type)
+}
+public Harmony.HarmonyMethod : object {
+public MethodInfo method
+public Type declaringType
+public string methodName
+public Nullable`1<MethodType> methodType
+public Type[] argumentTypes
+public int prioritiy
+public String[] before
+public String[] after
+private void ImportMethod(MethodInfo theMethod)
+public void .ctor(MethodInfo method)
+public void .ctor(Type type, string name, Type[] parameters)
+public List`1<string> HarmonyFields()
+public HarmonyMethod Merge(List`1<HarmonyMethod> attributes)
+public string ToString()
+}
+public Harmony.HarmonyMethodExtensions : object {
+public void CopyTo(HarmonyMethod from, HarmonyMethod to)
+public HarmonyMethod Clone(HarmonyMethod original)
+public HarmonyMethod Merge(HarmonyMethod master, HarmonyMethod detail)
+public List`1<HarmonyMethod> GetHarmonyMethods(Type type)
+public List`1<HarmonyMethod> GetHarmonyMethods(MethodBase method)
+}
+public Harmony.HarmonyPatch : HarmonyAttribute {
+public void .ctor(Type declaringType)
+public void .ctor(Type declaringType, Type[] argumentTypes)
+public void .ctor(Type declaringType, string methodName)
+public void .ctor(Type declaringType, string methodName, Type[] argumentTypes)
+public void .ctor(Type declaringType, string methodName, Type[] argumentTypes, ArgumentType[] argumentVariations)
+public void .ctor(Type declaringType, MethodType methodType)
+public void .ctor(Type declaringType, MethodType methodType, Type[] argumentTypes)
+public void .ctor(Type declaringType, MethodType methodType, Type[] argumentTypes, ArgumentType[] argumentVariations)
+public void .ctor(Type declaringType, string propertyName, MethodType methodType)
+public void .ctor(string methodName)
+public void .ctor(string methodName, Type[] argumentTypes)
+public void .ctor(string methodName, Type[] argumentTypes, ArgumentType[] argumentVariations)
+public void .ctor(string propertyName, MethodType methodType)
+public void .ctor(MethodType methodType)
+public void .ctor(MethodType methodType, Type[] argumentTypes)
+public void .ctor(MethodType methodType, Type[] argumentTypes, ArgumentType[] argumentVariations)
+public void .ctor(Type[] argumentTypes)
+public void .ctor(Type[] argumentTypes, ArgumentType[] argumentVariations)
+public void .ctor(string propertyName, PropertyMethod type)
+private void ParseSpecialArguments(Type[] argumentTypes, ArgumentType[] argumentVariations)
+}
+public Harmony.HarmonyPatchType : Enum {
+public int value__
+public HarmonyPatchType All
+public HarmonyPatchType Prefix
+public HarmonyPatchType Postfix
+public HarmonyPatchType Transpiler
+}
+public Harmony.HarmonyPriority : HarmonyAttribute {
+public void .ctor(int prioritiy)
+}
+public Harmony.HarmonySharedState : object {
+private string name
+internal int internalVersion
+internal int actualVersion
+private Dictionary`2<MethodBase, Byte[]> GetState()
+private Assembly SharedStateAssembly()
+internal PatchInfo GetPatchInfo(MethodBase method)
+internal IEnumerable`1<MethodBase> GetPatchedMethods()
+internal void UpdatePatchInfo(MethodBase method, PatchInfo patchInfo)
+}
+public Harmony.ILCopying.ByteBuffer : object {
+public Byte[] buffer
+public int position
+public void .ctor(Byte[] buffer)
+public byte ReadByte()
+public Byte[] ReadBytes(int length)
+public short ReadInt16()
+public int ReadInt32()
+public long ReadInt64()
+public float ReadSingle()
+public double ReadDouble()
+private void CheckCanRead(int count)
+}
+public Harmony.ILCopying.Emitter : object {
+private GetterHandler codeLenGetter
+private GetterHandler localsGetter
+private GetterHandler localCountGetter
+public string CodePos(ILGenerator il)
+public void LogIL(ILGenerator il, OpCode opCode, object argument)
+public void LogLocalVariable(ILGenerator il, LocalBuilder variable)
+public string FormatArgument(object argument)
+public void MarkLabel(ILGenerator il, Label label)
+public void MarkBlockBefore(ILGenerator il, ExceptionBlock block, Nullable`1& label)
+public void MarkBlockAfter(ILGenerator il, ExceptionBlock block)
+public void Emit(ILGenerator il, OpCode opcode)
+public void Emit(ILGenerator il, OpCode opcode, LocalBuilder local)
+public void Emit(ILGenerator il, OpCode opcode, FieldInfo field)
+public void Emit(ILGenerator il, OpCode opcode, Label[] labels)
+public void Emit(ILGenerator il, OpCode opcode, Label label)
+public void Emit(ILGenerator il, OpCode opcode, string str)
+public void Emit(ILGenerator il, OpCode opcode, float arg)
+public void Emit(ILGenerator il, OpCode opcode, byte arg)
+public void Emit(ILGenerator il, OpCode opcode, sbyte arg)
+public void Emit(ILGenerator il, OpCode opcode, double arg)
+public void Emit(ILGenerator il, OpCode opcode, int arg)
+public void Emit(ILGenerator il, OpCode opcode, MethodInfo meth)
+public void Emit(ILGenerator il, OpCode opcode, short arg)
+public void Emit(ILGenerator il, OpCode opcode, SignatureHelper signature)
+public void Emit(ILGenerator il, OpCode opcode, ConstructorInfo con)
+public void Emit(ILGenerator il, OpCode opcode, Type cls)
+public void Emit(ILGenerator il, OpCode opcode, long arg)
+public void EmitCall(ILGenerator il, OpCode opcode, MethodInfo methodInfo, Type[] optionalParameterTypes)
+public void EmitCalli(ILGenerator il, OpCode opcode, CallingConvention unmanagedCallConv, Type returnType, Type[] parameterTypes)
+public void EmitCalli(ILGenerator il, OpCode opcode, CallingConventions callingConvention, Type returnType, Type[] parameterTypes, Type[] optionalParameterTypes)
+}
+public Harmony.ILCopying.ExceptionBlock : object {
+public ExceptionBlockType blockType
+public Type catchType
+public void .ctor(ExceptionBlockType blockType, Type catchType)
+}
+public Harmony.ILCopying.ExceptionBlockType : Enum {
+public int value__
+public ExceptionBlockType BeginExceptionBlock
+public ExceptionBlockType BeginCatchBlock
+public ExceptionBlockType BeginExceptFilterBlock
+public ExceptionBlockType BeginFaultBlock
+public ExceptionBlockType BeginFinallyBlock
+public ExceptionBlockType EndExceptionBlock
+}
+public Harmony.ILCopying.ILInstruction : object {
+public int offset
+public OpCode opcode
+public object operand
+public object argument
+public List`1<Label> labels
+public List`1<ExceptionBlock> blocks
+public void .ctor(OpCode opcode, object operand)
+public CodeInstruction GetCodeInstruction()
+public int GetSize()
+public string ToString()
+private void AppendLabel(String& str, object argument)
+}
+public Harmony.ILCopying.LeaveTry : object {
+public string ToString()
+}
+public Harmony.ILCopying.Memory : object {
+private HashSet`1<PlatformID> WindowsPlatformIDSet
+public bool IsWindows
+public bool get_IsWindows()
+public bool VirtualProtect(IntPtr lpAddress, UIntPtr dwSize, Protection flNewProtect, Protection& lpflOldProtect)
+public void UnprotectMemoryPage(long memory)
+public string DetourMethod(MethodBase original, MethodBase replacement)
+public string WriteJump(long memory, long destination)
+private RuntimeMethodHandle GetRuntimeMethodHandle(MethodBase method)
+public long GetMethodStart(MethodBase method, Exception& exception)
+public bool CompareBytes(long memory, Byte[] values)
+public byte ReadByte(long memory)
+public int ReadInt(long memory)
+public long ReadLong(long memory)
+public long WriteByte(long memory, byte value)
+public long WriteBytes(long memory, Byte[] values)
+public long WriteInt(long memory, int value)
+public long WriteLong(long memory, long value)
+}
+public Harmony.ILCopying.MethodBodyReader : object {
+private ILGenerator generator
+private MethodBase method
+private Module module
+private Type[] typeArguments
+private Type[] methodArguments
+private ByteBuffer ilBytes
+private ParameterInfo this_parameter
+private ParameterInfo[] parameters
+private IList`1<LocalVariableInfo> locals
+private IList`1<ExceptionHandlingClause> exceptions
+private List`1<ILInstruction> ilInstructions
+private LocalBuilder[] variables
+private Dictionary`2<OpCode, OpCode> shortJumps
+private OpCode[] one_byte_opcodes
+private OpCode[] two_bytes_opcodes
+private Dictionary`2<Type, MethodInfo> emitMethods
+public List`1<ILInstruction> GetInstructions(ILGenerator generator, MethodBase method)
+public void .ctor(MethodBase method, ILGenerator generator)
+public void ReadInstructions()
+public void DeclareVariables(LocalBuilder[] existingVariables)
+private void ResolveBranches()
+private void ParseExceptions()
+public void FinalizeILCodes(List`1<MethodInfo> transpilers, List`1<Label> endLabels, List`1<ExceptionBlock> endBlocks)
+private void GetMemberInfoValue(MemberInfo info, Object& result)
+private void ReadOperand(ILInstruction instruction)
+private ILInstruction GetInstruction(int offset, bool isEndOfInstruction)
+private bool TargetsLocalVariable(OpCode opcode)
+private LocalVariableInfo GetLocalVariable(int index)
+private ParameterInfo GetParameter(int index)
+private OpCode ReadOpCode()
+private MethodInfo EmitMethodForType(Type type)
+private LocalBuilder <DeclareVariables>b__15_0(LocalVariableInfo lvi)
+}
+public Harmony.ILCopying.MethodCopier : object {
+private MethodBodyReader reader
+private List`1<MethodInfo> transpilers
+public void .ctor(MethodBase fromMethod, ILGenerator toILGenerator, LocalBuilder[] existingVariables)
+public void AddTranspiler(MethodInfo transpiler)
+public void Finalize(List`1<Label> endLabels, List`1<ExceptionBlock> endBlocks)
+}
+public Harmony.ILCopying.Protection : Enum {
+public int value__
+public Protection PAGE_NOACCESS
+public Protection PAGE_READONLY
+public Protection PAGE_READWRITE
+public Protection PAGE_WRITECOPY
+public Protection PAGE_EXECUTE
+public Protection PAGE_EXECUTE_READ
+public Protection PAGE_EXECUTE_READWRITE
+public Protection PAGE_EXECUTE_WRITECOPY
+public Protection PAGE_GUARD
+public Protection PAGE_NOCACHE
+public Protection PAGE_WRITECOMBINE
+}
+public Harmony.InstantiationHandler : MulticastDelegate {
+public void .ctor(object object, IntPtr method)
+public object Invoke()
+public IAsyncResult BeginInvoke(AsyncCallback callback, object object)
+public object EndInvoke(IAsyncResult result)
+}
+public Harmony.MethodInvoker : object {
+public FastInvokeHandler GetHandler(DynamicMethod methodInfo, Module module)
+public FastInvokeHandler GetHandler(MethodInfo methodInfo)
+private FastInvokeHandler Handler(MethodInfo methodInfo, Module module, bool directBoxValueAccess)
+private void EmitCastToReference(ILGenerator il, Type type)
+private void EmitUnboxIfNeeded(ILGenerator il, Type type)
+private void EmitBoxIfNeeded(ILGenerator il, Type type)
+private void EmitFastInt(ILGenerator il, int value)
+}
+public Harmony.MethodPatcher : object {
+public string INSTANCE_PARAM
+public string ORIGINAL_METHOD_PARAM
+public string RESULT_VAR
+public string STATE_VAR
+public string PARAM_INDEX_PREFIX
+public string INSTANCE_FIELD_PREFIX
+private bool DEBUG_METHOD_GENERATION_BY_DLL_CREATION
+private MethodInfo getMethodMethod
+public DynamicMethod CreatePatchedMethod(MethodBase original, List`1<MethodInfo> prefixes, List`1<MethodInfo> postfixes, List`1<MethodInfo> transpilers)
+public DynamicMethod CreatePatchedMethod(MethodBase original, string harmonyInstanceID, List`1<MethodInfo> prefixes, List`1<MethodInfo> postfixes, List`1<MethodInfo> transpilers)
+private OpCode LoadIndOpCodeFor(Type type)
+private HarmonyArgument GetArgumentAttribute(ParameterInfo parameter)
+private HarmonyArgument[] GetArgumentAttributes(MethodInfo method)
+private HarmonyArgument[] GetArgumentAttributes(Type type)
+private string GetOriginalArgumentName(ParameterInfo parameter, String[] originalParameterNames)
+private string GetOriginalArgumentName(HarmonyArgument[] attributes, string name, String[] originalParameterNames)
+private string GetOriginalArgumentName(MethodInfo method, String[] originalParameterNames, string name)
+private int GetArgumentIndex(MethodInfo patch, String[] originalParameterNames, ParameterInfo patchParam)
+private void EmitCallParameter(ILGenerator il, MethodBase original, MethodInfo patch, Dictionary`2<string, LocalBuilder> variables, bool allowFirsParamPassthrough)
+private bool AddPrefixes(ILGenerator il, MethodBase original, List`1<MethodInfo> prefixes, Dictionary`2<string, LocalBuilder> variables, Label label)
+private void AddPostfixes(ILGenerator il, MethodBase original, List`1<MethodInfo> postfixes, Dictionary`2<string, LocalBuilder> variables, bool passthroughPatches)
+}
+public Harmony.MethodType : Enum {
+public int value__
+public MethodType Normal
+public MethodType Getter
+public MethodType Setter
+public MethodType Constructor
+public MethodType StaticConstructor
+}
+public Harmony.Patch : object {
+public int index
+public string owner
+public int priority
+public String[] before
+public String[] after
+public MethodInfo patch
+public void .ctor(MethodInfo patch, int index, string owner, int priority, String[] before, String[] after)
+public MethodInfo GetMethod(MethodBase original)
+public bool Equals(object obj)
+public int CompareTo(object obj)
+public int GetHashCode()
+}
+public Harmony.Patches : object {
+public ReadOnlyCollection`1<Patch> Prefixes
+public ReadOnlyCollection`1<Patch> Postfixes
+public ReadOnlyCollection`1<Patch> Transpilers
+public ReadOnlyCollection`1<string> Owners
+public ReadOnlyCollection`1<string> get_Owners()
+public void .ctor(Patch[] prefixes, Patch[] postfixes, Patch[] transpilers)
+}
+public Harmony.PatchFunctions : object {
+public void AddPrefix(PatchInfo patchInfo, string owner, HarmonyMethod info)
+public void RemovePrefix(PatchInfo patchInfo, string owner)
+public void AddPostfix(PatchInfo patchInfo, string owner, HarmonyMethod info)
+public void RemovePostfix(PatchInfo patchInfo, string owner)
+public void AddTranspiler(PatchInfo patchInfo, string owner, HarmonyMethod info)
+public void RemoveTranspiler(PatchInfo patchInfo, string owner)
+public void RemovePatch(PatchInfo patchInfo, MethodInfo patch)
+public List`1<ILInstruction> GetInstructions(ILGenerator generator, MethodBase method)
+public List`1<MethodInfo> GetSortedPatchMethods(MethodBase original, Patch[] patches)
+public DynamicMethod UpdateWrapper(MethodBase original, PatchInfo patchInfo, string instanceID)
+}
+public Harmony.PatchInfo : object {
+public Patch[] prefixes
+public Patch[] postfixes
+public Patch[] transpilers
+public void AddPrefix(MethodInfo patch, string owner, int priority, String[] before, String[] after)
+public void RemovePrefix(string owner)
+public void AddPostfix(MethodInfo patch, string owner, int priority, String[] before, String[] after)
+public void RemovePostfix(string owner)
+public void AddTranspiler(MethodInfo patch, string owner, int priority, String[] before, String[] after)
+public void RemoveTranspiler(string owner)
+public void RemovePatch(MethodInfo patch)
+}
+public Harmony.PatchInfoSerialization : object {
+public Byte[] Serialize(PatchInfo patchInfo)
+public PatchInfo Deserialize(Byte[] bytes)
+public int PriorityComparer(object obj, int index, int priority, String[] before, String[] after)
+}
+public Harmony.PatchProcessor : object {
+private object locker
+private HarmonyInstance instance
+private Type container
+private HarmonyMethod containerAttributes
+private List`1<MethodBase> originals
+private HarmonyMethod prefix
+private HarmonyMethod postfix
+private HarmonyMethod transpiler
+public void .ctor(HarmonyInstance instance, Type type, HarmonyMethod attributes)
+public void .ctor(HarmonyInstance instance, List`1<MethodBase> originals, HarmonyMethod prefix, HarmonyMethod postfix, HarmonyMethod transpiler)
+public Patches GetPatchInfo(MethodBase method)
+public IEnumerable`1<MethodBase> AllPatchedMethods()
+public List`1<DynamicMethod> Patch()
+public void Unpatch(HarmonyPatchType type, string harmonyID)
+public void Unpatch(MethodInfo patch)
+private void PrepareType()
+private MethodBase GetOriginalMethod()
+private T RunMethod(T defaultIfNotExisting, Object[] parameters)
+private void RunMethod(Object[] parameters)
+}
+public Harmony.PatchTools : object {
+private Dictionary`2<object, object> objectReferences
+public void RememberObject(object key, object value)
+public MethodInfo GetPatchMethod(Type patchType, string name, Type[] parameters)
+public void GetPatches(Type patchType, MethodInfo& prefix, MethodInfo& postfix, MethodInfo& transpiler)
+}
+public Harmony.Priority : object {
+public int Last
+public int VeryLow
+public int Low
+public int LowerThanNormal
+public int Normal
+public int HigherThanNormal
+public int High
+public int VeryHigh
+public int First
+}
+public Harmony.PropertyMethod : Enum {
+public int value__
+public PropertyMethod Getter
+public PropertyMethod Setter
+}
+public Harmony.SetterHandler : MulticastDelegate {
+public void .ctor(object object, IntPtr method)
+public void Invoke(object source, object value)
+public IAsyncResult BeginInvoke(object source, object value, AsyncCallback callback, object object)
+public void EndInvoke(IAsyncResult result)
+}
+public Harmony.SymbolExtensions : object {
+public MethodInfo GetMethodInfo(Expression`1<Action> expression)
+public MethodInfo GetMethodInfo(Expression`1<Action`1<T>> expression)
+public MethodInfo GetMethodInfo(Expression`1<Func`2<T, TResult>> expression)
+public MethodInfo GetMethodInfo(LambdaExpression expression)
+}
+internal Harmony.Tools.SelfPatching : object {
+private int upgradeToLatestVersionFullNameHash
+private int GetVersion(MethodBase method)
+private string MethodKey(MethodBase method)
+private bool IsHarmonyAssembly(Assembly assembly)
+private List`1<MethodBase> GetAllMethods(Assembly assembly)
+private string AssemblyInfo(Assembly assembly)
+public void PatchOldHarmonyMethods()
+}
+public Harmony.Transpilers : object {
+public IEnumerable`1<CodeInstruction> MethodReplacer(IEnumerable`1<CodeInstruction> instructions, MethodBase from, MethodBase to)
+public IEnumerable`1<CodeInstruction> DebugLogger(IEnumerable`1<CodeInstruction> instructions, string text)
+}
+public Harmony.Traverse : object {
+private AccessCache Cache
+private Type _type
+private object _root
+private MemberInfo _info
+private MethodBase _method
+private Object[] _params
+public Action`2<Traverse, Traverse> CopyFields
+public Traverse Create(Type type)
+public Traverse Create()
+public Traverse Create(object root)
+public Traverse CreateWithType(string name)
+public void .ctor(Type type)
+public void .ctor(object root)
+private void .ctor(object root, MemberInfo info, Object[] index)
+private void .ctor(object root, MethodInfo method, Object[] parameter)
+public object GetValue()
+public T GetValue()
+public object GetValue(Object[] arguments)
+public T GetValue(Object[] arguments)
+public Traverse SetValue(object value)
+public Type GetValueType()
+private Traverse Resolve()
+public Traverse Type(string name)
+public Traverse Field(string name)
+public Traverse`1<T> Field(string name)
+public List`1<string> Fields()
+public Traverse Property(string name, Object[] index)
+public Traverse`1<T> Property(string name, Object[] index)
+public List`1<string> Properties()
+public Traverse Method(string name, Object[] arguments)
+public Traverse Method(string name, Type[] paramTypes, Object[] arguments)
+public List`1<string> Methods()
+public bool FieldExists()
+public bool MethodExists()
+public bool TypeExists()
+public void IterateFields(object source, Action`1<Traverse> action)
+public void IterateFields(object source, object target, Action`2<Traverse, Traverse> action)
+public void IterateFields(object source, object target, Action`3<string, Traverse, Traverse> action)
+public void IterateProperties(object source, Action`1<Traverse> action)
+public void IterateProperties(object source, object target, Action`2<Traverse, Traverse> action)
+public void IterateProperties(object source, object target, Action`3<string, Traverse, Traverse> action)
+public string ToString()
+}
+public Harmony.Traverse`1 : object {
+private Traverse traverse
+public T Value
+public void .ctor(Traverse traverse)
+public T get_Value()
+public void set_Value(T value)
+}
+internal Harmony.UpgradeToLatestVersion : Attribute {
+public int version
+public void .ctor(int version)
+}

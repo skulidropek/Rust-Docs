@@ -347,6 +347,7 @@ protected internal object Item
 protected internal ConfigurationPropertyCollection Properties
 internal bool IsElementPresent
 public Configuration CurrentConfiguration
+protected bool HasContext
 internal Configuration get_Configuration()
 internal void set_Configuration(Configuration value)
 internal void InitFromProperty(PropertyInformation propertyInfo)
@@ -397,6 +398,9 @@ internal bool HasValue(ConfigurationElement parent, PropertyInformation prop, Co
 internal bool HasValues(ConfigurationElement parent, ConfigurationSaveMode mode)
 internal void PrepareSave(ConfigurationElement parent, ConfigurationSaveMode mode)
 public Configuration get_CurrentConfiguration()
+protected bool get_HasContext()
+protected string GetTransformedAssemblyString(string assemblyName)
+protected string GetTransformedTypeString(string typeName)
 }
 public System.Configuration.ConfigurationElementCollection : ConfigurationElement {
 private ArrayList list
@@ -785,6 +789,9 @@ private void DoDeserializeSection(XmlReader reader)
 protected internal void DeserializeSection(XmlReader reader)
 internal void DeserializeConfigSource(string basePath)
 protected internal string SerializeSection(ConfigurationElement parentElement, string name, ConfigurationSaveMode saveMode)
+protected internal bool ShouldSerializeElementInTargetVersion(ConfigurationElement element, string elementName, FrameworkName targetFramework)
+protected internal bool ShouldSerializePropertyInTargetVersion(ConfigurationProperty property, string propertyName, FrameworkName targetFramework, ConfigurationElement parentConfigurationElement)
+protected internal bool ShouldSerializeSectionInTargetVersion(FrameworkName targetFramework)
 }
 public System.Configuration.ConfigurationSectionCollection : NameObjectCollectionBase {
 private SectionGroupInfo group
@@ -840,6 +847,7 @@ public ConfigurationSectionGroupCollection get_SectionGroups()
 public ConfigurationSectionCollection get_Sections()
 public string get_Type()
 public void set_Type(string value)
+protected internal bool ShouldSerializeSectionGroupInTargetVersion(FrameworkName targetFramework)
 }
 public System.Configuration.ConfigurationSectionGroupCollection : NameObjectCollectionBase {
 private SectionGroupInfo group
@@ -1104,6 +1112,7 @@ public bool SupportsChangeNotifications
 public bool SupportsLocation
 public bool SupportsPath
 public bool SupportsRefresh
+protected IInternalConfigurationBuilderHost ConfigBuilderHost
 protected IInternalConfigHost get_Host()
 protected void set_Host(IInternalConfigHost value)
 public object CreateConfigurationContext(string configPath, string locationSubPath)
@@ -1147,6 +1156,7 @@ public bool get_SupportsChangeNotifications()
 public bool get_SupportsLocation()
 public bool get_SupportsPath()
 public bool get_SupportsRefresh()
+protected IInternalConfigurationBuilderHost get_ConfigBuilderHost()
 public ConfigurationSection ProcessConfigurationSection(ConfigurationSection configSection, ConfigurationBuilder builder)
 public XmlNode ProcessRawXml(XmlNode rawXml, ConfigurationBuilder builder)
 }

@@ -3,9 +3,13 @@ public bool initializeOnStartup
 private bool initializeOnStartupInternal
 private bool enabledInternal
 private bool playerOptedOutInternal
+private string eventUrlInternal
+private string configUrlInternal
 private bool limitUserTrackingInternal
 private bool deviceStatsEnabledInternal
 public bool playerOptedOut
+public string eventUrl
+public string configUrl
 public bool limitUserTracking
 public bool deviceStatsEnabled
 public bool enabled
@@ -15,10 +19,12 @@ public AnalyticsResult ResumeInitialization()
 private AnalyticsResult ResumeInitializationInternal()
 private bool get_initializeOnStartupInternal()
 private void set_initializeOnStartupInternal(bool value)
-private bool IsInitialized()
+internal bool IsInitialized()
 private bool get_enabledInternal()
 private void set_enabledInternal(bool value)
 private bool get_playerOptedOutInternal()
+private string get_eventUrlInternal()
+private string get_configUrlInternal()
 private bool get_limitUserTrackingInternal()
 private void set_limitUserTrackingInternal(bool value)
 private bool get_deviceStatsEnabledInternal()
@@ -27,11 +33,19 @@ private bool FlushArchivedEvents()
 private AnalyticsResult Transaction(string productId, double amount, string currency, string receiptPurchaseData, string signature, bool usingIAPService)
 private AnalyticsResult SendCustomEventName(string customEventName)
 private AnalyticsResult SendCustomEvent(CustomEventData eventData)
+internal AnalyticsResult IsCustomEventWithLimitEnabled(string customEventName)
+internal AnalyticsResult EnableCustomEventWithLimit(string customEventName, bool enable)
+internal AnalyticsResult IsEventWithLimitEnabled(string eventName, int ver, string prefix)
+internal AnalyticsResult EnableEventWithLimit(string eventName, bool enable, int ver, string prefix)
 internal AnalyticsResult RegisterEventWithLimit(string eventName, int maxEventPerHour, int maxItems, string vendorKey, int ver, string prefix, string assemblyInfo, bool notifyServer)
 internal AnalyticsResult RegisterEventsWithLimit(String[] eventName, int maxEventPerHour, int maxItems, string vendorKey, int ver, string prefix, string assemblyInfo, bool notifyServer)
 internal AnalyticsResult SendEventWithLimit(string eventName, object parameters, int ver, string prefix)
+internal AnalyticsResult SetEventWithLimitEndPoint(string eventName, string endPoint, int ver, string prefix)
+internal AnalyticsResult SetEventWithLimitPriority(string eventName, AnalyticsEventPriority eventPriority, int ver, string prefix)
 internal bool QueueEvent(string eventName, object parameters, int ver, string prefix)
 public bool get_playerOptedOut()
+public string get_eventUrl()
+public string get_configUrl()
 public bool get_limitUserTracking()
 public void set_limitUserTracking(bool value)
 public bool get_deviceStatsEnabled()
@@ -49,10 +63,28 @@ public AnalyticsResult Transaction(string productId, decimal amount, string curr
 public AnalyticsResult CustomEvent(string customEventName)
 public AnalyticsResult CustomEvent(string customEventName, Vector3 position)
 public AnalyticsResult CustomEvent(string customEventName, IDictionary`2<string, object> eventData)
+public AnalyticsResult EnableCustomEvent(string customEventName, bool enabled)
+public AnalyticsResult IsCustomEventEnabled(string customEventName)
 public AnalyticsResult RegisterEvent(string eventName, int maxEventPerHour, int maxItems, string vendorKey, string prefix)
 public AnalyticsResult RegisterEvent(string eventName, int maxEventPerHour, int maxItems, string vendorKey, int ver, string prefix)
 private AnalyticsResult RegisterEvent(string eventName, int maxEventPerHour, int maxItems, string vendorKey, int ver, string prefix, string assemblyInfo)
 public AnalyticsResult SendEvent(string eventName, object parameters, int ver, string prefix)
+public AnalyticsResult SetEventEndPoint(string eventName, string endPoint, int ver, string prefix)
+public AnalyticsResult SetEventPriority(string eventName, AnalyticsEventPriority eventPriority, int ver, string prefix)
+public AnalyticsResult EnableEvent(string eventName, bool enabled, int ver, string prefix)
+public AnalyticsResult IsEventEnabled(string eventName, int ver, string prefix)
+}
+public UnityEngine.Analytics.AnalyticsEventPriority : Enum {
+public int value__
+public AnalyticsEventPriority FlushQueueFlag
+public AnalyticsEventPriority CacheImmediatelyFlag
+public AnalyticsEventPriority AllowInStopModeFlag
+public AnalyticsEventPriority SendImmediateFlag
+public AnalyticsEventPriority NormalPriorityEvent
+public AnalyticsEventPriority NormalPriorityEvent_WithCaching
+public AnalyticsEventPriority HighPriorityEvent
+public AnalyticsEventPriority HighPriorityEvent_InStopMode
+public AnalyticsEventPriority HighestPriorityEvent
 }
 public UnityEngine.Analytics.AnalyticsResult : Enum {
 public int value__
@@ -67,12 +99,19 @@ public AnalyticsResult UnsupportedPlatform
 }
 public UnityEngine.Analytics.AnalyticsSessionInfo : object {
 private SessionStateChanged sessionStateChanged
+private IdentityTokenChanged identityTokenChanged
 public AnalyticsSessionState sessionState
 public long sessionId
 public long sessionCount
 public long sessionElapsedTime
 public bool sessionFirstRun
 public string userId
+public string customUserId
+public string customDeviceId
+public string identityToken
+private string identityTokenInternal
+private string customUserIdInternal
+private string customDeviceIdInternal
 public void add_sessionStateChanged(SessionStateChanged value)
 public void remove_sessionStateChanged(SessionStateChanged value)
 internal void CallSessionStateChanged(AnalyticsSessionState sessionState, long sessionId, long sessionElapsedTime, bool sessionChanged)
@@ -82,6 +121,19 @@ public long get_sessionCount()
 public long get_sessionElapsedTime()
 public bool get_sessionFirstRun()
 public string get_userId()
+public string get_customUserId()
+public void set_customUserId(string value)
+public string get_customDeviceId()
+public void set_customDeviceId(string value)
+public void add_identityTokenChanged(IdentityTokenChanged value)
+public void remove_identityTokenChanged(IdentityTokenChanged value)
+internal void CallIdentityTokenChanged(string token)
+public string get_identityToken()
+private string get_identityTokenInternal()
+private string get_customUserIdInternal()
+private void set_customUserIdInternal(string value)
+private string get_customDeviceIdInternal()
+private void set_customDeviceIdInternal(string value)
 }
 public UnityEngine.Analytics.AnalyticsSessionState : Enum {
 public int value__
@@ -90,13 +142,18 @@ public AnalyticsSessionState kSessionStarted
 public AnalyticsSessionState kSessionPaused
 public AnalyticsSessionState kSessionResumed
 }
-internal UnityEngine.Analytics.ContinuousEvent : object {
-public void RegisterCollector(string collectorName, Func`1<T> del)
-public void SetEventHistogramThresholds(string eventName, int count, T[] data)
-private void RegisterCollector_Internal(string type, string collectorName, object collector)
-private void SetEventHistogramThresholds_Internal(string type, string eventName, int count, object data)
-public void EnableEvent(string eventName, bool enabled)
-public void ConfigureEvent(string eventName, string collectorName, float interval, float period, bool enabled, bool custom)
+public UnityEngine.Analytics.ContinuousEvent : object {
+public AnalyticsResult RegisterCollector(string metricName, Func`1<T> del)
+public AnalyticsResult SetEventHistogramThresholds(string eventName, int count, T[] data, int ver, string prefix)
+public AnalyticsResult SetCustomEventHistogramThresholds(string eventName, int count, T[] data)
+public AnalyticsResult ConfigureCustomEvent(string customEventName, string metricName, float interval, float period, bool enabled)
+public AnalyticsResult ConfigureEvent(string eventName, string metricName, float interval, float period, bool enabled, int ver, string prefix)
+private AnalyticsResult InternalRegisterCollector(string type, string metricName, object collector)
+private AnalyticsResult InternalSetEventHistogramThresholds(string type, string eventName, int count, object data, int ver, string prefix)
+private AnalyticsResult InternalSetCustomEventHistogramThresholds(string type, string eventName, int count, object data)
+private AnalyticsResult InternalConfigureCustomEvent(string customEventName, string metricName, float interval, float period, bool enabled)
+private AnalyticsResult InternalConfigureEvent(string eventName, string metricName, float interval, float period, bool enabled, int ver, string prefix)
+internal bool IsInitialized()
 }
 internal UnityEngine.Analytics.CustomEventData : object {
 internal IntPtr m_Ptr
@@ -124,9 +181,9 @@ public Gender Unknown
 public UnityEngine.RemoteConfigSettings : object {
 internal IntPtr m_Ptr
 private Action`1<bool> Updated
-public void .ctor(string configKey)
 public void add_Updated(Action`1<bool> value)
 public void remove_Updated(Action`1<bool> value)
+public void .ctor(string configKey)
 protected void Finalize()
 private void Destroy()
 public void Dispose()
@@ -135,6 +192,7 @@ internal void Internal_Destroy(IntPtr ptr)
 internal void RemoteConfigSettingsUpdated(RemoteConfigSettings rcs, bool wasLastUpdatedFromServer)
 public bool QueueConfig(string name, object param, int ver, string prefix)
 public bool SendDeviceInfoInConfigRequest()
+public void AddSessionTag(string tag)
 public void ForceUpdate()
 public bool WasLastUpdatedFromServer()
 public int GetInt(string key)
@@ -150,14 +208,40 @@ public bool GetBool(string key, bool defaultValue)
 public bool HasKey(string key)
 public int GetCount()
 public String[] GetKeys()
+public T GetObject(string key)
+public object GetObject(Type type, string key)
+public object GetObject(string key, object defaultValue)
+internal object GetAsScriptingObject(Type t, object defaultValue, string key)
+public IDictionary`2<string, object> GetDictionary(string key)
 internal void UseSafeLock()
 internal void ReleaseSafeLock()
 internal IntPtr GetSafeTopMap()
+}
+internal UnityEngine.RemoteConfigSettingsHelper : object {
 internal IntPtr GetSafeMap(IntPtr m, string key)
+internal String[] GetSafeMapKeys(IntPtr m)
+internal Tag[] GetSafeMapTypes(IntPtr m)
 internal long GetSafeNumber(IntPtr m, string key, long defaultValue)
 internal float GetSafeFloat(IntPtr m, string key, float defaultValue)
 internal bool GetSafeBool(IntPtr m, string key, bool defaultValue)
 internal string GetSafeStringValue(IntPtr m, string key, string defaultValue)
+internal IntPtr GetSafeArray(IntPtr m, string key)
+internal long GetSafeArraySize(IntPtr a)
+internal IntPtr GetSafeArrayArray(IntPtr a, long i)
+internal IntPtr GetSafeArrayMap(IntPtr a, long i)
+internal Tag GetSafeArrayType(IntPtr a, long i)
+internal long GetSafeNumberArray(IntPtr a, long i)
+internal float GetSafeArrayFloat(IntPtr a, long i)
+internal bool GetSafeArrayBool(IntPtr a, long i)
+internal string GetSafeArrayStringValue(IntPtr a, long i)
+public IDictionary`2<string, object> GetDictionary(IntPtr m, string key)
+internal IDictionary`2<string, object> GetDictionary(IntPtr m)
+internal object GetArrayArrayEntries(IntPtr a, long i)
+internal IDictionary`2<string, object> GetArrayMapEntries(IntPtr a, long i)
+internal T[] GetArrayEntriesType(IntPtr a, long size, Func`3<IntPtr, long, T> f)
+internal object GetArrayEntries(IntPtr a)
+internal object GetMixedArrayEntries(IntPtr a)
+internal void SetDictKeyType(IntPtr m, IDictionary`2<string, object> dict, string key, Tag tag)
 }
 public UnityEngine.RemoteSettings : object {
 private UpdatedEventHandler Updated
@@ -188,4 +272,12 @@ public bool GetBool(string key, bool defaultValue)
 public bool HasKey(string key)
 public int GetCount()
 public String[] GetKeys()
+public T GetObject(string key)
+public object GetObject(Type type, string key)
+public object GetObject(string key, object defaultValue)
+internal object GetAsScriptingObject(Type t, object defaultValue, string key)
+public IDictionary`2<string, object> GetDictionary(string key)
+internal void UseSafeLock()
+internal void ReleaseSafeLock()
+internal IntPtr GetSafeTopMap()
 }

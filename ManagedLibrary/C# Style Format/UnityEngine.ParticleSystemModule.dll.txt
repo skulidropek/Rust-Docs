@@ -1,8 +1,8 @@
 public UnityEngine.ParticleCollisionEvent : ValueType {
-private Vector3 m_Intersection
-private Vector3 m_Normal
-private Vector3 m_Velocity
-private int m_ColliderInstanceID
+internal Vector3 m_Intersection
+internal Vector3 m_Normal
+internal Vector3 m_Velocity
+internal int m_ColliderInstanceID
 public Vector3 intersection
 public Vector3 normal
 public Vector3 velocity
@@ -123,6 +123,57 @@ public bool get_proceduralSimulationSupported()
 internal float GetParticleCurrentSize(Particle& particle)
 internal Vector3 GetParticleCurrentSize3D(Particle& particle)
 internal Color32 GetParticleCurrentColor(Particle& particle)
+internal int GetParticleMeshIndex(Particle& particle)
+public void SetParticles(Particle[] particles, int size, int offset)
+public void SetParticles(Particle[] particles, int size)
+public void SetParticles(Particle[] particles)
+private void SetParticlesWithNativeArray(IntPtr particles, int particlesLength, int size, int offset)
+public void SetParticles(NativeArray`1<Particle> particles, int size, int offset)
+public void SetParticles(NativeArray`1<Particle> particles, int size)
+public void SetParticles(NativeArray`1<Particle> particles)
+public int GetParticles(Particle[] particles, int size, int offset)
+public int GetParticles(Particle[] particles, int size)
+public int GetParticles(Particle[] particles)
+private int GetParticlesWithNativeArray(IntPtr particles, int particlesLength, int size, int offset)
+public int GetParticles(NativeArray`1<Particle> particles, int size, int offset)
+public int GetParticles(NativeArray`1<Particle> particles, int size)
+public int GetParticles(NativeArray`1<Particle> particles)
+public void SetCustomParticleData(List`1<Vector4> customData, ParticleSystemCustomData streamIndex)
+public int GetCustomParticleData(List`1<Vector4> customData, ParticleSystemCustomData streamIndex)
+public PlaybackState GetPlaybackState()
+public void SetPlaybackState(PlaybackState playbackState)
+private void GetTrailDataInternal(Trails& trailData)
+public Trails GetTrails()
+public void SetTrails(Trails trailData)
+public void Simulate(float t, bool withChildren, bool restart, bool fixedTimeStep)
+public void Simulate(float t, bool withChildren, bool restart)
+public void Simulate(float t, bool withChildren)
+public void Simulate(float t)
+public void Play(bool withChildren)
+public void Play()
+public void Pause(bool withChildren)
+public void Pause()
+public void Stop(bool withChildren, ParticleSystemStopBehavior stopBehavior)
+public void Stop(bool withChildren)
+public void Stop()
+public void Clear(bool withChildren)
+public void Clear()
+public bool IsAlive(bool withChildren)
+public bool IsAlive()
+public void Emit(int count)
+private void Emit_Internal(int count)
+public void Emit(EmitParams emitParams, int count)
+private void EmitOld_Internal(Particle& particle)
+public void TriggerSubEmitter(int subEmitterIndex)
+public void TriggerSubEmitter(int subEmitterIndex, Particle& particle)
+internal void TriggerSubEmitterForParticle(int subEmitterIndex, Particle particle)
+public void TriggerSubEmitter(int subEmitterIndex, List`1<Particle> particles)
+public void ResetPreMappedBufferMemory()
+internal Void* GetManagedJobData()
+internal JobHandle GetManagedJobHandle()
+internal void SetManagedJobHandle(JobHandle handle)
+internal JobHandle ScheduleManagedJob(JobScheduleParameters& parameters, Void* additionalData)
+internal void CopyManagedJobData(Void* systemPtr, NativeParticleData& particleData)
 public MainModule get_main()
 public EmissionModule get_emission()
 public ShapeModule get_shape()
@@ -145,48 +196,27 @@ public TextureSheetAnimationModule get_textureSheetAnimation()
 public LightsModule get_lights()
 public TrailModule get_trails()
 public CustomDataModule get_customData()
-public void SetParticles(Particle[] particles, int size, int offset)
-public void SetParticles(Particle[] particles, int size)
-public void SetParticles(Particle[] particles)
-public int GetParticles(Particle[] particles, int size, int offset)
-public int GetParticles(Particle[] particles, int size)
-public int GetParticles(Particle[] particles)
-public void Simulate(float t, bool withChildren, bool restart, bool fixedTimeStep)
-public void Simulate(float t, bool withChildren, bool restart)
-public void Simulate(float t, bool withChildren)
-public void Simulate(float t)
-public void Play(bool withChildren)
-public void Play()
-public void Pause(bool withChildren)
-public void Pause()
-public void Stop(bool withChildren, ParticleSystemStopBehavior stopBehavior)
-public void Stop(bool withChildren)
-public void Stop()
-public void Clear(bool withChildren)
-public void Clear()
-public bool IsAlive(bool withChildren)
-public bool IsAlive()
-public void Emit(int count)
-private void Emit_Internal(int count)
-public void Emit(EmitParams emitParams, int count)
-public void ResetPreMappedBufferMemory()
-public void SetCustomParticleData(List`1<Vector4> customData, ParticleSystemCustomData streamIndex)
-public int GetCustomParticleData(List`1<Vector4> customData, ParticleSystemCustomData streamIndex)
-internal void SetCustomParticleDataInternal(object customData, int streamIndex)
-internal int GetCustomParticleDataInternal(object customData, int streamIndex)
-private void Internal_EmitOld(Particle& particle)
-public void TriggerSubEmitter(int subEmitterIndex)
-public void TriggerSubEmitter(int subEmitterIndex, Particle& particle)
-public void TriggerSubEmitter(int subEmitterIndex, List`1<Particle> particles)
-internal void Internal_TriggerSubEmitter(int subEmitterIndex, object particles)
 private void GetParticleCurrentSize3D_Injected(Particle& particle, Vector3& ret)
 private void GetParticleCurrentColor_Injected(Particle& particle, Color32& ret)
+private void GetPlaybackState_Injected(PlaybackState& ret)
+private void SetPlaybackState_Injected(PlaybackState& playbackState)
+private void SetTrails_Injected(Trails& trailData)
 private void Emit_Injected(EmitParams& emitParams, int count)
+private void TriggerSubEmitterForParticle_Injected(int subEmitterIndex, Particle& particle)
+private void GetManagedJobHandle_Injected(JobHandle& ret)
+private void SetManagedJobHandle_Injected(JobHandle& handle)
+private void ScheduleManagedJob_Injected(JobScheduleParameters& parameters, Void* additionalData, JobHandle& ret)
 }
 public UnityEngine.ParticleSystemAnimationMode : Enum {
 public int value__
 public ParticleSystemAnimationMode Grid
 public ParticleSystemAnimationMode Sprites
+}
+public UnityEngine.ParticleSystemAnimationRowMode : Enum {
+public int value__
+public ParticleSystemAnimationRowMode Custom
+public ParticleSystemAnimationRowMode Random
+public ParticleSystemAnimationRowMode MeshIndex
 }
 public UnityEngine.ParticleSystemAnimationTimeMode : Enum {
 public int value__
@@ -254,9 +284,9 @@ internal UnityEngine.ParticleSystemExtensionsImpl : object {
 internal int GetSafeCollisionEventSize(ParticleSystem ps)
 internal int GetCollisionEventsDeprecated(ParticleSystem ps, GameObject go, ParticleCollisionEvent[] collisionEvents)
 internal int GetSafeTriggerParticlesSize(ParticleSystem ps, int type)
-internal int GetCollisionEvents(ParticleSystem ps, GameObject go, object collisionEvents)
-internal int GetTriggerParticles(ParticleSystem ps, int type, object particles)
-internal void SetTriggerParticles(ParticleSystem ps, int type, object particles, int offset, int count)
+internal int GetCollisionEvents(ParticleSystem ps, GameObject go, List`1<ParticleCollisionEvent> collisionEvents)
+internal int GetTriggerParticles(ParticleSystem ps, int type, List`1<Particle> particles)
+internal void SetTriggerParticles(ParticleSystem ps, int type, List`1<Particle> particles, int offset, int count)
 }
 public UnityEngine.ParticleSystemForceField : Component {
 public ParticleSystemForceFieldShape shape
@@ -345,6 +375,7 @@ public UnityEngine.ParticleSystemGameObjectFilter : Enum {
 public int value__
 public ParticleSystemGameObjectFilter LayerMask
 public ParticleSystemGameObjectFilter List
+public ParticleSystemGameObjectFilter LayerMaskAndList
 }
 public UnityEngine.ParticleSystemGradientMode : Enum {
 public int value__
@@ -358,6 +389,114 @@ public UnityEngine.ParticleSystemInheritVelocityMode : Enum {
 public int value__
 public ParticleSystemInheritVelocityMode Initial
 public ParticleSystemInheritVelocityMode Current
+}
+public UnityEngine.ParticleSystemJobs.IJobParticleSystem {
+public void Execute(ParticleSystemJobData jobData)
+}
+public UnityEngine.ParticleSystemJobs.IJobParticleSystemParallelFor {
+public void Execute(ParticleSystemJobData jobData, int index)
+}
+public UnityEngine.ParticleSystemJobs.IJobParticleSystemParallelForBatch {
+public void Execute(ParticleSystemJobData jobData, int startIndex, int count)
+}
+public UnityEngine.ParticleSystemJobs.IParticleSystemJobExtensions : object {
+public JobHandle Schedule(T jobData, ParticleSystem ps, JobHandle dependsOn)
+public JobHandle Schedule(T jobData, ParticleSystem ps, int minIndicesPerJobCount, JobHandle dependsOn)
+public JobHandle ScheduleBatch(T jobData, ParticleSystem ps, int innerLoopBatchCount, JobHandle dependsOn)
+private JobScheduleParameters CreateScheduleParams(T& jobData, ParticleSystem ps, JobHandle dependsOn, IntPtr jobReflectionData)
+}
+internal UnityEngine.ParticleSystemJobs.NativeListData : ValueType {
+public Void* system
+public int length
+public int capacity
+}
+internal UnityEngine.ParticleSystemJobs.NativeParticleData : ValueType {
+internal int count
+internal Array3 positions
+internal Array3 velocities
+internal Array3 rotations
+internal Array3 rotationalSpeeds
+internal Array3 sizes
+internal Void* startColors
+internal Void* aliveTimePercent
+internal Void* inverseStartLifetimes
+internal Void* randomSeeds
+internal Array4 customData1
+internal Array4 customData2
+}
+public UnityEngine.ParticleSystemJobs.ParticleSystemJobData : ValueType {
+private int <count>k__BackingField
+private ParticleSystemNativeArray3 <positions>k__BackingField
+private ParticleSystemNativeArray3 <velocities>k__BackingField
+private ParticleSystemNativeArray3 <rotations>k__BackingField
+private ParticleSystemNativeArray3 <rotationalSpeeds>k__BackingField
+private ParticleSystemNativeArray3 <sizes>k__BackingField
+private NativeArray`1<Color32> <startColors>k__BackingField
+private NativeArray`1<float> <aliveTimePercent>k__BackingField
+private NativeArray`1<float> <inverseStartLifetimes>k__BackingField
+private NativeArray`1<UInt32> <randomSeeds>k__BackingField
+private ParticleSystemNativeArray4 <customData1>k__BackingField
+private ParticleSystemNativeArray4 <customData2>k__BackingField
+public int count
+public ParticleSystemNativeArray3 positions
+public ParticleSystemNativeArray3 velocities
+public ParticleSystemNativeArray3 rotations
+public ParticleSystemNativeArray3 rotationalSpeeds
+public ParticleSystemNativeArray3 sizes
+public NativeArray`1<Color32> startColors
+public NativeArray`1<float> aliveTimePercent
+public NativeArray`1<float> inverseStartLifetimes
+public NativeArray`1<UInt32> randomSeeds
+public ParticleSystemNativeArray4 customData1
+public ParticleSystemNativeArray4 customData2
+public int get_count()
+public ParticleSystemNativeArray3 get_positions()
+public ParticleSystemNativeArray3 get_velocities()
+public ParticleSystemNativeArray3 get_rotations()
+public ParticleSystemNativeArray3 get_rotationalSpeeds()
+public ParticleSystemNativeArray3 get_sizes()
+public NativeArray`1<Color32> get_startColors()
+public NativeArray`1<float> get_aliveTimePercent()
+public NativeArray`1<float> get_inverseStartLifetimes()
+public NativeArray`1<UInt32> get_randomSeeds()
+public ParticleSystemNativeArray4 get_customData1()
+public ParticleSystemNativeArray4 get_customData2()
+internal void .ctor(NativeParticleData& nativeData)
+internal NativeArray`1<T> CreateNativeArray(Void* src, int count)
+internal ParticleSystemNativeArray3 CreateNativeArray3(Array3& ptrs, int count)
+internal ParticleSystemNativeArray4 CreateNativeArray4(Array4& ptrs, int count)
+}
+internal UnityEngine.ParticleSystemJobs.ParticleSystemJobStruct`1 : ValueType {
+public IntPtr jobReflectionData
+public IntPtr Initialize()
+public void Execute(T& data, IntPtr listDataPtr, IntPtr unusedPtr, JobRanges& ranges, int jobIndex)
+}
+public UnityEngine.ParticleSystemJobs.ParticleSystemNativeArray3 : ValueType {
+public NativeArray`1<float> x
+public NativeArray`1<float> y
+public NativeArray`1<float> z
+public Vector3 Item
+public Vector3 get_Item(int index)
+public void set_Item(int index, Vector3 value)
+}
+public UnityEngine.ParticleSystemJobs.ParticleSystemNativeArray4 : ValueType {
+public NativeArray`1<float> x
+public NativeArray`1<float> y
+public NativeArray`1<float> z
+public NativeArray`1<float> w
+public Vector4 Item
+public Vector4 get_Item(int index)
+public void set_Item(int index, Vector4 value)
+}
+internal UnityEngine.ParticleSystemJobs.ParticleSystemParallelForBatchJobStruct`1 : ValueType {
+public IntPtr jobReflectionData
+public IntPtr Initialize()
+public void Execute(T& data, IntPtr listDataPtr, IntPtr bufferRangePatchData, JobRanges& ranges, int jobIndex)
+}
+internal UnityEngine.ParticleSystemJobs.ParticleSystemParallelForJobStruct`1 : ValueType {
+public IntPtr jobReflectionData
+public IntPtr Initialize()
+public void Execute(T& data, IntPtr listDataPtr, IntPtr bufferRangePatchData, JobRanges& ranges, int jobIndex)
 }
 public UnityEngine.ParticleSystemMeshShapeType : Enum {
 public int value__
@@ -438,22 +577,19 @@ public bool get_enableGPUInstancing()
 public void set_enableGPUInstancing(bool value)
 public bool get_allowRoll()
 public void set_allowRoll(bool value)
+public Mesh get_mesh()
+public void set_mesh(Mesh value)
+public int GetMeshes(Mesh[] meshes)
+public void SetMeshes(Mesh[] meshes, int size)
+public void SetMeshes(Mesh[] meshes)
+public int get_meshCount()
 public void BakeMesh(Mesh mesh, bool useTransform)
 public void BakeMesh(Mesh mesh, Camera camera, bool useTransform)
 public void BakeTrailsMesh(Mesh mesh, bool useTransform)
 public void BakeTrailsMesh(Mesh mesh, Camera camera, bool useTransform)
-public Mesh get_mesh()
-public void set_mesh(Mesh value)
-public int get_meshCount()
-private int Internal_GetMeshCount()
-public int GetMeshes(Mesh[] meshes)
-public void SetMeshes(Mesh[] meshes)
-public void SetMeshes(Mesh[] meshes, int size)
 public int get_activeVertexStreamsCount()
 public void SetActiveVertexStreams(List`1<ParticleSystemVertexStream> streams)
-internal void SetActiveVertexStreamsInternal(object streams)
 public void GetActiveVertexStreams(List`1<ParticleSystemVertexStream> streams)
-internal void GetActiveVertexStreamsInternal(object streams)
 private void get_pivot_Injected(Vector3& ret)
 private void set_pivot_Injected(Vector3& value)
 private void get_flip_Injected(Vector3& ret)
@@ -635,6 +771,7 @@ public ParticleSystemVertexStream NoiseSumXYZ
 public ParticleSystemVertexStream NoiseImpulseX
 public ParticleSystemVertexStream NoiseImpulseXY
 public ParticleSystemVertexStream NoiseImpulseXYZ
+public ParticleSystemVertexStream MeshIndex
 }
 public UnityEngine.ParticleSystemVertexStreams : Enum {
 public int value__

@@ -226,24 +226,21 @@ public string help
 public void .ctor(string help)
 }
 public Facepunch.Integration : BaseIntegration {
-private Auth _auth
-private Ticket _steamTicket
 public string PublicKey
 public string Bucket
-public string UserId
-public string UserName
-public Auth Auth
-public bool DebugOutput
 public string get_PublicKey()
 public string get_Bucket()
 public void OnManifestFile(Manifest manifest)
-public string get_UserId()
-public string get_UserName()
-public Auth get_Auth()
-public bool get_DebugOutput()
+public bool ShouldReportException(string message, string stackTrace, LogType type)
+}
+public Facepunch.KeyCombos : object {
+public bool TryParse(String& name, List`1& keys)
+public void RegisterButton(string name, List`1<KeyCode> keys)
+private bool IsFunctionKey(KeyCode keyCode)
+private bool IsMouseButton(KeyCode keyCode)
 }
 public Facepunch.RandomUsernames : object {
-public String[] All
+private String[] All
 public string Get(int v)
 public string Get(ulong v)
 }
@@ -466,442 +463,13 @@ private void SetKeyword()
 public bool IsActive()
 public void OnRenderImage(RenderTexture source, RenderTexture destination)
 }
-public MegaWindType : Enum {
-public int value__
-public MegaWindType Planar
-public MegaWindType Spherical
-}
-public MegaWire : MonoBehaviour {
-public bool Rebuild
-public float fudge
-public MegaWireStrandedMesher strandedMesher
-public float spring
-public float damp
-public float timeStep
-public float Mass
-public Vector3 gravity
-public float airdrag
-public float massRand
-public bool doCollisions
-public bool useraycast
-public LayerMask collisionmask
-public float collisionoff
-public float collisiondist
-public float floor
-public int points
-public int iters
-public int frameWait
-public int frameNum
-public bool stiffnessSprings
-public float stiffrate
-public float stiffdamp
-public bool lengthConstraints
-public MegaWireSolver verletsolver
-public bool showphysics
-public bool showconnections
-public bool showmeshparams
-public List`1<MegaWireConnectionDef> connections
-public List`1<MegaWireSpan> spans
-public Vector3 windDir
-public float windFrc
-public float windEffect
-public MegaWireWind wind
-public Material material
-public bool uselod
-public float disableDist
-public bool disableOnNotVisible
-public float lodreducesides
-public float lodreducesegs
-public GameObject startObj
-public float startAlpha
-public Vector3 startRot
-public Vector3 startOffset
-public GameObject endObj
-public float endAlpha
-public Vector3 endRot
-public Vector3 endOffset
-public List`1<MegaWireLodLevel> lods
-public bool hidespans
-public bool disableOnDistance
-public float distfromcamera
-public float rbodyforce
-public bool Enabled
-public bool ShowWire
-public float awakeTime
-public bool displayGizmo
-public Color gizmoColor
-public List`1<Transform> poles
-public float stretch
-public float warmPhysicsTime
-public bool builduvs
-public bool DisableAll
-public float startTime
-public bool showWindParams
-public bool showPhysicsAdv
-public bool showAttach
-public void Copy(MegaWire from, MegaWireConnectionHelper helper)
-public MegaWire Create(MegaWire wire, List`1<GameObject> objs, Material mat, string name, MegaWire copyfrom, float wiresize, float str)
-public void ChangeStretch(float stretch)
-public int GetVertexCount()
-public void SetHidden(bool hide)
-public void SetSelection(List`1<GameObject> objs, bool add)
-public void UpdateOffsets()
-public void Init()
-private void WireUpdate(float t)
-public void RunPhysics(float t)
-public Vector3 SetWeight(float alpha, int strand, float weight, bool snap)
-public Vector3 GetPos(float alpha, int strand, bool snap)
-private void Start()
-public void SetWireVisible(bool show)
-public void RebuildWire()
-private void LateUpdate()
-}
-public MegaWireAttach : MonoBehaviour {
-public MegaWire wire
-public int span
-public int connection
-public float alpha
-public Vector3 offset
-public bool align
-public Vector3 rotate
-private Quaternion locrot
-private Matrix4x4 wtm
-public Transform parent
-private void LateUpdate()
-}
-public MegaWireConnection : object {
-public Vector3 inOffset
-public Vector3 outOffset
-public float radius
-public Vector3 windFrc
-public Transform start
-public Transform end
-public float WireLength
-private Matrix4x4 wtm
-public List`1<MegaWireMass> masses
-public List`1<MegaWireSpring> springs
-public List`1<MegaWirePointConstraint> constraints
-public List`1<MegaWireLengthConstraint> lenconstraints
-public Vector3[] masspos
-public void SetEndConstraintActive(int index, bool active, float time)
-public void Update(MegaWire wire, float timeStep)
-public void Init(MegaWire wire)
-public void MoveMasses(MegaWire wire)
-public Vector3 Interp(float t)
-public Vector3 Velocity(float t)
-public Vector3 LinInterp(float t)
-public Matrix4x4 GetDeformMat(float alpha)
-public Matrix4x4 GetDeformMatLin(float alpha)
-}
-public MegaWireConnectionDef : object {
-public Vector3 inOffset
-public Vector3 outOffset
-public float radius
-public void .ctor(MegaWireConnectionDef src)
-}
-public MegaWireConnectionHelper : MonoBehaviour {
-public List`1<MegaWireConnectionDef> connections
-public bool showgizmo
-}
-public MegaWireConstraint : object {
-public bool active
-public float reactivate
-public float rtime
-public void Apply(MegaWireConnection soft)
-}
-public MegaWireGizmoType : Enum {
-public int value__
-public MegaWireGizmoType Waypoint
-public MegaWireGizmoType Pole
-public MegaWireGizmoType Both
-}
-public MegaWireHanger : MonoBehaviour {
-public MegaWire wire
-public float alpha
-public int strand
-public float offset
-public float weight
-public bool align
-public Vector3 rotate
-private Quaternion locrot
-private Matrix4x4 wtm
-public Transform parent
-private void LateUpdate()
-}
-public MegaWireLengthConstraint : MegaWireConstraint {
-public int p1
-public int p2
-public float length
-private Vector3 moveVector
-public void .ctor(int _p1, int _p2, float _len)
-public void Apply(MegaWireConnection soft)
-}
-public MegaWireLodLevel : object {
-public float distance
-public int sides
-public float segsperunit
-}
-public MegaWireMass : object {
-public Vector3 pos
-public Vector3 last
-public Vector3 force
-public Vector3 vel
-public Vector3 posc
-public Vector3 velc
-public Vector3 forcec
-public float mass
-public float oneovermass
-public bool collide
-public void .ctor(float m, Vector3 p)
-}
-public MegaWireMesher : object {
-public bool show
-private Vector3[] tan1
-private Vector3[] tan2
-public void BuildMesh(MegaWire rope, MegaWireSpan span)
-public void BuildTangents(Mesh mesh, Vector3[] verts, Vector2[] uvs, Vector3[] norms, Int32[] tris)
-}
-public MegaWireOrbit : MonoBehaviour {
-public GameObject target
-private MeshRenderer render
-private SkinnedMeshRenderer srender
-private MeshFilter filter
-public float distance
-public float xSpeed
-public float ySpeed
-public float zSpeed
-public float yMinLimit
-public float yMaxLimit
-public float xMinLimit
-public float xMaxLimit
-public float x
-public float y
-private Vector3 center
-public bool Dynamic
-public Vector3 offset
-public Vector3 EditTest
-private Vector3 tpos
-private float t
-public float trantime
-public float vx
-public float vy
-public float vz
-public float nx
-public float ny
-public float nz
-public float delay
-public float delayz
-public float mindist
-private void Start()
-private float easeInOutQuint(float start, float end, float value)
-private float easeInQuad(float start, float end, float value)
-private float easeInSine(float start, float end, float value)
-public void NewTarget(GameObject targ)
-private void LateUpdate()
-private float ClampAngle(float angle, float min, float max)
-private void OnGUI()
-}
-public MegaWirePerlin : object {
-private MegaWirePerlin instance
-private Int32[] p
-private Int32[] permutation
-public MegaWirePerlin Instance
-public MegaWirePerlin get_Instance()
-public int Perm(int i)
-public float Noise(float x)
-public float Noise(float x, float y)
-public float Noise(float x, float y, float z)
-private float fade(float t)
-private float lerp(float t, float a, float b)
-private float grad(int hash, float x)
-private float grad(int hash, float x, float y)
-private float grad(int hash, float x, float y, float z)
-public float fBm1(float x, float H, float lacunarity, float octaves)
-public float fBm1(Vector3 vertex, float H, float lacunarity, float octaves)
-public float fBm1(float x, float y, float z, float H, float lacunarity, float octaves)
-}
-public MegaWirePlantPolesList : MonoBehaviour {
-public List`1<Vector3> waypoints
-public bool closed
-public int curve
-public float start
-public float length
-public float spacing
-public bool update
-public GameObject pole
-public Vector3 rotate
-public float offset
-public bool conform
-public float upright
-public bool addwires
-public List`1<GameObject> poles
-public MegaWire copyfrom
-public Material material
-public Vector3 positionVariation
-public Vector3 rotateVariation
-public Vector3 scaleVariation
-public float spacingVariation
-public bool reverseWire
-public int seed
-public float wireSizeMult
-public float stretch
-public bool showgizmo
-public bool showgizmoparams
-public MegaWireGizmoType gizmoType
-public float arrowwidth
-public float arrowlength
-public float vertStart
-public float vertLength
-public float arrowoff
-public float dashdist
-public Color arrowCol
-public Color lineCol
-public Color otherCol
-public Color dashCol
-public MegaWireUnits units
-public float unitsScale
-private List`1<MegaWireSection> knots
-private float pathlength
-public Vector3 Interpolate(float alpha)
-public Vector3 InterpCurve3D(float alpha)
-private float CalcLength()
-public void Rebuild()
-}
-public MegaWirePointConstraint : MegaWireConstraint {
-public int p1
-public Vector3 offset
-public Transform obj
-public Vector3 ps
-public Vector3 tp
-public void .ctor(int _p1, Transform trans, Vector3 off)
-private Vector3 easeInOutSine(Vector3 start, Vector3 end, float value)
-public void ReActivate(MegaWireConnection soft, float t)
-public void Apply(MegaWireConnection soft)
-}
-public MegaWireSolver : object {
-public void doIntegration1(MegaWireConnection rope, MegaWire wire, float dt)
-public void Solve()
-}
-public MegaWireSolverVertlet : MegaWireSolver {
-private void doCalculateForces(MegaWireConnection rope, MegaWire wire)
-private void DoConstraints(MegaWireConnection rope, MegaWire wire)
-public void doIntegration1(MegaWireConnection rope, MegaWire wire, float dt)
-private void DoCollisions(MegaWireConnection rope, MegaWire wire)
-}
-public MegaWireSpan : MonoBehaviour {
-public bool visible
-public bool on
-public Transform start
-public Transform end
-public List`1<MegaWireConnection> connections
-public Mesh mesh
-public float WireLength
-public bool AllowUpdates
-public bool buildmesh
-public float time
-public Matrix4x4 startTm
-public Matrix4x4 endTm
-public int vcount
-public Vector3[] verts
-public Vector2[] uvs
-public Int32[] tris
-public Vector3[] norms
-private void OnBecameVisible()
-private void OnBecameInvisible()
-public void Init(MegaWire wire)
-public void UpdateSpan(MegaWire wire, float ts)
-public void MoveMasses(MegaWire wire)
-public void BuildMesh(MegaWire wire)
-}
-public MegaWireSpring : object {
-public int p1
-public int p2
-public float restlen
-public float initlen
-public float ks
-public float kd
-public float len
-public void .ctor(int _p1, int _p2, float _ks, float _kd, MegaWireConnection con)
-public void .ctor(int _p1, int _p2, float _ks, float _kd, MegaWireConnection con, float stretch)
-public void doCalculateSpringForce(MegaWireConnection hose)
-public void doCalculateSpringForce1(MegaWireConnection mod)
-}
-public MegaWireStrandedMesher : MegaWireMesher {
-private Matrix4x4 wtm
-public int sides
-public int segments
-public float uvtwist
-public float uvtilex
-public float uvtiley
-public int strands
-public float offset
-public float Twist
-public bool cap
-public float strandRadius
-public float SegsPerUnit
-public float TwistPerUnit
-public bool calcBounds
-public bool calcTangents
-public bool genuv
-public bool linInterp
-private Vector3[] cross
-private Vector3[] cnorms
-public void Copy(MegaWireStrandedMesher src)
-public void BuildMesh(MegaWire rope, MegaWireSpan span)
-private void BuildCrossSection(float rad)
-}
-public MegaWireUnits : Enum {
-public int value__
-public MegaWireUnits Meters
-public MegaWireUnits Centimeters
-public MegaWireUnits Feet
-public MegaWireUnits Inches
-public MegaWireUnits Yards
-}
-public MegaWireWatch : MonoBehaviour {
-public bool realtime
-public GameObject watch
-public Matrix4x4 mat
-private void Start()
-private void Update()
-}
-public MegaWireWind : MonoBehaviour {
-public float decay
-public float turb
-public float strength
-public MegaWindType type
-public float freq
-public float scale
-public Vector3 force
-private MegaWirePerlin iperlin
-private float forceScaleFactor
-public Vector3 gizmoSize
-public int divs
-public bool displayGizmo
-public float gizscale
-public Vector3 gizmopos
-public Color gizmocol
-public bool dirnoise
-public float dirfreq
-public float dirphase
-public Vector3 dirscale
-public bool strengthnoise
-public float strengthfreq
-public float strengthphase
-public float strengthscale
-public Vector3 dir
-public float t
-private Vector3 rotseed
-private float strengthval
-private Vector3 dirval
-private float RTurbulence(Vector3 p, float freq)
-public Vector3 Force(Vector3 pos)
-private void Update()
-}
 public NeedsKeyboard : ListComponent`1<NeedsKeyboard> {
 public UnityEvent onNoKeysDown
+public bool ShowEscapeUI
 private bool watchForNoKeys
+public bool ShouldShowUI
 public bool AnyActive()
+public bool get_ShouldShowUI()
 protected void OnEnable()
 public void Update()
 }
@@ -1704,8 +1272,6 @@ protected void OnDisable()
 protected void OnRenderImage(RenderTexture source, RenderTexture destination)
 }
 public TOD_Sky : MonoBehaviour {
-private float pi
-private float tau
 private List`1<TOD_Sky> instances
 private int probeRenderID
 public TOD_ColorSpaceType ColorSpace
@@ -1766,6 +1332,7 @@ private Color <GroundColor>k__BackingField
 private Color <AmbientColor>k__BackingField
 private Color <MoonHaloColor>k__BackingField
 private ReflectionProbe <Probe>k__BackingField
+private GameObject <ProbeInstance>k__BackingField
 private MonoBehaviour <ProbeEx>k__BackingField
 private float timeSinceLightUpdate
 private float timeSinceAmbientUpdate
@@ -1776,6 +1343,8 @@ private Vector4 kSun
 private Vector4 k4PI
 private Vector4 kRadius
 private Vector4 kScale
+private float pi
+private float tau
 public List`1<TOD_Sky> Instances
 public TOD_Sky Instance
 public bool Initialized
@@ -1822,9 +1391,8 @@ public Color GroundColor
 public Color AmbientColor
 public Color MoonHaloColor
 public ReflectionProbe Probe
+public GameObject ProbeInstance
 public MonoBehaviour ProbeEx
-private void UpdateScattering()
-private void UpdateCelestials()
 public List`1<TOD_Sky> get_Instances()
 public TOD_Sky get_Instance()
 public bool get_Initialized()
@@ -1909,6 +1477,8 @@ public Color get_MoonHaloColor()
 private void set_MoonHaloColor(Color value)
 public ReflectionProbe get_Probe()
 private void set_Probe(ReflectionProbe value)
+public GameObject get_ProbeInstance()
+private void set_ProbeInstance(GameObject value)
 public MonoBehaviour get_ProbeEx()
 private void set_ProbeEx(MonoBehaviour value)
 public Vector3 OrbitalToUnity(float radius, float theta, float phi)
@@ -1917,7 +1487,8 @@ public Color SampleAtmosphere(Vector3 direction, bool directLight)
 public SphericalHarmonicsL2 RenderToSphericalHarmonics()
 public SphericalHarmonicsL2 RenderToSphericalHarmonics(float intensity, float saturation)
 public void RenderToCubemap(RenderTexture targetTexture)
-public void RenderToProbeEx(RenderTexture targetTexture)
+public void RenderToProbe()
+private void UpdateProbeProperties()
 public Color SampleFogColor(bool directLight)
 public Color SampleSkyColor()
 public Color SampleEquatorColor()
@@ -1945,6 +1516,8 @@ protected void OnEnable()
 protected void OnDisable()
 protected void LateUpdate()
 protected void OnValidate()
+private void UpdateScattering()
+private void UpdateCelestials()
 }
 public TOD_SkyQualityType : Enum {
 public int value__
@@ -1990,6 +1563,7 @@ private Action OnSunset
 private TOD_Sky sky
 private AnimationCurve timeCurve
 private AnimationCurve timeCurveInverse
+private float timeFraction
 public void add_OnSecond(Action value)
 public void remove_OnSecond(Action value)
 public void add_OnMinute(Action value)
@@ -2013,7 +1587,7 @@ public void AddSeconds(float seconds, bool adjust)
 private void CalculateLinearTangents(Keyframe[] keys)
 private void ApproximateCurve(AnimationCurve source, AnimationCurve& approxCurve, AnimationCurve& approxInverse)
 protected void Awake()
-protected void FixedUpdate()
+protected void Update()
 }
 public TOD_Util : object {
 public Color MulRGB(Color color, float multiplier)
@@ -2051,41 +1625,6 @@ public TOD_WorldParameters : object {
 public float Latitude
 public float Longitude
 public float UTC
-}
-public TrackIR : object {
-private dNP_GetSignatureDelegate NP_GetSignatureDelegate
-private dNP_RegisterWindowHandle NP_RegisterWindowHandle
-private dNP_UnregisterWindowHandle NP_UnregisterWindowHandle
-private dNP_RegisterProgramProfileID NP_RegisterProgramProfileID
-private dNP_QueryVersion NP_QueryVersion
-private dNP_RequestData NP_RequestData
-private dNP_GetData NP_GetData
-private dNP_StartCursor NP_StartCursor
-private dNP_StopCursor NP_StopCursor
-private dNP_ReCenter NP_ReCenter
-private dNP_StartDataTransmission NP_StartDataTransmission
-private dNP_StopDataTransmission NP_StopDataTransmission
-private ulong frameSignature
-private ulong staleFrames
-private NPRESULT result
-private NPDATA data
-private bool verbose
-private IntPtr dllPtr
-private ushort developerID
-private long appKeyHigh
-private long appKeyLow
-private int GetForegroundWindow()
-private IntPtr LoadLibrary(string lpFileName)
-private IntPtr GetProcAddress(IntPtr hModule, string lpProcName)
-private bool FreeLibrary(IntPtr hModule)
-public void .ctor(ushort developerID, long appKeyHigh, long appKeyLow, NPDATA data, bool verbose)
-public void Init()
-private bool Connect(string dllPath)
-private string GetPath()
-public void Shutdown()
-public LPTRACKIRDATA GetData()
-public void Refresh()
-public void ReCenter()
 }
 public UnityEngine.AI.CollectObjects : Enum {
 public int value__
@@ -2588,6 +2127,12 @@ private Material creaseApplyMaterial
 public bool CheckResources()
 private void OnRenderImage(RenderTexture source, RenderTexture destination)
 }
+public UnityStandardAssets.ImageEffects.DepthAwareBackgroundBlur : DepthOfField {
+public float StartDistance
+public float BlurSize
+public BlurSampleCount BlurQuality
+private void Awake()
+}
 public UnityStandardAssets.ImageEffects.DepthOfField : PostEffectsBase {
 public bool visualizeFocus
 public float focalLength
@@ -2600,6 +2145,7 @@ public BlurType blurType
 public BlurSampleCount blurSampleCount
 public bool nearBlur
 public float foregroundOverlap
+private bool forceOnlyFarBlur
 public Shader dofHdrShader
 private Material dofHdrMaterial
 public Shader dx11BokehShader
@@ -2613,6 +2159,9 @@ private float focalDistance01
 private ComputeBuffer cbDrawArgs
 private ComputeBuffer cbPoints
 private float internalBlurWidth
+public bool ForceOnlyFarBlur
+public bool get_ForceOnlyFarBlur()
+public void set_ForceOnlyFarBlur(bool value)
 public bool CheckResources()
 private void OnEnable()
 private void OnDisable()

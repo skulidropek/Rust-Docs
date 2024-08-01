@@ -7,11 +7,11 @@ public bool hideAssetInstances
 public bool hideDefaultInstance
 public bool defaultBrush
 public string defaultName
-public void .ctor(bool hideAssetInstances, bool hideDefaultInstance, bool defaultBrush, string defaultName)
 public bool get_hideAssetInstances()
 public bool get_hideDefaultInstance()
 public bool get_defaultBrush()
 public string get_defaultName()
+public void .ctor(bool hideAssetInstances, bool hideDefaultInstance, bool defaultBrush, string defaultName)
 }
 public UnityEngine.GridBrushBase : ScriptableObject {
 public void Paint(GridLayout gridLayout, GameObject brushTarget, Vector3Int position)
@@ -238,6 +238,14 @@ private ColliderType GetColliderType_Injected(Vector3Int& position)
 private void FloodFillTileAsset_Injected(Vector3Int& position, Object tile)
 private void BoxFillTileAsset_Injected(Vector3Int& position, Object tile, int startX, int startY, int endX, int endY)
 }
+public UnityEngine.Tilemaps.TilemapCollider2D : Collider2D {
+public UInt32 maximumTileChangeCount
+public float extrusionFactor
+public UInt32 get_maximumTileChangeCount()
+public void set_maximumTileChangeCount(UInt32 value)
+public float get_extrusionFactor()
+public void set_extrusionFactor(float value)
+}
 public UnityEngine.Tilemaps.TilemapRenderer : Renderer {
 public Vector3Int chunkSize
 public Vector3 chunkCullingBounds
@@ -263,6 +271,9 @@ public DetectChunkCullingBounds get_detectChunkCullingBounds()
 public void set_detectChunkCullingBounds(DetectChunkCullingBounds value)
 public SpriteMaskInteraction get_maskInteraction()
 public void set_maskInteraction(SpriteMaskInteraction value)
+internal void RegisterSpriteAtlasRegistered()
+internal void UnregisterSpriteAtlasRegistered()
+internal void OnSpriteAtlasRegistered(SpriteAtlas atlas)
 private void get_chunkSize_Injected(Vector3Int& ret)
 private void set_chunkSize_Injected(Vector3Int& value)
 private void get_chunkCullingBounds_Injected(Vector3& ret)

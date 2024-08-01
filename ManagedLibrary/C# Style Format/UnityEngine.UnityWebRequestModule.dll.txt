@@ -24,6 +24,7 @@ protected string GetText()
 private Encoding GetTextEncoder()
 private string GetContentType()
 protected bool ReceiveData(Byte[] data, int dataLength)
+protected void ReceiveContentLengthHeader(ulong contentLength)
 protected void ReceiveContentLength(int contentLength)
 protected void CompleteContent()
 protected float GetProgress()
@@ -39,20 +40,21 @@ public string GetContent(UnityWebRequest www)
 }
 public UnityEngine.Networking.DownloadHandlerFile : DownloadHandler {
 public bool removeFileOnAbort
+private IntPtr Create(DownloadHandlerFile obj, string path, bool append)
+private void InternalCreateVFS(string path, bool append)
 public void .ctor(string path)
-private IntPtr Create(DownloadHandlerFile obj, string path)
-private void InternalCreateVFS(string path)
+public void .ctor(string path, bool append)
 protected Byte[] GetData()
 protected string GetText()
 public bool get_removeFileOnAbort()
 public void set_removeFileOnAbort(bool value)
 }
 public UnityEngine.Networking.DownloadHandlerScript : DownloadHandler {
-public void .ctor(Byte[] preallocatedBuffer)
 private IntPtr Create(DownloadHandlerScript obj)
 private IntPtr CreatePreallocated(DownloadHandlerScript obj, Byte[] preallocatedBuffer)
 private void InternalCreateScript()
 private void InternalCreateScript(Byte[] preallocatedBuffer)
+public void .ctor(Byte[] preallocatedBuffer)
 }
 public UnityEngine.Networking.IMultipartFormSection {
 public string sectionName
@@ -93,13 +95,13 @@ public string sectionName
 public Byte[] sectionData
 public string fileName
 public string contentType
+private void Init(string name, Byte[] data, string fileName, string contentType)
 public void .ctor(string name, Byte[] data, string fileName, string contentType)
 public void .ctor(Byte[] data)
 public void .ctor(string fileName, Byte[] data)
 public void .ctor(string name, string data, Encoding dataEncoding, string fileName)
 public void .ctor(string data, Encoding dataEncoding, string fileName)
 public void .ctor(string data, string fileName)
-private void Init(string name, Byte[] data, string fileName, string contentType)
 public string get_sectionName()
 public Byte[] get_sectionData()
 public string get_fileName()
@@ -144,12 +146,7 @@ public UploadHandler uploadHandler
 public DownloadHandler downloadHandler
 public CertificateHandler certificateHandler
 public int timeout
-public void .ctor(string url)
-public void .ctor(Uri uri)
-public void .ctor(string url, string method)
-public void .ctor(Uri uri, string method)
-public void .ctor(string url, string method, DownloadHandler downloadHandler, UploadHandler uploadHandler)
-public void .ctor(Uri uri, string method, DownloadHandler downloadHandler, UploadHandler uploadHandler)
+internal bool suppressErrorsToConsole
 private string GetWebErrorString(UnityWebRequestError err)
 internal string GetHTTPStatusString(long responseCode)
 public bool get_disposeCertificateHandlerOnDispose()
@@ -165,6 +162,12 @@ internal IntPtr Create()
 private void Release()
 internal void InternalDestroy()
 private void InternalSetDefaults()
+public void .ctor(string url)
+public void .ctor(Uri uri)
+public void .ctor(string url, string method)
+public void .ctor(Uri uri, string method)
+public void .ctor(string url, string method, DownloadHandler downloadHandler, UploadHandler uploadHandler)
+public void .ctor(Uri uri, string method, DownloadHandler downloadHandler, UploadHandler uploadHandler)
 protected void Finalize()
 public void Dispose()
 private void DisposeHandlers()
@@ -232,6 +235,10 @@ private int GetTimeoutMsec()
 private UnityWebRequestError SetTimeoutMsec(int timeout)
 public int get_timeout()
 public void set_timeout(int value)
+private bool GetSuppressErrorsToConsole()
+private UnityWebRequestError SetSuppressErrorsToConsole(bool suppress)
+internal bool get_suppressErrorsToConsole()
+internal void set_suppressErrorsToConsole(bool value)
 public UnityWebRequest Get(string uri)
 public UnityWebRequest Get(Uri uri)
 public UnityWebRequest Delete(string uri)
@@ -294,22 +301,19 @@ internal Byte[] GetData()
 internal string GetContentType()
 internal void SetContentType(string newContentType)
 internal float GetProgress()
-}
-public UnityEngine.Networking.UploadHandlerFile : UploadHandler {
-public void .ctor(string filePath)
-private IntPtr Create(UploadHandlerFile self, string filePath)
-}
-public UnityEngine.Networking.UploadHandlerRaw : UploadHandler {
-public void .ctor(Byte[] data)
-private IntPtr Create(UploadHandlerRaw self, Byte[] data)
 private string InternalGetContentType()
 private void InternalSetContentType(string newContentType)
-private Byte[] InternalGetData()
 private float InternalGetProgress()
-internal string GetContentType()
-internal void SetContentType(string newContentType)
+}
+public UnityEngine.Networking.UploadHandlerFile : UploadHandler {
+private IntPtr Create(UploadHandlerFile self, string filePath)
+public void .ctor(string filePath)
+}
+public UnityEngine.Networking.UploadHandlerRaw : UploadHandler {
+private IntPtr Create(UploadHandlerRaw self, Byte[] data)
+public void .ctor(Byte[] data)
+private Byte[] InternalGetData()
 internal Byte[] GetData()
-internal float GetProgress()
 }
 public UnityEngine.WWWForm : object {
 private List`1<Byte[]> formData

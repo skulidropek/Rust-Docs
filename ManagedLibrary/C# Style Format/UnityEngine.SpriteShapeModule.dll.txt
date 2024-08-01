@@ -1,23 +1,34 @@
-public UnityEngine.Experimental.U2D.AngleRangeInfo : ValueType {
+public UnityEngine.U2D.AngleRangeInfo : ValueType {
 public float start
 public float end
 public UInt32 order
 public Int32[] sprites
 }
-public UnityEngine.Experimental.U2D.ShapeControlPoint : ValueType {
+public UnityEngine.U2D.ShapeControlPoint : ValueType {
 public Vector3 position
 public Vector3 leftTangent
 public Vector3 rightTangent
 public int mode
 }
-public UnityEngine.Experimental.U2D.SpriteShapeMetaData : ValueType {
+internal UnityEngine.U2D.SpriteShapeDataType : Enum {
+public int value__
+public SpriteShapeDataType Index
+public SpriteShapeDataType Segment
+public SpriteShapeDataType BoundingBox
+public SpriteShapeDataType ChannelVertex
+public SpriteShapeDataType ChannelTexCoord0
+public SpriteShapeDataType ChannelNormal
+public SpriteShapeDataType ChannelTangent
+public SpriteShapeDataType DataCount
+}
+public UnityEngine.U2D.SpriteShapeMetaData : ValueType {
 public float height
 public float bevelCutoff
 public float bevelSize
 public UInt32 spriteIndex
 public bool corner
 }
-public UnityEngine.Experimental.U2D.SpriteShapeParameters : ValueType {
+public UnityEngine.U2D.SpriteShapeParameters : ValueType {
 public Matrix4x4 transform
 public Texture2D fillTexture
 public UInt32 fillScale
@@ -30,8 +41,53 @@ public bool carpet
 public bool smartSprite
 public bool adaptiveUV
 public bool spriteBorders
+public bool stretchUV
 }
-public UnityEngine.Experimental.U2D.SpriteShapeUtility : object {
+public UnityEngine.U2D.SpriteShapeRenderer : Renderer {
+public Color color
+public SpriteMaskInteraction maskInteraction
+public Color get_color()
+public void set_color(Color value)
+public SpriteMaskInteraction get_maskInteraction()
+public void set_maskInteraction(SpriteMaskInteraction value)
+public void Prepare(JobHandle handle, SpriteShapeParameters shapeParams, Sprite[] sprites)
+private NativeArray`1<T> GetNativeDataArray(SpriteShapeDataType dataType)
+private NativeSlice`1<T> GetChannelDataArray(SpriteShapeDataType dataType, VertexAttribute channel)
+private void SetSegmentCount(int geomCount)
+private void SetMeshDataCount(int vertexCount, int indexCount)
+private void SetMeshChannelInfo(int vertexCount, int indexCount, int hotChannelMask)
+private SpriteChannelInfo GetDataInfo(SpriteShapeDataType arrayType)
+private SpriteChannelInfo GetChannelInfo(VertexAttribute channel)
+public NativeArray`1<Bounds> GetBounds()
+public NativeArray`1<SpriteShapeSegment> GetSegments(int dataSize)
+public void GetChannels(int dataSize, NativeArray`1& indices, NativeSlice`1& vertices, NativeSlice`1& texcoords)
+public void GetChannels(int dataSize, NativeArray`1& indices, NativeSlice`1& vertices, NativeSlice`1& texcoords, NativeSlice`1& tangents)
+public void GetChannels(int dataSize, NativeArray`1& indices, NativeSlice`1& vertices, NativeSlice`1& texcoords, NativeSlice`1& tangents, NativeSlice`1& normals)
+private void get_color_Injected(Color& ret)
+private void set_color_Injected(Color& value)
+private void Prepare_Injected(JobHandle& handle, SpriteShapeParameters& shapeParams, Sprite[] sprites)
+private void GetDataInfo_Injected(SpriteShapeDataType arrayType, SpriteChannelInfo& ret)
+private void GetChannelInfo_Injected(VertexAttribute channel, SpriteChannelInfo& ret)
+}
+public UnityEngine.U2D.SpriteShapeSegment : ValueType {
+private int m_GeomIndex
+private int m_IndexCount
+private int m_VertexCount
+private int m_SpriteIndex
+public int geomIndex
+public int indexCount
+public int vertexCount
+public int spriteIndex
+public int get_geomIndex()
+public void set_geomIndex(int value)
+public int get_indexCount()
+public void set_indexCount(int value)
+public int get_vertexCount()
+public void set_vertexCount(int value)
+public int get_spriteIndex()
+public void set_spriteIndex(int value)
+}
+public UnityEngine.U2D.SpriteShapeUtility : object {
 public Int32[] Generate(Mesh mesh, SpriteShapeParameters shapeParams, ShapeControlPoint[] points, SpriteShapeMetaData[] metaData, AngleRangeInfo[] angleRange, Sprite[] sprites, Sprite[] corners)
 public void GenerateSpriteShape(SpriteShapeRenderer renderer, SpriteShapeParameters shapeParams, ShapeControlPoint[] points, SpriteShapeMetaData[] metaData, AngleRangeInfo[] angleRange, Sprite[] sprites, Sprite[] corners)
 private Int32[] Generate_Injected(Mesh mesh, SpriteShapeParameters& shapeParams, ShapeControlPoint[] points, SpriteShapeMetaData[] metaData, AngleRangeInfo[] angleRange, Sprite[] sprites, Sprite[] corners)

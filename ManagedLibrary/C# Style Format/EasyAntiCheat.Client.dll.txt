@@ -113,6 +113,7 @@ public void Initialize(CallbackProgress OnProgress, CallbackFinished OnFinished,
 public void ConnectionReset()
 public bool PopNetworkMessage(Byte[]& MessageBuffer, Int32& MessageLength)
 public void SetMaxAllowedMessageLength(int MaxMessageLength)
+public void SetPlatformUserAuthTicket(string PlatformName, Byte[] AuthTicket, int AuthTicketLength)
 public void PushNetworkMessage(Byte[] MessageBuffer, int MessageLength)
 public void PollStatus()
 public void ValidateServerHost(UInt32 TimeoutMs)
@@ -169,6 +170,7 @@ private void set_HostValidation(HostValidationResult value)
 public void Initialize(EventHandler`1<StateChangedEventArgs> onStateChanged, EventHandler`1<LoadCompletedEventArgs> onCompleted, EventHandler`1<LoadProgressEventArgs> onProgress)
 public bool IsActive()
 public void Release()
+public void SetPlatformUserAuthTicket(string PlatformName, Byte[] AuthTicket, int AuthTicketLength)
 public void ConnectionReset()
 public bool PopNetworkMessage(Byte[]& MessageBuffer, Int32& MessageLength)
 public void SetMaxAllowedMessageLength(int MaxMessageLength)
@@ -207,49 +209,6 @@ public bool get_Violated()
 private void set_Violated(bool value)
 public string get_ViolationMessage()
 private void set_ViolationMessage(string value)
-}
-internal EasyAntiCheat.Client.Legacy.NativeClient : object {
-private string InterfaceVersion
-private INativeModule Module
-private IntPtr Instance
-private CallbackProgress nogcOnProgress
-private CallbackFinished nogcOnFinished
-public bool IsStartedWithEasyAntiCheat()
-public bool IsUnity()
-public bool IsWindows()
-public void Dispose()
-public void Initialize(CallbackProgress OnProgress, CallbackFinished OnFinished)
-public void SetUserToken(Byte[] UserToken, int SizeOfToken)
-}
-public EasyAntiCheat.Client.Legacy.Runtime : object {
-private CallbackProgress nogc_AntiCheatProgress
-private CallbackFinished nogc_AntiCheatEvent
-private Byte[] userToken
-private bool initializeCalled
-private EventHandler`1<LoadProgressEventArgs> onProgress
-private EventHandler`1<LoadCompletedEventArgs> onLoadCompleted
-private EventHandler`1<StateChangedEventArgs> onStateChanged
-private ConnectionDescriptor <Connection>k__BackingField
-private bool <Initialized>k__BackingField
-private IntegrityDescriptor <Integrity>k__BackingField
-public ConnectionDescriptor Connection
-public bool Initialized
-public IntegrityDescriptor Integrity
-public Byte[] UserToken
-public ConnectionDescriptor get_Connection()
-private void set_Connection(ConnectionDescriptor value)
-public bool get_Initialized()
-private void set_Initialized(bool value)
-public IntegrityDescriptor get_Integrity()
-private void set_Integrity(IntegrityDescriptor value)
-public Byte[] get_UserToken()
-public void set_UserToken(Byte[] value)
-public void Initialize(EventHandler`1<LoadCompletedEventArgs> onCompleted, EventHandler`1<LoadProgressEventArgs> onProgress, EventHandler`1<StateChangedEventArgs> onStateChanged)
-public bool IsActive()
-public void Release()
-private UInt32 OnInternalProgress(UInt32 Progress, IntPtr CallbackParameter)
-private void OnInternalEvent(LoadResult Result, string Message, IntPtr CallbackParameter)
-private void UpdateUserToken()
 }
 public EasyAntiCheat.Client.LoadCompletedEventArgs : LoadEventArgs {
 private LoadResult <Status>k__BackingField
@@ -338,11 +297,12 @@ private Runtime`1<TClient> Runtime
 internal void .ctor(IntPtr NativeInstance, Runtime`1<TClient> Runtime)
 public void BeginFrame()
 public void EndFrame()
-public void LogGameRoundStart(string MapName)
+public void LogGameRoundStart(string MapName, string ModeName, int RoundTimeSeconds)
 public void LogGameRoundEnd(int WinningTeamID)
 public void LogPlayerSpawn(TClient Player, int TeamID, int CharacterID)
 public void LogPlayerDespawn(TClient Player)
 public void LogPlayerKill(TClient PlayerVictim, TClient PlayerAttacker)
+public void LogPlayerDowned(TClient PlayerVictim, TClient PlayerAttacker)
 public void LogPlayerRevive(TClient PlayerRevived, TClient PlayerReviving)
 public void LogPlayerTick(TClient Player, PlayerTick EventParams)
 public void LogPlayerUseWeapon(TClient Player, PlayerUseWeapon EventParams)
@@ -352,11 +312,12 @@ internal void SetNativeInstance(IntPtr NativeInstance)
 public EasyAntiCheat.Client.P2P.Cerberus.ICerberus`1 {
 public void BeginFrame()
 public void EndFrame()
-public void LogGameRoundStart(string MapName)
+public void LogGameRoundStart(string MapName, string ModeName, int RoundTimeSeconds)
 public void LogGameRoundEnd(int WinningTeamID)
 public void LogPlayerSpawn(TClient Player, int TeamID, int CharacterID)
 public void LogPlayerDespawn(TClient Player)
 public void LogPlayerKill(TClient ClientVictim, TClient ClientKiller)
+public void LogPlayerDowned(TClient PlayerVictim, TClient PlayerAttacker)
 public void LogPlayerRevive(TClient PlayerRevived, TClient PlayerReviving)
 public void LogPlayerTick(TClient Player, PlayerTick EventParams)
 public void LogPlayerUseWeapon(TClient Player, PlayerUseWeapon EventParams)
@@ -364,9 +325,9 @@ public void LogPlayerTakeDamage(TClient PlayerVictim, TClient PlayerAttacker, Pl
 }
 public EasyAntiCheat.Client.P2P.Cerberus.PlayerTakeDamage : ValueType {
 public Vector3 VictimPosition
-public Vector3 VictimViewAngles
+public Quaternion VictimViewRotation
 public Vector3 AttackerPosition
-public Vector3 AttackerViewAngles
+public Quaternion AttackerViewRotation
 public int AttackerFieldOfView
 public int WeaponID
 public int HitBoneID
@@ -380,7 +341,7 @@ public PlayerTakeDamageFlags PlayerTakeDamageCriticalHit
 }
 public EasyAntiCheat.Client.P2P.Cerberus.PlayerTick : ValueType {
 public Vector3 Position
-public Vector3 ViewAngles
+public Quaternion ViewRotation
 public int Health
 public PlayerTickFlags TickFlags
 }
@@ -390,44 +351,55 @@ public PlayerTickFlags PlayerTickNone
 public PlayerTickFlags PlayerTickCrouched
 public PlayerTickFlags PlayerTickProned
 public PlayerTickFlags PlayerTickMounted
-public PlayerTickFlags PlayerTickDormant
+public PlayerTickFlags PlayerTickDowned
 public PlayerTickFlags PlayerTickSwimming
 public PlayerTickFlags PlayerTickAirborne
 public PlayerTickFlags PlayerTickClimbingLadder
+public PlayerTickFlags PlayerTickStunned
 }
 public EasyAntiCheat.Client.P2P.Cerberus.PlayerUseWeapon : ValueType {
 public Vector3 Position
-public Vector3 ViewAngles
+public Quaternion ViewRotation
 public int FieldOfView
 public int WeaponID
+public bool IsMeleeAttack
+}
+public EasyAntiCheat.Client.P2P.Cerberus.Quaternion : ValueType {
+public float W
+public float X
+public float Y
+public float Z
+public void .ctor(float W, float X, float Y, float Z)
 }
 public EasyAntiCheat.Client.P2P.Cerberus.Vector3 : ValueType {
 public float X
 public float Y
 public float Z
-public void .ctor(float x, float y, float z)
+public void .ctor(float X, float Y, float Z)
 }
 internal EasyAntiCheat.Client.P2P.NativeCerberus : object {
 private string DllFileName
 private IntPtr Instance
 private void dotBeginFrame(IntPtr Instance)
 private void dotEndFrame(IntPtr Instance)
-private void dotGameRoundStart(IntPtr Instance, string MapName)
+private void dotGameRoundStart(IntPtr Instance, string MapName, string ModeName, UInt32 RoundTimeSeconds)
 private void dotGameRoundEnd(IntPtr Instance, UInt32 WinningTeamID)
 private void dotPlayerSpawn(IntPtr Instance, IntPtr Player, UInt32 TeamID, UInt32 CharacterID)
 private void dotPlayerDespawn(IntPtr Instance, IntPtr Player, UInt32 IsPlayerDeath, IntPtr PlayerAttacker)
+private void dotPlayerDowned(IntPtr Instance, IntPtr PlayerVictim, IntPtr PlayerAttacker)
 private void dotPlayerRevive(IntPtr Instance, IntPtr PlayerRevived, IntPtr PlayerReviving)
-private void dotPlayerTick(IntPtr Instance, IntPtr Player, float PositionX, float PositionY, float PositionZ, float ViewAnglesX, float ViewAnglesY, float ViewAnglesZ, UInt32 Health, UInt32 TickFlags)
-private void dotPlayerUseWeapon(IntPtr Instance, IntPtr Player, float PositionX, float PositionY, float PositionZ, float ViewAnglesX, float ViewAnglesY, float ViewAnglesZ, UInt32 FieldOfView, UInt32 WeaponID)
-private void dotPlayerTakeDamage(IntPtr Instance, IntPtr PlayerVictim, float VictimPositionX, float VictimPositionY, float VictimPositionZ, float VictimViewAnglesX, float VictimViewAnglesY, float VictimViewAnglesZ, IntPtr PlayerAttacker, float AttackerPositionX, float AttackerPositionY, float AttackerPositionZ, float AttackerViewAnglesX, float AttackerViewAnglesY, float AttackerViewAnglesZ, UInt32 AttackerFieldOfView, UInt32 WeaponID, UInt32 HitBoneID, UInt32 DamageTaken, UInt32 DamageFlags)
+private void dotPlayerTick(IntPtr Instance, IntPtr Player, float PositionX, float PositionY, float PositionZ, float ViewRotationW, float ViewRotationX, float ViewRotationY, float ViewRotationZ, UInt32 Health, UInt32 TickFlags)
+private void dotPlayerUseWeapon(IntPtr Instance, IntPtr Player, float PositionX, float PositionY, float PositionZ, float ViewRotationW, float ViewRotationX, float ViewRotationY, float ViewRotationZ, UInt32 FieldOfView, UInt32 WeaponID, UInt32 IsMeleeAttack)
+private void dotPlayerTakeDamage(IntPtr Instance, IntPtr PlayerVictim, float VictimPositionX, float VictimPositionY, float VictimPositionZ, float VictimViewRotationW, float VictimViewRotationX, float VictimViewRotationY, float VictimViewRotationZ, IntPtr PlayerAttacker, float AttackerPositionX, float AttackerPositionY, float AttackerPositionZ, float AttackerViewRotationW, float AttackerViewRotationX, float AttackerViewRotationY, float AttackerViewRotationZ, UInt32 AttackerFieldOfView, UInt32 WeaponID, UInt32 HitBoneID, UInt32 DamageTaken, UInt32 DamageFlags)
 internal void SetInstance(IntPtr CerberusInstance)
 internal void BeginFrame()
 internal void EndFrame()
-internal void LogGameRoundStart(string MapName)
+internal void LogGameRoundStart(string MapName, string ModeName, int RoundTimeSeconds)
 internal void LogGameRoundEnd(int WinningTeamID)
 internal void LogPlayerSpawn(IntPtr PlayerObject, int TeamID, int CharacterID)
 internal void LogPlayerDespawn(IntPtr PlayerObject)
 internal void LogPlayerKill(IntPtr PlayerVictim, IntPtr PlayerAttacker)
+internal void LogPlayerDowned(IntPtr PlayerVictim, IntPtr PlayerAttacker)
 internal void LogPlayerRevive(IntPtr PlayerRevived, IntPtr PlayerReviving)
 internal void LogPlayerTick(IntPtr PlayerObject, PlayerTick EventParams)
 internal void LogPlayerUseWeapon(IntPtr PlayerObject, PlayerUseWeapon EventParams)

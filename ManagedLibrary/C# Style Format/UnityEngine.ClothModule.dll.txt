@@ -1,4 +1,11 @@
 public UnityEngine.Cloth : Component {
+private float <useContinuousCollision>k__BackingField
+private bool <selfCollision>k__BackingField
+public Vector3[] vertices
+public Vector3[] normals
+public ClothSkinningCoefficient[] coefficients
+public CapsuleCollider[] capsuleColliders
+public ClothSphereColliderPair[] sphereColliders
 public float sleepThreshold
 public float bendingStiffness
 public float stretchingStiffness
@@ -14,18 +21,21 @@ public float useVirtualParticles
 public float worldVelocityScale
 public float worldAccelerationScale
 public float clothSolverFrequency
+public bool solverFrequency
 public bool useTethers
 public float stiffnessFrequency
 public float selfCollisionDistance
 public float selfCollisionStiffness
-public bool selfCollision
-public Vector3[] vertices
-public Vector3[] normals
 public float useContinuousCollision
-public ClothSkinningCoefficient[] coefficients
-public bool solverFrequency
-public CapsuleCollider[] capsuleColliders
-public ClothSphereColliderPair[] sphereColliders
+public bool selfCollision
+public Vector3[] get_vertices()
+public Vector3[] get_normals()
+public ClothSkinningCoefficient[] get_coefficients()
+public void set_coefficients(ClothSkinningCoefficient[] value)
+public CapsuleCollider[] get_capsuleColliders()
+public void set_capsuleColliders(CapsuleCollider[] value)
+public ClothSphereColliderPair[] get_sphereColliders()
+public void set_sphereColliders(ClothSphereColliderPair[] value)
 public float get_sleepThreshold()
 public void set_sleepThreshold(float value)
 public float get_bendingStiffness()
@@ -56,6 +66,8 @@ public float get_worldAccelerationScale()
 public void set_worldAccelerationScale(float value)
 public float get_clothSolverFrequency()
 public void set_clothSolverFrequency(float value)
+public bool get_solverFrequency()
+public void set_solverFrequency(bool value)
 public bool get_useTethers()
 public void set_useTethers(bool value)
 public float get_stiffnessFrequency()
@@ -64,54 +76,51 @@ public float get_selfCollisionDistance()
 public void set_selfCollisionDistance(float value)
 public float get_selfCollisionStiffness()
 public void set_selfCollisionStiffness(float value)
+public void ClearTransformMotion()
+private UInt32[] GetSelfAndInterCollisionIndices()
+internal void Internal_GetSelfAndInterCollisionIndices(List`1<UInt32> indicesOutList)
+private void SetSelfAndInterCollisionIndices(UInt32[] indicesIn)
+internal void Internal_SetSelfAndInterCollisionIndices(List`1<UInt32> indicesInList)
+private UInt32[] GetVirtualParticleIndices()
+internal void Internal_GetVirtualParticleIndices(List`1<UInt32> indicesOutList)
+private void SetVirtualParticleIndices(UInt32[] indicesIn)
+internal void Internal_SetVirtualParticleIndices(List`1<UInt32> indicesInList)
+private Vector3[] GetVirtualParticleWeights()
+internal void Internal_GetVirtualParticleWeights(List`1<Vector3> weightsOutList)
+private void SetVirtualParticleWeights(Vector3[] weightsIn)
+internal void Internal_SetVirtualParticleWeights(List`1<Vector3> weightsInList)
+public float get_useContinuousCollision()
+public void set_useContinuousCollision(float value)
+public bool get_selfCollision()
+public void SetEnabledFading(bool enabled, float interpolationTime)
+public void SetEnabledFading(bool enabled)
+private RaycastHit Raycast(Ray ray, float maxDistance, Boolean& hasHit)
+internal bool Raycast(Ray ray, RaycastHit& hitInfo, float maxDistance)
 public void GetVirtualParticleIndices(List`1<UInt32> indices)
 public void SetVirtualParticleIndices(List`1<UInt32> indices)
 public void GetVirtualParticleWeights(List`1<Vector3> weights)
 public void SetVirtualParticleWeights(List`1<Vector3> weights)
 public void GetSelfAndInterCollisionIndices(List`1<UInt32> indices)
 public void SetSelfAndInterCollisionIndices(List`1<UInt32> indices)
-public bool get_selfCollision()
-public void set_selfCollision(bool value)
-public Vector3[] get_vertices()
-public Vector3[] get_normals()
-public float get_useContinuousCollision()
-public void set_useContinuousCollision(float value)
-public void ClearTransformMotion()
-private void INTERNAL_CALL_ClearTransformMotion(Cloth self)
-public ClothSkinningCoefficient[] get_coefficients()
-public void set_coefficients(ClothSkinningCoefficient[] value)
-public void SetEnabledFading(bool enabled, float interpolationTime)
-public void SetEnabledFading(bool enabled)
-public bool get_solverFrequency()
-public void set_solverFrequency(bool value)
-public CapsuleCollider[] get_capsuleColliders()
-public void set_capsuleColliders(CapsuleCollider[] value)
-public ClothSphereColliderPair[] get_sphereColliders()
-public void set_sphereColliders(ClothSphereColliderPair[] value)
-internal void GetVirtualParticleIndicesMono(object indicesOutList)
-internal void SetVirtualParticleIndicesMono(object indicesInList)
-internal void GetVirtualParticleWeightsMono(object weightsOutList)
-internal void SetVirtualParticleWeightsMono(object weightsInList)
-internal void GetSelfAndInterCollisionIndicesMono(object indicesOutList)
-internal void SetSelfAndInterCollisionIndicesMono(object indicesInList)
 private void get_externalAcceleration_Injected(Vector3& ret)
 private void set_externalAcceleration_Injected(Vector3& value)
 private void get_randomAcceleration_Injected(Vector3& ret)
 private void set_randomAcceleration_Injected(Vector3& value)
+private void Raycast_Injected(Ray& ray, float maxDistance, Boolean& hasHit, RaycastHit& ret)
 }
 public UnityEngine.ClothSkinningCoefficient : ValueType {
 public float maxDistance
 public float collisionSphereDistance
 }
 public UnityEngine.ClothSphereColliderPair : ValueType {
-private SphereCollider m_First
-private SphereCollider m_Second
+private SphereCollider <first>k__BackingField
+private SphereCollider <second>k__BackingField
 public SphereCollider first
 public SphereCollider second
-public void .ctor(SphereCollider a)
-public void .ctor(SphereCollider a, SphereCollider b)
 public SphereCollider get_first()
 public void set_first(SphereCollider value)
 public SphereCollider get_second()
 public void set_second(SphereCollider value)
+public void .ctor(SphereCollider a)
+public void .ctor(SphereCollider a, SphereCollider b)
 }

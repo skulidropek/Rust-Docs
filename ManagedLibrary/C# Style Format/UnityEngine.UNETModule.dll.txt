@@ -534,8 +534,6 @@ public NetworkID networkId
 public NetworkAccessToken accessToken
 public NodeID nodeId
 public bool usingRelay
-internal void .ctor(CreateMatchResponse matchResponse)
-internal void .ctor(JoinMatchResponse matchResponse)
 public string get_address()
 private void set_address(string value)
 public int get_port()
@@ -550,6 +548,8 @@ public NodeID get_nodeId()
 private void set_nodeId(NodeID value)
 public bool get_usingRelay()
 private void set_usingRelay(bool value)
+internal void .ctor(CreateMatchResponse matchResponse)
+internal void .ctor(JoinMatchResponse matchResponse)
 public string ToString()
 }
 public UnityEngine.Networking.Match.MatchInfoSnapshot : object {
@@ -571,7 +571,6 @@ public int currentSize
 public bool isPrivate
 public Dictionary`2<string, long> matchAttributes
 public List`1<MatchInfoDirectConnectSnapshot> directConnectInfos
-internal void .ctor(MatchDesc matchDesc)
 public NetworkID get_networkId()
 private void set_networkId(NetworkID value)
 public NodeID get_hostNodeId()
@@ -590,6 +589,7 @@ public Dictionary`2<string, long> get_matchAttributes()
 private void set_matchAttributes(Dictionary`2<string, long> value)
 public List`1<MatchInfoDirectConnectSnapshot> get_directConnectInfos()
 private void set_directConnectInfos(List`1<MatchInfoDirectConnectSnapshot> value)
+internal void .ctor(MatchDesc matchDesc)
 }
 public UnityEngine.Networking.Match.NetworkMatch : MonoBehaviour {
 private Uri m_BaseUri
@@ -692,7 +692,7 @@ public NetworkEventType BroadcastEvent
 public UnityEngine.Networking.NetworkTransport : object {
 private int s_nextSceneId
 public bool IsStarted
-internal bool DoesEndPointUsePlatformProtocols(EndPoint endPoint)
+public bool DoesEndPointUsePlatformProtocols(EndPoint endPoint)
 public int ConnectEndPoint(int hostId, EndPoint endPoint, int exceptionConnectionId, Byte& error)
 public void Init()
 public void Init(GlobalConfig config)
@@ -796,8 +796,17 @@ public void SetBroadcastCredentials(int hostId, int key, int version, int subver
 public string GetBroadcastConnectionInfo(int hostId, Int32& port, Byte& error)
 public void GetBroadcastConnectionInfo(int hostId, String& address, Int32& port, Byte& error)
 public void GetBroadcastConnectionMessage(int hostId, Byte[] buffer, int bufferSize, Int32& receivedSize, Byte& error)
+public void SetMulticastLock(bool enabled)
 private void GetBroadcastConnectionMessageInternal(int hostId, Byte[] buffer, int bufferSize, Int32& receivedSize, Byte& error)
 private void CheckTopology(HostTopology topology)
+private bool LoadEncryptionLibraryInternal(string libraryName)
+public bool LoadEncryptionLibrary(string libraryName)
+private void UnloadEncryptionLibraryInternal()
+public void UnloadEncryptionLibrary()
+private bool IsEncryptionActiveInternal()
+public bool IsEncryptionActive()
+private short GetEncryptionSafeMaxPacketSizeInternal(short maxPacketSize)
+public short GetEncryptionSafeMaxPacketSize(short maxPacketSize)
 }
 public UnityEngine.Networking.QosType : Enum {
 public int value__

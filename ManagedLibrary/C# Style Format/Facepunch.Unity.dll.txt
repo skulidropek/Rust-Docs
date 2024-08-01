@@ -1,41 +1,22 @@
-public Facepunch.Analytics : object {
-private string <Uid>k__BackingField
-private string <SessionId>k__BackingField
-private string <ReportUrl>k__BackingField
-private Stat Stats
-private DateTime <LastSend>k__BackingField
-private string <LastMessage>k__BackingField
-private string <LastResponse>k__BackingField
-internal string Uid
-internal string SessionId
-internal string ReportUrl
-public DateTime LastSend
-public string LastMessage
-public string LastResponse
-internal string get_Uid()
-internal void set_Uid(string value)
-internal string get_SessionId()
-private void set_SessionId(string value)
-internal string get_ReportUrl()
-private void set_ReportUrl(string value)
-public DateTime get_LastSend()
-internal void set_LastSend(DateTime value)
-public string get_LastMessage()
-internal void set_LastMessage(string value)
-public string get_LastResponse()
-internal void set_LastResponse(string value)
-internal void .ctor(string reportUrl)
-internal void OnQuit()
-private void Send(string action, object obj, bool andWait)
-public IEnumerator KeepAlive()
-private void SendSessionUpdate(bool andWait)
-public void ForceSendSessionUpdateDebug()
-public void RecordAdd(string category, string name, double val)
-public void RecordReplace(string category, string name, double val)
-public void RecordAverage(string category, string name, double val)
+public Facepunch.AccountNotice : object {
+private int <NoticeId>k__BackingField
+private DateTime <Created>k__BackingField
+private string <Json>k__BackingField
+private string <Seen>k__BackingField
+public int NoticeId
+public DateTime Created
+public string Json
+public string Seen
+public int get_NoticeId()
+public void set_NoticeId(int value)
+public DateTime get_Created()
+public void set_Created(DateTime value)
+public string get_Json()
+public void set_Json(string value)
+public string get_Seen()
+public void set_Seen(string value)
 }
 public Facepunch.Application : object {
-public Analytics Analytics
 private MonoBehaviour _controller
 public Manifest Manifest
 private BaseIntegration <Integration>k__BackingField
@@ -81,15 +62,37 @@ public bool get_DebugOutput()
 public bool ShouldReportException(string message, string stackTrace, LogType type)
 }
 public Facepunch.BenchmarkData : object {
-public Result[] Results
-public string UserID
+public BenchmarkData Current
+public Dictionary`2<string, float> Results
+public string ComputerName
 public string BuildDate
 public string BranchName
 public string Changeset
 public string BuildId
+public bool Auto
+public int Version
 public AppInfo AppInfo
+public SystemInformation SystemInfo
+private int frames
+private int hitches
+private int freezes
+private float lastTime
+private double frameTimes
+private float AvgMilliseconds
+private float avgFrameRate
 public BenchmarkData New()
-public string Upload()
+public Task`1<string> Upload()
+private float get_AvgMilliseconds()
+private float get_avgFrameRate()
+public void Frame()
+}
+public Facepunch.BenchmarkTimer : object {
+public bool Enabled
+public Dictionary`2<string, Stopwatch> All
+private Stopwatch stopwatch
+public BenchmarkTimer New(string name)
+public void .ctor(string name)
+public void Dispose()
 }
 public Facepunch.BinaryReaderExtensions : object {
 public Vector3 ReadVector3(BinaryReader o)
@@ -189,13 +192,13 @@ public void set_Disabled(bool value)
 internal void InstallHooks()
 private void OnLogMessage(string message, string stackTrace, LogType type)
 public string get_PublicKey()
-public void set_PublicKey(string value)
+private void set_PublicKey(string value)
 public string get_SecretKey()
-public void set_SecretKey(string value)
+private void set_SecretKey(string value)
 public string get_Host()
-public void set_Host(string value)
+private void set_Host(string value)
 public string get_ProjectId()
-public void set_ProjectId(string value)
+private void set_ProjectId(string value)
 public void InitializeFromUrl(string url)
 public void SendReport(string exception, string stacktrace)
 private Dictionary`2<string, string> get_Headers()
@@ -205,13 +208,7 @@ public Vector3 ClosestPoint(Ray ray, Vector3 position)
 public float ClosestDistance(Ray ray, Vector3 position)
 }
 public Facepunch.Feedback : object {
-private bool <IsOpening>k__BackingField
-public Action`1<List`1<PlayerInfo>> GetPlayersForFeedback
-public bool IsOpening
-public bool get_IsOpening()
-private void set_IsOpening(bool value)
-internal void Frame()
-public bool Open(string section)
+public Task`1<string> Report(Feedback feedback)
 }
 public Facepunch.FrameRateCategory : Enum {
 public int value__
@@ -225,6 +222,36 @@ public FrameRateCategory Count
 }
 public Facepunch.GameObjectExtensions : object {
 public void SetIgnoreCollisions(GameObject self, GameObject other, bool ignore)
+}
+public Facepunch.Hero : object {
+private string <Ident>k__BackingField
+private string <MediaUrl>k__BackingField
+private string <TitleText>k__BackingField
+private string <ActionText>k__BackingField
+private string <TargetUrl>k__BackingField
+private string <Conditions>k__BackingField
+private double <Chance>k__BackingField
+public string Ident
+public string MediaUrl
+public string TitleText
+public string ActionText
+public string TargetUrl
+public string Conditions
+public double Chance
+public string get_Ident()
+public void set_Ident(string value)
+public string get_MediaUrl()
+public void set_MediaUrl(string value)
+public string get_TitleText()
+public void set_TitleText(string value)
+public string get_ActionText()
+public void set_ActionText(string value)
+public string get_TargetUrl()
+public void set_TargetUrl(string value)
+public string get_Conditions()
+public void set_Conditions(string value)
+public double get_Chance()
+public void set_Chance(double value)
 }
 public Facepunch.Leaderboard : object {
 public void Insert(string board, float score, bool OnlyIfLower, bool OnlyIfHigher, string extra, Action`1<string> result)
@@ -264,48 +291,6 @@ public int Current
 public int get_Current()
 public DateTime ToDateTime(decimal unixTime)
 public int FromDateTime(DateTime time)
-}
-internal Facepunch.Models.Analytics.SessionClose : object {
-public string Uid
-public string Sid
-public SessionUpdate FinalUpdate
-public int Version
-public int get_Version()
-}
-internal Facepunch.Models.Analytics.SessionStart : object {
-public string Uid
-public string Sid
-public string Bucket
-public string ChangeSet
-public string Branch
-public string Os
-public string Gpu
-public string Cpu
-public int CpuCnt
-public int Mem
-public int GpuMem
-public int CpuFrq
-public string Arch
-public bool Fullscreen
-public int Height
-public int Width
-public int RR
-public int Version
-public int get_Version()
-}
-internal Facepunch.Models.Analytics.SessionUpdate : object {
-public string Uid
-public string Sid
-public Int32[] Frames
-public int Mem
-public int Gc
-public string StatText
-public string PerfText
-public int Version
-public int get_Version()
-}
-internal Facepunch.Models.Analytics.Stat : Dictionary`2<string, Container> {
-public Container GetCategory(string name)
 }
 public Facepunch.Models.AppInfo : ValueType {
 public int Version
@@ -350,7 +335,7 @@ public string Type
 public string Id
 public string Ticket
 public string Name
-public Auth Steam(Byte[] ticket, ulong steamId, string username)
+public Auth Steam(string ticket, ulong steamId, string username)
 }
 public Facepunch.Models.Database.Add : Base {
 public string Content
@@ -384,12 +369,14 @@ public bool Running
 public bool Success
 public Entry[] Entries
 }
-public Facepunch.Models.Feedback.GameInfo : ValueType {
+public Facepunch.Models.Feedback : ValueType {
+public string Subject
+public string Message
+public ReportType Type
+public string TargetReportType
+public string TargetId
+public string TargetName
 public AppInfo AppInfo
-public Auth Auth
-public PlayerInfo[] Players
-public int Version
-public int get_Version()
 }
 public Facepunch.Models.Leaderboard.Add : object {
 public string Parent
@@ -431,7 +418,9 @@ public string BenchmarkUrl
 public string AnalyticUrl
 public string DatabaseUrl
 public string LeaderboardUrl
-public string FeedbackUrl
+public string ReportUrl
+public string AccountUrl
+public Hero[] Heroes
 public Administrator[] Administrators
 internal Manifest FromJson(string text)
 }
@@ -445,8 +434,23 @@ public void set_Name(string value)
 public string get_Id()
 public void set_Id(string value)
 }
+public Facepunch.Models.ReportType : Enum {
+public int value__
+public ReportType General
+public ReportType Bug
+public ReportType Cheat
+public ReportType Abuse
+public ReportType Idea
+}
 internal Facepunch.Mono : object {
 internal void FixHttpsValidation()
+}
+public Facepunch.NoticeData : ValueType {
+public string Type
+public string SteamId
+public string DisplayName
+public int Reports
+public DateTime ReportDate
 }
 public Facepunch.Performance : object {
 public Func`1<int> GetMemoryUsage
@@ -525,18 +529,9 @@ public void set_tags(Dictionary`2<string, string> value)
 public StackTrace get_stacktrace()
 public void set_stacktrace(StackTrace value)
 }
-public Facepunch.SingletonComponent : MonoBehaviour {
-public void SingletonSetup()
-public void SingletonClear()
-protected void Awake()
-protected void OnDestroy()
-}
-public Facepunch.SingletonComponent`1 : SingletonComponent {
-private T instance
-public T Instance
-public T get_Instance()
-public void SingletonSetup()
-public void SingletonClear()
+public Facepunch.SystemInformation : ValueType {
+public Hardware hardware
+public Environment environment
 }
 public Facepunch.Threading : object {
 private int mainThread
@@ -565,18 +560,15 @@ public Vector3 RemoveAxis(Vector3 o, Vector3 axis)
 }
 public Facepunch.WebUtil : object {
 internal void Get(string url, Action`1<string> result)
-private IEnumerator DownloadStringCoroutine(WWW www, Action`1<string> result)
+private IEnumerator DownloadStringCoroutine(UnityWebRequest www, Action`1<string> result)
+public Task`1<string> DownloadFileTemp(string url, bool keepextension)
+private void DownloadString(UnityWebRequest www, Action`1<string> result)
 internal void Post(string url, Dictionary`2<string, string> data, bool wait, Action`1<string> result)
+internal Task`1<string> PostAsync(string url, Dictionary`2<string, string> data)
+internal void PostData(string url, object dataObject, Action`1<string> result, bool wait)
+internal Task`1<string> PostDataAsync(string url, object dataObject)
 private IEnumerator PostValuesCoroutine(WWW www, Action`1<string> result)
 internal string Escape(string type)
-}
-public Facepunch.WeightedGameObjectList : object {
-public List`1<Container> Objects
-private float _total
-private float Total
-private float get_Total()
-public GameObject Get(float f)
-public GameObject GetRandom()
 }
 public Facepunch.WeightedStringList : object {
 public List`1<Container> Objects
@@ -607,4 +599,16 @@ public TimeUntil : ValueType {
 private float time
 public float op_Implicit(TimeUntil ts)
 public TimeUntil op_Implicit(float ts)
+}
+public UnityEngine.WaitForSecondsRealtimeEx : CustomYieldInstruction {
+private bool _isInPool
+private float _waitUntilTime
+private float <WaitTime>k__BackingField
+public float WaitTime
+public bool keepWaiting
+public float get_WaitTime()
+public void set_WaitTime(float value)
+public bool get_keepWaiting()
+public void EnterPool()
+public void LeavePool()
 }

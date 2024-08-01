@@ -228,7 +228,7 @@ internal Vector3 m_RelativeVelocity
 internal Rigidbody m_Rigidbody
 internal Collider m_Collider
 internal int m_ContactCount
-internal ContactPoint[] m_RecycledContacts
+internal ContactPoint[] m_ReusedContacts
 internal ContactPoint[] m_LegacyContacts
 public Vector3 relativeVelocity
 public Rigidbody rigidbody
@@ -251,6 +251,7 @@ public int get_contactCount()
 public ContactPoint[] get_contacts()
 public ContactPoint GetContact(int index)
 public int GetContacts(ContactPoint[] contacts)
+public int GetContacts(List`1<ContactPoint> contacts)
 public IEnumerator GetEnumerator()
 public Vector3 get_impulse()
 public Vector3 get_impactForceSum()
@@ -666,6 +667,7 @@ public MeshColliderCookingOptions InflateConvexMesh
 public MeshColliderCookingOptions CookForFasterSimulation
 public MeshColliderCookingOptions EnableMeshCleaning
 public MeshColliderCookingOptions WeldColocatedVertices
+public MeshColliderCookingOptions UseFastMidphase
 }
 public UnityEngine.PhysicMaterial : Object {
 public float bounciness
@@ -732,6 +734,7 @@ public float maxAngularVelocity
 public int solverIterationCount
 public int solverVelocityIterationCount
 public float penetrationPenaltyForce
+public float defaultMaxAngularSpeed
 public PhysicsScene defaultPhysicsScene
 public bool autoSimulation
 public bool autoSyncTransforms
@@ -739,6 +742,7 @@ public bool reuseCollisionCallbacks
 public float interCollisionDistance
 public float interCollisionStiffness
 public bool interCollisionSettingsToggle
+public Vector3 clothGravity
 public float get_minPenetrationForPenalty()
 public void set_minPenetrationForPenalty(float value)
 public Vector3 get_gravity()
@@ -771,12 +775,15 @@ public int get_solverVelocityIterationCount()
 public void set_solverVelocityIterationCount(int value)
 public float get_penetrationPenaltyForce()
 public void set_penetrationPenaltyForce(float value)
+public float get_defaultMaxAngularSpeed()
+public void set_defaultMaxAngularSpeed(float value)
 public PhysicsScene get_defaultPhysicsScene()
 public void IgnoreCollision(Collider collider1, Collider collider2, bool ignore)
 public void IgnoreCollision(Collider collider1, Collider collider2)
 public void IgnoreLayerCollision(int layer1, int layer2, bool ignore)
 public void IgnoreLayerCollision(int layer1, int layer2)
 public bool GetIgnoreLayerCollision(int layer1, int layer2)
+public bool GetIgnoreCollision(Collider collider1, Collider collider2)
 public bool Raycast(Vector3 origin, Vector3 direction, float maxDistance, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
 public bool Raycast(Vector3 origin, Vector3 direction, float maxDistance, int layerMask)
 public bool Raycast(Vector3 origin, Vector3 direction, float maxDistance)
@@ -799,8 +806,6 @@ public bool Linecast(Vector3 start, Vector3 end)
 public bool Linecast(Vector3 start, Vector3 end, RaycastHit& hitInfo, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
 public bool Linecast(Vector3 start, Vector3 end, RaycastHit& hitInfo, int layerMask)
 public bool Linecast(Vector3 start, Vector3 end, RaycastHit& hitInfo)
-private bool Query_CapsuleCast(PhysicsScene physicsScene, Vector3 point1, Vector3 point2, float radius, Vector3 direction, float maxDistance, RaycastHit& hitInfo, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
-private bool Internal_CapsuleCast(PhysicsScene physicsScene, Vector3 point1, Vector3 point2, float radius, Vector3 direction, RaycastHit& hitInfo, float maxDistance, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
 public bool CapsuleCast(Vector3 point1, Vector3 point2, float radius, Vector3 direction, float maxDistance, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
 public bool CapsuleCast(Vector3 point1, Vector3 point2, float radius, Vector3 direction, float maxDistance, int layerMask)
 public bool CapsuleCast(Vector3 point1, Vector3 point2, float radius, Vector3 direction, float maxDistance)
@@ -809,8 +814,6 @@ public bool CapsuleCast(Vector3 point1, Vector3 point2, float radius, Vector3 di
 public bool CapsuleCast(Vector3 point1, Vector3 point2, float radius, Vector3 direction, RaycastHit& hitInfo, float maxDistance, int layerMask)
 public bool CapsuleCast(Vector3 point1, Vector3 point2, float radius, Vector3 direction, RaycastHit& hitInfo, float maxDistance)
 public bool CapsuleCast(Vector3 point1, Vector3 point2, float radius, Vector3 direction, RaycastHit& hitInfo)
-private bool Query_SphereCast(PhysicsScene physicsScene, Vector3 origin, float radius, Vector3 direction, float maxDistance, RaycastHit& hitInfo, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
-private bool Internal_SphereCast(PhysicsScene physicsScene, Vector3 origin, float radius, Vector3 direction, RaycastHit& hitInfo, float maxDistance, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
 public bool SphereCast(Vector3 origin, float radius, Vector3 direction, RaycastHit& hitInfo, float maxDistance, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
 public bool SphereCast(Vector3 origin, float radius, Vector3 direction, RaycastHit& hitInfo, float maxDistance, int layerMask)
 public bool SphereCast(Vector3 origin, float radius, Vector3 direction, RaycastHit& hitInfo, float maxDistance)
@@ -823,8 +826,6 @@ public bool SphereCast(Ray ray, float radius, RaycastHit& hitInfo, float maxDist
 public bool SphereCast(Ray ray, float radius, RaycastHit& hitInfo, float maxDistance, int layerMask)
 public bool SphereCast(Ray ray, float radius, RaycastHit& hitInfo, float maxDistance)
 public bool SphereCast(Ray ray, float radius, RaycastHit& hitInfo)
-private bool Query_BoxCast(PhysicsScene physicsScene, Vector3 center, Vector3 halfExtents, Vector3 direction, Quaternion orientation, float maxDistance, RaycastHit& outHit, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
-private bool Internal_BoxCast(PhysicsScene physicsScene, Vector3 center, Vector3 halfExtents, Quaternion orientation, Vector3 direction, RaycastHit& hitInfo, float maxDistance, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
 public bool BoxCast(Vector3 center, Vector3 halfExtents, Vector3 direction, Quaternion orientation, float maxDistance, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
 public bool BoxCast(Vector3 center, Vector3 halfExtents, Vector3 direction, Quaternion orientation, float maxDistance, int layerMask)
 public bool BoxCast(Vector3 center, Vector3 halfExtents, Vector3 direction, Quaternion orientation, float maxDistance)
@@ -893,7 +894,8 @@ public float get_interCollisionStiffness()
 public void set_interCollisionStiffness(float value)
 public bool get_interCollisionSettingsToggle()
 public void set_interCollisionSettingsToggle(bool value)
-private int OverlapSphereNonAlloc_Internal(PhysicsScene physicsScene, Vector3 position, float radius, Collider[] results, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
+public Vector3 get_clothGravity()
+public void set_clothGravity(Vector3 value)
 public int OverlapSphereNonAlloc(Vector3 position, float radius, Collider[] results, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
 public int OverlapSphereNonAlloc(Vector3 position, float radius, Collider[] results, int layerMask)
 public int OverlapSphereNonAlloc(Vector3 position, float radius, Collider[] results)
@@ -901,12 +903,10 @@ private bool CheckSphere_Internal(PhysicsScene physicsScene, Vector3 position, f
 public bool CheckSphere(Vector3 position, float radius, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
 public bool CheckSphere(Vector3 position, float radius, int layerMask)
 public bool CheckSphere(Vector3 position, float radius)
-private int Internal_CapsuleCastNonAlloc(PhysicsScene physicsScene, Vector3 p0, Vector3 p1, float radius, Vector3 direction, RaycastHit[] raycastHits, float maxDistance, int mask, QueryTriggerInteraction queryTriggerInteraction)
 public int CapsuleCastNonAlloc(Vector3 point1, Vector3 point2, float radius, Vector3 direction, RaycastHit[] results, float maxDistance, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
 public int CapsuleCastNonAlloc(Vector3 point1, Vector3 point2, float radius, Vector3 direction, RaycastHit[] results, float maxDistance, int layerMask)
 public int CapsuleCastNonAlloc(Vector3 point1, Vector3 point2, float radius, Vector3 direction, RaycastHit[] results, float maxDistance)
 public int CapsuleCastNonAlloc(Vector3 point1, Vector3 point2, float radius, Vector3 direction, RaycastHit[] results)
-private int Internal_SphereCastNonAlloc(PhysicsScene physicsScene, Vector3 origin, float radius, Vector3 direction, RaycastHit[] raycastHits, float maxDistance, int mask, QueryTriggerInteraction queryTriggerInteraction)
 public int SphereCastNonAlloc(Vector3 origin, float radius, Vector3 direction, RaycastHit[] results, float maxDistance, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
 public int SphereCastNonAlloc(Vector3 origin, float radius, Vector3 direction, RaycastHit[] results, float maxDistance, int layerMask)
 public int SphereCastNonAlloc(Vector3 origin, float radius, Vector3 direction, RaycastHit[] results, float maxDistance)
@@ -929,12 +929,10 @@ public Collider[] OverlapBox(Vector3 center, Vector3 halfExtents, Quaternion ori
 public Collider[] OverlapBox(Vector3 center, Vector3 halfExtents, Quaternion orientation, int layerMask)
 public Collider[] OverlapBox(Vector3 center, Vector3 halfExtents, Quaternion orientation)
 public Collider[] OverlapBox(Vector3 center, Vector3 halfExtents)
-private int OverlapBoxNonAlloc_Internal(PhysicsScene physicsScene, Vector3 center, Vector3 halfExtents, Collider[] results, Quaternion orientation, int mask, QueryTriggerInteraction queryTriggerInteraction)
 public int OverlapBoxNonAlloc(Vector3 center, Vector3 halfExtents, Collider[] results, Quaternion orientation, int mask, QueryTriggerInteraction queryTriggerInteraction)
 public int OverlapBoxNonAlloc(Vector3 center, Vector3 halfExtents, Collider[] results, Quaternion orientation, int mask)
 public int OverlapBoxNonAlloc(Vector3 center, Vector3 halfExtents, Collider[] results, Quaternion orientation)
 public int OverlapBoxNonAlloc(Vector3 center, Vector3 halfExtents, Collider[] results)
-private int Internal_BoxCastNonAlloc(PhysicsScene physicsScene, Vector3 center, Vector3 halfExtents, Vector3 direction, RaycastHit[] raycastHits, Quaternion orientation, float maxDistance, int mask, QueryTriggerInteraction queryTriggerInteraction)
 public int BoxCastNonAlloc(Vector3 center, Vector3 halfExtents, Vector3 direction, RaycastHit[] results, Quaternion orientation, float maxDistance, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
 public int BoxCastNonAlloc(Vector3 center, Vector3 halfExtents, Vector3 direction, RaycastHit[] results, Quaternion orientation)
 public int BoxCastNonAlloc(Vector3 center, Vector3 halfExtents, Vector3 direction, RaycastHit[] results, Quaternion orientation, float maxDistance)
@@ -946,18 +944,15 @@ public RaycastHit[] BoxCastAll(Vector3 center, Vector3 halfExtents, Vector3 dire
 public RaycastHit[] BoxCastAll(Vector3 center, Vector3 halfExtents, Vector3 direction, Quaternion orientation, float maxDistance)
 public RaycastHit[] BoxCastAll(Vector3 center, Vector3 halfExtents, Vector3 direction, Quaternion orientation)
 public RaycastHit[] BoxCastAll(Vector3 center, Vector3 halfExtents, Vector3 direction)
-private int OverlapCapsuleNonAlloc_Internal(PhysicsScene physicsScene, Vector3 point0, Vector3 point1, float radius, Collider[] results, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
 public int OverlapCapsuleNonAlloc(Vector3 point0, Vector3 point1, float radius, Collider[] results, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
 public int OverlapCapsuleNonAlloc(Vector3 point0, Vector3 point1, float radius, Collider[] results, int layerMask)
 public int OverlapCapsuleNonAlloc(Vector3 point0, Vector3 point1, float radius, Collider[] results)
 private void Internal_RebuildBroadphaseRegions(Bounds bounds, int subdivisions)
 public void RebuildBroadphaseRegions(Bounds worldBounds, int subdivisions)
+public void BakeMesh(int meshID, bool convex)
 private void get_gravity_Injected(Vector3& ret)
 private void set_gravity_Injected(Vector3& value)
 private void get_defaultPhysicsScene_Injected(PhysicsScene& ret)
-private bool Query_CapsuleCast_Injected(PhysicsScene& physicsScene, Vector3& point1, Vector3& point2, float radius, Vector3& direction, float maxDistance, RaycastHit& hitInfo, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
-private bool Query_SphereCast_Injected(PhysicsScene& physicsScene, Vector3& origin, float radius, Vector3& direction, float maxDistance, RaycastHit& hitInfo, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
-private bool Query_BoxCast_Injected(PhysicsScene& physicsScene, Vector3& center, Vector3& halfExtents, Vector3& direction, Quaternion& orientation, float maxDistance, RaycastHit& outHit, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
 private RaycastHit[] Internal_RaycastAll_Injected(PhysicsScene& physicsScene, Ray& ray, float maxDistance, int mask, QueryTriggerInteraction queryTriggerInteraction)
 private RaycastHit[] Query_CapsuleCastAll_Injected(PhysicsScene& physicsScene, Vector3& p0, Vector3& p1, float radius, Vector3& direction, float maxDistance, int mask, QueryTriggerInteraction queryTriggerInteraction)
 private RaycastHit[] Query_SphereCastAll_Injected(PhysicsScene& physicsScene, Vector3& origin, float radius, Vector3& direction, float maxDistance, int mask, QueryTriggerInteraction queryTriggerInteraction)
@@ -966,17 +961,13 @@ private Collider[] OverlapSphere_Internal_Injected(PhysicsScene& physicsScene, V
 private void Simulate_Internal_Injected(PhysicsScene& physicsScene, float step)
 private bool Query_ComputePenetration_Injected(Collider colliderA, Vector3& positionA, Quaternion& rotationA, Collider colliderB, Vector3& positionB, Quaternion& rotationB, Vector3& direction, Single& distance)
 private void Query_ClosestPoint_Injected(Collider collider, Vector3& position, Quaternion& rotation, Vector3& point, Vector3& ret)
-private int OverlapSphereNonAlloc_Internal_Injected(PhysicsScene& physicsScene, Vector3& position, float radius, Collider[] results, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
+private void get_clothGravity_Injected(Vector3& ret)
+private void set_clothGravity_Injected(Vector3& value)
 private bool CheckSphere_Internal_Injected(PhysicsScene& physicsScene, Vector3& position, float radius, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
-private int Internal_CapsuleCastNonAlloc_Injected(PhysicsScene& physicsScene, Vector3& p0, Vector3& p1, float radius, Vector3& direction, RaycastHit[] raycastHits, float maxDistance, int mask, QueryTriggerInteraction queryTriggerInteraction)
-private int Internal_SphereCastNonAlloc_Injected(PhysicsScene& physicsScene, Vector3& origin, float radius, Vector3& direction, RaycastHit[] raycastHits, float maxDistance, int mask, QueryTriggerInteraction queryTriggerInteraction)
 private bool CheckCapsule_Internal_Injected(PhysicsScene& physicsScene, Vector3& start, Vector3& end, float radius, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
 private bool CheckBox_Internal_Injected(PhysicsScene& physicsScene, Vector3& center, Vector3& halfExtents, Quaternion& orientation, int layermask, QueryTriggerInteraction queryTriggerInteraction)
 private Collider[] OverlapBox_Internal_Injected(PhysicsScene& physicsScene, Vector3& center, Vector3& halfExtents, Quaternion& orientation, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
-private int OverlapBoxNonAlloc_Internal_Injected(PhysicsScene& physicsScene, Vector3& center, Vector3& halfExtents, Collider[] results, Quaternion& orientation, int mask, QueryTriggerInteraction queryTriggerInteraction)
-private int Internal_BoxCastNonAlloc_Injected(PhysicsScene& physicsScene, Vector3& center, Vector3& halfExtents, Vector3& direction, RaycastHit[] raycastHits, Quaternion& orientation, float maxDistance, int mask, QueryTriggerInteraction queryTriggerInteraction)
 private RaycastHit[] Internal_BoxCastAll_Injected(PhysicsScene& physicsScene, Vector3& center, Vector3& halfExtents, Vector3& direction, Quaternion& orientation, float maxDistance, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
-private int OverlapCapsuleNonAlloc_Internal_Injected(PhysicsScene& physicsScene, Vector3& point0, Vector3& point1, float radius, Collider[] results, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
 private void Internal_RebuildBroadphaseRegions_Injected(Bounds& bounds, int subdivisions)
 }
 public UnityEngine.PhysicsScene : ValueType {
@@ -998,11 +989,44 @@ public bool Raycast(Vector3 origin, Vector3 direction, RaycastHit& hitInfo, floa
 private bool Internal_Raycast(PhysicsScene physicsScene, Ray ray, float maxDistance, RaycastHit& hit, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
 public int Raycast(Vector3 origin, Vector3 direction, RaycastHit[] raycastHits, float maxDistance, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
 private int Internal_RaycastNonAlloc(PhysicsScene physicsScene, Ray ray, RaycastHit[] raycastHits, float maxDistance, int mask, QueryTriggerInteraction queryTriggerInteraction)
+private bool Query_CapsuleCast(PhysicsScene physicsScene, Vector3 point1, Vector3 point2, float radius, Vector3 direction, float maxDistance, RaycastHit& hitInfo, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
+private bool Internal_CapsuleCast(PhysicsScene physicsScene, Vector3 point1, Vector3 point2, float radius, Vector3 direction, RaycastHit& hitInfo, float maxDistance, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
+public bool CapsuleCast(Vector3 point1, Vector3 point2, float radius, Vector3 direction, RaycastHit& hitInfo, float maxDistance, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
+private int Internal_CapsuleCastNonAlloc(PhysicsScene physicsScene, Vector3 p0, Vector3 p1, float radius, Vector3 direction, RaycastHit[] raycastHits, float maxDistance, int mask, QueryTriggerInteraction queryTriggerInteraction)
+public int CapsuleCast(Vector3 point1, Vector3 point2, float radius, Vector3 direction, RaycastHit[] results, float maxDistance, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
+private int OverlapCapsuleNonAlloc_Internal(PhysicsScene physicsScene, Vector3 point0, Vector3 point1, float radius, Collider[] results, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
+public int OverlapCapsule(Vector3 point0, Vector3 point1, float radius, Collider[] results, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
+private bool Query_SphereCast(PhysicsScene physicsScene, Vector3 origin, float radius, Vector3 direction, float maxDistance, RaycastHit& hitInfo, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
+private bool Internal_SphereCast(PhysicsScene physicsScene, Vector3 origin, float radius, Vector3 direction, RaycastHit& hitInfo, float maxDistance, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
+public bool SphereCast(Vector3 origin, float radius, Vector3 direction, RaycastHit& hitInfo, float maxDistance, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
+private int Internal_SphereCastNonAlloc(PhysicsScene physicsScene, Vector3 origin, float radius, Vector3 direction, RaycastHit[] raycastHits, float maxDistance, int mask, QueryTriggerInteraction queryTriggerInteraction)
+public int SphereCast(Vector3 origin, float radius, Vector3 direction, RaycastHit[] results, float maxDistance, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
+private int OverlapSphereNonAlloc_Internal(PhysicsScene physicsScene, Vector3 position, float radius, Collider[] results, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
+public int OverlapSphere(Vector3 position, float radius, Collider[] results, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
+private bool Query_BoxCast(PhysicsScene physicsScene, Vector3 center, Vector3 halfExtents, Vector3 direction, Quaternion orientation, float maxDistance, RaycastHit& outHit, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
+private bool Internal_BoxCast(PhysicsScene physicsScene, Vector3 center, Vector3 halfExtents, Quaternion orientation, Vector3 direction, RaycastHit& hitInfo, float maxDistance, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
+public bool BoxCast(Vector3 center, Vector3 halfExtents, Vector3 direction, RaycastHit& hitInfo, Quaternion orientation, float maxDistance, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
+public bool BoxCast(Vector3 center, Vector3 halfExtents, Vector3 direction, RaycastHit& hitInfo)
+private int OverlapBoxNonAlloc_Internal(PhysicsScene physicsScene, Vector3 center, Vector3 halfExtents, Collider[] results, Quaternion orientation, int mask, QueryTriggerInteraction queryTriggerInteraction)
+public int OverlapBox(Vector3 center, Vector3 halfExtents, Collider[] results, Quaternion orientation, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
+public int OverlapBox(Vector3 center, Vector3 halfExtents, Collider[] results)
+private int Internal_BoxCastNonAlloc(PhysicsScene physicsScene, Vector3 center, Vector3 halfExtents, Vector3 direction, RaycastHit[] raycastHits, Quaternion orientation, float maxDistance, int mask, QueryTriggerInteraction queryTriggerInteraction)
+public int BoxCast(Vector3 center, Vector3 halfExtents, Vector3 direction, RaycastHit[] results, Quaternion orientation, float maxDistance, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
+public int BoxCast(Vector3 center, Vector3 halfExtents, Vector3 direction, RaycastHit[] results)
 private bool IsValid_Internal_Injected(PhysicsScene& physicsScene)
 private bool IsEmpty_Internal_Injected(PhysicsScene& physicsScene)
 private bool Internal_RaycastTest_Injected(PhysicsScene& physicsScene, Ray& ray, float maxDistance, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
 private bool Internal_Raycast_Injected(PhysicsScene& physicsScene, Ray& ray, float maxDistance, RaycastHit& hit, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
 private int Internal_RaycastNonAlloc_Injected(PhysicsScene& physicsScene, Ray& ray, RaycastHit[] raycastHits, float maxDistance, int mask, QueryTriggerInteraction queryTriggerInteraction)
+private bool Query_CapsuleCast_Injected(PhysicsScene& physicsScene, Vector3& point1, Vector3& point2, float radius, Vector3& direction, float maxDistance, RaycastHit& hitInfo, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
+private int Internal_CapsuleCastNonAlloc_Injected(PhysicsScene& physicsScene, Vector3& p0, Vector3& p1, float radius, Vector3& direction, RaycastHit[] raycastHits, float maxDistance, int mask, QueryTriggerInteraction queryTriggerInteraction)
+private int OverlapCapsuleNonAlloc_Internal_Injected(PhysicsScene& physicsScene, Vector3& point0, Vector3& point1, float radius, Collider[] results, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
+private bool Query_SphereCast_Injected(PhysicsScene& physicsScene, Vector3& origin, float radius, Vector3& direction, float maxDistance, RaycastHit& hitInfo, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
+private int Internal_SphereCastNonAlloc_Injected(PhysicsScene& physicsScene, Vector3& origin, float radius, Vector3& direction, RaycastHit[] raycastHits, float maxDistance, int mask, QueryTriggerInteraction queryTriggerInteraction)
+private int OverlapSphereNonAlloc_Internal_Injected(PhysicsScene& physicsScene, Vector3& position, float radius, Collider[] results, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
+private bool Query_BoxCast_Injected(PhysicsScene& physicsScene, Vector3& center, Vector3& halfExtents, Vector3& direction, Quaternion& orientation, float maxDistance, RaycastHit& outHit, int layerMask, QueryTriggerInteraction queryTriggerInteraction)
+private int OverlapBoxNonAlloc_Internal_Injected(PhysicsScene& physicsScene, Vector3& center, Vector3& halfExtents, Collider[] results, Quaternion& orientation, int mask, QueryTriggerInteraction queryTriggerInteraction)
+private int Internal_BoxCastNonAlloc_Injected(PhysicsScene& physicsScene, Vector3& center, Vector3& halfExtents, Vector3& direction, RaycastHit[] raycastHits, Quaternion& orientation, float maxDistance, int mask, QueryTriggerInteraction queryTriggerInteraction)
 }
 public UnityEngine.PhysicsSceneExtensions : object {
 public PhysicsScene GetPhysicsScene(Scene scene)

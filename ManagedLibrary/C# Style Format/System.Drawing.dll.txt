@@ -3,6 +3,7 @@ public string MonoVersion
 public string MonoCompany
 public string MonoProduct
 public string MonoCopyright
+public int MonoCorlibVersion
 public string FxVersion
 public string FxFileVersion
 public string EnvironmentVersion
@@ -44,6 +45,101 @@ internal Locale : object {
 public string GetText(string msg)
 public string GetText(string fmt, Object[] args)
 }
+internal SR : object {
+public string CantTellPrinterName
+public string CantChangeImmutableObjects
+public string CantMakeIconTransparent
+public string ColorNotSystemColor
+public string DotNET_ComponentType
+public string GdiplusAborted
+public string GdiplusAccessDenied
+public string GdiplusCannotCreateGraphicsFromIndexedPixelFormat
+public string GdiplusCannotSetPixelFromIndexedPixelFormat
+public string GdiplusDestPointsInvalidParallelogram
+public string GdiplusDestPointsInvalidLength
+public string GdiplusFileNotFound
+public string GdiplusFontFamilyNotFound
+public string GdiplusFontStyleNotFound
+public string GdiplusGenericError
+public string GdiplusInsufficientBuffer
+public string GdiplusInvalidParameter
+public string GdiplusInvalidRectangle
+public string GdiplusInvalidSize
+public string GdiplusOutOfMemory
+public string GdiplusNotImplemented
+public string GdiplusNotInitialized
+public string GdiplusNotTrueTypeFont
+public string GdiplusNotTrueTypeFont_NoName
+public string GdiplusObjectBusy
+public string GdiplusOverflow
+public string GdiplusPropertyNotFoundError
+public string GdiplusPropertyNotSupportedError
+public string GdiplusUnknown
+public string GdiplusUnknownImageFormat
+public string GdiplusUnsupportedGdiplusVersion
+public string GdiplusWrongState
+public string GlobalAssemblyCache
+public string GraphicsBufferCurrentlyBusy
+public string GraphicsBufferQueryFail
+public string ToolboxItemLocked
+public string ToolboxItemInvalidPropertyType
+public string ToolboxItemValueNotSerializable
+public string ToolboxItemInvalidKey
+public string IllegalState
+public string InterpolationColorsColorBlendNotSet
+public string InterpolationColorsCommon
+public string InterpolationColorsInvalidColorBlendObject
+public string InterpolationColorsInvalidStartPosition
+public string InterpolationColorsInvalidEndPosition
+public string InterpolationColorsLength
+public string InterpolationColorsLengthsDiffer
+public string InvalidArgument
+public string InvalidBoundArgument
+public string InvalidClassName
+public string InvalidColor
+public string InvalidDashPattern
+public string InvalidEx2BoundArgument
+public string InvalidFrame
+public string InvalidGDIHandle
+public string InvalidImage
+public string InvalidLowBoundArgumentEx
+public string InvalidPermissionLevel
+public string InvalidPermissionState
+public string InvalidPictureType
+public string InvalidPrinterException_InvalidPrinter
+public string InvalidPrinterException_NoDefaultPrinter
+public string InvalidPrinterHandle
+public string ValidRangeX
+public string ValidRangeY
+public string NativeHandle0
+public string NoDefaultPrinter
+public string NotImplemented
+public string PDOCbeginPrintDescr
+public string PDOCdocumentNameDescr
+public string PDOCdocumentPageSettingsDescr
+public string PDOCendPrintDescr
+public string PDOCoriginAtMarginsDescr
+public string PDOCprintControllerDescr
+public string PDOCprintPageDescr
+public string PDOCprinterSettingsDescr
+public string PDOCqueryPageSettingsDescr
+public string PrintDocumentDesc
+public string PrintingPermissionBadXml
+public string PrintingPermissionAttributeInvalidPermissionLevel
+public string PropertyValueInvalidEntry
+public string PSizeNotCustom
+public string ResourceNotFound
+public string TargetNotPrintingPermission
+public string TextParseFailedFormat
+public string TriStateCompareError
+public string toStringIcon
+public string toStringNone
+public string DCTypeInvalid
+public string InvalidEnumArgument
+public string ConvertInvalidPrimitive
+public string LibgdiplusNotFound
+public string Format(string format, Object[] args)
+}
 internal System.Drawing.AnimateEventArgs : EventArgs {
 private int frameCount
 private int activeFrame
@@ -53,6 +149,11 @@ public void .ctor(Image image)
 public Thread get_RunThread()
 public void set_RunThread(Thread value)
 public int GetNextFrame()
+}
+internal System.Drawing.AssemblyRef : object {
+public string SystemDrawingDesign
+public string SystemDesign
+public string SystemWindowsForms
 }
 public System.Drawing.Bitmap : Image {
 internal void .ctor(IntPtr ptr)
@@ -86,22 +187,13 @@ public void MakeTransparent(Color transparentColor)
 public void SetResolution(float xDpi, float yDpi)
 public void UnlockBits(BitmapData bitmapdata)
 }
-public System.Drawing.BitmapSuffixInSameAssemblyAttribute : Attribute {
-public object TypeId
-public object get_TypeId()
-}
-public System.Drawing.BitmapSuffixInSatelliteAssemblyAttribute : Attribute {
-public object TypeId
-public object get_TypeId()
-}
 public System.Drawing.Brush : MarshalByRefObject {
-internal IntPtr nativeObject
-internal IntPtr NativeObject
-internal void .ctor(IntPtr ptr)
+private IntPtr _nativeBrush
+internal IntPtr NativeBrush
 public object Clone()
-internal IntPtr get_NativeObject()
-internal void set_NativeObject(IntPtr value)
 protected internal void SetNativeBrush(IntPtr brush)
+internal void SetNativeBrushInternal(IntPtr brush)
+internal IntPtr get_NativeBrush()
 public void Dispose()
 protected void Dispose(bool disposing)
 protected void Finalize()
@@ -602,6 +694,10 @@ public int GetHashCode()
 public bool op_Equality(CharacterRange cr1, CharacterRange cr2)
 public bool op_Inequality(CharacterRange cr1, CharacterRange cr2)
 }
+internal System.Drawing.ClientUtils : object {
+public bool IsCriticalException(Exception ex)
+public bool IsSecurityOrCriticalException(Exception ex)
+}
 internal System.Drawing.CocoaContext : ValueType {
 public IntPtr ctx
 public int width
@@ -950,8 +1046,16 @@ public object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, obj
 public StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
 public bool GetStandardValuesSupported(ITypeDescriptorContext context)
 }
+internal System.Drawing.ColorTable : object {
+private Lazy`1<Dictionary`2<string, Color>> s_colorConstants
+internal Dictionary`2<string, Color> Colors
+private Dictionary`2<string, Color> GetColors()
+internal Dictionary`2<string, Color> get_Colors()
+private void FillConstants(Dictionary`2<string, Color> colors, Type enumType)
+internal bool TryGetNamedColor(string name, Color& result)
+internal bool IsKnownNamedColor(string name)
+}
 public System.Drawing.ColorTranslator : object {
-private Dictionary`2<string, int> <>f__switch$map0
 public Color FromHtml(string htmlColor)
 internal Color FromBGR(int bgr)
 public Color FromOle(int oleColor)
@@ -961,6 +1065,10 @@ private char GetHexNumber(int b)
 private string FormatHtml(int r, int g, int b)
 public int ToOle(Color c)
 public int ToWin32(Color c)
+}
+internal System.Drawing.ColorUtil : object {
+public Color FromKnownColor(KnownColor color)
+public bool IsSystemColor(Color color)
 }
 internal System.Drawing.ComIStreamMarshaler : object {
 private int S_OK
@@ -1033,12 +1141,12 @@ public void CopyTo(String[] array, int index)
 public int IndexOf(string value)
 }
 public System.Drawing.Design.IPropertyValueUIService {
+public void add_PropertyUIValueItemsChanged(EventHandler value)
+public void remove_PropertyUIValueItemsChanged(EventHandler value)
 public void AddPropertyValueUIHandler(PropertyValueUIHandler newHandler)
 public PropertyValueUIItem[] GetPropertyUIValueItems(ITypeDescriptorContext context, PropertyDescriptor propDesc)
 public void NotifyPropertyValueUIItemsChanged()
 public void RemovePropertyValueUIHandler(PropertyValueUIHandler newHandler)
-public void add_PropertyUIValueItemsChanged(EventHandler value)
-public void remove_PropertyUIValueItemsChanged(EventHandler value)
 }
 public System.Drawing.Design.IToolboxItemProvider {
 public ToolboxItemCollection Items
@@ -1054,8 +1162,8 @@ public void AddCreator(ToolboxItemCreatorCallback creator, string format)
 public void AddCreator(ToolboxItemCreatorCallback creator, string format, IDesignerHost host)
 public void AddLinkedToolboxItem(ToolboxItem toolboxItem, IDesignerHost host)
 public void AddLinkedToolboxItem(ToolboxItem toolboxItem, string category, IDesignerHost host)
-public void AddToolboxItem(ToolboxItem toolboxItem, string category)
 public void AddToolboxItem(ToolboxItem toolboxItem)
+public void AddToolboxItem(ToolboxItem toolboxItem, string category)
 public ToolboxItem DeserializeToolboxItem(object serializedObject)
 public ToolboxItem DeserializeToolboxItem(object serializedObject, IDesignerHost host)
 public ToolboxItem GetSelectedToolboxItem()
@@ -1064,8 +1172,8 @@ public ToolboxItemCollection GetToolboxItems()
 public ToolboxItemCollection GetToolboxItems(IDesignerHost host)
 public ToolboxItemCollection GetToolboxItems(string category)
 public ToolboxItemCollection GetToolboxItems(string category, IDesignerHost host)
-public bool IsSupported(object serializedObject, ICollection filterAttributes)
 public bool IsSupported(object serializedObject, IDesignerHost host)
+public bool IsSupported(object serializedObject, ICollection filterAttributes)
 public bool IsToolboxItem(object serializedObject)
 public bool IsToolboxItem(object serializedObject, IDesignerHost host)
 public void Refresh()
@@ -1084,7 +1192,7 @@ public void ToolPicked(ToolboxItem tool)
 }
 public System.Drawing.Design.PaintValueEventArgs : EventArgs {
 private ITypeDescriptorContext context
-private object value
+private object valueToPaint
 private Graphics graphics
 private Rectangle bounds
 public Rectangle Bounds
@@ -1104,7 +1212,7 @@ public IAsyncResult BeginInvoke(ITypeDescriptorContext context, PropertyDescript
 public void EndInvoke(IAsyncResult result)
 }
 public System.Drawing.Design.PropertyValueUIItem : object {
-private Image uiItemImage
+private Image itemImage
 private PropertyValueUIItemInvokeHandler handler
 private string tooltip
 public Image Image
@@ -1123,7 +1231,7 @@ public IAsyncResult BeginInvoke(ITypeDescriptorContext context, PropertyDescript
 public void EndInvoke(IAsyncResult result)
 }
 public System.Drawing.Design.ToolboxComponentsCreatedEventArgs : EventArgs {
-private IComponent[] components
+private IComponent[] comps
 public IComponent[] Components
 public void .ctor(IComponent[] components)
 public IComponent[] get_Components()
@@ -1151,7 +1259,6 @@ private bool locked
 private Hashtable properties
 private ToolboxComponentsCreatedEventHandler ComponentsCreated
 private ToolboxComponentsCreatingEventHandler ComponentsCreating
-private Dictionary`2<string, int> <>f__switch$map1
 public AssemblyName AssemblyName
 public Bitmap Bitmap
 public string DisplayName
@@ -1165,6 +1272,7 @@ public string Description
 public bool IsTransient
 public IDictionary Properties
 public string Version
+public Bitmap OriginalBitmap
 public void .ctor(Type toolType)
 public AssemblyName get_AssemblyName()
 public void set_AssemblyName(AssemblyName value)
@@ -1215,11 +1323,13 @@ public void add_ComponentsCreated(ToolboxComponentsCreatedEventHandler value)
 public void remove_ComponentsCreated(ToolboxComponentsCreatedEventHandler value)
 public void add_ComponentsCreating(ToolboxComponentsCreatingEventHandler value)
 public void remove_ComponentsCreating(ToolboxComponentsCreatingEventHandler value)
+public Bitmap get_OriginalBitmap()
+public void set_OriginalBitmap(Bitmap value)
 }
 public System.Drawing.Design.ToolboxItemCollection : ReadOnlyCollectionBase {
 public ToolboxItem Item
-public void .ctor(ToolboxItem[] value)
 public void .ctor(ToolboxItemCollection value)
+public void .ctor(ToolboxItem[] value)
 public ToolboxItem get_Item(int index)
 public bool Contains(ToolboxItem value)
 public void CopyTo(ToolboxItem[] array, int index)
@@ -1233,42 +1343,42 @@ public ToolboxItem EndInvoke(IAsyncResult result)
 }
 public System.Drawing.Design.UITypeEditor : object {
 public bool IsDropDownResizable
-public object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value)
+public bool get_IsDropDownResizable()
 public object EditValue(IServiceProvider provider, object value)
-public UITypeEditorEditStyle GetEditStyle(ITypeDescriptorContext context)
+public object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value)
 public UITypeEditorEditStyle GetEditStyle()
 public bool GetPaintValueSupported()
 public bool GetPaintValueSupported(ITypeDescriptorContext context)
+public UITypeEditorEditStyle GetEditStyle(ITypeDescriptorContext context)
 public void PaintValue(object value, Graphics canvas, Rectangle rectangle)
 public void PaintValue(PaintValueEventArgs e)
-public bool get_IsDropDownResizable()
 }
 public System.Drawing.Design.UITypeEditorEditStyle : Enum {
 public int value__
-public UITypeEditorEditStyle DropDown
-public UITypeEditorEditStyle Modal
 public UITypeEditorEditStyle None
+public UITypeEditorEditStyle Modal
+public UITypeEditorEditStyle DropDown
 }
 public System.Drawing.Drawing2D.AdjustableArrowCap : CustomLineCap {
-public bool Filled
-public float Width
 public float Height
+public float Width
 public float MiddleInset
-internal void .ctor(IntPtr ptr)
+public bool Filled
+internal void .ctor(IntPtr nativeCap)
 public void .ctor(float width, float height)
 public void .ctor(float width, float height, bool isFilled)
-public bool get_Filled()
-public void set_Filled(bool value)
-public float get_Width()
-public void set_Width(float value)
 public float get_Height()
 public void set_Height(float value)
+public float get_Width()
+public void set_Width(float value)
 public float get_MiddleInset()
 public void set_MiddleInset(float value)
+public bool get_Filled()
+public void set_Filled(bool value)
 }
 public System.Drawing.Drawing2D.Blend : object {
-private Single[] positions
-private Single[] factors
+private Single[] <Factors>k__BackingField
+private Single[] <Positions>k__BackingField
 public Single[] Factors
 public Single[] Positions
 public void .ctor(int count)
@@ -1277,9 +1387,17 @@ public void set_Factors(Single[] value)
 public Single[] get_Positions()
 public void set_Positions(Single[] value)
 }
+internal System.Drawing.Drawing2D.BrushType : Enum {
+public int value__
+public BrushType SolidColor
+public BrushType HatchFill
+public BrushType TextureFill
+public BrushType PathGradient
+public BrushType LinearGradient
+}
 public System.Drawing.Drawing2D.ColorBlend : object {
-private Single[] positions
-private Color[] colors
+private Color[] <Colors>k__BackingField
+private Single[] <Positions>k__BackingField
 public Color[] Colors
 public Single[] Positions
 public void .ctor(int count)
@@ -1290,58 +1408,65 @@ public void set_Positions(Single[] value)
 }
 public System.Drawing.Drawing2D.CombineMode : Enum {
 public int value__
-public CombineMode Complement
-public CombineMode Exclude
-public CombineMode Intersect
 public CombineMode Replace
+public CombineMode Intersect
 public CombineMode Union
 public CombineMode Xor
+public CombineMode Exclude
+public CombineMode Complement
 }
 public System.Drawing.Drawing2D.CompositingMode : Enum {
 public int value__
-public CompositingMode SourceCopy
 public CompositingMode SourceOver
+public CompositingMode SourceCopy
 }
 public System.Drawing.Drawing2D.CompositingQuality : Enum {
 public int value__
-public CompositingQuality AssumeLinear
-public CompositingQuality Default
-public CompositingQuality GammaCorrected
-public CompositingQuality HighQuality
-public CompositingQuality HighSpeed
 public CompositingQuality Invalid
+public CompositingQuality Default
+public CompositingQuality HighSpeed
+public CompositingQuality HighQuality
+public CompositingQuality GammaCorrected
+public CompositingQuality AssumeLinear
 }
 public System.Drawing.Drawing2D.CoordinateSpace : Enum {
 public int value__
-public CoordinateSpace Device
-public CoordinateSpace Page
 public CoordinateSpace World
+public CoordinateSpace Page
+public CoordinateSpace Device
 }
 public System.Drawing.Drawing2D.CustomLineCap : MarshalByRefObject {
-private bool disposed
-internal IntPtr nativeObject
-public LineCap BaseCap
+internal SafeCustomLineCapHandle nativeCap
+private bool _disposed
 public LineJoin StrokeJoin
+public LineCap BaseCap
 public float BaseInset
 public float WidthScale
-internal void .ctor(IntPtr ptr)
+internal CustomLineCap CreateCustomLineCapObject(IntPtr cap)
 public void .ctor(GraphicsPath fillPath, GraphicsPath strokePath)
 public void .ctor(GraphicsPath fillPath, GraphicsPath strokePath, LineCap baseCap)
 public void .ctor(GraphicsPath fillPath, GraphicsPath strokePath, LineCap baseCap, float baseInset)
-public LineCap get_BaseCap()
-public void set_BaseCap(LineCap value)
+internal void .ctor(IntPtr nativeLineCap)
+internal void SetNativeLineCap(IntPtr handle)
+public void Dispose()
+protected void Dispose(bool disposing)
+protected void Finalize()
+public object Clone()
+public void SetStrokeCaps(LineCap startCap, LineCap endCap)
+public void GetStrokeCaps(LineCap& startCap, LineCap& endCap)
 public LineJoin get_StrokeJoin()
 public void set_StrokeJoin(LineJoin value)
+public LineCap get_BaseCap()
+public void set_BaseCap(LineCap value)
 public float get_BaseInset()
 public void set_BaseInset(float value)
 public float get_WidthScale()
 public void set_WidthScale(float value)
-public object Clone()
-public void Dispose()
-protected void Dispose(bool disposing)
-protected void Finalize()
-public void GetStrokeCaps(LineCap& startCap, LineCap& endCap)
-public void SetStrokeCaps(LineCap startCap, LineCap endCap)
+}
+internal System.Drawing.Drawing2D.CustomLineCapType : Enum {
+public int value__
+public CustomLineCapType Default
+public CustomLineCapType AdjustableArrowCap
 }
 public System.Drawing.Drawing2D.DashCap : Enum {
 public int value__
@@ -1351,12 +1476,12 @@ public DashCap Triangle
 }
 public System.Drawing.Drawing2D.DashStyle : Enum {
 public int value__
-public DashStyle Custom
+public DashStyle Solid
 public DashStyle Dash
+public DashStyle Dot
 public DashStyle DashDot
 public DashStyle DashDotDot
-public DashStyle Dot
-public DashStyle Solid
+public DashStyle Custom
 }
 public System.Drawing.Drawing2D.FillMode : Enum {
 public int value__
@@ -1401,22 +1526,22 @@ public Byte[] get_PathTypes()
 public int get_PointCount()
 internal IntPtr get_NativeObject()
 internal void set_NativeObject(IntPtr value)
-public void AddArc(Rectangle rect, float start_angle, float sweep_angle)
-public void AddArc(RectangleF rect, float start_angle, float sweep_angle)
-public void AddArc(int x, int y, int width, int height, float start_angle, float sweep_angle)
-public void AddArc(float x, float y, float width, float height, float start_angle, float sweep_angle)
+public void AddArc(Rectangle rect, float startAngle, float sweepAngle)
+public void AddArc(RectangleF rect, float startAngle, float sweepAngle)
+public void AddArc(int x, int y, int width, int height, float startAngle, float sweepAngle)
+public void AddArc(float x, float y, float width, float height, float startAngle, float sweepAngle)
 public void AddBezier(Point pt1, Point pt2, Point pt3, Point pt4)
 public void AddBezier(PointF pt1, PointF pt2, PointF pt3, PointF pt4)
 public void AddBezier(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4)
 public void AddBezier(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
-public void AddBeziers(Point[] pts)
-public void AddBeziers(PointF[] pts)
-public void AddEllipse(RectangleF r)
+public void AddBeziers(Point[] points)
+public void AddBeziers(PointF[] points)
+public void AddEllipse(RectangleF rect)
 public void AddEllipse(float x, float y, float width, float height)
-public void AddEllipse(Rectangle r)
+public void AddEllipse(Rectangle rect)
 public void AddEllipse(int x, int y, int width, int height)
-public void AddLine(Point a, Point b)
-public void AddLine(PointF a, PointF b)
+public void AddLine(Point pt1, Point pt2)
+public void AddLine(PointF pt1, PointF pt2)
 public void AddLine(int x1, int y1, int x2, int y2)
 public void AddLine(float x1, float y1, float x2, float y2)
 public void AddLines(Point[] points)
@@ -1485,76 +1610,49 @@ public void Widen(Pen pen, Matrix matrix)
 public void Widen(Pen pen, Matrix matrix, float flatness)
 }
 public System.Drawing.Drawing2D.GraphicsPathIterator : MarshalByRefObject {
-private IntPtr nativeObject
-internal IntPtr NativeObject
+internal IntPtr nativeIter
 public int Count
 public int SubpathCount
-internal void .ctor(IntPtr native)
 public void .ctor(GraphicsPath path)
-internal IntPtr get_NativeObject()
-internal void set_NativeObject(IntPtr value)
+public void Dispose()
+private void Dispose(bool disposing)
+protected void Finalize()
+public int NextSubpath(Int32& startIndex, Int32& endIndex, Boolean& isClosed)
+public int NextSubpath(GraphicsPath path, Boolean& isClosed)
+public int NextPathType(Byte& pathType, Int32& startIndex, Int32& endIndex)
+public int NextMarker(Int32& startIndex, Int32& endIndex)
+public int NextMarker(GraphicsPath path)
 public int get_Count()
 public int get_SubpathCount()
-internal void Dispose(bool disposing)
-public int CopyData(PointF[]& points, Byte[]& types, int startIndex, int endIndex)
-public void Dispose()
-protected void Finalize()
-public int Enumerate(PointF[]& points, Byte[]& types)
 public bool HasCurve()
-public int NextMarker(GraphicsPath path)
-public int NextMarker(Int32& startIndex, Int32& endIndex)
-public int NextPathType(Byte& pathType, Int32& startIndex, Int32& endIndex)
-public int NextSubpath(GraphicsPath path, Boolean& isClosed)
-public int NextSubpath(Int32& startIndex, Int32& endIndex, Boolean& isClosed)
 public void Rewind()
+public int Enumerate(PointF[]& points, Byte[]& types)
+public int CopyData(PointF[]& points, Byte[]& types, int startIndex, int endIndex)
 }
 public System.Drawing.Drawing2D.GraphicsState : MarshalByRefObject {
-internal UInt32 nativeState
+internal int nativeState
+internal void .ctor(int nativeState)
 }
 public System.Drawing.Drawing2D.HatchBrush : Brush {
-public Color BackgroundColor
-public Color ForegroundColor
 public HatchStyle HatchStyle
-internal void .ctor(IntPtr ptr)
-public void .ctor(HatchStyle hatchStyle, Color foreColor)
-public void .ctor(HatchStyle hatchStyle, Color foreColor, Color backColor)
-public Color get_BackgroundColor()
-public Color get_ForegroundColor()
-public HatchStyle get_HatchStyle()
+public Color ForegroundColor
+public Color BackgroundColor
+public void .ctor(HatchStyle hatchstyle, Color foreColor)
+public void .ctor(HatchStyle hatchstyle, Color foreColor, Color backColor)
+internal void .ctor(IntPtr nativeBrush)
 public object Clone()
+public HatchStyle get_HatchStyle()
+public Color get_ForegroundColor()
+public Color get_BackgroundColor()
 }
 public System.Drawing.Drawing2D.HatchStyle : Enum {
 public int value__
+public HatchStyle Horizontal
+public HatchStyle Vertical
+public HatchStyle ForwardDiagonal
 public HatchStyle BackwardDiagonal
 public HatchStyle Cross
-public HatchStyle DarkDownwardDiagonal
-public HatchStyle DarkHorizontal
-public HatchStyle DarkUpwardDiagonal
-public HatchStyle DarkVertical
-public HatchStyle DashedDownwardDiagonal
-public HatchStyle DashedHorizontal
-public HatchStyle DashedUpwardDiagonal
-public HatchStyle DashedVertical
-public HatchStyle DiagonalBrick
 public HatchStyle DiagonalCross
-public HatchStyle Divot
-public HatchStyle DottedDiamond
-public HatchStyle DottedGrid
-public HatchStyle ForwardDiagonal
-public HatchStyle Horizontal
-public HatchStyle HorizontalBrick
-public HatchStyle LargeCheckerBoard
-public HatchStyle LargeConfetti
-public HatchStyle LargeGrid
-public HatchStyle LightDownwardDiagonal
-public HatchStyle LightHorizontal
-public HatchStyle LightUpwardDiagonal
-public HatchStyle LightVertical
-public HatchStyle Max
-public HatchStyle Min
-public HatchStyle NarrowHorizontal
-public HatchStyle NarrowVertical
-public HatchStyle OutlinedDiamond
 public HatchStyle Percent05
 public HatchStyle Percent10
 public HatchStyle Percent20
@@ -1567,32 +1665,56 @@ public HatchStyle Percent70
 public HatchStyle Percent75
 public HatchStyle Percent80
 public HatchStyle Percent90
-public HatchStyle Plaid
-public HatchStyle Shingle
-public HatchStyle SmallCheckerBoard
-public HatchStyle SmallConfetti
-public HatchStyle SmallGrid
-public HatchStyle SolidDiamond
-public HatchStyle Sphere
-public HatchStyle Trellis
-public HatchStyle Vertical
-public HatchStyle Wave
-public HatchStyle Weave
+public HatchStyle LightDownwardDiagonal
+public HatchStyle LightUpwardDiagonal
+public HatchStyle DarkDownwardDiagonal
+public HatchStyle DarkUpwardDiagonal
 public HatchStyle WideDownwardDiagonal
 public HatchStyle WideUpwardDiagonal
+public HatchStyle LightVertical
+public HatchStyle LightHorizontal
+public HatchStyle NarrowVertical
+public HatchStyle NarrowHorizontal
+public HatchStyle DarkVertical
+public HatchStyle DarkHorizontal
+public HatchStyle DashedDownwardDiagonal
+public HatchStyle DashedUpwardDiagonal
+public HatchStyle DashedHorizontal
+public HatchStyle DashedVertical
+public HatchStyle SmallConfetti
+public HatchStyle LargeConfetti
 public HatchStyle ZigZag
+public HatchStyle Wave
+public HatchStyle DiagonalBrick
+public HatchStyle HorizontalBrick
+public HatchStyle Weave
+public HatchStyle Plaid
+public HatchStyle Divot
+public HatchStyle DottedGrid
+public HatchStyle DottedDiamond
+public HatchStyle Shingle
+public HatchStyle Trellis
+public HatchStyle Sphere
+public HatchStyle SmallGrid
+public HatchStyle SmallCheckerBoard
+public HatchStyle LargeCheckerBoard
+public HatchStyle OutlinedDiamond
+public HatchStyle SolidDiamond
+public HatchStyle LargeGrid
+public HatchStyle Min
+public HatchStyle Max
 }
 public System.Drawing.Drawing2D.InterpolationMode : Enum {
 public int value__
-public InterpolationMode Bicubic
-public InterpolationMode Bilinear
-public InterpolationMode Default
-public InterpolationMode High
-public InterpolationMode HighQualityBicubic
-public InterpolationMode HighQualityBilinear
 public InterpolationMode Invalid
+public InterpolationMode Default
 public InterpolationMode Low
+public InterpolationMode High
+public InterpolationMode Bilinear
+public InterpolationMode Bicubic
 public InterpolationMode NearestNeighbor
+public InterpolationMode HighQualityBilinear
+public InterpolationMode HighQualityBicubic
 }
 public System.Drawing.Drawing2D.LinearGradientBrush : Brush {
 private RectangleF rectangle
@@ -1642,31 +1764,31 @@ public object Clone()
 }
 public System.Drawing.Drawing2D.LinearGradientMode : Enum {
 public int value__
-public LinearGradientMode BackwardDiagonal
-public LinearGradientMode ForwardDiagonal
 public LinearGradientMode Horizontal
 public LinearGradientMode Vertical
+public LinearGradientMode ForwardDiagonal
+public LinearGradientMode BackwardDiagonal
 }
 public System.Drawing.Drawing2D.LineCap : Enum {
 public int value__
-public LineCap AnchorMask
+public LineCap Flat
+public LineCap Square
+public LineCap Round
+public LineCap Triangle
+public LineCap NoAnchor
+public LineCap SquareAnchor
+public LineCap RoundAnchor
+public LineCap DiamondAnchor
 public LineCap ArrowAnchor
 public LineCap Custom
-public LineCap DiamondAnchor
-public LineCap Flat
-public LineCap NoAnchor
-public LineCap Round
-public LineCap RoundAnchor
-public LineCap Square
-public LineCap SquareAnchor
-public LineCap Triangle
+public LineCap AnchorMask
 }
 public System.Drawing.Drawing2D.LineJoin : Enum {
 public int value__
-public LineJoin Bevel
 public LineJoin Miter
-public LineJoin MiterClipped
+public LineJoin Bevel
 public LineJoin Round
+public LineJoin MiterClipped
 }
 public System.Drawing.Drawing2D.Matrix : MarshalByRefObject {
 internal IntPtr nativeMatrix
@@ -1714,12 +1836,12 @@ internal void set_NativeObject(IntPtr value)
 }
 public System.Drawing.Drawing2D.MatrixOrder : Enum {
 public int value__
-public MatrixOrder Append
 public MatrixOrder Prepend
+public MatrixOrder Append
 }
 public System.Drawing.Drawing2D.PathData : object {
-private PointF[] points
-private Byte[] types
+private PointF[] <Points>k__BackingField
+private Byte[] <Types>k__BackingField
 public PointF[] Points
 public Byte[] Types
 public PointF[] get_Points()
@@ -1777,14 +1899,14 @@ public object Clone()
 }
 public System.Drawing.Drawing2D.PathPointType : Enum {
 public int value__
-public PathPointType Bezier
-public PathPointType Bezier3
-public PathPointType CloseSubpath
-public PathPointType DashMode
-public PathPointType Line
-public PathPointType PathMarker
-public PathPointType PathTypeMask
 public PathPointType Start
+public PathPointType Line
+public PathPointType Bezier
+public PathPointType PathTypeMask
+public PathPointType DashMode
+public PathPointType PathMarker
+public PathPointType CloseSubpath
+public PathPointType Bezier3
 }
 public System.Drawing.Drawing2D.PenAlignment : Enum {
 public int value__
@@ -1796,47 +1918,56 @@ public PenAlignment Right
 }
 public System.Drawing.Drawing2D.PenType : Enum {
 public int value__
-public PenType HatchFill
-public PenType LinearGradient
-public PenType PathGradient
 public PenType SolidColor
+public PenType HatchFill
 public PenType TextureFill
+public PenType PathGradient
+public PenType LinearGradient
 }
 public System.Drawing.Drawing2D.PixelOffsetMode : Enum {
 public int value__
-public PixelOffsetMode Default
-public PixelOffsetMode Half
-public PixelOffsetMode HighQuality
-public PixelOffsetMode HighSpeed
 public PixelOffsetMode Invalid
+public PixelOffsetMode Default
+public PixelOffsetMode HighSpeed
+public PixelOffsetMode HighQuality
 public PixelOffsetMode None
+public PixelOffsetMode Half
 }
 public System.Drawing.Drawing2D.QualityMode : Enum {
 public int value__
-public QualityMode Default
-public QualityMode High
 public QualityMode Invalid
+public QualityMode Default
 public QualityMode Low
+public QualityMode High
 }
 public System.Drawing.Drawing2D.RegionData : object {
-private Byte[] data
+private Byte[] <Data>k__BackingField
 public Byte[] Data
+internal void .ctor(Byte[] data)
 public Byte[] get_Data()
 public void set_Data(Byte[] value)
 }
+internal System.Drawing.Drawing2D.SafeCustomLineCapHandle : SafeHandle {
+public bool IsInvalid
+internal void .ctor(IntPtr h)
+protected bool ReleaseHandle()
+public bool get_IsInvalid()
+public IntPtr op_Implicit(SafeCustomLineCapHandle handle)
+public SafeCustomLineCapHandle op_Explicit(IntPtr handle)
+}
 public System.Drawing.Drawing2D.SmoothingMode : Enum {
 public int value__
-public SmoothingMode AntiAlias
-public SmoothingMode Default
-public SmoothingMode HighQuality
-public SmoothingMode HighSpeed
 public SmoothingMode Invalid
+public SmoothingMode Default
+public SmoothingMode HighSpeed
+public SmoothingMode HighQuality
 public SmoothingMode None
+public SmoothingMode AntiAlias
 }
 public System.Drawing.Drawing2D.WarpMode : Enum {
 public int value__
-public WarpMode Bilinear
 public WarpMode Perspective
+public WarpMode Bilinear
 }
 public System.Drawing.Drawing2D.WrapMode : Enum {
 public int value__
@@ -1845,6 +1976,17 @@ public WrapMode TileFlipX
 public WrapMode TileFlipY
 public WrapMode TileFlipXY
 public WrapMode Clamp
+}
+internal System.Drawing.ExternDll : object {
+public string Gdiplus
+public string User32
+public string Gdi32
+public string Kernel32
+public string Winspool
+public string Comdlg32
+public string Comctl32
+public string Shell32
+public string Oleaut32
 }
 public System.Drawing.Font : MarshalByRefObject {
 private IntPtr fontObject
@@ -1883,7 +2025,16 @@ public string SystemFontName
 public string OriginalFontName
 public bool Underline
 public GraphicsUnit Unit
+private void CreateFont(string familyName, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
 private void .ctor(SerializationInfo info, StreamingContext context)
+private void System.Runtime.Serialization.ISerializable.GetObjectData(SerializationInfo si, StreamingContext context)
+protected void Finalize()
+public void Dispose()
+internal void SetSystemFontName(string newSystemFontName)
+internal void unitConversion(GraphicsUnit fromUnit, GraphicsUnit toUnit, float nSrc, Single& nTrg)
+private void setProperties(FontFamily family, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
+public Font FromHfont(IntPtr hfont)
+public IntPtr ToHfont()
 internal void .ctor(IntPtr newFontObject, string familyName, FontStyle style, float size)
 public void .ctor(Font prototype, FontStyle newStyle)
 public void .ctor(FontFamily family, float emSize, GraphicsUnit unit)
@@ -1899,14 +2050,6 @@ public void .ctor(string familyName, float emSize, FontStyle style, GraphicsUnit
 public void .ctor(string familyName, float emSize, FontStyle style, GraphicsUnit unit, byte gdiCharSet)
 public void .ctor(string familyName, float emSize, FontStyle style, GraphicsUnit unit, byte gdiCharSet, bool gdiVerticalFont)
 internal void .ctor(string familyName, float emSize, string systemName)
-private void CreateFont(string familyName, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
-private void System.Runtime.Serialization.ISerializable.GetObjectData(SerializationInfo si, StreamingContext context)
-protected void Finalize()
-public void Dispose()
-internal void unitConversion(GraphicsUnit fromUnit, GraphicsUnit toUnit, float nSrc, Single& nTrg)
-private void setProperties(FontFamily family, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
-public Font FromHfont(IntPtr hfont)
-public IntPtr ToHfont()
 public object Clone()
 internal IntPtr get_NativeObject()
 public bool get_Bold()
@@ -1952,18 +2095,20 @@ public System.Drawing.FontFamily : MarshalByRefObject {
 private string name
 private IntPtr nativeFontFamily
 internal IntPtr NativeObject
+internal IntPtr NativeFamily
 public string Name
 public FontFamily GenericMonospace
 public FontFamily GenericSansSerif
 public FontFamily GenericSerif
 public FontFamily[] Families
 internal void .ctor(IntPtr fntfamily)
-public void .ctor(GenericFontFamilies genericFamily)
-public void .ctor(string name)
-public void .ctor(string name, FontCollection fontCollection)
 internal void refreshName()
 protected void Finalize()
 internal IntPtr get_NativeObject()
+internal IntPtr get_NativeFamily()
+public void .ctor(GenericFontFamilies genericFamily)
+public void .ctor(string name)
+public void .ctor(string name, FontCollection fontCollection)
 public string get_Name()
 public FontFamily get_GenericMonospace()
 public FontFamily get_GenericSansSerif()
@@ -2026,6 +2171,7 @@ public IntPtr Display
 public bool UseX11Drawable
 public bool UseCarbonDrawable
 public bool UseCocoaDrawable
+private string GdiPlus
 internal ulong GdiPlusToken
 internal Status GdiplusStartup(UInt64& token, GdiplusStartupInput& input, GdiplusStartupOutput& output)
 internal void GdiplusShutdown(UInt64& token)
@@ -2040,9 +2186,9 @@ public IntPtr FromPointToUnManagedMemory(PointF[] pts)
 internal void CheckStatus(Status status)
 internal IntPtr GdipAlloc(int size)
 internal void GdipFree(IntPtr ptr)
-internal Status GdipCloneBrush(IntPtr brush, IntPtr& clonedBrush)
-internal Status GdipDeleteBrush(IntPtr brush)
-internal Status GdipGetBrushType(IntPtr brush, BrushType& type)
+internal int GdipCloneBrush(HandleRef brush, IntPtr& clonedBrush)
+internal int GdipDeleteBrush(HandleRef brush)
+internal int GdipGetBrushType(HandleRef brush, BrushType& type)
 internal Status GdipCreateRegion(IntPtr& region)
 internal Status GdipCreateRegionRgnData(Byte[] data, int size, IntPtr& region)
 internal Status GdipDeleteRegion(IntPtr region)
@@ -2074,28 +2220,28 @@ internal Status GdipTransformRegion(IntPtr region, IntPtr matrix)
 internal Status GdipFillRegion(IntPtr graphics, IntPtr brush, IntPtr region)
 internal Status GdipGetRegionHRgn(IntPtr region, IntPtr graphics, IntPtr& hRgn)
 internal Status GdipCreateRegionHrgn(IntPtr hRgn, IntPtr& region)
-internal Status GdipCreateSolidFill(int color, IntPtr& brush)
-internal Status GdipGetSolidFillColor(IntPtr brush, Int32& color)
-internal Status GdipSetSolidFillColor(IntPtr brush, int color)
-internal Status GdipCreateHatchBrush(HatchStyle hatchstyle, int foreColor, int backColor, IntPtr& brush)
-internal Status GdipGetHatchStyle(IntPtr brush, HatchStyle& hatchstyle)
-internal Status GdipGetHatchForegroundColor(IntPtr brush, Int32& foreColor)
-internal Status GdipGetHatchBackgroundColor(IntPtr brush, Int32& backColor)
-internal Status GdipGetTextureImage(IntPtr texture, IntPtr& image)
-internal Status GdipCreateTexture(IntPtr image, WrapMode wrapMode, IntPtr& texture)
-internal Status GdipCreateTextureIAI(IntPtr image, IntPtr imageAttributes, int x, int y, int width, int height, IntPtr& texture)
-internal Status GdipCreateTextureIA(IntPtr image, IntPtr imageAttributes, float x, float y, float width, float height, IntPtr& texture)
-internal Status GdipCreateTexture2I(IntPtr image, WrapMode wrapMode, int x, int y, int width, int height, IntPtr& texture)
-internal Status GdipCreateTexture2(IntPtr image, WrapMode wrapMode, float x, float y, float width, float height, IntPtr& texture)
-internal Status GdipGetTextureTransform(IntPtr texture, IntPtr matrix)
-internal Status GdipSetTextureTransform(IntPtr texture, IntPtr matrix)
-internal Status GdipGetTextureWrapMode(IntPtr texture, WrapMode& wrapMode)
-internal Status GdipSetTextureWrapMode(IntPtr texture, WrapMode wrapMode)
-internal Status GdipMultiplyTextureTransform(IntPtr texture, IntPtr matrix, MatrixOrder order)
-internal Status GdipResetTextureTransform(IntPtr texture)
-internal Status GdipRotateTextureTransform(IntPtr texture, float angle, MatrixOrder order)
-internal Status GdipScaleTextureTransform(IntPtr texture, float sx, float sy, MatrixOrder order)
-internal Status GdipTranslateTextureTransform(IntPtr texture, float dx, float dy, MatrixOrder order)
+internal int GdipCreateSolidFill(int color, IntPtr& brush)
+internal int GdipGetSolidFillColor(HandleRef brush, Int32& color)
+internal int GdipSetSolidFillColor(HandleRef brush, int color)
+internal int GdipCreateHatchBrush(int hatchstyle, int foreColor, int backColor, IntPtr& brush)
+internal int GdipGetHatchStyle(HandleRef brush, Int32& hatchstyle)
+internal int GdipGetHatchForegroundColor(HandleRef brush, Int32& foreColor)
+internal int GdipGetHatchBackgroundColor(HandleRef brush, Int32& backColor)
+internal int GdipGetTextureImage(HandleRef texture, IntPtr& image)
+internal int GdipCreateTexture(HandleRef image, int wrapMode, IntPtr& texture)
+internal int GdipCreateTextureIAI(HandleRef image, HandleRef imageAttributes, int x, int y, int width, int height, IntPtr& texture)
+internal int GdipCreateTextureIA(HandleRef image, HandleRef imageAttributes, float x, float y, float width, float height, IntPtr& texture)
+internal int GdipCreateTexture2I(HandleRef image, int wrapMode, int x, int y, int width, int height, IntPtr& texture)
+internal int GdipCreateTexture2(HandleRef image, int wrapMode, float x, float y, float width, float height, IntPtr& texture)
+internal int GdipGetTextureTransform(HandleRef texture, HandleRef matrix)
+internal int GdipSetTextureTransform(HandleRef texture, HandleRef matrix)
+internal int GdipGetTextureWrapMode(HandleRef texture, Int32& wrapMode)
+internal int GdipSetTextureWrapMode(HandleRef texture, int wrapMode)
+internal int GdipMultiplyTextureTransform(HandleRef texture, HandleRef matrix, MatrixOrder order)
+internal int GdipResetTextureTransform(HandleRef texture)
+internal int GdipRotateTextureTransform(HandleRef texture, float angle, MatrixOrder order)
+internal int GdipScaleTextureTransform(HandleRef texture, float sx, float sy, MatrixOrder order)
+internal int GdipTranslateTextureTransform(HandleRef texture, float dx, float dy, MatrixOrder order)
 internal Status GdipCreatePathGradientFromPath(IntPtr path, IntPtr& brush)
 internal Status GdipCreatePathGradientI(Point[] points, int count, WrapMode wrapMode, IntPtr& brush)
 internal Status GdipCreatePathGradient(PointF[] points, int count, WrapMode wrapMode, IntPtr& brush)
@@ -2310,28 +2456,28 @@ internal Status GdipMultiplyPenTransform(IntPtr pen, IntPtr matrix, MatrixOrder 
 internal Status GdipRotatePenTransform(IntPtr pen, float angle, MatrixOrder order)
 internal Status GdipScalePenTransform(IntPtr pen, float sx, float sy, MatrixOrder order)
 internal Status GdipTranslatePenTransform(IntPtr pen, float dx, float dy, MatrixOrder order)
-internal Status GdipCreateCustomLineCap(IntPtr fillPath, IntPtr strokePath, LineCap baseCap, float baseInset, IntPtr& customCap)
-internal Status GdipDeleteCustomLineCap(IntPtr customCap)
-internal Status GdipCloneCustomLineCap(IntPtr customCap, IntPtr& clonedCap)
-internal Status GdipSetCustomLineCapStrokeCaps(IntPtr customCap, LineCap startCap, LineCap endCap)
-internal Status GdipGetCustomLineCapStrokeCaps(IntPtr customCap, LineCap& startCap, LineCap& endCap)
-internal Status GdipSetCustomLineCapStrokeJoin(IntPtr customCap, LineJoin lineJoin)
-internal Status GdipGetCustomLineCapStrokeJoin(IntPtr customCap, LineJoin& lineJoin)
-internal Status GdipSetCustomLineCapBaseCap(IntPtr customCap, LineCap baseCap)
-internal Status GdipGetCustomLineCapBaseCap(IntPtr customCap, LineCap& baseCap)
-internal Status GdipSetCustomLineCapBaseInset(IntPtr customCap, float inset)
-internal Status GdipGetCustomLineCapBaseInset(IntPtr customCap, Single& inset)
-internal Status GdipSetCustomLineCapWidthScale(IntPtr customCap, float widthScale)
-internal Status GdipGetCustomLineCapWidthScale(IntPtr customCap, Single& widthScale)
-internal Status GdipCreateAdjustableArrowCap(float height, float width, bool isFilled, IntPtr& arrowCap)
-internal Status GdipSetAdjustableArrowCapHeight(IntPtr arrowCap, float height)
-internal Status GdipGetAdjustableArrowCapHeight(IntPtr arrowCap, Single& height)
-internal Status GdipSetAdjustableArrowCapWidth(IntPtr arrowCap, float width)
-internal Status GdipGetAdjustableArrowCapWidth(IntPtr arrowCap, Single& width)
-internal Status GdipSetAdjustableArrowCapMiddleInset(IntPtr arrowCap, float middleInset)
-internal Status GdipGetAdjustableArrowCapMiddleInset(IntPtr arrowCap, Single& middleInset)
-internal Status GdipSetAdjustableArrowCapFillState(IntPtr arrowCap, bool isFilled)
-internal Status GdipGetAdjustableArrowCapFillState(IntPtr arrowCap, Boolean& isFilled)
+internal int GdipCreateCustomLineCap(HandleRef fillPath, HandleRef strokePath, LineCap baseCap, float baseInset, IntPtr& customCap)
+internal int GdipDeleteCustomLineCap(HandleRef customCap)
+internal int GdipCloneCustomLineCap(HandleRef customCap, IntPtr& clonedCap)
+internal int GdipSetCustomLineCapStrokeCaps(HandleRef customCap, LineCap startCap, LineCap endCap)
+internal int GdipGetCustomLineCapStrokeCaps(HandleRef customCap, LineCap& startCap, LineCap& endCap)
+internal int GdipSetCustomLineCapStrokeJoin(HandleRef customCap, LineJoin lineJoin)
+internal int GdipGetCustomLineCapStrokeJoin(HandleRef customCap, LineJoin& lineJoin)
+internal int GdipSetCustomLineCapBaseCap(HandleRef customCap, LineCap baseCap)
+internal int GdipGetCustomLineCapBaseCap(HandleRef customCap, LineCap& baseCap)
+internal int GdipSetCustomLineCapBaseInset(HandleRef customCap, float inset)
+internal int GdipGetCustomLineCapBaseInset(HandleRef customCap, Single& inset)
+internal int GdipSetCustomLineCapWidthScale(HandleRef customCap, float widthScale)
+internal int GdipGetCustomLineCapWidthScale(HandleRef customCap, Single& widthScale)
+internal int GdipCreateAdjustableArrowCap(float height, float width, bool isFilled, IntPtr& arrowCap)
+internal int GdipSetAdjustableArrowCapHeight(HandleRef arrowCap, float height)
+internal int GdipGetAdjustableArrowCapHeight(HandleRef arrowCap, Single& height)
+internal int GdipSetAdjustableArrowCapWidth(HandleRef arrowCap, float width)
+internal int GdipGetAdjustableArrowCapWidth(HandleRef arrowCap, Single& width)
+internal int GdipSetAdjustableArrowCapMiddleInset(HandleRef arrowCap, float middleInset)
+internal int GdipGetAdjustableArrowCapMiddleInset(HandleRef arrowCap, Single& middleInset)
+internal int GdipSetAdjustableArrowCapFillState(HandleRef arrowCap, bool isFilled)
+internal int GdipGetAdjustableArrowCapFillState(HandleRef arrowCap, Boolean& isFilled)
 internal Status GdipCreateFromHWND(IntPtr hwnd, IntPtr& graphics)
 internal Status GdipMeasureString(IntPtr graphics, string str, int length, IntPtr font, RectangleF& layoutRect, IntPtr stringFormat, RectangleF& boundingBox, Int32* codepointsFitted, Int32* linesFilled)
 internal Status GdipMeasureCharacterRanges(IntPtr graphics, string str, int length, IntPtr font, RectangleF& layoutRect, IntPtr stringFormat, int regcount, IntPtr& regions)
@@ -2486,32 +2632,32 @@ internal Status GdipIsVisiblePathPoint(IntPtr path, float x, float y, IntPtr gra
 internal Status GdipIsVisiblePathPointI(IntPtr path, int x, int y, IntPtr graphics, Boolean& result)
 internal Status GdipIsOutlineVisiblePathPoint(IntPtr path, float x, float y, IntPtr pen, IntPtr graphics, Boolean& result)
 internal Status GdipIsOutlineVisiblePathPointI(IntPtr path, int x, int y, IntPtr pen, IntPtr graphics, Boolean& result)
-internal Status GdipCreatePathIter(IntPtr& iterator, IntPtr path)
-internal Status GdipPathIterGetCount(IntPtr iterator, Int32& count)
-internal Status GdipPathIterGetSubpathCount(IntPtr iterator, Int32& count)
-internal Status GdipDeletePathIter(IntPtr iterator)
-internal Status GdipPathIterCopyData(IntPtr iterator, Int32& resultCount, PointF[] points, Byte[] types, int startIndex, int endIndex)
-internal Status GdipPathIterEnumerate(IntPtr iterator, Int32& resultCount, PointF[] points, Byte[] types, int count)
-internal Status GdipPathIterHasCurve(IntPtr iterator, Boolean& curve)
-internal Status GdipPathIterNextMarkerPath(IntPtr iterator, Int32& resultCount, IntPtr path)
-internal Status GdipPathIterNextMarker(IntPtr iterator, Int32& resultCount, Int32& startIndex, Int32& endIndex)
-internal Status GdipPathIterNextPathType(IntPtr iterator, Int32& resultCount, Byte& pathType, Int32& startIndex, Int32& endIndex)
-internal Status GdipPathIterNextSubpathPath(IntPtr iterator, Int32& resultCount, IntPtr path, Boolean& isClosed)
-internal Status GdipPathIterNextSubpath(IntPtr iterator, Int32& resultCount, Int32& startIndex, Int32& endIndex, Boolean& isClosed)
-internal Status GdipPathIterRewind(IntPtr iterator)
-internal Status GdipCreateImageAttributes(IntPtr& imageattr)
-internal Status GdipSetImageAttributesColorKeys(IntPtr imageattr, ColorAdjustType type, bool enableFlag, int colorLow, int colorHigh)
-internal Status GdipDisposeImageAttributes(IntPtr imageattr)
-internal Status GdipSetImageAttributesColorMatrix(IntPtr imageattr, ColorAdjustType type, bool enableFlag, IntPtr colorMatrix, IntPtr grayMatrix, ColorMatrixFlag flags)
-internal Status GdipSetImageAttributesGamma(IntPtr imageattr, ColorAdjustType type, bool enableFlag, float gamma)
-internal Status GdipSetImageAttributesNoOp(IntPtr imageattr, ColorAdjustType type, bool enableFlag)
-internal Status GdipSetImageAttributesOutputChannel(IntPtr imageattr, ColorAdjustType type, bool enableFlag, ColorChannelFlag channelFlags)
-internal Status GdipSetImageAttributesOutputChannelColorProfile(IntPtr imageattr, ColorAdjustType type, bool enableFlag, string profileName)
-internal Status GdipSetImageAttributesRemapTable(IntPtr imageattr, ColorAdjustType type, bool enableFlag, UInt32 mapSize, IntPtr colorMap)
-internal Status GdipSetImageAttributesThreshold(IntPtr imageattr, ColorAdjustType type, bool enableFlag, float thresHold)
-internal Status GdipCloneImageAttributes(IntPtr imageattr, IntPtr& cloneImageattr)
-internal Status GdipGetImageAttributesAdjustedPalette(IntPtr imageattr, IntPtr colorPalette, ColorAdjustType colorAdjustType)
-internal Status GdipSetImageAttributesWrapMode(IntPtr imageattr, WrapMode wrap, int argb, bool clamp)
+internal int GdipCreatePathIter(IntPtr& iterator, HandleRef path)
+internal int GdipPathIterGetCount(HandleRef iterator, Int32& count)
+internal int GdipPathIterGetSubpathCount(HandleRef iterator, Int32& count)
+internal int GdipDeletePathIter(HandleRef iterator)
+internal int GdipPathIterCopyData(HandleRef iterator, Int32& resultCount, IntPtr points, Byte[] types, int startIndex, int endIndex)
+internal int GdipPathIterEnumerate(HandleRef iterator, Int32& resultCount, IntPtr points, Byte[] types, int count)
+internal int GdipPathIterHasCurve(HandleRef iterator, Boolean& curve)
+internal int GdipPathIterNextMarkerPath(HandleRef iterator, Int32& resultCount, HandleRef path)
+internal int GdipPathIterNextMarker(HandleRef iterator, Int32& resultCount, Int32& startIndex, Int32& endIndex)
+internal int GdipPathIterNextPathType(HandleRef iterator, Int32& resultCount, Byte& pathType, Int32& startIndex, Int32& endIndex)
+internal int GdipPathIterNextSubpathPath(HandleRef iterator, Int32& resultCount, HandleRef path, Boolean& isClosed)
+internal int GdipPathIterNextSubpath(HandleRef iterator, Int32& resultCount, Int32& startIndex, Int32& endIndex, Boolean& isClosed)
+internal int GdipPathIterRewind(HandleRef iterator)
+internal int GdipCreateImageAttributes(IntPtr& imageattr)
+internal int GdipSetImageAttributesColorKeys(HandleRef imageattr, ColorAdjustType type, bool enableFlag, int colorLow, int colorHigh)
+internal int GdipDisposeImageAttributes(HandleRef imageattr)
+internal int GdipSetImageAttributesColorMatrix(HandleRef imageattr, ColorAdjustType type, bool enableFlag, ColorMatrix colorMatrix, ColorMatrix grayMatrix, ColorMatrixFlag flags)
+internal int GdipSetImageAttributesGamma(HandleRef imageattr, ColorAdjustType type, bool enableFlag, float gamma)
+internal int GdipSetImageAttributesNoOp(HandleRef imageattr, ColorAdjustType type, bool enableFlag)
+internal int GdipSetImageAttributesOutputChannel(HandleRef imageattr, ColorAdjustType type, bool enableFlag, ColorChannelFlag channelFlags)
+internal int GdipSetImageAttributesOutputChannelColorProfile(HandleRef imageattr, ColorAdjustType type, bool enableFlag, string profileName)
+internal int GdipSetImageAttributesRemapTable(HandleRef imageattr, ColorAdjustType type, bool enableFlag, int mapSize, HandleRef colorMap)
+internal int GdipSetImageAttributesThreshold(HandleRef imageattr, ColorAdjustType type, bool enableFlag, float thresHold)
+internal int GdipCloneImageAttributes(HandleRef imageattr, IntPtr& cloneImageattr)
+internal int GdipGetImageAttributesAdjustedPalette(HandleRef imageattr, HandleRef colorPalette, ColorAdjustType colorAdjustType)
+internal int GdipSetImageAttributesWrapMode(HandleRef imageattr, int wrap, int argb, bool clamp)
 internal Status GdipCreateFont(IntPtr fontFamily, float emSize, FontStyle style, GraphicsUnit unit, IntPtr& font)
 internal Status GdipDeleteFont(IntPtr font)
 internal Status GdipGetLogFont(IntPtr font, IntPtr graphics, object logfontA)
@@ -2541,9 +2687,9 @@ internal IntPtr XDefaultVisual(IntPtr display, int screen)
 internal IntPtr XGetVisualInfo(IntPtr display, int vinfo_mask, XVisualInfo& vinfo_template, Int32& nitems)
 internal IntPtr XVisualIDFromVisual(IntPtr visual)
 internal void XFree(IntPtr data)
-internal Status GdipGetFontCollectionFamilyCount(IntPtr collection, Int32& found)
-internal Status GdipGetFontCollectionFamilyList(IntPtr collection, int getCount, IntPtr[] dest, Int32& retCount)
-internal Status GdipNewInstalledFontCollection(IntPtr& collection)
+internal int GdipGetFontCollectionFamilyCount(HandleRef collection, Int32& found)
+internal int GdipGetFontCollectionFamilyList(HandleRef collection, int getCount, IntPtr[] dest, Int32& retCount)
+internal int GdipNewInstalledFontCollection(IntPtr& collection)
 internal Status GdipNewPrivateFontCollection(IntPtr& collection)
 internal Status GdipDeletePrivateFontCollection(IntPtr& collection)
 internal Status GdipPrivateAddFontFile(IntPtr collection, string fileName)
@@ -2562,7 +2708,7 @@ internal Status GdipDeleteFontFamily(IntPtr fontFamily)
 internal Status GdipGetFontSize(IntPtr font, Single& size)
 internal Status GdipGetFontHeight(IntPtr font, IntPtr graphics, Single& height)
 internal Status GdipGetFontHeightGivenDPI(IntPtr font, float dpi, Single& height)
-internal Status GdipCloneFontFamily(IntPtr fontFamily, IntPtr& clone)
+internal int GdipCloneFontFamily(HandleRef fontFamily, IntPtr& clone)
 internal Status GdipCreateStringFormat(int formatAttributes, int language, IntPtr& format)
 internal Status GdipStringFormatGetGenericDefault(IntPtr& format)
 internal Status GdipStringFormatGetGenericTypographic(IntPtr& format)
@@ -2602,10 +2748,10 @@ internal Status GdipCreateMetafileFromStream(IStream stream, IntPtr& metafile)
 internal Status GdipGetMetafileHeaderFromStream(IStream stream, IntPtr header)
 internal Status GdipRecordMetafileStream(IStream stream, IntPtr hdc, EmfType type, RectangleF& frameRect, MetafileFrameUnit frameUnit, string description, IntPtr& metafile)
 internal Status GdipRecordMetafileStreamI(IStream stream, IntPtr hdc, EmfType type, Rectangle& frameRect, MetafileFrameUnit frameUnit, string description, IntPtr& metafile)
-internal Status GdipGetImageDecodersSize(Int32& decoderNums, Int32& arraySize)
-internal Status GdipGetImageDecoders(int decoderNums, int arraySize, IntPtr decoders)
-internal Status GdipGetImageEncodersSize(Int32& encoderNums, Int32& arraySize)
-internal Status GdipGetImageEncoders(int encoderNums, int arraySize, IntPtr encoders)
+internal int GdipGetImageDecodersSize(Int32& decoderNums, Int32& arraySize)
+internal int GdipGetImageDecoders(int decoderNums, int arraySize, IntPtr decoders)
+internal int GdipGetImageEncodersSize(Int32& encoderNums, Int32& arraySize)
+internal int GdipGetImageEncoders(int encoderNums, int arraySize, IntPtr encoders)
 internal Status GdipCreateFromContext_macosx(IntPtr cgref, int width, int height, IntPtr& graphics)
 internal Status GdipSetVisibleClip_linux(IntPtr graphics, Rectangle& rect)
 internal Status GdipCreateFromXDrawable_linux(IntPtr drawable, IntPtr display, IntPtr& graphics)
@@ -2686,6 +2832,7 @@ private IntPtr deviceContextHdc
 private string MetafileEnumeration
 internal float systemDpiX
 internal float systemDpiY
+internal IntPtr NativeGraphics
 internal IntPtr NativeObject
 public Region Clip
 public RectangleF ClipBounds
@@ -2709,6 +2856,7 @@ internal void .ctor(IntPtr nativeGraphics)
 protected void Finalize()
 internal float get_systemDpiX()
 internal float get_systemDpiY()
+internal IntPtr get_NativeGraphics()
 internal IntPtr get_NativeObject()
 internal void set_NativeObject(IntPtr value)
 public void AddMetafileComment(Byte[] data)
@@ -2998,10 +3146,10 @@ public void .ctor(string fileName)
 public void .ctor(Type type, string resource)
 private void .ctor(SerializationInfo info, StreamingContext context)
 internal void .ctor(string resourceName, bool undisposable)
+private void System.Runtime.Serialization.ISerializable.GetObjectData(SerializationInfo si, StreamingContext context)
 public void .ctor(Stream stream, Size size)
 public void .ctor(string fileName, int width, int height)
 public void .ctor(string fileName, Size size)
-private void System.Runtime.Serialization.ISerializable.GetObjectData(SerializationInfo si, StreamingContext context)
 public Icon ExtractAssociatedIcon(string filePath)
 public void Dispose()
 public object Clone()
@@ -3068,6 +3216,7 @@ public object Tag
 public float VerticalResolution
 public int Width
 internal IntPtr NativeObject
+internal IntPtr nativeImage
 internal void .ctor(SerializationInfo info, StreamingContext context)
 private void System.Runtime.Serialization.ISerializable.GetObjectData(SerializationInfo si, StreamingContext context)
 public Image FromFile(string filename)
@@ -3078,6 +3227,7 @@ public Image FromStream(Stream stream)
 public Image FromStream(Stream stream, bool useEmbeddedColorManagement)
 public Image FromStream(Stream stream, bool useEmbeddedColorManagement, bool validateImageData)
 internal Image LoadFromStream(Stream stream, bool keepAlive)
+internal Image CreateImageObject(IntPtr nativeImage)
 internal Image CreateFromHandle(IntPtr handle)
 public int GetPixelFormatSize(PixelFormat pixfmt)
 public bool IsAlphaPixelFormat(PixelFormat pixfmt)
@@ -3121,6 +3271,7 @@ public float get_VerticalResolution()
 public int get_Width()
 internal IntPtr get_NativeObject()
 internal void set_NativeObject(IntPtr value)
+internal IntPtr get_nativeImage()
 public void Dispose()
 protected void Finalize()
 protected void Dispose(bool disposing)
@@ -3197,64 +3348,63 @@ public void set_Stride(int value)
 }
 public System.Drawing.Imaging.ColorAdjustType : Enum {
 public int value__
-public ColorAdjustType Any
+public ColorAdjustType Default
 public ColorAdjustType Bitmap
 public ColorAdjustType Brush
-public ColorAdjustType Count
-public ColorAdjustType Default
 public ColorAdjustType Pen
 public ColorAdjustType Text
+public ColorAdjustType Count
+public ColorAdjustType Any
 }
 public System.Drawing.Imaging.ColorChannelFlag : Enum {
 public int value__
 public ColorChannelFlag ColorChannelC
-public ColorChannelFlag ColorChannelK
-public ColorChannelFlag ColorChannelLast
 public ColorChannelFlag ColorChannelM
 public ColorChannelFlag ColorChannelY
+public ColorChannelFlag ColorChannelK
+public ColorChannelFlag ColorChannelLast
 }
 public System.Drawing.Imaging.ColorMap : object {
-private Color newColor
-private Color oldColor
-public Color NewColor
+private Color _oldColor
+private Color _newColor
 public Color OldColor
-public Color get_NewColor()
-public void set_NewColor(Color value)
+public Color NewColor
 public Color get_OldColor()
 public void set_OldColor(Color value)
+public Color get_NewColor()
+public void set_NewColor(Color value)
 }
 public System.Drawing.Imaging.ColorMapType : Enum {
 public int value__
-public ColorMapType Brush
 public ColorMapType Default
+public ColorMapType Brush
 }
 public System.Drawing.Imaging.ColorMatrix : object {
-private float color00
-private float color01
-private float color02
-private float color03
-private float color04
-private float color10
-private float color11
-private float color12
-private float color13
-private float color14
-private float color20
-private float color21
-private float color22
-private float color23
-private float color24
-private float color30
-private float color31
-private float color32
-private float color33
-private float color34
-private float color40
-private float color41
-private float color42
-private float color43
-private float color44
-public float Item
+private float _matrix00
+private float _matrix01
+private float _matrix02
+private float _matrix03
+private float _matrix04
+private float _matrix10
+private float _matrix11
+private float _matrix12
+private float _matrix13
+private float _matrix14
+private float _matrix20
+private float _matrix21
+private float _matrix22
+private float _matrix23
+private float _matrix24
+private float _matrix30
+private float _matrix31
+private float _matrix32
+private float _matrix33
+private float _matrix34
+private float _matrix40
+private float _matrix41
+private float _matrix42
+private float _matrix43
+private float _matrix44
 public float Matrix00
 public float Matrix01
 public float Matrix02
@@ -3280,9 +3430,7 @@ public float Matrix41
 public float Matrix42
 public float Matrix43
 public float Matrix44
-public void .ctor(Single[][] matrix)
-public float get_Item(int row, int column)
-public void set_Item(int row, int column, float value)
+public float Item
 public float get_Matrix00()
 public void set_Matrix00(float value)
 public float get_Matrix01()
@@ -3333,14 +3481,17 @@ public float get_Matrix43()
 public void set_Matrix43(float value)
 public float get_Matrix44()
 public void set_Matrix44(float value)
-internal IntPtr Alloc(ColorMatrix cm)
-internal void Free(IntPtr cm)
+public void .ctor(Single[][] newColorMatrix)
+internal void SetMatrix(Single[][] newColorMatrix)
+internal Single[][] GetMatrix()
+public float get_Item(int row, int column)
+public void set_Item(int row, int column, float value)
 }
 public System.Drawing.Imaging.ColorMatrixFlag : Enum {
 public int value__
-public ColorMatrixFlag AltGrays
 public ColorMatrixFlag Default
 public ColorMatrixFlag SkipGrays
+public ColorMatrixFlag AltGrays
 }
 public System.Drawing.Imaging.ColorMode : Enum {
 public int value__
@@ -3348,379 +3499,383 @@ public ColorMode Argb32Mode
 public ColorMode Argb64Mode
 }
 public System.Drawing.Imaging.ColorPalette : object {
-private int flags
-private Color[] entries
-public Color[] Entries
+private int _flags
+private Color[] _entries
 public int Flags
-internal void .ctor(int flags, Color[] colors)
-public Color[] get_Entries()
+public Color[] Entries
 public int get_Flags()
-internal IntPtr getGDIPalette()
-internal void setFromGDIPalette(IntPtr palette)
+public Color[] get_Entries()
+internal void .ctor(int count)
+internal void ConvertFromMemory(IntPtr memory)
+internal IntPtr ConvertToMemory()
+}
+internal System.Drawing.Imaging.EmfPlusFlags : Enum {
+public int value__
+public EmfPlusFlags Display
+public EmfPlusFlags NonDualGdi
 }
 public System.Drawing.Imaging.EmfPlusRecordType : Enum {
 public int value__
-public EmfPlusRecordType BeginContainer
-public EmfPlusRecordType BeginContainerNoParams
-public EmfPlusRecordType Clear
-public EmfPlusRecordType Comment
-public EmfPlusRecordType DrawArc
-public EmfPlusRecordType DrawBeziers
-public EmfPlusRecordType DrawClosedCurve
-public EmfPlusRecordType DrawCurve
-public EmfPlusRecordType DrawDriverString
-public EmfPlusRecordType DrawEllipse
-public EmfPlusRecordType DrawImage
-public EmfPlusRecordType DrawImagePoints
-public EmfPlusRecordType DrawLines
-public EmfPlusRecordType DrawPath
-public EmfPlusRecordType DrawPie
-public EmfPlusRecordType DrawRects
-public EmfPlusRecordType DrawString
-public EmfPlusRecordType EmfAbortPath
-public EmfPlusRecordType EmfAlphaBlend
-public EmfPlusRecordType EmfAngleArc
-public EmfPlusRecordType EmfArcTo
-public EmfPlusRecordType EmfBeginPath
-public EmfPlusRecordType EmfBitBlt
-public EmfPlusRecordType EmfChord
-public EmfPlusRecordType EmfCloseFigure
-public EmfPlusRecordType EmfColorCorrectPalette
-public EmfPlusRecordType EmfColorMatchToTargetW
-public EmfPlusRecordType EmfCreateBrushIndirect
-public EmfPlusRecordType EmfCreateColorSpace
-public EmfPlusRecordType EmfCreateColorSpaceW
-public EmfPlusRecordType EmfCreateDibPatternBrushPt
-public EmfPlusRecordType EmfCreateMonoBrush
-public EmfPlusRecordType EmfCreatePalette
-public EmfPlusRecordType EmfCreatePen
-public EmfPlusRecordType EmfDeleteColorSpace
-public EmfPlusRecordType EmfDeleteObject
-public EmfPlusRecordType EmfDrawEscape
-public EmfPlusRecordType EmfEllipse
-public EmfPlusRecordType EmfEndPath
-public EmfPlusRecordType EmfEof
-public EmfPlusRecordType EmfExcludeClipRect
-public EmfPlusRecordType EmfExtCreateFontIndirect
-public EmfPlusRecordType EmfExtCreatePen
-public EmfPlusRecordType EmfExtEscape
-public EmfPlusRecordType EmfExtFloodFill
-public EmfPlusRecordType EmfExtSelectClipRgn
-public EmfPlusRecordType EmfExtTextOutA
-public EmfPlusRecordType EmfExtTextOutW
-public EmfPlusRecordType EmfFillPath
-public EmfPlusRecordType EmfFillRgn
-public EmfPlusRecordType EmfFlattenPath
-public EmfPlusRecordType EmfForceUfiMapping
-public EmfPlusRecordType EmfFrameRgn
-public EmfPlusRecordType EmfGdiComment
-public EmfPlusRecordType EmfGlsBoundedRecord
-public EmfPlusRecordType EmfGlsRecord
-public EmfPlusRecordType EmfGradientFill
+public EmfPlusRecordType WmfRecordBase
+public EmfPlusRecordType WmfSetBkColor
+public EmfPlusRecordType WmfSetBkMode
+public EmfPlusRecordType WmfSetMapMode
+public EmfPlusRecordType WmfSetROP2
+public EmfPlusRecordType WmfSetRelAbs
+public EmfPlusRecordType WmfSetPolyFillMode
+public EmfPlusRecordType WmfSetStretchBltMode
+public EmfPlusRecordType WmfSetTextCharExtra
+public EmfPlusRecordType WmfSetTextColor
+public EmfPlusRecordType WmfSetTextJustification
+public EmfPlusRecordType WmfSetWindowOrg
+public EmfPlusRecordType WmfSetWindowExt
+public EmfPlusRecordType WmfSetViewportOrg
+public EmfPlusRecordType WmfSetViewportExt
+public EmfPlusRecordType WmfOffsetWindowOrg
+public EmfPlusRecordType WmfScaleWindowExt
+public EmfPlusRecordType WmfOffsetViewportOrg
+public EmfPlusRecordType WmfScaleViewportExt
+public EmfPlusRecordType WmfLineTo
+public EmfPlusRecordType WmfMoveTo
+public EmfPlusRecordType WmfExcludeClipRect
+public EmfPlusRecordType WmfIntersectClipRect
+public EmfPlusRecordType WmfArc
+public EmfPlusRecordType WmfEllipse
+public EmfPlusRecordType WmfFloodFill
+public EmfPlusRecordType WmfPie
+public EmfPlusRecordType WmfRectangle
+public EmfPlusRecordType WmfRoundRect
+public EmfPlusRecordType WmfPatBlt
+public EmfPlusRecordType WmfSaveDC
+public EmfPlusRecordType WmfSetPixel
+public EmfPlusRecordType WmfOffsetCilpRgn
+public EmfPlusRecordType WmfTextOut
+public EmfPlusRecordType WmfBitBlt
+public EmfPlusRecordType WmfStretchBlt
+public EmfPlusRecordType WmfPolygon
+public EmfPlusRecordType WmfPolyline
+public EmfPlusRecordType WmfEscape
+public EmfPlusRecordType WmfRestoreDC
+public EmfPlusRecordType WmfFillRegion
+public EmfPlusRecordType WmfFrameRegion
+public EmfPlusRecordType WmfInvertRegion
+public EmfPlusRecordType WmfPaintRegion
+public EmfPlusRecordType WmfSelectClipRegion
+public EmfPlusRecordType WmfSelectObject
+public EmfPlusRecordType WmfSetTextAlign
+public EmfPlusRecordType WmfChord
+public EmfPlusRecordType WmfSetMapperFlags
+public EmfPlusRecordType WmfExtTextOut
+public EmfPlusRecordType WmfSetDibToDev
+public EmfPlusRecordType WmfSelectPalette
+public EmfPlusRecordType WmfRealizePalette
+public EmfPlusRecordType WmfAnimatePalette
+public EmfPlusRecordType WmfSetPalEntries
+public EmfPlusRecordType WmfPolyPolygon
+public EmfPlusRecordType WmfResizePalette
+public EmfPlusRecordType WmfDibBitBlt
+public EmfPlusRecordType WmfDibStretchBlt
+public EmfPlusRecordType WmfDibCreatePatternBrush
+public EmfPlusRecordType WmfStretchDib
+public EmfPlusRecordType WmfExtFloodFill
+public EmfPlusRecordType WmfSetLayout
+public EmfPlusRecordType WmfDeleteObject
+public EmfPlusRecordType WmfCreatePalette
+public EmfPlusRecordType WmfCreatePatternBrush
+public EmfPlusRecordType WmfCreatePenIndirect
+public EmfPlusRecordType WmfCreateFontIndirect
+public EmfPlusRecordType WmfCreateBrushIndirect
+public EmfPlusRecordType WmfCreateRegion
 public EmfPlusRecordType EmfHeader
-public EmfPlusRecordType EmfIntersectClipRect
-public EmfPlusRecordType EmfInvertRgn
-public EmfPlusRecordType EmfLineTo
-public EmfPlusRecordType EmfMaskBlt
-public EmfPlusRecordType EmfMax
-public EmfPlusRecordType EmfMin
-public EmfPlusRecordType EmfModifyWorldTransform
-public EmfPlusRecordType EmfMoveToEx
-public EmfPlusRecordType EmfNamedEscpae
-public EmfPlusRecordType EmfOffsetClipRgn
-public EmfPlusRecordType EmfPaintRgn
-public EmfPlusRecordType EmfPie
-public EmfPlusRecordType EmfPixelFormat
-public EmfPlusRecordType EmfPlgBlt
-public EmfPlusRecordType EmfPlusRecordBase
 public EmfPlusRecordType EmfPolyBezier
-public EmfPlusRecordType EmfPolyBezier16
-public EmfPlusRecordType EmfPolyBezierTo
-public EmfPlusRecordType EmfPolyBezierTo16
-public EmfPlusRecordType EmfPolyDraw
-public EmfPlusRecordType EmfPolyDraw16
 public EmfPlusRecordType EmfPolygon
-public EmfPlusRecordType EmfPolygon16
 public EmfPlusRecordType EmfPolyline
-public EmfPlusRecordType EmfPolyPolygon16
+public EmfPlusRecordType EmfPolyBezierTo
+public EmfPlusRecordType EmfPolyLineTo
 public EmfPlusRecordType EmfPolyPolyline
-public EmfPlusRecordType EmfPolyline16
 public EmfPlusRecordType EmfPolyPolygon
-public EmfPlusRecordType EmfPolyPolyline16
-public EmfPlusRecordType EmfPolyTextOutA
-public EmfPlusRecordType EmfPolyTextOutW
-public EmfPlusRecordType EmfRealizePalette
-public EmfPlusRecordType EmfRectangle
-public EmfPlusRecordType EmfReserved069
-public EmfPlusRecordType EmfReserved117
-public EmfPlusRecordType EmfResizePalette
-public EmfPlusRecordType EmfRestoreDC
-public EmfPlusRecordType EmfRoundArc
-public EmfPlusRecordType EmfRoundRect
-public EmfPlusRecordType EmfSaveDC
-public EmfPlusRecordType EmfScaleViewportExtEx
-public EmfPlusRecordType EmfScaleWindowExtEx
-public EmfPlusRecordType EmfSelectClipPath
-public EmfPlusRecordType EmfSelectObject
-public EmfPlusRecordType EmfSelectPalette
-public EmfPlusRecordType EmfSetArcDirection
-public EmfPlusRecordType EmfSetBkColor
-public EmfPlusRecordType EmfSetBkMode
+public EmfPlusRecordType EmfSetWindowExtEx
+public EmfPlusRecordType EmfSetWindowOrgEx
+public EmfPlusRecordType EmfSetViewportExtEx
+public EmfPlusRecordType EmfSetViewportOrgEx
 public EmfPlusRecordType EmfSetBrushOrgEx
-public EmfPlusRecordType EmfSetColorAdjustment
-public EmfPlusRecordType EmfSetColorSpace
-public EmfPlusRecordType EmfSetDIBitsToDevice
-public EmfPlusRecordType EmfSetIcmMode
-public EmfPlusRecordType EmfSetIcmProfileA
-public EmfPlusRecordType EmfSetIcmProfileW
-public EmfPlusRecordType EmfSetLayout
-public EmfPlusRecordType EmfSetLinkedUfis
-public EmfPlusRecordType EmfSetMapMode
-public EmfPlusRecordType EmfSetMapperFlags
-public EmfPlusRecordType EmfSetMetaRgn
-public EmfPlusRecordType EmfSetMiterLimit
-public EmfPlusRecordType EmfSetPaletteEntries
+public EmfPlusRecordType EmfEof
 public EmfPlusRecordType EmfSetPixelV
+public EmfPlusRecordType EmfSetMapperFlags
+public EmfPlusRecordType EmfSetMapMode
+public EmfPlusRecordType EmfSetBkMode
 public EmfPlusRecordType EmfSetPolyFillMode
 public EmfPlusRecordType EmfSetROP2
 public EmfPlusRecordType EmfSetStretchBltMode
 public EmfPlusRecordType EmfSetTextAlign
+public EmfPlusRecordType EmfSetColorAdjustment
 public EmfPlusRecordType EmfSetTextColor
-public EmfPlusRecordType EmfSetTextJustification
-public EmfPlusRecordType EmfSetViewportExtEx
-public EmfPlusRecordType EmfSetViewportOrgEx
-public EmfPlusRecordType EmfSetWindowExtEx
-public EmfPlusRecordType EmfSetWindowOrgEx
+public EmfPlusRecordType EmfSetBkColor
+public EmfPlusRecordType EmfOffsetClipRgn
+public EmfPlusRecordType EmfMoveToEx
+public EmfPlusRecordType EmfSetMetaRgn
+public EmfPlusRecordType EmfExcludeClipRect
+public EmfPlusRecordType EmfIntersectClipRect
+public EmfPlusRecordType EmfScaleViewportExtEx
+public EmfPlusRecordType EmfScaleWindowExtEx
+public EmfPlusRecordType EmfSaveDC
+public EmfPlusRecordType EmfRestoreDC
 public EmfPlusRecordType EmfSetWorldTransform
-public EmfPlusRecordType EmfSmallTextOut
-public EmfPlusRecordType EmfStartDoc
-public EmfPlusRecordType EmfStretchBlt
-public EmfPlusRecordType EmfStretchDIBits
+public EmfPlusRecordType EmfModifyWorldTransform
+public EmfPlusRecordType EmfSelectObject
+public EmfPlusRecordType EmfCreatePen
+public EmfPlusRecordType EmfCreateBrushIndirect
+public EmfPlusRecordType EmfDeleteObject
+public EmfPlusRecordType EmfAngleArc
+public EmfPlusRecordType EmfEllipse
+public EmfPlusRecordType EmfRectangle
+public EmfPlusRecordType EmfRoundRect
+public EmfPlusRecordType EmfRoundArc
+public EmfPlusRecordType EmfChord
+public EmfPlusRecordType EmfPie
+public EmfPlusRecordType EmfSelectPalette
+public EmfPlusRecordType EmfCreatePalette
+public EmfPlusRecordType EmfSetPaletteEntries
+public EmfPlusRecordType EmfResizePalette
+public EmfPlusRecordType EmfRealizePalette
+public EmfPlusRecordType EmfExtFloodFill
+public EmfPlusRecordType EmfLineTo
+public EmfPlusRecordType EmfArcTo
+public EmfPlusRecordType EmfPolyDraw
+public EmfPlusRecordType EmfSetArcDirection
+public EmfPlusRecordType EmfSetMiterLimit
+public EmfPlusRecordType EmfBeginPath
+public EmfPlusRecordType EmfEndPath
+public EmfPlusRecordType EmfCloseFigure
+public EmfPlusRecordType EmfFillPath
 public EmfPlusRecordType EmfStrokeAndFillPath
 public EmfPlusRecordType EmfStrokePath
-public EmfPlusRecordType EmfTransparentBlt
+public EmfPlusRecordType EmfFlattenPath
 public EmfPlusRecordType EmfWidenPath
-public EmfPlusRecordType EndContainer
-public EmfPlusRecordType EndOfFile
-public EmfPlusRecordType FillClosedCurve
-public EmfPlusRecordType FillEllipse
-public EmfPlusRecordType FillPath
-public EmfPlusRecordType FillPie
-public EmfPlusRecordType FillPolygon
-public EmfPlusRecordType FillRects
-public EmfPlusRecordType FillRegion
-public EmfPlusRecordType GetDC
-public EmfPlusRecordType Header
+public EmfPlusRecordType EmfSelectClipPath
+public EmfPlusRecordType EmfAbortPath
+public EmfPlusRecordType EmfReserved069
+public EmfPlusRecordType EmfGdiComment
+public EmfPlusRecordType EmfFillRgn
+public EmfPlusRecordType EmfFrameRgn
+public EmfPlusRecordType EmfInvertRgn
+public EmfPlusRecordType EmfPaintRgn
+public EmfPlusRecordType EmfExtSelectClipRgn
+public EmfPlusRecordType EmfBitBlt
+public EmfPlusRecordType EmfStretchBlt
+public EmfPlusRecordType EmfMaskBlt
+public EmfPlusRecordType EmfPlgBlt
+public EmfPlusRecordType EmfSetDIBitsToDevice
+public EmfPlusRecordType EmfStretchDIBits
+public EmfPlusRecordType EmfExtCreateFontIndirect
+public EmfPlusRecordType EmfExtTextOutA
+public EmfPlusRecordType EmfExtTextOutW
+public EmfPlusRecordType EmfPolyBezier16
+public EmfPlusRecordType EmfPolygon16
+public EmfPlusRecordType EmfPolyline16
+public EmfPlusRecordType EmfPolyBezierTo16
+public EmfPlusRecordType EmfPolylineTo16
+public EmfPlusRecordType EmfPolyPolyline16
+public EmfPlusRecordType EmfPolyPolygon16
+public EmfPlusRecordType EmfPolyDraw16
+public EmfPlusRecordType EmfCreateMonoBrush
+public EmfPlusRecordType EmfCreateDibPatternBrushPt
+public EmfPlusRecordType EmfExtCreatePen
+public EmfPlusRecordType EmfPolyTextOutA
+public EmfPlusRecordType EmfPolyTextOutW
+public EmfPlusRecordType EmfSetIcmMode
+public EmfPlusRecordType EmfCreateColorSpace
+public EmfPlusRecordType EmfSetColorSpace
+public EmfPlusRecordType EmfDeleteColorSpace
+public EmfPlusRecordType EmfGlsRecord
+public EmfPlusRecordType EmfGlsBoundedRecord
+public EmfPlusRecordType EmfPixelFormat
+public EmfPlusRecordType EmfDrawEscape
+public EmfPlusRecordType EmfExtEscape
+public EmfPlusRecordType EmfStartDoc
+public EmfPlusRecordType EmfSmallTextOut
+public EmfPlusRecordType EmfForceUfiMapping
+public EmfPlusRecordType EmfNamedEscpae
+public EmfPlusRecordType EmfColorCorrectPalette
+public EmfPlusRecordType EmfSetIcmProfileA
+public EmfPlusRecordType EmfSetIcmProfileW
+public EmfPlusRecordType EmfAlphaBlend
+public EmfPlusRecordType EmfSetLayout
+public EmfPlusRecordType EmfTransparentBlt
+public EmfPlusRecordType EmfReserved117
+public EmfPlusRecordType EmfGradientFill
+public EmfPlusRecordType EmfSetLinkedUfis
+public EmfPlusRecordType EmfSetTextJustification
+public EmfPlusRecordType EmfColorMatchToTargetW
+public EmfPlusRecordType EmfCreateColorSpaceW
+public EmfPlusRecordType EmfMax
+public EmfPlusRecordType EmfMin
+public EmfPlusRecordType EmfPlusRecordBase
 public EmfPlusRecordType Invalid
-public EmfPlusRecordType Max
-public EmfPlusRecordType Min
-public EmfPlusRecordType MultiFormatEnd
-public EmfPlusRecordType MultiFormatSection
+public EmfPlusRecordType Header
+public EmfPlusRecordType EndOfFile
+public EmfPlusRecordType Comment
+public EmfPlusRecordType GetDC
 public EmfPlusRecordType MultiFormatStart
-public EmfPlusRecordType MultiplyWorldTransform
+public EmfPlusRecordType MultiFormatSection
+public EmfPlusRecordType MultiFormatEnd
 public EmfPlusRecordType Object
-public EmfPlusRecordType OffsetClip
-public EmfPlusRecordType ResetClip
-public EmfPlusRecordType ResetWorldTransform
-public EmfPlusRecordType Restore
-public EmfPlusRecordType RotateWorldTransform
-public EmfPlusRecordType Save
-public EmfPlusRecordType ScaleWorldTransform
+public EmfPlusRecordType Clear
+public EmfPlusRecordType FillRects
+public EmfPlusRecordType DrawRects
+public EmfPlusRecordType FillPolygon
+public EmfPlusRecordType DrawLines
+public EmfPlusRecordType FillEllipse
+public EmfPlusRecordType DrawEllipse
+public EmfPlusRecordType FillPie
+public EmfPlusRecordType DrawPie
+public EmfPlusRecordType DrawArc
+public EmfPlusRecordType FillRegion
+public EmfPlusRecordType FillPath
+public EmfPlusRecordType DrawPath
+public EmfPlusRecordType FillClosedCurve
+public EmfPlusRecordType DrawClosedCurve
+public EmfPlusRecordType DrawCurve
+public EmfPlusRecordType DrawBeziers
+public EmfPlusRecordType DrawImage
+public EmfPlusRecordType DrawImagePoints
+public EmfPlusRecordType DrawString
+public EmfPlusRecordType SetRenderingOrigin
 public EmfPlusRecordType SetAntiAliasMode
-public EmfPlusRecordType SetClipPath
-public EmfPlusRecordType SetClipRect
-public EmfPlusRecordType SetClipRegion
+public EmfPlusRecordType SetTextRenderingHint
+public EmfPlusRecordType SetTextContrast
+public EmfPlusRecordType SetInterpolationMode
+public EmfPlusRecordType SetPixelOffsetMode
 public EmfPlusRecordType SetCompositingMode
 public EmfPlusRecordType SetCompositingQuality
-public EmfPlusRecordType SetInterpolationMode
-public EmfPlusRecordType SetPageTransform
-public EmfPlusRecordType SetPixelOffsetMode
-public EmfPlusRecordType SetRenderingOrigin
-public EmfPlusRecordType SetTextContrast
-public EmfPlusRecordType SetTextRenderingHint
+public EmfPlusRecordType Save
+public EmfPlusRecordType Restore
+public EmfPlusRecordType BeginContainer
+public EmfPlusRecordType BeginContainerNoParams
+public EmfPlusRecordType EndContainer
 public EmfPlusRecordType SetWorldTransform
-public EmfPlusRecordType Total
+public EmfPlusRecordType ResetWorldTransform
+public EmfPlusRecordType MultiplyWorldTransform
 public EmfPlusRecordType TranslateWorldTransform
-public EmfPlusRecordType WmfAnimatePalette
-public EmfPlusRecordType WmfArc
-public EmfPlusRecordType WmfBitBlt
-public EmfPlusRecordType WmfChord
-public EmfPlusRecordType WmfCreateBrushIndirect
-public EmfPlusRecordType WmfCreateFontIndirect
-public EmfPlusRecordType WmfCreatePalette
-public EmfPlusRecordType WmfCreatePatternBrush
-public EmfPlusRecordType WmfCreatePenIndirect
-public EmfPlusRecordType WmfCreateRegion
-public EmfPlusRecordType WmfDeleteObject
-public EmfPlusRecordType WmfDibBitBlt
-public EmfPlusRecordType WmfDibCreatePatternBrush
-public EmfPlusRecordType WmfFillRegion
-public EmfPlusRecordType WmfFloodFill
-public EmfPlusRecordType WmfFrameRegion
-public EmfPlusRecordType WmfIntersectClipRect
-public EmfPlusRecordType WmfInvertRegion
-public EmfPlusRecordType WmfLineTo
-public EmfPlusRecordType WmfMoveTo
-public EmfPlusRecordType WmfOffsetCilpRgn
-public EmfPlusRecordType WmfOffsetViewportOrg
-public EmfPlusRecordType WmfOffsetWindowOrg
-public EmfPlusRecordType WmfPaintRegion
-public EmfPlusRecordType WmfPatBlt
-public EmfPlusRecordType WmfPie
-public EmfPlusRecordType WmfPolygon
-public EmfPlusRecordType WmfPolyline
-public EmfPlusRecordType WmfPolyPolygon
-public EmfPlusRecordType WmfRealizePalette
-public EmfPlusRecordType WmfRecordBase
-public EmfPlusRecordType WmfRectangle
-public EmfPlusRecordType WmfResizePalette
-public EmfPlusRecordType WmfRestoreDC
-public EmfPlusRecordType WmfRoundRect
-public EmfPlusRecordType WmfSaveDC
-public EmfPlusRecordType WmfScaleViewportExt
-public EmfPlusRecordType WmfScaleWindowExt
-public EmfPlusRecordType WmfSelectClipRegion
-public EmfPlusRecordType WmfSelectObject
-public EmfPlusRecordType WmfSelectPalette
-public EmfPlusRecordType WmfSetBkColor
-public EmfPlusRecordType WmfSetBkMode
-public EmfPlusRecordType WmfSetDibToDev
-public EmfPlusRecordType WmfSetLayout
-public EmfPlusRecordType WmfSetMapMode
-public EmfPlusRecordType WmfSetMapperFlags
-public EmfPlusRecordType WmfSetPalEntries
-public EmfPlusRecordType WmfSetPixel
-public EmfPlusRecordType WmfSetPolyFillMode
-public EmfPlusRecordType WmfSetRelAbs
-public EmfPlusRecordType WmfSetROP2
-public EmfPlusRecordType WmfSetStretchBltMode
-public EmfPlusRecordType WmfSetTextAlign
-public EmfPlusRecordType WmfSetTextCharExtra
-public EmfPlusRecordType WmfSetTextColor
-public EmfPlusRecordType WmfSetTextJustification
-public EmfPlusRecordType WmfSetViewportExt
-public EmfPlusRecordType WmfSetViewportOrg
-public EmfPlusRecordType WmfSetWindowExt
-public EmfPlusRecordType WmfSetWindowOrg
-public EmfPlusRecordType WmfStretchBlt
-public EmfPlusRecordType WmfStretchDib
-public EmfPlusRecordType WmfTextOut
-public EmfPlusRecordType EmfPolyLineTo
-public EmfPlusRecordType EmfPolylineTo16
-public EmfPlusRecordType WmfDibStretchBlt
-public EmfPlusRecordType WmfEllipse
-public EmfPlusRecordType WmfEscape
-public EmfPlusRecordType WmfExcludeClipRect
-public EmfPlusRecordType WmfExtFloodFill
-public EmfPlusRecordType WmfExtTextOut
+public EmfPlusRecordType ScaleWorldTransform
+public EmfPlusRecordType RotateWorldTransform
+public EmfPlusRecordType SetPageTransform
+public EmfPlusRecordType ResetClip
+public EmfPlusRecordType SetClipRect
+public EmfPlusRecordType SetClipPath
+public EmfPlusRecordType SetClipRegion
+public EmfPlusRecordType OffsetClip
+public EmfPlusRecordType DrawDriverString
+public EmfPlusRecordType Total
+public EmfPlusRecordType Max
+public EmfPlusRecordType Min
 }
 public System.Drawing.Imaging.EmfType : Enum {
 public int value__
 public EmfType EmfOnly
-public EmfType EmfPlusDual
 public EmfType EmfPlusOnly
+public EmfType EmfPlusDual
 }
 public System.Drawing.Imaging.Encoder : object {
-private Guid guid
-public Encoder ChrominanceTable
-public Encoder ColorDepth
 public Encoder Compression
-public Encoder LuminanceTable
-public Encoder Quality
-public Encoder RenderMethod
-public Encoder SaveFlag
+public Encoder ColorDepth
 public Encoder ScanMethod
-public Encoder Transformation
 public Encoder Version
+public Encoder RenderMethod
+public Encoder Quality
+public Encoder Transformation
+public Encoder LuminanceTable
+public Encoder ChrominanceTable
+public Encoder SaveFlag
+private Guid _guid
 public Guid Guid
-internal void .ctor(string guid)
 public void .ctor(Guid guid)
 public Guid get_Guid()
 }
 public System.Drawing.Imaging.EncoderParameter : object {
-private Encoder encoder
-private int valuesCount
-private EncoderParameterValueType type
-private IntPtr valuePtr
+private Guid _parameterGuid
+private int _numberOfValues
+private EncoderParameterValueType _parameterValueType
+private IntPtr _parameterValue
 public Encoder Encoder
-public int NumberOfValues
 public EncoderParameterValueType Type
 public EncoderParameterValueType ValueType
-public void .ctor(Encoder encoder, byte value)
-public void .ctor(Encoder encoder, Byte[] value)
-public void .ctor(Encoder encoder, short value)
-public void .ctor(Encoder encoder, Int16[] value)
-public void .ctor(Encoder encoder, long value)
-public void .ctor(Encoder encoder, Int64[] value)
-public void .ctor(Encoder encoder, string value)
-public void .ctor(Encoder encoder, byte value, bool undefined)
-public void .ctor(Encoder encoder, Byte[] value, bool undefined)
-public void .ctor(Encoder encoder, int numerator, int denominator)
-public void .ctor(Encoder encoder, Int32[] numerator, Int32[] denominator)
-public void .ctor(Encoder encoder, long rangebegin, long rangeend)
-public void .ctor(Encoder encoder, Int64[] rangebegin, Int64[] rangeend)
-public void .ctor(Encoder encoder, int numberOfValues, int type, int value)
-public void .ctor(Encoder encoder, int numerator1, int denominator1, int numerator2, int denominator2)
-public void .ctor(Encoder encoder, Int32[] numerator1, Int32[] denominator1, Int32[] numerator2, Int32[] denominator2)
+public int NumberOfValues
+protected void Finalize()
 public Encoder get_Encoder()
 public void set_Encoder(Encoder value)
-public int get_NumberOfValues()
 public EncoderParameterValueType get_Type()
 public EncoderParameterValueType get_ValueType()
-private void Dispose(bool disposing)
+public int get_NumberOfValues()
 public void Dispose()
-protected void Finalize()
-internal int NativeSize()
-internal void ToNativePtr(IntPtr epPtr)
-internal EncoderParameter FromNativePtr(IntPtr epPtr)
+private void Dispose(bool disposing)
+public void .ctor(Encoder encoder, byte value)
+public void .ctor(Encoder encoder, byte value, bool undefined)
+public void .ctor(Encoder encoder, short value)
+public void .ctor(Encoder encoder, long value)
+public void .ctor(Encoder encoder, int numerator, int denominator)
+public void .ctor(Encoder encoder, long rangebegin, long rangeend)
+public void .ctor(Encoder encoder, int numerator1, int demoninator1, int numerator2, int demoninator2)
+public void .ctor(Encoder encoder, string value)
+public void .ctor(Encoder encoder, Byte[] value)
+public void .ctor(Encoder encoder, Byte[] value, bool undefined)
+public void .ctor(Encoder encoder, Int16[] value)
+public void .ctor(Encoder encoder, Int64[] value)
+public void .ctor(Encoder encoder, Int32[] numerator, Int32[] denominator)
+public void .ctor(Encoder encoder, Int64[] rangebegin, Int64[] rangeend)
+public void .ctor(Encoder encoder, Int32[] numerator1, Int32[] denominator1, Int32[] numerator2, Int32[] denominator2)
+public void .ctor(Encoder encoder, int NumberOfValues, int Type, int Value)
+public void .ctor(Encoder encoder, int numberValues, EncoderParameterValueType type, IntPtr value)
+private IntPtr Add(IntPtr a, int b)
+private IntPtr Add(int a, IntPtr b)
 }
 public System.Drawing.Imaging.EncoderParameters : object {
-private EncoderParameter[] parameters
+private EncoderParameter[] _param
 public EncoderParameter[] Param
 public void .ctor(int count)
 public EncoderParameter[] get_Param()
 public void set_Param(EncoderParameter[] value)
+internal IntPtr ConvertToMemory()
+internal EncoderParameters ConvertFromMemory(IntPtr memory)
 public void Dispose()
-internal IntPtr ToNativePtr()
-internal EncoderParameters FromNativePtr(IntPtr epPtr)
 }
 public System.Drawing.Imaging.EncoderParameterValueType : Enum {
 public int value__
-public EncoderParameterValueType ValueTypeAscii
 public EncoderParameterValueType ValueTypeByte
-public EncoderParameterValueType ValueTypeLong
-public EncoderParameterValueType ValueTypeLongRange
-public EncoderParameterValueType ValueTypeRational
-public EncoderParameterValueType ValueTypeRationalRange
+public EncoderParameterValueType ValueTypeAscii
 public EncoderParameterValueType ValueTypeShort
+public EncoderParameterValueType ValueTypeLong
+public EncoderParameterValueType ValueTypeRational
+public EncoderParameterValueType ValueTypeLongRange
 public EncoderParameterValueType ValueTypeUndefined
+public EncoderParameterValueType ValueTypeRationalRange
 }
 public System.Drawing.Imaging.EncoderValue : Enum {
 public int value__
 public EncoderValue ColorTypeCMYK
 public EncoderValue ColorTypeYCCK
+public EncoderValue CompressionLZW
 public EncoderValue CompressionCCITT3
 public EncoderValue CompressionCCITT4
-public EncoderValue CompressionLZW
-public EncoderValue CompressionNone
 public EncoderValue CompressionRle
-public EncoderValue Flush
-public EncoderValue FrameDimensionPage
-public EncoderValue FrameDimensionResolution
-public EncoderValue FrameDimensionTime
-public EncoderValue LastFrame
-public EncoderValue MultiFrame
-public EncoderValue RenderNonProgressive
-public EncoderValue RenderProgressive
+public EncoderValue CompressionNone
 public EncoderValue ScanMethodInterlaced
 public EncoderValue ScanMethodNonInterlaced
-public EncoderValue TransformFlipHorizontal
-public EncoderValue TransformFlipVertical
-public EncoderValue TransformRotate180
-public EncoderValue TransformRotate270
-public EncoderValue TransformRotate90
 public EncoderValue VersionGif87
 public EncoderValue VersionGif89
+public EncoderValue RenderProgressive
+public EncoderValue RenderNonProgressive
+public EncoderValue TransformRotate90
+public EncoderValue TransformRotate180
+public EncoderValue TransformRotate270
+public EncoderValue TransformFlipHorizontal
+public EncoderValue TransformFlipVertical
+public EncoderValue MultiFrame
+public EncoderValue LastFrame
+public EncoderValue Flush
+public EncoderValue FrameDimensionTime
+public EncoderValue FrameDimensionResolution
+public EncoderValue FrameDimensionPage
 }
 internal System.Drawing.Imaging.EnhMetafileHeader : ValueType {
 public int type
@@ -3740,152 +3895,166 @@ public Size device
 public Size millimeters
 }
 public System.Drawing.Imaging.FrameDimension : object {
-private Guid guid
-private string name
-private FrameDimension page
-private FrameDimension resolution
-private FrameDimension time
+private FrameDimension s_time
+private FrameDimension s_resolution
+private FrameDimension s_page
+private Guid _guid
 public Guid Guid
-public FrameDimension Page
-public FrameDimension Resolution
 public FrameDimension Time
+public FrameDimension Resolution
+public FrameDimension Page
 public void .ctor(Guid guid)
-internal void .ctor(Guid guid, string name)
 public Guid get_Guid()
-public FrameDimension get_Page()
-public FrameDimension get_Resolution()
 public FrameDimension get_Time()
+public FrameDimension get_Resolution()
+public FrameDimension get_Page()
 public bool Equals(object o)
 public int GetHashCode()
 public string ToString()
 }
 public System.Drawing.Imaging.ImageAttributes : object {
-private IntPtr nativeImageAttr
-internal IntPtr NativeObject
-internal void .ctor(IntPtr native)
-internal IntPtr get_NativeObject()
-public void ClearBrushRemapTable()
-public void ClearColorKey()
-public void ClearColorKey(ColorAdjustType type)
-public void ClearColorMatrix()
-public void ClearColorMatrix(ColorAdjustType type)
-public void ClearGamma()
-public void ClearGamma(ColorAdjustType type)
-public void ClearNoOp()
-public void ClearNoOp(ColorAdjustType type)
-public void ClearOutputChannel()
-public void ClearOutputChannel(ColorAdjustType type)
-public void ClearOutputChannelColorProfile()
-public void ClearOutputChannelColorProfile(ColorAdjustType type)
-public void ClearRemapTable()
-public void ClearRemapTable(ColorAdjustType type)
-public void ClearThreshold()
-public void ClearThreshold(ColorAdjustType type)
-public void SetColorKey(Color colorLow, Color colorHigh)
-public void SetColorMatrix(ColorMatrix colorMatrix)
-public void SetColorMatrix(ColorMatrix colorMatrix, ColorMatrixFlag colorMatrixFlag)
-public void SetColorMatrix(ColorMatrix colorMatrix, ColorMatrixFlag colorMatrixFlag, ColorAdjustType colorAdjustType)
+internal IntPtr nativeImageAttributes
+internal void SetNativeImageAttributes(IntPtr handle)
+internal void .ctor(IntPtr newNativeImageAttributes)
 public void Dispose()
+private void Dispose(bool disposing)
 protected void Finalize()
 public object Clone()
-public void GetAdjustedPalette(ColorPalette palette, ColorAdjustType type)
-public void SetBrushRemapTable(ColorMap[] map)
-public void SetColorKey(Color colorLow, Color colorHigh, ColorAdjustType type)
+public void SetColorMatrix(ColorMatrix newColorMatrix)
+public void SetColorMatrix(ColorMatrix newColorMatrix, ColorMatrixFlag flags)
+public void SetColorMatrix(ColorMatrix newColorMatrix, ColorMatrixFlag mode, ColorAdjustType type)
+public void ClearColorMatrix()
+public void ClearColorMatrix(ColorAdjustType type)
 public void SetColorMatrices(ColorMatrix newColorMatrix, ColorMatrix grayMatrix)
 public void SetColorMatrices(ColorMatrix newColorMatrix, ColorMatrix grayMatrix, ColorMatrixFlag flags)
 public void SetColorMatrices(ColorMatrix newColorMatrix, ColorMatrix grayMatrix, ColorMatrixFlag mode, ColorAdjustType type)
-public void SetGamma(float gamma)
-public void SetGamma(float gamma, ColorAdjustType coloradjust)
-public void SetNoOp()
-public void SetNoOp(ColorAdjustType type)
-public void SetOutputChannel(ColorChannelFlag flags)
-public void SetOutputChannel(ColorChannelFlag flags, ColorAdjustType type)
-public void SetOutputChannelColorProfile(string colorProfileFilename)
-public void SetOutputChannelColorProfile(string colorProfileFilename, ColorAdjustType type)
-public void SetRemapTable(ColorMap[] map)
-public void SetRemapTable(ColorMap[] map, ColorAdjustType type)
 public void SetThreshold(float threshold)
 public void SetThreshold(float threshold, ColorAdjustType type)
+public void ClearThreshold()
+public void ClearThreshold(ColorAdjustType type)
+public void SetGamma(float gamma)
+public void SetGamma(float gamma, ColorAdjustType type)
+public void ClearGamma()
+public void ClearGamma(ColorAdjustType type)
+public void SetNoOp()
+public void SetNoOp(ColorAdjustType type)
+public void ClearNoOp()
+public void ClearNoOp(ColorAdjustType type)
+public void SetColorKey(Color colorLow, Color colorHigh)
+public void SetColorKey(Color colorLow, Color colorHigh, ColorAdjustType type)
+public void ClearColorKey()
+public void ClearColorKey(ColorAdjustType type)
+public void SetOutputChannel(ColorChannelFlag flags)
+public void SetOutputChannel(ColorChannelFlag flags, ColorAdjustType type)
+public void ClearOutputChannel()
+public void ClearOutputChannel(ColorAdjustType type)
+public void SetOutputChannelColorProfile(string colorProfileFilename)
+public void SetOutputChannelColorProfile(string colorProfileFilename, ColorAdjustType type)
+public void ClearOutputChannelColorProfile()
+public void ClearOutputChannelColorProfile(ColorAdjustType type)
+public void SetRemapTable(ColorMap[] map)
+public void SetRemapTable(ColorMap[] map, ColorAdjustType type)
+public void ClearRemapTable()
+public void ClearRemapTable(ColorAdjustType type)
+public void SetBrushRemapTable(ColorMap[] map)
+public void ClearBrushRemapTable()
 public void SetWrapMode(WrapMode mode)
 public void SetWrapMode(WrapMode mode, Color color)
 public void SetWrapMode(WrapMode mode, Color color, bool clamp)
+public void GetAdjustedPalette(ColorPalette palette, ColorAdjustType type)
 }
 public System.Drawing.Imaging.ImageCodecFlags : Enum {
 public int value__
-public ImageCodecFlags BlockingDecode
-public ImageCodecFlags Builtin
-public ImageCodecFlags Decoder
 public ImageCodecFlags Encoder
-public ImageCodecFlags SeekableEncode
+public ImageCodecFlags Decoder
 public ImageCodecFlags SupportBitmap
 public ImageCodecFlags SupportVector
+public ImageCodecFlags SeekableEncode
+public ImageCodecFlags BlockingDecode
+public ImageCodecFlags Builtin
 public ImageCodecFlags System
 public ImageCodecFlags User
 }
 public System.Drawing.Imaging.ImageCodecInfo : object {
-private Guid clsid
-private string codecName
-private string dllName
-private string filenameExtension
-private ImageCodecFlags flags
-private string formatDescription
-private Guid formatID
-private string mimeType
-private Byte[][] signatureMasks
-private Byte[][] signaturePatterns
-private int version
+private Guid _clsid
+private Guid _formatID
+private string _codecName
+private string _dllName
+private string _formatDescription
+private string _filenameExtension
+private string _mimeType
+private ImageCodecFlags _flags
+private int _version
+private Byte[][] _signaturePatterns
+private Byte[][] _signatureMasks
 public Guid Clsid
+public Guid FormatID
 public string CodecName
 public string DllName
-public string FilenameExtension
-public ImageCodecFlags Flags
 public string FormatDescription
-public Guid FormatID
+public string FilenameExtension
 public string MimeType
-public Byte[][] SignatureMasks
-public Byte[][] SignaturePatterns
+public ImageCodecFlags Flags
 public int Version
-public ImageCodecInfo[] GetImageDecoders()
-public ImageCodecInfo[] GetImageEncoders()
+public Byte[][] SignaturePatterns
+public Byte[][] SignatureMasks
 public Guid get_Clsid()
 public void set_Clsid(Guid value)
+public Guid get_FormatID()
+public void set_FormatID(Guid value)
 public string get_CodecName()
 public void set_CodecName(string value)
 public string get_DllName()
 public void set_DllName(string value)
-public string get_FilenameExtension()
-public void set_FilenameExtension(string value)
-public ImageCodecFlags get_Flags()
-public void set_Flags(ImageCodecFlags value)
 public string get_FormatDescription()
 public void set_FormatDescription(string value)
-public Guid get_FormatID()
-public void set_FormatID(Guid value)
+public string get_FilenameExtension()
+public void set_FilenameExtension(string value)
 public string get_MimeType()
 public void set_MimeType(string value)
-public Byte[][] get_SignatureMasks()
-public void set_SignatureMasks(Byte[][] value)
-public Byte[][] get_SignaturePatterns()
-public void set_SignaturePatterns(Byte[][] value)
+public ImageCodecFlags get_Flags()
+public void set_Flags(ImageCodecFlags value)
 public int get_Version()
 public void set_Version(int value)
+public Byte[][] get_SignaturePatterns()
+public void set_SignaturePatterns(Byte[][] value)
+public Byte[][] get_SignatureMasks()
+public void set_SignatureMasks(Byte[][] value)
+public ImageCodecInfo[] GetImageDecoders()
+public ImageCodecInfo[] GetImageEncoders()
+private ImageCodecInfo[] ConvertFromMemory(IntPtr memoryStart, int numCodecs)
+}
+internal System.Drawing.Imaging.ImageCodecInfoPrivate : object {
+public Guid Clsid
+public Guid FormatID
+public IntPtr CodecName
+public IntPtr DllName
+public IntPtr FormatDescription
+public IntPtr FilenameExtension
+public IntPtr MimeType
+public int Flags
+public int Version
+public int SigCount
+public int SigSize
+public IntPtr SigPattern
+public IntPtr SigMask
 }
 public System.Drawing.Imaging.ImageFlags : Enum {
 public int value__
-public ImageFlags Caching
+public ImageFlags None
+public ImageFlags Scalable
+public ImageFlags HasAlpha
+public ImageFlags HasTranslucent
+public ImageFlags PartiallyScalable
+public ImageFlags ColorSpaceRgb
 public ImageFlags ColorSpaceCmyk
 public ImageFlags ColorSpaceGray
-public ImageFlags ColorSpaceRgb
 public ImageFlags ColorSpaceYcbcr
 public ImageFlags ColorSpaceYcck
-public ImageFlags HasAlpha
 public ImageFlags HasRealDpi
 public ImageFlags HasRealPixelSize
-public ImageFlags HasTranslucent
-public ImageFlags None
-public ImageFlags PartiallyScalable
 public ImageFlags ReadOnly
-public ImageFlags Scalable
+public ImageFlags Caching
 }
 public System.Drawing.Imaging.ImageFormat : object {
 private Guid guid
@@ -3942,9 +4111,9 @@ public ImageFormat get_Wmf()
 public System.Drawing.Imaging.ImageLockMode : Enum {
 public int value__
 public ImageLockMode ReadOnly
+public ImageLockMode WriteOnly
 public ImageLockMode ReadWrite
 public ImageLockMode UserInputBuffer
-public ImageLockMode WriteOnly
 }
 public System.Drawing.Imaging.Metafile : Image {
 internal void .ctor(IntPtr ptr)
@@ -3976,14 +4145,14 @@ public void .ctor(Stream stream, IntPtr referenceHdc, RectangleF frameRect, Meta
 public void .ctor(string fileName, IntPtr referenceHdc, EmfType type, string description)
 public void .ctor(string fileName, IntPtr referenceHdc, Rectangle frameRect, MetafileFrameUnit frameUnit)
 public void .ctor(string fileName, IntPtr referenceHdc, RectangleF frameRect, MetafileFrameUnit frameUnit)
-public void .ctor(IntPtr referenceHdc, Rectangle frameRect, MetafileFrameUnit frameUnit, EmfType type, string description)
+public void .ctor(IntPtr referenceHdc, Rectangle frameRect, MetafileFrameUnit frameUnit, EmfType type, string desc)
 public void .ctor(IntPtr referenceHdc, RectangleF frameRect, MetafileFrameUnit frameUnit, EmfType type, string description)
 public void .ctor(Stream stream, IntPtr referenceHdc, Rectangle frameRect, MetafileFrameUnit frameUnit, EmfType type)
 public void .ctor(Stream stream, IntPtr referenceHdc, RectangleF frameRect, MetafileFrameUnit frameUnit, EmfType type)
 public void .ctor(string fileName, IntPtr referenceHdc, Rectangle frameRect, MetafileFrameUnit frameUnit, EmfType type)
 public void .ctor(string fileName, IntPtr referenceHdc, Rectangle frameRect, MetafileFrameUnit frameUnit, string description)
 public void .ctor(string fileName, IntPtr referenceHdc, RectangleF frameRect, MetafileFrameUnit frameUnit, EmfType type)
-public void .ctor(string fileName, IntPtr referenceHdc, RectangleF frameRect, MetafileFrameUnit frameUnit, string description)
+public void .ctor(string fileName, IntPtr referenceHdc, RectangleF frameRect, MetafileFrameUnit frameUnit, string desc)
 public void .ctor(Stream stream, IntPtr referenceHdc, Rectangle frameRect, MetafileFrameUnit frameUnit, EmfType type, string description)
 public void .ctor(Stream stream, IntPtr referenceHdc, RectangleF frameRect, MetafileFrameUnit frameUnit, EmfType type, string description)
 public void .ctor(string fileName, IntPtr referenceHdc, Rectangle frameRect, MetafileFrameUnit frameUnit, EmfType type, string description)
@@ -3993,17 +4162,17 @@ public MetafileHeader GetMetafileHeader()
 public MetafileHeader GetMetafileHeader(IntPtr henhmetafile)
 public MetafileHeader GetMetafileHeader(Stream stream)
 public MetafileHeader GetMetafileHeader(string fileName)
-public MetafileHeader GetMetafileHeader(IntPtr henhmetafile, WmfPlaceableFileHeader wmfHeader)
+public MetafileHeader GetMetafileHeader(IntPtr hmetafile, WmfPlaceableFileHeader wmfHeader)
 public void PlayRecord(EmfPlusRecordType recordType, int flags, int dataSize, Byte[] data)
 }
 public System.Drawing.Imaging.MetafileFrameUnit : Enum {
 public int value__
-public MetafileFrameUnit Document
-public MetafileFrameUnit GdiCompatible
-public MetafileFrameUnit Inch
-public MetafileFrameUnit Millimeter
 public MetafileFrameUnit Pixel
 public MetafileFrameUnit Point
+public MetafileFrameUnit Inch
+public MetafileFrameUnit Document
+public MetafileFrameUnit Millimeter
+public MetafileFrameUnit GdiCompatible
 }
 public System.Drawing.Imaging.MetafileHeader : object {
 private MonoMetafileHeader header
@@ -4036,6 +4205,54 @@ public int get_MetafileSize()
 public MetafileType get_Type()
 public int get_Version()
 public MetaHeader get_WmfHeader()
+}
+internal System.Drawing.Imaging.MetafileHeaderEmf : object {
+public MetafileType type
+public int size
+public int version
+public EmfPlusFlags emfPlusFlags
+public float dpiX
+public float dpiY
+public int X
+public int Y
+public int Width
+public int Height
+public ENHMETAHEADER EmfHeader
+public int EmfPlusHeaderSize
+public int LogicalDpiX
+public int LogicalDpiY
+}
+internal System.Drawing.Imaging.MetafileHeaderWmf : object {
+public MetafileType type
+public int size
+public int version
+public EmfPlusFlags emfPlusFlags
+public float dpiX
+public float dpiY
+public int X
+public int Y
+public int Width
+public int Height
+public MetaHeader WmfHeader
+public int dummy1
+public int dummy2
+public int dummy3
+public int dummy4
+public int dummy5
+public int dummy6
+public int dummy7
+public int dummy8
+public int dummy9
+public int dummy10
+public int dummy11
+public int dummy12
+public int dummy13
+public int dummy14
+public int dummy15
+public int dummy16
+public int EmfPlusHeaderSize
+public int LogicalDpiX
+public int LogicalDpiY
 }
 public System.Drawing.Imaging.MetafileType : Enum {
 public int value__
@@ -4090,35 +4307,35 @@ public int logical_dpi_y
 }
 public System.Drawing.Imaging.PaletteFlags : Enum {
 public int value__
+public PaletteFlags HasAlpha
 public PaletteFlags GrayScale
 public PaletteFlags Halftone
-public PaletteFlags HasAlpha
 }
 public System.Drawing.Imaging.PixelFormat : Enum {
 public int value__
+public PixelFormat Indexed
+public PixelFormat Gdi
 public PixelFormat Alpha
-public PixelFormat Canonical
-public PixelFormat DontCare
+public PixelFormat PAlpha
 public PixelFormat Extended
-public PixelFormat Format16bppArgb1555
+public PixelFormat Canonical
+public PixelFormat Undefined
+public PixelFormat DontCare
+public PixelFormat Format1bppIndexed
+public PixelFormat Format4bppIndexed
+public PixelFormat Format8bppIndexed
 public PixelFormat Format16bppGrayScale
 public PixelFormat Format16bppRgb555
 public PixelFormat Format16bppRgb565
-public PixelFormat Format1bppIndexed
+public PixelFormat Format16bppArgb1555
 public PixelFormat Format24bppRgb
+public PixelFormat Format32bppRgb
 public PixelFormat Format32bppArgb
 public PixelFormat Format32bppPArgb
-public PixelFormat Format32bppRgb
 public PixelFormat Format48bppRgb
-public PixelFormat Format4bppIndexed
 public PixelFormat Format64bppArgb
 public PixelFormat Format64bppPArgb
-public PixelFormat Format8bppIndexed
-public PixelFormat Gdi
-public PixelFormat Indexed
 public PixelFormat Max
-public PixelFormat PAlpha
-public PixelFormat Undefined
 }
 public System.Drawing.Imaging.PlayRecordCallback : MulticastDelegate {
 public void .ctor(object object, IntPtr method)
@@ -4127,10 +4344,10 @@ public IAsyncResult BeginInvoke(EmfPlusRecordType recordType, int flags, int dat
 public void EndInvoke(IAsyncResult result)
 }
 public System.Drawing.Imaging.PropertyItem : object {
-private int id
-private int len
-private short type
-private Byte[] value
+private int _id
+private int _len
+private short _type
+private Byte[] _value
 public int Id
 public int Len
 public short Type
@@ -4144,6 +4361,19 @@ public void set_Type(short value)
 public Byte[] get_Value()
 public void set_Value(Byte[] value)
 }
+internal System.Drawing.Imaging.PropertyItemInternal : object {
+public int id
+public int len
+public short type
+public IntPtr value
+public Byte[] Value
+protected void Finalize()
+public void Dispose()
+private void Dispose(bool disposing)
+internal PropertyItemInternal ConvertFromPropertyItem(PropertyItem propItem)
+internal PropertyItem[] ConvertFromMemory(IntPtr propdata, int count)
+public Byte[] get_Value()
+}
 internal System.Drawing.Imaging.WmfMetaHeader : ValueType {
 public short file_type
 public short header_size
@@ -4155,42 +4385,72 @@ public int max_record_size
 public short num_of_params
 }
 public System.Drawing.Imaging.WmfPlaceableFileHeader : object {
-private int key
-private short handle
-private short left
-private short top
-private short right
-private short bottom
-private short inch
-private int reserved
-private short checksum
-public short BboxBottom
-public short BboxLeft
-public short BboxRight
-public short BboxTop
-public short Checksum
-public short Hmf
-public short Inch
+private int _key
+private short _hmf
+private short _bboxLeft
+private short _bboxTop
+private short _bboxRight
+private short _bboxBottom
+private short _inch
+private int _reserved
+private short _checksum
 public int Key
+public short Hmf
+public short BboxLeft
+public short BboxTop
+public short BboxRight
+public short BboxBottom
+public short Inch
 public int Reserved
-public short get_BboxBottom()
-public void set_BboxBottom(short value)
-public short get_BboxLeft()
-public void set_BboxLeft(short value)
-public short get_BboxRight()
-public void set_BboxRight(short value)
-public short get_BboxTop()
-public void set_BboxTop(short value)
-public short get_Checksum()
-public void set_Checksum(short value)
-public short get_Hmf()
-public void set_Hmf(short value)
-public short get_Inch()
-public void set_Inch(short value)
+public short Checksum
 public int get_Key()
 public void set_Key(int value)
+public short get_Hmf()
+public void set_Hmf(short value)
+public short get_BboxLeft()
+public void set_BboxLeft(short value)
+public short get_BboxTop()
+public void set_BboxTop(short value)
+public short get_BboxRight()
+public void set_BboxRight(short value)
+public short get_BboxBottom()
+public void set_BboxBottom(short value)
+public short get_Inch()
+public void set_Inch(short value)
 public int get_Reserved()
 public void set_Reserved(int value)
+public short get_Checksum()
+public void set_Checksum(short value)
+}
+internal System.Drawing.Internal.GPPOINT : object {
+internal int X
+internal int Y
+internal void .ctor(Point pt)
+}
+internal System.Drawing.Internal.GPPOINTF : object {
+internal float X
+internal float Y
+internal void .ctor(PointF pt)
+internal PointF ToPoint()
+}
+internal System.Drawing.Internal.GPRECT : ValueType {
+internal int X
+internal int Y
+internal int Width
+internal int Height
+internal void .ctor(int x, int y, int width, int height)
+internal void .ctor(Rectangle rect)
+}
+internal System.Drawing.Internal.GPRECTF : ValueType {
+internal float X
+internal float Y
+internal float Width
+internal float Height
+internal SizeF SizeF
+internal void .ctor(float x, float y, float width, float height)
+internal void .ctor(RectangleF rect)
+internal SizeF get_SizeF()
+internal RectangleF ToRectangleF()
 }
 public System.Drawing.KnownColor : Enum {
 public int value__
@@ -4441,6 +4701,22 @@ internal void CGContextEOFillPath(IntPtr context)
 internal void CGContextSaveGState(IntPtr context)
 internal void CGContextRestoreGState(IntPtr context)
 }
+internal System.Drawing.NativeMethods : object {
+internal HandleRef NullHandleRef
+public int MAX_PATH
+internal int SM_REMOTESESSION
+internal int OBJ_DC
+internal int OBJ_METADC
+internal int OBJ_MEMDC
+internal int OBJ_ENHMETADC
+internal int DIB_RGB_COLORS
+internal int BI_BITFIELDS
+internal int BI_RGB
+internal int BITMAPINFO_MAX_COLORSIZE
+internal int SPI_GETICONTITLELOGFONT
+internal int SPI_GETNONCLIENTMETRICS
+internal int DEFAULT_GUI_FONT
+}
 public System.Drawing.Pen : MarshalByRefObject {
 internal IntPtr nativeObject
 internal bool isModifiable
@@ -4464,6 +4740,7 @@ public float MiterLimit
 public PenType PenType
 public Matrix Transform
 public float Width
+internal IntPtr NativePen
 internal void .ctor(IntPtr p)
 public void .ctor(Brush brush)
 public void .ctor(Color color)
@@ -4502,6 +4779,7 @@ public Matrix get_Transform()
 public void set_Transform(Matrix value)
 public float get_Width()
 public void set_Width(float value)
+internal IntPtr get_NativePen()
 public object Clone()
 public void Dispose()
 private void Dispose(bool disposing)
@@ -4949,9 +5227,6 @@ public Point Empty
 public bool IsEmpty
 public int X
 public int Y
-public void .ctor(int dw)
-public void .ctor(Size sz)
-public void .ctor(int x, int y)
 public Point Ceiling(PointF value)
 public Point Round(PointF value)
 public Point Truncate(PointF value)
@@ -4961,6 +5236,9 @@ public bool op_Inequality(Point left, Point right)
 public Point op_Subtraction(Point pt, Size sz)
 public Size op_Explicit(Point p)
 public PointF op_Implicit(Point p)
+public void .ctor(int dw)
+public void .ctor(Size sz)
+public void .ctor(int x, int y)
 public bool get_IsEmpty()
 public int get_X()
 public void set_X(int value)
@@ -4991,13 +5269,13 @@ public PointF Empty
 public bool IsEmpty
 public float X
 public float Y
-public void .ctor(float x, float y)
 public PointF op_Addition(PointF pt, Size sz)
 public PointF op_Addition(PointF pt, SizeF sz)
 public bool op_Equality(PointF left, PointF right)
 public bool op_Inequality(PointF left, PointF right)
 public PointF op_Subtraction(PointF pt, Size sz)
 public PointF op_Subtraction(PointF pt, SizeF sz)
+public void .ctor(float x, float y)
 public bool get_IsEmpty()
 public float get_X()
 public void set_X(float value)
@@ -5014,8 +5292,8 @@ public PointF Subtract(PointF pt, SizeF sz)
 public System.Drawing.Printing.Duplex : Enum {
 public int value__
 public Duplex Default
-public Duplex Horizontal
 public Duplex Simplex
+public Duplex Horizontal
 public Duplex Vertical
 }
 internal System.Drawing.Printing.GlobalPrintingServices : object {
@@ -5056,20 +5334,30 @@ internal void set_Graphics(Graphics value)
 internal IntPtr get_Hdc()
 }
 public System.Drawing.Printing.InvalidPrinterException : SystemException {
-public void .ctor(PrinterSettings settings)
+private PrinterSettings _settings
 protected void .ctor(SerializationInfo info, StreamingContext context)
 public void GetObjectData(SerializationInfo info, StreamingContext context)
-private string GetMessage(PrinterSettings settings)
+public void .ctor(PrinterSettings settings)
+private string GenerateMessage(PrinterSettings settings)
 }
 public System.Drawing.Printing.Margins : object {
-private int left
-private int right
-private int top
-private int bottom
+private int _left
+private int _right
+private int _bottom
+private int _top
+private double _doubleLeft
+private double _doubleRight
+private double _doubleTop
+private double _doubleBottom
 public int Left
 public int Right
 public int Top
 public int Bottom
+internal double DoubleLeft
+internal double DoubleRight
+internal double DoubleTop
+internal double DoubleBottom
+private void OnDeserializedMethod(StreamingContext context)
 public void .ctor(int left, int right, int top, int bottom)
 public int get_Left()
 public void set_Left(int value)
@@ -5079,14 +5367,21 @@ public int get_Top()
 public void set_Top(int value)
 public int get_Bottom()
 public void set_Bottom(int value)
-private void InvalidMargin(string property)
+internal double get_DoubleLeft()
+internal void set_DoubleLeft(double value)
+internal double get_DoubleRight()
+internal void set_DoubleRight(double value)
+internal double get_DoubleTop()
+internal void set_DoubleTop(double value)
+internal double get_DoubleBottom()
+internal void set_DoubleBottom(double value)
+private void CheckMargin(int margin, string name)
 public object Clone()
 public bool Equals(object obj)
-private bool Equals(Margins m)
 public int GetHashCode()
-public string ToString()
 public bool op_Equality(Margins m1, Margins m2)
 public bool op_Inequality(Margins m1, Margins m2)
+public string ToString()
 }
 public System.Drawing.Printing.MarginsConverter : ExpandableObjectConverter {
 public bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
@@ -5145,191 +5440,182 @@ public string ToString()
 }
 public System.Drawing.Printing.PaperKind : Enum {
 public int value__
-public PaperKind A2
-public PaperKind A3
-public PaperKind A3Extra
-public PaperKind A3ExtraTransverse
-public PaperKind A3Rotated
-public PaperKind A3Transverse
-public PaperKind A4
-public PaperKind A4Extra
-public PaperKind A4Plus
-public PaperKind A4Rotated
-public PaperKind A4Small
-public PaperKind A4Transverse
-public PaperKind A5
-public PaperKind A5Extra
-public PaperKind A5Rotated
-public PaperKind A5Transverse
-public PaperKind A6
-public PaperKind A6Rotated
-public PaperKind APlus
-public PaperKind B4
-public PaperKind B4Envelope
-public PaperKind B4JisRotated
-public PaperKind B5
-public PaperKind B5Envelope
-public PaperKind B5Extra
-public PaperKind B5JisRotated
-public PaperKind B5Transverse
-public PaperKind B6Envelope
-public PaperKind B6Jis
-public PaperKind B6JisRotated
-public PaperKind BPlus
-public PaperKind C3Envelope
-public PaperKind C4Envelope
-public PaperKind C5Envelope
-public PaperKind C65Envelope
-public PaperKind C6Envelope
-public PaperKind CSheet
 public PaperKind Custom
-public PaperKind DLEnvelope
+public PaperKind Letter
+public PaperKind Legal
+public PaperKind A4
+public PaperKind CSheet
 public PaperKind DSheet
 public PaperKind ESheet
-public PaperKind Executive
-public PaperKind Folio
-public PaperKind GermanLegalFanfold
-public PaperKind GermanStandardFanfold
-public PaperKind InviteEnvelope
-public PaperKind IsoB4
-public PaperKind ItalyEnvelope
-public PaperKind JapaneseDoublePostcard
-public PaperKind JapaneseDoublePostcardRotated
-public PaperKind JapaneseEnvelopeChouNumber3
-public PaperKind JapaneseEnvelopeChouNumber3Rotated
-public PaperKind JapaneseEnvelopeChouNumber4
-public PaperKind JapaneseEnvelopeChouNumber4Rotated
-public PaperKind JapaneseEnvelopeKakuNumber2
-public PaperKind JapaneseEnvelopeKakuNumber2Rotated
-public PaperKind JapaneseEnvelopeKakuNumber3
-public PaperKind JapaneseEnvelopeKakuNumber3Rotated
-public PaperKind JapaneseEnvelopeYouNumber4
-public PaperKind JapaneseEnvelopeYouNumber4Rotated
-public PaperKind JapanesePostcard
-public PaperKind JapanesePostcardRotated
-public PaperKind Ledger
-public PaperKind Legal
-public PaperKind LegalExtra
-public PaperKind Letter
-public PaperKind LetterExtra
-public PaperKind LetterExtraTransverse
-public PaperKind LetterPlus
-public PaperKind LetterRotated
 public PaperKind LetterSmall
-public PaperKind LetterTransverse
-public PaperKind MonarchEnvelope
+public PaperKind Tabloid
+public PaperKind Ledger
+public PaperKind Statement
+public PaperKind Executive
+public PaperKind A3
+public PaperKind A4Small
+public PaperKind A5
+public PaperKind B4
+public PaperKind B5
+public PaperKind Folio
+public PaperKind Quarto
+public PaperKind Standard10x14
+public PaperKind Standard11x17
 public PaperKind Note
+public PaperKind Number9Envelope
 public PaperKind Number10Envelope
 public PaperKind Number11Envelope
 public PaperKind Number12Envelope
 public PaperKind Number14Envelope
-public PaperKind Number9Envelope
+public PaperKind DLEnvelope
+public PaperKind C5Envelope
+public PaperKind C3Envelope
+public PaperKind C4Envelope
+public PaperKind C6Envelope
+public PaperKind C65Envelope
+public PaperKind B4Envelope
+public PaperKind B5Envelope
+public PaperKind B6Envelope
+public PaperKind ItalyEnvelope
+public PaperKind MonarchEnvelope
 public PaperKind PersonalEnvelope
+public PaperKind USStandardFanfold
+public PaperKind GermanStandardFanfold
+public PaperKind GermanLegalFanfold
+public PaperKind IsoB4
+public PaperKind JapanesePostcard
+public PaperKind Standard9x11
+public PaperKind Standard10x11
+public PaperKind Standard15x11
+public PaperKind InviteEnvelope
+public PaperKind LetterExtra
+public PaperKind LegalExtra
+public PaperKind TabloidExtra
+public PaperKind A4Extra
+public PaperKind LetterTransverse
+public PaperKind A4Transverse
+public PaperKind LetterExtraTransverse
+public PaperKind APlus
+public PaperKind BPlus
+public PaperKind LetterPlus
+public PaperKind A4Plus
+public PaperKind A5Transverse
+public PaperKind B5Transverse
+public PaperKind A3Extra
+public PaperKind A5Extra
+public PaperKind B5Extra
+public PaperKind A2
+public PaperKind A3Transverse
+public PaperKind A3ExtraTransverse
+public PaperKind JapaneseDoublePostcard
+public PaperKind A6
+public PaperKind JapaneseEnvelopeKakuNumber2
+public PaperKind JapaneseEnvelopeKakuNumber3
+public PaperKind JapaneseEnvelopeChouNumber3
+public PaperKind JapaneseEnvelopeChouNumber4
+public PaperKind LetterRotated
+public PaperKind A3Rotated
+public PaperKind A4Rotated
+public PaperKind A5Rotated
+public PaperKind B4JisRotated
+public PaperKind B5JisRotated
+public PaperKind JapanesePostcardRotated
+public PaperKind JapaneseDoublePostcardRotated
+public PaperKind A6Rotated
+public PaperKind JapaneseEnvelopeKakuNumber2Rotated
+public PaperKind JapaneseEnvelopeKakuNumber3Rotated
+public PaperKind JapaneseEnvelopeChouNumber3Rotated
+public PaperKind JapaneseEnvelopeChouNumber4Rotated
+public PaperKind B6Jis
+public PaperKind B6JisRotated
+public PaperKind Standard12x11
+public PaperKind JapaneseEnvelopeYouNumber4
+public PaperKind JapaneseEnvelopeYouNumber4Rotated
 public PaperKind Prc16K
-public PaperKind Prc16KRotated
 public PaperKind Prc32K
 public PaperKind Prc32KBig
-public PaperKind Prc32KBigRotated
-public PaperKind Prc32KRotated
 public PaperKind PrcEnvelopeNumber1
-public PaperKind PrcEnvelopeNumber10
-public PaperKind PrcEnvelopeNumber10Rotated
-public PaperKind PrcEnvelopeNumber1Rotated
 public PaperKind PrcEnvelopeNumber2
-public PaperKind PrcEnvelopeNumber2Rotated
 public PaperKind PrcEnvelopeNumber3
-public PaperKind PrcEnvelopeNumber3Rotated
 public PaperKind PrcEnvelopeNumber4
-public PaperKind PrcEnvelopeNumber4Rotated
 public PaperKind PrcEnvelopeNumber5
-public PaperKind PrcEnvelopeNumber5Rotated
 public PaperKind PrcEnvelopeNumber6
-public PaperKind PrcEnvelopeNumber6Rotated
 public PaperKind PrcEnvelopeNumber7
-public PaperKind PrcEnvelopeNumber7Rotated
 public PaperKind PrcEnvelopeNumber8
-public PaperKind PrcEnvelopeNumber8Rotated
 public PaperKind PrcEnvelopeNumber9
+public PaperKind PrcEnvelopeNumber10
+public PaperKind Prc16KRotated
+public PaperKind Prc32KRotated
+public PaperKind Prc32KBigRotated
+public PaperKind PrcEnvelopeNumber1Rotated
+public PaperKind PrcEnvelopeNumber2Rotated
+public PaperKind PrcEnvelopeNumber3Rotated
+public PaperKind PrcEnvelopeNumber4Rotated
+public PaperKind PrcEnvelopeNumber5Rotated
+public PaperKind PrcEnvelopeNumber6Rotated
+public PaperKind PrcEnvelopeNumber7Rotated
+public PaperKind PrcEnvelopeNumber8Rotated
 public PaperKind PrcEnvelopeNumber9Rotated
-public PaperKind Quarto
-public PaperKind Standard10x11
-public PaperKind Standard10x14
-public PaperKind Standard11x17
-public PaperKind Standard12x11
-public PaperKind Standard15x11
-public PaperKind Standard9x11
-public PaperKind Statement
-public PaperKind Tabloid
-public PaperKind TabloidExtra
-public PaperKind USStandardFanfold
+public PaperKind PrcEnvelopeNumber10Rotated
 }
 public System.Drawing.Printing.PaperSize : object {
-private string name
-private int width
-private int height
-private PaperKind kind
-internal bool is_default
-public int Width
+private PaperKind _kind
+private string _name
+private int _width
+private int _height
+private bool _createdByDefaultConstructor
 public int Height
-public string PaperName
 public PaperKind Kind
+public string PaperName
 public int RawKind
-internal bool IsDefault
+public int Width
+internal void .ctor(PaperKind kind, string name, int width, int height)
 public void .ctor(string name, int width, int height)
-internal void .ctor(string name, int width, int height, PaperKind kind, bool isDefault)
-public int get_Width()
-public void set_Width(int value)
 public int get_Height()
 public void set_Height(int value)
+public PaperKind get_Kind()
 public string get_PaperName()
 public void set_PaperName(string value)
-public PaperKind get_Kind()
 public int get_RawKind()
 public void set_RawKind(int value)
-internal bool get_IsDefault()
-internal void set_IsDefault(bool value)
-internal void SetKind(PaperKind k)
+public int get_Width()
+public void set_Width(int value)
 public string ToString()
 }
 public System.Drawing.Printing.PaperSource : object {
-private PaperSourceKind kind
-private string source_name
-internal bool is_default
+private string _name
+private PaperSourceKind _kind
 public PaperSourceKind Kind
-public string SourceName
 public int RawKind
-internal bool IsDefault
-internal void .ctor(string sourceName, PaperSourceKind kind)
-internal void .ctor(string sourceName, PaperSourceKind kind, bool isDefault)
+public string SourceName
+internal void .ctor(PaperSourceKind kind, string name)
 public PaperSourceKind get_Kind()
-public string get_SourceName()
-public void set_SourceName(string value)
 public int get_RawKind()
 public void set_RawKind(int value)
-internal bool get_IsDefault()
-internal void set_IsDefault(bool value)
+public string get_SourceName()
+public void set_SourceName(string value)
 public string ToString()
 }
 public System.Drawing.Printing.PaperSourceKind : Enum {
 public int value__
-public PaperSourceKind AutomaticFeed
-public PaperSourceKind Cassette
-public PaperSourceKind Custom
-public PaperSourceKind Envelope
-public PaperSourceKind FormSource
-public PaperSourceKind LargeCapacity
-public PaperSourceKind LargeFormat
-public PaperSourceKind Lower
-public PaperSourceKind Manual
-public PaperSourceKind ManualFeed
-public PaperSourceKind Middle
-public PaperSourceKind SmallFormat
-public PaperSourceKind TractorFeed
 public PaperSourceKind Upper
+public PaperSourceKind Lower
+public PaperSourceKind Middle
+public PaperSourceKind Manual
+public PaperSourceKind Envelope
+public PaperSourceKind ManualFeed
+public PaperSourceKind AutomaticFeed
+public PaperSourceKind TractorFeed
+public PaperSourceKind SmallFormat
+public PaperSourceKind LargeFormat
+public PaperSourceKind LargeCapacity
+public PaperSourceKind Cassette
+public PaperSourceKind FormSource
+public PaperSourceKind Custom
 }
 public System.Drawing.Printing.PreviewPageInfo : object {
-private Image image
-private Size physicalSize
+private Image _image
+private Size _physicalSize
 public Image Image
 public Size PhysicalSize
 public void .ctor(Image image, Size physicalSize)
@@ -5405,28 +5691,28 @@ public void add_QueryPageSettings(QueryPageSettingsEventHandler value)
 public void remove_QueryPageSettings(QueryPageSettingsEventHandler value)
 }
 public System.Drawing.Printing.PrinterResolution : object {
-private PrinterResolutionKind kind
-private int x
-private int y
+private int _x
+private int _y
+private PrinterResolutionKind _kind
+public PrinterResolutionKind Kind
 public int X
 public int Y
-public PrinterResolutionKind Kind
-internal void .ctor(int x, int y, PrinterResolutionKind kind)
+internal void .ctor(PrinterResolutionKind kind, int x, int y)
+public PrinterResolutionKind get_Kind()
+public void set_Kind(PrinterResolutionKind value)
 public int get_X()
 public void set_X(int value)
 public int get_Y()
 public void set_Y(int value)
-public PrinterResolutionKind get_Kind()
-public void set_Kind(PrinterResolutionKind value)
 public string ToString()
 }
 public System.Drawing.Printing.PrinterResolutionKind : Enum {
 public int value__
-public PrinterResolutionKind Custom
-public PrinterResolutionKind Draft
 public PrinterResolutionKind High
-public PrinterResolutionKind Low
 public PrinterResolutionKind Medium
+public PrinterResolutionKind Low
+public PrinterResolutionKind Draft
+public PrinterResolutionKind Custom
 }
 public System.Drawing.Printing.PrinterSettings : object {
 private string printer_name
@@ -5529,23 +5815,25 @@ public string ToString()
 public System.Drawing.Printing.PrinterUnit : Enum {
 public int value__
 public PrinterUnit Display
+public PrinterUnit ThousandthsOfAnInch
 public PrinterUnit HundredthsOfAMillimeter
 public PrinterUnit TenthsOfAMillimeter
-public PrinterUnit ThousandthsOfAnInch
 }
 public System.Drawing.Printing.PrinterUnitConvert : object {
 public double Convert(double value, PrinterUnit fromUnit, PrinterUnit toUnit)
 public int Convert(int value, PrinterUnit fromUnit, PrinterUnit toUnit)
-public Margins Convert(Margins value, PrinterUnit fromUnit, PrinterUnit toUnit)
 public Point Convert(Point value, PrinterUnit fromUnit, PrinterUnit toUnit)
-public Rectangle Convert(Rectangle value, PrinterUnit fromUnit, PrinterUnit toUnit)
 public Size Convert(Size value, PrinterUnit fromUnit, PrinterUnit toUnit)
+public Rectangle Convert(Rectangle value, PrinterUnit fromUnit, PrinterUnit toUnit)
+public Margins Convert(Margins value, PrinterUnit fromUnit, PrinterUnit toUnit)
+private double UnitsPerDisplay(PrinterUnit unit)
 }
 public System.Drawing.Printing.PrintEventArgs : CancelEventArgs {
 private GraphicsPrinter graphics_context
-internal PrintAction action
+private PrintAction action
 public PrintAction PrintAction
 internal GraphicsPrinter GraphicsContext
+internal void .ctor(PrintAction action)
 public PrintAction get_PrintAction()
 internal GraphicsPrinter get_GraphicsContext()
 internal void set_GraphicsContext(GraphicsPrinter value)
@@ -5557,30 +5845,23 @@ public IAsyncResult BeginInvoke(object sender, PrintEventArgs e, AsyncCallback c
 public void EndInvoke(IAsyncResult result)
 }
 public System.Drawing.Printing.PrintingPermission : CodeAccessPermission {
-private int version
-private PrintingPermissionLevel _Level
+private PrintingPermissionLevel printingLevel
 public PrintingPermissionLevel Level
 public void .ctor(PermissionState state)
 public void .ctor(PrintingPermissionLevel printingLevel)
 public PrintingPermissionLevel get_Level()
 public void set_Level(PrintingPermissionLevel value)
-public IPermission Copy()
-public void FromXml(SecurityElement esd)
-public IPermission Intersect(IPermission target)
-public bool IsSubsetOf(IPermission target)
+private void VerifyPrintingLevel(PrintingPermissionLevel level)
 public bool IsUnrestricted()
-public SecurityElement ToXml()
+public bool IsSubsetOf(IPermission target)
+public IPermission Intersect(IPermission target)
 public IPermission Union(IPermission target)
-private bool IsEmpty()
-private PrintingPermission Cast(IPermission target)
-internal SecurityElement Element(int version)
-internal PermissionState CheckPermissionState(PermissionState state, bool allowUnrestricted)
-internal int CheckSecurityElement(SecurityElement se, string parameterName, int minimumVersion, int maximumVersion)
-internal bool IsUnrestricted(SecurityElement se)
-internal void ThrowInvalidPermission(IPermission target, Type expected)
+public IPermission Copy()
+public SecurityElement ToXml()
+public void FromXml(SecurityElement esd)
 }
 public System.Drawing.Printing.PrintingPermissionAttribute : CodeAccessSecurityAttribute {
-private PrintingPermissionLevel _level
+private PrintingPermissionLevel level
 public PrintingPermissionLevel Level
 public void .ctor(SecurityAction action)
 public PrintingPermissionLevel get_Level()
@@ -5589,10 +5870,10 @@ public IPermission CreatePermission()
 }
 public System.Drawing.Printing.PrintingPermissionLevel : Enum {
 public int value__
-public PrintingPermissionLevel AllPrinting
-public PrintingPermissionLevel DefaultPrinting
 public PrintingPermissionLevel NoPrinting
 public PrintingPermissionLevel SafePrinting
+public PrintingPermissionLevel DefaultPrinting
+public PrintingPermissionLevel AllPrinting
 }
 internal System.Drawing.Printing.PrintingServices : object {
 internal string DefaultPrinter
@@ -5722,12 +6003,13 @@ public void EndInvoke(IAsyncResult result)
 public System.Drawing.Printing.PrintRange : Enum {
 public int value__
 public PrintRange AllPages
-public PrintRange Selection
 public PrintRange SomePages
+public PrintRange Selection
 public PrintRange CurrentPage
 }
 public System.Drawing.Printing.QueryPageSettingsEventArgs : PrintEventArgs {
-private PageSettings pageSettings
+private PageSettings _pageSettings
+internal bool PageSettingsChanged
 public PageSettings PageSettings
 public void .ctor(PageSettings pageSettings)
 public PageSettings get_PageSettings()
@@ -5781,8 +6063,6 @@ public int Top
 public int Width
 public int X
 public int Y
-public void .ctor(Point location, Size size)
-public void .ctor(int x, int y, int width, int height)
 public Rectangle Ceiling(RectangleF value)
 public Rectangle FromLTRB(int left, int top, int right, int bottom)
 public Rectangle Inflate(Rectangle rect, int x, int y)
@@ -5795,6 +6075,8 @@ public Rectangle Truncate(RectangleF value)
 public Rectangle Union(Rectangle a, Rectangle b)
 public bool op_Equality(Rectangle left, Rectangle right)
 public bool op_Inequality(Rectangle left, Rectangle right)
+public void .ctor(Point location, Size size)
+public void .ctor(int x, int y, int width, int height)
 public int get_Bottom()
 public int get_Height()
 public void set_Height(int value)
@@ -5850,8 +6132,6 @@ public float Top
 public float Width
 public float X
 public float Y
-public void .ctor(PointF location, SizeF size)
-public void .ctor(float x, float y, float width, float height)
 public RectangleF FromLTRB(float left, float top, float right, float bottom)
 public RectangleF Inflate(RectangleF rect, float x, float y)
 public void Inflate(float x, float y)
@@ -5862,6 +6142,8 @@ public RectangleF Union(RectangleF a, RectangleF b)
 public bool op_Equality(RectangleF left, RectangleF right)
 public bool op_Inequality(RectangleF left, RectangleF right)
 public RectangleF op_Implicit(Rectangle r)
+public void .ctor(PointF location, SizeF size)
+public void .ctor(float x, float y, float width, float height)
 public float get_Bottom()
 public float get_Height()
 public void set_Height(float value)
@@ -5957,21 +6239,312 @@ public void ReleaseHrgn(IntPtr regionHandle)
 public System.Drawing.RotateFlipType : Enum {
 public int value__
 public RotateFlipType RotateNoneFlipNone
-public RotateFlipType Rotate180FlipXY
 public RotateFlipType Rotate90FlipNone
-public RotateFlipType Rotate270FlipXY
 public RotateFlipType Rotate180FlipNone
-public RotateFlipType RotateNoneFlipXY
 public RotateFlipType Rotate270FlipNone
-public RotateFlipType Rotate90FlipXY
 public RotateFlipType RotateNoneFlipX
-public RotateFlipType Rotate180FlipY
 public RotateFlipType Rotate90FlipX
-public RotateFlipType Rotate270FlipY
 public RotateFlipType Rotate180FlipX
-public RotateFlipType RotateNoneFlipY
 public RotateFlipType Rotate270FlipX
+public RotateFlipType RotateNoneFlipY
 public RotateFlipType Rotate90FlipY
+public RotateFlipType Rotate180FlipY
+public RotateFlipType Rotate270FlipY
+public RotateFlipType RotateNoneFlipXY
+public RotateFlipType Rotate90FlipXY
+public RotateFlipType Rotate180FlipXY
+public RotateFlipType Rotate270FlipXY
+}
+internal System.Drawing.SafeNativeMethods : object {
+public int ERROR_CANCELLED
+public int E_UNEXPECTED
+public int E_NOTIMPL
+public int E_ABORT
+public int E_FAIL
+public int E_ACCESSDENIED
+public int GMEM_MOVEABLE
+public int GMEM_ZEROINIT
+public int DM_IN_BUFFER
+public int DM_OUT_BUFFER
+public int DT_PLOTTER
+public int DT_RASPRINTER
+public int TECHNOLOGY
+public int DC_PAPERS
+public int DC_PAPERSIZE
+public int DC_BINS
+public int DC_DUPLEX
+public int DC_BINNAMES
+public int DC_ENUMRESOLUTIONS
+public int DC_PAPERNAMES
+public int DC_ORIENTATION
+public int DC_COPIES
+public int PD_ALLPAGES
+public int PD_SELECTION
+public int PD_PAGENUMS
+public int PD_CURRENTPAGE
+public int PD_RETURNDEFAULT
+public int DI_NORMAL
+public int IMAGE_ICON
+public int IDI_APPLICATION
+public int IDI_HAND
+public int IDI_QUESTION
+public int IDI_EXCLAMATION
+public int IDI_ASTERISK
+public int IDI_WINLOGO
+public int IDI_WARNING
+public int IDI_ERROR
+public int IDI_INFORMATION
+public int SRCCOPY
+public int PLANES
+public int BITSPIXEL
+public int LOGPIXELSX
+public int LOGPIXELSY
+public int PHYSICALWIDTH
+public int PHYSICALHEIGHT
+public int PHYSICALOFFSETX
+public int PHYSICALOFFSETY
+public int VERTRES
+public int HORZRES
+public int DM_ORIENTATION
+public int DM_PAPERSIZE
+public int DM_PAPERLENGTH
+public int DM_PAPERWIDTH
+public int DM_COPIES
+public int DM_DEFAULTSOURCE
+public int DM_PRINTQUALITY
+public int DM_COLOR
+public int DM_DUPLEX
+public int DM_YRESOLUTION
+public int DM_COLLATE
+public int DMORIENT_PORTRAIT
+public int DMORIENT_LANDSCAPE
+public int DMPAPER_LETTER
+public int DMPAPER_LETTERSMALL
+public int DMPAPER_TABLOID
+public int DMPAPER_LEDGER
+public int DMPAPER_LEGAL
+public int DMPAPER_STATEMENT
+public int DMPAPER_EXECUTIVE
+public int DMPAPER_A3
+public int DMPAPER_A4
+public int DMPAPER_A4SMALL
+public int DMPAPER_A5
+public int DMPAPER_B4
+public int DMPAPER_B5
+public int DMPAPER_FOLIO
+public int DMPAPER_QUARTO
+public int DMPAPER_10X14
+public int DMPAPER_11X17
+public int DMPAPER_NOTE
+public int DMPAPER_ENV_9
+public int DMPAPER_ENV_10
+public int DMPAPER_ENV_11
+public int DMPAPER_ENV_12
+public int DMPAPER_ENV_14
+public int DMPAPER_CSHEET
+public int DMPAPER_DSHEET
+public int DMPAPER_ESHEET
+public int DMPAPER_ENV_DL
+public int DMPAPER_ENV_C5
+public int DMPAPER_ENV_C3
+public int DMPAPER_ENV_C4
+public int DMPAPER_ENV_C6
+public int DMPAPER_ENV_C65
+public int DMPAPER_ENV_B4
+public int DMPAPER_ENV_B5
+public int DMPAPER_ENV_B6
+public int DMPAPER_ENV_ITALY
+public int DMPAPER_ENV_MONARCH
+public int DMPAPER_ENV_PERSONAL
+public int DMPAPER_FANFOLD_US
+public int DMPAPER_FANFOLD_STD_GERMAN
+public int DMPAPER_FANFOLD_LGL_GERMAN
+public int DMPAPER_ISO_B4
+public int DMPAPER_JAPANESE_POSTCARD
+public int DMPAPER_9X11
+public int DMPAPER_10X11
+public int DMPAPER_15X11
+public int DMPAPER_ENV_INVITE
+public int DMPAPER_RESERVED_48
+public int DMPAPER_RESERVED_49
+public int DMPAPER_LETTER_EXTRA
+public int DMPAPER_LEGAL_EXTRA
+public int DMPAPER_TABLOID_EXTRA
+public int DMPAPER_A4_EXTRA
+public int DMPAPER_LETTER_TRANSVERSE
+public int DMPAPER_A4_TRANSVERSE
+public int DMPAPER_LETTER_EXTRA_TRANSVERSE
+public int DMPAPER_A_PLUS
+public int DMPAPER_B_PLUS
+public int DMPAPER_LETTER_PLUS
+public int DMPAPER_A4_PLUS
+public int DMPAPER_A5_TRANSVERSE
+public int DMPAPER_B5_TRANSVERSE
+public int DMPAPER_A3_EXTRA
+public int DMPAPER_A5_EXTRA
+public int DMPAPER_B5_EXTRA
+public int DMPAPER_A2
+public int DMPAPER_A3_TRANSVERSE
+public int DMPAPER_A3_EXTRA_TRANSVERSE
+public int DMPAPER_DBL_JAPANESE_POSTCARD
+public int DMPAPER_A6
+public int DMPAPER_JENV_KAKU2
+public int DMPAPER_JENV_KAKU3
+public int DMPAPER_JENV_CHOU3
+public int DMPAPER_JENV_CHOU4
+public int DMPAPER_LETTER_ROTATED
+public int DMPAPER_A3_ROTATED
+public int DMPAPER_A4_ROTATED
+public int DMPAPER_A5_ROTATED
+public int DMPAPER_B4_JIS_ROTATED
+public int DMPAPER_B5_JIS_ROTATED
+public int DMPAPER_JAPANESE_POSTCARD_ROTATED
+public int DMPAPER_DBL_JAPANESE_POSTCARD_ROTATED
+public int DMPAPER_A6_ROTATED
+public int DMPAPER_JENV_KAKU2_ROTATED
+public int DMPAPER_JENV_KAKU3_ROTATED
+public int DMPAPER_JENV_CHOU3_ROTATED
+public int DMPAPER_JENV_CHOU4_ROTATED
+public int DMPAPER_B6_JIS
+public int DMPAPER_B6_JIS_ROTATED
+public int DMPAPER_12X11
+public int DMPAPER_JENV_YOU4
+public int DMPAPER_JENV_YOU4_ROTATED
+public int DMPAPER_P16K
+public int DMPAPER_P32K
+public int DMPAPER_P32KBIG
+public int DMPAPER_PENV_1
+public int DMPAPER_PENV_2
+public int DMPAPER_PENV_3
+public int DMPAPER_PENV_4
+public int DMPAPER_PENV_5
+public int DMPAPER_PENV_6
+public int DMPAPER_PENV_7
+public int DMPAPER_PENV_8
+public int DMPAPER_PENV_9
+public int DMPAPER_PENV_10
+public int DMPAPER_P16K_ROTATED
+public int DMPAPER_P32K_ROTATED
+public int DMPAPER_P32KBIG_ROTATED
+public int DMPAPER_PENV_1_ROTATED
+public int DMPAPER_PENV_2_ROTATED
+public int DMPAPER_PENV_3_ROTATED
+public int DMPAPER_PENV_4_ROTATED
+public int DMPAPER_PENV_5_ROTATED
+public int DMPAPER_PENV_6_ROTATED
+public int DMPAPER_PENV_7_ROTATED
+public int DMPAPER_PENV_8_ROTATED
+public int DMPAPER_PENV_9_ROTATED
+public int DMPAPER_PENV_10_ROTATED
+public int DMPAPER_LAST
+public int DMBIN_UPPER
+public int DMBIN_LOWER
+public int DMBIN_MIDDLE
+public int DMBIN_MANUAL
+public int DMBIN_ENVELOPE
+public int DMBIN_ENVMANUAL
+public int DMBIN_AUTO
+public int DMBIN_TRACTOR
+public int DMBIN_SMALLFMT
+public int DMBIN_LARGEFMT
+public int DMBIN_LARGECAPACITY
+public int DMBIN_CASSETTE
+public int DMBIN_FORMSOURCE
+public int DMBIN_LAST
+public int DMBIN_USER
+public int DMRES_DRAFT
+public int DMRES_LOW
+public int DMRES_MEDIUM
+public int DMRES_HIGH
+public int DMCOLOR_MONOCHROME
+public int DMCOLOR_COLOR
+public int DMDUP_SIMPLEX
+public int DMDUP_VERTICAL
+public int DMDUP_HORIZONTAL
+public int DMCOLLATE_FALSE
+public int DMCOLLATE_TRUE
+public int PRINTER_ENUM_LOCAL
+public int PRINTER_ENUM_CONNECTIONS
+public int SRCPAINT
+public int SRCAND
+public int SRCINVERT
+public int SRCERASE
+public int NOTSRCCOPY
+public int NOTSRCERASE
+public int MERGECOPY
+public int MERGEPAINT
+public int PATCOPY
+public int PATPAINT
+public int PATINVERT
+public int DSTINVERT
+public int BLACKNESS
+public int WHITENESS
+public int CAPTUREBLT
+public int SM_CXICON
+public int SM_CYICON
+public int DEFAULT_CHARSET
+public int NOMIRRORBITMAP
+public int QUERYESCSUPPORT
+public int CHECKJPEGFORMAT
+public int CHECKPNGFORMAT
+public int ERROR_ACCESS_DENIED
+public int ERROR_INVALID_PARAMETER
+public int ERROR_PROC_NOT_FOUND
+public IntPtr IntCreateCompatibleBitmap(HandleRef hDC, int width, int height)
+public IntPtr CreateCompatibleBitmap(HandleRef hDC, int width, int height)
+public int BitBlt(HandleRef hDC, int x, int y, int nWidth, int nHeight, HandleRef hSrcDC, int xSrc, int ySrc, int dwRop)
+public int GetDIBits(HandleRef hdc, HandleRef hbm, int arg1, int arg2, IntPtr arg3, BITMAPINFO_FLAT& bmi, int arg5)
+public UInt32 GetPaletteEntries(HandleRef hpal, int iStartIndex, int nEntries, Byte[] lppe)
+public IntPtr IntCreateDIBSection(HandleRef hdc, BITMAPINFO_FLAT& bmi, int iUsage, IntPtr& ppvBits, IntPtr hSection, int dwOffset)
+public IntPtr CreateDIBSection(HandleRef hdc, BITMAPINFO_FLAT& bmi, int iUsage, IntPtr& ppvBits, IntPtr hSection, int dwOffset)
+public IntPtr GlobalFree(HandleRef handle)
+public int StartDoc(HandleRef hDC, DOCINFO lpDocInfo)
+public int StartPage(HandleRef hDC)
+public int EndPage(HandleRef hDC)
+public int AbortDoc(HandleRef hDC)
+public int EndDoc(HandleRef hDC)
+public bool PrintDlg(PRINTDLG lppd)
+public bool PrintDlg(PRINTDLGX86 lppd)
+public int DeviceCapabilities(string pDevice, string pPort, short fwCapabilities, IntPtr pOutput, IntPtr pDevMode)
+public int DocumentProperties(HandleRef hwnd, HandleRef hPrinter, string pDeviceName, IntPtr pDevModeOutput, HandleRef pDevModeInput, int fMode)
+public int DocumentProperties(HandleRef hwnd, HandleRef hPrinter, string pDeviceName, IntPtr pDevModeOutput, IntPtr pDevModeInput, int fMode)
+public int EnumPrinters(int flags, string name, int level, IntPtr pPrinterEnum, int cbBuf, Int32& pcbNeeded, Int32& pcReturned)
+public IntPtr GlobalLock(HandleRef handle)
+public IntPtr ResetDC(HandleRef hDC, HandleRef lpDevMode)
+public bool GlobalUnlock(HandleRef handle)
+private IntPtr IntCreateRectRgn(int x1, int y1, int x2, int y2)
+public IntPtr CreateRectRgn(int x1, int y1, int x2, int y2)
+public int GetClipRgn(HandleRef hDC, HandleRef hRgn)
+public int SelectClipRgn(HandleRef hDC, HandleRef hRgn)
+public int AddFontResourceEx(string lpszFilename, int fl, IntPtr pdv)
+public int AddFontFile(string fileName)
+internal IntPtr SaveClipRgn(IntPtr hDC)
+internal void RestoreClipRgn(IntPtr hDC, IntPtr hRgn)
+public int ExtEscape(HandleRef hDC, int nEscape, int cbInput, Int32& inData, int cbOutput, Int32& outData)
+public int ExtEscape(HandleRef hDC, int nEscape, int cbInput, Byte[] inData, int cbOutput, Int32& outData)
+public int IntersectClipRect(HandleRef hDC, int x1, int y1, int x2, int y2)
+public IntPtr IntGlobalAlloc(int uFlags, UIntPtr dwBytes)
+public IntPtr GlobalAlloc(int uFlags, UInt32 dwBytes)
+internal void ZeroMemory(Byte* ptr, ulong length)
+internal int IntDeleteObject(HandleRef hObject)
+public int DeleteObject(HandleRef hObject)
+public IntPtr SelectObject(HandleRef hdc, HandleRef obj)
+private IntPtr IntCreateIconFromResourceEx(Byte* pbIconBits, int cbIconBits, bool fIcon, int dwVersion, int csDesired, int cyDesired, int flags)
+public IntPtr CreateIconFromResourceEx(Byte* pbIconBits, int cbIconBits, bool fIcon, int dwVersion, int csDesired, int cyDesired, int flags)
+public IntPtr IntExtractAssociatedIcon(HandleRef hInst, StringBuilder iconPath, Int32& index)
+public IntPtr ExtractAssociatedIcon(HandleRef hInst, StringBuilder iconPath, Int32& index)
+private IntPtr IntLoadIcon(HandleRef hInst, IntPtr iconId)
+public IntPtr LoadIcon(HandleRef hInst, int iconId)
+private bool IntDestroyIcon(HandleRef hIcon)
+public bool DestroyIcon(HandleRef hIcon)
+private IntPtr IntCopyImage(HandleRef hImage, int uType, int cxDesired, int cyDesired, int fuFlags)
+public IntPtr CopyImage(HandleRef hImage, int uType, int cxDesired, int cyDesired, int fuFlags)
+public int GetObject(HandleRef hObject, int nSize, BITMAP bm)
+public int GetObject(HandleRef hObject, int nSize, LOGFONT lf)
+public int GetObject(HandleRef hObject, LOGFONT lp)
+public bool GetIconInfo(HandleRef hIcon, ICONINFO info)
+public bool DrawIconEx(HandleRef hDC, int x, int y, HandleRef hIcon, int width, int height, int iStepIfAniCursor, HandleRef hBrushFlickerFree, int diFlags)
+public IPicture OleCreatePictureIndirect(PICTDESC pictdesc, Guid& refiid, bool fOwn)
 }
 public System.Drawing.Size : ValueType {
 private int width
@@ -5980,8 +6553,6 @@ public Size Empty
 public bool IsEmpty
 public int Width
 public int Height
-public void .ctor(Point pt)
-public void .ctor(int width, int height)
 public Size Ceiling(SizeF value)
 public Size Round(SizeF value)
 public Size Truncate(SizeF value)
@@ -5991,6 +6562,8 @@ public bool op_Inequality(Size sz1, Size sz2)
 public Size op_Subtraction(Size sz1, Size sz2)
 public Point op_Explicit(Size size)
 public SizeF op_Implicit(Size p)
+public void .ctor(Point pt)
+public void .ctor(int width, int height)
 public bool get_IsEmpty()
 public int get_Width()
 public void set_Width(int value)
@@ -6019,14 +6592,14 @@ public SizeF Empty
 public bool IsEmpty
 public float Width
 public float Height
-public void .ctor(PointF pt)
-public void .ctor(SizeF size)
-public void .ctor(float width, float height)
 public SizeF op_Addition(SizeF sz1, SizeF sz2)
 public bool op_Equality(SizeF sz1, SizeF sz2)
 public bool op_Inequality(SizeF sz1, SizeF sz2)
 public SizeF op_Subtraction(SizeF sz1, SizeF sz2)
 public PointF op_Explicit(SizeF size)
+public void .ctor(PointF pt)
+public void .ctor(SizeF size)
+public void .ctor(float width, float height)
 public bool get_IsEmpty()
 public float get_Width()
 public void set_Width(float value)
@@ -6051,15 +6624,17 @@ public PropertyDescriptorCollection GetProperties(ITypeDescriptorContext context
 public bool GetPropertiesSupported(ITypeDescriptorContext context)
 }
 public System.Drawing.SolidBrush : Brush {
-internal bool isModifiable
-private Color color
+private Color _color
+private bool _immutable
 public Color Color
-internal void .ctor(IntPtr ptr)
 public void .ctor(Color color)
-public Color get_Color()
-public void set_Color(Color value)
+internal void .ctor(Color color, bool immutable)
+internal void .ctor(IntPtr nativeBrush)
 public object Clone()
 protected void Dispose(bool disposing)
+public Color get_Color()
+public void set_Color(Color value)
+private void InternalSetColor(Color value)
 }
 internal System.Drawing.SRDescriptionAttribute : DescriptionAttribute {
 private bool isReplaced
@@ -6118,13 +6693,14 @@ public int DigitSubstitutionLanguage
 public StringFormat GenericTypographic
 public StringDigitSubstitute DigitSubstitutionMethod
 internal IntPtr NativeObject
+internal IntPtr nativeFormat
 public void .ctor(StringFormatFlags options, int language)
 internal void .ctor(IntPtr native)
-public void .ctor(StringFormat format)
-public void .ctor(StringFormatFlags options)
 protected void Finalize()
 public void Dispose()
 private void Dispose(bool disposing)
+public void .ctor(StringFormat format)
+public void .ctor(StringFormatFlags options)
 public StringAlignment get_Alignment()
 public void set_Alignment(StringAlignment value)
 public StringAlignment get_LineAlignment()
@@ -6145,6 +6721,7 @@ public object Clone()
 public string ToString()
 internal IntPtr get_NativeObject()
 internal void set_NativeObject(IntPtr value)
+internal IntPtr get_nativeFormat()
 public void SetTabStops(float firstTabOffset, Single[] tabStops)
 public void SetDigitSubstitution(int language, StringDigitSubstitute substitute)
 public Single[] GetTabStops(Single& firstTabOffset)
@@ -6182,106 +6759,74 @@ public StringUnit Millimeter
 public StringUnit Em
 }
 public System.Drawing.SystemBrushes : object {
-private SolidBrush active_border
-private SolidBrush active_caption
-private SolidBrush active_caption_text
-private SolidBrush app_workspace
-private SolidBrush control
-private SolidBrush control_dark
-private SolidBrush control_dark_dark
-private SolidBrush control_light
-private SolidBrush control_light_light
-private SolidBrush control_text
-private SolidBrush desktop
-private SolidBrush highlight
-private SolidBrush highlight_text
-private SolidBrush hot_track
-private SolidBrush inactive_border
-private SolidBrush inactive_caption
-private SolidBrush info
-private SolidBrush menu
-private SolidBrush scroll_bar
-private SolidBrush window
-private SolidBrush window_text
-private SolidBrush button_face
-private SolidBrush button_highlight
-private SolidBrush button_shadow
-private SolidBrush gradient_activecaption
-private SolidBrush gradient_inactivecaption
-private SolidBrush graytext
-private SolidBrush inactive_captiontext
-private SolidBrush infotext
-private SolidBrush menubar
-private SolidBrush menu_highlight
-private SolidBrush menu_text
-private SolidBrush window_fame
+private object s_systemBrushesKey
 public Brush ActiveBorder
 public Brush ActiveCaption
 public Brush ActiveCaptionText
 public Brush AppWorkspace
-public Brush Control
-public Brush ControlLight
-public Brush ControlLightLight
-public Brush ControlDark
-public Brush ControlDarkDark
-public Brush ControlText
-public Brush Highlight
-public Brush HighlightText
-public Brush Window
-public Brush WindowText
-public Brush InactiveBorder
-public Brush Desktop
-public Brush HotTrack
-public Brush InactiveCaption
-public Brush Info
-public Brush Menu
-public Brush ScrollBar
 public Brush ButtonFace
 public Brush ButtonHighlight
 public Brush ButtonShadow
+public Brush Control
+public Brush ControlLightLight
+public Brush ControlLight
+public Brush ControlDark
+public Brush ControlDarkDark
+public Brush ControlText
+public Brush Desktop
 public Brush GradientActiveCaption
 public Brush GradientInactiveCaption
 public Brush GrayText
+public Brush Highlight
+public Brush HighlightText
+public Brush HotTrack
+public Brush InactiveCaption
+public Brush InactiveBorder
 public Brush InactiveCaptionText
+public Brush Info
 public Brush InfoText
+public Brush Menu
 public Brush MenuBar
 public Brush MenuHighlight
 public Brush MenuText
+public Brush ScrollBar
+public Brush Window
 public Brush WindowFrame
+public Brush WindowText
 public Brush get_ActiveBorder()
 public Brush get_ActiveCaption()
 public Brush get_ActiveCaptionText()
 public Brush get_AppWorkspace()
-public Brush get_Control()
-public Brush get_ControlLight()
-public Brush get_ControlLightLight()
-public Brush get_ControlDark()
-public Brush get_ControlDarkDark()
-public Brush get_ControlText()
-public Brush get_Highlight()
-public Brush get_HighlightText()
-public Brush get_Window()
-public Brush get_WindowText()
-public Brush get_InactiveBorder()
-public Brush get_Desktop()
-public Brush get_HotTrack()
-public Brush get_InactiveCaption()
-public Brush get_Info()
-public Brush get_Menu()
-public Brush get_ScrollBar()
-public Brush FromSystemColor(Color c)
 public Brush get_ButtonFace()
 public Brush get_ButtonHighlight()
 public Brush get_ButtonShadow()
+public Brush get_Control()
+public Brush get_ControlLightLight()
+public Brush get_ControlLight()
+public Brush get_ControlDark()
+public Brush get_ControlDarkDark()
+public Brush get_ControlText()
+public Brush get_Desktop()
 public Brush get_GradientActiveCaption()
 public Brush get_GradientInactiveCaption()
 public Brush get_GrayText()
+public Brush get_Highlight()
+public Brush get_HighlightText()
+public Brush get_HotTrack()
+public Brush get_InactiveCaption()
+public Brush get_InactiveBorder()
 public Brush get_InactiveCaptionText()
+public Brush get_Info()
 public Brush get_InfoText()
+public Brush get_Menu()
 public Brush get_MenuBar()
 public Brush get_MenuHighlight()
 public Brush get_MenuText()
+public Brush get_ScrollBar()
+public Brush get_Window()
 public Brush get_WindowFrame()
+public Brush get_WindowText()
+public Brush FromSystemColor(Color c)
 }
 public System.Drawing.SystemColors : object {
 public Color ActiveBorder
@@ -6502,7 +7047,7 @@ public Pen get_ScrollBar()
 public Pen get_Window()
 }
 public System.Drawing.Text.FontCollection : object {
-internal IntPtr nativeFontCollection
+internal IntPtr _nativeFontCollection
 public FontFamily[] Families
 public void Dispose()
 protected void Dispose(bool disposing)
@@ -6511,15 +7056,15 @@ protected void Finalize()
 }
 public System.Drawing.Text.GenericFontFamilies : Enum {
 public int value__
-public GenericFontFamilies Monospace
-public GenericFontFamilies SansSerif
 public GenericFontFamilies Serif
+public GenericFontFamilies SansSerif
+public GenericFontFamilies Monospace
 }
 public System.Drawing.Text.HotkeyPrefix : Enum {
 public int value__
-public HotkeyPrefix Hide
 public HotkeyPrefix None
 public HotkeyPrefix Show
+public HotkeyPrefix Hide
 }
 public System.Drawing.Text.PrivateFontCollection : FontCollection {
 public void AddFontFile(string filename)
@@ -6528,41 +7073,41 @@ protected void Dispose(bool disposing)
 }
 public System.Drawing.Text.TextRenderingHint : Enum {
 public int value__
-public TextRenderingHint AntiAlias
-public TextRenderingHint AntiAliasGridFit
-public TextRenderingHint ClearTypeGridFit
-public TextRenderingHint SingleBitPerPixel
-public TextRenderingHint SingleBitPerPixelGridFit
 public TextRenderingHint SystemDefault
+public TextRenderingHint SingleBitPerPixelGridFit
+public TextRenderingHint SingleBitPerPixel
+public TextRenderingHint AntiAliasGridFit
+public TextRenderingHint AntiAlias
+public TextRenderingHint ClearTypeGridFit
 }
 public System.Drawing.TextureBrush : Brush {
-public Image Image
 public Matrix Transform
 public WrapMode WrapMode
-internal void .ctor(IntPtr ptr)
+public Image Image
 public void .ctor(Image bitmap)
-public void .ctor(Image image, Rectangle dstRect)
-public void .ctor(Image image, RectangleF dstRect)
 public void .ctor(Image image, WrapMode wrapMode)
-public void .ctor(Image image, Rectangle dstRect, ImageAttributes imageAttr)
-public void .ctor(Image image, RectangleF dstRect, ImageAttributes imageAttr)
-public void .ctor(Image image, WrapMode wrapMode, Rectangle dstRect)
 public void .ctor(Image image, WrapMode wrapMode, RectangleF dstRect)
-public Image get_Image()
+public void .ctor(Image image, WrapMode wrapMode, Rectangle dstRect)
+public void .ctor(Image image, RectangleF dstRect)
+public void .ctor(Image image, RectangleF dstRect, ImageAttributes imageAttr)
+public void .ctor(Image image, Rectangle dstRect)
+public void .ctor(Image image, Rectangle dstRect, ImageAttributes imageAttr)
+internal void .ctor(IntPtr nativeBrush)
+public object Clone()
 public Matrix get_Transform()
 public void set_Transform(Matrix value)
 public WrapMode get_WrapMode()
 public void set_WrapMode(WrapMode value)
-public object Clone()
+public Image get_Image()
+public void ResetTransform()
 public void MultiplyTransform(Matrix matrix)
 public void MultiplyTransform(Matrix matrix, MatrixOrder order)
-public void ResetTransform()
-public void RotateTransform(float angle)
-public void RotateTransform(float angle, MatrixOrder order)
-public void ScaleTransform(float sx, float sy)
-public void ScaleTransform(float sx, float sy, MatrixOrder order)
 public void TranslateTransform(float dx, float dy)
 public void TranslateTransform(float dx, float dy, MatrixOrder order)
+public void ScaleTransform(float sx, float sy)
+public void ScaleTransform(float sx, float sy, MatrixOrder order)
+public void RotateTransform(float angle)
+public void RotateTransform(float angle, MatrixOrder order)
 }
 public System.Drawing.ToolboxBitmapAttribute : Attribute {
 private Image smallImage
@@ -6579,6 +7124,24 @@ public Image GetImage(Type type)
 public Image GetImage(Type type, bool large)
 public Image GetImage(Type type, string imgName, bool large)
 public Image GetImageFromResource(Type t, string imageName, bool large)
+}
+internal System.Drawing.UnsafeNativeMethods : object {
+public void CopyMemory(HandleRef destData, HandleRef srcData, int size)
+private IntPtr IntGetDC(HandleRef hWnd)
+public IntPtr GetDC(HandleRef hWnd)
+private bool IntDeleteDC(HandleRef hDC)
+public bool DeleteDC(HandleRef hDC)
+private int IntReleaseDC(HandleRef hWnd, HandleRef hDC)
+public int ReleaseDC(HandleRef hWnd, HandleRef hDC)
+private IntPtr IntCreateCompatibleDC(HandleRef hDC)
+public IntPtr CreateCompatibleDC(HandleRef hDC)
+public IntPtr GetStockObject(int nIndex)
+public int GetSystemDefaultLCID()
+public int GetSystemMetrics(int nIndex)
+public bool SystemParametersInfo(int uiAction, int uiParam, NONCLIENTMETRICS pvParam, int fWinIni)
+public bool SystemParametersInfo(int uiAction, int uiParam, LOGFONT pvParam, int fWinIni)
+public int GetDeviceCaps(HandleRef hDC, int nIndex)
+public int GetObjectType(HandleRef hObject)
 }
 internal System.Drawing.WorkerThread : object {
 private EventHandler frameChangeHandler
@@ -6607,6 +7170,26 @@ internal IntPtr blue_mask
 internal int colormap_size
 internal int bits_per_rgb
 }
+internal System.Internal.HandleChangeEventHandler : MulticastDelegate {
+public void .ctor(object object, IntPtr method)
+public void Invoke(string handleType, IntPtr handleValue, int currentHandleCount)
+public IAsyncResult BeginInvoke(string handleType, IntPtr handleValue, int currentHandleCount, AsyncCallback callback, object object)
+public void EndInvoke(IAsyncResult result)
+}
+internal System.Internal.HandleCollector : object {
+private HandleType[] s_handleTypes
+private int s_handleTypeCount
+private HandleChangeEventHandler HandleAdded
+private HandleChangeEventHandler HandleRemoved
+private object s_internalSyncObject
+internal void add_HandleAdded(HandleChangeEventHandler value)
+internal void remove_HandleAdded(HandleChangeEventHandler value)
+internal void add_HandleRemoved(HandleChangeEventHandler value)
+internal void remove_HandleRemoved(HandleChangeEventHandler value)
+internal IntPtr Add(IntPtr handle, int type)
+internal int RegisterType(string typeName, int expense, int initialThreshold)
+internal IntPtr Remove(IntPtr handle, int type)
+}
 internal System.MonoDocumentationNoteAttribute : MonoTODOAttribute {
 public void .ctor(string comment)
 }
@@ -6627,4 +7210,7 @@ private string comment
 public string Comment
 public void .ctor(string comment)
 public string get_Comment()
+}
+internal Unity.ThrowStub : ObjectDisposedException {
+public void ThrowNotSupportedException()
 }

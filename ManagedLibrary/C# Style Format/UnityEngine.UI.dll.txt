@@ -10,11 +10,11 @@ private Vector2 <moveVector>k__BackingField
 private MoveDirection <moveDir>k__BackingField
 public Vector2 moveVector
 public MoveDirection moveDir
-public void .ctor(EventSystem eventSystem)
 public Vector2 get_moveVector()
 public void set_moveVector(Vector2 value)
 public MoveDirection get_moveDir()
 public void set_moveDir(MoveDirection value)
+public void .ctor(EventSystem eventSystem)
 }
 public UnityEngine.EventSystems.BaseEventData : AbstractEventData {
 private EventSystem m_EventSystem
@@ -83,18 +83,23 @@ public void UpdateModule()
 public bool IsModuleSupported()
 }
 public UnityEngine.EventSystems.BaseRaycaster : UIBehaviour {
+private BaseRaycaster m_RootRaycaster
 public Camera eventCamera
 public int priority
 public int sortOrderPriority
 public int renderOrderPriority
+public BaseRaycaster rootRaycaster
 public void Raycast(PointerEventData eventData, List`1<RaycastResult> resultAppendList)
 public Camera get_eventCamera()
 public int get_priority()
 public int get_sortOrderPriority()
 public int get_renderOrderPriority()
+public BaseRaycaster get_rootRaycaster()
 public string ToString()
 protected void OnEnable()
 protected void OnDisable()
+protected void OnCanvasHierarchyChanged()
+protected void OnTransformParentChanged()
 }
 public UnityEngine.EventSystems.EventHandle : Enum {
 public int value__
@@ -113,7 +118,6 @@ private bool m_HasFocus
 private bool m_SelectionGuard
 private BaseEventData m_DummyData
 private Comparison`1<RaycastResult> s_RaycastComparer
-private Comparison`1<RaycastResult> <>f__mg$cache0
 public EventSystem current
 public bool sendNavigationEvents
 public int pixelDragThreshold
@@ -157,6 +161,8 @@ public UnityEngine.EventSystems.EventTrigger : MonoBehaviour {
 private List`1<Entry> m_Delegates
 public List`1<Entry> delegates
 public List`1<Entry> triggers
+public List`1<Entry> get_delegates()
+public void set_delegates(List`1<Entry> value)
 public List`1<Entry> get_triggers()
 public void set_triggers(List`1<Entry> value)
 private void Execute(EventTriggerType id, BaseEventData eventData)
@@ -218,23 +224,6 @@ private EventFunction`1<ISubmitHandler> s_SubmitHandler
 private EventFunction`1<ICancelHandler> s_CancelHandler
 private ObjectPool`1<List`1<IEventSystemHandler>> s_HandlerListPool
 private List`1<Transform> s_InternalTransformList
-private EventFunction`1<IPointerEnterHandler> <>f__mg$cache0
-private EventFunction`1<IPointerExitHandler> <>f__mg$cache1
-private EventFunction`1<IPointerDownHandler> <>f__mg$cache2
-private EventFunction`1<IPointerUpHandler> <>f__mg$cache3
-private EventFunction`1<IPointerClickHandler> <>f__mg$cache4
-private EventFunction`1<IInitializePotentialDragHandler> <>f__mg$cache5
-private EventFunction`1<IBeginDragHandler> <>f__mg$cache6
-private EventFunction`1<IDragHandler> <>f__mg$cache7
-private EventFunction`1<IEndDragHandler> <>f__mg$cache8
-private EventFunction`1<IDropHandler> <>f__mg$cache9
-private EventFunction`1<IScrollHandler> <>f__mg$cacheA
-private EventFunction`1<IUpdateSelectedHandler> <>f__mg$cacheB
-private EventFunction`1<ISelectHandler> <>f__mg$cacheC
-private EventFunction`1<IDeselectHandler> <>f__mg$cacheD
-private EventFunction`1<IMoveHandler> <>f__mg$cacheE
-private EventFunction`1<ISubmitHandler> <>f__mg$cacheF
-private EventFunction`1<ICancelHandler> <>f__mg$cache10
 public EventFunction`1<IPointerEnterHandler> pointerEnterHandler
 public EventFunction`1<IPointerExitHandler> pointerExitHandler
 public EventFunction`1<IPointerDownHandler> pointerDownHandler
@@ -294,7 +283,6 @@ private bool ShouldSendToComponent(Component component)
 private void GetEventList(GameObject go, IList`1<IEventSystemHandler> results)
 public bool CanHandleEvent(GameObject go)
 public GameObject GetEventHandler(GameObject root)
-private void <s_HandlerListPool>m__0(List`1<IEventSystemHandler> l)
 }
 public UnityEngine.EventSystems.IBeginDragHandler {
 public void OnBeginDrag(PointerEventData eventData)
@@ -366,7 +354,6 @@ protected LayerMask m_EventMask
 protected int m_MaxRayIntersections
 protected int m_LastMaxRayIntersections
 private RaycastHit[] m_Hits
-private Comparison`1<RaycastHit> <>f__am$cache0
 public Camera eventCamera
 public int depth
 public int finalEventMask
@@ -379,9 +366,8 @@ public LayerMask get_eventMask()
 public void set_eventMask(LayerMask value)
 public int get_maxRayIntersections()
 public void set_maxRayIntersections(int value)
-protected void ComputeRayAndDistance(PointerEventData eventData, Ray& ray, Single& distanceToClipPlane)
+protected bool ComputeRayAndDistance(PointerEventData eventData, Ray& ray, Single& distanceToClipPlane)
 public void Raycast(PointerEventData eventData, List`1<RaycastResult> resultAppendList)
-private int <Raycast>m__0(RaycastHit r1, RaycastHit r2)
 }
 public UnityEngine.EventSystems.PointerEventData : BaseEventData {
 private GameObject <pointerEnter>k__BackingField
@@ -427,7 +413,6 @@ public InputButton button
 public Camera enterEventCamera
 public Camera pressEventCamera
 public GameObject pointerPress
-public void .ctor(EventSystem eventSystem)
 public GameObject get_pointerEnter()
 public void set_pointerEnter(GameObject value)
 public GameObject get_lastPress()
@@ -466,6 +451,7 @@ public bool get_dragging()
 public void set_dragging(bool value)
 public InputButton get_button()
 public void set_button(InputButton value)
+public void .ctor(EventSystem eventSystem)
 public bool IsPointerMoving()
 public bool IsScrolling()
 public Camera get_enterEventCamera()
@@ -565,6 +551,7 @@ public string get_cancelButton()
 public void set_cancelButton(string value)
 private bool ShouldIgnoreEventsOnNoFocus()
 public void UpdateModule()
+private void ReleaseMouse(PointerEventData pointerEvent, GameObject currentOverGo)
 public bool IsModuleSupported()
 public bool ShouldActivateModule()
 public void ActivateModule()
@@ -621,16 +608,19 @@ public bool IsDestroyed()
 }
 public UnityEngine.UI.AnimationTriggers : object {
 private string kDefaultNormalAnimName
-private string kDefaultSelectedAnimName
+private string kDefaultHighlightedAnimName
 private string kDefaultPressedAnimName
+private string kDefaultSelectedAnimName
 private string kDefaultDisabledAnimName
 private string m_NormalTrigger
 private string m_HighlightedTrigger
 private string m_PressedTrigger
+private string m_SelectedTrigger
 private string m_DisabledTrigger
 public string normalTrigger
 public string highlightedTrigger
 public string pressedTrigger
+public string selectedTrigger
 public string disabledTrigger
 public string get_normalTrigger()
 public void set_normalTrigger(string value)
@@ -638,6 +628,8 @@ public string get_highlightedTrigger()
 public void set_highlightedTrigger(string value)
 public string get_pressedTrigger()
 public void set_pressedTrigger(string value)
+public string get_selectedTrigger()
+public void set_selectedTrigger(string value)
 public string get_disabledTrigger()
 public void set_disabledTrigger(string value)
 }
@@ -702,6 +694,7 @@ protected float m_FallbackScreenDPI
 protected float m_DefaultSpriteDPI
 protected float m_DynamicPixelsPerUnit
 private Canvas m_Canvas
+private float m_PrevScaleFactor
 private float m_PrevReferencePixelsPerUnit
 public ScaleMode uiScaleMode
 public float referencePixelsPerUnit
@@ -760,7 +753,6 @@ private bool m_PerformingGraphicUpdate
 private IndexedSet`1<ICanvasElement> m_LayoutRebuildQueue
 private IndexedSet`1<ICanvasElement> m_GraphicRebuildQueue
 private Comparison`1<ICanvasElement> s_SortLayoutFunction
-private Comparison`1<ICanvasElement> <>f__mg$cache0
 public CanvasUpdateRegistry instance
 public CanvasUpdateRegistry get_instance()
 private bool ObjectValidForUpdate(ICanvasElement element)
@@ -791,7 +783,6 @@ public void Unregister(IClipper c)
 }
 public UnityEngine.UI.Clipping : object {
 public Rect FindCullAndClipWorldRect(List`1<RectMask2D> rectMaskParents, Boolean& validRect)
-private Rect RectIntersect(Rect a, Rect b)
 }
 internal UnityEngine.UI.Collections.IndexedSet`1 : object {
 private List`1<T> m_List
@@ -821,12 +812,14 @@ public UnityEngine.UI.ColorBlock : ValueType {
 private Color m_NormalColor
 private Color m_HighlightedColor
 private Color m_PressedColor
+private Color m_SelectedColor
 private Color m_DisabledColor
 private float m_ColorMultiplier
 private float m_FadeDuration
 public Color normalColor
 public Color highlightedColor
 public Color pressedColor
+public Color selectedColor
 public Color disabledColor
 public float colorMultiplier
 public float fadeDuration
@@ -837,6 +830,8 @@ public Color get_highlightedColor()
 public void set_highlightedColor(Color value)
 public Color get_pressedColor()
 public void set_pressedColor(Color value)
+public Color get_selectedColor()
+public void set_selectedColor(Color value)
 public Color get_disabledColor()
 public void set_disabledColor(Color value)
 public float get_colorMultiplier()
@@ -940,6 +935,7 @@ public void StartTween(T info)
 public void StopTween()
 }
 public UnityEngine.UI.DefaultControls : object {
+private IFactoryControls m_CurrentFactory
 private float kWidth
 private float kThickHeight
 private float kThinHeight
@@ -949,8 +945,10 @@ private Vector2 s_ImageElementSize
 private Color s_DefaultSelectableColor
 private Color s_PanelColor
 private Color s_TextColor
-private GameObject CreateUIElementRoot(string name, Vector2 size)
-private GameObject CreateUIObject(string name, GameObject parent)
+public IFactoryControls factory
+public IFactoryControls get_factory()
+private GameObject CreateUIElementRoot(string name, Vector2 size, Type[] components)
+private GameObject CreateUIObject(string name, GameObject parent, Type[] components)
 private void SetDefaultTextValues(Text lbl)
 private void SetDefaultColorTransitionValues(Selectable slider)
 private void SetParentAndAlign(GameObject child, GameObject parent)
@@ -976,6 +974,7 @@ private Image m_ItemImage
 private int m_Value
 private OptionDataList m_Options
 private DropdownEvent m_OnValueChanged
+private float m_AlphaFadeSpeed
 private GameObject m_Dropdown
 private GameObject m_Blocker
 private List`1<DropdownItem> m_Items
@@ -989,6 +988,7 @@ public Text itemText
 public Image itemImage
 public List`1<OptionData> options
 public DropdownEvent onValueChanged
+public float alphaFadeSpeed
 public int value
 public RectTransform get_template()
 public void set_template(RectTransform value)
@@ -1004,10 +1004,15 @@ public List`1<OptionData> get_options()
 public void set_options(List`1<OptionData> value)
 public DropdownEvent get_onValueChanged()
 public void set_onValueChanged(DropdownEvent value)
+public float get_alphaFadeSpeed()
+public void set_alphaFadeSpeed(float value)
 public int get_value()
 public void set_value(int value)
+public void SetValueWithoutNotify(int input)
+private void Set(int value, bool sendCallback)
 protected void Awake()
 protected void Start()
+protected void OnDisable()
 public void RefreshShownValue()
 public void AddOptions(List`1<OptionData> options)
 public void AddOptions(List`1<string> options)
@@ -1031,6 +1036,7 @@ private void AlphaFadeList(float duration, float start, float end)
 private void SetAlpha(float alpha)
 public void Hide()
 private IEnumerator DelayedDestroyDropdownList(float delay)
+private void ImmediateDestroyDropdownList()
 private void OnSelectItem(Toggle toggle)
 }
 public UnityEngine.UI.FontData : object {
@@ -1089,8 +1095,6 @@ private void UnityEngine.ISerializationCallbackReceiver.OnAfterDeserialize()
 }
 public UnityEngine.UI.FontUpdateTracker : object {
 private Dictionary`2<Font, HashSet`1<Text>> m_Tracked
-private Action`1<Font> <>f__mg$cache0
-private Action`1<Font> <>f__mg$cache1
 public void TrackText(Text t)
 private void RebuildForFont(Font f)
 public void UntrackText(Text t)
@@ -1100,6 +1104,8 @@ protected Material s_DefaultUI
 protected Texture2D s_WhiteTexture
 protected Material m_Material
 private Color m_Color
+protected bool m_SkipLayoutUpdate
+protected bool m_SkipMaterialUpdate
 private bool m_RaycastTarget
 private RectTransform m_RectTransform
 private CanvasRenderer m_CanvasRenderer
@@ -1111,6 +1117,8 @@ protected UnityAction m_OnDirtyVertsCallback
 protected UnityAction m_OnDirtyMaterialCallback
 protected Mesh s_Mesh
 private VertexHelper s_VertexHelper
+protected Mesh m_CachedMesh
+protected Vector2[] m_CachedUvs
 private TweenRunner`1<ColorTween> m_ColorTweenRunner
 private bool <useLegacyMeshGeneration>k__BackingField
 public Material defaultGraphicMaterial
@@ -1152,6 +1160,7 @@ public Material get_materialForRendering()
 public Texture get_mainTexture()
 protected void OnEnable()
 protected void OnDisable()
+protected void OnDestroy()
 protected void OnCanvasHierarchyChanged()
 public void OnCullingChanged()
 public void Rebuild(CanvasUpdate update)
@@ -1190,7 +1199,6 @@ protected LayerMask m_BlockingMask
 private Canvas m_Canvas
 private List`1<Graphic> m_RaycastResults
 private List`1<Graphic> s_SortedGraphics
-private Comparison`1<Graphic> <>f__am$cache0
 public int sortOrderPriority
 public int renderOrderPriority
 public bool ignoreReversedGraphics
@@ -1207,7 +1215,6 @@ private Canvas get_canvas()
 public void Raycast(PointerEventData eventData, List`1<RaycastResult> resultAppendList)
 public Camera get_eventCamera()
 private void Raycast(Canvas canvas, Camera eventCamera, Vector2 pointerPosition, IList`1<Graphic> foundGraphics, List`1<Graphic> results)
-private int <Raycast>m__0(Graphic g1, Graphic g2)
 }
 public UnityEngine.UI.GraphicRegistry : object {
 private GraphicRegistry s_Instance
@@ -1262,11 +1269,15 @@ protected bool m_ChildForceExpandWidth
 protected bool m_ChildForceExpandHeight
 protected bool m_ChildControlWidth
 protected bool m_ChildControlHeight
+protected bool m_ChildScaleWidth
+protected bool m_ChildScaleHeight
 public float spacing
 public bool childForceExpandWidth
 public bool childForceExpandHeight
 public bool childControlWidth
 public bool childControlHeight
+public bool childScaleWidth
+public bool childScaleHeight
 public float get_spacing()
 public void set_spacing(float value)
 public bool get_childForceExpandWidth()
@@ -1277,6 +1288,10 @@ public bool get_childControlWidth()
 public void set_childControlWidth(bool value)
 public bool get_childControlHeight()
 public void set_childControlHeight(bool value)
+public bool get_childScaleWidth()
+public void set_childScaleWidth(bool value)
+public bool get_childScaleHeight()
+public void set_childScaleHeight(bool value)
 protected void CalcAlongAxis(int axis, bool isVertical)
 protected void SetChildrenAlongAxis(int axis, bool isVertical)
 private void GetChildSizes(RectTransform child, int axis, bool controlSize, bool childForceExpand, Single& min, Single& preferred, Single& flexible)
@@ -1344,13 +1359,14 @@ private int m_FillOrigin
 private float m_AlphaHitTestMinimumThreshold
 private bool m_Tracked
 private bool m_UseSpriteMesh
+private float m_PixelsPerUnitMultiplier
+private float m_CachedReferencePixelsPerUnit
 private Vector2[] s_VertScratch
 private Vector2[] s_UVScratch
 private Vector3[] s_Xy
 private Vector3[] s_Uv
 private List`1<Image> m_TrackedTexturelessImages
 private bool s_Initialized
-private Action`1<SpriteAtlas> <>f__mg$cache0
 public Sprite sprite
 public Sprite overrideSprite
 private Sprite activeSprite
@@ -1367,7 +1383,9 @@ public bool useSpriteMesh
 public Material defaultETC1GraphicMaterial
 public Texture mainTexture
 public bool hasBorder
+public float pixelsPerUnitMultiplier
 public float pixelsPerUnit
+protected float multipliedPixelsPerUnit
 public Material material
 public float minWidth
 public float preferredWidth
@@ -1378,6 +1396,7 @@ public float flexibleHeight
 public int layoutPriority
 public Sprite get_sprite()
 public void set_sprite(Sprite value)
+public void DisableSpriteOptimizations()
 public Sprite get_overrideSprite()
 public void set_overrideSprite(Sprite value)
 private Sprite get_activeSprite()
@@ -1404,7 +1423,10 @@ public void set_useSpriteMesh(bool value)
 public Material get_defaultETC1GraphicMaterial()
 public Texture get_mainTexture()
 public bool get_hasBorder()
+public float get_pixelsPerUnitMultiplier()
+public void set_pixelsPerUnitMultiplier(float value)
 public float get_pixelsPerUnit()
+protected float get_multipliedPixelsPerUnit()
 public Material get_material()
 public void set_material(Material value)
 public void OnBeforeSerialize()
@@ -1412,11 +1434,14 @@ public void OnAfterDeserialize()
 private void PreserveSpriteAspectRatio(Rect& rect, Vector2 spriteSize)
 private Vector4 GetDrawingDimensions(bool shouldPreserveAspect)
 public void SetNativeSize()
+protected void OnRectTransformDimensionsChange()
+protected void OnTransformParentChanged()
 protected void OnPopulateMesh(VertexHelper toFill)
 private void TrackSprite()
 protected void OnEnable()
 protected void OnDisable()
 protected void UpdateMaterial()
+protected void OnCanvasHierarchyChanged()
 private void GenerateSimpleSprite(VertexHelper vh, bool lPreserveAspect)
 private void GenerateSprite(VertexHelper vh, bool lPreserveAspect)
 private void GenerateSlicedSprite(VertexHelper toFill)
@@ -1504,6 +1529,7 @@ private string m_OriginalText
 private bool m_WasCanceled
 private bool m_HasDoneFocusTransition
 private WaitForSecondsRealtime m_WaitForSecondsRealtime
+private bool m_TouchKeyboardAllowsInPlaceEditing
 private string kEmailSpecialCharacters
 private Event m_ProcessingEvent
 private int k_MaxTextLength
@@ -1560,6 +1586,8 @@ public bool get_shouldHideMobileInput()
 private bool get_shouldActivateOnSelect()
 public string get_text()
 public void set_text(string value)
+public void SetTextWithoutNotify(string input)
+private void SetText(string value, bool sendCallback)
 public bool get_isFocused()
 public float get_caretBlinkRate()
 public void set_caretBlinkRate(float value)
@@ -1658,6 +1686,7 @@ private void Delete()
 private void ForwardSpace()
 private void Backspace()
 private void Insert(char c)
+private void UpdateTouchKeyboardFromEditChanges()
 private void SendOnValueChangedAndUpdateLabel()
 private void SendOnValueChanged()
 protected void SendOnSubmit()
@@ -1678,7 +1707,7 @@ private void AssignPositioningIfNeeded()
 private void OnFillVBO(Mesh vbo)
 private void GenerateCaret(VertexHelper vbo, Vector2 roundingOffset)
 private void CreateCursorVerts()
-private void GenerateHightlight(VertexHelper vbo, Vector2 roundingOffset)
+private void GenerateHighlight(VertexHelper vbo, Vector2 roundingOffset)
 protected char Validate(string text, int pos, char ch)
 public void ActivateInputField()
 private void ActivateInputFieldInternal()
@@ -1796,7 +1825,9 @@ protected float GetStartOffset(int axis, float requiredSpaceWithoutPadding)
 protected float GetAlignmentOnAxis(int axis)
 protected void SetLayoutInputForAxis(float totalMin, float totalPreferred, float totalFlexible, int axis)
 protected void SetChildAlongAxis(RectTransform rect, int axis, float pos)
+protected void SetChildAlongAxisWithScale(RectTransform rect, int axis, float pos, float scaleFactor)
 protected void SetChildAlongAxis(RectTransform rect, int axis, float pos, float size)
+protected void SetChildAlongAxisWithScale(RectTransform rect, int axis, float pos, float size, float scaleFactor)
 private bool get_isRootLayoutGroup()
 protected void OnRectTransformDimensionsChange()
 protected void OnTransformChildrenChanged()
@@ -1808,12 +1839,6 @@ public UnityEngine.UI.LayoutRebuilder : object {
 private RectTransform m_ToRebuild
 private int m_CachedHashFromTransform
 private ObjectPool`1<LayoutRebuilder> s_Rebuilders
-private ReapplyDrivenProperties <>f__mg$cache0
-private Predicate`1<Component> <>f__am$cache0
-private UnityAction`1<Component> <>f__am$cache1
-private UnityAction`1<Component> <>f__am$cache2
-private UnityAction`1<Component> <>f__am$cache3
-private UnityAction`1<Component> <>f__am$cache4
 public Transform transform
 private void Initialize(RectTransform controller)
 private void Clear()
@@ -1833,22 +1858,8 @@ public void GraphicUpdateComplete()
 public int GetHashCode()
 public bool Equals(object obj)
 public string ToString()
-private void <s_Rebuilders>m__0(LayoutRebuilder x)
-private bool <StripDisabledBehavioursFromList>m__1(Component e)
-private void <Rebuild>m__2(Component e)
-private void <Rebuild>m__3(Component e)
-private void <Rebuild>m__4(Component e)
-private void <Rebuild>m__5(Component e)
 }
 public UnityEngine.UI.LayoutUtility : object {
-private Func`2<ILayoutElement, float> <>f__am$cache0
-private Func`2<ILayoutElement, float> <>f__am$cache1
-private Func`2<ILayoutElement, float> <>f__am$cache2
-private Func`2<ILayoutElement, float> <>f__am$cache3
-private Func`2<ILayoutElement, float> <>f__am$cache4
-private Func`2<ILayoutElement, float> <>f__am$cache5
-private Func`2<ILayoutElement, float> <>f__am$cache6
-private Func`2<ILayoutElement, float> <>f__am$cache7
 public float GetMinSize(RectTransform rect, int axis)
 public float GetPreferredSize(RectTransform rect, int axis)
 public float GetFlexibleSize(RectTransform rect, int axis)
@@ -1860,18 +1871,9 @@ public float GetPreferredHeight(RectTransform rect)
 public float GetFlexibleHeight(RectTransform rect)
 public float GetLayoutProperty(RectTransform rect, Func`2<ILayoutElement, float> property, float defaultValue)
 public float GetLayoutProperty(RectTransform rect, Func`2<ILayoutElement, float> property, float defaultValue, ILayoutElement& source)
-private float <GetMinWidth>m__0(ILayoutElement e)
-private float <GetPreferredWidth>m__1(ILayoutElement e)
-private float <GetPreferredWidth>m__2(ILayoutElement e)
-private float <GetFlexibleWidth>m__3(ILayoutElement e)
-private float <GetMinHeight>m__4(ILayoutElement e)
-private float <GetPreferredHeight>m__5(ILayoutElement e)
-private float <GetPreferredHeight>m__6(ILayoutElement e)
-private float <GetFlexibleHeight>m__7(ILayoutElement e)
 }
 internal UnityEngine.UI.ListPool`1 : object {
 private ObjectPool`1<List`1<T>> s_ListPool
-private UnityAction`1<List`1<T>> <>f__mg$cache0
 private void Clear(List`1<T> l)
 public List`1<T> Get()
 public void Release(List`1<T> toRelease)
@@ -1974,11 +1976,11 @@ private int <countAll>k__BackingField
 public int countAll
 public int countActive
 public int countInactive
-public void .ctor(UnityAction`1<T> actionOnGet, UnityAction`1<T> actionOnRelease)
 public int get_countAll()
 private void set_countAll(int value)
 public int get_countActive()
 public int get_countInactive()
+public void .ctor(UnityAction`1<T> actionOnGet, UnityAction`1<T> actionOnRelease)
 public T Get()
 public void Release(T element)
 }
@@ -2001,6 +2003,7 @@ public Rect get_uvRect()
 public void set_uvRect(Rect value)
 public void SetNativeSize()
 protected void OnPopulateMesh(VertexHelper vh)
+protected void OnDidApplyAnimationProperties()
 }
 internal UnityEngine.UI.RectangularVertexClipper : object {
 private Vector3[] m_WorldCorners
@@ -2010,6 +2013,7 @@ public Rect GetCanvasRect(RectTransform t, Canvas c)
 public UnityEngine.UI.RectMask2D : UIBehaviour {
 private RectangularVertexClipper m_VertexClipper
 private RectTransform m_RectTransform
+private HashSet`1<MaskableGraphic> m_MaskableTargets
 private HashSet`1<IClippable> m_ClipTargets
 private bool m_ShouldRecalculateClipRects
 private List`1<RectMask2D> m_Clippers
@@ -2057,6 +2061,7 @@ private Vector2 m_Offset
 private DrivenRectTransformTracker m_Tracker
 private Coroutine m_PointerDownRepeat
 private bool isPointerDownAndNotDragging
+private bool m_DelayedUpdateVisuals
 public RectTransform handleRect
 public Direction direction
 public float value
@@ -2072,6 +2077,7 @@ public Direction get_direction()
 public void set_direction(Direction value)
 public float get_value()
 public void set_value(float value)
+public void SetValueWithoutNotify(float input)
 public float get_size()
 public void set_size(float value)
 public int get_numberOfSteps()
@@ -2084,14 +2090,15 @@ public void LayoutComplete()
 public void GraphicUpdateComplete()
 protected void OnEnable()
 protected void OnDisable()
+protected void Update()
 private void UpdateCachedReferences()
-private void Set(float input)
 private void Set(float input, bool sendCallback)
 protected void OnRectTransformDimensionsChange()
 private Axis get_axis()
 private bool get_reverseValue()
 private void UpdateVisuals()
 private void UpdateDrag(PointerEventData eventData)
+private void DoUpdateDrag(Vector2 handleCorner, float remainingSize)
 private bool MayDrag(PointerEventData eventData)
 public void OnBeginDrag(PointerEventData eventData)
 public void OnDrag(PointerEventData eventData)
@@ -2131,6 +2138,7 @@ protected Bounds m_ContentBounds
 private Bounds m_ViewBounds
 private Vector2 m_Velocity
 private bool m_Dragging
+private bool m_Scrolling
 private Vector2 m_PrevPosition
 private Bounds m_PrevContentBounds
 private Bounds m_PrevViewBounds
@@ -2267,7 +2275,9 @@ protected void SetDirtyCaching()
 private Transform UnityEngine.UI.ICanvasElement.get_transform()
 }
 public UnityEngine.UI.Selectable : UIBehaviour {
-private List`1<Selectable> s_List
+private Selectable[] s_Selectables
+private int s_SelectableCount
+private bool s_IsDirty
 private Navigation m_Navigation
 private Transition m_Transition
 private ColorBlock m_Colors
@@ -2276,11 +2286,13 @@ private AnimationTriggers m_AnimationTriggers
 private bool m_Interactable
 private Graphic m_TargetGraphic
 private bool m_GroupsAllowInteraction
-private SelectionState m_CurrentSelectionState
+private bool m_WillRemove
 private bool <isPointerInside>k__BackingField
 private bool <isPointerDown>k__BackingField
 private bool <hasSelection>k__BackingField
 private List`1<CanvasGroup> m_CanvasGroupCache
+public Selectable[] allSelectablesArray
+public int allSelectableCount
 public List`1<Selectable> allSelectables
 public Navigation navigation
 public Transition transition
@@ -2295,7 +2307,10 @@ private bool hasSelection
 public Image image
 public Animator animator
 protected SelectionState currentSelectionState
+public Selectable[] get_allSelectablesArray()
+public int get_allSelectableCount()
 public List`1<Selectable> get_allSelectables()
+public int AllSelectablesNoAlloc(Selectable[] selectables)
 public Navigation get_navigation()
 public void set_navigation(Navigation value)
 public Transition get_transition()
@@ -2324,8 +2339,10 @@ protected void OnCanvasGroupChanged()
 public bool IsInteractable()
 protected void OnDidApplyAnimationProperties()
 protected void OnEnable()
+protected void OnTransformParentChanged()
 private void OnSetProperty()
 protected void OnDisable()
+private void RemoveInvalidSelectables()
 protected SelectionState get_currentSelectionState()
 protected void InstantClearState()
 protected void DoStateTransition(SelectionState state, bool instant)
@@ -2340,12 +2357,9 @@ public void OnMove(AxisEventData eventData)
 private void StartColorTween(Color targetColor, bool instant)
 private void DoSpriteSwap(Sprite newSprite)
 private void TriggerAnimation(string triggername)
-protected bool IsHighlighted(BaseEventData eventData)
-protected bool IsPressed(BaseEventData eventData)
+protected bool IsHighlighted()
 protected bool IsPressed()
-protected void UpdateSelectionState(BaseEventData eventData)
-private void EvaluateAndTransitionToSelectionState(BaseEventData eventData)
-private void InternalEvaluateAndTransitionToSelectionState(bool instant)
+private void EvaluateAndTransitionToSelectionState()
 public void OnPointerDown(PointerEventData eventData)
 public void OnPointerUp(PointerEventData eventData)
 public void OnPointerEnter(PointerEventData eventData)
@@ -2393,6 +2407,7 @@ private Transform m_HandleTransform
 private RectTransform m_HandleContainerRect
 private Vector2 m_Offset
 private DrivenRectTransformTracker m_Tracker
+private bool m_DelayedUpdateVisuals
 public RectTransform fillRect
 public RectTransform handleRect
 public Direction direction
@@ -2419,6 +2434,7 @@ public bool get_wholeNumbers()
 public void set_wholeNumbers(bool value)
 public float get_value()
 public void set_value(float value)
+public void SetValueWithoutNotify(float input)
 public float get_normalizedValue()
 public void set_normalizedValue(float value)
 public SliderEvent get_onValueChanged()
@@ -2429,10 +2445,10 @@ public void LayoutComplete()
 public void GraphicUpdateComplete()
 protected void OnEnable()
 protected void OnDisable()
+protected void Update()
 protected void OnDidApplyAnimationProperties()
 private void UpdateCachedReferences()
 private float ClampValue(float input)
-private void Set(float input)
 protected void Set(float input, bool sendCallback)
 protected void OnRectTransformDimensionsChange()
 private Axis get_axis()
@@ -2454,14 +2470,18 @@ private Transform UnityEngine.UI.ICanvasElement.get_transform()
 public UnityEngine.UI.SpriteState : ValueType {
 private Sprite m_HighlightedSprite
 private Sprite m_PressedSprite
+private Sprite m_SelectedSprite
 private Sprite m_DisabledSprite
 public Sprite highlightedSprite
 public Sprite pressedSprite
+public Sprite selectedSprite
 public Sprite disabledSprite
 public Sprite get_highlightedSprite()
 public void set_highlightedSprite(Sprite value)
 public Sprite get_pressedSprite()
 public void set_pressedSprite(Sprite value)
+public Sprite get_selectedSprite()
+public void set_selectedSprite(Sprite value)
 public Sprite get_disabledSprite()
 public void set_disabledSprite(Sprite value)
 public bool Equals(SpriteState other)
@@ -2567,13 +2587,14 @@ public void set_group(ToggleGroup value)
 public void Rebuild(CanvasUpdate executing)
 public void LayoutComplete()
 public void GraphicUpdateComplete()
+protected void OnDestroy()
 protected void OnEnable()
 protected void OnDisable()
 protected void OnDidApplyAnimationProperties()
 private void SetToggleGroup(ToggleGroup newGroup, bool setMemberValue)
 public bool get_isOn()
 public void set_isOn(bool value)
-private void Set(bool value)
+public void SetIsOnWithoutNotify(bool value)
 private void Set(bool value, bool sendCallback)
 private void PlayEffect(bool instant)
 protected void Start()
@@ -2585,20 +2606,18 @@ private Transform UnityEngine.UI.ICanvasElement.get_transform()
 public UnityEngine.UI.ToggleGroup : UIBehaviour {
 private bool m_AllowSwitchOff
 private List`1<Toggle> m_Toggles
-private Predicate`1<Toggle> <>f__am$cache0
-private Func`2<Toggle, bool> <>f__am$cache1
 public bool allowSwitchOff
 public bool get_allowSwitchOff()
 public void set_allowSwitchOff(bool value)
+protected void Start()
 private void ValidateToggleIsInGroup(Toggle toggle)
-public void NotifyToggleOn(Toggle toggle)
+public void NotifyToggleOn(Toggle toggle, bool sendCallback)
 public void UnregisterToggle(Toggle toggle)
 public void RegisterToggle(Toggle toggle)
+public void EnsureValidState()
 public bool AnyTogglesOn()
 public IEnumerable`1<Toggle> ActiveToggles()
-public void SetAllTogglesOff()
-private bool <AnyTogglesOn>m__0(Toggle x)
-private bool <ActiveToggles>m__1(Toggle x)
+public void SetAllTogglesOff(bool sendCallback)
 }
 public UnityEngine.UI.VertexHelper : object {
 private List`1<Vector3> m_Positions
@@ -2624,6 +2643,7 @@ public int get_currentIndexCount()
 public void PopulateUIVertex(UIVertex& vertex, int i)
 public void SetUIVertex(UIVertex vertex, int i)
 public void FillMesh(Mesh mesh)
+public void AddVert(Vector3 position, Color32 color, Vector2 uv0, Vector2 uv1, Vector2 uv2, Vector2 uv3, Vector3 normal, Vector4 tangent)
 public void AddVert(Vector3 position, Color32 color, Vector2 uv0, Vector2 uv1, Vector3 normal, Vector4 tangent)
 public void AddVert(Vector3 position, Color32 color, Vector2 uv0)
 public void AddVert(UIVertex v)

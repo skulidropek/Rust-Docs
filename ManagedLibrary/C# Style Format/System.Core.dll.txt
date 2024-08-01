@@ -761,14 +761,17 @@ public void .ctor(Guid providerGuid)
 public void Close()
 public Guid CreateActivityId()
 public void Dispose()
+protected void Dispose(bool disposing)
 public WriteEventErrorCode GetLastWriteEventError()
 public bool IsEnabled()
 public bool IsEnabled(byte level, long keywords)
 public void SetActivityId(Guid& id)
+protected bool WriteEvent(EventDescriptor& eventDescriptor, int dataCount, IntPtr data)
 public bool WriteEvent(EventDescriptor& eventDescriptor, Object[] eventPayload)
 public bool WriteEvent(EventDescriptor& eventDescriptor, string data)
 public bool WriteMessageEvent(string eventMessage)
 public bool WriteMessageEvent(string eventMessage, byte eventLevel, long eventKeywords)
+protected bool WriteTransferEvent(EventDescriptor& eventDescriptor, Guid relatedActivityId, int dataCount, IntPtr data)
 public bool WriteTransferEvent(EventDescriptor& eventDescriptor, Guid relatedActivityId, Object[] eventPayload)
 }
 public System.Diagnostics.Eventing.EventProviderTraceListener : TraceListener {
@@ -782,6 +785,8 @@ public void Write(string message)
 public void WriteLine(string message)
 }
 public System.Diagnostics.Eventing.Reader.EventBookmark : object {
+protected void .ctor(SerializationInfo info, StreamingContext context)
+protected void GetObjectData(SerializationInfo info, StreamingContext context)
 private void System.Runtime.Serialization.ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
 }
 public System.Diagnostics.Eventing.Reader.EventKeyword : object {
@@ -847,9 +852,12 @@ public IEnumerable`1<string> get_ProviderNames()
 public string get_SecurityDescriptor()
 public void set_SecurityDescriptor(string value)
 public void Dispose()
+protected void Dispose(bool disposing)
 public void SaveChanges()
 }
 public System.Diagnostics.Eventing.Reader.EventLogException : Exception {
+protected void .ctor(int errorCode)
+protected void .ctor(SerializationInfo serializationInfo, StreamingContext streamingContext)
 public void .ctor(string message)
 public void .ctor(string message, Exception innerException)
 }
@@ -872,6 +880,7 @@ public Nullable`1<long> get_OldestRecordNumber()
 public Nullable`1<long> get_RecordCount()
 }
 public System.Diagnostics.Eventing.Reader.EventLogInvalidDataException : EventLogException {
+protected void .ctor(SerializationInfo serializationInfo, StreamingContext streamingContext)
 public void .ctor(string message)
 public void .ctor(string message, Exception innerException)
 }
@@ -896,14 +905,17 @@ public EventLogMode Circular
 public EventLogMode Retain
 }
 public System.Diagnostics.Eventing.Reader.EventLogNotFoundException : EventLogException {
+protected void .ctor(SerializationInfo serializationInfo, StreamingContext streamingContext)
 public void .ctor(string message)
 public void .ctor(string message, Exception innerException)
 }
 public System.Diagnostics.Eventing.Reader.EventLogPropertySelector : object {
 public void .ctor(IEnumerable`1<string> propertyQueries)
 public void Dispose()
+protected void Dispose(bool disposing)
 }
 public System.Diagnostics.Eventing.Reader.EventLogProviderDisabledException : EventLogException {
+protected void .ctor(SerializationInfo serializationInfo, StreamingContext streamingContext)
 public void .ctor(string message)
 public void .ctor(string message, Exception innerException)
 }
@@ -932,6 +944,7 @@ public void set_BatchSize(int value)
 public IList`1<EventLogStatus> get_LogStatus()
 public void CancelReading()
 public void Dispose()
+protected void Dispose(bool disposing)
 public EventRecord ReadEvent()
 public EventRecord ReadEvent(TimeSpan timeout)
 public void Seek(EventBookmark bookmark)
@@ -939,6 +952,7 @@ public void Seek(EventBookmark bookmark, long offset)
 public void Seek(SeekOrigin origin, long offset)
 }
 public System.Diagnostics.Eventing.Reader.EventLogReadingException : EventLogException {
+protected void .ctor(SerializationInfo serializationInfo, StreamingContext streamingContext)
 public void .ctor(string message)
 public void .ctor(string message, Exception innerException)
 }
@@ -1010,6 +1024,7 @@ public void CancelCurrentOperations()
 public void ClearLog(string logName)
 public void ClearLog(string logName, string backupPath)
 public void Dispose()
+protected void Dispose(bool disposing)
 public void ExportLog(string path, PathType pathType, string query, string targetFilePath)
 public void ExportLog(string path, PathType pathType, string query, string targetFilePath, bool tolerateQueryErrors)
 public void ExportLogAndMessages(string path, PathType pathType, string query, string targetFilePath)
@@ -1042,6 +1057,7 @@ public void set_Enabled(bool value)
 public void add_EventRecordWritten(EventHandler`1<EventRecordWrittenEventArgs> value)
 public void remove_EventRecordWritten(EventHandler`1<EventRecordWrittenEventArgs> value)
 public void Dispose()
+protected void Dispose(bool disposing)
 }
 public System.Diagnostics.Eventing.Reader.EventMetadata : object {
 public string Description
@@ -1125,6 +1141,7 @@ public Nullable`1<DateTime> get_TimeCreated()
 public SecurityIdentifier get_UserId()
 public Nullable`1<byte> get_Version()
 public void Dispose()
+protected void Dispose(bool disposing)
 public string FormatDescription()
 public string FormatDescription(IEnumerable`1<object> values)
 public string ToXml()
@@ -1180,6 +1197,7 @@ public string get_ParameterFilePath()
 public string get_ResourceFilePath()
 public IList`1<EventTask> get_Tasks()
 public void Dispose()
+protected void Dispose(bool disposing)
 }
 public System.Diagnostics.Eventing.Reader.SessionAuthentication : Enum {
 public int value__
@@ -1261,6 +1279,7 @@ public void AddCounter(int counterId, CounterType counterType)
 public void AddCounter(int counterId, CounterType counterType, string counterName)
 public CounterSetInstance CreateCounterSetInstance(string instanceName)
 public void Dispose()
+protected void Dispose(bool disposing)
 }
 public System.Diagnostics.PerformanceData.CounterSetInstance : object {
 public CounterSetInstanceCounterDataSet Counters
@@ -8391,15 +8410,18 @@ public Func`2<TSource, bool> CombinePredicates(Func`2<TSource, bool> predicate1,
 public Func`2<TSource, TResult> CombineSelectors(Func`2<TSource, TMiddle> selector1, Func`2<TMiddle, TResult> selector2)
 }
 public System.Management.Instrumentation.InstanceNotFoundException : InstrumentationException {
+protected void .ctor(SerializationInfo info, StreamingContext context)
 public void .ctor(string message)
 public void .ctor(string message, Exception innerException)
 }
 public System.Management.Instrumentation.InstrumentationBaseException : Exception {
+protected void .ctor(SerializationInfo info, StreamingContext context)
 public void .ctor(string message)
 public void .ctor(string message, Exception innerException)
 }
 public System.Management.Instrumentation.InstrumentationException : InstrumentationBaseException {
 public void .ctor(Exception innerException)
+protected void .ctor(SerializationInfo info, StreamingContext context)
 public void .ctor(string message)
 public void .ctor(string message, Exception innerException)
 }

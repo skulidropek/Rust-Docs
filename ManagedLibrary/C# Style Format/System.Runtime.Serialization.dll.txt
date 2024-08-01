@@ -1,50 +1,16 @@
-internal Consts : object {
-public string MonoVersion
-public string MonoCompany
-public string MonoProduct
-public string MonoCopyright
-public string FxVersion
-public string FxFileVersion
-public string EnvironmentVersion
-public string VsVersion
-public string VsFileVersion
-private string PublicKeyToken
-public string AssemblyI18N
-public string AssemblyMicrosoft_JScript
-public string AssemblyMicrosoft_VisualStudio
-public string AssemblyMicrosoft_VisualStudio_Web
-public string AssemblyMicrosoft_VSDesigner
-public string AssemblyMono_Http
-public string AssemblyMono_Posix
-public string AssemblyMono_Security
-public string AssemblyMono_Messaging_RabbitMQ
-public string AssemblyCorlib
-public string AssemblySystem
-public string AssemblySystem_Data
-public string AssemblySystem_Design
-public string AssemblySystem_DirectoryServices
-public string AssemblySystem_Drawing
-public string AssemblySystem_Drawing_Design
-public string AssemblySystem_Messaging
-public string AssemblySystem_Security
-public string AssemblySystem_ServiceProcess
-public string AssemblySystem_Web
-public string AssemblySystem_Windows_Forms
-public string AssemblySystem_2_0
-public string AssemblySystemCore_3_5
-public string AssemblySystem_Core
-public string WindowsBase_3_0
-public string AssemblyWindowsBase
-public string AssemblyPresentationCore_3_5
-public string AssemblyPresentationCore_4_0
-public string AssemblyPresentationFramework_3_5
-public string AssemblySystemServiceModel_3_0
-}
 internal SR : object {
 internal string GetString(string name, Object[] args)
 internal string GetString(CultureInfo culture, string name, Object[] args)
 internal string GetString(string name)
 internal string GetString(CultureInfo culture, string name)
+internal string Format(string resourceFormat, Object[] args)
+internal string Format(string resourceFormat, object p1)
+internal string Format(string resourceFormat, object p1, object p2)
+internal string Format(string resourceFormat, object p1, object p2, object p3)
+}
+internal System.LocalAppContextSwitches : object {
+public bool DoNotUseTimeZoneInfo
+public bool DoNotUseEcmaScriptV6EscapeControlCharacter
 }
 internal System.Runtime.Serialization.AppSettings : object {
 internal string MaxMimePartsAppSettingsString
@@ -649,8 +615,8 @@ internal string Key
 public ParameterElementCollection Parameters
 public string Type
 public int Index
-public void .ctor(string typeName)
 protected ConfigurationPropertyCollection get_Properties()
+public void .ctor(string typeName)
 internal string get_Key()
 public ParameterElementCollection get_Parameters()
 protected void Reset(ConfigurationElement parentElement)
@@ -948,6 +914,7 @@ internal void InternalWriteStartObject(XmlWriterDelegator writer, object graph)
 internal void InternalWriteObjectContent(XmlWriterDelegator writer, object graph)
 internal void InternalWriteObjectContent(XmlWriterDelegator writer, object graph, DataContractResolver dataContractResolver)
 internal DataContract GetDataContract(DataContract declaredTypeContract, Type declaredType, Type objectType)
+internal void SetDataContractSurrogate(IDataContractSurrogate adapter)
 internal void InternalWriteEndObject(XmlWriterDelegator writer)
 internal object InternalReadObject(XmlReaderDelegator xmlReader, bool verifyObjectName)
 internal object InternalReadObject(XmlReaderDelegator xmlReader, bool verifyObjectName, DataContractResolver dataContractResolver)
@@ -956,6 +923,10 @@ internal Type GetSerializeType(object graph)
 internal Type GetDeserializeType()
 internal object SurrogateToDataContractType(IDataContractSurrogate dataContractSurrogate, object oldObj, Type surrogatedDeclaredType, Type& objType)
 internal Type GetSurrogatedType(IDataContractSurrogate dataContractSurrogate, Type type)
+}
+public System.Runtime.Serialization.DataContractSerializerExtensions : object {
+public ISerializationSurrogateProvider GetSerializationSurrogateProvider(DataContractSerializer serializer)
+public void SetSerializationSurrogateProvider(DataContractSerializer serializer, ISerializationSurrogateProvider provider)
 }
 public System.Runtime.Serialization.DataContractSerializerSettings : object {
 private int maxItemsInObjectGraph
@@ -1130,9 +1101,9 @@ private string clrTypeName
 private string clrAssemblyName
 private string id
 private bool isFinalValue
-private bool System.Runtime.Serialization.IDataNode.IsFinalValue
 public Type DataType
 public object Value
+private bool System.Runtime.Serialization.IDataNode.IsFinalValue
 public string DataContractName
 public string DataContractNamespace
 public string ClrTypeName
@@ -1570,7 +1541,6 @@ public object ReadXmlValue(XmlReaderDelegator reader, XmlObjectSerializerReadCon
 internal System.Runtime.Serialization.FxTrace : object {
 public bool ShouldTraceError
 public bool ShouldTraceVerbose
-private ExceptionTrace exception
 public EtwDiagnosticTrace Trace
 public ExceptionTrace Exception
 public EtwDiagnosticTrace get_Trace()
@@ -2126,6 +2096,11 @@ internal void set_Members(IList`1<ISerializableDataMember> value)
 public void GetData(ElementData element)
 public void Clear()
 }
+public System.Runtime.Serialization.ISerializationSurrogateProvider {
+public Type GetSurrogateType(Type type)
+public object GetObjectToSerialize(object obj, Type targetType)
+public object GetDeserializedObject(object obj, Type targetType)
+}
 internal System.Runtime.Serialization.Json.ByteArrayHelperWithString : ArrayHelper`2<string, byte> {
 public ByteArrayHelperWithString Instance
 internal void WriteArray(XmlWriter writer, Byte[] array, int offset, int count)
@@ -2517,7 +2492,7 @@ private object UnwrapNullableObject(Func`1<object> memberValue, Type& memberType
 private bool TryWritePrimitive(Type type, Func`1<object> value, MemberInfo memberInfo, Nullable`1<int> arrayItemIndex, XmlDictionaryString name, int nameIndex)
 private bool TryWritePrimitiveArray(Type type, Type itemType, Func`1<object> value, XmlDictionaryString itemName)
 private object LoadMemberValue(DataMember member)
-private object <WriteCollection>m__0()
+private object <WriteCollection>b__22_0()
 }
 internal System.Runtime.Serialization.Json.JsonGlobals : object {
 public int DataContractXsdBaseNamespaceLength
@@ -2748,9 +2723,13 @@ private char MAX_CHAR
 private char WHITESPACE
 private char CARRIAGE_RETURN
 private char NEWLINE
+private char BACKSPACE
+private char FORM_FEED
+private char HORIZONTAL_TABULATION
 private string xmlNamespace
 private string xmlnsNamespace
 private BinHexEncoding binHexEncoding
+private Char[] CharacterAbbrevs
 private string attributeText
 private JsonDataType dataType
 private int depth
@@ -2781,6 +2760,8 @@ private bool IsWritingNameAttribute
 private bool IsWritingNameWithMapping
 private bool WrittenNameWithMapping
 public void .ctor(bool indent, string indentChars)
+private Char[] GetCharacterAbbrevs()
+private bool TryEscapeControlCharacter(char ch, Char& abbrev)
 public XmlWriterSettings get_Settings()
 public WriteState get_WriteState()
 public string get_XmlLang()
@@ -4120,7 +4101,7 @@ public int GetHashCode()
 public void WriteXmlValue(XmlWriterDelegator xmlWriter, object obj, XmlObjectSerializerWriteContext context)
 public object ReadXmlValue(XmlReaderDelegator xmlReader, XmlObjectSerializerReadContext context)
 internal CreateXmlSerializableDelegate GenerateCreateXmlSerializableDelegate()
-private IXmlSerializable <GenerateCreateXmlSerializableDelegate>m__0()
+private IXmlSerializable <GenerateCreateXmlSerializableDelegate>b__39_0()
 }
 internal System.Runtime.Serialization.XmlDataContractInterpreter : object {
 private XmlDataContract contract
@@ -4507,7 +4488,7 @@ private object UnwrapNullableObject(Func`1<object> memberValue, Type& memberType
 private bool TryWritePrimitive(Type type, Func`1<object> value, MemberInfo memberInfo, Nullable`1<int> arrayItemIndex, XmlDictionaryString ns, XmlDictionaryString name, int nameIndex)
 private bool TryWritePrimitiveArray(Type type, Type itemType, Func`1<object> value, XmlDictionaryString itemName, XmlDictionaryString itemNamespace)
 private object LoadMemberValue(DataMember member)
-private object <WriteCollection>m__0()
+private object <WriteCollection>b__24_0()
 }
 public System.Runtime.Serialization.XmlObjectSerializer : object {
 private IFormatterConverter formatterConverter
@@ -4633,9 +4614,6 @@ private bool isGetOnlyCollection
 private HybridObjectCache DeserializedObjects
 private XmlDocument Document
 internal bool IsGetOnlyCollection
-internal void .ctor(XmlObjectSerializer serializer, int maxItemsInObjectGraph, StreamingContext streamingContext, bool ignoreExtensionDataObject)
-internal void .ctor(DataContractSerializer serializer, DataContract rootTypeDataContract, DataContractResolver dataContractResolver)
-protected void .ctor(NetDataContractSerializer serializer)
 private HybridObjectCache get_DeserializedObjects()
 private XmlDocument get_Document()
 internal bool get_IsGetOnlyCollection()
@@ -4646,6 +4624,9 @@ internal void ThrowNullValueReturnedForGetOnlyCollectionException(Type type)
 internal void ThrowArrayExceededSizeException(int arraySize, Type type)
 internal XmlObjectSerializerReadContext CreateContext(DataContractSerializer serializer, DataContract rootTypeDataContract, DataContractResolver dataContractResolver)
 internal XmlObjectSerializerReadContext CreateContext(NetDataContractSerializer serializer)
+internal void .ctor(XmlObjectSerializer serializer, int maxItemsInObjectGraph, StreamingContext streamingContext, bool ignoreExtensionDataObject)
+internal void .ctor(DataContractSerializer serializer, DataContract rootTypeDataContract, DataContractResolver dataContractResolver)
+protected void .ctor(NetDataContractSerializer serializer)
 public object InternalDeserialize(XmlReaderDelegator xmlReader, int id, RuntimeTypeHandle declaredTypeHandle, string name, string ns)
 internal object InternalDeserialize(XmlReaderDelegator xmlReader, Type declaredType, string name, string ns)
 internal object InternalDeserialize(XmlReaderDelegator xmlReader, Type declaredType, DataContract dataContract, string name, string ns)
@@ -4712,7 +4693,6 @@ private SerializationBinder binder
 private ISurrogateSelector surrogateSelector
 private FormatterAssemblyStyle assemblyFormat
 private Hashtable surrogateDataContracts
-private Func`2<AssemblyName, Assembly> <>f__mg$cache0
 internal SerializationMode Mode
 internal void .ctor(DataContractSerializer serializer, DataContract rootTypeDataContract, DataContractResolver dataContractResolver)
 internal void .ctor(NetDataContractSerializer serializer)
@@ -4749,11 +4729,11 @@ protected ObjectToIdCache SerializedObjects
 internal bool IsGetOnlyCollection
 internal bool SerializeReadOnlyTypes
 internal bool UnsafeTypeForwardingEnabled
+internal XmlObjectSerializerWriteContext CreateContext(DataContractSerializer serializer, DataContract rootTypeDataContract, DataContractResolver dataContractResolver)
+internal XmlObjectSerializerWriteContext CreateContext(NetDataContractSerializer serializer, Hashtable surrogateDataContracts)
 protected void .ctor(DataContractSerializer serializer, DataContract rootTypeDataContract, DataContractResolver resolver)
 protected void .ctor(NetDataContractSerializer serializer)
 internal void .ctor(XmlObjectSerializer serializer, int maxItemsInObjectGraph, StreamingContext streamingContext, bool ignoreExtensionDataObject)
-internal XmlObjectSerializerWriteContext CreateContext(DataContractSerializer serializer, DataContract rootTypeDataContract, DataContractResolver dataContractResolver)
-internal XmlObjectSerializerWriteContext CreateContext(NetDataContractSerializer serializer, Hashtable surrogateDataContracts)
 protected ObjectToIdCache get_SerializedObjects()
 internal bool get_IsGetOnlyCollection()
 internal void set_IsGetOnlyCollection(bool value)
@@ -4986,10 +4966,6 @@ private XmlReaderDelegator xmlReader
 private int startDepth
 private bool isRootEmptyElement
 private XmlReader innerReader
-private bool System.Xml.Serialization.IXmlTextParser.Normalized
-private WhitespaceHandling System.Xml.Serialization.IXmlTextParser.WhitespaceHandling
-private int System.Xml.IXmlLineInfo.LineNumber
-private int System.Xml.IXmlLineInfo.LinePosition
 private XmlReader InnerReader
 public XmlReaderSettings Settings
 public XmlNodeType NodeType
@@ -5019,6 +4995,10 @@ public bool CanResolveEntity
 public bool CanReadBinaryContent
 public bool CanReadValueChunk
 public bool HasAttributes
+private bool System.Xml.Serialization.IXmlTextParser.Normalized
+private WhitespaceHandling System.Xml.Serialization.IXmlTextParser.WhitespaceHandling
+private int System.Xml.IXmlLineInfo.LineNumber
+private int System.Xml.IXmlLineInfo.LinePosition
 private XmlReader get_InnerReader()
 internal void BeginRead(XmlReaderDelegator xmlReader)
 internal void EndRead()
@@ -5539,12 +5519,12 @@ public long Length
 public int ReadTimeout
 public int WriteTimeout
 public void .ctor(Stream stream, Encoding encoding)
-public void .ctor(Stream stream, Encoding encoding, bool emitBOM)
 private void SetReadDocumentEncoding(SupportedEncoding e)
 private Encoding GetEncoding(SupportedEncoding e)
 private Encoding GetSafeEncoding(SupportedEncoding e)
 private string GetEncodingName(SupportedEncoding enc)
 private SupportedEncoding GetSupportedEncoding(Encoding encoding)
+public void .ctor(Stream stream, Encoding encoding, bool emitBOM)
 private SupportedEncoding ReadBOMEncoding(bool notOutOfBand)
 private SupportedEncoding ReadBOMEncoding(byte b1, byte b2, byte b3, byte b4, bool notOutOfBand, Int32& preserve)
 private void FillBuffer(int count)
@@ -7164,8 +7144,8 @@ private Dictionary`2<string, XmlDictionaryString> lookup
 private XmlDictionaryString[] strings
 private int nextId
 public IXmlDictionary Empty
-public void .ctor(int capacity)
 public IXmlDictionary get_Empty()
+public void .ctor(int capacity)
 public XmlDictionaryString Add(string value)
 public bool TryLookup(string value, XmlDictionaryString& result)
 public bool TryLookup(int key, XmlDictionaryString& result)
@@ -8061,4 +8041,7 @@ internal int get_Count()
 internal void set_Count(int value)
 internal int get_Offset()
 internal void set_Offset(int value)
+}
+internal Unity.ThrowStub : ObjectDisposedException {
+public void ThrowNotSupportedException()
 }

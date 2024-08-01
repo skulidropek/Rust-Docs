@@ -1,12 +1,20 @@
-public UnityEngineInternal.Input.NativeInputEvent : ValueType {
+internal UnityEngineInternal.Input.NativeInputEvent : ValueType {
+public int structSize
 public NativeInputEventType type
 public ushort sizeInBytes
 public ushort deviceId
-public int eventId
 public double time
+public int eventId
 public void .ctor(NativeInputEventType type, int sizeInBytes, int deviceId, double time)
 }
-public UnityEngineInternal.Input.NativeInputEventType : Enum {
+internal UnityEngineInternal.Input.NativeInputEventBuffer : ValueType {
+public int structSize
+public Void* eventBuffer
+public int eventCount
+public int sizeInBytes
+public int capacityInBytes
+}
+internal UnityEngineInternal.Input.NativeInputEventType : Enum {
 public int value__
 public NativeInputEventType DeviceRemoved
 public NativeInputEventType DeviceConfigChanged
@@ -14,9 +22,10 @@ public NativeInputEventType Text
 public NativeInputEventType State
 public NativeInputEventType Delta
 }
-public UnityEngineInternal.Input.NativeInputSystem : object {
-public Action`3<NativeInputUpdateType, int, IntPtr> onUpdate
+internal UnityEngineInternal.Input.NativeInputSystem : object {
+public NativeUpdateCallback onUpdate
 public Action`1<NativeInputUpdateType> onBeforeUpdate
+public Func`2<NativeInputUpdateType, bool> onShouldRunUpdate
 private Action`2<int, string> s_OnDeviceDiscoveredCallback
 public Action`2<int, string> onDeviceDiscovered
 internal bool hasDeviceDiscoveredCallback
@@ -25,8 +34,9 @@ public double currentTimeOffsetToRealtimeSinceStartup
 public Action`2<int, string> get_onDeviceDiscovered()
 public void set_onDeviceDiscovered(Action`2<int, string> value)
 internal void NotifyBeforeUpdate(NativeInputUpdateType updateType)
-internal void NotifyUpdate(NativeInputUpdateType updateType, int eventCount, IntPtr eventData)
+internal void NotifyUpdate(NativeInputUpdateType updateType, IntPtr eventBuffer)
 internal void NotifyDeviceDiscovered(int deviceId, string deviceDescriptor)
+internal void ShouldRunUpdate(NativeInputUpdateType updateType, Boolean& retval)
 internal void set_hasDeviceDiscoveredCallback(bool value)
 public double get_currentTime()
 public double get_currentTimeOffsetToRealtimeSinceStartup()
@@ -38,11 +48,17 @@ public void SetPollingFrequency(float hertz)
 public void Update(NativeInputUpdateType updateType)
 public void SetUpdateMask(NativeInputUpdateType mask)
 }
-public UnityEngineInternal.Input.NativeInputUpdateType : Enum {
+internal UnityEngineInternal.Input.NativeInputUpdateType : Enum {
 public int value__
 public NativeInputUpdateType Dynamic
 public NativeInputUpdateType Fixed
 public NativeInputUpdateType BeforeRender
 public NativeInputUpdateType Editor
 public NativeInputUpdateType IgnoreFocus
+}
+internal UnityEngineInternal.Input.NativeUpdateCallback : MulticastDelegate {
+public void .ctor(object object, IntPtr method)
+public void Invoke(NativeInputUpdateType updateType, NativeInputEventBuffer* buffer)
+public IAsyncResult BeginInvoke(NativeInputUpdateType updateType, NativeInputEventBuffer* buffer, AsyncCallback callback, object object)
+public void EndInvoke(IAsyncResult result)
 }

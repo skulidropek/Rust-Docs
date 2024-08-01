@@ -1,8 +1,8 @@
 public UnityEngine.Experimental.Video.VideoClipPlayable : ValueType {
 private PlayableHandle m_Handle
-internal void .ctor(PlayableHandle handle)
 public VideoClipPlayable Create(PlayableGraph graph, VideoClip clip, bool looping)
 private PlayableHandle CreateHandle(PlayableGraph graph, VideoClip clip, bool looping)
+internal void .ctor(PlayableHandle handle)
 public PlayableHandle GetHandle()
 public Playable op_Implicit(VideoClipPlayable playable)
 public VideoClipPlayable op_Explicit(Playable playable)
@@ -33,7 +33,7 @@ private bool ValidateType(PlayableHandle& hdl)
 }
 public UnityEngine.Experimental.Video.VideoPlayerExtensions : object {
 public AudioSampleProvider GetAudioSampleProvider(VideoPlayer vp, ushort trackIndex)
-private UInt32 InternalGetAudioSampleProviderId(VideoPlayer vp, ushort trackIndex)
+internal UInt32 InternalGetAudioSampleProviderId(VideoPlayer vp, ushort trackIndex)
 }
 public UnityEngine.Video.Video3DLayout : Enum {
 public int value__
@@ -66,6 +66,7 @@ public UInt32 width
 public UInt32 height
 public UInt32 pixelAspectRatioNumerator
 public UInt32 pixelAspectRatioDenominator
+public bool sRGB
 public ushort audioTrackCount
 public string get_originalPath()
 public ulong get_frameCount()
@@ -75,6 +76,7 @@ public UInt32 get_width()
 public UInt32 get_height()
 public UInt32 get_pixelAspectRatioNumerator()
 public UInt32 get_pixelAspectRatioDenominator()
+public bool get_sRGB()
 public ushort get_audioTrackCount()
 public ushort GetAudioChannelCount(ushort audioTrackIdx)
 public UInt32 GetAudioSampleRate(ushort audioTrackIdx)
@@ -268,6 +270,11 @@ public int value__
 public VideoTimeSource AudioDSPTimeSource
 public VideoTimeSource GameTimeSource
 }
+internal UnityEngineInternal.Video.VideoAlphaLayout : Enum {
+public int value__
+public VideoAlphaLayout Native
+public VideoAlphaLayout Split
+}
 internal UnityEngineInternal.Video.VideoError : Enum {
 public int value__
 public VideoError NoErr
@@ -315,6 +322,14 @@ public float GetPlaybackSpeed()
 public void SetPlaybackSpeed(float value)
 public bool GetLoop()
 public void SetLoop(bool value)
+public void SetAdjustToLinearSpace(bool enable)
+public ushort GetAudioTrackCount()
+public ushort GetAudioChannelCount(ushort trackIdx)
+public UInt32 GetAudioSampleRate(ushort trackIdx)
+public void SetAudioTarget(ushort trackIdx, bool enabled, bool softwareOutput, AudioSource audioSource)
+private UInt32 GetAudioSampleProviderId(ushort trackIndex)
+public AudioSampleProvider GetAudioSampleProvider(ushort trackIndex)
+internal bool PlatformSupportsH265()
 }
 internal UnityEngineInternal.Video.VideoPlaybackMgr : object {
 internal IntPtr m_Ptr
@@ -322,7 +337,7 @@ public ulong videoPlaybackCount
 public void Dispose()
 private IntPtr Internal_Create()
 private void Internal_Destroy(IntPtr ptr)
-public VideoPlayback CreateVideoPlayback(string fileName, MessageCallback errorCallback, Callback readyCallback, Callback reachedEndCallback)
+public VideoPlayback CreateVideoPlayback(string fileName, MessageCallback errorCallback, Callback readyCallback, Callback reachedEndCallback, bool splitAlpha)
 public void ReleaseVideoPlayback(VideoPlayback playback)
 public ulong get_videoPlaybackCount()
 public void Update()

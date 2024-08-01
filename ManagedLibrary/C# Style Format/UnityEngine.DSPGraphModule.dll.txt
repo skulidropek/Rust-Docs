@@ -1,0 +1,104 @@
+internal Unity.Audio.AudioMemoryManager : ValueType {
+public Void* Internal_AllocateAudioMemory(int size, int alignment)
+public void Internal_FreeAudioMemory(Void* memory)
+}
+internal Unity.Audio.AudioOutputHookManager : ValueType {
+public void Internal_CreateAudioOutputHook(Handle& outputHook, Void* jobReflectionData, Void* jobData)
+public void Internal_DisposeAudioOutputHook(Handle& outputHook)
+}
+internal Unity.Audio.DSPCommandBlockInternal : ValueType {
+public void Internal_CreateDSPNode(Handle& graph, Handle& block, Handle& node, Void* jobReflectionData, Void* jobMemory, Void* parameterDescriptionArray, int parameterCount, Void* sampleProviderDescriptionArray, int sampleProviderCount)
+public void Internal_SetFloat(Handle& graph, Handle& block, Handle& node, Void* jobReflectionData, UInt32 pIndex, float value, UInt32 interpolationLength)
+public void Internal_AddFloatKey(Handle& graph, Handle& block, Handle& node, Void* jobReflectionData, UInt32 pIndex, ulong dspClock, float value)
+public void Internal_SustainFloat(Handle& graph, Handle& block, Handle& node, Void* jobReflectionData, UInt32 pIndex, ulong dspClock)
+public void Internal_UpdateAudioJob(Handle& graph, Handle& block, Handle& node, Void* updateJobMem, Void* updateJobReflectionData, Void* nodeReflectionData)
+public void Internal_CreateUpdateRequest(Handle& graph, Handle& block, Handle& node, Handle& request, object callback, Void* updateJobMem, Void* updateJobReflectionData, Void* nodeReflectionData)
+public void Internal_ReleaseDSPNode(Handle& graph, Handle& block, Handle& node)
+public void Internal_Connect(Handle& graph, Handle& block, Handle& output, int outputPort, Handle& input, int inputPort, Handle& connection)
+public void Internal_Disconnect(Handle& graph, Handle& block, Handle& output, int outputPort, Handle& input, int inputPort)
+public void Internal_DisconnectByHandle(Handle& graph, Handle& block, Handle& connection)
+public void Internal_SetAttenuation(Handle& graph, Handle& block, Handle& connection, Void* value, byte dimension, UInt32 interpolationLength)
+public void Internal_AddAttenuationKey(Handle& graph, Handle& block, Handle& connection, ulong dspClock, Void* value, byte dimension)
+public void Internal_SustainAttenuation(Handle& graph, Handle& block, Handle& connection, ulong dspClock)
+public void Internal_AddInletPort(Handle& graph, Handle& block, Handle& node, int channelCount, int format)
+public void Internal_AddOutletPort(Handle& graph, Handle& block, Handle& node, int channelCount, int format)
+public void Internal_SetSampleProvider(Handle& graph, Handle& block, Handle& node, int item, int index, UInt32 audioSampleProviderId, bool destroyOnRemove)
+public void Internal_InsertSampleProvider(Handle& graph, Handle& block, Handle& node, int item, int index, UInt32 audioSampleProviderId, bool destroyOnRemove)
+public void Internal_RemoveSampleProvider(Handle& graph, Handle& block, Handle& node, int item, int index)
+public void Internal_Complete(Handle& graph, Handle& block)
+public void Internal_Cancel(Handle& graph, Handle& block)
+}
+internal Unity.Audio.DSPGraphExecutionNode : ValueType {
+public Void* ReflectionData
+public Void* JobStructData
+public Void* JobData
+public Void* ResourceContext
+public int FunctionIndex
+public int FenceIndex
+public int FenceCount
+}
+internal Unity.Audio.DSPGraphInternal : ValueType {
+public void Internal_CreateDSPGraph(Handle& graph, int outputFormat, UInt32 outputChannels, UInt32 dspBufferSize, UInt32 sampleRate)
+public void Internal_DisposeDSPGraph(Handle& graph)
+public void Internal_CreateDSPCommandBlock(Handle& graph, Handle& block)
+public UInt32 Internal_AddNodeEventHandler(Handle& graph, long eventTypeHashCode, object handler)
+public bool Internal_RemoveNodeEventHandler(Handle& graph, UInt32 handlerId)
+public void Internal_GetRootDSP(Handle& graph, Handle& root)
+public ulong Internal_GetDSPClock(Handle& graph)
+public void Internal_BeginMix(Handle& graph, int frameCount, int executionMode)
+public void Internal_ReadMix(Handle& graph, Void* buffer, int frameCount)
+public void Internal_Update(Handle& graph)
+public bool Internal_AssertMixerThread(Handle& graph)
+public bool Internal_AssertMainThread(Handle& graph)
+public Handle Internal_AllocateHandle(Handle& graph)
+public void Internal_InitializeJob(Void* jobStructData, Void* jobReflectionData, Void* resourceContext)
+public void Internal_ExecuteJob(Void* jobStructData, Void* jobReflectionData, Void* jobData, Void* resourceContext)
+public void Internal_ExecuteUpdateJob(Void* updateStructMemory, Void* updateReflectionData, Void* jobStructMemory, Void* jobReflectionData, Void* resourceContext, Handle& requestHandle, JobHandle& fence)
+public void Internal_DisposeJob(Void* jobStructData, Void* jobReflectionData, Void* resourceContext)
+public void Internal_ScheduleGraph(JobHandle inputDeps, Void* nodes, int nodeCount, Int32* childTable, Void* dependencies)
+public void Internal_SyncFenceNoWorkSteal(JobHandle handle)
+private void Internal_AllocateHandle_Injected(Handle& graph, Handle& ret)
+private void Internal_ScheduleGraph_Injected(JobHandle& inputDeps, Void* nodes, int nodeCount, Int32* childTable, Void* dependencies)
+private void Internal_SyncFenceNoWorkSteal_Injected(JobHandle& handle)
+}
+internal Unity.Audio.DSPNodeUpdateRequestHandleInternal : ValueType {
+public Void* Internal_GetUpdateJobData(Handle& graph, Handle& requestHandle)
+public bool Internal_HasError(Handle& graph, Handle& requestHandle)
+public void Internal_GetDSPNode(Handle& graph, Handle& requestHandle, Handle& node)
+public void Internal_GetFence(Handle& graph, Handle& requestHandle, JobHandle& fence)
+public void Internal_Dispose(Handle& graph, Handle& requestHandle)
+}
+internal Unity.Audio.DSPSampleProviderInternal : ValueType {
+public int Internal_ReadUInt8FromSampleProvider(Void* provider, int format, Void* buffer, int length)
+public int Internal_ReadSInt16FromSampleProvider(Void* provider, int format, Void* buffer, int length)
+public int Internal_ReadFloatFromSampleProvider(Void* provider, Void* buffer, int length)
+public ushort Internal_GetChannelCount(Void* provider)
+public UInt32 Internal_GetSampleRate(Void* provider)
+public int Internal_ReadUInt8FromSampleProviderById(UInt32 providerId, int format, Void* buffer, int length)
+public int Internal_ReadSInt16FromSampleProviderById(UInt32 providerId, int format, Void* buffer, int length)
+public int Internal_ReadFloatFromSampleProviderById(UInt32 providerId, Void* buffer, int length)
+public ushort Internal_GetChannelCountById(UInt32 providerId)
+public UInt32 Internal_GetSampleRateById(UInt32 providerId)
+}
+internal Unity.Audio.ExecuteContextInternal : ValueType {
+public void Internal_PostEvent(Void* dspNodePtr, long eventTypeHashCode, Void* eventPtr, int eventSize)
+}
+internal Unity.Audio.Handle : ValueType {
+private IntPtr m_Node
+public int Version
+public Node* AtomicNode
+public int Id
+public bool Valid
+public bool Alive
+public Node* get_AtomicNode()
+public void set_AtomicNode(Node* value)
+public int get_Id()
+public void set_Id(int value)
+public void .ctor(Node* node)
+public void FlushNode()
+public bool Equals(Handle other)
+public bool Equals(object obj)
+public int GetHashCode()
+public bool get_Valid()
+public bool get_Alive()
+}

@@ -16,6 +16,11 @@ public _VerticalAlignmentOptions Baseline
 public _VerticalAlignmentOptions Geometry
 public _VerticalAlignmentOptions Capline
 }
+public TMPro.AtlasPopulationMode : Enum {
+public int value__
+public AtlasPopulationMode Static
+public AtlasPopulationMode Dynamic
+}
 public TMPro.CaretInfo : ValueType {
 public int index
 public CaretPosition position
@@ -80,7 +85,7 @@ public Vector2 max
 public void .ctor(Vector2 min, Vector2 max)
 public string ToString()
 }
-public TMPro.FaceInfo : object {
+public TMPro.FaceInfo_Legacy : object {
 public string Name
 public float PointSize
 public float Scale
@@ -172,6 +177,12 @@ public int fontStyle
 public float fontStyleModifier
 public int renderMode
 public bool includeFontFeatures
+internal void .ctor(string sourceFontFileGUID, int pointSize, int pointSizeSamplingMode, int padding, int packingMode, int atlasWidth, int atlasHeight, int characterSelectionMode, string characterSet, int renderMode)
+}
+public TMPro.FontFeatureLookupFlags : Enum {
+public int value__
+public FontFeatureLookupFlags IgnoreLigatures
+public FontFeatureLookupFlags IgnoreSpacingAdjustments
 }
 public TMPro.FontStyles : Enum {
 public int value__
@@ -187,24 +198,32 @@ public FontStyles Superscript
 public FontStyles Subscript
 public FontStyles Highlight
 }
-public TMPro.FontWeights : Enum {
+public TMPro.FontWeight : Enum {
 public int value__
-public FontWeights Thin
-public FontWeights ExtraLight
-public FontWeights Light
-public FontWeights Normal
-public FontWeights Medium
-public FontWeights SemiBold
-public FontWeights Bold
-public FontWeights Heavy
-public FontWeights Black
+public FontWeight Thin
+public FontWeight ExtraLight
+public FontWeight Light
+public FontWeight Regular
+public FontWeight Medium
+public FontWeight SemiBold
+public FontWeight Bold
+public FontWeight Heavy
+public FontWeight Black
 }
-public TMPro.GlyphValueRecord : ValueType {
+public TMPro.GlyphPairKey : ValueType {
+public UInt32 firstGlyphIndex
+public UInt32 secondGlyphIndex
+public long key
+public void .ctor(UInt32 firstGlyphIndex, UInt32 secondGlyphIndex)
+internal void .ctor(TMP_GlyphPairAdjustmentRecord record)
+}
+public TMPro.GlyphValueRecord_Legacy : ValueType {
 public float xPlacement
 public float yPlacement
 public float xAdvance
 public float yAdvance
-public GlyphValueRecord op_Addition(GlyphValueRecord a, GlyphValueRecord b)
+internal void .ctor(GlyphValueRecord valueRecord)
+public GlyphValueRecord_Legacy op_Addition(GlyphValueRecord_Legacy a, GlyphValueRecord_Legacy b)
 }
 public TMPro.ITextElement {
 public Material sharedMaterial
@@ -222,22 +241,26 @@ public bool ValidTarget()
 }
 public TMPro.KerningPair : object {
 private UInt32 m_FirstGlyph
-private GlyphValueRecord m_FirstGlyphAdjustments
+private GlyphValueRecord_Legacy m_FirstGlyphAdjustments
 private UInt32 m_SecondGlyph
-private GlyphValueRecord m_SecondGlyphAdjustments
+private GlyphValueRecord_Legacy m_SecondGlyphAdjustments
 public float xOffset
+internal KerningPair empty
+private bool m_IgnoreSpacingAdjustments
 public UInt32 firstGlyph
-public GlyphValueRecord firstGlyphAdjustments
+public GlyphValueRecord_Legacy firstGlyphAdjustments
 public UInt32 secondGlyph
-public GlyphValueRecord secondGlyphAdjustments
+public GlyphValueRecord_Legacy secondGlyphAdjustments
+public bool ignoreSpacingAdjustments
 public UInt32 get_firstGlyph()
 public void set_firstGlyph(UInt32 value)
-public GlyphValueRecord get_firstGlyphAdjustments()
+public GlyphValueRecord_Legacy get_firstGlyphAdjustments()
 public UInt32 get_secondGlyph()
 public void set_secondGlyph(UInt32 value)
-public GlyphValueRecord get_secondGlyphAdjustments()
+public GlyphValueRecord_Legacy get_secondGlyphAdjustments()
+public bool get_ignoreSpacingAdjustments()
 public void .ctor(UInt32 left, UInt32 right, float offset)
-public void .ctor(UInt32 firstGlyph, GlyphValueRecord firstGlyphAdjustments, UInt32 secondGlyph, GlyphValueRecord secondGlyphAdjustments)
+public void .ctor(UInt32 firstGlyph, GlyphValueRecord_Legacy firstGlyphAdjustments, UInt32 secondGlyph, GlyphValueRecord_Legacy secondGlyphAdjustments)
 internal void ConvertLegacyKerningData()
 }
 public TMPro.KerningPairKey : ValueType {
@@ -250,7 +273,7 @@ public TMPro.KerningTable : object {
 public List`1<KerningPair> kerningPairs
 public void AddKerningPair()
 public int AddKerningPair(UInt32 first, UInt32 second, float offset)
-public int AddGlyphPairAdjustmentRecord(UInt32 first, GlyphValueRecord firstAdjustments, UInt32 second, GlyphValueRecord secondAdjustments)
+public int AddGlyphPairAdjustmentRecord(UInt32 first, GlyphValueRecord_Legacy firstAdjustments, UInt32 second, GlyphValueRecord_Legacy secondAdjustments)
 public void RemoveKerningPair(int left, int right)
 public void RemoveKerningPair(int index)
 public void SortKerningPairs()
@@ -269,42 +292,33 @@ public MaskingTypes MaskSoft
 public TMPro.MaterialReference : ValueType {
 public int index
 public TMP_FontAsset fontAsset
-public TMP_SpriteAsset spriteAsset
 public Material material
 public bool isDefaultMaterial
 public bool isFallbackMaterial
 public Material fallbackMaterial
 public float padding
 public int referenceCount
-public void .ctor(int index, TMP_FontAsset fontAsset, TMP_SpriteAsset spriteAsset, Material material, float padding)
+public void .ctor(int index, TMP_FontAsset fontAsset, Material material, float padding)
 public bool Contains(MaterialReference[] materialReferences, TMP_FontAsset fontAsset)
 public int AddMaterialReference(Material material, TMP_FontAsset fontAsset, MaterialReference[] materialReferences, Dictionary`2<int, int> materialReferenceIndexLookup)
-public int AddMaterialReference(Material material, TMP_SpriteAsset spriteAsset, MaterialReference[] materialReferences, Dictionary`2<int, int> materialReferenceIndexLookup)
+public int AddMaterialReference(Material material, MaterialReference[] materialReferences, Dictionary`2<int, int> materialReferenceIndexLookup)
 }
 public TMPro.MaterialReferenceManager : object {
 private MaterialReferenceManager s_Instance
 private Dictionary`2<int, Material> m_FontMaterialReferenceLookup
 private Dictionary`2<int, TMP_FontAsset> m_FontAssetReferenceLookup
-private Dictionary`2<int, TMP_SpriteAsset> m_SpriteAssetReferenceLookup
 private Dictionary`2<int, TMP_ColorGradient> m_ColorGradientReferenceLookup
 public MaterialReferenceManager instance
 public MaterialReferenceManager get_instance()
 public void AddFontAsset(TMP_FontAsset fontAsset)
 private void AddFontAssetInternal(TMP_FontAsset fontAsset)
-public void AddSpriteAsset(TMP_SpriteAsset spriteAsset)
-private void AddSpriteAssetInternal(TMP_SpriteAsset spriteAsset)
-public void AddSpriteAsset(int hashCode, TMP_SpriteAsset spriteAsset)
-private void AddSpriteAssetInternal(int hashCode, TMP_SpriteAsset spriteAsset)
 public void AddFontMaterial(int hashCode, Material material)
 private void AddFontMaterialInternal(int hashCode, Material material)
 public void AddColorGradientPreset(int hashCode, TMP_ColorGradient spriteAsset)
 private void AddColorGradientPreset_Internal(int hashCode, TMP_ColorGradient spriteAsset)
 public bool Contains(TMP_FontAsset font)
-public bool Contains(TMP_SpriteAsset sprite)
 public bool TryGetFontAsset(int hashCode, TMP_FontAsset& fontAsset)
 private bool TryGetFontAssetInternal(int hashCode, TMP_FontAsset& fontAsset)
-public bool TryGetSpriteAsset(int hashCode, TMP_SpriteAsset& spriteAsset)
-private bool TryGetSpriteAssetInternal(int hashCode, TMP_SpriteAsset& spriteAsset)
 public bool TryGetColorGradientPreset(int hashCode, TMP_ColorGradient& gradientPreset)
 private bool TryGetColorGradientPresetInternal(int hashCode, TMP_ColorGradient& gradientPreset)
 public bool TryGetMaterial(int hashCode, Material& material)
@@ -315,6 +329,70 @@ public Vector2 min
 public Vector2 max
 public void .ctor(Vector2 min, Vector2 max)
 public string ToString()
+}
+internal TMPro.RichTextTag : Enum {
+public UInt32 value__
+public RichTextTag BOLD
+public RichTextTag SLASH_BOLD
+public RichTextTag ITALIC
+public RichTextTag SLASH_ITALIC
+public RichTextTag UNDERLINE
+public RichTextTag SLASH_UNDERLINE
+public RichTextTag STRIKETHROUGH
+public RichTextTag SLASH_STRIKETHROUGH
+public RichTextTag COLOR
+public RichTextTag SLASH_COLOR
+public RichTextTag SIZE
+public RichTextTag SLASH_SIZE
+public RichTextTag SPRITE
+public RichTextTag BR
+public RichTextTag STYLE
+public RichTextTag SLASH_STYLE
+public RichTextTag FONT
+public RichTextTag SLASH_FONT
+public RichTextTag LINK
+public RichTextTag SLASH_LINK
+public RichTextTag FONT_WEIGHT
+public RichTextTag SLASH_FONT_WEIGHT
+public RichTextTag LIGA
+public RichTextTag SLASH_LIGA
+public RichTextTag FRAC
+public RichTextTag SLASH_FRAC
+public RichTextTag NAME
+public RichTextTag INDEX
+public RichTextTag TINT
+public RichTextTag ANIM
+public RichTextTag MATERIAL
+public RichTextTag RED
+public RichTextTag GREEN
+public RichTextTag BLUE
+public RichTextTag YELLOW
+public RichTextTag ORANGE
+public RichTextTag PLUS
+public RichTextTag MINUS
+public RichTextTag PX
+public RichTextTag PLUS_PX
+public RichTextTag MINUS_PX
+public RichTextTag EM
+public RichTextTag PLUS_EM
+public RichTextTag MINUS_EM
+public RichTextTag PCT
+public RichTextTag PLUS_PCT
+public RichTextTag MINUS_PCT
+public RichTextTag PERCENTAGE
+public RichTextTag PLUS_PERCENTAGE
+public RichTextTag MINUS_PERCENTAGE
+public RichTextTag TRUE
+public RichTextTag FALSE
+public RichTextTag DEFAULT
+}
+public TMPro.RichTextTagAttribute : ValueType {
+public int nameHashCode
+public int valueHashCode
+public TagValueType valueType
+public int valueStartIndex
+public int valueLength
+public TagUnitType unitType
 }
 internal TMPro.SetPropertyUtility : object {
 public bool SetColor(Color& currentValue, Color newValue)
@@ -344,6 +422,7 @@ public int ID_GradientScale
 public int ID_ScaleX
 public int ID_ScaleY
 public int ID_PerspectiveFilter
+public int ID_Sharpness
 public int ID_TextureWidth
 public int ID_TextureHeight
 public int ID_BevelAmount
@@ -383,6 +462,12 @@ public string ShaderTag_ZTestMode
 public string ShaderTag_CullMode
 private float m_clamp
 public bool isInitialized
+private Shader k_ShaderRef_MobileSDF
+private Shader k_ShaderRef_MobileBitmap
+internal Shader ShaderRef_MobileSDF
+internal Shader ShaderRef_MobileBitmap
+internal Shader get_ShaderRef_MobileSDF()
+internal Shader get_ShaderRef_MobileBitmap()
 public void GetShaderPropertyIDs()
 public void UpdateShaderRatios(Material mat)
 public Vector4 GetFontExtent(Material material)
@@ -390,28 +475,23 @@ public bool IsMaskingEnabled(Material material)
 public float GetPadding(Material material, bool enableExtraPadding, bool isBold)
 public float GetPadding(Material[] materials, bool enableExtraPadding, bool isBold)
 }
-public TMPro.SpriteAssetUtilities.SpriteAssetImportFormats : Enum {
-public int value__
-public SpriteAssetImportFormats None
-public SpriteAssetImportFormats TexturePacker
-}
 public TMPro.TagAttribute : ValueType {
 public int startIndex
 public int length
 public int hashCode
 }
-public TMPro.TagType : Enum {
+public TMPro.TagUnitType : Enum {
 public int value__
-public TagType None
-public TagType NumericalValue
-public TagType StringValue
-public TagType ColorValue
+public TagUnitType Pixels
+public TagUnitType FontUnits
+public TagUnitType Percentage
 }
-public TMPro.TagUnits : Enum {
+public TMPro.TagValueType : Enum {
 public int value__
-public TagUnits Pixels
-public TagUnits FontUnits
-public TagUnits Percentage
+public TagValueType None
+public TagValueType NumericalValue
+public TagValueType StringValue
+public TagValueType ColorValue
 }
 public TMPro.TextAlignmentOptions : Enum {
 public int value__
@@ -528,8 +608,12 @@ public TextContainerAnchors Bottom
 public TextContainerAnchors BottomRight
 public TextContainerAnchors Custom
 }
+public TMPro.TextElementType : Enum {
+public byte value__
+public TextElementType Character
+public TextElementType Sprite
+}
 public TMPro.TextMeshPro : TMP_Text {
-private bool m_currentAutoSizeMode
 private bool m_hasFontAssetChanged
 private float m_previousLossyScaleY
 private Renderer m_renderer
@@ -537,7 +621,6 @@ private MeshFilter m_meshFilter
 private bool m_isFirstAllocation
 private int m_max_characters
 private int m_max_numberOfLines
-private Bounds m_default_bounds
 protected TMP_SubMesh[] m_subTextObjects
 private bool m_isMaskingEnabled
 private bool isMaskUpdateRequired
@@ -546,6 +629,7 @@ private Matrix4x4 m_EnvMapMatrix
 private Vector3[] m_RectTransformCorners
 private bool m_isRegisteredForEvents
 private int loopCountA
+private bool m_currentAutoSizeMode
 public int sortingLayerID
 public int sortingOrder
 public bool autoSizeTextContainer
@@ -555,6 +639,47 @@ public Renderer renderer
 public Mesh mesh
 public MeshFilter meshFilter
 public MaskingTypes maskType
+protected void Awake()
+protected void OnEnable()
+protected void OnDisable()
+protected void OnDestroy()
+protected void LoadFontAsset()
+private void UpdateEnvMapMatrix()
+private void SetMask(MaskingTypes maskType)
+private void SetMaskCoordinates(Vector4 coords)
+private void SetMaskCoordinates(Vector4 coords, float softX, float softY)
+private void EnableMasking()
+private void DisableMasking()
+private void UpdateMask()
+protected Material GetMaterial(Material mat)
+protected Material[] GetMaterials(Material[] mats)
+protected void SetSharedMaterial(Material mat)
+protected Material[] GetSharedMaterials()
+protected void SetSharedMaterials(Material[] materials)
+protected void SetOutlineThickness(float thickness)
+protected void SetFaceColor(Color32 color)
+protected void SetOutlineColor(Color32 color)
+private void CreateMaterialInstance()
+protected void SetShaderDepth()
+protected void SetCulling()
+private void SetPerspectiveCorrection()
+protected float GetPaddingForMaterial(Material mat)
+protected float GetPaddingForMaterial()
+protected int SetArraySizes(UnicodeChar[] chars)
+public void ComputeMarginSize()
+protected void OnDidApplyAnimationProperties()
+protected void OnTransformParentChanged()
+protected void OnRectTransformDimensionsChange()
+internal void InternalUpdate()
+private void OnPreRenderObject()
+protected void GenerateTextMesh()
+protected Vector3[] GetTextContainerLocalCorners()
+private void SetMeshFilters(bool state)
+protected void SetActiveSubMeshes(bool state)
+protected void ClearSubMeshObjects()
+protected Bounds GetCompoundBounds()
+private void UpdateSDFScale(float scaleDelta)
+protected void AdjustLineOffset(int startIndex, int endIndex, float offset)
 public int get_sortingLayerID()
 public void set_sortingLayerID(int value)
 public int get_sortingOrder()
@@ -587,50 +712,8 @@ public void UpdateVertexData()
 public void UpdateFontAsset()
 public void CalculateLayoutInputHorizontal()
 public void CalculateLayoutInputVertical()
-protected void Awake()
-protected void OnEnable()
-protected void OnDisable()
-protected void OnDestroy()
-protected void LoadFontAsset()
-private void UpdateEnvMapMatrix()
-private void SetMask(MaskingTypes maskType)
-private void SetMaskCoordinates(Vector4 coords)
-private void SetMaskCoordinates(Vector4 coords, float softX, float softY)
-private void EnableMasking()
-private void DisableMasking()
-private void UpdateMask()
-protected Material GetMaterial(Material mat)
-protected Material[] GetMaterials(Material[] mats)
-protected void SetSharedMaterial(Material mat)
-protected Material[] GetSharedMaterials()
-protected void SetSharedMaterials(Material[] materials)
-protected void SetOutlineThickness(float thickness)
-protected void SetFaceColor(Color32 color)
-protected void SetOutlineColor(Color32 color)
-private void CreateMaterialInstance()
-protected void SetShaderDepth()
-protected void SetCulling()
-private void SetPerspectiveCorrection()
-protected float GetPaddingForMaterial(Material mat)
-protected float GetPaddingForMaterial()
-protected int SetArraySizes(Int32[] chars)
-public void ComputeMarginSize()
-protected void OnDidApplyAnimationProperties()
-protected void OnTransformParentChanged()
-protected void OnRectTransformDimensionsChange()
-private void LateUpdate()
-private void OnPreRenderObject()
-protected void GenerateTextMesh()
-protected Vector3[] GetTextContainerLocalCorners()
-private void SetMeshFilters(bool state)
-protected void SetActiveSubMeshes(bool state)
-protected void ClearSubMeshObjects()
-protected Bounds GetCompoundBounds()
-private void UpdateSDFScale(float lossyScale)
-protected void AdjustLineOffset(int startIndex, int endIndex, float offset)
 }
 public TMPro.TextMeshProUGUI : TMP_Text {
-private bool m_isRebuildingLayout
 private bool m_hasFontAssetChanged
 protected TMP_SubMeshUI[] m_subTextObjects
 private float m_previousLossyScaleY
@@ -648,11 +731,49 @@ private Matrix4x4 m_EnvMapMatrix
 private bool m_isRegisteredForEvents
 private int m_recursiveCountA
 private int loopCountA
+private bool m_isRebuildingLayout
 public Material materialForRendering
 public bool autoSizeTextContainer
 public Mesh mesh
 public CanvasRenderer canvasRenderer
 public Vector4 maskOffset
+protected void Awake()
+protected void OnEnable()
+protected void OnDisable()
+protected void OnDestroy()
+protected void LoadFontAsset()
+private Canvas GetCanvas()
+private void EnableMasking()
+private void DisableMasking()
+private void UpdateMask()
+protected Material GetMaterial(Material mat)
+protected Material[] GetMaterials(Material[] mats)
+protected void SetSharedMaterial(Material mat)
+protected Material[] GetSharedMaterials()
+protected void SetSharedMaterials(Material[] materials)
+protected void SetOutlineThickness(float thickness)
+protected void SetFaceColor(Color32 color)
+protected void SetOutlineColor(Color32 color)
+protected void SetShaderDepth()
+protected void SetCulling()
+private void SetPerspectiveCorrection()
+protected float GetPaddingForMaterial(Material mat)
+protected float GetPaddingForMaterial()
+private void SetMeshArrays(int size)
+protected int SetArraySizes(UnicodeChar[] chars)
+public void ComputeMarginSize()
+protected void OnDidApplyAnimationProperties()
+protected void OnCanvasHierarchyChanged()
+protected void OnTransformParentChanged()
+protected void OnRectTransformDimensionsChange()
+internal void InternalUpdate()
+private void OnPreRenderCanvas()
+protected void GenerateTextMesh()
+protected Vector3[] GetTextContainerLocalCorners()
+protected void SetActiveSubMeshes(bool state)
+protected Bounds GetCompoundBounds()
+private void UpdateSDFScale(float scaleDelta)
+protected void AdjustLineOffset(int startIndex, int endIndex, float offset)
 public Material get_materialForRendering()
 public bool get_autoSizeTextContainer()
 public void set_autoSizeTextContainer(bool value)
@@ -684,44 +805,6 @@ public void UpdateGeometry(Mesh mesh, int index)
 public void UpdateVertexData(TMP_VertexDataUpdateFlags flags)
 public void UpdateVertexData()
 public void UpdateFontAsset()
-protected void Awake()
-protected void OnEnable()
-protected void OnDisable()
-protected void OnDestroy()
-protected void LoadFontAsset()
-private Canvas GetCanvas()
-private void UpdateEnvMapMatrix()
-private void EnableMasking()
-private void DisableMasking()
-private void UpdateMask()
-protected Material GetMaterial(Material mat)
-protected Material[] GetMaterials(Material[] mats)
-protected void SetSharedMaterial(Material mat)
-protected Material[] GetSharedMaterials()
-protected void SetSharedMaterials(Material[] materials)
-protected void SetOutlineThickness(float thickness)
-protected void SetFaceColor(Color32 color)
-protected void SetOutlineColor(Color32 color)
-protected void SetShaderDepth()
-protected void SetCulling()
-private void SetPerspectiveCorrection()
-protected float GetPaddingForMaterial(Material mat)
-protected float GetPaddingForMaterial()
-private void SetMeshArrays(int size)
-protected int SetArraySizes(Int32[] chars)
-public void ComputeMarginSize()
-protected void OnDidApplyAnimationProperties()
-protected void OnCanvasHierarchyChanged()
-protected void OnTransformParentChanged()
-protected void OnRectTransformDimensionsChange()
-private void LateUpdate()
-private void OnPreRenderCanvas()
-protected void GenerateTextMesh()
-protected Vector3[] GetTextContainerLocalCorners()
-protected void SetActiveSubMeshes(bool state)
-protected Bounds GetCompoundBounds()
-private void UpdateSDFScale(float lossyScale)
-protected void AdjustLineOffset(int startIndex, int endIndex, float offset)
 }
 public TMPro.TextOverflowModes : Enum {
 public int value__
@@ -750,29 +833,17 @@ public int hashCode
 public Material material
 public int materialHashCode
 }
-public TMPro.TMP_BasicXmlTagStack : ValueType {
-public byte bold
-public byte italic
-public byte underline
-public byte strikethrough
-public byte highlight
-public byte superscript
-public byte subscript
-public byte uppercase
-public byte lowercase
-public byte smallcaps
-public void Clear()
-public byte Add(FontStyles style)
-public byte Remove(FontStyles style)
+public TMPro.TMP_Character : TMP_TextElement {
+public void .ctor(UInt32 unicode, Glyph glyph)
+internal void .ctor(UInt32 unicode, UInt32 glyphIndex)
 }
 public TMPro.TMP_CharacterInfo : ValueType {
 public char character
 public int index
+public int stringLength
 public TMP_TextElementType elementType
 public TMP_TextElement textElement
 public TMP_FontAsset fontAsset
-public TMP_SpriteAsset spriteAsset
-public int spriteIndex
 public Material material
 public int materialReferenceIndex
 public bool isUsingAlternateTypeface
@@ -780,8 +851,8 @@ public float pointSize
 public int lineNumber
 public int pageNumber
 public int vertexIndex
-public TMP_Vertex vertex_TL
 public TMP_Vertex vertex_BL
+public TMP_Vertex vertex_TL
 public TMP_Vertex vertex_TR
 public TMP_Vertex vertex_BR
 public Vector3 topLeft
@@ -813,9 +884,6 @@ private Color k_DefaultColor
 public void .ctor(Color color)
 public void .ctor(Color color0, Color color1, Color color2, Color color3)
 }
-public TMPro.TMP_Compatibility : object {
-public TextAlignmentOptions ConvertTextAlignmentEnumValues(TextAlignmentOptions oldValue)
-}
 public TMPro.TMP_DefaultControls : object {
 private float kWidth
 private float kThickHeight
@@ -831,90 +899,39 @@ private void SetDefaultColorTransitionValues(Selectable slider)
 private void SetParentAndAlign(GameObject child, GameObject parent)
 private void SetLayerRecursively(GameObject go, int layer)
 public GameObject CreateScrollbar(Resources resources)
+public GameObject CreateButton(Resources resources)
+public GameObject CreateText(Resources resources)
 public GameObject CreateInputField(Resources resources)
-public GameObject CreateDropdown(Resources resources)
-}
-public TMPro.TMP_Dropdown : Selectable {
-private RectTransform m_Template
-private TMP_Text m_CaptionText
-private Image m_CaptionImage
-private TMP_Text m_ItemText
-private Image m_ItemImage
-private int m_Value
-private OptionDataList m_Options
-private DropdownEvent m_OnValueChanged
-private GameObject m_Dropdown
-private GameObject m_Blocker
-private List`1<DropdownItem> m_Items
-private TweenRunner`1<FloatTween> m_AlphaTweenRunner
-private bool validTemplate
-private OptionData s_NoOptionData
-public RectTransform template
-public TMP_Text captionText
-public Image captionImage
-public TMP_Text itemText
-public Image itemImage
-public List`1<OptionData> options
-public DropdownEvent onValueChanged
-public int value
-public bool IsExpanded
-public RectTransform get_template()
-public void set_template(RectTransform value)
-public TMP_Text get_captionText()
-public void set_captionText(TMP_Text value)
-public Image get_captionImage()
-public void set_captionImage(Image value)
-public TMP_Text get_itemText()
-public void set_itemText(TMP_Text value)
-public Image get_itemImage()
-public void set_itemImage(Image value)
-public List`1<OptionData> get_options()
-public void set_options(List`1<OptionData> value)
-public DropdownEvent get_onValueChanged()
-public void set_onValueChanged(DropdownEvent value)
-public int get_value()
-public void set_value(int value)
-public bool get_IsExpanded()
-protected void Awake()
-public void RefreshShownValue()
-public void AddOptions(List`1<OptionData> options)
-public void AddOptions(List`1<string> options)
-public void AddOptions(List`1<Sprite> options)
-public void ClearOptions()
-private void SetupTemplate()
-private T GetOrAddComponent(GameObject go)
-public void OnPointerClick(PointerEventData eventData)
-public void OnSubmit(BaseEventData eventData)
-public void OnCancel(BaseEventData eventData)
-public void Show()
-protected GameObject CreateBlocker(Canvas rootCanvas)
-protected void DestroyBlocker(GameObject blocker)
-protected GameObject CreateDropdownList(GameObject template)
-protected void DestroyDropdownList(GameObject dropdownList)
-protected DropdownItem CreateItem(DropdownItem itemTemplate)
-protected void DestroyItem(DropdownItem item)
-private DropdownItem AddItem(OptionData data, bool selected, DropdownItem itemTemplate, List`1<DropdownItem> items)
-private void AlphaFadeList(float duration, float alpha)
-private void AlphaFadeList(float duration, float start, float end)
-private void SetAlpha(float alpha)
-public void Hide()
-private IEnumerator DelayedDestroyDropdownList(float delay)
-private void OnSelectItem(Toggle toggle)
 }
 public TMPro.TMP_FontAsset : TMP_Asset {
-private TMP_FontAsset s_defaultFontAsset
-public FontAssetTypes fontAssetType
-private FaceInfo m_fontInfo
+private string m_Version
+internal string m_SourceFontFileGUID
+private Font m_SourceFontFile
+private AtlasPopulationMode m_AtlasPopulationMode
+private FaceInfo m_FaceInfo
+private List`1<Glyph> m_GlyphTable
+private Dictionary`2<UInt32, Glyph> m_GlyphLookupDictionary
+private List`1<TMP_Character> m_CharacterTable
+private Dictionary`2<UInt32, TMP_Character> m_CharacterLookupDictionary
+private Texture2D m_AtlasTexture
+private Texture2D[] m_AtlasTextures
+internal int m_AtlasTextureIndex
+private List`1<GlyphRect> m_UsedGlyphRects
+private List`1<GlyphRect> m_FreeGlyphRects
+private FaceInfo_Legacy m_fontInfo
 public Texture2D atlas
-private List`1<TMP_Glyph> m_glyphInfoList
-private Dictionary`2<int, TMP_Glyph> m_characterDictionary
-private Dictionary`2<int, KerningPair> m_kerningDictionary
-private KerningTable m_kerningInfo
-private KerningPair m_kerningPair
-public List`1<TMP_FontAsset> fallbackFontAssets
-public FontAssetCreationSettings m_CreationSettings
-public TMP_FontWeights[] fontWeights
-private Int32[] m_characterSet
+private int m_AtlasWidth
+private int m_AtlasHeight
+private int m_AtlasPadding
+private GlyphRenderMode m_AtlasRenderMode
+internal List`1<TMP_Glyph> m_glyphInfoList
+internal KerningTable m_KerningTable
+private TMP_FontFeatureTable m_FontFeatureTable
+private List`1<TMP_FontAsset> fallbackFontAssets
+public List`1<TMP_FontAsset> m_FallbackFontAssetTable
+internal FontAssetCreationSettings m_CreationSettings
+private TMP_FontWeightPair[] m_FontWeightTable
+private TMP_FontWeightPair[] fontWeights
 public float normalStyle
 public float normalSpacingOffset
 public float boldStyle
@@ -922,26 +939,81 @@ public float boldSpacing
 public byte italicStyle
 public byte tabSize
 private byte m_oldTabSize
-public TMP_FontAsset defaultFontAsset
-public FaceInfo fontInfo
-public Dictionary`2<int, TMP_Glyph> characterDictionary
-public Dictionary`2<int, KerningPair> kerningDictionary
-public KerningTable kerningInfo
+internal bool m_IsFontAssetLookupTablesDirty
+private List`1<Glyph> m_GlyphsToPack
+private List`1<Glyph> m_GlyphsPacked
+private List`1<Glyph> m_GlyphsToRender
+private List`1<UInt32> m_GlyphIndexList
+private List`1<TMP_Character> m_CharactersToAdd
+internal UInt32[] s_GlyphIndexArray
+internal List`1<UInt32> s_MissingCharacterList
+public string version
+public Font sourceFontFile
+public AtlasPopulationMode atlasPopulationMode
+public FaceInfo faceInfo
+public List`1<Glyph> glyphTable
+public Dictionary`2<UInt32, Glyph> glyphLookupTable
+public List`1<TMP_Character> characterTable
+public Dictionary`2<UInt32, TMP_Character> characterLookupTable
+public Texture2D atlasTexture
+public Texture2D[] atlasTextures
+internal List`1<GlyphRect> usedGlyphRects
+internal List`1<GlyphRect> freeGlyphRects
+public FaceInfo_Legacy fontInfo
+public int atlasWidth
+public int atlasHeight
+public int atlasPadding
+public GlyphRenderMode atlasRenderMode
+public TMP_FontFeatureTable fontFeatureTable
+public List`1<TMP_FontAsset> fallbackFontAssetTable
 public FontAssetCreationSettings creationSettings
-public TMP_FontAsset get_defaultFontAsset()
-public FaceInfo get_fontInfo()
-public Dictionary`2<int, TMP_Glyph> get_characterDictionary()
-public Dictionary`2<int, KerningPair> get_kerningDictionary()
-public KerningTable get_kerningInfo()
+public TMP_FontWeightPair[] fontWeightTable
+public string get_version()
+internal void set_version(string value)
+public Font get_sourceFontFile()
+internal void set_sourceFontFile(Font value)
+public AtlasPopulationMode get_atlasPopulationMode()
+public void set_atlasPopulationMode(AtlasPopulationMode value)
+public FaceInfo get_faceInfo()
+internal void set_faceInfo(FaceInfo value)
+public List`1<Glyph> get_glyphTable()
+internal void set_glyphTable(List`1<Glyph> value)
+public Dictionary`2<UInt32, Glyph> get_glyphLookupTable()
+public List`1<TMP_Character> get_characterTable()
+internal void set_characterTable(List`1<TMP_Character> value)
+public Dictionary`2<UInt32, TMP_Character> get_characterLookupTable()
+public Texture2D get_atlasTexture()
+public Texture2D[] get_atlasTextures()
+public void set_atlasTextures(Texture2D[] value)
+internal List`1<GlyphRect> get_usedGlyphRects()
+internal void set_usedGlyphRects(List`1<GlyphRect> value)
+internal List`1<GlyphRect> get_freeGlyphRects()
+internal void set_freeGlyphRects(List`1<GlyphRect> value)
+public FaceInfo_Legacy get_fontInfo()
+public int get_atlasWidth()
+internal void set_atlasWidth(int value)
+public int get_atlasHeight()
+internal void set_atlasHeight(int value)
+public int get_atlasPadding()
+internal void set_atlasPadding(int value)
+public GlyphRenderMode get_atlasRenderMode()
+internal void set_atlasRenderMode(GlyphRenderMode value)
+public TMP_FontFeatureTable get_fontFeatureTable()
+internal void set_fontFeatureTable(TMP_FontFeatureTable value)
+public List`1<TMP_FontAsset> get_fallbackFontAssetTable()
+public void set_fallbackFontAssetTable(List`1<TMP_FontAsset> value)
 public FontAssetCreationSettings get_creationSettings()
 public void set_creationSettings(FontAssetCreationSettings value)
-private void OnEnable()
-private void OnDisable()
-public void AddFaceInfo(FaceInfo faceInfo)
-public void AddGlyphInfo(TMP_Glyph[] glyphInfo)
-public void AddKerningInfo(KerningTable kerningTable)
-public void ReadFontDefinition()
-public void SortGlyphs()
+public TMP_FontWeightPair[] get_fontWeightTable()
+internal void set_fontWeightTable(TMP_FontWeightPair[] value)
+public TMP_FontAsset CreateFontAsset(Font font)
+public TMP_FontAsset CreateFontAsset(Font font, int samplingPointSize, int atlasPadding, GlyphRenderMode renderMode, int atlasWidth, int atlasHeight, AtlasPopulationMode atlasPopulationMode)
+private void Awake()
+internal void InitializeDictionaryLookupTables()
+public void ReadFontAssetDefinition()
+internal void SortCharacterTable()
+internal void SortGlyphTable()
+internal void SortGlyphAndCharacterTables()
 public bool HasCharacter(int character)
 public bool HasCharacter(char character)
 public bool HasCharacter(char character, bool searchFallbacks)
@@ -950,23 +1022,121 @@ public bool HasCharacters(string text, List`1& missingCharacters)
 public bool HasCharacters(string text)
 public string GetCharacters(TMP_FontAsset fontAsset)
 public Int32[] GetCharactersArray(TMP_FontAsset fontAsset)
+public bool TryAddCharacters(UInt32[] unicodes)
+public bool TryAddCharacters(UInt32[] unicodes, UInt32[]& missingUnicodes)
+public bool TryAddCharacters(string characters)
+public bool TryAddCharacters(string characters, String& missingCharacters)
+internal bool TryAddCharacter_Internal(UInt32 unicode)
+internal TMP_Character AddCharacter_Internal(UInt32 unicode, Glyph glyph)
+internal bool TryAddCharacterInternal(UInt32 unicode, TMP_Character& character)
+internal UInt32 GetGlyphIndex(UInt32 unicode)
+internal void UpdateAtlasTexture()
+internal void UpdateGlyphAdjustmentRecords(UInt32 unicode, UInt32 glyphIndex)
+public void ClearFontAssetData(bool setAtlasSizeToZero)
+private void UpgradeFontAsset()
+private void UpgradeGlyphAdjustmentTableToFontFeatureTable()
+}
+public TMPro.TMP_FontAssetUtilities : object {
+private TMP_FontAssetUtilities s_Instance
+private List`1<int> k_SearchedFontAssets
+private bool k_IsFontEngineInitialized
+public TMP_FontAssetUtilities instance
+public TMP_FontAssetUtilities get_instance()
+public TMP_Character GetCharacterFromFontAsset(UInt32 unicode, TMP_FontAsset sourceFontAsset, bool includeFallbacks, FontStyles fontStyle, FontWeight fontWeight, Boolean& isAlternativeTypeface, TMP_FontAsset& fontAsset)
+private TMP_Character GetCharacterFromFontAsset_Internal(UInt32 unicode, TMP_FontAsset sourceFontAsset, bool includeFallbacks, FontStyles fontStyle, FontWeight fontWeight, Boolean& isAlternativeTypeface, TMP_FontAsset& fontAsset)
+public TMP_Character GetCharacterFromFontAssets(UInt32 unicode, List`1<TMP_FontAsset> fontAssets, bool includeFallbacks, FontStyles fontStyle, FontWeight fontWeight, Boolean& isAlternativeTypeface, TMP_FontAsset& fontAsset)
+private bool TryGetCharacterFromFontFile(UInt32 unicode, TMP_FontAsset fontAsset, TMP_Character& character)
+public bool TryGetGlyphFromFontFile(UInt32 glyphIndex, TMP_FontAsset fontAsset, Glyph& glyph)
+}
+public TMPro.TMP_FontFeatureTable : object {
+internal List`1<TMP_GlyphPairAdjustmentRecord> m_GlyphPairAdjustmentRecords
+internal Dictionary`2<long, TMP_GlyphPairAdjustmentRecord> m_GlyphPairAdjustmentRecordLookupDictionary
+internal List`1<TMP_GlyphPairAdjustmentRecord> glyphPairAdjustmentRecords
+internal List`1<TMP_GlyphPairAdjustmentRecord> get_glyphPairAdjustmentRecords()
+internal void set_glyphPairAdjustmentRecords(List`1<TMP_GlyphPairAdjustmentRecord> value)
+public void SortGlyphPairAdjustmentRecords()
+}
+public TMPro.TMP_FontStyleStack : ValueType {
+public byte bold
+public byte italic
+public byte underline
+public byte strikethrough
+public byte highlight
+public byte superscript
+public byte subscript
+public byte uppercase
+public byte lowercase
+public byte smallcaps
+public void Clear()
+public byte Add(FontStyles style)
+public byte Remove(FontStyles style)
 }
 public TMPro.TMP_FontUtilities : object {
 private List`1<int> k_searchedFontAssets
-public TMP_FontAsset SearchForGlyph(TMP_FontAsset font, int character, TMP_Glyph& glyph)
-public TMP_FontAsset SearchForGlyph(List`1<TMP_FontAsset> fonts, int character, TMP_Glyph& glyph)
-private TMP_FontAsset SearchForGlyphInternal(TMP_FontAsset font, int character, TMP_Glyph& glyph)
-private TMP_FontAsset SearchForGlyphInternal(List`1<TMP_FontAsset> fonts, int character, TMP_Glyph& glyph)
+public TMP_FontAsset SearchForCharacter(TMP_FontAsset font, UInt32 unicode, TMP_Character& character)
+public TMP_FontAsset SearchForCharacter(List`1<TMP_FontAsset> fonts, UInt32 unicode, TMP_Character& character)
+private TMP_FontAsset SearchForCharacterInternal(TMP_FontAsset font, UInt32 unicode, TMP_Character& character)
+private TMP_FontAsset SearchForCharacterInternal(List`1<TMP_FontAsset> fonts, UInt32 unicode, TMP_Character& character)
 }
-public TMPro.TMP_FontWeights : ValueType {
+public TMPro.TMP_FontWeightPair : ValueType {
 public TMP_FontAsset regularTypeface
 public TMP_FontAsset italicTypeface
 }
-public TMPro.TMP_Glyph : TMP_TextElement {
+public TMPro.TMP_Glyph : TMP_TextElement_Legacy {
 public TMP_Glyph Clone(TMP_Glyph source)
 }
+public TMPro.TMP_GlyphAdjustmentRecord : ValueType {
+private UInt32 m_GlyphIndex
+private TMP_GlyphValueRecord m_GlyphValueRecord
+public UInt32 glyphIndex
+public TMP_GlyphValueRecord glyphValueRecord
+public UInt32 get_glyphIndex()
+public void set_glyphIndex(UInt32 value)
+public TMP_GlyphValueRecord get_glyphValueRecord()
+public void set_glyphValueRecord(TMP_GlyphValueRecord value)
+public void .ctor(UInt32 glyphIndex, TMP_GlyphValueRecord glyphValueRecord)
+internal void .ctor(GlyphAdjustmentRecord adjustmentRecord)
+}
+public TMPro.TMP_GlyphPairAdjustmentRecord : object {
+private TMP_GlyphAdjustmentRecord m_FirstAdjustmentRecord
+private TMP_GlyphAdjustmentRecord m_SecondAdjustmentRecord
+private FontFeatureLookupFlags m_FeatureLookupFlags
+public TMP_GlyphAdjustmentRecord firstAdjustmentRecord
+public TMP_GlyphAdjustmentRecord secondAdjustmentRecord
+public FontFeatureLookupFlags featureLookupFlags
+public TMP_GlyphAdjustmentRecord get_firstAdjustmentRecord()
+public void set_firstAdjustmentRecord(TMP_GlyphAdjustmentRecord value)
+public TMP_GlyphAdjustmentRecord get_secondAdjustmentRecord()
+public void set_secondAdjustmentRecord(TMP_GlyphAdjustmentRecord value)
+public FontFeatureLookupFlags get_featureLookupFlags()
+public void set_featureLookupFlags(FontFeatureLookupFlags value)
+public void .ctor(TMP_GlyphAdjustmentRecord firstAdjustmentRecord, TMP_GlyphAdjustmentRecord secondAdjustmentRecord)
+internal void .ctor(GlyphPairAdjustmentRecord glyphPairAdjustmentRecord)
+}
+public TMPro.TMP_GlyphValueRecord : ValueType {
+private float m_XPlacement
+private float m_YPlacement
+private float m_XAdvance
+private float m_YAdvance
+public float xPlacement
+public float yPlacement
+public float xAdvance
+public float yAdvance
+public float get_xPlacement()
+public void set_xPlacement(float value)
+public float get_yPlacement()
+public void set_yPlacement(float value)
+public float get_xAdvance()
+public void set_xAdvance(float value)
+public float get_yAdvance()
+public void set_yAdvance(float value)
+public void .ctor(float xPlacement, float yPlacement, float xAdvance, float yAdvance)
+internal void .ctor(GlyphValueRecord_Legacy valueRecord)
+internal void .ctor(GlyphValueRecord valueRecord)
+public TMP_GlyphValueRecord op_Addition(TMP_GlyphValueRecord a, TMP_GlyphValueRecord b)
+}
 public TMPro.TMP_InputField : Selectable {
-protected TouchScreenKeyboard m_Keyboard
+protected TouchScreenKeyboard m_SoftKeyboard
 private Char[] kSeparators
 protected RectTransform m_TextViewport
 protected TMP_Text m_TextComponent
@@ -974,6 +1144,7 @@ protected RectTransform m_TextComponentRectTransform
 protected Graphic m_Placeholder
 protected Scrollbar m_VerticalScrollbar
 protected TMP_ScrollbarEventHandler m_VerticalScrollbarEventHandler
+private bool m_IsDrivenByLayoutComponents
 private float m_ScrollPosition
 protected float m_ScrollSensitivity
 private ContentType m_ContentType
@@ -982,6 +1153,7 @@ private char m_AsteriskChar
 private TouchScreenKeyboardType m_KeyboardType
 private LineType m_LineType
 private bool m_HideMobileInput
+private bool m_HideSoftKeyboard
 private CharacterValidation m_CharacterValidation
 private string m_RegexValue
 private float m_GlobalPointSize
@@ -993,6 +1165,7 @@ private SelectionEvent m_OnDeselect
 private TextSelectionEvent m_OnTextSelection
 private TextSelectionEvent m_OnEndTextSelection
 private OnChangeEvent m_OnValueChanged
+private TouchScreenKeyboardEvent m_OnTouchScreenKeyboardStatusChanged
 private OnValidateInput m_OnValidateInput
 private Color m_CaretColor
 private bool m_CustomCaretColor
@@ -1009,7 +1182,6 @@ protected int m_CaretSelectPosition
 private RectTransform caretRectTrans
 protected UIVertex[] m_CursorVerts
 private CanvasRenderer m_CachedInputRenderer
-private Vector2 m_DefaultTransformPosition
 private Vector2 m_LastPosition
 protected Mesh m_Mesh
 private bool m_AllowInput
@@ -1025,25 +1197,38 @@ private Coroutine m_DragCoroutine
 private string m_OriginalText
 private bool m_WasCanceled
 private bool m_HasDoneFocusTransition
+private WaitForSecondsRealtime m_WaitForSecondsRealtime
+private bool m_PreventCallback
+private bool m_TouchKeyboardAllowsInPlaceEditing
+private bool m_IsTextComponentUpdateRequired
 private bool m_IsScrollbarUpdateRequired
 private bool m_IsUpdatingScrollbarValues
 private bool m_isLastKeyBackspace
-private float m_ClickStartTime
+private float m_PointerDownClickStartTime
+private float m_KeyDownStartTime
 private float m_DoubleClickDelay
 private string kEmailSpecialCharacters
 protected TMP_FontAsset m_GlobalFontAsset
 protected bool m_OnFocusSelectAll
 protected bool m_isSelectAll
 protected bool m_ResetOnDeActivation
+private bool m_SelectionStillActive
+private bool m_ReleaseSelection
+private GameObject m_SelectedObject
 private bool m_RestoreOriginalTextOnEscape
 protected bool m_isRichTextEditingAllowed
+protected int m_LineLimit
 protected TMP_InputValidator m_InputValidator
 private bool m_isSelected
-private bool isStringPositionDirty
+private bool m_IsStringPositionDirty
+private bool m_IsCaretPositionDirty
 private bool m_forceRectTransformAdjustment
 private Event m_ProcessingEvent
+private BaseInput inputSystem
+private string compositionString
 protected Mesh mesh
 public bool shouldHideMobileInput
+public bool shouldHideSoftKeyboard
 public string text
 public bool isFocused
 public float caretBlinkRate
@@ -1063,6 +1248,7 @@ public SelectionEvent onDeselect
 public TextSelectionEvent onTextSelection
 public TextSelectionEvent onEndTextSelection
 public OnChangeEvent onValueChanged
+public TouchScreenKeyboardEvent onTouchScreenKeyboardStatusChanged
 public OnValidateInput onValidateInput
 public int characterLimit
 public float pointSize
@@ -1073,6 +1259,7 @@ public bool restoreOriginalTextOnEscape
 public bool isRichTextEditingAllowed
 public ContentType contentType
 public LineType lineType
+public int lineLimit
 public InputType inputType
 public TouchScreenKeyboardType keyboardType
 public CharacterValidation characterValidation
@@ -1094,11 +1281,25 @@ public int stringPosition
 public int selectionStringAnchorPosition
 public int selectionStringFocusPosition
 private string clipboard
+public float minWidth
+public float preferredWidth
+public float flexibleWidth
+public float minHeight
+public float preferredHeight
+public float flexibleHeight
+public int layoutPriority
+private BaseInput get_inputSystem()
+private string get_compositionString()
 protected Mesh get_mesh()
-public void set_shouldHideMobileInput(bool value)
 public bool get_shouldHideMobileInput()
+public void set_shouldHideMobileInput(bool value)
+public bool get_shouldHideSoftKeyboard()
+public void set_shouldHideSoftKeyboard(bool value)
+private bool isKeyboardUsingEvents()
 public string get_text()
 public void set_text(string value)
+public void SetTextWithoutNotify(string input)
+private void SetText(string value, bool sendCallback)
 public bool get_isFocused()
 public float get_caretBlinkRate()
 public void set_caretBlinkRate(float value)
@@ -1134,6 +1335,8 @@ public TextSelectionEvent get_onEndTextSelection()
 public void set_onEndTextSelection(TextSelectionEvent value)
 public OnChangeEvent get_onValueChanged()
 public void set_onValueChanged(OnChangeEvent value)
+public TouchScreenKeyboardEvent get_onTouchScreenKeyboardStatusChanged()
+public void set_onTouchScreenKeyboardStatusChanged(TouchScreenKeyboardEvent value)
 public OnValidateInput get_onValidateInput()
 public void set_onValidateInput(OnValidateInput value)
 public int get_characterLimit()
@@ -1154,6 +1357,8 @@ public ContentType get_contentType()
 public void set_contentType(ContentType value)
 public LineType get_lineType()
 public void set_lineType(LineType value)
+public int get_lineLimit()
+public void set_lineLimit(int value)
 public InputType get_inputType()
 public void set_inputType(InputType value)
 public TouchScreenKeyboardType get_keyboardType()
@@ -1208,6 +1413,7 @@ public void MoveToStartOfLine(bool shift, bool ctrl)
 private string get_clipboard()
 private void set_clipboard(string value)
 private bool InPlaceEditing()
+private void UpdateStringPositionFromKeyboard()
 protected void LateUpdate()
 private bool MayDrag(PointerEventData eventData)
 public void OnBeginDrag(PointerEventData eventData)
@@ -1216,14 +1422,14 @@ private IEnumerator MouseDragOutsideRect(PointerEventData eventData)
 public void OnEndDrag(PointerEventData eventData)
 public void OnPointerDown(PointerEventData eventData)
 protected EditState KeyPressed(Event evt)
-private bool IsValidChar(char c)
+protected bool IsValidChar(char c)
 public void ProcessEvent(Event e)
 public void OnUpdateSelected(BaseEventData eventData)
 public void OnScroll(PointerEventData eventData)
 private string GetSelectedString()
-private int FindtNextWordBegin()
+private int FindNextWordBegin()
 private void MoveRight(bool shift, bool ctrl)
-private int FindtPrevWordBegin()
+private int FindPrevWordBegin()
 private void MoveLeft(bool shift, bool ctrl)
 private int LineUpCharacterPosition(int originalPos, bool goToFirstChar)
 private int LineDownCharacterPosition(int originalPos, bool goToLastChar)
@@ -1238,11 +1444,12 @@ private void MovePageUp(bool shift, bool goToFirstChar)
 private void MovePageDown(bool shift)
 private void MovePageDown(bool shift, bool goToLastChar)
 private void Delete()
-private void ForwardSpace()
+private void DeleteKey()
 private void Backspace()
 protected void Append(string input)
 protected void Append(char input)
 private void Insert(char c)
+private void UpdateTouchKeyboardFromEditChanges()
 private void SendOnValueChangedAndUpdateLabel()
 private void SendOnValueChanged()
 protected void SendOnEndEdit()
@@ -1251,11 +1458,14 @@ protected void SendOnFocus()
 protected void SendOnFocusLost()
 protected void SendOnTextSelection()
 protected void SendOnEndTextSelection()
+protected void SendTouchScreenKeyboardStatusChanged()
 protected void UpdateLabel()
 private void UpdateScrollbar()
 private void OnScrollbarValueChange(float value)
 private void AdjustTextPositionRelativeToViewport(float relativePosition)
 private int GetCaretPositionFromStringIndex(int stringIndex)
+private int GetMinCaretPositionFromStringIndex(int stringIndex)
+private int GetMaxCaretPositionFromStringIndex(int stringIndex)
 private int GetStringIndexFromCaretPosition(int caretPosition)
 public void ForceLabelUpdate()
 private void MarkGeometryAsDirty()
@@ -1275,7 +1485,8 @@ private void ActivateInputFieldInternal()
 public void OnSelect(BaseEventData eventData)
 public void OnPointerClick(PointerEventData eventData)
 public void OnControlClick()
-public void DeactivateInputField()
+public void ReleaseSelection()
+public void DeactivateInputField(bool clearSelection)
 public void OnDeselect(BaseEventData eventData)
 public void OnSubmit(BaseEventData eventData)
 private void EnforceContentType()
@@ -1285,6 +1496,15 @@ private void SetToCustomIfContentTypeIsNot(ContentType[] allowedContentTypes)
 private void SetToCustom()
 private void SetToCustom(CharacterValidation characterValidation)
 protected void DoStateTransition(SelectionState state, bool instant)
+public void CalculateLayoutInputHorizontal()
+public void CalculateLayoutInputVertical()
+public float get_minWidth()
+public float get_preferredWidth()
+public float get_flexibleWidth()
+public float get_minHeight()
+public float get_preferredHeight()
+public float get_flexibleHeight()
+public int get_layoutPriority()
 public void SetGlobalPointSize(float pointSize)
 public void SetGlobalFontAsset(TMP_FontAsset fontAsset)
 private Transform UnityEngine.UI.ICanvasElement.get_transform()
@@ -1372,6 +1592,7 @@ public TMPro.TMP_MeshInfo : ValueType {
 private Color32 s_DefaultColor
 private Vector3 s_DefaultNormal
 private Vector4 s_DefaultTangent
+private Bounds s_DefaultBounds
 public Mesh mesh
 public int vertexCount
 public Vector3[] vertices
@@ -1417,6 +1638,24 @@ public float ascender
 public float baseLine
 public float descender
 }
+public TMPro.TMP_RichTextTagStack`1 : ValueType {
+public T[] m_ItemStack
+public int m_Index
+private int m_Capacity
+private T m_DefaultItem
+private int k_DefaultCapacity
+public void .ctor(T[] tagStack)
+public void .ctor(int capacity)
+public void Clear()
+public void SetDefault(T item)
+public void Add(T item)
+public T Remove()
+public void Push(T item)
+public T Pop()
+public T Peek()
+public T CurrentItem()
+public T PreviousItem()
+}
 public TMPro.TMP_ScrollbarEventHandler : MonoBehaviour {
 public bool isSelected
 public void OnPointerClick(PointerEventData eventData)
@@ -1432,7 +1671,8 @@ private bool m_enableWordWrapping
 private bool m_enableKerning
 private bool m_enableExtraPadding
 private bool m_enableTintAllSprites
-private bool m_enableParseEscapeCharacters
+private bool m_EnableRaycastTarget
+private bool m_GetFontFeaturesAtRuntime
 private int m_missingGlyphCharacter
 private bool m_warningsDisabled
 private TMP_FontAsset m_defaultFontAsset
@@ -1445,11 +1685,8 @@ private Vector2 m_defaultTextMeshProUITextContainerSize
 private bool m_autoSizeTextContainer
 private List`1<TMP_FontAsset> m_fallbackFontAssets
 private bool m_matchMaterialPreset
-private TMP_SpriteAsset m_defaultSpriteAsset
-private string m_defaultSpriteAssetPath
 private string m_defaultColorGradientPresetsPath
 private bool m_enableEmojiSupport
-private TMP_StyleSheet m_defaultStyleSheet
 private TextAsset m_leadingCharacters
 private TextAsset m_followingCharacters
 private LineBreakingTable m_linebreakingRules
@@ -1458,7 +1695,8 @@ public bool enableWordWrapping
 public bool enableKerning
 public bool enableExtraPadding
 public bool enableTintAllSprites
-public bool enableParseEscapeCharacters
+public bool enableRaycastTarget
+public bool getFontFeaturesAtRuntime
 public int missingGlyphCharacter
 public bool warningsDisabled
 public TMP_FontAsset defaultFontAsset
@@ -1471,11 +1709,8 @@ public Vector2 defaultTextMeshProUITextContainerSize
 public bool autoSizeTextContainer
 public List`1<TMP_FontAsset> fallbackFontAssets
 public bool matchMaterialPreset
-public TMP_SpriteAsset defaultSpriteAsset
-public string defaultSpriteAssetPath
 public string defaultColorGradientPresetsPath
 public bool enableEmojiSupport
-public TMP_StyleSheet defaultStyleSheet
 public TextAsset leadingCharacters
 public TextAsset followingCharacters
 public LineBreakingTable linebreakingRules
@@ -1485,8 +1720,10 @@ public bool get_enableWordWrapping()
 public bool get_enableKerning()
 public bool get_enableExtraPadding()
 public bool get_enableTintAllSprites()
-public bool get_enableParseEscapeCharacters()
+public bool get_enableRaycastTarget()
+public bool get_getFontFeaturesAtRuntime()
 public int get_missingGlyphCharacter()
+public void set_missingGlyphCharacter(int value)
 public bool get_warningsDisabled()
 public TMP_FontAsset get_defaultFontAsset()
 public string get_defaultFontAssetPath()
@@ -1498,12 +1735,9 @@ public Vector2 get_defaultTextMeshProUITextContainerSize()
 public bool get_autoSizeTextContainer()
 public List`1<TMP_FontAsset> get_fallbackFontAssets()
 public bool get_matchMaterialPreset()
-public TMP_SpriteAsset get_defaultSpriteAsset()
-public string get_defaultSpriteAssetPath()
 public string get_defaultColorGradientPresetsPath()
 public bool get_enableEmojiSupport()
 public void set_enableEmojiSupport(bool value)
-public TMP_StyleSheet get_defaultStyleSheet()
 public TextAsset get_leadingCharacters()
 public TextAsset get_followingCharacters()
 public LineBreakingTable get_linebreakingRules()
@@ -1511,96 +1745,16 @@ public TMP_Settings get_instance()
 public TMP_Settings LoadDefaultSettings()
 public TMP_Settings GetSettings()
 public TMP_FontAsset GetFontAsset()
-public TMP_SpriteAsset GetSpriteAsset()
-public TMP_StyleSheet GetStyleSheet()
 public void LoadLinebreakingRules()
 private Dictionary`2<int, char> GetCharacters(TextAsset file)
-}
-public TMPro.TMP_Sprite : TMP_TextElement {
-public string name
-public int hashCode
-public int unicode
-public Vector2 pivot
-public Sprite sprite
-}
-public TMPro.TMP_SpriteAnimator : MonoBehaviour {
-private Dictionary`2<int, bool> m_animations
-private TMP_Text m_TextComponent
-private void Awake()
-private void OnEnable()
-private void OnDisable()
-public void StopAllAnimations()
-public void DoSpriteAnimation(int currentCharacter, TMP_SpriteAsset spriteAsset, int start, int end, int framerate)
-private IEnumerator DoSpriteAnimationInternal(int currentCharacter, TMP_SpriteAsset spriteAsset, int start, int end, int framerate)
-}
-public TMPro.TMP_SpriteAsset : TMP_Asset {
-internal Dictionary`2<int, int> m_UnicodeLookup
-internal Dictionary`2<int, int> m_NameLookup
-public TMP_SpriteAsset m_defaultSpriteAsset
-public Texture spriteSheet
-public List`1<TMP_Sprite> spriteInfoList
-public List`1<TMP_SpriteAsset> fallbackSpriteAssets
-private List`1<int> k_searchedSpriteAssets
-public TMP_SpriteAsset defaultSpriteAsset
-public TMP_SpriteAsset get_defaultSpriteAsset()
-private void OnEnable()
-private Material GetDefaultSpriteMaterial()
-public void UpdateLookupTables()
-public int GetSpriteIndexFromHashcode(int hashCode)
-public int GetSpriteIndexFromUnicode(int unicode)
-public int GetSpriteIndexFromName(string name)
-public TMP_SpriteAsset SearchForSpriteByUnicode(TMP_SpriteAsset spriteAsset, int unicode, bool includeFallbacks, Int32& spriteIndex)
-private TMP_SpriteAsset SearchForSpriteByUnicodeInternal(List`1<TMP_SpriteAsset> spriteAssets, int unicode, bool includeFallbacks, Int32& spriteIndex)
-private TMP_SpriteAsset SearchForSpriteByUnicodeInternal(TMP_SpriteAsset spriteAsset, int unicode, bool includeFallbacks, Int32& spriteIndex)
-public TMP_SpriteAsset SearchForSpriteByHashCode(TMP_SpriteAsset spriteAsset, int hashCode, bool includeFallbacks, Int32& spriteIndex)
-private TMP_SpriteAsset SearchForSpriteByHashCodeInternal(List`1<TMP_SpriteAsset> spriteAssets, int hashCode, bool searchFallbacks, Int32& spriteIndex)
-private TMP_SpriteAsset SearchForSpriteByHashCodeInternal(TMP_SpriteAsset spriteAsset, int hashCode, bool searchFallbacks, Int32& spriteIndex)
 }
 public TMPro.TMP_SpriteInfo : ValueType {
 public int spriteIndex
 public int characterIndex
 public int vertexIndex
 }
-public TMPro.TMP_Style : object {
-private string m_Name
-private int m_HashCode
-private string m_OpeningDefinition
-private string m_ClosingDefinition
-private Int32[] m_OpeningTagArray
-private Int32[] m_ClosingTagArray
-public string name
-public int hashCode
-public string styleOpeningDefinition
-public string styleClosingDefinition
-public Int32[] styleOpeningTagArray
-public Int32[] styleClosingTagArray
-public string get_name()
-public void set_name(string value)
-public int get_hashCode()
-public void set_hashCode(int value)
-public string get_styleOpeningDefinition()
-public string get_styleClosingDefinition()
-public Int32[] get_styleOpeningTagArray()
-public Int32[] get_styleClosingTagArray()
-public void RefreshStyle()
-}
-public TMPro.TMP_StyleSheet : ScriptableObject {
-private TMP_StyleSheet s_Instance
-private List`1<TMP_Style> m_StyleList
-private Dictionary`2<int, TMP_Style> m_StyleDictionary
-public TMP_StyleSheet instance
-public TMP_StyleSheet get_instance()
-public TMP_StyleSheet LoadDefaultStyleSheet()
-public TMP_Style GetStyle(int hashCode)
-private TMP_Style GetStyleInternal(int hashCode)
-public void UpdateStyleDictionaryKey(int old_key, int new_key)
-public void UpdateStyleSheet()
-public void RefreshStyles()
-private void LoadStyleDictionaryInternal()
-}
 public TMPro.TMP_SubMesh : MonoBehaviour {
 private TMP_FontAsset m_fontAsset
-private TMP_SpriteAsset m_spriteAsset
 private Material m_material
 private Material m_sharedMaterial
 private Material m_fallbackMaterial
@@ -1613,7 +1767,6 @@ private Mesh m_mesh
 private TextMeshPro m_TextComponent
 private bool m_isRegisteredForEvents
 public TMP_FontAsset fontAsset
-public TMP_SpriteAsset spriteAsset
 public Material material
 public Material sharedMaterial
 public Material fallbackMaterial
@@ -1625,8 +1778,6 @@ public MeshFilter meshFilter
 public Mesh mesh
 public TMP_FontAsset get_fontAsset()
 public void set_fontAsset(TMP_FontAsset value)
-public TMP_SpriteAsset get_spriteAsset()
-public void set_spriteAsset(TMP_SpriteAsset value)
 public Material get_material()
 public void set_material(Material value)
 public Material get_sharedMaterial()
@@ -1660,7 +1811,6 @@ protected void UpdateMaterial()
 }
 public TMPro.TMP_SubMeshUI : MaskableGraphic {
 private TMP_FontAsset m_fontAsset
-private TMP_SpriteAsset m_spriteAsset
 private Material m_material
 private Material m_sharedMaterial
 private Material m_fallbackMaterial
@@ -1674,7 +1824,6 @@ private bool m_isRegisteredForEvents
 private bool m_materialDirty
 private int m_materialReferenceIndex
 public TMP_FontAsset fontAsset
-public TMP_SpriteAsset spriteAsset
 public Texture mainTexture
 public Material material
 public Material sharedMaterial
@@ -1687,8 +1836,6 @@ public CanvasRenderer canvasRenderer
 public Mesh mesh
 public TMP_FontAsset get_fontAsset()
 public void set_fontAsset(TMP_FontAsset value)
-public TMP_SpriteAsset get_spriteAsset()
-public void set_spriteAsset(TMP_SpriteAsset value)
 public Texture get_mainTexture()
 public Material get_material()
 public void set_material(Material value)
@@ -1743,7 +1890,7 @@ protected Material m_sharedMaterial
 protected Material m_currentMaterial
 protected MaterialReference[] m_materialReferences
 protected Dictionary`2<int, int> m_materialReferenceIndexLookup
-protected TMP_XmlTagStack`1<MaterialReference> m_materialReferenceStack
+protected TMP_RichTextTagStack`1<MaterialReference> m_materialReferenceStack
 protected int m_currentMaterialIndex
 protected Material[] m_fontSharedMaterials
 protected Material m_fontMaterial
@@ -1755,14 +1902,11 @@ protected Color32 s_colorWhite
 protected Color32 m_underlineColor
 protected Color32 m_strikethroughColor
 protected Color32 m_highlightColor
+protected Vector4 m_highlightPadding
 protected bool m_enableVertexGradient
 protected ColorMode m_colorMode
 protected VertexGradient m_fontColorGradient
 protected TMP_ColorGradient m_fontColorGradientPreset
-protected TMP_SpriteAsset m_spriteAsset
-protected bool m_tintAllSprites
-protected bool m_tintSprite
-protected Color32 m_spriteColor
 protected bool m_overrideHtmlColors
 protected Color32 m_faceColor
 protected Color32 m_outlineColor
@@ -1770,24 +1914,23 @@ protected float m_outlineWidth
 protected float m_fontSize
 protected float m_currentFontSize
 protected float m_fontSizeBase
-protected TMP_XmlTagStack`1<float> m_sizeStack
-protected int m_fontWeight
-protected int m_fontWeightInternal
-protected TMP_XmlTagStack`1<int> m_fontWeightStack
+protected TMP_RichTextTagStack`1<float> m_sizeStack
+protected FontWeight m_fontWeight
+protected FontWeight m_FontWeightInternal
+protected TMP_RichTextTagStack`1<FontWeight> m_FontWeightStack
 protected bool m_enableAutoSizing
 protected float m_maxFontSize
 protected float m_minFontSize
 protected float m_fontSizeMin
 protected float m_fontSizeMax
 protected FontStyles m_fontStyle
-protected FontStyles m_style
-protected TMP_BasicXmlTagStack m_fontStyleStack
+protected FontStyles m_FontStyleInternal
+protected TMP_FontStyleStack m_fontStyleStack
 protected bool m_isUsingBold
 protected TextAlignmentOptions m_textAlignment
 protected TextAlignmentOptions m_lineJustification
-protected TMP_XmlTagStack`1<TextAlignmentOptions> m_lineJustificationStack
+protected TMP_RichTextTagStack`1<TextAlignmentOptions> m_lineJustificationStack
 protected Vector3[] m_textContainerLocalCorners
-protected bool m_isAlignmentEnumConverted
 protected float m_characterSpacing
 protected float m_cSpacing
 protected float m_monoSpacing
@@ -1813,7 +1956,6 @@ protected bool m_enableKerning
 protected bool m_enableExtraPadding
 protected bool checkPaddingRequired
 protected bool m_isRichText
-protected bool m_parseCtrlCharacters
 protected bool m_isOverlay
 protected bool m_isOrthographic
 protected bool m_isCullingEnabled
@@ -1824,6 +1966,7 @@ protected TextureMappingOptions m_verticalMapping
 protected float m_uvLineOffset
 protected TextRenderFlags m_renderMode
 protected VertexSortingOrder m_geometrySortingOrder
+protected bool m_VertexBufferAutoSizeReduction
 protected int m_firstVisibleCharacter
 protected int m_maxVisibleCharacters
 protected int m_maxVisibleWords
@@ -1846,7 +1989,6 @@ private bool <autoSizeTextContainer>k__BackingField
 protected bool m_autoSizeTextContainer
 protected Mesh m_mesh
 protected bool m_isVolumetricText
-protected TMP_SpriteAnimator m_spriteAnimator
 protected float m_flexibleHeight
 protected float m_flexibleWidth
 protected float m_minWidth
@@ -1868,26 +2010,23 @@ protected bool m_isLayoutDirty
 protected bool m_verticesAlreadyDirty
 protected bool m_layoutAlreadyDirty
 protected bool m_isAwake
-protected bool m_isWaitingOnResourceLoad
-protected bool m_isInputParsingRequired
-protected TextInputSources m_inputSource
+internal bool m_isWaitingOnResourceLoad
+internal bool m_isInputParsingRequired
 protected string old_text
 protected float m_fontScale
 protected float m_fontScaleMultiplier
 protected Char[] m_htmlTag
-protected XML_TagAttribute[] m_xmlAttribute
+protected RichTextTagAttribute[] m_xmlAttribute
 protected Single[] m_attributeParameterValues
 protected float tag_LineIndent
 protected float tag_Indent
-protected TMP_XmlTagStack`1<float> m_indentStack
+protected TMP_RichTextTagStack`1<float> m_indentStack
 protected bool tag_NoParsing
 protected bool m_isParsingText
 protected Matrix4x4 m_FXMatrix
 protected bool m_isFXMatrixSet
-protected Int32[] m_char_buffer
+protected UnicodeChar[] m_TextParsingBuffer
 private TMP_CharacterInfo[] m_internalCharacterInfo
-protected Char[] m_input_CharArray
-private int m_charArray_Length
 protected int m_totalCharacterCount
 protected WordWrapState m_SavedWordWrapState
 protected WordWrapState m_SavedLineState
@@ -1908,31 +2047,28 @@ protected float m_startOfLineAscender
 protected float m_lineOffset
 protected Extents m_meshExtents
 protected Color32 m_htmlColor
-protected TMP_XmlTagStack`1<Color32> m_colorStack
-protected TMP_XmlTagStack`1<Color32> m_underlineColorStack
-protected TMP_XmlTagStack`1<Color32> m_strikethroughColorStack
-protected TMP_XmlTagStack`1<Color32> m_highlightColorStack
+protected TMP_RichTextTagStack`1<Color32> m_colorStack
+protected TMP_RichTextTagStack`1<Color32> m_underlineColorStack
+protected TMP_RichTextTagStack`1<Color32> m_strikethroughColorStack
+protected TMP_RichTextTagStack`1<Color32> m_highlightColorStack
 protected TMP_ColorGradient m_colorGradientPreset
-protected TMP_XmlTagStack`1<TMP_ColorGradient> m_colorGradientStack
+protected TMP_RichTextTagStack`1<TMP_ColorGradient> m_colorGradientStack
 protected float m_tabSpacing
 protected float m_spacing
-protected TMP_XmlTagStack`1<int> m_styleStack
-protected TMP_XmlTagStack`1<int> m_actionStack
+protected TMP_RichTextTagStack`1<int> m_styleStack
+protected TMP_RichTextTagStack`1<int> m_actionStack
 protected float m_padding
 protected float m_baselineOffset
-protected TMP_XmlTagStack`1<float> m_baselineOffsetStack
+protected TMP_RichTextTagStack`1<float> m_baselineOffsetStack
 protected float m_xAdvance
 protected TMP_TextElementType m_textElementType
 protected TMP_TextElement m_cached_TextElement
-protected TMP_Glyph m_cached_Underline_GlyphInfo
-protected TMP_Glyph m_cached_Ellipsis_GlyphInfo
-protected TMP_SpriteAsset m_defaultSpriteAsset
-protected TMP_SpriteAsset m_currentSpriteAsset
+protected TMP_Character m_cached_Underline_Character
+protected TMP_Character m_cached_Ellipsis_Character
 protected int m_spriteCount
 protected int m_spriteIndex
 protected int m_spriteAnimationID
 protected bool m_ignoreActiveState
-private Single[] k_Power
 protected Vector2 k_LargePositiveVector2
 protected Vector2 k_LargeNegativeVector2
 protected float k_LargePositiveFloat
@@ -1951,15 +2087,13 @@ public float alpha
 public bool enableVertexGradient
 public VertexGradient colorGradient
 public TMP_ColorGradient colorGradientPreset
-public TMP_SpriteAsset spriteAsset
-public bool tintAllSprites
 public bool overrideColorTags
 public Color32 faceColor
 public Color32 outlineColor
 public float outlineWidth
 public float fontSize
 public float fontScale
-public int fontWeight
+public FontWeight fontWeight
 public float pixelsPerUnit
 public bool enableAutoSizing
 public float fontSizeMin
@@ -1984,7 +2118,6 @@ public bool isTextTruncated
 public bool enableKerning
 public bool extraPadding
 public bool richText
-public bool parseCtrlCharacters
 public bool isOverlay
 public bool isOrthographic
 public bool enableCulling
@@ -1995,6 +2128,7 @@ public TextureMappingOptions verticalMapping
 public float mappingUvLineOffset
 public TextRenderFlags renderMode
 public VertexSortingOrder geometrySortingOrder
+public bool vertexBufferAutoSizeReduction
 public int firstVisibleCharacter
 public int maxVisibleCharacters
 public int maxVisibleWords
@@ -2012,7 +2146,6 @@ public Mesh mesh
 public bool isVolumetricText
 public Bounds bounds
 public Bounds textBounds
-protected TMP_SpriteAnimator spriteAnimator
 public float flexibleHeight
 public float flexibleWidth
 public float minWidth
@@ -2049,10 +2182,6 @@ public VertexGradient get_colorGradient()
 public void set_colorGradient(VertexGradient value)
 public TMP_ColorGradient get_colorGradientPreset()
 public void set_colorGradientPreset(TMP_ColorGradient value)
-public TMP_SpriteAsset get_spriteAsset()
-public void set_spriteAsset(TMP_SpriteAsset value)
-public bool get_tintAllSprites()
-public void set_tintAllSprites(bool value)
 public bool get_overrideColorTags()
 public void set_overrideColorTags(bool value)
 public Color32 get_faceColor()
@@ -2064,8 +2193,8 @@ public void set_outlineWidth(float value)
 public float get_fontSize()
 public void set_fontSize(float value)
 public float get_fontScale()
-public int get_fontWeight()
-public void set_fontWeight(int value)
+public FontWeight get_fontWeight()
+public void set_fontWeight(FontWeight value)
 public float get_pixelsPerUnit()
 public bool get_enableAutoSizing()
 public void set_enableAutoSizing(bool value)
@@ -2109,8 +2238,6 @@ public bool get_extraPadding()
 public void set_extraPadding(bool value)
 public bool get_richText()
 public void set_richText(bool value)
-public bool get_parseCtrlCharacters()
-public void set_parseCtrlCharacters(bool value)
 public bool get_isOverlay()
 public void set_isOverlay(bool value)
 public bool get_isOrthographic()
@@ -2131,6 +2258,8 @@ public TextRenderFlags get_renderMode()
 public void set_renderMode(TextRenderFlags value)
 public VertexSortingOrder get_geometrySortingOrder()
 public void set_geometrySortingOrder(VertexSortingOrder value)
+public bool get_vertexBufferAutoSizeReduction()
+public void set_vertexBufferAutoSizeReduction(bool value)
 public int get_firstVisibleCharacter()
 public void set_firstVisibleCharacter(int value)
 public int get_maxVisibleCharacters()
@@ -2159,7 +2288,6 @@ public bool get_isVolumetricText()
 public void set_isVolumetricText(bool value)
 public Bounds get_bounds()
 public Bounds get_textBounds()
-protected TMP_SpriteAnimator get_spriteAnimator()
 public float get_flexibleHeight()
 public float get_flexibleWidth()
 public float get_minWidth()
@@ -2204,26 +2332,8 @@ public void CrossFadeAlpha(float alpha, float duration, bool ignoreTimeScale)
 protected void InternalCrossFadeColor(Color targetColor, float duration, bool ignoreTimeScale, bool useAlpha)
 protected void InternalCrossFadeAlpha(float alpha, float duration, bool ignoreTimeScale)
 protected void ParseInputText()
-public void SetText(string text)
-public void SetText(string text, bool syncTextInputBox)
-public void SetText(string text, float arg0)
-public void SetText(string text, float arg0, float arg1)
-public void SetText(string text, float arg0, float arg1, float arg2)
-public void SetText(StringBuilder text)
-public void SetCharArray(Char[] sourceText)
-public void SetCharArray(Char[] sourceText, int start, int length)
-public void SetCharArray(Int32[] sourceText, int start, int length)
-protected void SetTextArrayToCharArray(Char[] sourceText, Int32[]& charBuffer)
-protected void StringToCharArray(string sourceText, Int32[]& charBuffer)
-protected void StringBuilderToIntArray(StringBuilder sourceText, Int32[]& charBuffer)
-private bool ReplaceOpeningStyleTag(String& sourceText, int srcIndex, Int32& srcOffset, Int32[]& charBuffer, Int32& writeIndex)
-private bool ReplaceOpeningStyleTag(Int32[]& sourceText, int srcIndex, Int32& srcOffset, Int32[]& charBuffer, Int32& writeIndex)
-private bool ReplaceOpeningStyleTag(Char[]& sourceText, int srcIndex, Int32& srcOffset, Int32[]& charBuffer, Int32& writeIndex)
-private bool ReplaceOpeningStyleTag(StringBuilder& sourceText, int srcIndex, Int32& srcOffset, Int32[]& charBuffer, Int32& writeIndex)
-private bool ReplaceClosingStyleTag(String& sourceText, int srcIndex, Int32[]& charBuffer, Int32& writeIndex)
-private bool ReplaceClosingStyleTag(Int32[]& sourceText, int srcIndex, Int32[]& charBuffer, Int32& writeIndex)
-private bool ReplaceClosingStyleTag(Char[]& sourceText, int srcIndex, Int32[]& charBuffer, Int32& writeIndex)
-private bool ReplaceClosingStyleTag(StringBuilder& sourceText, int srcIndex, Int32[]& charBuffer, Int32& writeIndex)
+protected void StringToCharArray(string sourceText, UnicodeChar[]& charBuffer)
+protected void StringBuilderToIntArray(StringBuilder sourceText, UnicodeChar[]& charBuffer)
 private bool IsTagName(String& text, string tag, int index)
 private bool IsTagName(Char[]& text, string tag, int index)
 private bool IsTagName(Int32[]& text, string tag, int index)
@@ -2233,9 +2343,7 @@ private int GetTagHashCode(Char[]& text, int index, Int32& closeIndex)
 private int GetTagHashCode(Int32[]& text, int index, Int32& closeIndex)
 private int GetTagHashCode(StringBuilder& text, int index, Int32& closeIndex)
 private void ResizeInternalArray(T[]& array)
-protected void AddFloatToCharArray(float number, Int32& index, int precision)
-protected void AddIntToCharArray(int number, Int32& index, int precision)
-protected int SetArraySizes(Int32[] chars)
+protected int SetArraySizes(UnicodeChar[] chars)
 protected void GenerateTextMesh()
 public Vector2 GetPreferredValues()
 public Vector2 GetPreferredValues(float width, float height)
@@ -2262,10 +2370,8 @@ public void ComputeMarginSize()
 protected void SaveWordWrappingState(WordWrapState& state, int index, int count)
 protected int RestoreWordWrappingState(WordWrapState& state)
 protected void SaveGlyphVertexInfo(float padding, float style_padding, Color32 vertexColor)
-protected void SaveSpriteVertexInfo(Color32 vertexColor)
 protected void FillCharacterVertexBuffers(int i, int index_X4)
 protected void FillCharacterVertexBuffers(int i, int index_X4, bool isVolumetric)
-protected void FillSpriteVertexBuffers(int i, int index_X4)
 protected void DrawUnderlineMesh(Vector3 start, Vector3 end, Int32& index, float startScale, float endScale, float maxScale, float sdfScale, Color32 underlineColor)
 protected void DrawTextHighlight(Vector3 start, Vector3 end, Int32& index, Color32 highlightColor)
 protected void LoadDefaultSettings()
@@ -2279,6 +2385,7 @@ public void ClearMesh(bool uploadGeometry)
 public string GetParsedText()
 protected Vector2 PackUV(float x, float y, float scale)
 protected float PackUV(float x, float y)
+internal void InternalUpdate()
 protected int HexToInt(char hex)
 protected int GetUTF16(string text, int i)
 protected int GetUTF16(StringBuilder text, int i)
@@ -2289,9 +2396,30 @@ protected Color32 HexCharsToColor(Char[] hexChars, int startIndex, int length)
 private int GetAttributeParameters(Char[] chars, int startIndex, int length, Single[]& parameters)
 protected float ConvertToFloat(Char[] chars, int startIndex, int length)
 protected float ConvertToFloat(Char[] chars, int startIndex, int length, Int32& lastIndex)
-protected bool ValidateHtmlTag(Int32[] chars, int startIndex, Int32& endIndex)
+protected bool ValidateHtmlTag(UnicodeChar[] chars, int startIndex, Int32& endIndex)
 }
 public TMPro.TMP_TextElement : object {
+protected TextElementType m_ElementType
+private UInt32 m_Unicode
+private Glyph m_Glyph
+private UInt32 m_GlyphIndex
+private float m_Scale
+public TextElementType elementType
+public UInt32 unicode
+public Glyph glyph
+public UInt32 glyphIndex
+public float scale
+public TextElementType get_elementType()
+public UInt32 get_unicode()
+public void set_unicode(UInt32 value)
+public Glyph get_glyph()
+public void set_glyph(Glyph value)
+public UInt32 get_glyphIndex()
+public void set_glyphIndex(UInt32 value)
+public float get_scale()
+public void set_scale(float value)
+}
+public TMPro.TMP_TextElement_Legacy : object {
 public int id
 public float x
 public float y
@@ -2305,7 +2433,7 @@ public float scale
 public TMPro.TMP_TextElementType : Enum {
 public int value__
 public TMP_TextElementType Character
-public TMP_TextElementType Sprite
+public TMP_TextElementType Unused
 }
 public TMPro.TMP_TextInfo : object {
 private Vector2 k_InfinityVectorPositive
@@ -2337,6 +2465,21 @@ public TMP_MeshInfo[] CopyMeshInfoVertexData()
 public void Resize(T[]& array, int size)
 public void Resize(T[]& array, int size, bool isBlockAllocated)
 }
+public TMPro.TMP_TextParsingUtilities : object {
+private TMP_TextParsingUtilities s_Instance
+private string k_LookupStringL
+private string k_LookupStringU
+public TMP_TextParsingUtilities instance
+public TMP_TextParsingUtilities get_instance()
+public UInt32 GetHashCode(string s)
+public int GetHashCodeCaseSensitive(string s)
+public char ToLowerASCIIFast(char c)
+public char ToUpperASCIIFast(char c)
+public UInt32 ToUpperASCIIFast(UInt32 c)
+public UInt32 ToLowerASCIIFast(UInt32 c)
+public bool IsHighSurrogate(UInt32 c)
+public bool IsLowSurrogate(UInt32 c)
+}
 public TMPro.TMP_TextUtilities : object {
 private Vector3[] m_rectWorldCorners
 private string k_lookupStringL
@@ -2362,7 +2505,7 @@ public char ToUpperFast(char c)
 public int GetSimpleHashCode(string s)
 public UInt32 GetSimpleHashCodeLowercase(string s)
 public int HexToInt(char hex)
-public int StringToInt(string s)
+public int StringHexToInt(string s)
 }
 public TMPro.TMP_UpdateManager : object {
 private TMP_UpdateManager s_Instance
@@ -2370,18 +2513,24 @@ private List`1<TMP_Text> m_LayoutRebuildQueue
 private Dictionary`2<int, int> m_LayoutQueueLookup
 private List`1<TMP_Text> m_GraphicRebuildQueue
 private Dictionary`2<int, int> m_GraphicQueueLookup
+private List`1<TMP_Text> m_InternalUpdateQueue
+private Dictionary`2<int, int> m_InternalUpdateLookup
 public TMP_UpdateManager instance
 public TMP_UpdateManager get_instance()
+internal void RegisterTextObjectForUpdate(TMP_Text textObject)
+private void InternalRegisterTextObjectForUpdate(TMP_Text textObject)
 public void RegisterTextElementForLayoutRebuild(TMP_Text element)
 private bool InternalRegisterTextElementForLayoutRebuild(TMP_Text element)
 public void RegisterTextElementForGraphicRebuild(TMP_Text element)
 private bool InternalRegisterTextElementForGraphicRebuild(TMP_Text element)
-private void OnBeginFrameRendering(Camera[] cameras)
+private void OnBeginFrameRendering(ScriptableRenderContext renderContext, Camera[] cameras)
 private void OnCameraPreCull(Camera cam)
 private void DoRebuilds()
+internal void UnRegisterTextObjectForUpdate(TMP_Text textObject)
 public void UnRegisterTextElementForRebuild(TMP_Text element)
 private void InternalUnRegisterTextElementForGraphicRebuild(TMP_Text element)
 private void InternalUnRegisterTextElementForLayoutRebuild(TMP_Text element)
+private void InternalUnRegisterTextObjectForUpdate(TMP_Text textObject)
 }
 public TMPro.TMP_UpdateRegistry : object {
 private TMP_UpdateRegistry s_Instance
@@ -2424,22 +2573,6 @@ public int firstCharacterIndex
 public int lastCharacterIndex
 public int characterCount
 public string GetWord()
-}
-public TMPro.TMP_XmlTagStack`1 : ValueType {
-public T[] itemStack
-public int index
-private int m_capacity
-private T m_defaultItem
-private int k_defaultCapacity
-public void .ctor(T[] tagStack)
-public void Clear()
-public void SetDefault(T item)
-public void Add(T item)
-public T Remove()
-public void Push(T item)
-public T Pop()
-public T CurrentItem()
-public T PreviousItem()
 }
 public TMPro.TMPro_EventManager : object {
 public FastAction`2<object, Compute_DT_EventArgs> COMPUTE_DT_EVENT
@@ -2492,6 +2625,17 @@ public void Init(MonoBehaviour coroutineContainer)
 public void StartTween(T info)
 public void StopTween()
 }
+internal TMPro.UnicodeCharacter : Enum {
+public UInt32 value__
+public UnicodeCharacter HYPHEN_MINUS
+public UnicodeCharacter SOFT_HYPHEN
+public UnicodeCharacter HYPHEN
+public UnicodeCharacter NON_BREAKING_HYPHEN
+public UnicodeCharacter ZERO_WIDTH_SPACE
+public UnicodeCharacter RIGHT_SINGLE_QUOTATION
+public UnicodeCharacter APOSTROPHE
+public UnicodeCharacter WORD_JOINER
+}
 public TMPro.VertexGradient : ValueType {
 public Color topLeft
 public Color topRight
@@ -2539,33 +2683,25 @@ public Color32 vertexColor
 public Color32 underlineColor
 public Color32 strikethroughColor
 public Color32 highlightColor
-public TMP_BasicXmlTagStack basicStyleStack
-public TMP_XmlTagStack`1<Color32> colorStack
-public TMP_XmlTagStack`1<Color32> underlineColorStack
-public TMP_XmlTagStack`1<Color32> strikethroughColorStack
-public TMP_XmlTagStack`1<Color32> highlightColorStack
-public TMP_XmlTagStack`1<TMP_ColorGradient> colorGradientStack
-public TMP_XmlTagStack`1<float> sizeStack
-public TMP_XmlTagStack`1<float> indentStack
-public TMP_XmlTagStack`1<int> fontWeightStack
-public TMP_XmlTagStack`1<int> styleStack
-public TMP_XmlTagStack`1<float> baselineStack
-public TMP_XmlTagStack`1<int> actionStack
-public TMP_XmlTagStack`1<MaterialReference> materialReferenceStack
-public TMP_XmlTagStack`1<TextAlignmentOptions> lineJustificationStack
+public TMP_FontStyleStack basicStyleStack
+public TMP_RichTextTagStack`1<Color32> colorStack
+public TMP_RichTextTagStack`1<Color32> underlineColorStack
+public TMP_RichTextTagStack`1<Color32> strikethroughColorStack
+public TMP_RichTextTagStack`1<Color32> highlightColorStack
+public TMP_RichTextTagStack`1<TMP_ColorGradient> colorGradientStack
+public TMP_RichTextTagStack`1<float> sizeStack
+public TMP_RichTextTagStack`1<float> indentStack
+public TMP_RichTextTagStack`1<FontWeight> fontWeightStack
+public TMP_RichTextTagStack`1<int> styleStack
+public TMP_RichTextTagStack`1<float> baselineStack
+public TMP_RichTextTagStack`1<int> actionStack
+public TMP_RichTextTagStack`1<MaterialReference> materialReferenceStack
+public TMP_RichTextTagStack`1<TextAlignmentOptions> lineJustificationStack
 public int spriteAnimationID
 public TMP_FontAsset currentFontAsset
-public TMP_SpriteAsset currentSpriteAsset
 public Material currentMaterial
 public int currentMaterialIndex
 public Extents meshExtents
 public bool tagNoParsing
 public bool isNonBreakingSpace
-}
-public TMPro.XML_TagAttribute : ValueType {
-public int nameHashCode
-public TagType valueType
-public int valueStartIndex
-public int valueLength
-public int valueHashCode
 }

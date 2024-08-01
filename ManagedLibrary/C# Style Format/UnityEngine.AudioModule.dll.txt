@@ -1,8 +1,12 @@
+internal Unity.Audio.IValidatable {
+public bool Valid
+public bool get_Valid()
+}
 public UnityEngine.Audio.AudioClipPlayable : ValueType {
 private PlayableHandle m_Handle
-internal void .ctor(PlayableHandle handle)
 public AudioClipPlayable Create(PlayableGraph graph, AudioClip clip, bool looping)
 private PlayableHandle CreateHandle(PlayableGraph graph, AudioClip clip, bool looping)
+internal void .ctor(PlayableHandle handle)
 public PlayableHandle GetHandle()
 public Playable op_Implicit(AudioClipPlayable playable)
 public AudioClipPlayable op_Explicit(Playable playable)
@@ -11,6 +15,12 @@ public AudioClip GetClip()
 public void SetClip(AudioClip value)
 public bool GetLooped()
 public void SetLooped(bool value)
+internal float GetVolume()
+internal void SetVolume(float value)
+internal float GetStereoPan()
+internal void SetStereoPan(float value)
+internal float GetSpatialBlend()
+internal void SetSpatialBlend(float value)
 public bool IsPlaying()
 public bool IsChannelPlaying()
 public double GetStartDelay()
@@ -23,6 +33,12 @@ private AudioClip GetClipInternal(PlayableHandle& hdl)
 private void SetClipInternal(PlayableHandle& hdl, AudioClip clip)
 private bool GetLoopedInternal(PlayableHandle& hdl)
 private void SetLoopedInternal(PlayableHandle& hdl, bool looped)
+private float GetVolumeInternal(PlayableHandle& hdl)
+private void SetVolumeInternal(PlayableHandle& hdl, float volume)
+private float GetStereoPanInternal(PlayableHandle& hdl)
+private void SetStereoPanInternal(PlayableHandle& hdl, float stereoPan)
+private float GetSpatialBlendInternal(PlayableHandle& hdl)
+private void SetSpatialBlendInternal(PlayableHandle& hdl, float spatialBlend)
 private bool GetIsChannelPlayingInternal(PlayableHandle& hdl)
 private double GetStartDelayInternal(PlayableHandle& hdl)
 private void SetStartDelayInternal(PlayableHandle& hdl, double delay)
@@ -36,9 +52,10 @@ public AudioMixerGroup outputAudioMixerGroup
 public AudioMixerUpdateMode updateMode
 public AudioMixerGroup get_outputAudioMixerGroup()
 public void set_outputAudioMixerGroup(AudioMixerGroup value)
-public AudioMixerGroup[] FindMatchingGroups(string subPath)
 public AudioMixerSnapshot FindSnapshot(string name)
-private void TransitionToSnapshot(AudioMixerSnapshot snapshot, float timeToReach)
+public AudioMixerGroup[] FindMatchingGroups(string subPath)
+internal void TransitionToSnapshot(AudioMixerSnapshot snapshot, float timeToReach)
+private void TransitionToSnapshotInternal(AudioMixerSnapshot snapshot, float timeToReach)
 public void TransitionToSnapshots(AudioMixerSnapshot[] snapshots, Single[] weights, float timeToReach)
 public AudioMixerUpdateMode get_updateMode()
 public void set_updateMode(AudioMixerUpdateMode value)
@@ -52,14 +69,14 @@ public AudioMixer get_audioMixer()
 }
 public UnityEngine.Audio.AudioMixerPlayable : ValueType {
 private PlayableHandle m_Handle
-internal void .ctor(PlayableHandle handle)
 public AudioMixerPlayable Create(PlayableGraph graph, int inputCount, bool normalizeInputVolumes)
 private PlayableHandle CreateHandle(PlayableGraph graph, int inputCount, bool normalizeInputVolumes)
+internal void .ctor(PlayableHandle handle)
 public PlayableHandle GetHandle()
 public Playable op_Implicit(AudioMixerPlayable playable)
 public AudioMixerPlayable op_Explicit(Playable playable)
 public bool Equals(AudioMixerPlayable other)
-private bool CreateAudioMixerPlayableInternal(PlayableGraph& graph, int inputCount, bool normalizeInputVolumes, PlayableHandle& handle)
+private bool CreateAudioMixerPlayableInternal(PlayableGraph& graph, bool normalizeInputVolumes, PlayableHandle& handle)
 }
 public UnityEngine.Audio.AudioMixerSnapshot : Object {
 public AudioMixer audioMixer
@@ -72,7 +89,6 @@ public AudioMixerUpdateMode Normal
 public AudioMixerUpdateMode UnscaledTime
 }
 public UnityEngine.Audio.AudioPlayableBinding : object {
-private CreateOutputMethod <>f__mg$cache0
 public PlayableBinding Create(string name, Object key)
 private PlayableOutput CreateAudioOutput(PlayableGraph graph, string name)
 }
@@ -82,8 +98,8 @@ internal bool InternalCreateAudioOutput(PlayableGraph& graph, string name, Playa
 public UnityEngine.Audio.AudioPlayableOutput : ValueType {
 private PlayableOutputHandle m_Handle
 public AudioPlayableOutput Null
-internal void .ctor(PlayableOutputHandle handle)
 public AudioPlayableOutput Create(PlayableGraph graph, string name, AudioSource target)
+internal void .ctor(PlayableOutputHandle handle)
 public AudioPlayableOutput get_Null()
 public PlayableOutputHandle GetHandle()
 public PlayableOutput op_Implicit(AudioPlayableOutput output)
@@ -96,11 +112,6 @@ private AudioSource InternalGetTarget(PlayableOutputHandle& output)
 private void InternalSetTarget(PlayableOutputHandle& output, AudioSource target)
 private bool InternalGetEvaluateOnSeek(PlayableOutputHandle& output)
 private void InternalSetEvaluateOnSeek(PlayableOutputHandle& output, bool value)
-}
-internal UnityEngine.AudioAmbisonicExtensionDefinition : object {
-public PropertyName ambisonicPluginName
-public AudioExtensionDefinition definition
-public void .ctor(string ambisonicNameIn, AudioExtensionDefinition definitionIn)
 }
 public UnityEngine.AudioChorusFilter : Behaviour {
 public float dryMix
@@ -139,8 +150,13 @@ public bool isReadyToPlay
 public AudioClipLoadType loadType
 public bool preloadAudioData
 public bool ambisonic
-public AudioDataLoadState loadState
 public bool loadInBackground
+public AudioDataLoadState loadState
+private bool GetData(AudioClip clip, Single[] data, int numSamples, int samplesOffset)
+private bool SetData(AudioClip clip, Single[] data, int numsamples, int samplesOffset)
+private AudioClip Construct_Internal()
+private string GetName()
+private void CreateUserSound(string name, int lengthSamples, int channels, int frequency, bool stream)
 public float get_length()
 public int get_samples()
 public int get_channels()
@@ -151,8 +167,8 @@ public bool LoadAudioData()
 public bool UnloadAudioData()
 public bool get_preloadAudioData()
 public bool get_ambisonic()
-public AudioDataLoadState get_loadState()
 public bool get_loadInBackground()
+public AudioDataLoadState get_loadState()
 public bool GetData(Single[] data, int offsetSamples)
 public bool SetData(Single[] data, int offsetSamples)
 public AudioClip Create(string name, int lengthSamples, int channels, int frequency, bool _3D, bool stream)
@@ -167,8 +183,6 @@ private void add_m_PCMSetPositionCallback(PCMSetPositionCallback value)
 private void remove_m_PCMSetPositionCallback(PCMSetPositionCallback value)
 private void InvokePCMReaderCallback_Internal(Single[] data)
 private void InvokePCMSetPositionCallback_Internal(int position)
-private AudioClip Construct_Internal()
-private void Init_Internal(string name, int lengthSamples, int channels, int frequency, bool stream)
 }
 public UnityEngine.AudioClipLoadType : Enum {
 public int value__
@@ -222,54 +236,6 @@ public void set_dryMix(float value)
 public float get_wetMix()
 public void set_wetMix(float value)
 }
-internal UnityEngine.AudioExtensionDefinition : object {
-private string assemblyName
-private string extensionNamespace
-private string extensionTypeName
-private Type extensionType
-public void .ctor(AudioExtensionDefinition definition)
-public void .ctor(string assemblyNameIn, string extensionNamespaceIn, string extensionTypeNameIn)
-public Type GetExtensionType()
-}
-internal UnityEngine.AudioExtensionManager : object {
-private List`1<AudioSpatializerExtensionDefinition> m_ListenerSpatializerExtensionDefinitions
-private List`1<AudioSpatializerExtensionDefinition> m_SourceSpatializerExtensionDefinitions
-private List`1<AudioAmbisonicExtensionDefinition> m_SourceAmbisonicDecoderExtensionDefinitions
-private List`1<AudioSourceExtension> m_SourceExtensionsToUpdate
-private int m_NextStopIndex
-private bool m_BuiltinDefinitionsRegistered
-private PropertyName m_SpatializerName
-private PropertyName m_SpatializerExtensionName
-private PropertyName m_ListenerSpatializerExtensionName
-internal bool IsListenerSpatializerExtensionRegistered()
-internal bool IsSourceSpatializerExtensionRegistered()
-internal bool IsSourceAmbisonicDecoderExtensionRegistered()
-internal AudioSourceExtension AddSpatializerExtension(AudioSource source)
-internal AudioSourceExtension AddAmbisonicDecoderExtension(AudioSource source)
-internal void WriteExtensionProperties(AudioSourceExtension extension, string extensionName)
-internal AudioListenerExtension AddSpatializerExtension(AudioListener listener)
-internal void WriteExtensionProperties(AudioListenerExtension extension, string extensionName)
-internal AudioListenerExtension GetSpatializerExtension(AudioListener listener)
-internal AudioSourceExtension GetSpatializerExtension(AudioSource source)
-internal AudioSourceExtension GetAmbisonicExtension(AudioSource source)
-internal Type GetListenerSpatializerExtensionType()
-internal Type GetListenerSpatializerExtensionEditorType()
-internal Type GetSourceSpatializerExtensionType()
-internal Type GetSourceSpatializerExtensionEditorType()
-internal Type GetSourceAmbisonicExtensionType()
-internal PropertyName GetSpatializerName()
-internal PropertyName GetSourceSpatializerExtensionName()
-internal PropertyName GetListenerSpatializerExtensionName()
-internal void AddExtensionToManager(AudioSourceExtension extension)
-internal void RemoveExtensionFromManager(AudioSourceExtension extension)
-internal void Update()
-internal void GetReadyToPlay(AudioSourceExtension extension)
-private void RegisterBuiltinDefinitions()
-private bool RegisterListenerSpatializerDefinition(string spatializerName, AudioExtensionDefinition extensionDefinition, AudioExtensionDefinition editorDefinition)
-private bool RegisterSourceSpatializerDefinition(string spatializerName, AudioExtensionDefinition extensionDefinition, AudioExtensionDefinition editorDefinition)
-private bool RegisterSourceAmbisonicDefinition(string ambisonicDecoderName, AudioExtensionDefinition extensionDefinition)
-internal Object GetAudioListener()
-}
 public UnityEngine.AudioHighPassFilter : Behaviour {
 public float cutoffFrequency
 public float highpassResonanceQ
@@ -279,53 +245,32 @@ public float get_highpassResonanceQ()
 public void set_highpassResonanceQ(float value)
 }
 public UnityEngine.AudioListener : AudioBehaviour {
-internal AudioListenerExtension spatializerExtension
 public float volume
 public bool pause
 public AudioVelocityUpdateMode velocityUpdateMode
+private void GetOutputDataHelper(Single[] samples, int channel)
+private void GetSpectrumDataHelper(Single[] samples, int channel, FFTWindow window)
 public float get_volume()
 public void set_volume(float value)
 public bool get_pause()
 public void set_pause(bool value)
 public AudioVelocityUpdateMode get_velocityUpdateMode()
 public void set_velocityUpdateMode(AudioVelocityUpdateMode value)
-private void GetOutputDataHelper(Single[] samples, int channel)
-private void GetSpectrumDataHelper(Single[] samples, int channel, FFTWindow window)
 public Single[] GetOutputData(int numSamples, int channel)
 public void GetOutputData(Single[] samples, int channel)
 public Single[] GetSpectrumData(int numSamples, int channel, FFTWindow window)
 public void GetSpectrumData(Single[] samples, int channel, FFTWindow window)
-internal int GetNumExtensionProperties()
-internal int GetNumExtensionPropertiesForThisExtension(PropertyName extensionName)
-private int INTERNAL_CALL_GetNumExtensionPropertiesForThisExtension(AudioListener self, PropertyName& extensionName)
-internal PropertyName ReadExtensionName(int listenerIndex)
-private void INTERNAL_CALL_ReadExtensionName(AudioListener self, int listenerIndex, PropertyName& value)
-internal PropertyName ReadExtensionPropertyName(int listenerIndex)
-private void INTERNAL_CALL_ReadExtensionPropertyName(AudioListener self, int listenerIndex, PropertyName& value)
-internal float ReadExtensionPropertyValue(int listenerIndex)
-internal bool ReadExtensionProperty(PropertyName extensionName, PropertyName propertyName, Single& propertyValue)
-private bool INTERNAL_CALL_ReadExtensionProperty(AudioListener self, PropertyName& extensionName, PropertyName& propertyName, Single& propertyValue)
-internal void ClearExtensionProperties(PropertyName extensionName)
-private void INTERNAL_CALL_ClearExtensionProperties(AudioListener self, PropertyName& extensionName)
-internal AudioListenerExtension AddExtension(Type extensionType)
-}
-internal UnityEngine.AudioListenerExtension : ScriptableObject {
-private AudioListener m_audioListener
-public AudioListener audioListener
-public AudioListener get_audioListener()
-public void set_audioListener(AudioListener value)
-public float ReadExtensionProperty(PropertyName propertyName)
-public void WriteExtensionProperty(PropertyName propertyName, float propertyValue)
-public void ExtensionUpdate()
 }
 public UnityEngine.AudioLowPassFilter : Behaviour {
-public float cutoffFrequency
 public AnimationCurve customCutoffCurve
+public float cutoffFrequency
 public float lowpassResonanceQ
-public float get_cutoffFrequency()
-public void set_cutoffFrequency(float value)
+private AnimationCurve GetCustomLowpassLevelCurveCopy()
+private void SetCustomLowpassLevelCurveHelper(AudioLowPassFilter source, AnimationCurve curve)
 public AnimationCurve get_customCutoffCurve()
 public void set_customCutoffCurve(AnimationCurve value)
+public float get_cutoffFrequency()
+public void set_cutoffFrequency(float value)
 public float get_lowpassResonanceQ()
 public void set_lowpassResonanceQ(float value)
 }
@@ -489,6 +434,9 @@ internal int profilerCaptureFlags
 public double dspTime
 public int outputSampleRate
 internal bool unityAudioDisabled
+private AudioSpeakerMode GetSpeakerMode()
+private bool SetConfiguration(AudioConfiguration config)
+private int GetSampleRate()
 public AudioSpeakerMode get_driverCapabilities()
 public AudioSpeakerMode get_speakerMode()
 public void set_speakerMode(AudioSpeakerMode value)
@@ -500,20 +448,16 @@ public void GetDSPBufferSize(Int32& bufferLength, Int32& numBuffers)
 public void SetDSPBufferSize(int bufferLength, int numBuffers)
 public string GetSpatializerPluginName()
 public AudioConfiguration GetConfiguration()
-private void INTERNAL_CALL_GetConfiguration(AudioConfiguration& value)
 public bool Reset(AudioConfiguration config)
-private bool INTERNAL_CALL_Reset(AudioConfiguration& config)
 public void add_OnAudioConfigurationChanged(AudioConfigurationChangeHandler value)
 public void remove_OnAudioConfigurationChanged(AudioConfigurationChangeHandler value)
 internal void InvokeOnAudioConfigurationChanged(bool deviceWasChanged)
-internal void InvokeOnAudioManagerUpdate()
-internal void InvokeOnAudioSourcePlay(AudioSource source)
 internal bool get_unityAudioDisabled()
 internal string GetAmbisonicDecoderPluginName()
+private bool SetConfiguration_Injected(AudioConfiguration& config)
+private void GetConfiguration_Injected(AudioConfiguration& ret)
 }
 public UnityEngine.AudioSource : AudioBehaviour {
-internal AudioSourceExtension spatializerExtension
-internal AudioSourceExtension ambisonicExtension
 public float volume
 public float pitch
 public float time
@@ -529,7 +473,6 @@ public bool ignoreListenerPause
 public AudioVelocityUpdateMode velocityUpdateMode
 public float panStereo
 public float spatialBlend
-internal bool spatializeInternal
 public bool spatialize
 public bool spatializePostEffects
 public float reverbZoneMix
@@ -546,6 +489,16 @@ public AudioRolloffMode rolloffMode
 public float minVolume
 public float maxVolume
 public float rolloffFactor
+private float GetPitch(AudioSource source)
+private void SetPitch(AudioSource source, float pitch)
+private void PlayHelper(AudioSource source, ulong delay)
+private void Play(double delay)
+private void PlayOneShotHelper(AudioSource source, AudioClip clip, float volumeScale)
+private void Stop(bool stopOneShots)
+private void SetCustomCurveHelper(AudioSource source, AudioSourceCurveType type, AnimationCurve curve)
+private AnimationCurve GetCustomCurveHelper(AudioSource source, AudioSourceCurveType type)
+private void GetOutputDataHelper(AudioSource source, Single[] samples, int channel)
+private void GetSpectrumDataHelper(AudioSource source, Single[] samples, int channel, FFTWindow window)
 public float get_volume()
 public void set_volume(float value)
 public float get_pitch()
@@ -558,23 +511,19 @@ public AudioClip get_clip()
 public void set_clip(AudioClip value)
 public AudioMixerGroup get_outputAudioMixerGroup()
 public void set_outputAudioMixerGroup(AudioMixerGroup value)
-public void Play(ulong delay)
 public void Play()
+public void Play(ulong delay)
 public void PlayDelayed(float delay)
 public void PlayScheduled(double time)
+public void PlayOneShot(AudioClip clip)
+public void PlayOneShot(AudioClip clip, float volumeScale)
 public void SetScheduledStartTime(double time)
 public void SetScheduledEndTime(double time)
 public void Stop()
 public void Pause()
-private void INTERNAL_CALL_Pause(AudioSource self)
 public void UnPause()
-private void INTERNAL_CALL_UnPause(AudioSource self)
 public bool get_isPlaying()
 public bool get_isVirtual()
-public void PlayOneShot(AudioClip clip)
-public void PlayOneShot(AudioClip clip, float volumeScale)
-private void PlayOneShotHelper(AudioClip clip, float volumeScale)
-private void PlayOneShotHelper(AudioClip clip)
 public void PlayClipAtPoint(AudioClip clip, Vector3 position)
 public void PlayClipAtPoint(AudioClip clip, Vector3 position, float volume)
 public bool get_loop()
@@ -591,8 +540,6 @@ public float get_panStereo()
 public void set_panStereo(float value)
 public float get_spatialBlend()
 public void set_spatialBlend(float value)
-internal bool get_spatializeInternal()
-internal void set_spatializeInternal(bool value)
 public bool get_spatialize()
 public void set_spatialize(bool value)
 public bool get_spatializePostEffects()
@@ -621,26 +568,10 @@ public float get_maxDistance()
 public void set_maxDistance(float value)
 public AudioRolloffMode get_rolloffMode()
 public void set_rolloffMode(AudioRolloffMode value)
-private void GetOutputDataHelper(Single[] samples, int channel)
 public Single[] GetOutputData(int numSamples, int channel)
 public void GetOutputData(Single[] samples, int channel)
-private void GetSpectrumDataHelper(Single[] samples, int channel, FFTWindow window)
 public Single[] GetSpectrumData(int numSamples, int channel, FFTWindow window)
 public void GetSpectrumData(Single[] samples, int channel, FFTWindow window)
-internal int GetNumExtensionProperties()
-internal int GetNumExtensionPropertiesForThisExtension(PropertyName extensionName)
-private int INTERNAL_CALL_GetNumExtensionPropertiesForThisExtension(AudioSource self, PropertyName& extensionName)
-internal PropertyName ReadExtensionName(int sourceIndex)
-private void INTERNAL_CALL_ReadExtensionName(AudioSource self, int sourceIndex, PropertyName& value)
-internal PropertyName ReadExtensionPropertyName(int sourceIndex)
-private void INTERNAL_CALL_ReadExtensionPropertyName(AudioSource self, int sourceIndex, PropertyName& value)
-internal float ReadExtensionPropertyValue(int sourceIndex)
-internal bool ReadExtensionProperty(PropertyName extensionName, PropertyName propertyName, Single& propertyValue)
-private bool INTERNAL_CALL_ReadExtensionProperty(AudioSource self, PropertyName& extensionName, PropertyName& propertyName, Single& propertyValue)
-internal void ClearExtensionProperties(PropertyName extensionName)
-private void INTERNAL_CALL_ClearExtensionProperties(AudioSource self, PropertyName& extensionName)
-internal AudioSourceExtension AddSpatializerExtension(Type extensionType)
-internal AudioSourceExtension AddAmbisonicExtension(Type extensionType)
 public float get_minVolume()
 public void set_minVolume(float value)
 public float get_maxVolume()
@@ -649,8 +580,8 @@ public float get_rolloffFactor()
 public void set_rolloffFactor(float value)
 public bool SetSpatializerFloat(int index, float value)
 public bool GetSpatializerFloat(int index, Single& value)
-public bool SetAmbisonicDecoderFloat(int index, float value)
 public bool GetAmbisonicDecoderFloat(int index, Single& value)
+public bool SetAmbisonicDecoderFloat(int index, float value)
 }
 public UnityEngine.AudioSourceCurveType : Enum {
 public int value__
@@ -658,25 +589,6 @@ public AudioSourceCurveType CustomRolloff
 public AudioSourceCurveType SpatialBlend
 public AudioSourceCurveType ReverbZoneMix
 public AudioSourceCurveType Spread
-}
-internal UnityEngine.AudioSourceExtension : ScriptableObject {
-private AudioSource m_audioSource
-internal int m_ExtensionManagerUpdateIndex
-public AudioSource audioSource
-public AudioSource get_audioSource()
-public void set_audioSource(AudioSource value)
-public float ReadExtensionProperty(PropertyName propertyName)
-public void WriteExtensionProperty(PropertyName propertyName, float propertyValue)
-public void Play()
-public void Stop()
-public void ExtensionUpdate()
-public void OnDestroy()
-}
-internal UnityEngine.AudioSpatializerExtensionDefinition : object {
-public PropertyName spatializerName
-public AudioExtensionDefinition definition
-public AudioExtensionDefinition editorDefinition
-public void .ctor(string spatializerNameIn, AudioExtensionDefinition definitionIn, AudioExtensionDefinition editorDefinitionIn)
 }
 public UnityEngine.AudioSpeakerMode : Enum {
 public int value__
@@ -694,6 +606,9 @@ public int value__
 public AudioVelocityUpdateMode Auto
 public AudioVelocityUpdateMode Fixed
 public AudioVelocityUpdateMode Dynamic
+}
+internal UnityEngine.Experimental.Audio.AudioClipExtensionsInternal : object {
+public UInt32 Internal_CreateAudioClipSampleProvider(AudioClip audioClip, ulong start, long end, bool loop, bool allowDrop)
 }
 public UnityEngine.Experimental.Audio.AudioSampleProvider : object {
 private ConsumeSampleFramesNativeFunction m_ConsumeSampleFramesNativeFunction
@@ -717,8 +632,9 @@ public UInt32 freeSampleFrameCountLowThreshold
 public bool enableSampleFramesAvailableEvents
 public bool enableSilencePadding
 public ConsumeSampleFramesNativeFunction consumeSampleFramesNativeFunction
-private void .ctor(UInt32 providerId, Object ownerObj, ushort trackIdx)
 internal AudioSampleProvider Lookup(UInt32 providerId, Object ownerObj, ushort trackIndex)
+internal AudioSampleProvider Create(ushort channelCount, UInt32 sampleRate)
+private void .ctor(UInt32 providerId, Object ownerObj, ushort trackIdx)
 protected void Finalize()
 public void Dispose()
 public UInt32 get_id()
@@ -743,6 +659,7 @@ public bool get_enableSilencePadding()
 public void set_enableSilencePadding(bool value)
 public UInt32 ConsumeSampleFrames(NativeArray`1<float> sampleFrames)
 public ConsumeSampleFramesNativeFunction get_consumeSampleFramesNativeFunction()
+internal UInt32 QueueSampleFrames(NativeArray`1<float> sampleFrames)
 public void add_sampleFramesAvailable(SampleFramesHandler value)
 public void remove_sampleFramesAvailable(SampleFramesHandler value)
 public void add_sampleFramesOverflow(SampleFramesHandler value)
@@ -753,10 +670,12 @@ public void SetSampleFramesOverflowNativeHandler(SampleFramesEventNativeFunction
 public void ClearSampleFramesOverflowNativeHandler()
 private void InvokeSampleFramesAvailable(int sampleFrameCount)
 private void InvokeSampleFramesOverflow(int droppedSampleFrameCount)
+private UInt32 InternalCreateSampleProvider(ushort channelCount, UInt32 sampleRate)
+internal void InternalRemove(UInt32 providerId)
 private void InternalGetFormatInfo(UInt32 providerId, UInt16& chCount, UInt32& sRate)
 private AudioSampleProvider InternalGetScriptingPtr(UInt32 providerId)
 private void InternalSetScriptingPtr(UInt32 providerId, AudioSampleProvider provider)
-private bool InternalIsValid(UInt32 providerId)
+internal bool InternalIsValid(UInt32 providerId)
 private UInt32 InternalGetMaxSampleFrameCount(UInt32 providerId)
 private UInt32 InternalGetAvailableSampleFrameCount(UInt32 providerId)
 private UInt32 InternalGetFreeSampleFrameCount(UInt32 providerId)
@@ -771,6 +690,13 @@ private void InternalClearSampleFramesOverflowNativeHandler(UInt32 providerId)
 private bool InternalGetEnableSilencePadding(UInt32 id)
 private void InternalSetEnableSilencePadding(UInt32 id, bool enabled)
 private IntPtr InternalGetConsumeSampleFramesNativeFunctionPtr()
+private UInt32 InternalQueueSampleFrames(UInt32 id, IntPtr interleavedSampleFrames, UInt32 sampleFrameCount)
+}
+internal UnityEngine.Experimental.Audio.AudioSourceExtensionsInternal : object {
+public void RegisterSampleProvider(AudioSource source, AudioSampleProvider provider)
+public void UnregisterSampleProvider(AudioSource source, AudioSampleProvider provider)
+private void Internal_RegisterSampleProviderWithAudioSource(AudioSource source, UInt32 providerId)
+private void Internal_UnregisterSampleProviderFromAudioSource(AudioSource source, UInt32 providerId)
 }
 public UnityEngine.FFTWindow : Enum {
 public int value__
@@ -783,6 +709,12 @@ public FFTWindow BlackmanHarris
 }
 public UnityEngine.Microphone : object {
 public String[] devices
+private int GetMicrophoneDeviceIDFromName(string name)
+private AudioClip StartRecord(int deviceID, bool loop, float lengthSec, int frequency)
+private void EndRecord(int deviceID)
+private bool IsRecording(int deviceID)
+private int GetRecordPosition(int deviceID)
+private void GetDeviceCaps(int deviceID, Int32& minFreq, Int32& maxFreq)
 public AudioClip Start(string deviceName, bool loop, int lengthSec, int frequency)
 public void End(string deviceName)
 public String[] get_devices()
@@ -796,12 +728,10 @@ public bool loop
 public bool isPlaying
 public bool isReadyToPlay
 public float duration
+private void FeatureRemoved()
 public void Play()
-private void INTERNAL_CALL_Play(MovieTexture self)
 public void Stop()
-private void INTERNAL_CALL_Stop(MovieTexture self)
 public void Pause()
-private void INTERNAL_CALL_Pause(MovieTexture self)
 public AudioClip get_audioClip()
 public bool get_loop()
 public void set_loop(bool value)
@@ -852,17 +782,17 @@ public WebCamDevice[] devices
 public int videoRotationAngle
 public bool videoVerticallyMirrored
 public bool didUpdateThisFrame
-public void .ctor(string deviceName, int requestedWidth, int requestedHeight, int requestedFPS)
-public void .ctor(string deviceName, int requestedWidth, int requestedHeight)
-public void .ctor(string deviceName)
-public void .ctor(int requestedWidth, int requestedHeight, int requestedFPS)
-public void .ctor(int requestedWidth, int requestedHeight)
 public Nullable`1<Vector2> get_autoFocusPoint()
 public void set_autoFocusPoint(Nullable`1<Vector2> value)
 internal Vector2 get_internalAutoFocusPoint()
 internal void set_internalAutoFocusPoint(Vector2 value)
 public bool get_isDepth()
 private void Internal_CreateWebCamTexture(WebCamTexture self, string scriptingDevice, int requestedWidth, int requestedHeight, int maxFramerate)
+public void .ctor(string deviceName, int requestedWidth, int requestedHeight, int requestedFPS)
+public void .ctor(string deviceName, int requestedWidth, int requestedHeight)
+public void .ctor(string deviceName)
+public void .ctor(int requestedWidth, int requestedHeight, int requestedFPS)
+public void .ctor(int requestedWidth, int requestedHeight)
 public void Play()
 private void INTERNAL_CALL_Play(WebCamTexture self)
 public void Pause()
