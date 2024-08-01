@@ -50,6 +50,7 @@ public Bounds bounds
 public void Process()
 }
 public AddToHeightMap : ProceduralObject {
+public bool DestroyGameObject
 public void Process()
 }
 public AddToWaterMap : ProceduralObject {
@@ -289,7 +290,6 @@ public bool isDynamic
 public float enabledRadius
 public bool toggleFade
 public float toggleFadeDuration
-public bool StickyGizmos
 protected void OnValidate()
 }
 public AmmoInformationPanel : ItemInformationPanel {
@@ -703,7 +703,6 @@ private void Invoke()
 private void Callback(IAsyncResult result)
 }
 public AtmosphereVolume : MonoBehaviour {
-public bool StickyGizmos
 public float MaxVisibleDistance
 public float BoundsAttenuationDecay
 public FogSettings FogSettings
@@ -1179,6 +1178,75 @@ public TraitFlag get_Traits()
 public void Eat(BaseNpc baseNpc, float timeSpent)
 public bool ShouldInheritNetworkGroup()
 }
+public BaseCrane : BaseVehicle {
+public float extensionArmState
+public float raiseArmState
+public float yawState
+public Transform COM
+public float extensionDirection
+public float yawDirection
+public float raiseArmDirection
+public float arm1Speed
+public float arm2Speed
+public float turnYawSpeed
+public Animator animator
+public BaseMagnet Magnet
+public Rigidbody myRigidbody
+public WheelCollider[] leftWheels
+public WheelCollider[] rightWheels
+public float brakeStrength
+public float engineStrength
+public Transform[] collisionTestingPoints
+public float maxDistanceFromOrigin
+public GameObjectRef selfDamageEffect
+public GameObjectRef explosionEffect
+public Transform explosionPoint
+public CapsuleCollider driverCollision
+public Transform leftHandTarget
+public Transform rightHandTarget
+public GameObjectRef fuelStoragePrefab
+public Transform fuelStoragePoint
+public float fuelPerSec
+protected EntityFuelSystem fuelSystem
+public GameObject[] OnTriggers
+public TriggerHurtEx magnetDamage
+public Phrase ReturnMessage
+private Vector3 spawnOrigin
+public float nextInputTime
+private float nextToggleTime
+public float turnAmount
+public float throttle
+private float lastExtensionArmState
+private float lastRaiseArmState
+private float lastYawState
+private bool handbrakeOn
+private float nextSelfHealTime
+private Vector3 lastDamagePos
+private float lastDrivenTime
+private float testPreviousYaw
+public float GetPlayerDamageMultiplier()
+public void OnHurtTriggerOccupant(BaseEntity hurtEntity, DamageType damageType, float damageTotal)
+public void ServerInit()
+public void SetMagnetEnabled(bool wantsOn)
+public void PlayerServerInput(InputState inputState, BasePlayer player)
+public bool EngineOn()
+protected void VehicleFixedUpdate()
+public void UpdateMotorSpeed(float speedLeft, float speedRight, float brakeSpeed)
+public void Save(SaveInfo info)
+public void UpdateParams()
+public void LateUpdate()
+public void OnAttacked(HitInfo info)
+public void OnKilled(HitInfo info)
+public void LightToggle(BasePlayer player)
+public bool DidCollide()
+public void SpawnSubEntities()
+public void RPC_OpenFuel(RPCMessage msg)
+public EntityFuelSystem GetFuelSystem()
+public void Load(LoadInfo info)
+public void UpdateAnimator(bool shouldLerp)
+public void InitShared()
+public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+}
 public BaseDetector : IOEntity {
 public PlayerDetectionTrigger myTrigger
 public Flags Flag_HasContents
@@ -1197,9 +1265,9 @@ private UInt32 broadcastProtocol
 private List`1<EntityLink> links
 private bool linkedToNeighbours
 public BaseEntity creatorEntity
-private int ticksSinceStopped
+public int ticksSinceStopped
 private int doneMovingWithoutARigidBodyCheck
-private bool isCallingUpdateNetworkGroup
+public bool isCallingUpdateNetworkGroup
 private EntityRef[] entitySlots
 public List`1<TriggerBase> triggers
 protected bool isVisible
@@ -1224,8 +1292,8 @@ public float RealisticMass
 public float radiationLevel
 public float currentTemperature
 public float currentEnvironmentalWetness
-protected float PositionTickRate
-protected bool PositionTickFixedTime
+public float PositionTickRate
+public bool PositionTickFixedTime
 public Vector3 ServerPosition
 public Quaternion ServerRotation
 public TraitFlag Traits
@@ -1278,8 +1346,8 @@ public void SetParent(BaseEntity entity, string strBone, bool worldPositionStays
 public bool HasChild(BaseEntity c)
 public void SetParent(BaseEntity entity, UInt32 boneID, bool worldPositionStays, bool sendImmediate)
 public void DestroyOnClient(Connection connection)
-private void SendChildrenNetworkUpdate()
-private void SendChildrenNetworkUpdateImmediate()
+public void SendChildrenNetworkUpdate()
+public void SendChildrenNetworkUpdateImmediate()
 public void SwitchParent(BaseEntity ent)
 public void OnParentChanging(BaseEntity oldParent, BaseEntity newParent)
 public BuildingPrivlidge GetBuildingPrivilege()
@@ -1317,9 +1385,9 @@ public void EnableGlobalBroadcast(bool wants)
 public void EnableSaving(bool wants)
 public void ServerInit()
 public void OnSensation(Sensation sensation)
-protected float get_PositionTickRate()
-protected bool get_PositionTickFixedTime()
-protected void NetworkPositionTick()
+public float get_PositionTickRate()
+public bool get_PositionTickFixedTime()
+public void NetworkPositionTick()
 public void TransformChanged()
 public void OnPositionalNetworkUpdate()
 public void DoMovingWithoutARigidBodyCheck()
@@ -1769,6 +1837,25 @@ public bool HasLockPermission(BasePlayer player)
 public void RPC_TakeLock(RPCMessage rpc)
 public float BoundsPadding()
 }
+public BaseMagnet : MonoBehaviour {
+public TriggerMagnet magnetTrigger
+public FixedJoint fixedJoint
+public Rigidbody kinematicAttachmentBody
+public float magnetForce
+public Transform attachDepthPoint
+public GameObjectRef attachEffect
+public bool isMagnetOn
+public GameObject colliderSource
+public bool HasConnectedObject()
+public OBB GetConnectedOBB(float scale)
+public void SetCollisionsEnabled(GameObject other, bool wants)
+public void Start()
+public void SetMagnetEnabled(bool wantsOn)
+public void OnMagnetEnabled()
+public void OnMagnetDisabled()
+public bool IsMagnetOn()
+public void MagnetThink(float delta)
+}
 public BaseMelee : AttackEntity {
 public bool canThrowAsProjectile
 public bool canAiHearIt
@@ -1984,6 +2071,7 @@ public SoundDefinition mountSoundDef
 public SoundDefinition swapSoundDef
 public SoundDefinition dismountSoundDef
 public MountStatType mountTimeStatType
+public MountGestureType allowedGestures
 public CameraMode MountedCameraMode
 public bool isMobile
 public float SideLeanAmount
@@ -2040,7 +2128,7 @@ public bool NearMountPoint(BasePlayer player)
 public Vector3 ConvertVector(Vector3 vec)
 public bool get_CanDrinkWhileMounted()
 public bool get_BlocksDoors()
-private bool <ValidDismountPosition>g__HitOurself|57_0(RaycastHit hit)
+private bool <ValidDismountPosition>g__HitOurself|59_0(RaycastHit hit)
 }
 public BaseMovement : MonoBehaviour {
 public bool adminCheat
@@ -2735,8 +2823,8 @@ public void LightToggle(bool mask)
 public bool get_InGesture()
 private bool get_CurrentGestureBlocksMovement()
 private bool get_InGestureCancelCooldown()
-private void Server_StartGesture(RPCMessage msg)
-private void Server_StartGesture(GestureConfig toPlay)
+public void Server_StartGesture(RPCMessage msg)
+public void Server_StartGesture(GestureConfig toPlay)
 private void TimeoutGestureServer()
 private void Server_CancelGesture(RPCMessage msg)
 private bool IsGestureBlocked()
@@ -3783,6 +3871,15 @@ public Single[] fovs
 public GameObjectRef fovChangeEffect
 public float smoothSpeed
 }
+public BiomeVisuals : MonoBehaviour {
+public GameObject Arid
+public GameObject Temperate
+public GameObject Tundra
+public GameObject Arctic
+protected void Start()
+private void SetChoice(GameObject selection)
+private void ApplyChoice(GameObject selection, GameObject target, bool shouldDestroy)
+}
 public BirthdayBalloonHandler : MonoBehaviour {
 public float checkOffset
 public float checkRadius
@@ -4180,6 +4277,7 @@ private DeferredAction skinChange
 private MeshRenderer placeholderRenderer
 private MeshCollider placeholderCollider
 public UpdateSkinWorkQueue updateSkinQueueServer
+public bool CullBushes
 public Construction blockDefinition
 private Vector3[] outsideLookupOffsets
 public ConstructionGrade currentGrade
@@ -4375,6 +4473,14 @@ public bool doSplashEffects
 public void Start()
 public void OnDrawGizmos()
 }
+public BushEntity : BaseEntity {
+public GameObjectRef prefab
+public bool globalBillboard
+public void InitShared()
+public void ServerInit()
+internal void DoServerDestroy()
+public void PreProcess(IPrefabProcessor preProcess, GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
+}
 public BUTTON : Enum {
 public int value__
 public BUTTON FORWARD
@@ -4518,6 +4624,7 @@ public SoundDefinition PlaySfx
 public SoundDefinition ShuffleSfx
 public SoundDefinition WinSfx
 public SoundDefinition YourTurnSfx
+public SoundDefinition CheckSfx
 protected Type GetIndexedType()
 public void PlaySound(SoundType sound, GameObject forGameObject)
 }
@@ -5681,7 +5788,7 @@ public bool HasSubscription(ulong steamId)
 public List`1<ulong> ToList()
 public void LoadFrom(List`1<ulong> steamIds)
 public void IntersectWith(List`1<PlayerNameID> players)
-public Task`1<NotificationSendResult> SendNotification(NotificationChannel channel, string title, string body)
+public Task`1<NotificationSendResult> SendNotification(NotificationChannel channel, string title, string body, string type)
 public Task`1<NotificationSendResult> SendNotificationTo(ICollection`1<ulong> steamIds, NotificationChannel channel, string title, string body, Dictionary`2<string, string> data)
 public Task`1<NotificationSendResult> SendNotificationTo(ulong steamId, NotificationChannel channel, string title, string body, Dictionary`2<string, string> data)
 private Task`1<NotificationSendResult> SendNotificationImpl(ICollection`1<ulong> steamIds, NotificationChannel channel, string title, string body, Dictionary`2<string, string> data)
@@ -5784,7 +5891,7 @@ public Phrase NotificationTooManySubscribers
 public Phrase NotificationUnknown
 public Vector2 WorldToMap(Vector3 worldPos)
 public void SendSignedInNotification(BasePlayer player)
-public void SendDeathNotification(BasePlayer player, string killerName)
+public void SendDeathNotification(BasePlayer player, BaseEntity killer)
 public Task`1<NotificationSendResult> SendPairNotification(string type, BasePlayer player, string title, string message, Dictionary`2<string, string> data)
 public Dictionary`2<string, string> GetServerPairingData()
 public Dictionary`2<string, string> GetPlayerPairingData(BasePlayer player)
@@ -6680,6 +6787,8 @@ public void info(Arg arg)
 public ConVar.Net : ConsoleSystem {
 public bool visdebug
 public bool debug
+public int visibilityRadiusFarOverride
+public int visibilityRadiusNearOverride
 }
 public ConVar.PatrolHelicopter : ConsoleSystem {
 private string path
@@ -6958,6 +7067,7 @@ public ConVar.Terrain : ConsoleSystem {
 public float quality
 }
 public ConVar.Texture : ConsoleSystem {
+public int streamingBudgetOverride
 public bool streaming
 public bool get_streaming()
 public void set_streaming(bool value)
@@ -7205,7 +7315,9 @@ public Image Image
 }
 public CrushTrigger : TriggerHurt {
 public bool includeNPCs
+public bool requireCentreBelowPosition
 internal GameObject InterestedInObject(GameObject obj)
+protected bool CanHurt(BaseCombatEntity ent)
 }
 public cui : object {
 public void test(Arg args)
@@ -7413,7 +7525,6 @@ public bool op_Implicit(DeferredAction obj)
 public void Invoke(Object sender, Action action, ActionPriority priority)
 }
 public DeferredDecal : MonoBehaviour {
-public bool StickyGizmos
 public Mesh mesh
 public Material material
 public DeferredDecalQueue queue
@@ -8048,9 +8159,11 @@ public DungeonConnectionVariant A
 public DungeonConnectionVariant B
 }
 public DungeonInfo : LandmarkInfo {
+public int CellSize
 public float LinkHeight
 public float LinkRadius
 public float LinkRotation
+internal MonumentInfo Monument
 internal List`1<GameObject> Links
 protected void Awake()
 protected void Start()
@@ -8774,7 +8887,6 @@ public EnvironmentType PlayerConstruction
 public EnvironmentType TrainTunnels
 }
 public EnvironmentVolume : MonoBehaviour {
-public bool StickyGizmos
 public EnvironmentType Type
 public Vector3 Center
 public Vector3 Size
@@ -8782,9 +8894,6 @@ private BoxCollider <trigger>k__BackingField
 public BoxCollider trigger
 public BoxCollider get_trigger()
 private void set_trigger(BoxCollider value)
-protected void OnDrawGizmos()
-protected void OnDrawGizmosSelected()
-private void DrawGizmos()
 protected void Awake()
 public void UpdateTrigger()
 }
@@ -9179,7 +9288,6 @@ protected int ScrapItemID
 protected bool IsServer
 protected bool IsClient
 public WinnerBreakdown winnerInfo
-protected bool SendAllCards
 public CardGameState get_State()
 private void set_State(CardGameState value)
 public bool get_HasGameInProgress()
@@ -9215,6 +9323,7 @@ public bool TryGetCardPlayerData(BasePlayer forPlayer, CardPlayerData& cardPlaye
 public bool IsAllowedToPlay(CardPlayerData cpd)
 protected void ClearWinnerInfo()
 public void JoinTable(BasePlayer player)
+protected void SyncAllLocalPlayerCards()
 private void JoinTable(ulong userID)
 public void LeaveTable(ulong userID)
 protected int AddToPot(CardPlayerData playerData, int maxAmount)
@@ -9223,7 +9332,6 @@ protected int PayOut(CardPlayerData playerData, int maxAmount)
 protected int PayOutAll(CardPlayerData playerData)
 protected int RemoveScrapFromStorage(CardPlayerData data)
 public void Save(CardTable syncData)
-protected bool get_SendAllCards()
 private void InvokeStartNewRound()
 private bool TryStartNewRound()
 protected void TimeoutTurn()
@@ -9252,6 +9360,8 @@ private bool isServer
 public int availableInputs
 public int betThisRound
 public int betThisTurn
+private bool <LeftRoundEarly>k__BackingField
+private bool <SendCardDetails>k__BackingField
 public int finalScore
 private bool <hasActedThisTurn>k__BackingField
 public float lastActionTime
@@ -9264,6 +9374,8 @@ public bool HasUser
 public bool HasUserInGame
 public bool HasUserInCurrentRound
 private bool IsClient
+public bool LeftRoundEarly
+public bool SendCardDetails
 public bool hasActedThisTurn
 public ulong get_UserID()
 private void set_UserID(ulong value)
@@ -9273,6 +9385,10 @@ public bool get_HasUser()
 public bool get_HasUserInGame()
 public bool get_HasUserInCurrentRound()
 private bool get_IsClient()
+public bool get_LeftRoundEarly()
+private void set_LeftRoundEarly(bool value)
+public bool get_SendCardDetails()
+private void set_SendCardDetails(bool value)
 public void .ctor(int mountIndex, bool isServer)
 public void .ctor(int scrapItemID, Func`2<int, StorageContainer> getStorage, int mountIndex, bool isServer)
 public void Dispose()
@@ -9285,11 +9401,12 @@ public StorageContainer GetStorage()
 public void AddUser(ulong userID)
 public void ClearAllData()
 public void JoinRound()
-public void LeaveCurrentRound(bool clearCards, bool clearBets)
+public void LeaveCurrentRound(bool clearBets, bool leftRoundEarly)
 public void LeaveGame()
+public void EnableSendingCards()
 public string HandToString()
 public string HandToString(List`1<PlayingCard> cards)
-public void Save(List`1<CardPlayer> playersMsg, bool sendCards)
+public void Save(List`1<CardPlayer> playersMsg)
 }
 public Facepunch.CardGames.DeckOfCards : object {
 private List`1<PlayingCard> deck
@@ -9354,7 +9471,6 @@ public PokerInputOption LastAction
 public ulong LastActionTarget
 public int LastActionValue
 public int biggestRaiseThisTurn
-protected bool SendAllCards
 public int get_MinBuyIn()
 public int get_MaxBuyIn()
 public int get_MinPlayers()
@@ -9384,7 +9500,6 @@ protected void SubStartRound()
 protected void SubEndRound()
 protected void SubEndGameplay()
 private void IncrementDealer()
-private void IncrementActivePlayer()
 private void DealHoleCards()
 private bool DealFlop()
 protected void TimeoutTurn()
@@ -9392,7 +9507,6 @@ protected void SubReceivedInputFromPlayer(CardPlayerData playerData, int input, 
 private bool ShouldEndTurn()
 private void EndTurn()
 protected int SubGetAvailableInputsForPlayer(CardPlayerData playerData)
-protected bool get_SendAllCards()
 public void OnTableDestroyed()
 protected void SubOnPlayerLeaving(CardPlayerData playerData)
 private void <SubEndRound>g__AddWinner|46_0(CardPlayerData pData, int winnings, bool primaryWinner)
@@ -10288,7 +10402,6 @@ public void Process(UInt32 seed)
 public GenerateCliffTopology : ProceduralComponent {
 public bool KeepExisting
 private int filter
-private int filter_del
 public void Process(int x, int z)
 private void Process(int x, int z, bool keepExisting)
 public void Process(UInt32 seed)
@@ -10335,6 +10448,7 @@ public float OuterFade
 public float RandomScale
 public float MeshOffset
 public float TerrainOffset
+private int Smoothen
 public void Process(UInt32 seed)
 }
 public GenerateRiverMeshes : ProceduralComponent {
@@ -10348,6 +10462,7 @@ public void Process(UInt32 seed)
 public bool get_RunOnCache()
 }
 public GenerateRiverTopology : ProceduralComponent {
+private int Smoothen
 public void Process(UInt32 seed)
 public void MarkRiverside()
 }
@@ -10460,6 +10575,7 @@ public bool forceUnlock
 public SteamDLCItem dlcItem
 public SteamInventoryItem inventoryItem
 public bool IsOwnedBy(BasePlayer player)
+public bool CanBeUsedBy(BasePlayer player)
 }
 public GhostSheetSystemSpaceUpdater : MonoBehaviour {
 private EZSoftBone[] ezSoftBones
@@ -10491,6 +10607,8 @@ public bool important
 public float explodeScale
 public float scaleOverride
 public int uniqueId
+public BoundsEffectType boundsEffectType
+public Bounds effectBounds
 public List`1<OverrideMesh> MeshOverrides
 protected Type GetIndexedType()
 }
@@ -11101,19 +11219,13 @@ public void PreProcess(IPrefabProcessor preProcess, GameObject rootObj, string n
 public HitchTrough : StorageContainer {
 public HitchSpot[] hitchSpots
 public float caloriesToDecaySeconds
-public float decayDelayThinkMinutes
-public float cachedCalories
-public void ServerInit()
 public Item GetFoodItem()
-public bool HasFood()
 public bool ValidHitchPosition(Vector3 pos)
 public bool HasSpace()
 public HitchSpot GetClosest(Vector3 testPos, bool includeOccupied, float maxRadius)
 public void Unhitch(RidableHorse horse)
 public int NumHitched()
 public bool AttemptToHitch(RidableHorse horse, HitchSpot hitch)
-public void EnableDisableAnimalDecay()
-public void DelayAnimalDecay()
 public void Save(SaveInfo info)
 public void PostServerLoad()
 public void UnhitchAll()
@@ -11840,6 +11952,10 @@ public void Dilate2D(Int32[] src, int len1, int len2, int srcmask, int radius, A
 public void FloodFill2D(int x, int y, Int32[] data, int len1, int len2, int mask_any, int mask_not, Func`2<int, int> action)
 public bool IsValidPNG(Byte[] data, int maxWidth, int maxHeight)
 public bool IsValidJPG(Byte[] data, int maxWidth, int maxHeight)
+}
+public IMagnetLiftable : MonoBehaviour {
+private void Start()
+private void Update()
 }
 public Impostor : MonoBehaviour {
 public ImpostorAsset asset
@@ -13491,6 +13607,38 @@ private void RPC_Disarm(RPCMessage rpc)
 public LanguageSelection : MonoBehaviour {
 public GameObject buttonContainer
 }
+public LargeShredder : BaseEntity {
+public Transform shredRail
+public Transform shredRailStartPos
+public Transform shredRailEndPos
+public Vector3 shredRailStartRotation
+public Vector3 shredRailEndRotation
+public LargeShredderTrigger trigger
+public float shredDurationRotation
+public float shredDurationPosition
+public float shredSwayAmount
+public float shredSwaySpeed
+public BaseEntity currentlyShredding
+public GameObject[] shreddingWheels
+public float shredRotorSpeed
+public GameObjectRef shredSoundEffect
+public Transform resourceSpawnPoint
+private Quaternion entryRotation
+private bool isShredding
+private float shredStartTime
+public void OnEntityEnteredTrigger(BaseEntity ent)
+public void CreateShredResources()
+public void UpdateBonePosition(float delta)
+public void SetShredding(bool isShredding)
+public void FireShredEffect()
+public void ServerUpdate()
+private void Update()
+}
+public LargeShredderTrigger : TriggerBase {
+public LargeShredder shredder
+internal GameObject InterestedInObject(GameObject obj)
+internal void OnEntityEnter(BaseEntity ent)
+}
 public LaserBeam : MonoBehaviour {
 public float scrollSpeed
 public LineRenderer beamRenderer
@@ -13678,7 +13826,6 @@ public LightOccludee : MonoBehaviour {
 public float RadiusScale
 public float MinTimeVisible
 public bool IsDynamic
-public bool StickyGizmos
 }
 public LightPulse : MonoBehaviour {
 public Light TargetLight
@@ -14214,6 +14361,36 @@ public Rigidbody mainRigidbody
 public Transform[] waypoints
 private Vector3 currentWaypoint
 private Vector3 nextWaypoint
+}
+public MagnetCraneSounds : MonoBehaviour {
+public BaseCrane crane
+public SoundDefinition engineStartSoundDef
+public SoundDefinition engineStopSoundDef
+public BlendedLoopEngineSound engineLoops
+public SoundDefinition cabinRotationStartDef
+public SoundDefinition cabinRotationStopDef
+public SoundDefinition cabinRotationLoopDef
+private Sound cabinRotationLoop
+public SoundDefinition turningLoopDef
+private Sound turningLoop
+public SoundDefinition trackMovementLoopDef
+private Sound trackMovementLoop
+private Modulator trackGainMod
+private Modulator trackPitchMod
+public SoundDefinition armMovementLoopDef
+public SoundDefinition armMovementStartDef
+public SoundDefinition armMovementStopDef
+private Sound armMovementLoop01
+private Modulator armMovementLoop01PitchMod
+public GameObject arm01SoundPosition
+public GameObject arm02SoundPosition
+private Sound armMovementLoop02
+private Modulator armMovementLoop02PitchMod
+}
+public MagnetLiftable : EntityComponent`1<BaseEntity> {
+public ItemAmount[] shredResources
+public Vector3 shredDirection
+public void SetMagnetized(bool wantsOn, BaseMagnet magnetSource)
 }
 public MagnetSnap : object {
 private Transform snapLocation
@@ -15325,6 +15502,7 @@ public VehicleEngineController engineController
 public EngineState lastSetEngineState
 public EntityFuelSystem fuelSystem
 public float cachedFuelFraction
+public Surface OnSurface
 public float DriveWheelVelocity
 public float DriveWheelSlip
 public float SteerAngle
@@ -15333,6 +15511,7 @@ public float MaxSteerAngle
 public bool IsLockable
 public EngineState CurEngineState
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
+public Surface get_OnSurface()
 public void OnCollisionEnter(Collision collision)
 public void ServerInit()
 public void DoServerDestroy()
@@ -15342,8 +15521,6 @@ public void OnHurtTriggerOccupant(BaseEntity hurtEntity, DamageType damageType, 
 public float GetComfort()
 public float GetSteerInput()
 public bool GetSteerModInput()
-public bool IsOnRoad()
-public bool IsOnIce()
 public void VehicleFixedUpdate()
 public void PlayerServerInput(InputState inputState, BasePlayer player)
 public void PlayerDismounted(BasePlayer player, BaseMountable seat)
@@ -15581,6 +15758,9 @@ public int MinDistance
 public Bounds Bounds
 public bool HasNavmesh
 public bool IsSafeZone
+public bool WantsDungeonLink
+public bool HasDungeonLink
+public DungeonInfo DungeonEntrance
 protected void Awake()
 public bool CheckPlacement(Vector3 pos, Quaternion rot, Vector3 scale)
 public float Distance(Vector3 position)
@@ -15592,6 +15772,9 @@ protected void OnDrawGizmosSelected()
 public MonumentNavMesh GetMonumentNavMesh()
 public int TierToMask(MonumentTier tier)
 public void PreProcess(IPrefabProcessor preProcess, GameObject rootObj, string name, bool serverside, bool clientside, bool bundling)
+private DungeonInfo FindDungeonEntrance()
+private bool DetermineHasDungeonLink()
+private bool DetermineWantsDungeonLink()
 }
 public MonumentMarker : MonoBehaviour {
 public Text text
@@ -17985,7 +18168,7 @@ public int GroupCandidates
 public int IndividualCandidates
 public int Attempts
 public void Process(UInt32 seed)
-public DistanceInfo GetDistanceInfo(List`1<SpawnInfo> spawns, Vector3 pos)
+public DistanceInfo GetDistanceInfo(List`1<SpawnInfo> spawns, Vector3 monumentPos, Vector3 dungeonPos)
 }
 public PlaceMonumentsOffshore : ProceduralComponent {
 public string ResourceFolder
@@ -18012,7 +18195,7 @@ public int GroupCandidates
 public int IndividualCandidates
 public Quaternion rot90
 public void Process(UInt32 seed)
-public DistanceInfo GetDistanceInfo(List`1<SpawnInfo> spawns, Vector3 pos)
+private DistanceInfo GetDistanceInfo(List`1<SpawnInfo> spawns, Vector3 pos, MonumentInfo info)
 }
 public PlacePowerlineObjects : ProceduralComponent {
 public BasicObject[] Start
@@ -18535,6 +18718,7 @@ public void SetBehaviourEnabled(bool state)
 public void SetComponentEnabled(bool state)
 }
 public PoolableEx : object {
+public bool SupportsPoolingInParent(GameObject gameObject)
 public bool SupportsPooling(GameObject gameObject)
 public void AwakeFromInstantiate(GameObject gameObject)
 }
@@ -18604,6 +18788,7 @@ public CanvasGroup group
 public PowerCounter : IOEntity {
 public int counterNumber
 public int targetCounterNumber
+public Canvas canvas
 public CanvasGroup screenAlpha
 public Text screenText
 public Flags Flag_ShowPassthrough
@@ -25269,19 +25454,19 @@ public Rust.Modular.ModularCarPhysics : object {
 private float <DriveWheelVelocity>k__BackingField
 private float <DriveWheelSlip>k__BackingField
 private float <SteerAngle>k__BackingField
-private ServerWheelData[] wheelData
-private ModularCar modularCar
-private Transform transform
-private Rigidbody rBody
-private ModularCarSettings vehicleSettings
-private float speedAngle
-private bool wasSleeping
-private bool hasDriver
-private bool hadDriver
-private float lastMovingTime
-private WheelFrictionCurve zeroFriction
-private Vector3 prevLocalCOM
-private float midWheelPos
+public ServerWheelData[] wheelData
+public ModularCar modularCar
+public Transform transform
+public Rigidbody rBody
+public ModularCarSettings vehicleSettings
+public float speedAngle
+public bool wasSleeping
+public bool hasDriver
+public bool hadDriver
+public float lastMovingTime
+public WheelFrictionCurve zeroFriction
+public Vector3 prevLocalCOM
+public float midWheelPos
 private int NUM_WHEELS
 private bool WHEEL_HIT_CORRECTION
 private float SLEEP_SPEED
@@ -25290,42 +25475,42 @@ private float AIR_DRAG
 private float DEFAULT_GROUND_GRIP
 private float ROAD_GROUND_GRIP
 private float ICE_GROUND_GRIP
-private bool slowSpeedExitFlag
+public bool slowSpeedExitFlag
 private float SLOW_SPEED_EXIT_SPEED
-private float dragMod
-private float dragModDuration
-private TimeSince timeSinceDragModSet
+public float dragMod
+public float dragModDuration
+public TimeSince timeSinceDragModSet
 public TimeSince timeSinceWaterCheck
 public float DriveWheelVelocity
 public float DriveWheelSlip
 public float SteerAngle
-private bool InSlowSpeedExitMode
+public bool InSlowSpeedExitMode
 public float get_DriveWheelVelocity()
-private void set_DriveWheelVelocity(float value)
+public void set_DriveWheelVelocity(float value)
 public float get_DriveWheelSlip()
-private void set_DriveWheelSlip(float value)
+public void set_DriveWheelSlip(float value)
 public float get_SteerAngle()
-private void set_SteerAngle(float value)
-private bool get_InSlowSpeedExitMode()
+public void set_SteerAngle(float value)
+public bool get_InSlowSpeedExitMode()
 public void .ctor(ModularCar modularCar, Transform transform, Rigidbody rBody, ModularCarSettings vehicleSettings)
 public void PushCar(BasePlayer player)
 public void FixedUpdate(float dt, float speed)
 public bool IsGrounded()
 public void SetTempDrag(float drag, float duration)
 public float GetModifiedDrag()
-private void COMChanged()
-private void ComputeSteerAngle(float dt, float speed)
-private float GetWheelForceDistance(WheelCollider col)
-private void UpdateSuspension(ServerWheelData wd)
-private void AdjustHitForces(int groundedWheels, float neutralForcePerWheel)
-private void UpdateLocalFrame(ServerWheelData wd, float dt)
-private void ComputeTireForces(ServerWheelData wd, float speed, float maxDriveForce, float maxSpeed, float throttleInput, float brakeInput, float driveForceMultiplier)
-private float ComputeDriveForce(float speed, float absSpeed, float demandedForce, float maxForce, float maxForwardSpeed, float driveForceMultiplier)
-private void ComputeOverallForces()
-private float ComputeCombinedSlip(Vector2 localVelocity, Vector2 tireSlip)
-private void ApplyTireForces(ServerWheelData wd)
-private Vector3 GetSidewaysForceAppPoint(ServerWheelData wd, Vector3 contactPoint)
-private ServerWheelData <.ctor>g__AddWheel|42_0(Wheel wheel)
+public void COMChanged()
+public void ComputeSteerAngle(float dt, float speed)
+public float GetWheelForceDistance(WheelCollider col)
+public void UpdateSuspension(ServerWheelData wd)
+public void AdjustHitForces(int groundedWheels, float neutralForcePerWheel)
+public void UpdateLocalFrame(ServerWheelData wd, float dt)
+public void ComputeTireForces(ServerWheelData wd, float speed, float maxDriveForce, float maxSpeed, float throttleInput, float brakeInput, float driveForceMultiplier)
+public float ComputeDriveForce(float speed, float absSpeed, float demandedForce, float maxForce, float maxForwardSpeed, float driveForceMultiplier)
+public void ComputeOverallForces()
+public float ComputeCombinedSlip(Vector2 localVelocity, Vector2 tireSlip)
+public void ApplyTireForces(ServerWheelData wd)
+public Vector3 GetSidewaysForceAppPoint(ServerWheelData wd, Vector3 contactPoint)
+public ServerWheelData <.ctor>g__AddWheel|42_0(Wheel wheel)
 }
 public Rust.Modular.ModularCarSettings : object {
 public float tireFriction
@@ -27106,6 +27291,7 @@ public SoundFollowCollider : MonoBehaviour {
 public SoundDefinition soundDefinition
 public Sound sound
 public Bounds soundFollowBounds
+public bool startImmediately
 }
 public SoundManager : SingletonComponent`1<SoundManager> {
 public SoundClass defaultSoundClass
@@ -27197,8 +27383,8 @@ public Enum TopologyAll
 public Enum TopologyNot
 public bool Test(Vector3 worldPos)
 public bool Test(float normX, float normZ)
-public float GetFactor(Vector3 worldPos)
-public float GetFactor(float normX, float normZ)
+public float GetFactor(Vector3 worldPos, bool checkPlacementMap)
+public float GetFactor(float normX, float normZ, bool checkPlacementMap)
 }
 public SpawnGroup : BaseMonoBehaviour {
 public MonumentTier Tier
@@ -27339,8 +27525,8 @@ public float lerpSpeed
 public void Save(SaveInfo info)
 public void Load(LoadInfo info)
 public void LerpRadiusTo(float radius, float speed)
-protected void UpdateScale()
-protected void Update()
+public void UpdateScale()
+public void Update()
 }
 public SpiderWeb : BaseCombatEntity {
 public bool Fresh()
@@ -28124,7 +28310,6 @@ public void SetAlpha(float normX, float normZ, float a, float opacity, float rad
 public TerrainAnchor : PrefabAttribute {
 public float Extents
 public float Offset
-protected void OnDrawGizmosSelected()
 public void Apply(Single& height, Single& min, Single& max, Vector3 pos, Vector3 scale)
 protected Type GetIndexedType()
 }
@@ -28231,7 +28416,6 @@ protected void Apply(Vector3 position, float opacity, float radius, float fade)
 public TerrainCheck : PrefabAttribute {
 public bool Rotate
 public float Extents
-protected void OnDrawGizmosSelected()
 public bool Check(Vector3 pos)
 protected Type GetIndexedType()
 }
@@ -28300,9 +28484,13 @@ public Texture get_AlbedoArray()
 public Texture get_NormalArray()
 public PhysicMaterial[] GetPhysicMaterials()
 public Color[] GetAridColors()
+public void GetAridOverlayConstants(Color[]& color, Vector4[]& param)
 public Color[] GetTemperateColors()
+public void GetTemperateOverlayConstants(Color[]& color, Vector4[]& param)
 public Color[] GetTundraColors()
+public void GetTundraOverlayConstants(Color[]& color, Vector4[]& param)
 public Color[] GetArcticColors()
+public void GetArcticOverlayConstants(Color[]& color, Vector4[]& param)
 public Single[] GetSplatTiling()
 public float GetMaxSplatTiling()
 public float GetMinSplatTiling()
@@ -28329,6 +28517,7 @@ public void LogSize(object obj, ulong size)
 }
 public TerrainFilter : PrefabAttribute {
 public SpawnFilter Filter
+public bool CheckPlacementMap
 protected void OnDrawGizmosSelected()
 public bool Check(Vector3 pos)
 protected Type GetIndexedType()
@@ -28341,6 +28530,9 @@ public TerrainConfig config
 private float HeightMapRes
 private float SplatMapRes
 private float BaseMapRes
+private int GetHeightMapRes()
+private int GetSplatMapRes()
+private int GetBaseMapRes()
 public GameObject CreateTerrain()
 public GameObject CreateTerrain(int heightmapResolution, int alphamapResolution)
 }
@@ -28362,6 +28554,7 @@ public float GetHeightFast(Vector2 uv)
 public float GetHeight(int x, int z)
 public float GetHeight01(Vector3 worldPos)
 public float GetHeight01(float normX, float normZ)
+public float GetTriangulatedHeight01(float normX, float normZ)
 public float GetHeight01(int x, int z)
 private float GetSrcHeight01(int x, int z)
 private float GetDstHeight01(int x, int z)
@@ -28574,7 +28767,6 @@ public TerrainModifier : PrefabAttribute {
 public float Opacity
 public float Radius
 public float Fade
-protected void OnDrawGizmosSelected()
 public void Apply(Vector3 pos, float scale)
 protected void Apply(Vector3 position, float opacity, float radius, float fade)
 protected Type GetIndexedType()
@@ -28858,6 +29050,8 @@ private RustText actionText
 private Sprite dealerChip
 private Sprite smallBlindChip
 private Sprite bigBlindChip
+private Sprite canSeeIcon
+private Sprite cannotSeeIcon
 private Sprite noChip
 private Image chip
 private Image[] cardsDisplay
@@ -28881,6 +29075,7 @@ private Phrase phraseRoundWinner
 private Phrase phraseRoundWinners
 private Phrase phraseScrapWon
 private Phrase phraseScrapReturned
+private Phrase phraseWinningHand
 private Phrase phraseRoyalFlush
 private Phrase phraseStraightFlush
 private Phrase phraseFourOfAKind
@@ -29624,6 +29819,11 @@ public Renderer treadRenderer
 public Material leftTread
 public Material rightTread
 public TreadEffects treadEffects
+public float traceThickness
+public float heightFudge
+public bool useWheelYOrigin
+public Vector2 treadTextureDirection
+public bool isMetallic
 }
 public TreadEffects : MonoBehaviour {
 public ParticleSystem[] rearTreadDirt
@@ -29640,14 +29840,12 @@ public SoundDefinition fallLeavesLoopDef
 public Boolean[] usedHeights
 public bool impactSoundPlayed
 private float treeDistanceUponFalling
-public ListHashSet`1<TreeEntity> activeTreeList
 public GameObjectRef prefab
 public bool hasBonusGame
 public GameObjectRef bonusHitEffect
 public GameObjectRef bonusHitSound
 public Collider serverCollider
 public Collider clientCollider
-public TreeMarkerData MarkerData
 public SoundDefinition smallCrackSoundDef
 public SoundDefinition medCrackSoundDef
 private float lastAttackDamage
@@ -29676,26 +29874,27 @@ public TreeLOD : LODComponent {
 public State[] States
 }
 public TreeManager : BaseEntity {
+public ListHashSet`1<BaseEntity> entities
 public TreeManager server
 private int maxTreesPerPacket
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 public Vector3 ProtoHalf3ToVec3(Half3 half3)
 public Half3 Vec3ToProtoHalf3(Vector3 vec3)
 public void ServerInit()
-public void OnTreeDestroyed(TreeEntity treeEntity)
-private void ExtractTreeNetworkData(TreeEntity treeEntity, Tree tree)
+public void OnTreeDestroyed(BaseEntity billboardEntity)
+public void OnTreeSpawned(BaseEntity billboardEntity)
+private void ExtractTreeNetworkData(BaseEntity billboardEntity, Tree tree)
 private void SERVER_RequestTrees(RPCMessage msg)
 }
 public TreeMarker : BaseEntity {
 public GameObjectRef hitEffect
 public SoundDefinition hitEffectSound
 public GameObjectRef spawnEffect
-public DeferredDecal myDecal
 private Vector3 initialPosition
 public bool SpherecastOnInit
 public bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg)
 }
-public TreeMarkerData : ScriptableObject {
+public TreeMarkerData : PrefabAttribute {
 public GenerationArc[] GenerationArcs
 public MarkerLocation[] Markers
 public Vector3 GenerationStartPoint
@@ -29703,7 +29902,7 @@ public float GenerationRadius
 public float MaxY
 public float MinY
 public bool ProcessAngleChecks
-public Vector3 ClampToClosestPointInLocalSpace(Vector3 v, Int32& ignoreIndex, Int32& ignoreIndex2, Vector3& normal)
+protected Type GetIndexedType()
 public Vector3 GetNearbyPoint(Vector3 point, Int32& ignoreIndex, Vector3& normal)
 }
 public TriggerAchievement : TriggerBase {
@@ -29785,6 +29984,7 @@ public GameObject InterestedInObject(GameObject obj)
 public void OnObjects()
 public void OnEmpty()
 private void OnTick()
+protected bool CanHurt(BaseCombatEntity ent)
 }
 public TriggerHurtEx : TriggerBase {
 public float repeatRate
@@ -29838,6 +30038,9 @@ private void OnTick()
 }
 public TriggerLadder : TriggerBase {
 public GameObject InterestedInObject(GameObject obj)
+}
+public TriggerMagnet : TriggerBase {
+internal GameObject InterestedInObject(GameObject obj)
 }
 public TriggerMount : TriggerBase {
 private float MOUNT_DELAY
@@ -31462,16 +31665,15 @@ public void NudgePlayersInRadius(float radius)
 }
 public VehicleTerrainHandler : object {
 public string CurGroundPhysicsMatName
-public bool IsOnRoad
-public bool IsOnSnowOrIce
-public bool IsOnSand
-public bool IsOnIce
+public Surface OnSurface
 public bool IsGrounded
 public float RayLength
 private String[] TerrainRoad
 private float SECONDS_BETWEEN_TERRAIN_SAMPLE
 private TimeSince timeSinceTerrainCheck
 private BaseVehicle vehicle
+public bool IsOnSnowOrIce
+public bool get_IsOnSnowOrIce()
 public void .ctor(BaseVehicle vehicle)
 public void FixedUpdate()
 private void DoTerrainCheck()
