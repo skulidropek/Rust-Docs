@@ -4246,6 +4246,7 @@ public MissionMapMarker missionMapMarker
 public Bike bike
 public TravellingVendor travellingVendor
 public VendingDynamicPricing vendingDynamicPricing
+public TinCanAlarm tinCanAlarm
 public bool ShouldPool
 private bool _disposed
 public void ResetToPool(Entity instance)
@@ -4896,6 +4897,7 @@ public void InspectUids(UidInspector`1<ulong> action)
 public ProtoBuf.HotAirBalloon : object {
 public float inflationAmount
 public Vector3 velocity
+public float sinceLastBlast
 public bool ShouldPool
 private bool _disposed
 public void ResetToPool(HotAirBalloon instance)
@@ -9760,6 +9762,37 @@ public Byte[] SerializeToBytes(TimeSinceThreatAIEventData instance)
 public void SerializeLengthDelimited(Stream stream, TimeSinceThreatAIEventData instance)
 public void InspectUids(UidInspector`1<ulong> action)
 }
+public ProtoBuf.TinCanAlarm : object {
+public Vector3 endPoint
+public bool ShouldPool
+private bool _disposed
+public void ResetToPool(TinCanAlarm instance)
+public void ResetToPool()
+public void Dispose()
+public void EnterPool()
+public void LeavePool()
+public void CopyTo(TinCanAlarm instance)
+public TinCanAlarm Copy()
+public TinCanAlarm Deserialize(Stream stream)
+public TinCanAlarm DeserializeLengthDelimited(Stream stream)
+public TinCanAlarm DeserializeLength(Stream stream, int length)
+public TinCanAlarm Deserialize(Byte[] buffer)
+public void FromProto(Stream stream, bool isDelta)
+public void WriteToStream(Stream stream)
+public void WriteToStreamDelta(Stream stream, TinCanAlarm previous)
+public void ReadFromStream(Stream stream, int size, bool isDelta)
+public TinCanAlarm Deserialize(Byte[] buffer, TinCanAlarm instance, bool isDelta)
+public TinCanAlarm Deserialize(Stream stream, TinCanAlarm instance, bool isDelta)
+public TinCanAlarm DeserializeLengthDelimited(Stream stream, TinCanAlarm instance, bool isDelta)
+public TinCanAlarm DeserializeLength(Stream stream, int length, TinCanAlarm instance, bool isDelta)
+public void SerializeDelta(Stream stream, TinCanAlarm instance, TinCanAlarm previous)
+public void Serialize(Stream stream, TinCanAlarm instance)
+public Byte[] ToProtoBytes()
+public void ToProto(Stream stream)
+public Byte[] SerializeToBytes(TinCanAlarm instance)
+public void SerializeLengthDelimited(Stream stream, TinCanAlarm instance)
+public void InspectUids(UidInspector`1<ulong> action)
+}
 public ProtoBuf.TirednessAboveAIEventData : object {
 public float value
 public bool ShouldPool
@@ -9827,8 +9860,7 @@ public void SerializeLengthDelimited(Stream stream, TrainEngine instance)
 public void InspectUids(UidInspector`1<ulong> action)
 }
 public ProtoBuf.TravellingVendor : object {
-public float steeringAngleLeft
-public float steeringAngleRight
+public float steeringAngle
 public Vector3 velocity
 public int wheelFlags
 public bool ShouldPool
@@ -10184,7 +10216,7 @@ public void InspectUids(UidInspector`1<ulong> action)
 }
 public ProtoBuf.VendingDynamicPricing : object {
 public List`1<SalesData> allSalesData
-public long lastHourUpdate
+public float timeToNextSalesUpdate
 public bool ShouldPool
 private bool _disposed
 public void ResetToPool(VendingDynamicPricing instance)

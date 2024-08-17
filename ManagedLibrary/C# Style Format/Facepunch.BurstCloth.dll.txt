@@ -1,7 +1,7 @@
 public Facepunch.BurstCloth.BurstCloth : MonoBehaviour {
 internal int TickRateMultiplier
 internal int MaximumTickRate
-private List`1<CapsuleParams> CapsuleParamsShared
+private List`1<SphereParams> SphereParamsShared
 public Transform[] RootBones
 public bool SiblingConstraints
 public float LengthModifier
@@ -9,6 +9,7 @@ public BurstClothMaterial Material
 public Vector3 Gravity
 public Transform SimulationSpace
 public float RootMotionStrength
+public Vector2 DefaultLengthConstraint
 public bool EnableCollisions
 public float CollisionRadius
 public AnimationCurve CollisionRadiusCurve
@@ -18,6 +19,7 @@ public int MaxTicksPerFrame
 public int ConstraintIterationCount
 internal List`1<Chain> _chains
 internal List`1<BoneData> _boneDataOriginal
+internal List`1<RotationConstraint> _rotationConstraintsDataOriginal
 private Vector3 _origin
 private Quaternion _rotation
 private Vector3 _up
@@ -33,12 +35,14 @@ private Dictionary`2<Transform, int> _boneToIndex
 private TransformAccessArray _boneTransforms
 private NativeArray`1<BoneData> _boneData
 private NativeArray`1<BoneState> _boneState
-private TransformAccessArray _colliderTransforms
-private NativeArray`1<ColliderData> _colliderData
-private NativeArray`1<ColliderState> _colliderState
+private NativeArray`1<RotationConstraint> _rotationConstraints
+private TransformAccessArray _sphereColliderTransforms
+private NativeArray`1<SphereColliderData> _sphereColliderData
+private NativeArray`1<SphereColliderState> _sphereColliderState
 protected void Initialize()
 protected void Awake()
 protected void OnEnable()
+private void ResetBoneTransforms()
 protected void OnDisable()
 protected internal void FrameUpdate()
 internal JobHandle SimulateSystem()
@@ -46,11 +50,10 @@ private void SetupData()
 private void SetupManagedData()
 private void SetupNativeData()
 protected ValueTuple`3<Vector3, Quaternion, Vector3> GetOriginTransform()
-protected void GatherColliders(List`1<CapsuleParams> colliders)
+protected void GatherColliders(List`1<SphereParams> sphereColliders)
 private ValueTuple`2<Vector3, float> GetBoneLocalPositionAndLength(Transform parent, Transform child)
 private ValueTuple`2<Transform, int> GetSiblingAndIndex(int chainIndex, int depth)
 private void BuildBoneToIndexMap(Dictionary`2<Transform, int> boneToIndex)
-protected CapsuleParams GetCapsuleParams(CapsuleCollider collider)
 protected void UpdateCachedMaterialData()
 }
 public Facepunch.BurstCloth.BurstClothConstraint : MonoBehaviour {
@@ -78,106 +81,53 @@ public void LateUpdate()
 public BurstClothManager Get()
 }
 public Facepunch.BurstCloth.BurstClothMaterial : ScriptableObject {
+private float lengthRelaxation
+private float shapeRelaxation
+private float siblingRelaxation
 private float _damping
 private AnimationCurve _dampingCurve
-private float _lengthWeight
-private AnimationCurve _lengthWeightCurve
-private float _shapeWeight
-private AnimationCurve _shapeWeightCurve
-private float _rotationConstraintWeight
-private AnimationCurve _rotationConstraintWeightCurve
-private float _siblingConstraintWeight
+private AnimationCurve _lengthRelaxationCurve
+private AnimationCurve _shapeRelaxationCurve
 private AnimationCurve _siblingConstraintWeightCurve
-private float _moveSpeed
-private AnimationCurve _moveSpeedCurve
+private bool _forceSyncInEditor
 private BurstClothMaterial _defaultMaterial
-public float Damping
-public AnimationCurve DampingCurve
-public float LengthWeight
-public AnimationCurve LengthWeightCurve
-public float ShapeWeight
-public AnimationCurve ShapeWeightCurve
-public float RotationConstraintWeight
-public AnimationCurve RotationConstraintWeightCurve
-public float SiblingConstraintWeight
-public AnimationCurve SiblingConstraintWeightCurve
-public float MoveSpeed
-public AnimationCurve MoveSpeedCurve
+public bool ForceSyncInEditor
 public BurstClothMaterial DefaultMaterial
-public float get_Damping()
-public void set_Damping(float value)
-public AnimationCurve get_DampingCurve()
-public float get_LengthWeight()
-public void set_LengthWeight(float value)
-public AnimationCurve get_LengthWeightCurve()
-public float get_ShapeWeight()
-public void set_ShapeWeight(float value)
-public AnimationCurve get_ShapeWeightCurve()
-public float get_RotationConstraintWeight()
-public void set_RotationConstraintWeight(float value)
-public AnimationCurve get_RotationConstraintWeightCurve()
-public float get_SiblingConstraintWeight()
-public void set_SiblingConstraintWeight(float value)
-public AnimationCurve get_SiblingConstraintWeightCurve()
-public float get_MoveSpeed()
-public void set_MoveSpeed(float value)
-public AnimationCurve get_MoveSpeedCurve()
+public bool get_ForceSyncInEditor()
 public BurstClothMaterial get_DefaultMaterial()
+public float GetLengthRelaxation(float t)
+public float GetShapeRelaxation(float t)
+public float GetSiblingRelaxation(float t)
 public float GetDamping(float t)
-public float GetLengthWeight(float t)
-public float GetShapeWeight(float t)
-public float GetRotationConstraintWeight(float t)
-public float GetSiblingConstraintWeight(float t)
-public float GetMoveSpeed(float t)
-}
-public Facepunch.BurstCloth.CapsuleParams : ValueType {
-public Transform Transform
-public Vector3 PointA
-public Vector3 PointB
-public float Radius
 }
 internal Facepunch.BurstCloth.Jobs.BoneData : ValueType {
 public int Depth
 public int Parent
 public int Child
 public float Length
-public float3 Normal
+public float3 NormalFromParent
 public int LeftSibling
-public float3 LeftPosition
+public float3 NormalFromLeft
 public float LengthToLeft
 public int RightSibling
-public float3 RightPosition
+public float3 NormalFromRight
 public float LengthToRight
 public float3 LocalPosition
+public quaternion LocalRotation
 public float3 DirectionFromOrigin
 public float CollisionRadius
 public float DampingInv
-public float LengthWeight
-public float ShapeWeight
-public float RotationConstraintWeight
-public float SiblingConstraintWeight
-public float MoveSpeed
-public bool ConstrainRotateX
-public float2 RotateXConstraint
-public bool ConstrainRotateY
-public float2 RotateYConstraint
-public bool ConstrainRotateZ
-public float2 RotateZConstraint
+public float LengthRelaxation
+public float ShapeRelaxation
+public float SiblingRelaxation
+public int RotationConstraintIndex
 public float2 LengthConstraint
 }
 internal Facepunch.BurstCloth.Jobs.BoneState : ValueType {
 public float3 Position
 public quaternion Rotation
 public float3 OldPosition
-}
-internal Facepunch.BurstCloth.Jobs.ColliderData : ValueType {
-public float Radius
-public float3 LocalPositionA
-public float3 LocalPositionB
-}
-internal Facepunch.BurstCloth.Jobs.ColliderState : ValueType {
-public float3 PositionA
-public float3 PositionB
+public float3 Delta
 }
 internal Facepunch.BurstCloth.Jobs.InitializeBoneStateJob : ValueType {
 public NativeArray`1<BoneData> Data
@@ -186,16 +136,24 @@ public float DeltaTime
 public int IterationCount
 public void Execute(int index, TransformAccess transform)
 }
-internal Facepunch.BurstCloth.Jobs.InitializeColliderStateJob : ValueType {
-public NativeArray`1<ColliderData> Data
-public NativeArray`1<ColliderState> State
+internal Facepunch.BurstCloth.Jobs.InitializeSphereColliderStateJob : ValueType {
+public NativeArray`1<SphereColliderData> Data
+public NativeArray`1<SphereColliderState> State
 public void Execute(int index, TransformAccess transform)
 }
+internal Facepunch.BurstCloth.Jobs.RotationConstraint : ValueType {
+public bool3 Constraints
+public float2 X
+public float2 Y
+public float2 Z
+public void .ctor(bool3 constraints, float2 x, float2 y, float2 z)
+}
 internal Facepunch.BurstCloth.Jobs.SimulatePositionsJob : ValueType {
-public NativeArray`1<ColliderData> ColliderData
-public NativeArray`1<ColliderState> ColliderState
+public NativeArray`1<SphereColliderData> ColliderData
+public NativeArray`1<SphereColliderState> ColliderState
+public NativeArray`1<RotationConstraint> RotationConstraints
 public NativeArray`1<BoneData> BoneData
-public NativeArray`1<BoneState> BoneState
+public NativeArray`1<BoneState> BoneStates
 public int TickRate
 public float DeltaTime
 public int IterationCount
@@ -212,15 +170,16 @@ public float3 Up
 public float Radius
 public void Execute()
 private void AdjustSimulationSpace()
-private void MovePositions(BoneData& data, BoneState& oldState, BoneState& newState)
-private void ApplySpringConstraints(BoneData& data, BoneState& state, NativeArray`1& workBoneState, float dt)
-private float3 CalculateAnchorPosition(float3& from, float3& to, float2& lengthRange)
-private void ResolveCollisions(BoneData& data, BoneState& state)
+private void MovePositions(BoneData& data, BoneState& newState)
+private void ApplyLinearConstraints(BoneData& data, BoneState& state, NativeArray`1& workBoneState, Collision& collision)
+private void VerletIntegrate(BoneState& state, float3 acceleration, float dt, float damping)
+private void PopulateCollisions(NativeArray`1<Collision> collisions)
 private void ApplyRotationConstraints(BoneData& data, BoneState& state)
-private quaternion ApplyAngleConstraint(BoneData& data, quaternion rotation, quaternion parentRotation)
-private float3 RayMarch(float3& origin, float3& direction, float radius, float maxDistance)
+private quaternion ApplyAngleLimitsConstraint(BoneData& data, NativeArray`1& rotationConstraints, quaternion rotation, quaternion parentRotation)
+private float3 RayMarch(float3& origin, float3& direction, float radius, float maxDistance, Boolean& hit)
 private float Scene(float3& position)
 private float Union(float d1, float d2)
+private float SphereSignedDistance(float3& p, float3& pSphere, Single& r)
 private float Capsule(float3& p, float3& a, float3& b, float r)
 private float3 Slerp(float3 a, float3 b, float t)
 private quaternion FromToRotation(float3 from, float3 to)
@@ -232,10 +191,23 @@ private float Repeat(float t, float length)
 private float3 ToEuler(quaternion q, RotationOrder order)
 private float3 EulerReorderBack(float3 euler, RotationOrder order)
 }
+internal Facepunch.BurstCloth.Jobs.SphereColliderData : ValueType {
+public float Radius
+public float RadiusSqr
+public float3 LocalPosition
+}
+internal Facepunch.BurstCloth.Jobs.SphereColliderState : ValueType {
+public float3 Position
+}
 internal Facepunch.BurstCloth.Jobs.UpdateTransformsJob : ValueType {
 public NativeArray`1<BoneData> Data
 public NativeArray`1<BoneState> State
 public void Execute(int index, TransformAccess transform)
+}
+public Facepunch.BurstCloth.SphereParams : ValueType {
+public Transform Transform
+public Vector3 Point
+public float Radius
 }
 internal UnitySourceGeneratedAssemblyMonoScriptTypes_v1 : object {
 private MonoScriptData Get()

@@ -6,13 +6,73 @@ public string SslCertificate
 public string SslCertificatePassword
 public Action`3<IPAddress, int, string> OnMessage
 private int nextClientId
-private Dictionary`2<int, IWebSocketConnection> clients
+private Dictionary`2<int, RconConnection> clients
 private List`1<int> deadClients
 private WebSocketServer server
 public void Start()
 public void Shutdown()
 public void BroadcastMessage(string str)
 public void SendMessage(int target, string str)
+public IList`1<RconClientStats> GetClientStats()
+}
+public Facepunch.Rcon.RconClientStats : ValueType {
+public int ConnectionId
+public string IP
+public int Port
+public DateTime ConnectedAt
+public int BroadcastedMessages
+public int SentMessages
+public int RecievedMessages
+}
+internal Facepunch.Rcon.RconConnection : object {
+private IWebSocketConnection <Socket>k__BackingField
+public RconClientStats Stats
+public int ConnectionId
+public IWebSocketConnection Socket
+public int get_ConnectionId()
+public IWebSocketConnection get_Socket()
+public void .ctor(IWebSocketConnection connection, int connectionId)
+}
+public Facepunch.Rust.Profiling.RconConnectionAttempt : ValueType {
+public string IP
+public int Port
+public int ConnectionId
+public bool Success
+public string PasswordAttempt
+}
+public Facepunch.Rust.Profiling.RconMessageStats : ValueType {
+public string IP
+public int Port
+public int ConnectionId
+public string Message
+public int MessageLength
+}
+public Facepunch.Rust.Profiling.RconProfiler : object {
+public int mode
+public int ClampedMessageLength
+public TimeSpan ExecutionTime
+private RconProfilerStats currentStats
+private int lastClientCount
+private object Lock
+public void OnRconMessage(string ip, int port, int connectionId, string message)
+public void OnNewConnection(IWebSocketConnection socket, int connectionId)
+public void OnFailedConnection(IWebSocketConnection socket, string passwordAttempt)
+public void UpdateClientCount(int count)
+private void LogConnection(IWebSocketConnection socket, int connectionId, bool success, string passwordAttempt)
+public RconProfilerStats GetCurrentStats(bool reset)
+public void Reset()
+}
+public Facepunch.Rust.Profiling.RconProfilerStats : object {
+public RconProfilerStats Default
+public int MessageCount
+public long MessageLengthSum
+public int ConnectionCount
+public int NewConnectionCount
+public int FailedConnectionCount
+public List`1<RconMessageStats> Messages
+public List`1<RconConnectionAttempt> ConnectionAttempts
+public void EnterPool()
+public void LeavePool()
 }
 internal UnitySourceGeneratedAssemblyMonoScriptTypes_v1 : object {
 private MonoScriptData Get()

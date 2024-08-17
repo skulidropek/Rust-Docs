@@ -247,6 +247,36 @@ public string RemoveBadCharacters(string str)
 public string Base64Encode(string plainText)
 public string Base64Decode(string base64EncodedData)
 }
+public Facepunch.NativeMemoryStream : Stream {
+private NativeArray`1<byte> _buffer
+private int _capacity
+private int _length
+private int _position
+private bool _disposeArray
+private Allocator _allocator
+public int MaxSupportedCapacity
+public NativeArray`1<byte> Buffer
+public bool CanRead
+public bool CanSeek
+public bool CanWrite
+public long Length
+public long Position
+public void .ctor(int capacity, Allocator allocator, bool disposeArray)
+public NativeArray`1<byte> get_Buffer()
+public bool get_CanRead()
+public bool get_CanSeek()
+public bool get_CanWrite()
+public long get_Length()
+public long get_Position()
+public void set_Position(long value)
+public void Flush()
+public int Read(Byte[] buffer, int offset, int count)
+public long Seek(long offset, SeekOrigin origin)
+public void SetLength(long value)
+public void Write(Byte[] buffer, int offset, int count)
+private void EnsureCapacity(int capacity)
+protected void Dispose(bool disposing)
+}
 public Facepunch.Pool : object {
 public ConcurrentDictionary`2<Type, IPoolCollection> Directory
 public void FreeList(List`1& obj)
@@ -319,6 +349,18 @@ public bool Empty
 public bool get_Empty()
 public void Add(T item)
 public T Pop()
+}
+public LimitDictionary`2 : Dictionary`2<TKey, TValue> {
+public int maxCapacity
+private Queue`1<TKey> entries
+public void .ctor(int maxCapacity)
+public void Add(TKey key, TValue item)
+}
+public LimitList`1 : List`1<T> {
+public int maxCapacity
+private Queue`1<T> entries
+public void .ctor(int maxCapacity)
+public void Add(T item)
 }
 public ListDictionary`2 : object {
 private Dictionary`2<TKey, int> key2idx
