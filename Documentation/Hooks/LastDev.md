@@ -1,4 +1,4 @@
-# Hooks Definitions
+# Hook Definitions
 
 ## OnPlayerSpectate(BasePlayer,string)
 
@@ -643,13 +643,13 @@ object OnCodeEntered(CodeLock lock, BasePlayer player, string code)
 /// Called when the code of a CodeLock is changed.
 /// </summary>
 /// <param name="player">The player who changed the code.</param>
-/// <param name="codeLock">The CodeLock whose code was changed.</param>
+/// <param name="lock">The CodeLock whose code was changed.</param>
 /// <param name="newCode">The new code entered by the player.</param>
 /// <param name="isGuest">Whether the player is a guest or not.</param>
 /// <returns>No return behavior.</returns>
-void OnCodeChanged(BasePlayer player, CodeLock codeLock, string newCode, bool isGuest)
+void OnCodeChanged(BasePlayer player, CodeLock lock, string newCode, bool isGuest)
 {
-    Puts($"Code changed to {newCode} for CodeLock {codeLock}");
+    Puts($"Code changed to {newCode} for lock {lock}");
 }
 ```
 
@@ -657,8 +657,8 @@ void OnCodeChanged(BasePlayer player, CodeLock codeLock, string newCode, bool is
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.MaxDistance(3f, CheckParent = true)]
+	[RPC_Server]
 	private void RPC_ChangeCode(RPCMessage rpc)
 	{
 		if (!rpc.player.CanInteract())
@@ -960,15 +960,19 @@ void OnAdventGiftAward(AdventCalendar calendar, BasePlayer player)
 
 ```csharp
 /// <summary>
-/// Called when a player attempts to unlock an entity.
+/// Called when a player attempts to unlock the entity.
 /// </summary>
 /// <param name="player">The player attempting to unlock the entity.</param>
 /// <param name="lock">The lock being unlocked.</param>
-/// <returns>Returns true if the default behavior is overridden, and false otherwise.</returns>
-bool CanUnlock(BasePlayer player, KeyLock lock)
+/// <returns>Returns null if the default behavior is allowed, and a non-null value otherwise.</returns>
+object CanUnlock(BasePlayer player, KeyLock lock)
 {
-    Puts("CanUnlock is working!");
-    return true;
+    Puts("CanUnlock hook called!");
+    // If you want to override the default behavior, return a non-null value
+    // For example:
+    // return true; // Allow unlocking
+    // return false; // Prevent unlocking
+    return null;
 }
 ```
 
@@ -976,8 +980,8 @@ bool CanUnlock(BasePlayer player, KeyLock lock)
 
 ```csharp
 
-	[RPC_Server.MaxDistance(3f, CheckParent = true)]
 	[RPC_Server]
+	[RPC_Server.MaxDistance(3f, CheckParent = true)]
 	private void RPC_Unlock(RPCMessage rpc)
 	{
 		if (rpc.player.CanInteract() && IsLocked() && Interface.CallHook("CanUnlock", rpc.player, this) == null && HasLockPermission(rpc.player))
@@ -1892,7 +1896,7 @@ void OnSignUpdated(CarvablePumpkin pumpkin, BasePlayer player)
 /// </summary>
 /// <param name="vendingMachine">The vending machine being opened.</param>
 /// <param name="player">The player opening the vending shop.</param>
-/// <returns>Returns null if the default behavior is not overridden, otherwise returns a non-null value.</returns>
+/// <returns>Returns null if the default behavior is not overridden, otherwise returns an object representing the result of the hook.</returns>
 object OnVendingShopOpen(VendingMachine vendingMachine, BasePlayer player)
 {
     Puts("OnVendingShopOpen is working!");
@@ -1904,8 +1908,8 @@ object OnVendingShopOpen(VendingMachine vendingMachine, BasePlayer player)
 
 ```csharp
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	public void RPC_OpenShop(RPCMessage msg)
 	{
 		if (OccupiedCheck(msg.player) && Interface.CallHook("OnVendingShopOpen", this, msg.player) == null)
@@ -2025,8 +2029,8 @@ object OnHorseLead(BaseRidableAnimal animal, BasePlayer player)
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.IsVisible(3f)]
+	[RPC_Server]
 	public void RPC_Lead(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -2324,11 +2328,10 @@ object OnOvenStart(BaseOven oven)
 /// Called when a map image is updated.
 /// </summary>
 /// <param name="imageId">The ID of the updated image.</param>
-/// <param name="imageType">The type of the updated image (0 = fog, 1 = paint).</param>
 /// <returns>No return behavior.</returns>
-void OnMapImageUpdated(uint imageId, byte imageType)
+void OnMapImageUpdated(uint imageId)
 {
-    Puts($"Map image {imageType} updated with ID {imageId}");
+    Puts($"Map image updated: {imageId}");
 }
 ```
 
@@ -2337,8 +2340,8 @@ void OnMapImageUpdated(uint imageId, byte imageType)
 ```csharp
 
 	[RPC_Server.FromOwner]
-	[RPC_Server]
 	[RPC_Server.CallsPerSecond(1uL)]
+	[RPC_Server]
 	public void ImageUpdate(RPCMessage msg)
 	{
 		if (msg.player == null)
@@ -2413,11 +2416,10 @@ float IOnNpcTarget(BaseNpc npc, BaseEntity target)
 /// </summary>
 /// <param name="sign">The sign that was locked.</param>
 /// <param name="player">The player who locked the sign.</param>
-/// <returns>Returns a non-null value if the default behavior is overridden.</returns>
-object OnSignLocked(PhotoFrame sign, BasePlayer player)
+/// <returns>No return behavior.</returns>
+void OnSignLocked(PhotoFrame sign, BasePlayer player)
 {
-    Puts("OnSignLocked hook called!");
-    return null;
+    Puts($"Sign locked by player {player.UserIDString} for sign ID {sign.EntityID}");
 }
 ```
 
@@ -2425,8 +2427,8 @@ object OnSignLocked(PhotoFrame sign, BasePlayer player)
 
 ```csharp
 
-	[RPC_Server.MaxDistance(3f)]
 	[RPC_Server]
+	[RPC_Server.MaxDistance(3f)]
 	public void LockSign(RPCMessage msg)
 	{
 		if (msg.player.CanInteract() && CanUpdateSign(msg.player))
@@ -2572,11 +2574,11 @@ bool CanLootPlayer(BasePlayer looter, BasePlayer target)
 /// </summary>
 /// <param name="player">The player attempting to loot the entity.</param>
 /// <param name="entity">The entity being looted.</param>
-/// <returns>Returns true if the default behavior is overridden, false otherwise.</returns>
-bool CanLootEntity(BasePlayer player, BaseRidableAnimal entity)
+/// <returns>Returns null if the default behavior is not overridden, otherwise returns a non-null value.</returns>
+object CanLootEntity(BasePlayer player, BaseRidableAnimal entity)
 {
     Puts("CanLootEntity is working!");
-    return true; // Or another value depending on the method's functionality
+    return null;
 }
 ```
 
@@ -2584,8 +2586,8 @@ bool CanLootEntity(BasePlayer player, BaseRidableAnimal entity)
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.IsVisible(3f)]
+	[RPC_Server]
 	private void RPC_OpenLoot(RPCMessage rpc)
 	{
 		if (storageInventory == null)
@@ -2970,10 +2972,10 @@ object OnWireConnect(BasePlayer player, IOEntity inputEntity, int inputIndex, IO
 
 ```csharp
 
-	[RPC_Server]
-	[RPC_Server.IsActiveItem]
-	[RPC_Server.FromOwner]
 	[RPC_Server.CallsPerSecond(5uL)]
+	[RPC_Server.FromOwner]
+	[RPC_Server.IsActiveItem]
+	[RPC_Server]
 	public void RPC_MakeConnection(RPCMessage rpc)
 	{
 		BasePlayer player = rpc.player;
@@ -3791,12 +3793,13 @@ void OnPhoneDialTimeout(PhoneController phoneController, PhoneController otherPh
 /// <summary>
 /// Called when a vending shop is opened.
 /// </summary>
-/// <param name="vendingMachine">The vending machine that was opened.</param>
+/// <param name="vendingMachine">The NPC vending machine that was opened.</param>
 /// <param name="player">The player who opened the vending shop.</param>
-/// <returns>No return behavior if the default behavior is not overridden.</returns>
-void OnVendingShopOpen(NPCVendingMachine vendingMachine, BasePlayer player)
+/// <returns>Returns null if the default behavior is not overridden, otherwise returns a non-null value.</returns>
+object OnVendingShopOpen(NPCVendingMachine vendingMachine, BasePlayer player)
 {
     Puts("OnVendingShopOpen is working!");
+    return null;
 }
 ```
 
@@ -3804,8 +3807,8 @@ void OnVendingShopOpen(NPCVendingMachine vendingMachine, BasePlayer player)
 
 ```csharp
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	public void SV_OpenMenu(RPCMessage msg)
 	{
 		if (vendingMachine == null)
@@ -3999,8 +4002,8 @@ void OnMapMarkersClear(BasePlayer player, System.Collections.Generic.List<ProtoB
 ```csharp
 
 	[RPC_Server.CallsPerSecond(1uL)]
-	[RPC_Server.FromOwner]
 	[RPC_Server]
+	[RPC_Server.FromOwner]
 	public void Server_ClearMapMarkers(RPCMessage msg)
 	{
 		if (Interface.CallHook("OnMapMarkersClear", this, State.pointsOfInterest) != null)
@@ -4477,12 +4480,12 @@ void OnLootSpawn(LootContainer lootContainer)
 /// <summary>
 /// Called when a player assists another wounded player.
 /// </summary>
-/// <param name="assister">The player assisting the wounded player.</param>
-/// <param name="victim">The wounded player being assisted.</param>
+/// <param name="assister">The player who is assisting.</param>
+/// <param name="target">The player being assisted.</param>
 /// <returns>No return behavior.</returns>
-void OnPlayerAssist(BasePlayer assister, BasePlayer victim)
+void OnPlayerAssist(BasePlayer assister, BasePlayer target)
 {
-    Puts($"Player {assister.UserIDString} assisted wounded player {victim.UserIDString}");
+    Puts($"Player {assister.UserIDString} assisted wounded player {target.UserIDString}");
 }
 ```
 
@@ -4490,8 +4493,8 @@ void OnPlayerAssist(BasePlayer assister, BasePlayer victim)
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.IsVisible(3f)]
+	[RPC_Server]
 	public void RPC_Assist(RPCMessage msg)
 	{
 		if (msg.player.CanInteract() && !(msg.player == this) && IsWounded() && Interface.CallHook("OnPlayerAssist", this, msg.player) == null)
@@ -5480,12 +5483,12 @@ object OnOutputUpdate(IOEntity ioEntity)
 /// Called when the excavator's resource target is set.
 /// </summary>
 /// <param name="excavatorArm">The excavator arm.</param>
-/// <param name="resourceType">The type of resource to mine.</param>
+/// <param name="resourceType">The type of resource to mine (e.g. "HQM", "Sulfur", etc.).</param>
 /// <param name="player">The player who set the resource target.</param>
 /// <returns>No return behavior.</returns>
 void OnExcavatorResourceSet(ExcavatorArm excavatorArm, string resourceType, BasePlayer player)
 {
-    Puts($"Resource target set to {resourceType} by player {player.UserID}");
+    Puts($"Resource target set to {resourceType} for player {player.UserID}");
 }
 ```
 
@@ -5493,8 +5496,8 @@ void OnExcavatorResourceSet(ExcavatorArm excavatorArm, string resourceType, Base
 
 ```csharp
 
-	[RPC_Server.MaxDistance(3f)]
 	[RPC_Server]
+	[RPC_Server.MaxDistance(3f)]
 	public void RPC_SetResourceTarget(RPCMessage msg)
 	{
 		string text = msg.read.String();
@@ -5868,8 +5871,8 @@ object OnRotateVendingMachine(VendingMachine vendingMachine, BasePlayer player)
 
 ```csharp
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	public void RPC_RotateVM(RPCMessage msg)
 	{
 		if (Interface.CallHook("OnRotateVendingMachine", this, msg.player) == null && CanRotate())
@@ -5935,8 +5938,8 @@ bool OnTrapDisarm(Landmine landmine, BasePlayer player)
 
 ```csharp
 
-	[RPC_Server.MaxDistance(3f)]
 	[RPC_Server]
+	[RPC_Server.MaxDistance(3f)]
 	private void RPC_Disarm(RPCMessage rpc)
 	{
 		if ((ulong)rpc.player.userID != triggerPlayerID && Armed() && Interface.CallHook("OnTrapDisarm", this, rpc.player) == null)
@@ -5973,8 +5976,8 @@ void OnTurretRotate(AutoTurret turret, BasePlayer player)
 
 ```csharp
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	private void FlipAim(RPCMessage rpc)
 	{
 		if (!IsOnline() && IsAuthed(rpc.player) && !booting && Interface.CallHook("OnTurretRotate", this, rpc.player) == null)
@@ -6369,7 +6372,7 @@ void OnNpcRadioChatter(ScientistNPC npc)
 /// <param name="workbench">The workbench where the unlock occurred.</param>
 /// <param name="node">The unlocked tech tree node.</param>
 /// <param name="player">The player who unlocked the node.</param>
-/// <returns>Returns null if the default behavior is not overridden.</returns>
+/// <returns>Returns null if no custom behavior is provided.</returns>
 object OnTechTreeNodeUnlocked(Workbench workbench, TechTreeData.NodeInstance node, BasePlayer player)
 {
     Puts("OnTechTreeNodeUnlocked called!");
@@ -6381,8 +6384,8 @@ object OnTechTreeNodeUnlocked(Workbench workbench, TechTreeData.NodeInstance nod
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.IsVisible(3f)]
+	[RPC_Server]
 	public void RPC_TechTreeUnlock(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -6539,11 +6542,10 @@ void OnPlayerRecovered(BasePlayer player)
 /// </summary>
 /// <param name="liquidWeapon">The liquid weapon being fired.</param>
 /// <param name="player">The player firing the liquid weapon.</param>
-/// <returns>Returns a non-null value if the default behavior is overridden.</returns>
-object OnLiquidWeaponFired(LiquidWeapon liquidWeapon, BasePlayer player)
+/// <returns>No return behavior.</returns>
+void OnLiquidWeaponFired(LiquidWeapon liquidWeapon, BasePlayer player)
 {
-    Puts("OnLiquidWeaponFired is working!");
-    return null;
+    Puts($"Liquid weapon {liquidWeapon} fired by player {player}");
 }
 ```
 
@@ -6551,8 +6553,8 @@ object OnLiquidWeaponFired(LiquidWeapon liquidWeapon, BasePlayer player)
 
 ```csharp
 
-	[RPC_Server.IsActiveItem]
 	[RPC_Server]
+	[RPC_Server.IsActiveItem]
 	private void StartFiring(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -7458,16 +7460,16 @@ void OnPlayerSleepEnded(BasePlayer player)
 
 ```csharp
 /// <summary>
-/// Called when the player switches to a different type of ammunition.
+/// Called when the player switches to a different ammo type.
 /// </summary>
 /// <param name="projectile">The projectile being switched.</param>
 /// <param name="player">The player performing the switch.</param>
-/// <param name="itemDefinition">The definition of the new ammunition type.</param>
+/// <param name="itemDefinition">The new ammo item definition.</param>
 /// <returns>Returns null if the default behavior is not overridden, otherwise returns a non-null value.</returns>
 object OnAmmoSwitch(BaseProjectile projectile, BasePlayer player, ItemDefinition itemDefinition)
 {
     Puts("OnAmmoSwitch called!");
-    return null;
+    // Minimal code to demonstrate functionality
 }
 ```
 
@@ -7475,8 +7477,8 @@ object OnAmmoSwitch(BaseProjectile projectile, BasePlayer player, ItemDefinition
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.IsActiveItem]
+	[RPC_Server]
 	private void SwitchAmmoTo(RPCMessage msg)
 	{
 		BasePlayer ownerPlayer = GetOwnerPlayer();
@@ -7630,8 +7632,8 @@ object OnVehicleLockRequest(ModularCarGarage garage, BasePlayer player, string l
 
 ```csharp
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server.MaxDistance(3f)]
+	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
 	public void RPC_RequestAddLock(RPCMessage msg)
 	{
@@ -7878,8 +7880,8 @@ object OnVehicleModuleSelect(Item item, ModularCarGarage garage, BasePlayer play
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.MaxDistance(3f)]
+	[RPC_Server]
 	public void RPC_SelectedLootItem(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -9702,7 +9704,7 @@ public class MyModule : MonoBehaviour
 
 ```csharp
 /// <summary>
-/// Called when a player attempts to loot an entity.
+/// Called to determine if a player can loot an entity.
 /// </summary>
 /// <param name="player">The player attempting to loot the entity.</param>
 /// <param name="entity">The entity being looted.</param>
@@ -9710,7 +9712,7 @@ public class MyModule : MonoBehaviour
 bool CanLootEntity(BasePlayer player, LootableCorpse entity)
 {
     Puts("CanLootEntity is working!");
-    return false;
+    return true;
 }
 ```
 
@@ -9718,8 +9720,8 @@ bool CanLootEntity(BasePlayer player, LootableCorpse entity)
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.IsVisible(3f)]
+	[RPC_Server]
 	private void RPC_LootCorpse(RPCMessage rpc)
 	{
 		BasePlayer player = rpc.player;
@@ -9787,8 +9789,6 @@ object OnTeamUpdate(ulong oldTeam, ulong newTeam, BasePlayer player)
 ## IOnPlayerConnected(BasePlayer)
 
 ```csharp
-Документация для IOnPlayerConnected(BasePlayer)
-
 /// <summary>
 /// Called when a player connects to the server.
 /// </summary>
@@ -9796,10 +9796,8 @@ object OnTeamUpdate(ulong oldTeam, ulong newTeam, BasePlayer player)
 /// <returns>No return behavior.</returns>
 void IOnPlayerConnected(BasePlayer player)
 {
-    Puts($"Player {player.UserIDString} connected!");
+    Puts($"Player {player.displayName} connected.");
 }
-
-Метод вызывается в PlayerInit(Network.Connection c) и является частью процесса подключения игрока к серверу.
 ```
 
 ### Source Code from the Library
@@ -9815,7 +9813,7 @@ void IOnPlayerConnected(BasePlayer player)
 			activePlayerList.Add(this);
 			bots.Remove(this);
 			userID = c.userid;
-			UserIDString = userID.ToString();
+			UserIDString = userID.Get().ToString();
 			displayName = c.username;
 			c.player = this;
 			secondsConnected = 0;
@@ -11482,11 +11480,11 @@ object OnVendingShopOpened(InvisibleVendingMachine vendingMachine, BasePlayer pl
 /// <param name="car">The modular car.</param>
 /// <param name="player">The player requesting the new code.</param>
 /// <param name="newCode">The new code to be set.</param>
-/// <returns>Returns null if the default behavior is not overridden, otherwise returns a non-null value.</returns>
+/// <returns>Returns null if the default behavior is overridden, otherwise returns a non-null value.</returns>
 object OnCodeChange(ModularCar car, BasePlayer player, string newCode)
 {
     Puts("OnCodeChange hook called!");
-    // If you want to override the default behavior, return a non-null value
+    // Add custom logic here if needed
     return null;
 }
 ```
@@ -11496,8 +11494,8 @@ object OnCodeChange(ModularCar car, BasePlayer player, string newCode)
 ```csharp
 
 	[RPC_Server]
-	[RPC_Server.MaxDistance(3f)]
 	[RPC_Server.IsVisible(3f)]
+	[RPC_Server.MaxDistance(3f)]
 	public void RPC_RequestNewCode(RPCMessage msg)
 	{
 		if (!HasOccupant || !carOccupant.CarLock.HasALock)
@@ -11710,8 +11708,8 @@ void OnItemResearch(ResearchTable researchTable, Item item, BasePlayer player)
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.IsVisible(3f)]
+	[RPC_Server]
 	public void DoResearch(RPCMessage msg)
 	{
 		if (IsResearching())
@@ -12048,12 +12046,12 @@ object CanBypassQueue(Network.Connection connection)
 /// <summary>
 /// Called when a player responds to an NPC's conversation.
 /// </summary>
-/// <param name="npc">The NPC initiating the conversation.</param>
+/// <param name="npcTalking">The NPC initiating the conversation.</param>
 /// <param name="player">The player responding to the conversation.</param>
 /// <param name="conversationData">The data for the ongoing conversation.</param>
 /// <param name="responseNode">The node representing the player's response.</param>
 /// <returns>Returns a non-null value if the default behavior is overridden.</returns>
-object OnNpcConversationRespond(NPCTalking npc, BasePlayer player, ConversationData conversationData, ConversationData.ResponseNode responseNode)
+object OnNpcConversationRespond(NPCTalking npcTalking, BasePlayer player, ConversationData conversationData, ConversationData.ResponseNode responseNode)
 {
     // Minimal code to demonstrate functionality
     Puts("OnNpcConversationRespond called!");
@@ -12068,8 +12066,8 @@ object OnNpcConversationRespond(NPCTalking npc, BasePlayer player, ConversationD
 ```csharp
 
 	[RPC_Server.CallsPerSecond(5uL)]
-	[RPC_Server.MaxDistance(3f)]
 	[RPC_Server]
+	[RPC_Server.MaxDistance(3f)]
 	public void Server_ResponsePressed(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -12502,9 +12500,9 @@ object OnBuyVendingItem(VendingMachine vendingMachine, BasePlayer player, int it
 
 ```csharp
 
+	[RPC_Server]
 	[RPC_Server.CallsPerSecond(5uL)]
 	[RPC_Server.IsVisible(3f)]
-	[RPC_Server]
 	public void BuyItem(RPCMessage rpc)
 	{
 		if (OccupiedCheck(rpc.player))
@@ -12531,13 +12529,14 @@ object OnBuyVendingItem(VendingMachine vendingMachine, BasePlayer player, int it
 /// <summary>
 /// Called when a turret is assigned to a player.
 /// </summary>
-/// <param name="turret">The turret being assigned.</param>
-/// <param name="playerId">The ID of the player being assigned the turret.</param>
-/// <param name="player">The player being assigned the turret.</param>
+/// <param name="turret">The AutoTurret being assigned.</param>
+/// <param name="id">The ID of the player being assigned the turret.</param>
+/// <param name="player">The BasePlayer being assigned the turret.</param>
 /// <returns>Returns null if the default behavior is not overridden, otherwise returns a non-null value.</returns>
-object OnTurretAssign(AutoTurret turret, ulong playerId, BasePlayer player)
+object OnTurretAssign(AutoTurret turret, ulong id, BasePlayer player)
 {
     Puts("OnTurretAssign called!");
+    // Minimal code to demonstrate functionality
     return null;
 }
 ```
@@ -12546,8 +12545,8 @@ object OnTurretAssign(AutoTurret turret, ulong playerId, BasePlayer player)
 
 ```csharp
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	public void AssignToFriend(RPCMessage msg)
 	{
 		if (AtMaxAuthCapacity() || msg.player == null || !msg.player.CanInteract() || !CanChangeSettings(msg.player))
@@ -12708,8 +12707,8 @@ void OnVehicleModuleDeselected(ModularCarGarage garage, BasePlayer player)
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.MaxDistance(3f)]
+	[RPC_Server]
 	public void RPC_DeselectedLootItem(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -12744,8 +12743,8 @@ void OnMapMarkersCleared(BasePlayer player)
 ```csharp
 
 	[RPC_Server.CallsPerSecond(1uL)]
-	[RPC_Server.FromOwner]
 	[RPC_Server]
+	[RPC_Server.FromOwner]
 	public void Server_ClearMapMarkers(RPCMessage msg)
 	{
 		if (Interface.CallHook("OnMapMarkersClear", this, State.pointsOfInterest) != null)
@@ -13103,11 +13102,11 @@ void OnTerrainInitialized()
 /// </summary>
 /// <param name="player">The player attempting to dismount the entity.</param>
 /// <param name="entity">The entity being dismounted.</param>
-/// <returns>Returns true if the default behavior is overridden, and false otherwise.</returns>
+/// <returns>Returns true if the default behavior is overridden, false otherwise.</returns>
 bool CanDismountEntity(BasePlayer player, BaseMountable entity)
 {
     Puts("CanDismountEntity is working!");
-    return false;
+    return true; // or false depending on the method's functionality
 }
 ```
 
@@ -13151,12 +13150,7 @@ bool CanDismountEntity(BasePlayer player, BaseMountable entity)
 			_mounted.ClientRPC(RpcTarget.Player("ForcePositionTo", _mounted), res);
 			BasePlayer mounted = _mounted;
 			_mounted = null;
-			string[] obj = new string[6] { "Killing player due to invalid dismount point :", player.displayName, " / ", null, null, null };
-			BasePlayer.EncryptedValue<ulong> userID = player.userID;
-			obj[3] = userID.ToString();
-			obj[4] = " on obj : ";
-			obj[5] = base.gameObject.name;
-			Debug.LogWarning(string.Concat(obj));
+			Debug.LogWarning("Killing player due to invalid dismount point :" + player.displayName + " / " + player.userID.Get() + " on obj : " + base.gameObject.name);
 			mounted.Hurt(1000f, DamageType.Suicide, mounted, useProtection: false);
 			if (baseVehicle != null)
 			{
@@ -13365,11 +13359,11 @@ object CanDeployItem(BasePlayer player, Deployer deployer, NetworkableId network
 /// Called when a new map marker is added.
 /// </summary>
 /// <param name="player">The player who added the marker.</param>
-/// <param name="mapNote">The details of the newly added marker.</param>
+/// <param name="mapNote">The details of the map marker.</param>
 /// <returns>No return behavior.</returns>
 void OnMapMarkerAdd(BasePlayer player, ProtoBuf.MapNote mapNote)
 {
-    Puts($"New map marker added by {player.UserIDString} at position: {mapNote.position}");
+    Puts($"New map marker added by {player.UserIDString} at position: {mapNote.Position}");
 }
 ```
 
@@ -13377,8 +13371,8 @@ void OnMapMarkerAdd(BasePlayer player, ProtoBuf.MapNote mapNote)
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.FromOwner]
+	[RPC_Server]
 	[RPC_Server.CallsPerSecond(8uL)]
 	public void Server_AddMarker(RPCMessage msg)
 	{
@@ -14300,13 +14294,13 @@ object OnLiquidVesselFill(BaseLiquidVessel vessel, BasePlayer player, LiquidCont
 /// <summary>
 /// Called when the mode of a turret is toggled.
 /// </summary>
-/// <param name="turret">The AutoTurret whose mode is being toggled.</param>
+/// <param name="turret">The turret whose mode is being toggled.</param>
 /// <param name="player">The player who triggered the toggle.</param>
 /// <returns>Returns null if the default behavior is not overridden, otherwise returns an object representing the result of the hook.</returns>
 object OnTurretModeToggle(AutoTurret turret, BasePlayer player)
 {
-    Puts("OnTurretModeToggle called!");
-    // Minimal code to demonstrate functionality
+    Puts("OnTurretModeToggle is working!");
+    return null;
 }
 ```
 
@@ -14314,8 +14308,8 @@ object OnTurretModeToggle(AutoTurret turret, BasePlayer player)
 
 ```csharp
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	private void SERVER_Peacekeeper(RPCMessage rpc)
 	{
 		if (IsAuthed(rpc.player) && Interface.CallHook("OnTurretModeToggle", this, rpc.player) == null)
@@ -14365,8 +14359,8 @@ Overall, this code snippet appears to be part of a larger game engine that handl
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.IsActiveItem]
+	[RPC_Server]
 	public void PlayerAttack(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -14682,7 +14676,7 @@ object OnMapMarkerRemove(BasePlayer player, System.Collections.Generic.List<Prot
     // Minimal code to demonstrate functionality
     Puts($"Map marker removed at index {index} for player {player.UserID}");
     
-    // Return null if the default behavior is not overridden
+    // If the return value is not null, it means the default behavior was overridden
     return null;
 }
 ```
@@ -14691,9 +14685,9 @@ object OnMapMarkerRemove(BasePlayer player, System.Collections.Generic.List<Prot
 
 ```csharp
 
+	[RPC_Server]
 	[RPC_Server.CallsPerSecond(10uL)]
 	[RPC_Server.FromOwner]
-	[RPC_Server]
 	public void Server_RemovePointOfInterest(RPCMessage msg)
 	{
 		int num = msg.read.Int32();
@@ -15281,8 +15275,8 @@ object OnLootPlayer(BasePlayer looter, BasePlayer target)
 
 ```csharp
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	public void RPC_LootPlayer(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -15320,8 +15314,8 @@ object OnTurretAssigned(AutoTurret turret, ulong id, BasePlayer player)
 
 ```csharp
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	public void AssignToFriend(RPCMessage msg)
 	{
 		if (AtMaxAuthCapacity() || msg.player == null || !msg.player.CanInteract() || !CanChangeSettings(msg.player))
@@ -16334,20 +16328,27 @@ private void OnReceiveTick(PlayerTick msg, bool wasPlayerStalled)
         serverInput.Flip(msg.inputState);
     }
     
-    // Вызов хука OnPlayerInput
+    if (Interface.CallHook("OnPlayerTick", this, msg, wasPlayerStalled) != null)
+    {
+        return;
+    }
+    
+    // ...
+    
     if (Interface.CallHook("OnPlayerInput", this, serverInput) != null || IsReceivingSnapshot)
     {
         return;
     }
     
-    // Остальной код метода...
+    OnPlayerInput(serverInput.Player, serverInput.InputState);
 }
 ```
 
 ### Примечания
 
-*   Хук `OnPlayerInput` вызывается в методе `OnReceiveTick`, поэтому убедитесь, что вы понимаете логику этого метода и как он взаимодействует с хуком.
-*   В параметрах хука указаны два аргумента: `BasePlayer` и `InputState`. Убедитесь, что вы понимаете, что эти параметры представляют собой и что они используются в методе.
+*   Хук `OnPlayerInput` вызывается в методе `OnReceiveTick`, поэтому убедитесь, что вы понимаете логику этого метода.
+*   В параметрах хука указаны `BasePlayer` и `InputState`. Убедитесь, что вы понимаете, как эти параметры используются в методе `OnPlayerInput`.
+*   Код для обрабатывания ввода игрока должен быть написан внутри метода `OnPlayerInput`.
 ```
 
 ### Source Code from the Library
@@ -16446,7 +16447,7 @@ private void OnReceiveTick(PlayerTick msg, bool wasPlayerStalled)
 				tutorialKickTime += UnityEngine.Time.deltaTime;
 				if (tutorialKickTime > 3f)
 				{
-					Debug.LogWarning($"Killing player {displayName}/{userID} as they are on a tutorial island that doesn't belong them");
+					Debug.LogWarning($"Killing player {displayName}/{userID.Get()} as they are on a tutorial island that doesn't belong them");
 					Hurt(999f);
 					tutorialKickTime = 0f;
 				}
@@ -16473,7 +16474,7 @@ private void OnReceiveTick(PlayerTick msg, bool wasPlayerStalled)
 				tutorialKickTime += UnityEngine.Time.deltaTime;
 				if (tutorialKickTime > 3f)
 				{
-					Debug.LogWarning($"Killing player {displayName}/{userID} as they are no longer on a tutorial island and are marked as being in a tutorial");
+					Debug.LogWarning($"Killing player {displayName}/{userID.Get()} as they are no longer on a tutorial island and are marked as being in a tutorial");
 					Hurt(999f);
 					tutorialKickTime = 0f;
 				}
@@ -16856,8 +16857,8 @@ object OnOvenToggle(BaseOven oven, BasePlayer player)
 
 ```csharp
 
-	[RPC_Server.MaxDistance(3f)]
 	[RPC_Server]
+	[RPC_Server.MaxDistance(3f)]
 	protected virtual void SVSwitch(RPCMessage msg)
 	{
 		bool flag = msg.read.Bit();
@@ -17398,8 +17399,8 @@ void OnStashHidden(StashContainer stash, BasePlayer player)
 
 ```csharp
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	public void RPC_HideStash(RPCMessage rpc)
 	{
 		if (Interface.CallHook("CanHideStash", rpc.player, this) == null)
@@ -17613,13 +17614,10 @@ object OnEntityDeath(BaseCombatEntity entity, HitInfo info)
 /// </summary>
 /// <param name="player">The player attempting to research the item.</param>
 /// <param name="item">The item being researched.</param>
-/// <returns>Returns null if the default behavior is not overridden, indicating that the research can proceed.</returns>
+/// <returns>Returns null if the default behavior is not overridden, otherwise returns a non-null value.</returns>
 object CanResearchItem(BasePlayer player, Item item)
 {
-    // Minimal code to demonstrate functionality
-    Puts("CanResearchItem called!");
-    
-    // If no return value is specified, the method will return null by default
+    Puts("CanResearchItem is working!");
     return null;
 }
 ```
@@ -17628,8 +17626,8 @@ object CanResearchItem(BasePlayer player, Item item)
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.IsVisible(3f)]
+	[RPC_Server]
 	public void DoResearch(RPCMessage msg)
 	{
 		if (IsResearching())
@@ -18035,8 +18033,8 @@ void OnVendingShopOpened(VendingMachine vendingMachine, BasePlayer player)
 
 ```csharp
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	public void RPC_OpenShop(RPCMessage msg)
 	{
 		if (OccupiedCheck(msg.player) && Interface.CallHook("OnVendingShopOpen", this, msg.player) == null)
@@ -18369,8 +18367,8 @@ object OnStructureDemolish(StabilityEntity entity, BasePlayer player, bool isPla
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.MaxDistance(3f)]
+	[RPC_Server]
 	public void DoDemolish(RPCMessage msg)
 	{
 		if (msg.player.CanInteract() && CanDemolish(msg.player) && Interface.CallHook("OnStructureDemolish", this, msg.player, false) == null)
@@ -18463,11 +18461,11 @@ object OnEntityStabilityCheck(StabilityEntity entity)
 /// </summary>
 /// <param name="player">The player attempting to set the public status.</param>
 /// <param name="sleepingBag">The sleeping bag being modified.</param>
-/// <returns>Returns true if the default behavior is overridden, and false otherwise.</returns>
-bool CanSetBedPublic(BasePlayer player, SleepingBag sleepingBag)
+/// <returns>Returns null if the default behavior is not overridden, otherwise returns a non-null value.</returns>
+object CanSetBedPublic(BasePlayer player, SleepingBag sleepingBag)
 {
     Puts("CanSetBedPublic is working!");
-    return false;
+    return null;
 }
 ```
 
@@ -18475,8 +18473,8 @@ bool CanSetBedPublic(BasePlayer player, SleepingBag sleepingBag)
 
 ```csharp
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	public virtual void RPC_MakePublic(RPCMessage msg)
 	{
 		if (!canBePublic || !msg.player.CanInteract() || (deployerUserID != (ulong)msg.player.userID && !msg.player.CanBuild()))
@@ -18771,30 +18769,52 @@ object OnFuelAmountCheck(EntityFuelSystem fuelSystem, Item item)
 
 * `BaseProjectile`: Объект-проектиль, который будет создан после выстрела.
 * `BasePlayer`: Игрок, который стреляет.
-* `ItemModProjectile`: Модификатор проектиля, который используется в оружии.
-* `ProtoBuf.ProjectileShoot`: Данные о выстреле, которые передаются в хук.
+* `ItemModProjectile`: Компонент-проектиль, который используется в оружии.
+* `ProtoBuf.ProjectileShoot`: Данные проектилей, которые будут созданы после выстрела.
 
 **Возвращаемые значения**
 
-Нет возвращаемых значений.
+Нет.
 
 **Примечания**
 
-Хук вызывается после проверки, что игрок имеет право стрелять и что у него есть патроны. Если эти условия не выполняются, хук не будет вызван.
+Хук вызывается только один раз при каждом выстреле. Если игрок стреляет несколько раз подряд, хук будет вызван только один раз.
 
 **Использование**
 
-Чтобы использовать этот хук, необходимо создать модификатор проектиля `ItemModProjectile` и добавить его к оружию. Затем, когда игрок стреляет, хук будет вызван и сможет модифицировать поведение проектилей.
+Чтобы использовать этот хук, необходимо создать функцию, которая будет вызвана при выстреле оружия. Функция должна иметь следующий формат:
 
-**Примеры использования**
+```csharp
+void MyFunction(BaseProjectile projectile, BasePlayer player, ItemModProjectile component, ProtoBuf.ProjectileShoot data)
+{
+    // Код функции
+}
+```
 
-* Модификатор проектиля может изменить скорость или траекторию полета проектилей.
-* Хук можно использовать для добавления новых типов проектилей, которые не являются частью стандартного набора оружия.
-* Хук можно использовать для изменения поведения проектилей в зависимости от типа оружия, которое используется.
+Затем необходимо добавить вызов этой функции в хук `OnWeaponFired`:
 
-**Сохранение**
+```csharp
+Interface.CallHook("OnWeaponFired", this, msg.player, component, projectileShoot);
+```
 
-Хук сохраняется в файле конфигурации игры и может быть изменен или удален при необходимости.
+**Пример**
+
+Например, вы можете создать функцию, которая изменит цвет проектилей после выстрела:
+
+```csharp
+void ChangeProjectileColor(BaseProjectile projectile, BasePlayer player, ItemModProjectile component, ProtoBuf.ProjectileShoot data)
+{
+    // Измените цвет проектиля
+    projectile.GetComponent<Projectile>().SetColor(Color.red);
+}
+```
+
+Затем добавьте вызов этой функции в хук `OnWeaponFired`:
+
+```csharp
+Interface.CallHook("OnWeaponFired", this, msg.player, component, projectileShoot);
+ChangeProjectileColor(projectile, player, component, data);
+```
 ```
 
 ### Source Code from the Library
@@ -18802,8 +18822,8 @@ object OnFuelAmountCheck(EntityFuelSystem fuelSystem, Item item)
 ```csharp
 
 	[RPC_Server]
-	[RPC_Server.IsActiveItem]
 	[RPC_Server.FromOwner]
+	[RPC_Server.IsActiveItem]
 	private void CLProject(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -19071,9 +19091,9 @@ void OnSignUpdated(Signage signage, BasePlayer player, int index)
 
 ```csharp
 
-	[RPC_Server]
-	[RPC_Server.CallsPerSecond(5uL)]
 	[RPC_Server.MaxDistance(5f)]
+	[RPC_Server.CallsPerSecond(5uL)]
+	[RPC_Server]
 	public void UpdateSign(RPCMessage msg)
 	{
 		if (msg.player == null || !CanUpdateSign(msg.player))
@@ -19349,8 +19369,8 @@ void OnVendingShopOpened(NPCVendingMachine vendingMachine, BasePlayer player)
 
 ```csharp
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	public void SV_OpenMenu(RPCMessage msg)
 	{
 		if (vendingMachine == null)
@@ -19369,40 +19389,61 @@ void OnVendingShopOpened(NPCVendingMachine vendingMachine, BasePlayer player)
 ## OnPlayerTick(BasePlayer,PlayerTick,bool)
 
 ```csharp
-Документация для OnPlayerTick(BasePlayer, PlayerTick, bool):
+Документация для хука `OnPlayerTick(BasePlayer, PlayerTick, bool)`:
 
 **Описание:**
 
-Функция OnPlayerTick вызывается при каждом тике игрока. Она позволяет модулю выполнять свои действия перед основным процессингом тика.
+Хук вызывается при каждом тике игрока. Он позволяет модулю обрабатывать ввод пользователя и выполнять необходимые действия.
 
 **Параметры:**
 
 * `BasePlayer`: Объект игрока.
 * `PlayerTick`: Объект, содержащий информацию о текущем тике.
-* `bool`: Флаг, указывающий, был ли игрок заморожен в предыдущем тике.
+* `bool wasPlayerStalled`: Флаг, указывающий, был ли игрок заморожен в предыдущем тике.
 
-**Действия:**
+**Метод структура:**
 
-1. Если модуль вызывает функцию OnPlayerTick, он должен вернуть null, чтобы пропустить основный процессинг тика.
-2. Модуль может выполнять свои действия перед основным процессингом тика.
-3. После выполнения своих действий модуль должен вернуться к основному процессингу тика.
+```csharp
+void OnPlayerTick(BasePlayer player, PlayerTick tick, bool wasPlayerStalled)
+{
+    // Обработка ввода пользователя
+    if (tick.inputState != null)
+    {
+        serverInput.Flip(tick.inputState);
+    }
+
+    // Вызов хука OnPlayerTick
+    if (Interface.CallHook("OnPlayerTick", this, tick, wasPlayerStalled) != null)
+    {
+        return;
+    }
+
+    // Обработка остальных событий
+    // ...
+}
+```
 
 **Пример использования:**
 
 ```csharp
-public void OnPlayerTick(BasePlayer player, PlayerTick tick, bool wasFrozen)
+public class MyPlugin : BasePlugin
 {
-    // Выполняем свои действия перед основным процессингом тика.
-    Debug.Log("Модуль выполнил свои действия.");
+    public override void OnReceiveTick(PlayerTick msg, bool wasPlayerStalled)
+    {
+        base.OnReceiveTick(msg, wasPlayerStalled);
 
-    // Возвращаем null, чтобы пропустить основный процессинг тика.
-    return;
+        if (msg.inputState != null)
+        {
+            serverInput.Flip(msg.inputState);
+        }
+
+        // Вызов хука OnPlayerTick
+        Interface.CallHook("OnPlayerTick", this, msg, wasPlayerStalled);
+    }
 }
 ```
 
-**Примечание:**
-
-Функция OnPlayerTick вызывается при каждом тике игрока, поэтому модулю следует быть осторожным с ресурсами и не выполнять слишком сложных действий.
+Примечание: В примере выше показано, как вызвать хук `OnPlayerTick` из метода `OnReceiveTick`.
 ```
 
 ### Source Code from the Library
@@ -19501,7 +19542,7 @@ public void OnPlayerTick(BasePlayer player, PlayerTick tick, bool wasFrozen)
 				tutorialKickTime += UnityEngine.Time.deltaTime;
 				if (tutorialKickTime > 3f)
 				{
-					Debug.LogWarning($"Killing player {displayName}/{userID} as they are on a tutorial island that doesn't belong them");
+					Debug.LogWarning($"Killing player {displayName}/{userID.Get()} as they are on a tutorial island that doesn't belong them");
 					Hurt(999f);
 					tutorialKickTime = 0f;
 				}
@@ -19528,7 +19569,7 @@ public void OnPlayerTick(BasePlayer player, PlayerTick tick, bool wasFrozen)
 				tutorialKickTime += UnityEngine.Time.deltaTime;
 				if (tutorialKickTime > 3f)
 				{
-					Debug.LogWarning($"Killing player {displayName}/{userID} as they are no longer on a tutorial island and are marked as being in a tutorial");
+					Debug.LogWarning($"Killing player {displayName}/{userID.Get()} as they are no longer on a tutorial island and are marked as being in a tutorial");
 					Hurt(999f);
 					tutorialKickTime = 0f;
 				}
@@ -19548,7 +19589,7 @@ public void OnPlayerTick(BasePlayer player, PlayerTick tick, bool wasFrozen)
 /// <summary>
 /// Called when fishing is stopped.
 /// </summary>
-/// <param name="rod">The fishing rod that was being used.</param>
+/// <param name="rod">The fishing rod used.</param>
 /// <param name="reason">The reason why fishing was stopped.</param>
 /// <returns>No return behavior.</returns>
 void OnFishingStopped(BaseFishingRod rod, FailReason reason)
@@ -19913,14 +19954,14 @@ void OnPhoneDialFailed(PhoneController phoneController, Telephone.DialFailReason
 
 ```csharp
 /// <summary>
-/// Called when a player is banned by the anticheat system.
+/// Called when a player is banned.
 /// </summary>
 /// <param name="connection">The player's network connection.</param>
 /// <param name="status">The reason for the ban (e.g. VACBanned, PublisherBanned).</param>
 /// <returns>No return behavior.</returns>
 void IOnPlayerBanned(Network.Connection connection, AuthResponse status)
 {
-    Puts($"Player {connection.username} banned by anticheat: {status}");
+    Puts($"Player {connection.username} banned: {status}");
 }
 ```
 
@@ -19968,14 +20009,14 @@ void IOnPlayerBanned(Network.Connection connection, AuthResponse status)
 
 ```csharp
 /// <summary>
-/// Called every tick to perform various updates and checks.
+/// Called on each tick of the game loop.
 /// </summary>
-void OnTick()
+/// <returns>Returns a non-null value if custom behavior is implemented.</returns>
+object OnTick()
 {
-    Puts("OnTick called!");
+    Puts("OnTick hook called!");
+    return null;
 }
- 
-// No return statement is necessary since the method has a void return type.
 ```
 
 ### Source Code from the Library
@@ -20012,7 +20053,7 @@ void OnTick()
 /// <returns>No return behavior.</returns>
 void OnPayForPlacement(BasePlayer player, Planner planner, Construction construction)
 {
-    Puts($"Player {player.UserIDString} paid for placement of construction: {construction.DisplayName}");
+    Puts($"Player {player.UserID} paid for placement of construction {construction.Name}");
 }
 ```
 
@@ -20060,12 +20101,13 @@ void OnPayForPlacement(BasePlayer player, Planner planner, Construction construc
 /// Called when a player recovers from being wounded.
 /// </summary>
 /// <param name="player">The player recovering.</param>
-/// <returns>Returns the result of the hook, or null if no custom behavior is provided.</returns>
-object OnPlayerRecover(BasePlayer player)
+/// <returns>No return behavior.</returns>
+void OnPlayerRecover(BasePlayer player)
 {
-    Puts("OnPlayerRecover called!");
-    return null;
+    Puts($"Player {player.UserIDString} has recovered.");
 }
+ 
+Метод вызывается в контексте восстановления игрока после ранения.
 ```
 
 ### Source Code from the Library
@@ -20151,7 +20193,7 @@ bool CanBeAwardedAdventGift(AdventCalendar calendar, BasePlayer player)
 /// </summary>
 /// <param name="trap">The bear trap being armed.</param>
 /// <param name="player">The player who triggered the trap.</param>
-/// <returns>Returns a non-null value if the default behavior is overridden.</returns>
+/// <returns>Returns null if the default behavior is not overridden, otherwise returns a non-null value.</returns>
 object OnTrapArm(BearTrap trap, BasePlayer player)
 {
     Puts("OnTrapArm hook called!");
@@ -20181,8 +20223,8 @@ object OnTrapArm(BearTrap trap, BasePlayer player)
 /// <summary>
 /// Called when an entity enters a comfort zone.
 /// </summary>
-/// <param name="comfort">The comfort zone.</param>
-/// <param name="entity">The entity entering the comfort zone.</param>
+/// <param name="comfort">The comfort zone that was entered.</param>
+/// <param name="entity">The entity that entered the comfort zone.</param>
 /// <returns>Returns a non-null value if the default behavior is overridden.</returns>
 object OnEntityEnter(TriggerComfort comfort, BaseEntity entity)
 {
@@ -20252,10 +20294,10 @@ void OnVehicleHornPressed(VehicleModuleSeating module, BasePlayer player)
 /// Called when a connection is added to the queue.
 /// </summary>
 /// <param name="connection">The connection being queued.</param>
-/// <returns>Returns a non-null value if the default behavior is overridden.</returns>
+/// <returns>Returns null if the default behavior is not overridden, otherwise returns a non-null value.</returns>
 object OnConnectionQueue(Network.Connection connection)
 {
-    Puts("OnConnectionQueue is working!");
+    Puts("OnConnectionQueue called!");
     return null;
 }
 ```
@@ -20373,7 +20415,7 @@ object OnEntityPickedUp(BaseCombatEntity entity, Item item, BasePlayer player)
 /// </summary>
 /// <param name="npcTalking">The NPC initiating the conversation.</param>
 /// <param name="player">The player responding to the conversation.</param>
-/// <param name="conversationData">The data for the ongoing conversation.</param>
+/// <param name="conversationData">The data associated with the conversation.</param>
 /// <param name="responseNode">The node representing the player's response.</param>
 /// <returns>Returns a non-null value if the default behavior is overridden.</returns>
 object OnNpcConversationResponded(NPCTalking npcTalking, BasePlayer player, ConversationData conversationData, ConversationData.ResponseNode responseNode)
@@ -20391,8 +20433,8 @@ object OnNpcConversationResponded(NPCTalking npcTalking, BasePlayer player, Conv
 ```csharp
 
 	[RPC_Server.CallsPerSecond(5uL)]
-	[RPC_Server.MaxDistance(3f)]
 	[RPC_Server]
+	[RPC_Server.MaxDistance(3f)]
 	public void Server_ResponsePressed(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -20441,11 +20483,11 @@ object OnNpcConversationResponded(NPCTalking npcTalking, BasePlayer player, Conv
 /// </summary>
 /// <param name="info">The hit info.</param>
 /// <param name="item">The item being created.</param>
-/// <returns>Returns the created item, or null if the default behavior is overridden.</returns>
+/// <returns>Returns the created entity, or null if no entity was created.</returns>
 object OnWorldProjectileCreate(HitInfo info, Item item)
 {
-    Puts("OnWorldProjectileCreate called!");
-    return item;
+    Puts("OnWorldProjectileCreate is working!");
+    return null;
 }
 ```
 
@@ -20558,8 +20600,10 @@ void OnCrateLanded(HackableLockedCrate crate)
 /// <returns>The updated fuse length if overridden, or null for default behavior.</returns>
 object OnExplosiveFuseSet(TimedExplosive explosive, float fuseLength)
 {
+    // Minimal code to demonstrate functionality
     Puts("OnExplosiveFuseSet is working!");
-    return null;
+    
+    return null; // Or another value depending on the method's functionality
 }
 ```
 
@@ -20604,42 +20648,8 @@ object CanEquipItem(PlayerInventory inventory, Item item, int slot)
         return (bool)obj;
     }
     
-    // If the item is not allowed in the belt, return false
-    if ((item.info.flags & ItemDefinition.Flag.NotAllowedInBelt) != 0)
-    {
-        return false;
-    }
-    
-    // If the player is restrained and the restraint item is in the target slot, return false
-    if (base.baseEntity != null && base.baseEntity.IsRestrained)
-    {
-        Handcuffs restraintItem = base.baseEntity.Belt.GetRestraintItem();
-        if (restraintItem != null && restraintItem.GetItem().position == slot)
-        {
-            return false;
-        }
-    }
-    
-    // If the item has a container restriction component, check if it can exist with other items in the inventory
-    ItemModContainerRestriction component = item.info.GetComponent<ItemModContainerRestriction>();
-    if (component != null)
-    {
-        Item[] array = inventory.itemList.ToArray();
-        foreach (Item item2 in array)
-        {
-            if (item2 != item)
-            {
-                ItemModContainerRestriction component2 = item2.info.GetComponent<ItemModContainerRestriction>();
-                if (!(component2 == null) && !component.CanExistWith(component2) && !item2.MoveToContainer(inventory.main))
-                {
-                    item2.Drop(base.baseEntity.GetDropPosition(), base.baseEntity.GetDropVelocity());
-                }
-            }
-        }
-    }
-    
-    // If none of the above conditions are met, return true
-    return true;
+    // Otherwise, return null to indicate no override
+    return null;
 }
 ```
 
@@ -20770,7 +20780,7 @@ void OnRackedWeaponMounted(Item item, BasePlayer player, WeaponRack rack)
 /// Called when a player attempts to loot an entity.
 /// </summary>
 /// <param name="player">The player attempting to loot the entity.</param>
-/// <param name="container">The container being looted.</param>
+/// <param name="container">The resource container being looted.</param>
 /// <returns>Returns null if the default behavior is allowed, or a non-null value if the default behavior is overridden.</returns>
 object CanLootEntity(BasePlayer player, ResourceContainer container)
 {
@@ -20863,7 +20873,7 @@ object OnPlayerColliderEnable(BasePlayer player, UnityEngine.CapsuleCollider col
 /// <returns>No return behavior.</returns>
 void OnNpcAttack(BaseNpc npc, BaseEntity target)
 {
-    Puts($"NPC {npc} is attacking {target}");
+    Puts($"NPC {npc.EntityID} is attacking {target.EntityID}");
 }
 ```
 
@@ -20985,15 +20995,18 @@ void OnClientAuth(Network.Connection connection)
 
 ```csharp
 /// <summary>
-/// Called when an inventory search is performed.
+/// Called when an inventory is searched for items with a specific ID.
 /// </summary>
 /// <param name="inventory">The player's inventory.</param>
-/// <param name="id">The item ID to search for.</param>
+/// <param name="id">The ID of the item to find.</param>
 /// <returns>Returns a list of items found in the inventory, or null if no items were found.</returns>
 object OnInventoryItemsFind(PlayerInventory inventory, int id)
 {
     // Minimal code to demonstrate functionality
-    return null;
+    Puts("OnInventoryItemsFind is working!");
+    
+    // Return a list of items found in the inventory
+    return new List<Item>();
 }
 ```
 
@@ -21729,12 +21742,12 @@ object OnVendingShopRename(VendingMachine vendingMachine, string newName, BasePl
 /// <summary>
 /// Called when a sign's image is updated.
 /// </summary>
-/// <param name="sign">The PhotoFrame that was updated.</param>
-/// <param name="player">The BasePlayer who performed the update.</param>
+/// <param name="photoFrame">The photo frame that was updated.</param>
+/// <param name="player">The player who performed the update.</param>
 /// <returns>No return behavior.</returns>
-void OnSignUpdated(PhotoFrame sign, BasePlayer player)
+void OnSignUpdated(PhotoFrame photoFrame, BasePlayer player)
 {
-    Puts($"Sign at {sign.GetPosition()} updated by {player.UserIDString}.");
+    Puts($"Sign image updated by {player.UserIDString} for photo frame {photoFrame.ID}");
 }
 ```
 
@@ -21742,9 +21755,9 @@ void OnSignUpdated(PhotoFrame sign, BasePlayer player)
 
 ```csharp
 
-	[RPC_Server.CallsPerSecond(3uL)]
 	[RPC_Server]
 	[RPC_Server.MaxDistance(5f)]
+	[RPC_Server.CallsPerSecond(3uL)]
 	public void UpdateSign(RPCMessage msg)
 	{
 		if (!(msg.player == null) && CanUpdateSign(msg.player))
@@ -22405,9 +22418,9 @@ bool CanSpectateTarget(BasePlayer player, string targetName)
 /// <summary>
 /// Called when a player cancels the shop click.
 /// </summary>
-/// <param name="shopFront">The shop front.</param>
+/// <param name="shopFront">The shop front that was clicked.</param>
 /// <param name="player">The player who canceled the shop click.</param>
-/// <returns>Returns a non-null value if the default behavior is overridden.</returns>
+/// <returns>Returns null if the default behavior is not overridden, otherwise returns a non-null value.</returns>
 object OnShopCancelClick(ShopFront shopFront, BasePlayer player)
 {
     Puts("OnShopCancelClick is working!");
@@ -22419,8 +22432,8 @@ object OnShopCancelClick(ShopFront shopFront, BasePlayer player)
 
 ```csharp
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	public void CancelClicked(RPCMessage msg)
 	{
 		if (IsTradingPlayer(msg.player) && Interface.CallHook("OnShopCancelClick", this, msg.player) == null)
@@ -22612,11 +22625,10 @@ object OnPlayerCorpseSpawn(BasePlayer player)
 /// <param name="workbench">The workbench instance.</param>
 /// <param name="nodeInstance">The tech tree node instance being unlocked.</param>
 /// <param name="player">The player unlocking the node.</param>
-/// <returns>Returns null if the default behavior is not overridden.</returns>
-object OnTechTreeNodeUnlock(Workbench workbench, TechTreeData.NodeInstance nodeInstance, BasePlayer player)
+/// <returns>No return behavior.</returns>
+void OnTechTreeNodeUnlock(Workbench workbench, TechTreeData.NodeInstance nodeInstance, BasePlayer player)
 {
-    Puts("OnTechTreeNodeUnlock called!");
-    return null;
+    Puts($"Node {nodeInstance.groupName} unlocked by player {player.UserID}");
 }
 ```
 
@@ -22624,8 +22636,8 @@ object OnTechTreeNodeUnlock(Workbench workbench, TechTreeData.NodeInstance nodeI
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.IsVisible(3f)]
+	[RPC_Server]
 	public void RPC_TechTreeUnlock(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -23631,8 +23643,8 @@ void OnRocketLaunched(BasePlayer player, BaseEntity baseEntity)
 
 ```csharp
 
-	[RPC_Server.IsActiveItem]
 	[RPC_Server]
+	[RPC_Server.IsActiveItem]
 	private void SV_Launch(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -24677,10 +24689,10 @@ object OnItemCraft(IndustrialCrafter crafter, ItemBlueprint blueprint)
 /// </summary>
 /// <param name="player">The player attempting to change the code.</param>
 /// <param name="entity">The entity being modified.</param>
-/// <param name="newCode">The new code being set.</param>
-/// <param name="isGuest">Whether the new code is for a guest or not.</param>
+/// <param name="newCode">The new code to be set.</param>
+/// <param name="flag">A flag indicating whether the new code is a guest code or not.</param>
 /// <returns>Returns null if the default behavior is overridden, otherwise returns a non-null value.</returns>
-object CanChangeCode(BasePlayer player, CodeLock entity, string newCode, bool isGuest)
+object CanChangeCode(BasePlayer player, CodeLock entity, string newCode, bool flag)
 {
     Puts("CanChangeCode is working!");
     return null;
@@ -24691,8 +24703,8 @@ object CanChangeCode(BasePlayer player, CodeLock entity, string newCode, bool is
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.MaxDistance(3f, CheckParent = true)]
+	[RPC_Server]
 	private void RPC_ChangeCode(RPCMessage rpc)
 	{
 		if (!rpc.player.CanInteract())
@@ -24802,9 +24814,9 @@ Overall, this code snippet is responsible for handling the reskining of entities
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.IsActiveItem]
 	[RPC_Server.CallsPerSecond(2uL)]
+	[RPC_Server]
 	private void ChangeItemSkin(RPCMessage msg)
 	{
 		if (IsBusy())
@@ -25108,8 +25120,8 @@ object OnPlayerSpawn(BasePlayer player, Network.Connection connection)
 			{
 				basePlayer.Respawn();
 			}
-			DebugEx.Log($"{basePlayer.displayName} with steamid {basePlayer.userID} joined from ip {basePlayer.net.connection.ipaddress}");
-			DebugEx.Log($"\tNetworkId {basePlayer.userID} is {basePlayer.net.ID} ({basePlayer.displayName})");
+			DebugEx.Log($"{basePlayer.displayName} with steamid {basePlayer.userID.Get()} joined from ip {basePlayer.net.connection.ipaddress}");
+			DebugEx.Log($"\tNetworkId {basePlayer.userID.Get()} is {basePlayer.net.ID} ({basePlayer.displayName})");
 			if (basePlayer.net.connection.ownerid != 0L && basePlayer.net.connection.ownerid != basePlayer.net.connection.userid)
 			{
 				DebugEx.Log($"\t{basePlayer} is sharing the account {basePlayer.net.connection.ownerid}");
@@ -25724,8 +25736,8 @@ object OnItemAction(Item item, string action, BasePlayer player)
 
 ```csharp
 
-	[BaseEntity.RPC_Server]
 	[BaseEntity.RPC_Server.FromOwner]
+	[BaseEntity.RPC_Server]
 	private void ItemCmd(BaseEntity.RPCMessage msg)
 	{
 		if ((msg.player != null && msg.player.IsWounded()) || base.baseEntity.IsTransferring())
@@ -26301,16 +26313,16 @@ object OnTrapTrigger(BearTrap trap, UnityEngine.GameObject obj)
 
 ```csharp
 /// <summary>
-/// Called when a player claims a ridable animal using a purchase token.
+/// Called when a player claims a ridable animal.
 /// </summary>
 /// <param name="animal">The ridable animal being claimed.</param>
 /// <param name="player">The player claiming the animal.</param>
-/// <param name="token">The purchase token used to claim the animal.</param>
+/// <param name="item">The item used to claim the animal.</param>
 /// <returns>Returns null if the default behavior is not overridden, otherwise returns a non-null value.</returns>
-object OnRidableAnimalClaim(BaseRidableAnimal animal, BasePlayer player, Item token)
+object OnRidableAnimalClaim(BaseRidableAnimal animal, BasePlayer player, Item item)
 {
     Puts("OnRidableAnimalClaim called!");
-    // Minimal code to demonstrate functionality
+    return null;
 }
 ```
 
@@ -26318,8 +26330,8 @@ object OnRidableAnimalClaim(BaseRidableAnimal animal, BasePlayer player, Item to
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.IsVisible(3f)]
+	[RPC_Server]
 	public void RPC_Claim(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -26497,7 +26509,7 @@ object OnTrapTrigger(Landmine landmine, UnityEngine.GameObject entity)
 /// <returns>No return behavior.</returns>
 void OnRidableAnimalClaimed(BaseRidableAnimal animal, BasePlayer player)
 {
-    Puts($"Player {player.UserID} has claimed a {animal.ShortPrefabName}");
+    Puts($"Player {player.UserIDString} has claimed a {animal.ShortPrefabName}");
 }
 ```
 
@@ -26505,8 +26517,8 @@ void OnRidableAnimalClaimed(BaseRidableAnimal animal, BasePlayer player)
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.IsVisible(3f)]
+	[RPC_Server]
 	public void RPC_Claim(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -27145,8 +27157,8 @@ void OnShopAcceptClick(ShopFront shopFront, BasePlayer player)
 
 ```csharp
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	public void AcceptClicked(RPCMessage msg)
 	{
 		if (IsTradingPlayer(msg.player) && !(vendorPlayer == null) && !(customerPlayer == null) && Interface.CallHook("OnShopAcceptClick", this, msg.player) == null)
@@ -27567,11 +27579,11 @@ void OnBookmarkControlEnd(ComputerStation computerStation, BasePlayer player, Ba
 /// </summary>
 /// <param name="player">The player attempting to hide the stash.</param>
 /// <param name="stashContainer">The stash container being hidden.</param>
-/// <returns>Returns true if the stash can be hidden, and false otherwise.</returns>
-bool CanHideStash(BasePlayer player, StashContainer stashContainer)
+/// <returns>Returns null if the default behavior is allowed, or a non-null value if overridden.</returns>
+object CanHideStash(BasePlayer player, StashContainer stashContainer)
 {
     Puts("CanHideStash is working!");
-    return true; // Or another value depending on the method's functionality
+    return null;
 }
 ```
 
@@ -27579,8 +27591,8 @@ bool CanHideStash(BasePlayer player, StashContainer stashContainer)
 
 ```csharp
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	public void RPC_HideStash(RPCMessage rpc)
 	{
 		if (Interface.CallHook("CanHideStash", rpc.player, this) == null)
@@ -27647,8 +27659,8 @@ void OnItemPickup(Item item, BasePlayer player)
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.IsVisible(3f)]
+	[RPC_Server]
 	public void Pickup(RPCMessage msg)
 	{
 		if (msg.player.CanInteract() && this.item != null && allowPickup && Interface.CallHook("OnItemPickup", this.item, msg.player) == null && CanOpenInSafeZone(msg.player))
@@ -27671,11 +27683,11 @@ void OnItemPickup(Item item, BasePlayer player)
 /// Called when a player's authorization to use an AutoTurret is deauthorized.
 /// </summary>
 /// <param name="turret">The AutoTurret that was deauthorized.</param>
-/// <param name="player">The player who lost authorization.</param>
+/// <param name="player">The player who had their authorization removed.</param>
 /// <returns>No return behavior.</returns>
 void OnTurretDeauthorize(AutoTurret turret, BasePlayer player)
 {
-    Puts($"Authorization to use {turret} by {player} has been removed.");
+    Puts($"Authorization to use {turret} by player {player} has been deauthorized.");
 }
 ```
 
@@ -27683,8 +27695,8 @@ void OnTurretDeauthorize(AutoTurret turret, BasePlayer player)
 
 ```csharp
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	private void RemoveSelfAuthorize(RPCMessage rpc)
 	{
 		RPCMessage rpc2 = rpc;
@@ -27783,10 +27795,14 @@ object OnNpcTarget(HumanNPC npc, BaseEntity target)
 /// <param name="sprayCan">The spray can being created.</param>
 /// <param name="position">The position of the spray can.</param>
 /// <param name="rotation">The rotation of the spray can.</param>
-/// <returns>No return behavior.</returns>
-void OnSprayCreate(SprayCan sprayCan, Vector3 position, Quaternion rotation)
+/// <returns>Returns null if the default behavior is not overridden, otherwise returns a non-null value.</returns>
+object OnSprayCreate(SprayCan sprayCan, Vector3 position, Quaternion rotation)
 {
-    Puts($"Spray can created at {position} with rotation {rotation}");
+    // Minimal code to demonstrate functionality
+    Puts("OnSprayCreate called!");
+    
+    // If ReturnType is void, do not include the return statement
+    return null;
 }
 ```
 
@@ -27794,8 +27810,8 @@ void OnSprayCreate(SprayCan sprayCan, Vector3 position, Quaternion rotation)
 
 ```csharp
 
-	[RPC_Server.IsActiveItem]
 	[RPC_Server]
+	[RPC_Server.IsActiveItem]
 	private void CreateSpray(RPCMessage msg)
 	{
 		if (IsBusy())
@@ -28073,9 +28089,9 @@ Overall, this code snippet is responsible for handling the reskining of entities
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.IsActiveItem]
 	[RPC_Server.CallsPerSecond(2uL)]
+	[RPC_Server]
 	private void ChangeItemSkin(RPCMessage msg)
 	{
 		if (IsBusy())
@@ -28611,8 +28627,8 @@ void OnDeleteVendingOffer(VendingMachine vendingMachine, int index)
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.IsVisible(3f)]
+	[RPC_Server]
 	public void RPC_DeleteSellOrder(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -28796,7 +28812,7 @@ void OnCrateHackEnd(HackableLockedCrate crate)
 /// Called when a melee attack is thrown.
 /// </summary>
 /// <param name="player">The player who threw the attack.</param>
-/// <param name="item">The item that was thrown.</param>
+/// <param name="item">The item used to throw the attack.</param>
 /// <returns>No return behavior.</returns>
 void OnMeleeThrown(BasePlayer player, Item item)
 {
@@ -28804,16 +28820,16 @@ void OnMeleeThrown(BasePlayer player, Item item)
 }
 ```
 
-Этот метод вызывается в методе `CLProject` после того, как был проверен и подтвержден бросок предмета. Метод принимает на вход двух параметров: игрока (`player`) и предмет (`item`).
+Этот метод вызывается в методе `CLProject` после того, как был проверен и подтвержден бросок атаки. Он не имеет возвращаемого значения (`void`) и не требует никаких параметров кроме `player` и `item`.
 ```
 
 ### Source Code from the Library
 
 ```csharp
 
-	[RPC_Server.FromOwner]
 	[RPC_Server]
 	[RPC_Server.IsActiveItem]
+	[RPC_Server.FromOwner]
 	private void CLProject(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -28984,8 +29000,8 @@ void OnMapMarkerAdded(BasePlayer player, ProtoBuf.MapNote mapNote)
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.FromOwner]
+	[RPC_Server]
 	[RPC_Server.CallsPerSecond(8uL)]
 	public void Server_AddMarker(RPCMessage msg)
 	{
@@ -29137,14 +29153,14 @@ void OnDefaultItemsReceive(PlayerInventory inventory)
 
 ```csharp
 /// <summary>
-/// Called when a player's authorization on a cupboard is deauthorized.
+/// Called when a player's authorization to access a cupboard is deauthorized.
 /// </summary>
 /// <param name="buildingPrivilege">The building privilege being deauthorized.</param>
 /// <param name="player">The player whose authorization was deauthorized.</param>
 /// <returns>No return behavior.</returns>
 void OnCupboardDeauthorize(BuildingPrivlidge buildingPrivilege, BasePlayer player)
 {
-    Puts($"Authorization on cupboard {buildingPrivilege} for player {player.UserIDString} has been deauthorized.");
+    Puts($"Authorization to access cupboard {buildingPrivilege} for player {player.UserIDString} has been removed.");
 }
 ```
 
@@ -30082,9 +30098,9 @@ bool OnEntityControl(PoweredRemoteControlEntity entity, ulong playerID)
 
 ```csharp
 /// <summary>
-/// Called when a lock is removed from a modular car.
+/// Called when a lock is removed from a ModularCar.
 /// </summary>
-/// <param name="car">The modular car that the lock was removed from.</param>
+/// <param name="car">The ModularCar that the lock was removed from.</param>
 /// <param name="player">The player who requested to remove the lock.</param>
 /// <returns>No return behavior.</returns>
 void OnLockRemove(ModularCar car, BasePlayer player)
@@ -30097,9 +30113,9 @@ void OnLockRemove(ModularCar car, BasePlayer player)
 
 ```csharp
 
+	[RPC_Server.MaxDistance(3f)]
 	[RPC_Server]
 	[RPC_Server.IsVisible(3f)]
-	[RPC_Server.MaxDistance(3f)]
 	public void RPC_RequestRemoveLock(RPCMessage msg)
 	{
 		if (HasOccupant && carOccupant.CarLock.HasALock && Interface.CallHook("OnLockRemove", carOccupant, msg.player) == null)
@@ -30808,8 +30824,8 @@ object OnVehicleModuleSelected(Item item, ModularCarGarage garage, BasePlayer pl
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.MaxDistance(3f)]
+	[RPC_Server]
 	public void RPC_SelectedLootItem(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -30924,9 +30940,9 @@ object OnPhotoCapture(PhotoEntity photoEntity, Item item, BasePlayer player, byt
 
 ```csharp
 
-	[RPC_Server]
-	[RPC_Server.FromOwner]
 	[RPC_Server.CallsPerSecond(3uL)]
+	[RPC_Server.FromOwner]
+	[RPC_Server]
 	private void TakePhoto(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -31196,11 +31212,10 @@ object OnItemResearched(ResearchTable table, int amount)
 /// <param name="item">The item used to take the photo.</param>
 /// <param name="player">The player who took the photo.</param>
 /// <param name="imageData">The image data of the captured photo.</param>
-/// <returns>Returns a non-null value if the default behavior is overridden.</returns>
-object OnPhotoCaptured(PhotoEntity photoEntity, Item item, BasePlayer player, byte[] imageData)
+/// <returns>No return behavior.</returns>
+void OnPhotoCaptured(PhotoEntity photoEntity, Item item, BasePlayer player, byte[] imageData)
 {
-    Puts("OnPhotoCaptured is working!");
-    return null;
+    Puts($"Photo captured by {player.name} using {item.shortName}");
 }
 ```
 
@@ -31208,9 +31223,9 @@ object OnPhotoCaptured(PhotoEntity photoEntity, Item item, BasePlayer player, by
 
 ```csharp
 
-	[RPC_Server]
-	[RPC_Server.FromOwner]
 	[RPC_Server.CallsPerSecond(3uL)]
+	[RPC_Server.FromOwner]
+	[RPC_Server]
 	private void TakePhoto(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -31634,13 +31649,13 @@ object OnEntitySnapshot(BaseNetworkable entity, Network.Connection connection)
 /// Called when a turret's identifier is set.
 /// </summary>
 /// <param name="turret">The AutoTurret instance.</param>
-/// <param name="player">The player who initiated the change.</param>
+/// <param name="player">The player who set the identifier.</param>
 /// <param name="newIdentifier">The new identifier to be set.</param>
 /// <returns>Returns null if the default behavior is not overridden, otherwise returns a non-null value.</returns>
 object OnTurretIdentifierSet(AutoTurret turret, BasePlayer player, string newIdentifier)
 {
     // Minimal code to demonstrate functionality
-    Puts($"Identifier changed for turret {turret} by player {player}");
+    Puts($"Identifier for AutoTurret {turret} set by {player} to {newIdentifier}");
     
     return null;
 }
@@ -31650,8 +31665,8 @@ object OnTurretIdentifierSet(AutoTurret turret, BasePlayer player, string newIde
 
 ```csharp
 
-	[RPC_Server.MaxDistance(3f)]
 	[RPC_Server]
+	[RPC_Server.MaxDistance(3f)]
 	public void Server_SetID(RPCMessage msg)
 	{
 		if (msg.player == null || !CanChangeID(msg.player))
@@ -33286,10 +33301,11 @@ bool CanBeHomingTargeted(CH47Helicopter helicopter)
 /// </summary>
 /// <param name="entity">The entity being dismounted.</param>
 /// <param name="player">The player dismounting the entity.</param>
-/// <returns>No return behavior.</returns>
-void OnEntityDismounted(BaseMountable entity, BasePlayer player)
+/// <returns>Returns a non-null value if the default behavior is overridden.</returns>
+object OnEntityDismounted(BaseMountable entity, BasePlayer player)
 {
-    Puts($"Player {player.displayName} dismounted from entity: {entity.gameObject.name}");
+    Puts("OnEntityDismounted is working!");
+    return null;
 }
 ```
 
@@ -33333,12 +33349,7 @@ void OnEntityDismounted(BaseMountable entity, BasePlayer player)
 			_mounted.ClientRPC(RpcTarget.Player("ForcePositionTo", _mounted), res);
 			BasePlayer mounted = _mounted;
 			_mounted = null;
-			string[] obj = new string[6] { "Killing player due to invalid dismount point :", player.displayName, " / ", null, null, null };
-			BasePlayer.EncryptedValue<ulong> userID = player.userID;
-			obj[3] = userID.ToString();
-			obj[4] = " on obj : ";
-			obj[5] = base.gameObject.name;
-			Debug.LogWarning(string.Concat(obj));
+			Debug.LogWarning("Killing player due to invalid dismount point :" + player.displayName + " / " + player.userID.Get() + " on obj : " + base.gameObject.name);
 			mounted.Hurt(1000f, DamageType.Suicide, mounted, useProtection: false);
 			if (baseVehicle != null)
 			{
@@ -36076,7 +36087,7 @@ void OnEntitySaved(BaseNetworkable entity, BaseNetworkable.SaveInfo saveInfo)
 /// <summary>
 /// Called when a player attempts to execute a command.
 /// </summary>
-/// <param name="player">The player attempting to execute the command.</param>
+/// <param name="player">The player executing the command.</param>
 /// <param name="command">The command being executed.</param>
 /// <param name="args">Arguments passed with the command.</param>
 /// <returns>Returns a non-null value if the default behavior is overridden.</returns>
@@ -36165,8 +36176,8 @@ object OnPlayerCommand(BasePlayer player, string command, string args)
 /// Called to determine if a player can use the UI.
 /// </summary>
 /// <param name="player">The player attempting to use the UI.</param>
-/// <param name="json">The JSON data related to the UI.</param>
-/// <returns>Returns null if the default behavior is overridden, and non-null otherwise.</returns>
+/// <param name="json">The JSON data related to the UI usage.</param>
+/// <returns>Returns null if the default behavior is overridden, indicating that the player can use the UI. Otherwise, returns a non-null value.</returns>
 object CanUseUI(BasePlayer player, string json)
 {
     Puts("CanUseUI hook called!");
@@ -36228,22 +36239,14 @@ void OnPlayerUnbanned(string name, ulong steamId, string address)
 
 ```csharp
 /// <summary>
-/// Called when a user's connection is approved.
+/// Called when a user is approved.
 /// </summary>
-/// <param name="connection">The user's network connection.</param>
-/// <returns>Returns the result of the OnUserApproved hook, or null if not overridden.</returns>
+/// <param name="connection">The network connection of the user.</param>
+/// <returns>Returns a non-null value if the default behavior is overridden, otherwise returns true.</returns>
 object OnUserApprove(Network.Connection connection)
 {
-    Puts("OnUserApprove called!");
-    
-    // If the OnUserApproved hook is overridden, return its result
-    object result = Interface.CallHook("OnUserApproved", connection.username, connection.userid.ToString(), connection.ipaddress);
-    if (result != null)
-    {
-        return result;
-    }
-    
-    // Otherwise, return null
+    Puts("OnUserApprove is working!");
+    // Minimal code to demonstrate functionality
     return null;
 }
 ```
