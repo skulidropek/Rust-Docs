@@ -3237,6 +3237,7 @@ protected MobileTlsContext CreateContext(MonoSslAuthenticationOptions options)
 }
 internal Mono.Unity.X509ChainImplUnityTls : X509ChainImpl {
 private X509ChainElementCollection elements
+private unitytls_x509list* ownedList
 private unitytls_x509list_ref nativeCertificateChain
 private X509ChainPolicy policy
 private List`1<X509ChainStatus> chainStatusList
@@ -3248,6 +3249,7 @@ public X509ChainElementCollection ChainElements
 public X509ChainPolicy ChainPolicy
 public X509ChainStatus[] ChainStatus
 internal void .ctor(unitytls_x509list_ref nativeCertificateChain, bool reverseOrder)
+internal void .ctor(unitytls_x509list* ownedList, unitytls_errorstate* errorState, bool reverseOrder)
 public bool get_IsValid()
 public IntPtr get_Handle()
 internal unitytls_x509list_ref get_NativeCertificateChain()
@@ -20726,15 +20728,26 @@ internal System.Net.NetworkInformation.UnixNetworkInterfaceFactoryPal : object {
 public NetworkInterfaceFactory Create()
 }
 internal System.Net.NetworkInformation.Win32_FIXED_INFO : ValueType {
-private int MAX_HOSTNAME_LEN
-private int MAX_DOMAIN_NAME_LEN
-private int MAX_SCOPE_ID_LEN
 public string HostName
 public string DomainName
 public IntPtr CurrentDnsServer
 public Win32_IP_ADDR_STRING DnsServerList
 public NetBiosNodeType NodeType
 public string ScopeId
+public UInt32 EnableRouting
+public UInt32 EnableProxy
+public UInt32 EnableDns
+}
+internal System.Net.NetworkInformation.Win32_FIXED_INFO_Marshal : ValueType {
+private int MAX_HOSTNAME_LEN
+private int MAX_DOMAIN_NAME_LEN
+private int MAX_SCOPE_ID_LEN
+public <HostName>e__FixedBuffer HostName
+public <DomainName>e__FixedBuffer DomainName
+public IntPtr CurrentDnsServer
+public Win32_IP_ADDR_STRING DnsServerList
+public NetBiosNodeType NodeType
+public <ScopeId>e__FixedBuffer ScopeId
 public UInt32 EnableRouting
 public UInt32 EnableProxy
 public UInt32 EnableDns
@@ -21308,7 +21321,9 @@ private Win32_FIXED_INFO fixedInfo
 private bool initialized
 public Win32_FIXED_INFO FixedInfo
 private int GetNetworkParams(IntPtr ptr, Int32& size)
+private int MultiByteToWideChar(UInt32 CodePage, UInt32 dwFlags, Byte* lpMultiByteStr, int cbMultiByte, Char* lpWideCharStr, int cchWideChar)
 public Win32_FIXED_INFO get_FixedInfo()
+internal string <get_FixedInfo>g__GetStringFromMultiByte|5_0(Byte* bytes)
 }
 internal System.Net.NetworkInformation.Win32NetworkInterface2 : NetworkInterface {
 private Win32_IP_ADAPTER_ADDRESSES addr

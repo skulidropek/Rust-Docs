@@ -47,6 +47,7 @@ internal UnityEngine.UIElements.AlignmentUtils : object {
 internal float RoundToPixelGrid(float v, float pixelsPerPoint, float offset)
 internal float CeilToPixelGrid(float v, float pixelsPerPoint, float offset)
 internal float FloorToPixelGrid(float v, float pixelsPerPoint, float offset)
+internal float RoundToPanelPixelSize(VisualElement ve, float v)
 }
 public UnityEngine.UIElements.AlternatingRowBackground : Enum {
 public int value__
@@ -359,6 +360,8 @@ public void Init(VisualElement ve, IUxmlAttributes bag, CreationContext cc)
 }
 public UnityEngine.UIElements.BaseListView : BaseVerticalCollectionView {
 private string k_SizeFieldLabel
+private int k_FoldoutTabIndex
+private int k_ArraySizeFieldTabIndex
 private bool m_ShowBoundCollectionSize
 private bool m_ShowFoldoutHeader
 private string m_HeaderTitle
@@ -450,7 +453,7 @@ internal ICollectionDragAndDropController CreateDragAndDropController()
 public void .ctor(IList itemsSource, float itemHeight)
 private protected void PostRefresh()
 private protected bool HandleItemNavigation(bool moveIn, bool altPressed)
-private void <OnAddClicked>b__36_0()
+private void <OnAddClicked>b__38_0()
 }
 public UnityEngine.UIElements.BaseListViewController : CollectionViewController {
 private Action itemsSourceSizeChanged
@@ -869,8 +872,7 @@ private CollectionVirtualizationController m_VirtualizationController
 private KeyboardNavigationManipulator m_NavigationManipulator
 internal SerializedVirtualizationData serializedVirtualizationData
 private List`1<int> m_SelectedIds
-private List`1<int> m_SelectedIndices
-private List`1<object> m_SelectedItems
+private Selection m_Selection
 private float m_LastHeight
 private bool m_IsRangeSelectionDirectionUp
 private ListViewDragger m_Dragger
@@ -878,6 +880,7 @@ internal float ItemHeightUnset
 internal CustomStyleProperty`1<int> s_ItemHeightProperty
 private Action`2<int, int> m_ItemIndexChangedCallback
 private Action m_ItemsSourceChangedCallback
+internal IVisualElementScheduledItem m_RebuildScheduled
 public string ussClassName
 public string borderUssClassName
 public string itemUssClassName
@@ -1008,6 +1011,7 @@ public void RefreshItem(int index)
 public void RefreshItems()
 public void Refresh()
 public void Rebuild()
+internal void ScheduleRebuild()
 private void RefreshSelection()
 private protected void PostRefresh()
 public void ScrollTo(VisualElement visualElement)
@@ -1051,9 +1055,9 @@ private void OnSizeChanged(GeometryChangedEvent evt)
 private void OnCustomStyleResolved(CustomStyleResolvedEvent e)
 private void UnityEngine.ISerializationCallbackReceiver.OnBeforeSerialize()
 private void UnityEngine.ISerializationCallbackReceiver.OnAfterDeserialize()
-private void <.ctor>b__158_0(float v)
-private void <RefreshSelection>g__NotifyIfChanged|170_0(<>c__DisplayClass170_0& )
-private void <Apply>g__HandleSelectionAndScroll|181_0(int index, <>c__DisplayClass181_0& )
+private void <.ctor>b__159_0(float v)
+private void <RefreshSelection>g__NotifyIfChanged|172_0(<>c__DisplayClass172_0& )
+private void <Apply>g__HandleSelectionAndScroll|183_0(int index, <>c__DisplayClass183_0& )
 }
 internal UnityEngine.UIElements.BaseVisualElementPanel : object {
 private Action`1<BaseVisualElementPanel> panelDisposed
@@ -3421,14 +3425,22 @@ private ObjectPool`1<Queue`1<EventRecord>> k_EventQueuePool
 private Queue`1<EventRecord> m_Queue
 private PointerDispatchState <pointerState>k__BackingField
 private UInt32 m_GateCount
+private UInt32 m_GateDepth
+internal int k_MaxGateDepth
+internal int k_NumberOfEventsWithStackInfo
+internal int k_NumberOfEventsWithEventInfo
+private int m_DispatchStackFrame
+private EventBase m_CurrentEvent
 private Stack`1<DispatchContext> m_DispatchContexts
 private IEventDispatchingStrategy[] s_EditorStrategies
 private bool m_Immediate
 private bool <processingEvents>k__BackingField
 internal PointerDispatchState pointerState
+internal UInt32 GateDepth
 private bool dispatchImmediately
 internal bool processingEvents
 internal PointerDispatchState get_pointerState()
+internal UInt32 get_GateDepth()
 internal EventDispatcher CreateDefault()
 internal EventDispatcher CreateForRuntime(IList`1<IEventDispatchingStrategy> strategies)
 private void .ctor(IList`1<IEventDispatchingStrategy> strategies)
@@ -3436,6 +3448,7 @@ private bool get_dispatchImmediately()
 internal bool get_processingEvents()
 private void set_processingEvents(bool value)
 internal void Dispatch(EventBase evt, IPanel panel, DispatchMode dispatchMode)
+private bool HandleRecursiveState(EventBase evt)
 internal void PushDispatcherContext()
 internal void PopDispatcherContext()
 internal void CloseGate()
@@ -6539,7 +6552,6 @@ private float ComputeValueFromPosition(float positionToConvert)
 protected void ExecuteDefaultAction(EventBase evt)
 private void SetSliderValueFromDrag()
 private void SetSliderValueFromClick()
-private void ComputeValueDragStateNoThumb(float lowLimitPosition, float highLimitPosition, float dragElementPos)
 private void ComputeValueFromDraggingThumb(float dragElementStartPos, float dragElementEndPos)
 protected void UpdateMixedValueContent()
 internal void RegisterEditingCallbacks()
@@ -10946,6 +10958,8 @@ private float m_FixedPaneDimension
 private VisualElement m_DragLine
 private VisualElement m_DragLineAnchor
 private bool m_CollapseMode
+private bool m_CollapseChildCalledBeforeSetupComplete
+private int m_CollapsedChildIndex
 private VisualElement m_Content
 private TwoPaneSplitViewOrientation m_Orientation
 private int m_FixedPaneIndex
@@ -10953,6 +10967,7 @@ private float m_FixedPaneInitialDimension
 internal TwoPaneSplitViewResizer m_Resizer
 public VisualElement fixedPane
 public VisualElement flexedPane
+internal VisualElement dragLine
 public int fixedPaneIndex
 public float fixedPaneInitialDimension
 public TwoPaneSplitViewOrientation orientation
@@ -10960,6 +10975,7 @@ internal float fixedPaneDimension
 public VisualElement contentContainer
 public VisualElement get_fixedPane()
 public VisualElement get_flexedPane()
+internal VisualElement get_dragLine()
 public int get_fixedPaneIndex()
 public void set_fixedPaneIndex(int value)
 public float get_fixedPaneInitialDimension()
@@ -10974,6 +10990,9 @@ public void UnCollapse()
 private void OnUncollapsedPaneResized(GeometryChangedEvent evt)
 internal void Init(int fixedPaneIndex, float fixedPaneInitialDimension, TwoPaneSplitViewOrientation orientation)
 private void OnPostDisplaySetup(GeometryChangedEvent evt)
+private void ReplacePanesBasedOnAnchor()
+private void OnAnchorPostDisplaySetup(GeometryChangedEvent evt)
+private void IdentifyLeftAndRightPane()
 private void PostDisplaySetup()
 private void OnSizeChange(GeometryChangedEvent evt)
 private void UpdateDragLineAnchorOffset()
@@ -10989,6 +11008,7 @@ public TwoPaneSplitViewOrientation Horizontal
 public TwoPaneSplitViewOrientation Vertical
 }
 internal UnityEngine.UIElements.TwoPaneSplitViewResizer : PointerManipulator {
+private float k_DragLineTolerance
 private Vector3 m_Start
 protected bool m_Active
 private TwoPaneSplitView m_SplitView
@@ -11014,6 +11034,7 @@ public void ApplyDelta(float delta)
 protected void OnPointerDown(PointerDownEvent e)
 protected void OnPointerMove(PointerMoveEvent e)
 protected void OnPointerUp(PointerUpEvent e)
+protected void InterruptPointerMove(PointerMoveEvent e)
 }
 public UnityEngine.UIElements.TypedUxmlAttributeDescription`1 : UxmlAttributeDescription {
 private T <defaultValue>k__BackingField
@@ -11174,6 +11195,7 @@ private Dictionary`2<int, Panel> s_UIElementsCache
 private Event s_EventInstance
 internal Color editorPlayModeTintColor
 internal float singleLineHeight
+public string hiddenClassName
 private UIElementsUtility s_Instance
 internal List`1<Panel> s_PanelsIterationList
 internal string s_RepaintProfilerMarkerName
