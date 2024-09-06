@@ -97,6 +97,20 @@ private void OnEnable()
 private void Update()
 private void LateUpdate()
 }
+public GJK : object {
+private ProfilerMarker p_Distance
+private ProfilerMarker p_SolveDistance
+private ProfilerMarker p_GetSupportingVertex
+private float MaxIterations
+public float Distance(OBB a, OBB b)
+public float Distance2(OBB a, OBB b)
+private float DistanceInternal(ReadOnlySpan`1& a, ReadOnlySpan`1& b)
+private float Distance2Internal(ReadOnlySpan`1& a, ReadOnlySpan`1& b)
+private void SolveDistanceSimplex(ReadOnlySpan`1& a, ReadOnlySpan`1& b, Simplex& simplex)
+private Vector3 Support(ReadOnlySpan`1& vertices, Vector3& direction)
+private Vector3 GetSupportingVertex(ReadOnlySpan`1& verticesA, ReadOnlySpan`1& verticesB, Vector3& direction)
+private void PopulateVertices(OBB obb, Span`1<Vector3> vertices)
+}
 public HorizontalAttribute : PropertyAttribute {
 public int count
 public int label
@@ -121,6 +135,10 @@ public void PreServerComponentCull(IPrefabProcessor p)
 public Line : ValueType {
 public Vector3 point0
 public Vector3 point1
+public float Length
+public float LengthSqr
+public float get_Length()
+public float get_LengthSqr()
 public void .ctor(Vector3 point0, Vector3 point1)
 public void .ctor(Vector3 origin, Vector3 direction, float length)
 public bool Trace(Ray ray, float radius, RaycastHit& hit, float maxDistance)
@@ -128,6 +146,10 @@ public Vector3 ClosestPoint(Vector3 pos)
 public Vector3 ClosestPoint2D(Vector3 pos)
 public float Distance(Vector3 pos)
 public float SqrDistance(Vector3 pos)
+public Vector3 ClosestPoint(Line& other)
+public void ClosestPoints(Line& other, Vector3& closestThis, Vector3& closestOther)
+public float Distance(Line other)
+public float SqrDistance(Line other)
 }
 public ListEx : object {
 public T GetRandom(List`1<T> list)
@@ -147,7 +169,7 @@ public Renderer Renderer
 public void ReplaceRecursive(GameObject go, Material mat)
 public void ReplaceRecursive(GameObject obj, Material[] find, Material[] replace)
 public void Prepare(GameObject go)
-private bool MaterialsContainAny(Material[] source, Material[] find)
+public bool MaterialsContainAny(Material[] source, Material[] find)
 public void Reset(GameObject go)
 public void Init()
 private void Replace(Material mat)
@@ -552,6 +574,22 @@ public UInt32 Xorshift(UInt32& x)
 public ulong Xorshift(UInt64& x)
 public float Xorshift01(UInt32& x)
 }
+internal Simplex : ValueType {
+public Vector3 a
+public Vector3 b
+public Vector3 c
+public Vector3 d
+public int size
+public Vector3 Direction
+public float ScaledDistance
+public void SolveDistance()
+private void DebugDraw()
+private void Point()
+private void Line()
+private void Triangle()
+private void Tetrahedron()
+private float Det(Vector3 a, Vector3 b, Vector3 c)
+}
 public Sphere : ValueType {
 public Vector3 position
 public float radius
@@ -628,7 +666,7 @@ public bool IsLower(string str)
 public string ToPrintable(string str, int maxLength)
 public bool IsNumeric(string str)
 public bool IsAlphaNumeric(string str)
-public string EscapeRichText(string str)
+public string EscapeRichText(string str, bool altMode)
 public IEnumerable`1<string> SplitToLines(string input)
 public IEnumerable`1<string> SplitToChunks(string str, int chunkLength)
 public UInt32 ManifestHash(string str)
