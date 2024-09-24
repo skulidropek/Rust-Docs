@@ -1,670 +1,958 @@
-public BitUtility : object {
-private float float2byte
-private float byte2float
-private float float2short
-private float short2float
-public byte Float2Byte(float f)
-public float Byte2Float(int b)
-public short Float2Short(float f)
-public float Short2Float(int b)
-public Color32 EncodeFloat(float f)
-public float DecodeFloat(Color32 c)
-public Color32 EncodeInt(int i)
-public int DecodeInt(Color32 c)
-public Color32 EncodeShort(short i)
-public short DecodeShort(Color32 c)
-public Color EncodeNormal(Vector3 n)
-public Vector3 DecodeNormal(Color c)
-public Color32 EncodeVector(Vector4 v)
-public Vector4 DecodeVector(Color32 c)
-public Color32 EncodeVector2i(Vector2i v)
-public Vector2i DecodeVector2i(Color32 c)
+public class BitUtility : object {
+    
+private static float float2byte;
+    
+private static float byte2float;
+    
+private static float float2short;
+    
+private static float short2float;
+    public static byte Float2Byte(float f);
+    public static float Byte2Float(int b);
+    public static short Float2Short(float f);
+    public static float Short2Float(int b);
+    public static Color32 EncodeFloat(float f);
+    public static float DecodeFloat(Color32 c);
+    public static Color32 EncodeInt(int i);
+    public static int DecodeInt(Color32 c);
+    public static Color32 EncodeShort(short i);
+    public static short DecodeShort(Color32 c);
+    public static Color EncodeNormal(Vector3 n);
+    public static Vector3 DecodeNormal(Color c);
+    public static Color32 EncodeVector(Vector4 v);
+    public static Vector4 DecodeVector(Color32 c);
+    public static Color32 EncodeVector2i(Vector2i v);
+    public static Vector2i DecodeVector2i(Color32 c);
 }
-public BufferList`1 : object {
-private int count
-private T[] buffer
-public int Count
-public int Capacity
-public T[] Buffer
-public T Item
-public int get_Count()
-public int get_Capacity()
-public T[] get_Buffer()
-public T get_Item(int index)
-public void set_Item(int index, T value)
-public void .ctor(int capacity)
-public void Push(T element)
-public T Pop()
-public void Add(T element)
-public bool Remove(T element)
-public void RemoveAt(int index)
-public void RemoveUnordered(int index)
-public int IndexOf(T element)
-public int LastIndexOf(T element)
-public bool Contains(T element)
-public void Clear()
-public void Sort()
-public Enumerator<T> GetEnumerator()
-private IEnumerator`1<T> System.Collections.Generic.IEnumerable<T>.GetEnumerator()
-private IEnumerator System.Collections.IEnumerable.GetEnumerator()
+[DefaultMemberAttribute("Item")]
+public class BufferList`1 : object {
+    
+private int count;
+    
+private T[] buffer;
+    
+public int Count { get; }
+    
+public int Capacity { get; }
+    
+public T[] Buffer { get; }
+    
+public T Item { get; public set; }
+    public BufferList`1(int capacity);
+    public int get_Count();
+    public int get_Capacity();
+    public T[] get_Buffer();
+    public T get_Item(int index);
+    public void set_Item(int index, T value);
+    public void Push(T element);
+    public T Pop();
+    public void Add(T element);
+    public bool Remove(T element);
+    public void RemoveAt(int index);
+    public void RemoveUnordered(int index);
+    public int IndexOf(T element);
+    public int LastIndexOf(T element);
+    public bool Contains(T element);
+    public void Clear();
+    public void Sort();
+    public Enumerator<T> GetEnumerator();
+    private sealed virtual override IEnumerator`1<T> System.Collections.Generic.IEnumerable<T>.GetEnumerator();
+    private sealed virtual override IEnumerator System.Collections.IEnumerable.GetEnumerator();
 }
-public BurstUtil : object {
-public T& modreq(System.Runtime.InteropServices.InAttribute) GetReadonly(NativeArray`1& array, int index)
-public T& Get(NativeArray`1& array, int index)
+[ExtensionAttribute]
+public static class BurstUtil : object {
+    [ExtensionAttribute]
+public static T& modreq(System.Runtime.InteropServices.InAttribute) GetReadonly(NativeArray`1& array, int index);
+    [ExtensionAttribute]
+public static T& Get(NativeArray`1& array, int index);
 }
-public Checksum : object {
-private List`1<byte> values
-public void Add(float f, int bytes)
-public void Add(float f)
-public void Add(int i)
-public void Add(UInt32 u)
-public void Add(short i)
-public void Add(ushort u)
-public void Add(byte b)
-public void Clear()
-public string MD5()
-public string SHA1()
-public string ToString()
-private string BytesToString(Byte[] bytes)
+public class Checksum : object {
+    
+private List`1<byte> values;
+    public void Add(float f, int bytes);
+    public void Add(float f);
+    public void Add(int i);
+    public void Add(UInt32 u);
+    public void Add(short i);
+    public void Add(ushort u);
+    public void Add(byte b);
+    public void Clear();
+    public string MD5();
+    public string SHA1();
+    public virtual string ToString();
+    private string BytesToString(Byte[] bytes);
 }
-public CircularBuffer.CircularBuffer`1 : object {
-private T[] _buffer
-private int _start
-private int _end
-private int _size
-public int Capacity
-public bool IsFull
-public bool IsEmpty
-public int Size
-public T Item
-public void .ctor(int capacity)
-public void .ctor(int capacity, T[] items)
-public int get_Capacity()
-public bool get_IsFull()
-public bool get_IsEmpty()
-public int get_Size()
-public T Front()
-public T Back()
-public T get_Item(int index)
-public void set_Item(int index, T value)
-public void PushBack(T item)
-public void PushFront(T item)
-public void PopBack()
-public void PopFront()
-public void Clear()
-public T[] ToArray()
-public IList`1<ArraySegment`1<T>> ToArraySegments()
-public IEnumerator`1<T> GetEnumerator()
-private IEnumerator System.Collections.IEnumerable.GetEnumerator()
-private void ThrowIfEmpty(string message)
-private void Increment(Int32& index)
-private void Decrement(Int32& index)
-private int InternalIndex(int index)
-private ArraySegment`1<T> ArrayOne()
-private ArraySegment`1<T> ArrayTwo()
+[DefaultMemberAttribute("Item")]
+public class CircularBuffer.CircularBuffer`1 : object {
+    
+private T[] _buffer;
+    
+private int _start;
+    
+private int _end;
+    
+private int _size;
+    
+public int Capacity { get; }
+    
+public bool IsFull { get; }
+    
+public bool IsEmpty { get; }
+    
+public int Size { get; }
+    
+public T Item { get; public set; }
+    public CircularBuffer`1(int capacity);
+    public CircularBuffer`1(int capacity, T[] items);
+    public int get_Capacity();
+    public bool get_IsFull();
+    public bool get_IsEmpty();
+    public int get_Size();
+    public T Front();
+    public T Back();
+    public T get_Item(int index);
+    public void set_Item(int index, T value);
+    public void PushBack(T item);
+    public void PushFront(T item);
+    public void PopBack();
+    public void PopFront();
+    public void Clear();
+    public T[] ToArray();
+    public IList`1<ArraySegment`1<T>> ToArraySegments();
+    [IteratorStateMachineAttribute("CircularBuffer.CircularBuffer`1/<GetEnumerator>d__26")]
+public sealed virtual IEnumerator`1<T> GetEnumerator();
+    private sealed virtual override IEnumerator System.Collections.IEnumerable.GetEnumerator();
+    private void ThrowIfEmpty(string message);
+    private void Increment(Int32& index);
+    private void Decrement(Int32& index);
+    private int InternalIndex(int index);
+    private ArraySegment`1<T> ArrayOne();
+    private ArraySegment`1<T> ArrayTwo();
 }
-public Deque`1 : object {
-private T[] buffer
-private int offset
-private int count
-public T Item
-public int Count
-public bool IsEmpty
-public bool IsFull
-public bool IsSplit
-public int Capacity
-public T Front
-public T Back
-public void .ctor(int capacity)
-public T get_Item(int index)
-public void set_Item(int index, T value)
-public int get_Count()
-public bool get_IsEmpty()
-public bool get_IsFull()
-public bool get_IsSplit()
-public int get_Capacity()
-public T get_Front()
-public T get_Back()
-public void Clear()
-public void Resize(int capacity)
-public T PeekBack()
-public T PeekFront()
-public void PushBack(T value)
-public void PushFront(T value)
-public T PopBack()
-public T PopFront()
+[DefaultMemberAttribute("Item")]
+public class Deque`1 : object {
+    
+private T[] buffer;
+    
+private int offset;
+    
+private int count;
+    
+public T Item { get; public set; }
+    
+public int Count { get; }
+    
+public bool IsEmpty { get; }
+    
+public bool IsFull { get; }
+    
+public bool IsSplit { get; }
+    
+public int Capacity { get; }
+    
+public T Front { get; }
+    
+public T Back { get; }
+    public Deque`1(int capacity);
+    public T get_Item(int index);
+    public void set_Item(int index, T value);
+    public int get_Count();
+    public bool get_IsEmpty();
+    public bool get_IsFull();
+    public bool get_IsSplit();
+    public int get_Capacity();
+    public T get_Front();
+    public T get_Back();
+    public void Clear();
+    public void Resize(int capacity);
+    public T PeekBack();
+    public T PeekFront();
+    public void PushBack(T value);
+    public void PushFront(T value);
+    public T PopBack();
+    public T PopFront();
 }
-public Facepunch.ArrayPool`1 : object {
-private int count
-private ConcurrentQueue`1[] buffer
-public void .ctor(int maxSize)
-public ConcurrentQueue`1[] GetBuffer()
-public T[] Rent(int minSize)
-public void Return(T[] array)
-public int SizeToIndex(int size)
-public int IndexToSize(int index)
+public class Facepunch.ArrayPool`1 : object {
+    
+private int count;
+    
+private ConcurrentQueue`1[] buffer;
+    public ArrayPool`1(int maxSize);
+    public ConcurrentQueue`1[] GetBuffer();
+    public T[] Rent(int minSize);
+    public void Return(T[] array);
+    public int SizeToIndex(int size);
+    public int IndexToSize(int index);
 }
-public Facepunch.ByteArrayStream : Stream {
-private Byte[] _data
-private int _base
-private int _length
-private int _position
-public bool CanRead
-public bool CanSeek
-public bool CanWrite
-public long Length
-public long Position
-public bool get_CanRead()
-public bool get_CanSeek()
-public bool get_CanWrite()
-public long get_Length()
-public long get_Position()
-public void set_Position(long value)
-public void SetData(Byte[] data, int offset, int length)
-public int Read(Byte[] buffer, int offset, int count)
-public int ReadByte()
-public void Write(Byte[] buffer, int offset, int count)
-public void WriteByte(byte value)
-public long Seek(long offset, SeekOrigin origin)
-public void Flush()
-public void SetLength(long value)
+public class Facepunch.ByteArrayStream : Stream {
+    
+private Byte[] _data;
+    
+private int _base;
+    
+private int _length;
+    
+private int _position;
+    
+public bool CanRead { get; }
+    
+public bool CanSeek { get; }
+    
+public bool CanWrite { get; }
+    
+public long Length { get; }
+    
+public long Position { get; public set; }
+    public virtual bool get_CanRead();
+    public virtual bool get_CanSeek();
+    public virtual bool get_CanWrite();
+    public virtual long get_Length();
+    public virtual long get_Position();
+    public virtual void set_Position(long value);
+    public void SetData(Byte[] data, int offset, int length);
+    public virtual int Read(Byte[] buffer, int offset, int count);
+    public virtual int ReadByte();
+    public virtual void Write(Byte[] buffer, int offset, int count);
+    public virtual void WriteByte(byte value);
+    public virtual long Seek(long offset, SeekOrigin origin);
+    public virtual void Flush();
+    public virtual void SetLength(long value);
 }
-public Facepunch.CommandLine : object {
-private bool initialized
-private string commandline
-private Dictionary`2<string, string> switches
-public string Full
-public string get_Full()
-public void Force(string val)
-private void Initalize()
-public bool HasSwitch(string strName)
-public string GetSwitch(string strName, string strDefault)
-public int GetSwitchInt(string strName, int iDefault)
-public Dictionary`2<string, string> GetSwitches()
+public static class Facepunch.CommandLine : object {
+    
+private static bool initialized;
+    
+private static string commandline;
+    
+private static Dictionary`2<string, string> switches;
+    
+public static string Full { get; }
+    private static CommandLine();
+    public static string get_Full();
+    public static void Force(string val);
+    private static void Initalize();
+    public static bool HasSwitch(string strName);
+    public static string GetSwitch(string strName, string strDefault);
+    public static int GetSwitchInt(string strName, int iDefault);
+    public static Dictionary`2<string, string> GetSwitches();
 }
-public Facepunch.Crypt.Md5 : object {
-public string Calculate(string input)
-public string Calculate(Byte[] input)
+public class Facepunch.Crypt.Md5 : object {
+    public static string Calculate(string input);
+    public static string Calculate(Byte[] input);
 }
-public Facepunch.Extend.Base36Extensions : object {
-private string CharList
-private Char[] CharArray
-public string ToBase36(T i)
-public long FromBase36(string input)
+[ExtensionAttribute]
+public static class Facepunch.Extend.Base36Extensions : object {
+    
+private static string CharList;
+    
+private static Char[] CharArray;
+    private static Base36Extensions();
+    [ExtensionAttribute]
+public static string ToBase36(T i);
+    [ExtensionAttribute]
+public static long FromBase36(string input);
 }
-public Facepunch.Extend.ByteExtensions : object {
-public T ReadUnsafe(Byte[] buffer, int iOffset)
-public void WriteUnsafe(Byte[] buffer, T& value, int iOffset)
+[ExtensionAttribute]
+public static class Facepunch.Extend.ByteExtensions : object {
+    [ExtensionAttribute]
+public static T ReadUnsafe(Byte[] buffer, int iOffset);
+    [ExtensionAttribute]
+public static void WriteUnsafe(Byte[] buffer, T& value, int iOffset);
 }
-public Facepunch.Extend.DictionaryExtensions : object {
-public TValue GetOrCreate(Dictionary`2<TKey, TValue> dict, TKey key)
-public TValue GetOrCreatePooled(Dictionary`2<TKey, TValue> dict, TKey key)
-public Dictionary`2<TKey, TValue> Clone(Dictionary`2<TKey, TValue> dict)
+[ExtensionAttribute]
+public static class Facepunch.Extend.DictionaryExtensions : object {
+    [ExtensionAttribute]
+public static TValue GetOrCreate(Dictionary`2<TKey, TValue> dict, TKey key);
+    [ExtensionAttribute]
+public static TValue GetOrCreatePooled(Dictionary`2<TKey, TValue> dict, TKey key);
+    [ExtensionAttribute]
+public static Dictionary`2<TKey, TValue> Clone(Dictionary`2<TKey, TValue> dict);
 }
-public Facepunch.Extend.List : object {
-public void Compare(TListA a, TListB b, List`1<T> added, List`1<T> removed, List`1<T> remained)
-public void Compare(TListA a, TListB b, HashSet`1<TKey> added, HashSet`1<TKey> removed, HashSet`1<TKey> remained, Func`2<TItemA, TKey> selectorA, Func`2<TItemB, TKey> selectorB)
-public TItem FindWith(IReadOnlyCollection`1<TItem> items, Func`2<TItem, TKey> selector, TKey search, IEqualityComparer`1<TKey> comparer)
-public Nullable`1<TItem> TryFindWith(IReadOnlyCollection`1<TItem> items, Func`2<TItem, TKey> selector, TKey search, IEqualityComparer`1<TKey> comparer)
-public int FindIndexWith(IReadOnlyList`1<TItem> items, Func`2<TItem, TKey> selector, TKey search, IEqualityComparer`1<TKey> comparer)
-public int FindIndex(IReadOnlyList`1<TItem> items, TItem search, IEqualityComparer`1<TItem> comparer)
-public List`1<T> ShallowClonePooled(List`1<T> items)
-public bool Resize(List`1<T> list, int newCount)
+[ExtensionAttribute]
+public static class Facepunch.Extend.List : object {
+    [ExtensionAttribute]
+public static void Compare(TListA a, TListB b, List`1<T> added, List`1<T> removed, List`1<T> remained);
+    [ExtensionAttribute]
+public static void Compare(TListA a, TListB b, HashSet`1<TKey> added, HashSet`1<TKey> removed, HashSet`1<TKey> remained, Func`2<TItemA, TKey> selectorA, Func`2<TItemB, TKey> selectorB);
+    [ExtensionAttribute]
+public static TItem FindWith(IReadOnlyCollection`1<TItem> items, Func`2<TItem, TKey> selector, TKey search, IEqualityComparer`1<TKey> comparer);
+    [ExtensionAttribute]
+public static Nullable`1<TItem> TryFindWith(IReadOnlyCollection`1<TItem> items, Func`2<TItem, TKey> selector, TKey search, IEqualityComparer`1<TKey> comparer);
+    [ExtensionAttribute]
+public static int FindIndexWith(IReadOnlyList`1<TItem> items, Func`2<TItem, TKey> selector, TKey search, IEqualityComparer`1<TKey> comparer);
+    [ExtensionAttribute]
+public static int FindIndex(IReadOnlyList`1<TItem> items, TItem search, IEqualityComparer`1<TItem> comparer);
+    [ExtensionAttribute]
+public static List`1<T> ShallowClonePooled(List`1<T> items);
+    [ExtensionAttribute]
+public static bool Resize(List`1<T> list, int newCount);
 }
-public Facepunch.Extend.NumberExtensions : object {
-public string FormatBytes(T input, bool shortFormat)
-public T Clamp(T input, T min, T max)
-public string FormatSeconds(ulong i)
-public string FormatSeconds(long s)
-public string FormatSecondsLong(ulong i)
-public string FormatSecondsLong(long s)
-public string FormatNumberShort(ulong i)
-public string FormatNumberShort(long num)
-public string FormatDistance(float num)
+[ExtensionAttribute]
+public static class Facepunch.Extend.NumberExtensions : object {
+    [ExtensionAttribute]
+public static string FormatBytes(T input, bool shortFormat);
+    [ExtensionAttribute]
+public static T Clamp(T input, T min, T max);
+    [ExtensionAttribute]
+public static string FormatSeconds(ulong i);
+    [ExtensionAttribute]
+public static string FormatSeconds(long s);
+    [ExtensionAttribute]
+public static string FormatSecondsLong(ulong i);
+    [ExtensionAttribute]
+public static string FormatSecondsLong(long s);
+    [ExtensionAttribute]
+public static string FormatNumberShort(ulong i);
+    [ExtensionAttribute]
+public static string FormatNumberShort(long num);
+    [ExtensionAttribute]
+public static string FormatDistance(float num);
 }
-public Facepunch.Extend.ReflectionExtensions : object {
-public bool HasAttribute(MemberInfo method, Type attribute)
+[ExtensionAttribute]
+public static class Facepunch.Extend.ReflectionExtensions : object {
+    [ExtensionAttribute]
+public static bool HasAttribute(MemberInfo method, Type attribute);
 }
-public Facepunch.Extend.StringExtensions : object {
-private Regex regexSplitQuotes
-private Char[] spaceOrQuote
-private StringBuilder _quoteSafeBuilder
-private Char[] FilenameDelim
-private Char[] _badCharacters
-public string QuoteSafe(string str)
-public String[] SplitQuotesStrings(string input, int maxCount)
-public decimal ToDecimal(string str, decimal Default)
-public float ToFloat(string str, float Default)
-public int ToInt(string str, int Default)
-public long ToLong(string str, long Default)
-public bool ToBool(string str)
-public string Truncate(string str, int maxLength, string appendage)
-public string TruncateFilename(string str, int maxLength, string appendage)
-public bool Contains(string source, string toCheck, StringComparison comp)
-public string Snippet(string source, string find, int padding)
-public string RemoveBadCharacters(string str)
-public string Base64Encode(string plainText)
-public string Base64Decode(string base64EncodedData)
+[ExtensionAttribute]
+public static class Facepunch.Extend.StringExtensions : object {
+    
+private static Regex regexSplitQuotes;
+    
+private static Char[] spaceOrQuote;
+    
+private static StringBuilder _quoteSafeBuilder;
+    
+private static Char[] FilenameDelim;
+    
+private static Char[] _badCharacters;
+    private static StringExtensions();
+    [ExtensionAttribute]
+public static string QuoteSafe(string str);
+    [ExtensionAttribute]
+public static String[] SplitQuotesStrings(string input, int maxCount);
+    [ExtensionAttribute]
+public static decimal ToDecimal(string str, decimal Default);
+    [ExtensionAttribute]
+public static float ToFloat(string str, float Default);
+    [ExtensionAttribute]
+public static int ToInt(string str, int Default);
+    [ExtensionAttribute]
+public static long ToLong(string str, long Default);
+    [ExtensionAttribute]
+public static bool ToBool(string str);
+    [ExtensionAttribute]
+public static string Truncate(string str, int maxLength, string appendage);
+    [ExtensionAttribute]
+public static string TruncateFilename(string str, int maxLength, string appendage);
+    [ExtensionAttribute]
+public static bool Contains(string source, string toCheck, StringComparison comp);
+    [ExtensionAttribute]
+public static string Snippet(string source, string find, int padding);
+    [ExtensionAttribute]
+public static string RemoveBadCharacters(string str);
+    [ExtensionAttribute]
+public static string Base64Encode(string plainText);
+    [ExtensionAttribute]
+public static string Base64Decode(string base64EncodedData);
 }
-public Facepunch.NativeMemoryStream : Stream {
-private NativeArray`1<byte> _buffer
-private int _capacity
-private int _length
-private int _position
-private bool _disposeArray
-private Allocator _allocator
-public int MaxSupportedCapacity
-public NativeArray`1<byte> Buffer
-public bool CanRead
-public bool CanSeek
-public bool CanWrite
-public long Length
-public long Position
-public void .ctor(int capacity, Allocator allocator, bool disposeArray)
-public NativeArray`1<byte> get_Buffer()
-public bool get_CanRead()
-public bool get_CanSeek()
-public bool get_CanWrite()
-public long get_Length()
-public long get_Position()
-public void set_Position(long value)
-public void Flush()
-public int Read(Byte[] buffer, int offset, int count)
-public long Seek(long offset, SeekOrigin origin)
-public void SetLength(long value)
-public void Write(Byte[] buffer, int offset, int count)
-private void EnsureCapacity(int capacity)
-protected void Dispose(bool disposing)
+public class Facepunch.NativeMemoryStream : Stream {
+    
+private NativeArray`1<byte> _buffer;
+    
+private int _capacity;
+    
+private int _length;
+    
+private int _position;
+    
+private bool _disposeArray;
+    
+private Allocator _allocator;
+    
+public static int MaxSupportedCapacity;
+    
+public NativeArray`1<byte> Buffer { get; }
+    
+public bool CanRead { get; }
+    
+public bool CanSeek { get; }
+    
+public bool CanWrite { get; }
+    
+public long Length { get; }
+    
+public long Position { get; public set; }
+    public NativeMemoryStream(int capacity, Allocator allocator, bool disposeArray);
+    public NativeArray`1<byte> get_Buffer();
+    public virtual bool get_CanRead();
+    public virtual bool get_CanSeek();
+    public virtual bool get_CanWrite();
+    public virtual long get_Length();
+    public virtual long get_Position();
+    public virtual void set_Position(long value);
+    public virtual void Flush();
+    public virtual int Read(Byte[] buffer, int offset, int count);
+    public virtual long Seek(long offset, SeekOrigin origin);
+    public virtual void SetLength(long value);
+    public virtual void Write(Byte[] buffer, int offset, int count);
+    private void EnsureCapacity(int capacity);
+    protected virtual void Dispose(bool disposing);
 }
-public Facepunch.Pool : object {
-public ConcurrentDictionary`2<Type, IPoolCollection> Directory
-public void FreeList(List`1& obj)
-public void FreeListAndItems(List`1& items)
-public void ClearList(ICollection`1<T> items)
-public void FreeMemoryStream(MemoryStream& obj)
-public void Free(T& obj)
-public void Free(List`1& obj, bool freeElements)
-public void Free(HashSet`1& obj, bool freeElements)
-public void Free(Dictionary`2& dict, bool freeElements)
-public void Free(BufferList`1& obj, bool freeElements)
-public void Free(ListDictionary`2& dict, bool freeElements)
-public void Free(Queue`1& obj, bool freeElements)
-public void FreeUnsafe(T& obj)
-public void FreeUnmanaged(MemoryStream& obj)
-public void FreeUnmanaged(StringBuilder& obj)
-public void FreeUnmanaged(List`1& obj)
-public void FreeUnmanaged(HashSet`1& obj)
-public void FreeUnmanaged(Dictionary`2& dict)
-public void FreeUnmanaged(BufferList`1& obj)
-public void FreeUnmanaged(ListDictionary`2& dict)
-public void FreeUnmanaged(Queue`1& obj)
-private void FreeInternal(T& obj)
-public T Get()
-public List`1<T> GetList()
-public void ResizeBuffer(int size)
-public void FillBuffer()
-public PoolCollection`1<T> FindCollection()
-public void Clear(string filter)
-private bool Contains(string haystack, string needle, CompareOptions options)
+[ExtensionAttribute]
+public static class Facepunch.Pool : object {
+    
+public static ConcurrentDictionary`2<Type, IPoolCollection> Directory;
+    private static Pool();
+    [ObsoleteAttribute("FreeList got superseeded by Free<T>(where T : IPooled) and FreeUnmanaged<T>, use those instead")]
+public static void FreeList(List`1& obj);
+    [ObsoleteAttribute("FreeListAndItems got superseeded by Free<T>(list, true), use that instead")]
+public static void FreeListAndItems(List`1& items);
+    [ObsoleteAttribute("ClearList is deprecated and about to be removed")]
+public static void ClearList(ICollection`1<T> items);
+    [ObsoleteAttribute("FreeMemoryStream is superseeded by FreeUnmanaged, use that instead")]
+public static void FreeMemoryStream(MemoryStream& obj);
+    public static void Free(T& obj);
+    public static void Free(List`1& obj, bool freeElements);
+    public static void Free(HashSet`1& obj, bool freeElements);
+    public static void Free(Dictionary`2& dict, bool freeElements);
+    public static void Free(BufferList`1& obj, bool freeElements);
+    public static void Free(ListDictionary`2& dict, bool freeElements);
+    public static void Free(Queue`1& obj, bool freeElements);
+    public static void FreeUnsafe(T& obj);
+    public static void FreeUnmanaged(MemoryStream& obj);
+    public static void FreeUnmanaged(StringBuilder& obj);
+    public static void FreeUnmanaged(List`1& obj);
+    public static void FreeUnmanaged(HashSet`1& obj);
+    public static void FreeUnmanaged(Dictionary`2& dict);
+    public static void FreeUnmanaged(BufferList`1& obj);
+    public static void FreeUnmanaged(ListDictionary`2& dict);
+    public static void FreeUnmanaged(Queue`1& obj);
+    private static void FreeInternal(T& obj);
+    public static T Get();
+    [ObsoleteAttribute("GetList<T> is superseeded by Get<List<T>> and will be removed soon.")]
+public static List`1<T> GetList();
+    public static void ResizeBuffer(int size);
+    public static void FillBuffer();
+    public static PoolCollection`1<T> FindCollection();
+    public static void Clear(string filter);
+    [ExtensionAttribute]
+private static bool Contains(string haystack, string needle, CompareOptions options);
 }
-internal Facepunch.Pool`1 : object {
-public PoolCollection`1<T> Collection
+internal static class Facepunch.Pool`1 : object {
+    
+public static PoolCollection`1<T> Collection;
+    private static Pool`1();
 }
-public Facepunch.StringView : ValueType {
-private string _source
-private int _start
-private int _end
-public int Length
-public char Item
-public int get_Length()
-public char get_Item(int index)
-public void .ctor(string source)
-public void .ctor(string source, int start)
-public void .ctor(string source, int start, int length)
-public StringView op_Implicit(string source)
-public ReadOnlySpan`1<char> op_Implicit(StringView view)
-public string op_Explicit(StringView view)
-public string ToString()
-public int GetHashCode()
-public bool Equals(object obj)
-public bool Equals(StringView otherSv)
-public bool op_Equality(StringView left, StringView right)
-public bool op_Inequality(StringView left, StringView right)
-public void Split(char delim, ICollection`1<StringView> collection)
-public bool StartsWith(StringView other)
-public StringView Substring(int offset)
-public StringView Substring(int offset, int length)
-public StringView Slice(int offset, int length)
-public bool Contains(StringView other)
+[IsReadOnlyAttribute]
+[DefaultMemberAttribute("Item")]
+public class Facepunch.StringView : ValueType {
+    
+private string _source;
+    
+private int _start;
+    
+private int _end;
+    
+public int Length { get; }
+    
+public char Item { get; }
+    public StringView(string source);
+    public StringView(string source, int start);
+    public StringView(string source, int start, int length);
+    public int get_Length();
+    public char get_Item(int index);
+    public static StringView op_Implicit(string source);
+    public static ReadOnlySpan`1<char> op_Implicit(StringView view);
+    public static string op_Explicit(StringView view);
+    public virtual string ToString();
+    public virtual int GetHashCode();
+    public virtual bool Equals(object obj);
+    public bool Equals(StringView otherSv);
+    public static bool op_Equality(StringView left, StringView right);
+    public static bool op_Inequality(StringView left, StringView right);
+    public void Split(char delim, ICollection`1<StringView> collection);
+    public bool StartsWith(StringView other);
+    public StringView Substring(int offset);
+    public StringView Substring(int offset, int length);
+    public StringView Slice(int offset, int length);
+    public bool Contains(StringView other);
 }
-public GenericsUtil : object {
-public TDst Cast(TSrc obj)
-public void Swap(T& a, T& b)
+public static class GenericsUtil : object {
+    public static TDst Cast(TSrc obj);
+    public static void Swap(T& a, T& b);
 }
-public IImmutableStack`1 {
-public int Count
-public int get_Count()
-public IImmutableStack`1<T> Push(T value)
-public IImmutableStack`1<T> Pop()
-public T Peek()
+public interface IImmutableStack`1 {
+    
+public int Count { get; }
+    public abstract virtual int get_Count();
+    public abstract virtual IImmutableStack`1<T> Push(T value);
+    public abstract virtual IImmutableStack`1<T> Pop();
+    public abstract virtual T Peek();
 }
-public ILinkedListNode`1 {
-public T next
-public T get_next()
-public void set_next(T value)
+public interface ILinkedListNode`1 {
+    
+public T next { get; public set; }
+    public abstract virtual T get_next();
+    public abstract virtual void set_next(T value);
 }
-public IMinHeapNode`1 {
-public T child
-public int order
-public T get_child()
-public void set_child(T value)
-public int get_order()
+public interface IMinHeapNode`1 {
+    
+public T child { get; public set; }
+    
+public int order { get; }
+    public abstract virtual T get_child();
+    public abstract virtual void set_child(T value);
+    public abstract virtual int get_order();
 }
-public ImmutableStack`1 : object {
-private IImmutableStack`1<T> <Empty>k__BackingField
-private T _head
-private IImmutableStack`1<T> _tail
-private int <Count>k__BackingField
-public IImmutableStack`1<T> Empty
-public int Count
-public IImmutableStack`1<T> get_Empty()
-private void .ctor(T head, IImmutableStack`1<T> tail)
-public int get_Count()
-public T Peek()
-public IImmutableStack`1<T> Pop()
-public IImmutableStack`1<T> Push(T value)
-public IEnumerator`1<T> GetEnumerator()
-private IEnumerator System.Collections.IEnumerable.GetEnumerator()
+public class ImmutableStack`1 : object {
+    [CompilerGeneratedAttribute]
+
+private static IImmutableStack`1<T> <Empty>k__BackingField;
+    
+private T _head;
+    
+private IImmutableStack`1<T> _tail;
+    [CompilerGeneratedAttribute]
+
+private int <Count>k__BackingField;
+    
+public static IImmutableStack`1<T> Empty { get; }
+    
+public int Count { get; }
+    private ImmutableStack`1(T head, IImmutableStack`1<T> tail);
+    private static ImmutableStack`1();
+    [CompilerGeneratedAttribute]
+public static IImmutableStack`1<T> get_Empty();
+    [CompilerGeneratedAttribute]
+public sealed virtual int get_Count();
+    public sealed virtual T Peek();
+    public sealed virtual IImmutableStack`1<T> Pop();
+    public sealed virtual IImmutableStack`1<T> Push(T value);
+    [IteratorStateMachineAttribute("ImmutableStack`1/<GetEnumerator>d__13")]
+public sealed virtual IEnumerator`1<T> GetEnumerator();
+    private sealed virtual override IEnumerator System.Collections.IEnumerable.GetEnumerator();
 }
-public IntrusiveLinkedList`1 : ValueType {
-private T head
-public bool Empty
-public bool get_Empty()
-public void Add(T item)
-public T Pop()
+public class IntrusiveLinkedList`1 : ValueType {
+    
+private T head;
+    
+public bool Empty { get; }
+    public bool get_Empty();
+    public void Add(T item);
+    public T Pop();
 }
-public IntrusiveMinHeap`1 : ValueType {
-private T head
-public bool Empty
-public bool get_Empty()
-public void Add(T item)
-public T Pop()
+public class IntrusiveMinHeap`1 : ValueType {
+    
+private T head;
+    
+public bool Empty { get; }
+    public bool get_Empty();
+    public void Add(T item);
+    public T Pop();
 }
-public LimitDictionary`2 : Dictionary`2<TKey, TValue> {
-public int maxCapacity
-private Queue`1<TKey> entries
-public void .ctor(int maxCapacity)
-public void Add(TKey key, TValue item)
+public class LimitDictionary`2 : Dictionary`2<TKey, TValue> {
+    
+public int maxCapacity;
+    
+private Queue`1<TKey> entries;
+    public LimitDictionary`2(int maxCapacity);
+    public void Add(TKey key, TValue item);
 }
-public LimitList`1 : List`1<T> {
-public int maxCapacity
-private Queue`1<T> entries
-public void .ctor(int maxCapacity)
-public void Add(T item)
-public void AddRange(IEnumerable`1<T> items)
+public class LimitList`1 : List`1<T> {
+    
+public int maxCapacity;
+    
+private Queue`1<T> entries;
+    public LimitList`1(int maxCapacity);
+    public void Add(T item);
+    public void AddRange(IEnumerable`1<T> items);
 }
-public ListDictionary`2 : object {
-private Dictionary`2<TKey, int> key2idx
-private Dictionary`2<int, TKey> idx2key
-private BufferList`1<TKey> keys
-private BufferList`1<TVal> vals
-public TVal Item
-public BufferList`1<TKey> Keys
-public BufferList`1<TVal> Values
-public int Count
-public void .ctor(int capacity)
-public void Add(TKey key, TVal val)
-public bool Contains(TKey key)
-public bool ContainsKey(TKey key)
-public bool Remove(TKey key)
-public bool RemoveAt(int idx)
-private void Remove(int idx_remove, TKey key_remove)
-public bool TryGetValue(TKey key, TVal& val)
-public KeyValuePair`2<TKey, TVal> GetByIndex(int idx)
-public TVal get_Item(TKey key)
-public void set_Item(TKey key, TVal value)
-public void Clear()
-public BufferList`1<TKey> get_Keys()
-public BufferList`1<TVal> get_Values()
-public int get_Count()
-public IEnumerator`1<KeyValuePair`2<TKey, TVal>> GetEnumerator()
-private IEnumerator System.Collections.IEnumerable.GetEnumerator()
+[DefaultMemberAttribute("Item")]
+public class ListDictionary`2 : object {
+    
+private Dictionary`2<TKey, int> key2idx;
+    
+private Dictionary`2<int, TKey> idx2key;
+    
+private BufferList`1<TKey> keys;
+    
+private BufferList`1<TVal> vals;
+    
+public TVal Item { get; public set; }
+    
+public BufferList`1<TKey> Keys { get; }
+    
+public BufferList`1<TVal> Values { get; }
+    
+public int Count { get; }
+    public ListDictionary`2(int capacity);
+    public void Add(TKey key, TVal val);
+    public bool Contains(TKey key);
+    public bool ContainsKey(TKey key);
+    public bool Remove(TKey key);
+    public bool RemoveAt(int idx);
+    private void Remove(int idx_remove, TKey key_remove);
+    public bool TryGetValue(TKey key, TVal& val);
+    public KeyValuePair`2<TKey, TVal> GetByIndex(int idx);
+    public TVal get_Item(TKey key);
+    public void set_Item(TKey key, TVal value);
+    public void Clear();
+    public BufferList`1<TKey> get_Keys();
+    public BufferList`1<TVal> get_Values();
+    public int get_Count();
+    [IteratorStateMachineAttribute("ListDictionary`2/<GetEnumerator>d__24")]
+public sealed virtual IEnumerator`1<KeyValuePair`2<TKey, TVal>> GetEnumerator();
+    private sealed virtual override IEnumerator System.Collections.IEnumerable.GetEnumerator();
 }
-public ListHashSet`1 : object {
-private Dictionary`2<T, int> val2idx
-private Dictionary`2<int, T> idx2val
-private BufferList`1<T> vals
-public BufferList`1<T> Values
-public int Count
-public bool IsReadOnly
-public T Item
-public void .ctor(int capacity)
-public void Add(T val)
-public bool TryAdd(T val)
-public void AddRange(List`1<T> list)
-public bool Contains(T val)
-public bool Remove(T val)
-public void RemoveAt(int idx)
-public int IndexOf(T item)
-public void Insert(int index, T item)
-public void Clear()
-private void Remove(int idx_remove, T val_remove)
-public void CopyTo(T[] array, int arrayIndex)
-public BufferList`1<T> get_Values()
-public int get_Count()
-public bool get_IsReadOnly()
-public T get_Item(int index)
-public void set_Item(int index, T value)
-public Enumerator<T> GetEnumerator()
-private IEnumerator`1<T> System.Collections.Generic.IEnumerable<T>.GetEnumerator()
-private IEnumerator System.Collections.IEnumerable.GetEnumerator()
+[DefaultMemberAttribute("Item")]
+public class ListHashSet`1 : object {
+    
+private Dictionary`2<T, int> val2idx;
+    
+private Dictionary`2<int, T> idx2val;
+    
+private BufferList`1<T> vals;
+    
+public BufferList`1<T> Values { get; }
+    
+public int Count { get; }
+    
+public bool IsReadOnly { get; }
+    
+public T Item { get; public set; }
+    public ListHashSet`1(int capacity);
+    public sealed virtual void Add(T val);
+    public bool TryAdd(T val);
+    public void AddRange(List`1<T> list);
+    public sealed virtual bool Contains(T val);
+    public sealed virtual bool Remove(T val);
+    public sealed virtual void RemoveAt(int idx);
+    public sealed virtual int IndexOf(T item);
+    public sealed virtual void Insert(int index, T item);
+    public sealed virtual void Clear();
+    private void Remove(int idx_remove, T val_remove);
+    public sealed virtual void CopyTo(T[] array, int arrayIndex);
+    public BufferList`1<T> get_Values();
+    public sealed virtual int get_Count();
+    public sealed virtual bool get_IsReadOnly();
+    public sealed virtual T get_Item(int index);
+    public sealed virtual void set_Item(int index, T value);
+    public Enumerator<T> GetEnumerator();
+    private sealed virtual override IEnumerator`1<T> System.Collections.Generic.IEnumerable<T>.GetEnumerator();
+    private sealed virtual override IEnumerator System.Collections.IEnumerable.GetEnumerator();
 }
-public MaxQueue : object {
-private Deque`1<int> data
-private Deque`1<int> max
-public int Max
-public void .ctor(int capacity)
-public void Push(int value)
-public int Pop()
-public int get_Max()
+public class MaxQueue : object {
+    
+private Deque`1<int> data;
+    
+private Deque`1<int> max;
+    
+public int Max { get; }
+    public MaxQueue(int capacity);
+    public void Push(int value);
+    public int Pop();
+    public int get_Max();
 }
-public Memoized`2 : object {
-private Func`2<TArgs, TResult> _factory
-private Dictionary`2<TArgs, TResult> _cache
-public void .ctor(Func`2<TArgs, TResult> factory)
-public TResult Get(TArgs args)
+public class Memoized`2 : object {
+    
+private Func`2<TArgs, TResult> _factory;
+    
+private Dictionary`2<TArgs, TResult> _cache;
+    public Memoized`2(Func`2<TArgs, TResult> factory);
+    public TResult Get(TArgs args);
 }
-public MinQueue : object {
-private Deque`1<int> data
-private Deque`1<int> min
-public int Min
-public void .ctor(int capacity)
-public void Push(int value)
-public int Pop()
-public int get_Min()
+[CompilerGeneratedAttribute]
+[EmbeddedAttribute]
+internal class Microsoft.CodeAnalysis.EmbeddedAttribute : Attribute {
 }
-public MruDictionary`2 : object {
-private int capacity
-private Queue`1<LinkedListNode`1<KeyValuePair`2<Key, Value>>> recycled
-private LinkedList`1<KeyValuePair`2<Key, Value>> list
-private Dictionary`2<Key, LinkedListNode`1<KeyValuePair`2<Key, Value>>> dict
-private Action`2<Key, Value> valueRecycler
-private long <EvictionCount>k__BackingField
-public int Capacity
-public int Count
-public long EvictionCount
-public int get_Capacity()
-public int get_Count()
-public long get_EvictionCount()
-private void set_EvictionCount(long value)
-public void .ctor(int capacity, Action`2<Key, Value> valueRecycler)
-public void Add(Key key, Value value)
-public void Remove(Key key)
-private void RemoveLast()
-public bool TryGetValue(Key key, Value& value)
-public void Clear()
-public void SetCapacity(int newCapacity)
-public Enumerator<KeyValuePair`2<Key, Value>> GetEnumerator()
-private IEnumerator`1<KeyValuePair`2<Key, Value>> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<Key,Value>>.GetEnumerator()
-private IEnumerator System.Collections.IEnumerable.GetEnumerator()
+public class MinQueue : object {
+    
+private Deque`1<int> data;
+    
+private Deque`1<int> min;
+    
+public int Min { get; }
+    public MinQueue(int capacity);
+    public void Push(int value);
+    public int Pop();
+    public int get_Min();
 }
-public SpanningTree`1 : object {
-private List`1<Node<T>> nodes
-private List`1<Edge<T>> edges
-public int AddNode()
-public void AddEdge(int a_idx, int b_idx, int cost, T value)
-public void Clear()
-public void Reset()
-public void CalculateMin()
-public void ForEach(Action`1<T> action)
+public class MruDictionary`2 : object {
+    
+private int capacity;
+    
+private Queue`1<LinkedListNode`1<KeyValuePair`2<Key, Value>>> recycled;
+    
+private LinkedList`1<KeyValuePair`2<Key, Value>> list;
+    
+private Dictionary`2<Key, LinkedListNode`1<KeyValuePair`2<Key, Value>>> dict;
+    
+private Action`2<Key, Value> valueRecycler;
+    [CompilerGeneratedAttribute]
+
+private long <EvictionCount>k__BackingField;
+    
+public int Capacity { get; }
+    
+public int Count { get; }
+    
+public long EvictionCount { get; private set; }
+    public MruDictionary`2(int capacity, Action`2<Key, Value> valueRecycler);
+    public int get_Capacity();
+    public int get_Count();
+    [CompilerGeneratedAttribute]
+public long get_EvictionCount();
+    [CompilerGeneratedAttribute]
+private void set_EvictionCount(long value);
+    public void Add(Key key, Value value);
+    public void Remove(Key key);
+    private void RemoveLast();
+    public bool TryGetValue(Key key, Value& value);
+    public void Clear();
+    public void SetCapacity(int newCapacity);
+    public Enumerator<KeyValuePair`2<Key, Value>> GetEnumerator();
+    private sealed virtual override IEnumerator`1<KeyValuePair`2<Key, Value>> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<Key,Value>>.GetEnumerator();
+    private sealed virtual override IEnumerator System.Collections.IEnumerable.GetEnumerator();
 }
-public Spatial.Grid`1 : object {
-private int <CellCount>k__BackingField
-private int <CellSize>k__BackingField
-private float CenterX
-private float CenterY
-private Node[0...,0...] Nodes
-private Dictionary`2<T, Node<T>> Lookup
-public int CellCount
-public int CellSize
-public int get_CellCount()
-private void set_CellCount(int value)
-public int get_CellSize()
-private void set_CellSize(int value)
-public void .ctor(int CellSize, float WorldSize)
-public int Query(float x, float y, float radius, T[] result, Func`2<T, bool> filter)
-private int Clamp(float input)
-private Node<T> GetNode(float x, float y, bool create)
-public void Add(T obj, float x, float y)
-public void Move(T obj, float x, float y)
-public bool Remove(T obj)
+public class SpanningTree`1 : object {
+    
+private List`1<Node<T>> nodes;
+    
+private List`1<Edge<T>> edges;
+    public int AddNode();
+    public void AddEdge(int a_idx, int b_idx, int cost, T value);
+    public void Clear();
+    public void Reset();
+    public void CalculateMin();
+    public void ForEach(Action`1<T> action);
 }
-public StringBuilderExtensions : object {
-public StringBuilder QuoteSafe(StringBuilder builder, string value)
+public class Spatial.Grid`1 : object {
+    [CompilerGeneratedAttribute]
+
+private int <CellCount>k__BackingField;
+    [CompilerGeneratedAttribute]
+
+private int <CellSize>k__BackingField;
+    
+private float CenterX;
+    
+private float CenterY;
+    
+private Node[0...,0...] Nodes;
+    
+private Dictionary`2<T, Node<T>> Lookup;
+    
+public int CellCount { get; private set; }
+    
+public int CellSize { get; private set; }
+    public Grid`1(int CellSize, float WorldSize);
+    [CompilerGeneratedAttribute]
+public int get_CellCount();
+    [CompilerGeneratedAttribute]
+private void set_CellCount(int value);
+    [CompilerGeneratedAttribute]
+public int get_CellSize();
+    [CompilerGeneratedAttribute]
+private void set_CellSize(int value);
+    public int Query(float x, float y, float radius, T[] result, Func`2<T, bool> filter);
+    private int Clamp(float input);
+    private Node<T> GetNode(float x, float y, bool create);
+    public void Add(T obj, float x, float y);
+    public void Move(T obj, float x, float y);
+    public bool Remove(T obj);
 }
-public Union16 : ValueType {
-public short i
-public ushort u
-public byte b1
-public byte b2
+[ExtensionAttribute]
+public static class StringBuilderExtensions : object {
+    [ExtensionAttribute]
+public static StringBuilder QuoteSafe(StringBuilder builder, string value);
 }
-public Union32 : ValueType {
-public int i
-public UInt32 u
-public float f
-public byte b1
-public byte b2
-public byte b3
-public byte b4
+[CompilerGeneratedAttribute]
+[EmbeddedAttribute]
+internal class System.Runtime.CompilerServices.IsUnmanagedAttribute : Attribute {
 }
-public Union64 : ValueType {
-public long i
-public ulong u
-public double f
-public byte b1
-public byte b2
-public byte b3
-public byte b4
-public byte b5
-public byte b6
-public byte b7
-public byte b8
+public class Union16 : ValueType {
+    
+public short i;
+    
+public ushort u;
+    
+public byte b1;
+    
+public byte b2;
 }
-public Union8 : ValueType {
-public sbyte i
-public byte u
-public byte b1
+public class Union32 : ValueType {
+    
+public int i;
+    
+public UInt32 u;
+    
+public float f;
+    
+public byte b1;
+    
+public byte b2;
+    
+public byte b3;
+    
+public byte b4;
 }
-internal UnitySourceGeneratedAssemblyMonoScriptTypes_v1 : object {
-private MonoScriptData Get()
+public class Union64 : ValueType {
+    
+public long i;
+    
+public ulong u;
+    
+public double f;
+    
+public byte b1;
+    
+public byte b2;
+    
+public byte b3;
+    
+public byte b4;
+    
+public byte b5;
+    
+public byte b6;
+    
+public byte b7;
+    
+public byte b8;
 }
-public Vector2b : ValueType {
-public Vector2b alltrue
-public Vector2b allfalse
-public bool x
-public bool y
-public void .ctor(bool x, bool y)
-public bool op_Equality(Vector2b a, Vector2b b)
-public bool op_Inequality(Vector2b a, Vector2b b)
-public bool Equals(Vector2b o)
-public int GetHashCode()
-public bool Equals(object o)
-public string ToString()
+public class Union8 : ValueType {
+    
+public sbyte i;
+    
+public byte u;
+    
+public byte b1;
 }
-public Vector2i : ValueType {
-public Vector2i zero
-public Vector2i one
-public Vector2i left
-public Vector2i right
-public Vector2i forward
-public Vector2i back
-public int x
-public int y
-public void .ctor(int x, int y)
-public Vector2i op_RightShift(Vector2i v, int shift)
-public Vector2i op_LeftShift(Vector2i v, int shift)
-public Vector2i op_UnaryPlus(Vector2i v)
-public Vector2i op_UnaryNegation(Vector2i v)
-public Vector2i op_Addition(Vector2i a, Vector2i b)
-public Vector2i op_Subtraction(Vector2i a, Vector2i b)
-public Vector2i op_Multiply(Vector2i v, int multiplier)
-public Vector2i op_Division(Vector2i v, int divisor)
-public Vector2 op_Multiply(Vector2i v, float multiplier)
-public Vector2 op_Division(Vector2i v, float divisor)
-public Vector2i op_Modulus(Vector2i v, int mod)
-public Vector2 op_Implicit(Vector2i other)
-public Vector2i op_Explicit(Vector2 other)
-public bool op_Equality(Vector2i a, Vector2i b)
-public bool op_Inequality(Vector2i a, Vector2i b)
-public bool Equals(Vector2i o)
-public int GetHashCode()
-public bool Equals(object o)
-public string ToString()
+[CompilerGeneratedAttribute]
+[EditorBrowsableAttribute("1")]
+[GeneratedCodeAttribute("Unity.MonoScriptGenerator.MonoScriptInfoGenerator", "")]
+internal class UnitySourceGeneratedAssemblyMonoScriptTypes_v1 : object {
+    private static MonoScriptData Get();
 }
-public Vector3b : ValueType {
-public Vector3b alltrue
-public Vector3b allfalse
-public bool x
-public bool y
-public bool z
-public void .ctor(bool x, bool y, bool z)
-public bool op_Equality(Vector3b a, Vector3b b)
-public bool op_Inequality(Vector3b a, Vector3b b)
-public bool Equals(Vector3b o)
-public int GetHashCode()
-public bool Equals(object o)
-public string ToString()
+public class Vector2b : ValueType {
+    
+public static Vector2b alltrue;
+    
+public static Vector2b allfalse;
+    
+public bool x;
+    
+public bool y;
+    public Vector2b(bool x, bool y);
+    private static Vector2b();
+    public static bool op_Equality(Vector2b a, Vector2b b);
+    public static bool op_Inequality(Vector2b a, Vector2b b);
+    public sealed virtual bool Equals(Vector2b o);
+    public virtual int GetHashCode();
+    public virtual bool Equals(object o);
+    public virtual string ToString();
 }
-public Vector3i : ValueType {
-public Vector3i zero
-public Vector3i one
-public Vector3i forward
-public Vector3i back
-public Vector3i up
-public Vector3i down
-public Vector3i right
-public Vector3i left
-public int x
-public int y
-public int z
-public void .ctor(int x, int y, int z)
-public Vector3i op_RightShift(Vector3i v, int shift)
-public Vector3i op_LeftShift(Vector3i v, int shift)
-public Vector3i op_UnaryPlus(Vector3i v)
-public Vector3i op_UnaryNegation(Vector3i v)
-public Vector3i op_Addition(Vector3i a, Vector3i b)
-public Vector3i op_Subtraction(Vector3i a, Vector3i b)
-public Vector3i op_Multiply(Vector3i v, int multiplier)
-public Vector3i op_Division(Vector3i v, int divisor)
-public Vector3 op_Multiply(Vector3i v, float multiplier)
-public Vector3 op_Division(Vector3i v, float divisor)
-public Vector3i op_Modulus(Vector3i v, int mod)
-public Vector3 op_Implicit(Vector3i other)
-public Vector3i op_Explicit(Vector3 other)
-public bool op_Equality(Vector3i a, Vector3i b)
-public bool op_Inequality(Vector3i a, Vector3i b)
-public bool Equals(Vector3i o)
-public int GetHashCode()
-public bool Equals(object o)
-public string ToString()
+public class Vector2i : ValueType {
+    
+public static Vector2i zero;
+    
+public static Vector2i one;
+    
+public static Vector2i left;
+    
+public static Vector2i right;
+    
+public static Vector2i forward;
+    
+public static Vector2i back;
+    
+public int x;
+    
+public int y;
+    public Vector2i(int x, int y);
+    private static Vector2i();
+    public static Vector2i op_RightShift(Vector2i v, int shift);
+    public static Vector2i op_LeftShift(Vector2i v, int shift);
+    public static Vector2i op_UnaryPlus(Vector2i v);
+    public static Vector2i op_UnaryNegation(Vector2i v);
+    public static Vector2i op_Addition(Vector2i a, Vector2i b);
+    public static Vector2i op_Subtraction(Vector2i a, Vector2i b);
+    public static Vector2i op_Multiply(Vector2i v, int multiplier);
+    public static Vector2i op_Division(Vector2i v, int divisor);
+    public static Vector2 op_Multiply(Vector2i v, float multiplier);
+    public static Vector2 op_Division(Vector2i v, float divisor);
+    public static Vector2i op_Modulus(Vector2i v, int mod);
+    public static Vector2 op_Implicit(Vector2i other);
+    public static Vector2i op_Explicit(Vector2 other);
+    public static bool op_Equality(Vector2i a, Vector2i b);
+    public static bool op_Inequality(Vector2i a, Vector2i b);
+    public sealed virtual bool Equals(Vector2i o);
+    public virtual int GetHashCode();
+    public virtual bool Equals(object o);
+    public virtual string ToString();
+}
+public class Vector3b : ValueType {
+    
+public static Vector3b alltrue;
+    
+public static Vector3b allfalse;
+    
+public bool x;
+    
+public bool y;
+    
+public bool z;
+    public Vector3b(bool x, bool y, bool z);
+    private static Vector3b();
+    public static bool op_Equality(Vector3b a, Vector3b b);
+    public static bool op_Inequality(Vector3b a, Vector3b b);
+    public sealed virtual bool Equals(Vector3b o);
+    public virtual int GetHashCode();
+    public virtual bool Equals(object o);
+    public virtual string ToString();
+}
+public class Vector3i : ValueType {
+    
+public static Vector3i zero;
+    
+public static Vector3i one;
+    
+public static Vector3i forward;
+    
+public static Vector3i back;
+    
+public static Vector3i up;
+    
+public static Vector3i down;
+    
+public static Vector3i right;
+    
+public static Vector3i left;
+    
+public int x;
+    
+public int y;
+    
+public int z;
+    public Vector3i(int x, int y, int z);
+    private static Vector3i();
+    public static Vector3i op_RightShift(Vector3i v, int shift);
+    public static Vector3i op_LeftShift(Vector3i v, int shift);
+    public static Vector3i op_UnaryPlus(Vector3i v);
+    public static Vector3i op_UnaryNegation(Vector3i v);
+    public static Vector3i op_Addition(Vector3i a, Vector3i b);
+    public static Vector3i op_Subtraction(Vector3i a, Vector3i b);
+    public static Vector3i op_Multiply(Vector3i v, int multiplier);
+    public static Vector3i op_Division(Vector3i v, int divisor);
+    public static Vector3 op_Multiply(Vector3i v, float multiplier);
+    public static Vector3 op_Division(Vector3i v, float divisor);
+    public static Vector3i op_Modulus(Vector3i v, int mod);
+    public static Vector3 op_Implicit(Vector3i other);
+    public static Vector3i op_Explicit(Vector3 other);
+    public static bool op_Equality(Vector3i a, Vector3i b);
+    public static bool op_Inequality(Vector3i a, Vector3i b);
+    public sealed virtual bool Equals(Vector3i o);
+    public virtual int GetHashCode();
+    public virtual bool Equals(object o);
+    public virtual string ToString();
 }

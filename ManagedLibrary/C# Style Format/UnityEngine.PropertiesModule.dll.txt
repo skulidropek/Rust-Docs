@@ -1,887 +1,1330 @@
-public Unity.Properties.ArrayPropertyBag`1 : IndexedCollectionPropertyBag`2<TElement[], TElement> {
-protected InstantiationKind InstantiationKind
-protected InstantiationKind get_InstantiationKind()
-protected TElement[] InstantiateWithCount(int count)
-protected TElement[] Instantiate()
-}
-public Unity.Properties.AttributesScope : ValueType {
-private IAttributes m_Target
-private List`1<Attribute> m_Previous
-public void .ctor(IProperty target, IProperty source)
-internal void .ctor(IAttributes target, List`1<Attribute> attributes)
-public void Dispose()
-}
-public Unity.Properties.ConcreteTypeVisitor : object {
-protected void VisitContainer(TContainer& container)
-private void Unity.Properties.IPropertyBagVisitor.Visit(IPropertyBag`1<TContainer> properties, TContainer& container)
-}
-public Unity.Properties.ContainerPropertyBag`1 : PropertyBag`1<TContainer> {
-private List`1<IProperty`1<TContainer>> m_PropertiesList
-private Dictionary`2<string, IProperty`1<TContainer>> m_PropertiesHash
-protected void AddProperty(Property`2<TContainer, TValue> property)
-public PropertyCollection`1<TContainer> GetProperties()
-public PropertyCollection`1<TContainer> GetProperties(TContainer& container)
-public bool TryGetProperty(TContainer& container, string name, IProperty`1& property)
-}
-internal Unity.Properties.ConversionRegistry : ValueType {
-private ConverterKeyComparer Comparer
-private Dictionary`2<ConverterKey, Delegate> m_Converters
-public int ConverterCount
-private void .ctor(Dictionary`2<ConverterKey, Delegate> storage)
-public int get_ConverterCount()
-public ConversionRegistry Create()
-public void Register(Type source, Type destination, Delegate converter)
-public void Unregister(Type source, Type destination)
-public Delegate GetConverter(Type source, Type destination)
-public bool TryGetConverter(Type source, Type destination, Delegate& converter)
-public void GetAllTypesConvertingToType(Type type, List`1<Type> result)
-public bool Equals(ConversionRegistry x, ConversionRegistry y)
-public int GetHashCode(ConversionRegistry obj)
-}
-public Unity.Properties.DelegateProperty`2 : Property`2<TContainer, TValue> {
-private PropertyGetter`2<TContainer, TValue> m_Getter
-private PropertySetter`2<TContainer, TValue> m_Setter
-private string <Name>k__BackingField
-public string Name
-public bool IsReadOnly
-public string get_Name()
-public bool get_IsReadOnly()
-public void .ctor(string name, PropertyGetter`2<TContainer, TValue> getter, PropertySetter`2<TContainer, TValue> setter)
-public TValue GetValue(TContainer& container)
-public void SetValue(TContainer& container, TValue value)
-}
-public Unity.Properties.DictionaryPropertyBag`2 : KeyValueCollectionPropertyBag`3<Dictionary`2<TKey, TValue>, TKey, TValue> {
-protected InstantiationKind InstantiationKind
-protected InstantiationKind get_InstantiationKind()
-protected Dictionary`2<TKey, TValue> Instantiate()
-}
-public Unity.Properties.ExcludeContext`1 : ValueType {
-private PropertyVisitor m_Visitor
-private IProperty`1<TContainer> <Property>k__BackingField
-public IProperty`1<TContainer> Property
-internal ExcludeContext`1<TContainer> FromProperty(PropertyVisitor visitor, Property`2<TContainer, TValue> property)
-public IProperty`1<TContainer> get_Property()
-private void .ctor(PropertyVisitor visitor, IProperty`1<TContainer> property)
-}
-public Unity.Properties.ExcludeContext`2 : ValueType {
-private PropertyVisitor m_Visitor
-private Property`2<TContainer, TValue> <Property>k__BackingField
-public Property`2<TContainer, TValue> Property
-internal ExcludeContext`2<TContainer, TValue> FromProperty(PropertyVisitor visitor, Property`2<TContainer, TValue> property)
-public Property`2<TContainer, TValue> get_Property()
-private void .ctor(PropertyVisitor visitor, Property`2<TContainer, TValue> property)
-}
-internal Unity.Properties.FieldMember : ValueType {
-internal FieldInfo m_FieldInfo
-private string <Name>k__BackingField
-public string Name
-public bool IsReadOnly
-public Type ValueType
-public void .ctor(FieldInfo fieldInfo)
-public string get_Name()
-public bool get_IsReadOnly()
-public Type get_ValueType()
-public object GetValue(object obj)
-public void SetValue(object obj, object value)
-public IEnumerable`1<Attribute> GetCustomAttributes()
-}
-public Unity.Properties.GeneratePropertyBagsForTypeAttribute : Attribute {
-private Type <Type>k__BackingField
-public Type Type
-public Type get_Type()
-public void .ctor(Type type)
-}
-public Unity.Properties.GeneratePropertyBagsForTypesQualifiedWithAttribute : Attribute {
-private Type <Type>k__BackingField
-private TypeGenerationOptions <Options>k__BackingField
-public Type Type
-public TypeGenerationOptions Options
-public Type get_Type()
-public TypeGenerationOptions get_Options()
-public void .ctor(Type type, TypeGenerationOptions options)
-}
-public Unity.Properties.HashSetPropertyBag`1 : SetPropertyBagBase`2<HashSet`1<TElement>, TElement> {
-protected InstantiationKind InstantiationKind
-protected InstantiationKind get_InstantiationKind()
-protected HashSet`1<TElement> Instantiate()
-}
-public Unity.Properties.ICollectionPropertyAccept`1 {
-public void Accept(ICollectionPropertyVisitor visitor, Property`2<TContainer, TCollection> property, TContainer& container, TCollection& collection)
-}
-public Unity.Properties.ICollectionPropertyBagAccept`1 {
-public void Accept(ICollectionPropertyBagVisitor visitor, TContainer& container)
-}
-public Unity.Properties.ICollectionPropertyBagVisitor {
-public void Visit(ICollectionPropertyBag`2<TCollection, TElement> properties, TCollection& container)
-}
-public Unity.Properties.ICollectionPropertyVisitor {
-public void Visit(Property`2<TContainer, TCollection> property, TContainer& container, TCollection& collection)
-}
-internal Unity.Properties.IConstructor {
-public InstantiationKind InstantiationKind
-public InstantiationKind get_InstantiationKind()
-}
-internal Unity.Properties.IConstructor`1 {
-public T Instantiate()
-}
-internal Unity.Properties.IConstructorWithCount`1 {
-public T InstantiateWithCount(int count)
-}
-public Unity.Properties.IDictionaryElementProperty {
-public object ObjectKey
-public object get_ObjectKey()
-}
-public Unity.Properties.IDictionaryElementProperty`1 {
-public TKey Key
-public TKey get_Key()
-}
-public Unity.Properties.IDictionaryPropertyAccept`1 {
-public void Accept(IDictionaryPropertyVisitor visitor, Property`2<TContainer, TDictionary> property, TContainer& container, TDictionary& dictionary)
-}
-public Unity.Properties.IDictionaryPropertyBagAccept`1 {
-public void Accept(IDictionaryPropertyBagVisitor visitor, TContainer& container)
-}
-public Unity.Properties.IDictionaryPropertyBagVisitor {
-public void Visit(IDictionaryPropertyBag`3<TDictionary, TKey, TValue> properties, TDictionary& container)
-}
-public Unity.Properties.IDictionaryPropertyVisitor {
-public void Visit(Property`2<TContainer, TDictionary> property, TContainer& container, TDictionary& dictionary)
-}
-public Unity.Properties.IExcludeContravariantPropertyAdapter`1 {
-public bool IsExcluded(ExcludeContext`1& modreq(System.Runtime.InteropServices.InAttribute) context, TContainer& container, TValue value)
-}
-public Unity.Properties.IExcludeContravariantPropertyAdapter`2 {
-public bool IsExcluded(ExcludeContext`1& modreq(System.Runtime.InteropServices.InAttribute) context, TContainer& container, TValue value)
-}
-public Unity.Properties.IExcludePropertyAdapter {
-public bool IsExcluded(ExcludeContext`2& modreq(System.Runtime.InteropServices.InAttribute) context, TContainer& container, TValue& value)
-}
-public Unity.Properties.IExcludePropertyAdapter`1 {
-public bool IsExcluded(ExcludeContext`2& modreq(System.Runtime.InteropServices.InAttribute) context, TContainer& container, TValue& value)
-}
-public Unity.Properties.IExcludePropertyAdapter`2 {
-public bool IsExcluded(ExcludeContext`2& modreq(System.Runtime.InteropServices.InAttribute) context, TContainer& container, TValue& value)
-}
-internal Unity.Properties.IIndexedCollectionPropertyBagEnumerator`1 {
-public int GetCount(TContainer& container)
-public IProperty`1<TContainer> GetSharedProperty()
-public IndexedCollectionSharedPropertyState GetSharedPropertyState()
-public void SetSharedPropertyState(IndexedCollectionSharedPropertyState state)
-}
-public Unity.Properties.IIndexedProperties`1 {
-public bool TryGetProperty(TContainer& container, int index, IProperty`1& property)
-}
-public Unity.Properties.IKeyedProperties`2 {
-public bool TryGetProperty(TContainer& container, TKey key, IProperty`1& property)
-}
-public Unity.Properties.IListElementProperty {
-public int Index
-public int get_Index()
-}
-public Unity.Properties.IListPropertyAccept`1 {
-public void Accept(IListPropertyVisitor visitor, Property`2<TContainer, TList> property, TContainer& container, TList& list)
-}
-public Unity.Properties.IListPropertyBagAccept`1 {
-public void Accept(IListPropertyBagVisitor visitor, TContainer& container)
-}
-public Unity.Properties.IListPropertyBagVisitor {
-public void Visit(IListPropertyBag`2<TList, TElement> properties, TList& container)
-}
-public Unity.Properties.IListPropertyVisitor {
-public void Visit(Property`2<TContainer, TList> property, TContainer& container, TList& list)
-}
-internal Unity.Properties.IMemberInfo {
-public string Name
-public bool IsReadOnly
-public Type ValueType
-public string get_Name()
-public bool get_IsReadOnly()
-public Type get_ValueType()
-public object GetValue(object obj)
-public void SetValue(object obj, object value)
-public IEnumerable`1<Attribute> GetCustomAttributes()
-}
-public Unity.Properties.INamedProperties`1 {
-public bool TryGetProperty(TContainer& container, string name, IProperty`1& property)
-}
-public Unity.Properties.IndexedCollectionPropertyBag`2 : PropertyBag`1<TList> {
-private ListElementProperty<TList, TElement> m_Property
-public PropertyCollection`1<TList> GetProperties()
-public PropertyCollection`1<TList> GetProperties(TList& container)
-public bool TryGetProperty(TList& container, int index, IProperty`1& property)
-private void Unity.Properties.ICollectionPropertyBagAccept<TList>.Accept(ICollectionPropertyBagVisitor visitor, TList& container)
-private void Unity.Properties.IListPropertyBagAccept<TList>.Accept(IListPropertyBagVisitor visitor, TList& list)
-private void Unity.Properties.IListPropertyAccept<TList>.Accept(IListPropertyVisitor visitor, Property`2<TContainer, TList> property, TContainer& container, TList& list)
-private TList Unity.Properties.IConstructorWithCount<TList>.InstantiateWithCount(int count)
-protected TList InstantiateWithCount(int count)
-private int Unity.Properties.IIndexedCollectionPropertyBagEnumerator<TList>.GetCount(TList& container)
-private IProperty`1<TList> Unity.Properties.IIndexedCollectionPropertyBagEnumerator<TList>.GetSharedProperty()
-private IndexedCollectionSharedPropertyState Unity.Properties.IIndexedCollectionPropertyBagEnumerator<TList>.GetSharedPropertyState()
-private void Unity.Properties.IIndexedCollectionPropertyBagEnumerator<TList>.SetSharedPropertyState(IndexedCollectionSharedPropertyState state)
-}
-internal Unity.Properties.IndexedCollectionPropertyBagEnumerable`1 : ValueType {
-private IIndexedCollectionPropertyBagEnumerator`1<TContainer> m_Impl
-private TContainer m_Container
-public void .ctor(IIndexedCollectionPropertyBagEnumerator`1<TContainer> impl, TContainer container)
-public IndexedCollectionPropertyBagEnumerator`1<TContainer> GetEnumerator()
-}
-internal Unity.Properties.IndexedCollectionPropertyBagEnumerator`1 : ValueType {
-private IIndexedCollectionPropertyBagEnumerator`1<TContainer> m_Impl
-private IndexedCollectionSharedPropertyState m_Previous
-private TContainer m_Container
-private int m_Position
-public IProperty`1<TContainer> Current
-private object System.Collections.IEnumerator.Current
-internal void .ctor(IIndexedCollectionPropertyBagEnumerator`1<TContainer> impl, TContainer container)
-public IProperty`1<TContainer> get_Current()
-private object System.Collections.IEnumerator.get_Current()
-public bool MoveNext()
-public void Reset()
-public void Dispose()
-}
-internal Unity.Properties.IndexedCollectionSharedPropertyState : ValueType {
-public int Index
-public bool IsReadOnly
-}
-public Unity.Properties.InstantiationKind : Enum {
-public int value__
-public InstantiationKind Activator
-public InstantiationKind PropertyBagOverride
-public InstantiationKind NotInstantiatable
-}
-internal Unity.Properties.Internal.DefaultPropertyBagInitializer : object {
-internal void Initialize()
-}
-internal Unity.Properties.Internal.IAttributes {
-public List`1<Attribute> Attributes
-public List`1<Attribute> get_Attributes()
-public void set_Attributes(List`1<Attribute> value)
-public void AddAttribute(Attribute attribute)
-public void AddAttributes(IEnumerable`1<Attribute> attributes)
-public AttributesScope CreateAttributesScope(IAttributes attributes)
-}
-internal Unity.Properties.Internal.IPropertyBagRegister {
-public void Register()
-}
-internal Unity.Properties.Internal.PropertyBagStore : object {
-private ConcurrentDictionary`2<Type, IPropertyBag> s_PropertyBags
-private List`1<Type> s_RegisteredTypes
-private Action`2<Type, IPropertyBag> NewTypeRegistered
-private ReflectedPropertyBagProvider s_PropertyBagProvider
-internal bool HasProvider
-internal List`1<Type> AllTypes
-internal void add_NewTypeRegistered(Action`2<Type, IPropertyBag> value)
-internal void remove_NewTypeRegistered(Action`2<Type, IPropertyBag> value)
-internal bool get_HasProvider()
-internal List`1<Type> get_AllTypes()
-internal void AddPropertyBag(IPropertyBag`1<TContainer> propertyBag)
-internal IPropertyBag`1<TContainer> GetPropertyBag()
-internal IPropertyBag GetPropertyBag(Type type)
-internal bool Exists()
-internal bool Exists(Type type)
-internal bool Exists(TContainer& value)
-internal bool TryGetPropertyBagForValue(TValue& value, IPropertyBag& propertyBag)
-}
-internal Unity.Properties.Internal.ReadOnlyAdapterCollection : ValueType {
-private List`1<IPropertyVisitorAdapter> m_Adapters
-public void .ctor(List`1<IPropertyVisitorAdapter> adapters)
-public Enumerator GetEnumerator()
-}
-internal Unity.Properties.Internal.ReflectedPropertyBag`1 : ContainerPropertyBag`1<TContainer> {
-internal void AddProperty(Property`2<TContainer, TValue> property)
-}
-internal Unity.Properties.Internal.ReflectedPropertyBagProvider : object {
-private MethodInfo m_CreatePropertyMethod
-private MethodInfo m_CreatePropertyBagMethod
-private MethodInfo m_CreateIndexedCollectionPropertyBagMethod
-private MethodInfo m_CreateSetPropertyBagMethod
-private MethodInfo m_CreateKeyValueCollectionPropertyBagMethod
-private MethodInfo m_CreateKeyValuePairPropertyBagMethod
-private MethodInfo m_CreateArrayPropertyBagMethod
-private MethodInfo m_CreateListPropertyBagMethod
-private MethodInfo m_CreateHashSetPropertyBagMethod
-private MethodInfo m_CreateDictionaryPropertyBagMethod
-public IPropertyBag CreatePropertyBag(Type type)
-public IPropertyBag`1<TContainer> CreatePropertyBag()
-private void CreateProperty(IMemberInfo member, ReflectedPropertyBag`1<TContainer> propertyBag)
-private IPropertyBag`1<TList> CreateIndexedCollectionPropertyBag()
-private IPropertyBag`1<TSet> CreateSetPropertyBag()
-private IPropertyBag`1<TDictionary> CreateKeyValueCollectionPropertyBag()
-private IPropertyBag`1<KeyValuePair`2<TKey, TValue>> CreateKeyValuePairPropertyBag()
-private IPropertyBag`1<TElement[]> CreateArrayPropertyBag()
-private IPropertyBag`1<List`1<TElement>> CreateListPropertyBag()
-private IPropertyBag`1<HashSet`1<TElement>> CreateHashSetPropertyBag()
-private IPropertyBag`1<Dictionary`2<TKey, TValue>> CreateDictionaryPropertyBag()
-private IEnumerable`1<MemberInfo> GetPropertyMembers(Type type)
-private bool IsValidMember(MemberInfo memberInfo)
-private bool IsValidPropertyType(Type type)
-}
-internal Unity.Properties.Internal.ReflectionUtilities : object {
-public string SanitizeMemberName(MemberInfo info)
-}
-public Unity.Properties.InvalidContainerTypeException : Exception {
-private Type <Type>k__BackingField
-public Type Type
-public Type get_Type()
-public void .ctor(Type type)
-public void .ctor(Type type, Exception inner)
-private string GetMessageForType(Type type)
-}
-public Unity.Properties.InvalidPathException : Exception {
-public void .ctor(string message)
-public void .ctor(string message, Exception inner)
-}
-public Unity.Properties.IProperty {
-public string Name
-public bool IsReadOnly
-public string get_Name()
-public bool get_IsReadOnly()
-public Type DeclaredValueType()
-public bool HasAttribute()
-public TAttribute GetAttribute()
-public IEnumerable`1<TAttribute> GetAttributes()
-public IEnumerable`1<Attribute> GetAttributes()
-}
-public Unity.Properties.IProperty`1 {
-public object GetValue(TContainer& container)
-public void SetValue(TContainer& container, object value)
-}
-public Unity.Properties.IPropertyAccept`1 {
-public void Accept(IPropertyVisitor visitor, TContainer& container)
-}
-public Unity.Properties.IPropertyBag {
-public void Accept(ITypeVisitor visitor)
-public void Accept(IPropertyBagVisitor visitor, Object& container)
-}
-public Unity.Properties.IPropertyBag`1 {
-public PropertyCollection`1<TContainer> GetProperties()
-public PropertyCollection`1<TContainer> GetProperties(TContainer& container)
-public TContainer CreateInstance()
-public bool TryCreateInstance(TContainer& instance)
-public void Accept(IPropertyBagVisitor visitor, TContainer& container)
-}
-public Unity.Properties.IPropertyBagVisitor {
-public void Visit(IPropertyBag`1<TContainer> properties, TContainer& container)
-}
-public Unity.Properties.IPropertyVisitor {
-public void Visit(Property`2<TContainer, TValue> property, TContainer& container)
-}
-public Unity.Properties.ISetElementProperty {
-public object ObjectKey
-public object get_ObjectKey()
-}
-public Unity.Properties.ISetElementProperty`1 {
-public TKey Key
-public TKey get_Key()
-}
-public Unity.Properties.ISetPropertyAccept`1 {
-public void Accept(ISetPropertyVisitor visitor, Property`2<TContainer, TSet> property, TContainer& container, TSet& set)
-}
-public Unity.Properties.ISetPropertyBagAccept`1 {
-public void Accept(ISetPropertyBagVisitor visitor, TContainer& container)
-}
-public Unity.Properties.ISetPropertyBagVisitor {
-public void Visit(ISetPropertyBag`2<TSet, TValue> properties, TSet& container)
-}
-public Unity.Properties.ISetPropertyVisitor {
-public void Visit(Property`2<TContainer, TSet> property, TContainer& container, TSet& set)
-}
-public Unity.Properties.ITypeVisitor {
-public void Visit()
-}
-public Unity.Properties.IVisitContravariantPropertyAdapter`1 {
-public void Visit(VisitContext`1& modreq(System.Runtime.InteropServices.InAttribute) context, TContainer& container, TValue value)
-}
-public Unity.Properties.IVisitContravariantPropertyAdapter`2 {
-public void Visit(VisitContext`1& modreq(System.Runtime.InteropServices.InAttribute) context, TContainer& container, TValue value)
-}
-public Unity.Properties.IVisitPropertyAdapter {
-public void Visit(VisitContext`2& modreq(System.Runtime.InteropServices.InAttribute) context, TContainer& container, TValue& value)
-}
-public Unity.Properties.IVisitPropertyAdapter`1 {
-public void Visit(VisitContext`2& modreq(System.Runtime.InteropServices.InAttribute) context, TContainer& container, TValue& value)
-}
-public Unity.Properties.IVisitPropertyAdapter`2 {
-public void Visit(VisitContext`2& modreq(System.Runtime.InteropServices.InAttribute) context, TContainer& container, TValue& value)
-}
-public Unity.Properties.KeyValueCollectionPropertyBag`3 : PropertyBag`1<TDictionary> {
-private KeyValuePairProperty<TDictionary, TKey, TValue> m_KeyValuePairProperty
-public PropertyCollection`1<TDictionary> GetProperties()
-public PropertyCollection`1<TDictionary> GetProperties(TDictionary& container)
-private void Unity.Properties.ICollectionPropertyBagAccept<TDictionary>.Accept(ICollectionPropertyBagVisitor visitor, TDictionary& container)
-private void Unity.Properties.IDictionaryPropertyBagAccept<TDictionary>.Accept(IDictionaryPropertyBagVisitor visitor, TDictionary& container)
-private void Unity.Properties.IDictionaryPropertyAccept<TDictionary>.Accept(IDictionaryPropertyVisitor visitor, Property`2<TContainer, TDictionary> property, TContainer& container, TDictionary& dictionary)
-private bool Unity.Properties.IKeyedProperties<TDictionary,System.Object>.TryGetProperty(TDictionary& container, object key, IProperty`1& property)
-}
-public Unity.Properties.KeyValuePairPropertyBag`2 : PropertyBag`1<KeyValuePair`2<TKey, TValue>> {
-private DelegateProperty`2<KeyValuePair`2<TKey, TValue>, TKey> s_KeyProperty
-private DelegateProperty`2<KeyValuePair`2<TKey, TValue>, TValue> s_ValueProperty
-public PropertyCollection`1<KeyValuePair`2<TKey, TValue>> GetProperties()
-public PropertyCollection`1<KeyValuePair`2<TKey, TValue>> GetProperties(KeyValuePair`2& container)
-private IEnumerable`1<IProperty`1<KeyValuePair`2<TKey, TValue>>> GetPropertiesEnumerable()
-public bool TryGetProperty(KeyValuePair`2& container, string name, IProperty`1& property)
-}
-public Unity.Properties.ListPropertyBag`1 : IndexedCollectionPropertyBag`2<List`1<TElement>, TElement> {
-protected InstantiationKind InstantiationKind
-protected InstantiationKind get_InstantiationKind()
-protected List`1<TElement> InstantiateWithCount(int count)
-protected List`1<TElement> Instantiate()
-}
-public Unity.Properties.MissingPropertyBagException : Exception {
-private Type <Type>k__BackingField
-public Type Type
-public Type get_Type()
-public void .ctor(Type type)
-public void .ctor(Type type, Exception inner)
-private string GetMessageForType(Type type)
-}
-public Unity.Properties.PathVisitor : object {
-private int m_PathIndex
-private PropertyPath <Path>k__BackingField
-private IProperty <Property>k__BackingField
-private bool <ReadonlyVisit>k__BackingField
-private VisitReturnCode <ReturnCode>k__BackingField
-public PropertyPath Path
-private IProperty Property
-public bool ReadonlyVisit
-public VisitReturnCode ReturnCode
-public PropertyPath get_Path()
-public void set_Path(PropertyPath value)
-public void Reset()
-private IProperty get_Property()
-private void set_Property(IProperty value)
-public bool get_ReadonlyVisit()
-public void set_ReadonlyVisit(bool value)
-public VisitReturnCode get_ReturnCode()
-protected void set_ReturnCode(VisitReturnCode value)
-private void Unity.Properties.IPropertyBagVisitor.Visit(IPropertyBag`1<TContainer> properties, TContainer& container)
-private void Unity.Properties.IPropertyVisitor.Visit(Property`2<TContainer, TValue> property, TContainer& container)
-protected void VisitPath(Property`2<TContainer, TValue> property, TContainer& container, TValue& value)
-}
-public Unity.Properties.Property`2 : object {
-private List`1<Attribute> m_Attributes
-private List`1<Attribute> Unity.Properties.Internal.IAttributes.Attributes
-public string Name
-public bool IsReadOnly
-private List`1<Attribute> Unity.Properties.Internal.IAttributes.get_Attributes()
-private void Unity.Properties.Internal.IAttributes.set_Attributes(List`1<Attribute> value)
-public string get_Name()
-public bool get_IsReadOnly()
-public Type DeclaredValueType()
-public void Accept(IPropertyVisitor visitor, TContainer& container)
-private object Unity.Properties.IProperty<TContainer>.GetValue(TContainer& container)
-private void Unity.Properties.IProperty<TContainer>.SetValue(TContainer& container, object value)
-public TValue GetValue(TContainer& container)
-public void SetValue(TContainer& container, TValue value)
-protected void AddAttribute(Attribute attribute)
-protected void AddAttributes(IEnumerable`1<Attribute> attributes)
-private void Unity.Properties.Internal.IAttributes.AddAttribute(Attribute attribute)
-private void Unity.Properties.Internal.IAttributes.AddAttributes(IEnumerable`1<Attribute> attributes)
-public bool HasAttribute()
-public TAttribute GetAttribute()
-public IEnumerable`1<TAttribute> GetAttributes()
-public IEnumerable`1<Attribute> GetAttributes()
-private AttributesScope Unity.Properties.Internal.IAttributes.CreateAttributesScope(IAttributes attributes)
-}
-public Unity.Properties.PropertyBag : object {
-public void AcceptWithSpecializedVisitor(IPropertyBag`1<TContainer> properties, IPropertyBagVisitor visitor, TContainer& container)
-public void Register(PropertyBag`1<TContainer> propertyBag)
-public void RegisterArray()
-public void RegisterArray()
-public void RegisterList()
-public void RegisterList()
-public void RegisterHashSet()
-public void RegisterHashSet()
-public void RegisterDictionary()
-public void RegisterDictionary()
-public void RegisterIList()
-public void RegisterIList()
-public void RegisterISet()
-public void RegisterISet()
-public void RegisterIDictionary()
-public void RegisterIDictionary()
-public TContainer CreateInstance()
-public IPropertyBag GetPropertyBag(Type type)
-public IPropertyBag`1<TContainer> GetPropertyBag()
-public bool TryGetPropertyBagForValue(TValue& value, IPropertyBag& propertyBag)
-public bool Exists()
-public bool Exists(Type type)
-public IEnumerable`1<Type> GetAllTypesWithAPropertyBag()
-}
-public Unity.Properties.PropertyBag`1 : object {
-private InstantiationKind <InstantiationKind>k__BackingField
-private InstantiationKind Unity.Properties.IConstructor.InstantiationKind
-protected InstantiationKind InstantiationKind
-private void Unity.Properties.Internal.IPropertyBagRegister.Register()
-public void Accept(ITypeVisitor visitor)
-private void Unity.Properties.IPropertyBag.Accept(IPropertyBagVisitor visitor, Object& container)
-private void Unity.Properties.IPropertyBag<TContainer>.Accept(IPropertyBagVisitor visitor, TContainer& container)
-private PropertyCollection`1<TContainer> Unity.Properties.IPropertyBag<TContainer>.GetProperties()
-private PropertyCollection`1<TContainer> Unity.Properties.IPropertyBag<TContainer>.GetProperties(TContainer& container)
-private InstantiationKind Unity.Properties.IConstructor.get_InstantiationKind()
-private TContainer Unity.Properties.IConstructor<TContainer>.Instantiate()
-public PropertyCollection`1<TContainer> GetProperties()
-public PropertyCollection`1<TContainer> GetProperties(TContainer& container)
-protected InstantiationKind get_InstantiationKind()
-protected TContainer Instantiate()
-public TContainer CreateInstance()
-public bool TryCreateInstance(TContainer& instance)
-}
-public Unity.Properties.PropertyCollection`1 : ValueType {
-private EnumeratorType<TContainer> m_Type
-private IEnumerable`1<IProperty`1<TContainer>> m_Enumerable
-private List`1<IProperty`1<TContainer>> m_Properties
-private IndexedCollectionPropertyBagEnumerable`1<TContainer> m_IndexedCollectionPropertyBag
-private PropertyCollection`1<TContainer> <Empty>k__BackingField
-public PropertyCollection`1<TContainer> Empty
-public PropertyCollection`1<TContainer> get_Empty()
-public void .ctor(IEnumerable`1<IProperty`1<TContainer>> enumerable)
-public void .ctor(List`1<IProperty`1<TContainer>> properties)
-internal void .ctor(IndexedCollectionPropertyBagEnumerable`1<TContainer> enumerable)
-public Enumerator<TContainer> GetEnumerator()
-private IEnumerator`1<IProperty`1<TContainer>> System.Collections.Generic.IEnumerable<Unity.Properties.IProperty<TContainer>>.GetEnumerator()
-private IEnumerator System.Collections.IEnumerable.GetEnumerator()
-}
-public Unity.Properties.PropertyContainer : object {
-public void Accept(IPropertyBagVisitor visitor, TContainer container, VisitParameters parameters)
-public void Accept(IPropertyBagVisitor visitor, TContainer& container, VisitParameters parameters)
-public bool TryAccept(IPropertyBagVisitor visitor, TContainer& container, VisitParameters parameters)
-public bool TryAccept(IPropertyBagVisitor visitor, TContainer& container, VisitReturnCode& returnCode, VisitParameters parameters)
-public void Accept(IPropertyVisitor visitor, TContainer& container, PropertyPath& path, VisitParameters parameters)
-public bool TryAccept(IPropertyVisitor visitor, TContainer& container, PropertyPath& path, VisitReturnCode& returnCode, VisitParameters parameters)
-public IProperty GetProperty(TContainer container, PropertyPath& path)
-public IProperty GetProperty(TContainer& container, PropertyPath& path)
-public bool TryGetProperty(TContainer container, PropertyPath& path, IProperty& property)
-public bool TryGetProperty(TContainer& container, PropertyPath& path, IProperty& property)
-public bool TryGetProperty(TContainer& container, PropertyPath& path, IProperty& property, VisitReturnCode& returnCode)
-public TValue GetValue(TContainer container, string name)
-public TValue GetValue(TContainer& container, string name)
-public TValue GetValue(TContainer container, PropertyPath& path)
-public TValue GetValue(TContainer& container, PropertyPath& path)
-public bool TryGetValue(TContainer container, string name, TValue& value)
-public bool TryGetValue(TContainer& container, string name, TValue& value)
-public bool TryGetValue(TContainer container, PropertyPath& path, TValue& value)
-public bool TryGetValue(TContainer& container, PropertyPath& path, TValue& value)
-public bool TryGetValue(TContainer& container, PropertyPath& path, TValue& value, VisitReturnCode& returnCode)
-public bool IsPathValid(TContainer container, string path)
-public bool IsPathValid(TContainer container, PropertyPath& path)
-public bool IsPathValid(TContainer& container, string path)
-public bool IsPathValid(TContainer& container, PropertyPath& path)
-public void SetValue(TContainer container, string name, TValue value)
-public void SetValue(TContainer& container, string name, TValue value)
-public void SetValue(TContainer container, PropertyPath& path, TValue value)
-public void SetValue(TContainer& container, PropertyPath& path, TValue value)
-public bool TrySetValue(TContainer container, string name, TValue value)
-public bool TrySetValue(TContainer& container, string name, TValue value)
-public bool TrySetValue(TContainer container, PropertyPath& path, TValue value)
-public bool TrySetValue(TContainer& container, PropertyPath& path, TValue value)
-public bool TrySetValue(TContainer& container, PropertyPath& path, TValue value, VisitReturnCode& returnCode)
-}
-public Unity.Properties.PropertyGetter`2 : MulticastDelegate {
-public void .ctor(object object, IntPtr method)
-public TValue Invoke(TContainer& container)
-public IAsyncResult BeginInvoke(TContainer& container, AsyncCallback callback, object object)
-public TValue EndInvoke(TContainer& container, IAsyncResult result)
-}
-internal Unity.Properties.PropertyMember : ValueType {
-internal PropertyInfo m_PropertyInfo
-private string <Name>k__BackingField
-public string Name
-public bool IsReadOnly
-public Type ValueType
-public string get_Name()
-public bool get_IsReadOnly()
-public Type get_ValueType()
-public void .ctor(PropertyInfo propertyInfo)
-public object GetValue(object obj)
-public void SetValue(object obj, object value)
-public IEnumerable`1<Attribute> GetCustomAttributes()
-}
-public Unity.Properties.PropertyPath : ValueType {
-internal int k_InlineCount
-private PropertyPathPart m_Part0
-private PropertyPathPart m_Part1
-private PropertyPathPart m_Part2
-private PropertyPathPart m_Part3
-private int m_InlinePartsCount
-private PropertyPathPart[] m_AdditionalParts
-private int <Length>k__BackingField
-public int Length
-public bool IsEmpty
-public PropertyPathPart Item
-public int get_Length()
-public bool get_IsEmpty()
-public PropertyPathPart get_Item(int index)
-public void .ctor(string path)
-private void .ctor(PropertyPathPart& part)
-private void .ctor(PropertyPathPart& part0, PropertyPathPart& part1)
-private void .ctor(PropertyPathPart& part0, PropertyPathPart& part1, PropertyPathPart& part2)
-private void .ctor(PropertyPathPart& part0, PropertyPathPart& part1, PropertyPathPart& part2, PropertyPathPart& part3)
-internal void .ctor(List`1<PropertyPathPart> parts)
-public PropertyPath FromPart(PropertyPathPart& part)
-public PropertyPath FromName(string name)
-public PropertyPath FromIndex(int index)
-public PropertyPath FromKey(object key)
-public PropertyPath Combine(PropertyPath& path, PropertyPath& pathToAppend)
-public PropertyPath Combine(PropertyPath& path, string pathToAppend)
-public PropertyPath AppendPart(PropertyPath& path, PropertyPathPart& part)
-public PropertyPath AppendName(PropertyPath& path, string name)
-public PropertyPath AppendIndex(PropertyPath& path, int index)
-public PropertyPath AppendKey(PropertyPath& path, object key)
-public PropertyPath AppendProperty(PropertyPath& path, IProperty property)
-public PropertyPath Pop(PropertyPath& path)
-public PropertyPath SubPath(PropertyPath& path, int startIndex)
-public PropertyPath SubPath(PropertyPath& path, int startIndex, int length)
-public string ToString()
-private void AppendToBuilder(PropertyPathPart& part, StringBuilder builder)
-private void GetParts(PropertyPath& path, List`1<PropertyPathPart> parts)
-private PropertyPath ConstructFromPath(string path)
-public bool Equals(PropertyPath other)
-public bool Equals(object obj)
-public int GetHashCode()
-internal void <ConstructFromPath>g__TrimStart|37_0(<>c__DisplayClass37_0& )
-internal void <ConstructFromPath>g__ReadNext|37_1(<>c__DisplayClass37_0& )
-}
-public Unity.Properties.PropertyPathPart : ValueType {
-private PropertyPathPartKind m_Kind
-private string m_Name
-private int m_Index
-private object m_Key
-public bool IsName
-public bool IsIndex
-public bool IsKey
-public PropertyPathPartKind Kind
-public string Name
-public int Index
-public object Key
-public bool get_IsName()
-public bool get_IsIndex()
-public bool get_IsKey()
-public PropertyPathPartKind get_Kind()
-public string get_Name()
-public int get_Index()
-public object get_Key()
-public void .ctor(string name)
-public void .ctor(int index)
-public void .ctor(object key)
-private void CheckKind(PropertyPathPartKind type)
-public string ToString()
-public bool Equals(PropertyPathPart other)
-public bool Equals(object obj)
-public int GetHashCode()
-}
-public Unity.Properties.PropertyPathPartKind : Enum {
-public int value__
-public PropertyPathPartKind Name
-public PropertyPathPartKind Index
-public PropertyPathPartKind Key
-}
-public Unity.Properties.PropertySetter`2 : MulticastDelegate {
-public void .ctor(object object, IntPtr method)
-public void Invoke(TContainer& container, TValue value)
-public IAsyncResult BeginInvoke(TContainer& container, TValue value, AsyncCallback callback, object object)
-public void EndInvoke(TContainer& container, IAsyncResult result)
-}
-public Unity.Properties.PropertyVisitor : object {
-private List`1<IPropertyVisitorAdapter> m_Adapters
-public void AddAdapter(IPropertyVisitorAdapter adapter)
-public void RemoveAdapter(IPropertyVisitorAdapter adapter)
-private void Unity.Properties.IPropertyBagVisitor.Visit(IPropertyBag`1<TContainer> properties, TContainer& container)
-private void Unity.Properties.IListPropertyBagVisitor.Visit(IListPropertyBag`2<TList, TElement> properties, TList& container)
-private void Unity.Properties.IDictionaryPropertyBagVisitor.Visit(IDictionaryPropertyBag`3<TDictionary, TKey, TValue> properties, TDictionary& container)
-private void Unity.Properties.IPropertyVisitor.Visit(Property`2<TContainer, TValue> property, TContainer& container)
-internal void ContinueVisitation(Property`2<TContainer, TValue> property, TContainer& container, TValue& value)
-private void Unity.Properties.ICollectionPropertyVisitor.Visit(Property`2<TContainer, TCollection> property, TContainer& container, TCollection& collection)
-private void Unity.Properties.IListPropertyVisitor.Visit(Property`2<TContainer, TList> property, TContainer& container, TList& list)
-private void Unity.Properties.ISetPropertyVisitor.Visit(Property`2<TContainer, TSet> property, TContainer& container, TSet& set)
-private void Unity.Properties.IDictionaryPropertyVisitor.Visit(Property`2<TContainer, TDictionary> property, TContainer& container, TDictionary& dictionary)
-protected bool IsExcluded(Property`2<TContainer, TValue> property, TContainer& container, TValue& value)
-protected void VisitProperty(Property`2<TContainer, TValue> property, TContainer& container, TValue& value)
-protected void VisitCollection(Property`2<TContainer, TCollection> property, TContainer& container, TCollection& value)
-protected void VisitList(Property`2<TContainer, TList> property, TContainer& container, TList& value)
-protected void VisitSet(Property`2<TContainer, TSet> property, TContainer& container, TSet& value)
-protected void VisitDictionary(Property`2<TContainer, TDictionary> property, TContainer& container, TDictionary& value)
-private bool IsExcluded(Property`2<TContainer, TValue> property, Enumerator enumerator, TContainer& container, TValue& value)
-internal void ContinueVisitation(Property`2<TContainer, TValue> property, Enumerator enumerator, TContainer& container, TValue& value)
-internal void ContinueVisitationWithoutAdapters(Property`2<TContainer, TValue> property, Enumerator enumerator, TContainer& container, TValue& value)
-}
-public Unity.Properties.ReflectedMemberProperty`2 : Property`2<TContainer, TValue> {
-private IMemberInfo m_Info
-private bool m_IsStructContainerType
-private GetStructValueAction<TContainer, TValue> m_GetStructValueAction
-private SetStructValueAction<TContainer, TValue> m_SetStructValueAction
-private GetClassValueAction<TContainer, TValue> m_GetClassValueAction
-private SetClassValueAction<TContainer, TValue> m_SetClassValueAction
-private string <Name>k__BackingField
-private bool <IsReadOnly>k__BackingField
-public string Name
-public bool IsReadOnly
-public string get_Name()
-public bool get_IsReadOnly()
-public void .ctor(FieldInfo info, string name)
-public void .ctor(PropertyInfo info, string name)
-internal void .ctor(IMemberInfo info, string name)
-public TValue GetValue(TContainer& container)
-public void SetValue(TContainer& container, TValue value)
-}
-public Unity.Properties.SetPropertyBagBase`2 : PropertyBag`1<TSet> {
-private SetElementProperty<TSet, TElement> m_Property
-public PropertyCollection`1<TSet> GetProperties()
-public PropertyCollection`1<TSet> GetProperties(TSet& container)
-private IEnumerable`1<IProperty`1<TSet>> GetPropertiesEnumerable(TSet container)
-private void Unity.Properties.ICollectionPropertyBagAccept<TSet>.Accept(ICollectionPropertyBagVisitor visitor, TSet& container)
-private void Unity.Properties.ISetPropertyBagAccept<TSet>.Accept(ISetPropertyBagVisitor visitor, TSet& container)
-private void Unity.Properties.ISetPropertyAccept<TSet>.Accept(ISetPropertyVisitor visitor, Property`2<TContainer, TSet> property, TContainer& container, TSet& dictionary)
-public bool TryGetProperty(TSet& container, object key, IProperty`1& property)
-}
-public Unity.Properties.TypeConversion : object {
-private ConversionRegistry s_GlobalConverters
-public void Register(TypeConverter`2<TSource, TDestination> converter)
-public TDestination Convert(TSource& value)
-public bool TryConvert(TSource& source, TDestination& destination)
-private bool TryConvertToUnityEngineObject(TSource source, TDestination& destination)
-private bool IsNumericType(Type t)
-}
-public Unity.Properties.TypeConverter`2 : MulticastDelegate {
-public void .ctor(object object, IntPtr method)
-public TDestination Invoke(TSource& value)
-public IAsyncResult BeginInvoke(TSource& value, AsyncCallback callback, object object)
-public TDestination EndInvoke(TSource& value, IAsyncResult result)
-}
-public Unity.Properties.TypeGenerationOptions : Enum {
-public int value__
-public TypeGenerationOptions None
-public TypeGenerationOptions ValueType
-public TypeGenerationOptions ReferenceType
-public TypeGenerationOptions Default
-}
-public Unity.Properties.TypeTraits : object {
-public bool IsContainer(Type type)
-}
-public Unity.Properties.TypeTraits`1 : object {
-private bool <IsValueType>k__BackingField
-private bool <IsPrimitive>k__BackingField
-private bool <IsInterface>k__BackingField
-private bool <IsAbstract>k__BackingField
-private bool <IsArray>k__BackingField
-private bool <IsMultidimensionalArray>k__BackingField
-private bool <IsEnum>k__BackingField
-private bool <IsEnumFlags>k__BackingField
-private bool <IsNullable>k__BackingField
-private bool <IsObject>k__BackingField
-private bool <IsString>k__BackingField
-private bool <IsContainer>k__BackingField
-private bool <CanBeNull>k__BackingField
-private bool <IsPrimitiveOrString>k__BackingField
-private bool <IsAbstractOrInterface>k__BackingField
-private bool <IsUnityObject>k__BackingField
-private bool <IsLazyLoadReference>k__BackingField
-public bool IsValueType
-public bool IsPrimitive
-public bool IsInterface
-public bool IsAbstract
-public bool IsArray
-public bool IsMultidimensionalArray
-public bool IsEnum
-public bool IsEnumFlags
-public bool IsNullable
-public bool IsObject
-public bool IsString
-public bool IsContainer
-public bool CanBeNull
-public bool IsPrimitiveOrString
-public bool IsAbstractOrInterface
-public bool IsUnityObject
-public bool IsLazyLoadReference
-public bool get_IsValueType()
-public bool get_IsPrimitive()
-public bool get_IsInterface()
-public bool get_IsAbstract()
-public bool get_IsArray()
-public bool get_IsMultidimensionalArray()
-public bool get_IsEnum()
-public bool get_IsEnumFlags()
-public bool get_IsNullable()
-public bool get_IsObject()
-public bool get_IsString()
-public bool get_IsContainer()
-public bool get_CanBeNull()
-public bool get_IsPrimitiveOrString()
-public bool get_IsAbstractOrInterface()
-public bool get_IsUnityObject()
-public bool get_IsLazyLoadReference()
-}
-public Unity.Properties.TypeUtility : object {
-private ConcurrentDictionary`2<Type, ITypeConstructor> s_TypeConstructors
-private MethodInfo s_CreateTypeConstructor
-private ConcurrentDictionary`2<Type, string> s_CachedResolvedName
-private ObjectPool`1<StringBuilder> s_Builders
-private object syncedPoolObject
-public string GetTypeDisplayName(Type type)
-private string GetTypeDisplayName(Type type, IReadOnlyList`1<Type> args, Int32& argIndex)
-public Type GetRootType(Type type)
-private ITypeConstructor CreateTypeConstructor(Type type)
-private ITypeConstructor`1<T> CreateTypeConstructor()
-private ITypeConstructor GetTypeConstructor(Type type)
-private ITypeConstructor`1<T> GetTypeConstructor()
-public bool CanBeInstantiated(Type type)
-public bool CanBeInstantiated()
-public void SetExplicitInstantiationMethod(Func`1<T> constructor)
-public T Instantiate()
-public bool TryInstantiate(T& instance)
-public T Instantiate(Type derivedType)
-public bool TryInstantiate(Type derivedType, T& value)
-public TArray InstantiateArray(int count)
-public bool TryInstantiateArray(int count, TArray& instance)
-public TArray InstantiateArray(Type derivedType, int count)
-private void CheckIsAssignableFrom(Type type, Type derivedType)
-private void CheckCanBeInstantiated(ITypeConstructor`1<T> constructor)
-private void CheckCanBeInstantiated(ITypeConstructor constructor, Type type)
-}
-public Unity.Properties.VisitContext`1 : ValueType {
-private Enumerator m_Enumerator
-private PropertyVisitor m_Visitor
-private VisitDelegate<TContainer> m_Continue
-private VisitWithoutAdaptersDelegate<TContainer> m_ContinueWithoutAdapters
-private IProperty`1<TContainer> <Property>k__BackingField
-public IProperty`1<TContainer> Property
-internal VisitContext`1<TContainer> FromProperty(PropertyVisitor visitor, Enumerator enumerator, Property`2<TContainer, TValue> property)
-public IProperty`1<TContainer> get_Property()
-private void .ctor(PropertyVisitor visitor, Enumerator enumerator, IProperty`1<TContainer> property, VisitDelegate<TContainer> continueVisitation, VisitWithoutAdaptersDelegate<TContainer> continueVisitationWithoutAdapters)
-public void ContinueVisitation(TContainer& container)
-public void ContinueVisitationWithoutAdapters(TContainer& container)
-}
-public Unity.Properties.VisitContext`2 : ValueType {
-private Enumerator m_Enumerator
-private PropertyVisitor m_Visitor
-private Property`2<TContainer, TValue> <Property>k__BackingField
-public Property`2<TContainer, TValue> Property
-internal VisitContext`2<TContainer, TValue> FromProperty(PropertyVisitor visitor, Enumerator enumerator, Property`2<TContainer, TValue> property)
-public Property`2<TContainer, TValue> get_Property()
-private void .ctor(PropertyVisitor visitor, Enumerator enumerator, Property`2<TContainer, TValue> property)
-public void ContinueVisitation(TContainer& container, TValue& value)
-public void ContinueVisitationWithoutAdapters(TContainer& container, TValue& value)
-}
-public Unity.Properties.VisitExceptionKind : Enum {
-public int value__
-public VisitExceptionKind None
-public VisitExceptionKind Internal
-public VisitExceptionKind Visitor
-public VisitExceptionKind All
-}
-public Unity.Properties.VisitParameters : ValueType {
-private VisitExceptionKind <IgnoreExceptions>k__BackingField
-public VisitExceptionKind IgnoreExceptions
-public VisitExceptionKind get_IgnoreExceptions()
-public void set_IgnoreExceptions(VisitExceptionKind value)
-}
-public Unity.Properties.VisitReturnCode : Enum {
-public int value__
-public VisitReturnCode Ok
-public VisitReturnCode NullContainer
-public VisitReturnCode InvalidContainerType
-public VisitReturnCode MissingPropertyBag
-public VisitReturnCode InvalidPath
-public VisitReturnCode InvalidCast
-public VisitReturnCode AccessViolation
+public class Unity.Properties.ArrayPropertyBag`1 : IndexedCollectionPropertyBag`2<TElement[], TElement> {
+    
+protected InstantiationKind InstantiationKind { get; }
+    protected virtual InstantiationKind get_InstantiationKind();
+    protected virtual TElement[] InstantiateWithCount(int count);
+    protected virtual TElement[] Instantiate();
+}
+[IsReadOnlyAttribute]
+public class Unity.Properties.AttributesScope : ValueType {
+    
+private IAttributes m_Target;
+    
+private List`1<Attribute> m_Previous;
+    public AttributesScope(IProperty target, IProperty source);
+    internal AttributesScope(IAttributes target, List`1<Attribute> attributes);
+    public sealed virtual void Dispose();
+}
+public abstract class Unity.Properties.ConcreteTypeVisitor : object {
+    protected abstract virtual void VisitContainer(TContainer& container);
+    private sealed virtual override void Unity.Properties.IPropertyBagVisitor.Visit(IPropertyBag`1<TContainer> properties, TContainer& container);
+}
+public abstract class Unity.Properties.ContainerPropertyBag`1 : PropertyBag`1<TContainer> {
+    
+private List`1<IProperty`1<TContainer>> m_PropertiesList;
+    
+private Dictionary`2<string, IProperty`1<TContainer>> m_PropertiesHash;
+    private static ContainerPropertyBag`1();
+    protected void AddProperty(Property`2<TContainer, TValue> property);
+    public virtual PropertyCollection`1<TContainer> GetProperties();
+    public virtual PropertyCollection`1<TContainer> GetProperties(TContainer& container);
+    public sealed virtual bool TryGetProperty(TContainer& container, string name, IProperty`1& property);
+}
+[IsReadOnlyAttribute]
+internal class Unity.Properties.ConversionRegistry : ValueType {
+    
+private static ConverterKeyComparer Comparer;
+    
+private Dictionary`2<ConverterKey, Delegate> m_Converters;
+    
+public int ConverterCount { get; }
+    private ConversionRegistry(Dictionary`2<ConverterKey, Delegate> storage);
+    private static ConversionRegistry();
+    public int get_ConverterCount();
+    public static ConversionRegistry Create();
+    public void Register(Type source, Type destination, Delegate converter);
+    public void Unregister(Type source, Type destination);
+    public Delegate GetConverter(Type source, Type destination);
+    public bool TryGetConverter(Type source, Type destination, Delegate& converter);
+    public void GetAllTypesConvertingToType(Type type, List`1<Type> result);
+    public sealed virtual bool Equals(ConversionRegistry x, ConversionRegistry y);
+    public sealed virtual int GetHashCode(ConversionRegistry obj);
+}
+[AttributeUsageAttribute("384")]
+public class Unity.Properties.CreatePropertyAttribute : Attribute {
+}
+public class Unity.Properties.DelegateProperty`2 : Property`2<TContainer, TValue> {
+    
+private PropertyGetter`2<TContainer, TValue> m_Getter;
+    
+private PropertySetter`2<TContainer, TValue> m_Setter;
+    [DebuggerBrowsableAttribute("0")]
+[CompilerGeneratedAttribute]
+
+private string <Name>k__BackingField;
+    
+public string Name { get; }
+    
+public bool IsReadOnly { get; }
+    public DelegateProperty`2(string name, PropertyGetter`2<TContainer, TValue> getter, PropertySetter`2<TContainer, TValue> setter);
+    [CompilerGeneratedAttribute]
+public virtual string get_Name();
+    public virtual bool get_IsReadOnly();
+    public virtual TValue GetValue(TContainer& container);
+    public virtual void SetValue(TContainer& container, TValue value);
+}
+public class Unity.Properties.DictionaryPropertyBag`2 : KeyValueCollectionPropertyBag`3<Dictionary`2<TKey, TValue>, TKey, TValue> {
+    
+protected InstantiationKind InstantiationKind { get; }
+    protected virtual InstantiationKind get_InstantiationKind();
+    protected virtual Dictionary`2<TKey, TValue> Instantiate();
+}
+[AttributeUsageAttribute("256")]
+public class Unity.Properties.DontCreatePropertyAttribute : Attribute {
+}
+[IsReadOnlyAttribute]
+public class Unity.Properties.ExcludeContext`1 : ValueType {
+    
+private PropertyVisitor m_Visitor;
+    [DebuggerBrowsableAttribute("0")]
+[CompilerGeneratedAttribute]
+
+private IProperty`1<TContainer> <Property>k__BackingField;
+    
+public IProperty`1<TContainer> Property { get; }
+    private ExcludeContext`1(PropertyVisitor visitor, IProperty`1<TContainer> property);
+    internal static ExcludeContext`1<TContainer> FromProperty(PropertyVisitor visitor, Property`2<TContainer, TValue> property);
+    [CompilerGeneratedAttribute]
+public IProperty`1<TContainer> get_Property();
+}
+[IsReadOnlyAttribute]
+public class Unity.Properties.ExcludeContext`2 : ValueType {
+    
+private PropertyVisitor m_Visitor;
+    [CompilerGeneratedAttribute]
+[DebuggerBrowsableAttribute("0")]
+
+private Property`2<TContainer, TValue> <Property>k__BackingField;
+    
+public Property`2<TContainer, TValue> Property { get; }
+    private ExcludeContext`2(PropertyVisitor visitor, Property`2<TContainer, TValue> property);
+    internal static ExcludeContext`2<TContainer, TValue> FromProperty(PropertyVisitor visitor, Property`2<TContainer, TValue> property);
+    [CompilerGeneratedAttribute]
+public Property`2<TContainer, TValue> get_Property();
+}
+[IsReadOnlyAttribute]
+internal class Unity.Properties.FieldMember : ValueType {
+    
+internal FieldInfo m_FieldInfo;
+    [CompilerGeneratedAttribute]
+[DebuggerBrowsableAttribute("0")]
+
+private string <Name>k__BackingField;
+    
+public string Name { get; }
+    
+public bool IsReadOnly { get; }
+    
+public Type ValueType { get; }
+    public FieldMember(FieldInfo fieldInfo);
+    [CompilerGeneratedAttribute]
+public sealed virtual string get_Name();
+    public sealed virtual bool get_IsReadOnly();
+    public sealed virtual Type get_ValueType();
+    public sealed virtual object GetValue(object obj);
+    public sealed virtual void SetValue(object obj, object value);
+    public sealed virtual IEnumerable`1<Attribute> GetCustomAttributes();
+}
+[AttributeUsageAttribute("12")]
+public class Unity.Properties.GeneratePropertyBagAttribute : Attribute {
+}
+[AttributeUsageAttribute("1")]
+public class Unity.Properties.GeneratePropertyBagsForAssemblyAttribute : Attribute {
+}
+[AttributeUsageAttribute("1")]
+public class Unity.Properties.GeneratePropertyBagsForTypeAttribute : Attribute {
+    [CompilerGeneratedAttribute]
+[DebuggerBrowsableAttribute("0")]
+
+private Type <Type>k__BackingField;
+    
+public Type Type { get; }
+    public GeneratePropertyBagsForTypeAttribute(Type type);
+    [CompilerGeneratedAttribute]
+public Type get_Type();
+}
+[AttributeUsageAttribute("1")]
+public class Unity.Properties.GeneratePropertyBagsForTypesQualifiedWithAttribute : Attribute {
+    [DebuggerBrowsableAttribute("0")]
+[CompilerGeneratedAttribute]
+
+private Type <Type>k__BackingField;
+    [CompilerGeneratedAttribute]
+[DebuggerBrowsableAttribute("0")]
+
+private TypeGenerationOptions <Options>k__BackingField;
+    
+public Type Type { get; }
+    
+public TypeGenerationOptions Options { get; }
+    public GeneratePropertyBagsForTypesQualifiedWithAttribute(Type type, TypeGenerationOptions options);
+    [CompilerGeneratedAttribute]
+public Type get_Type();
+    [CompilerGeneratedAttribute]
+public TypeGenerationOptions get_Options();
+}
+public class Unity.Properties.HashSetPropertyBag`1 : SetPropertyBagBase`2<HashSet`1<TElement>, TElement> {
+    
+protected InstantiationKind InstantiationKind { get; }
+    protected virtual InstantiationKind get_InstantiationKind();
+    protected virtual HashSet`1<TElement> Instantiate();
+}
+public interface Unity.Properties.ICollectionElementProperty {
+}
+public interface Unity.Properties.ICollectionPropertyAccept`1 {
+    public abstract virtual void Accept(ICollectionPropertyVisitor visitor, Property`2<TContainer, TCollection> property, TContainer& container, TCollection& collection);
+}
+public interface Unity.Properties.ICollectionPropertyBag`2 {
+}
+public interface Unity.Properties.ICollectionPropertyBagAccept`1 {
+    public abstract virtual void Accept(ICollectionPropertyBagVisitor visitor, TContainer& container);
+}
+public interface Unity.Properties.ICollectionPropertyBagVisitor {
+    public abstract virtual void Visit(ICollectionPropertyBag`2<TCollection, TElement> properties, TCollection& container);
+}
+public interface Unity.Properties.ICollectionPropertyVisitor {
+    public abstract virtual void Visit(Property`2<TContainer, TCollection> property, TContainer& container, TCollection& collection);
+}
+internal interface Unity.Properties.IConstructor {
+    
+public InstantiationKind InstantiationKind { get; }
+    public abstract virtual InstantiationKind get_InstantiationKind();
+}
+internal interface Unity.Properties.IConstructor`1 {
+    public abstract virtual T Instantiate();
+}
+internal interface Unity.Properties.IConstructorWithCount`1 {
+    public abstract virtual T InstantiateWithCount(int count);
+}
+public interface Unity.Properties.IDictionaryElementProperty {
+    
+public object ObjectKey { get; }
+    public abstract virtual object get_ObjectKey();
+}
+public interface Unity.Properties.IDictionaryElementProperty`1 {
+    
+public TKey Key { get; }
+    public abstract virtual TKey get_Key();
+}
+public interface Unity.Properties.IDictionaryPropertyAccept`1 {
+    public abstract virtual void Accept(IDictionaryPropertyVisitor visitor, Property`2<TContainer, TDictionary> property, TContainer& container, TDictionary& dictionary);
+}
+public interface Unity.Properties.IDictionaryPropertyBag`3 {
+}
+public interface Unity.Properties.IDictionaryPropertyBagAccept`1 {
+    public abstract virtual void Accept(IDictionaryPropertyBagVisitor visitor, TContainer& container);
+}
+public interface Unity.Properties.IDictionaryPropertyBagVisitor {
+    public abstract virtual void Visit(IDictionaryPropertyBag`3<TDictionary, TKey, TValue> properties, TDictionary& container);
+}
+public interface Unity.Properties.IDictionaryPropertyVisitor {
+    public abstract virtual void Visit(Property`2<TContainer, TDictionary> property, TContainer& container, TDictionary& dictionary);
+}
+public interface Unity.Properties.IExcludeContravariantPropertyAdapter`1 {
+    public abstract virtual bool IsExcluded(ExcludeContext`1& modreq(System.Runtime.InteropServices.InAttribute) context, TContainer& container, TValue value);
+}
+public interface Unity.Properties.IExcludeContravariantPropertyAdapter`2 {
+    public abstract virtual bool IsExcluded(ExcludeContext`1& modreq(System.Runtime.InteropServices.InAttribute) context, TContainer& container, TValue value);
+}
+public interface Unity.Properties.IExcludePropertyAdapter {
+    public abstract virtual bool IsExcluded(ExcludeContext`2& modreq(System.Runtime.InteropServices.InAttribute) context, TContainer& container, TValue& value);
+}
+public interface Unity.Properties.IExcludePropertyAdapter`1 {
+    public abstract virtual bool IsExcluded(ExcludeContext`2& modreq(System.Runtime.InteropServices.InAttribute) context, TContainer& container, TValue& value);
+}
+public interface Unity.Properties.IExcludePropertyAdapter`2 {
+    public abstract virtual bool IsExcluded(ExcludeContext`2& modreq(System.Runtime.InteropServices.InAttribute) context, TContainer& container, TValue& value);
+}
+internal interface Unity.Properties.IIndexedCollectionPropertyBagEnumerator`1 {
+    public abstract virtual int GetCount(TContainer& container);
+    public abstract virtual IProperty`1<TContainer> GetSharedProperty();
+    public abstract virtual IndexedCollectionSharedPropertyState GetSharedPropertyState();
+    public abstract virtual void SetSharedPropertyState(IndexedCollectionSharedPropertyState state);
+}
+public interface Unity.Properties.IIndexedProperties`1 {
+    public abstract virtual bool TryGetProperty(TContainer& container, int index, IProperty`1& property);
+}
+public interface Unity.Properties.IKeyedProperties`2 {
+    public abstract virtual bool TryGetProperty(TContainer& container, TKey key, IProperty`1& property);
+}
+public interface Unity.Properties.IListElementProperty {
+    
+public int Index { get; }
+    public abstract virtual int get_Index();
+}
+public interface Unity.Properties.IListPropertyAccept`1 {
+    public abstract virtual void Accept(IListPropertyVisitor visitor, Property`2<TContainer, TList> property, TContainer& container, TList& list);
+}
+public interface Unity.Properties.IListPropertyBag`2 {
+}
+public interface Unity.Properties.IListPropertyBagAccept`1 {
+    public abstract virtual void Accept(IListPropertyBagVisitor visitor, TContainer& container);
+}
+public interface Unity.Properties.IListPropertyBagVisitor {
+    public abstract virtual void Visit(IListPropertyBag`2<TList, TElement> properties, TList& container);
+}
+public interface Unity.Properties.IListPropertyVisitor {
+    public abstract virtual void Visit(Property`2<TContainer, TList> property, TContainer& container, TList& list);
+}
+internal interface Unity.Properties.IMemberInfo {
+    
+public string Name { get; }
+    
+public bool IsReadOnly { get; }
+    
+public Type ValueType { get; }
+    public abstract virtual string get_Name();
+    public abstract virtual bool get_IsReadOnly();
+    public abstract virtual Type get_ValueType();
+    public abstract virtual object GetValue(object obj);
+    public abstract virtual void SetValue(object obj, object value);
+    public abstract virtual IEnumerable`1<Attribute> GetCustomAttributes();
+}
+public interface Unity.Properties.INamedProperties`1 {
+    public abstract virtual bool TryGetProperty(TContainer& container, string name, IProperty`1& property);
+}
+public class Unity.Properties.IndexedCollectionPropertyBag`2 : PropertyBag`1<TList> {
+    
+private ListElementProperty<TList, TElement> m_Property;
+    public virtual PropertyCollection`1<TList> GetProperties();
+    public virtual PropertyCollection`1<TList> GetProperties(TList& container);
+    public sealed virtual bool TryGetProperty(TList& container, int index, IProperty`1& property);
+    private sealed virtual override void Unity.Properties.ICollectionPropertyBagAccept<TList>.Accept(ICollectionPropertyBagVisitor visitor, TList& container);
+    private sealed virtual override void Unity.Properties.IListPropertyBagAccept<TList>.Accept(IListPropertyBagVisitor visitor, TList& list);
+    private sealed virtual override void Unity.Properties.IListPropertyAccept<TList>.Accept(IListPropertyVisitor visitor, Property`2<TContainer, TList> property, TContainer& container, TList& list);
+    private sealed virtual override TList Unity.Properties.IConstructorWithCount<TList>.InstantiateWithCount(int count);
+    protected virtual TList InstantiateWithCount(int count);
+    private sealed virtual override int Unity.Properties.IIndexedCollectionPropertyBagEnumerator<TList>.GetCount(TList& container);
+    private sealed virtual override IProperty`1<TList> Unity.Properties.IIndexedCollectionPropertyBagEnumerator<TList>.GetSharedProperty();
+    private sealed virtual override IndexedCollectionSharedPropertyState Unity.Properties.IIndexedCollectionPropertyBagEnumerator<TList>.GetSharedPropertyState();
+    private sealed virtual override void Unity.Properties.IIndexedCollectionPropertyBagEnumerator<TList>.SetSharedPropertyState(IndexedCollectionSharedPropertyState state);
+}
+[IsReadOnlyAttribute]
+internal class Unity.Properties.IndexedCollectionPropertyBagEnumerable`1 : ValueType {
+    
+private IIndexedCollectionPropertyBagEnumerator`1<TContainer> m_Impl;
+    
+private TContainer m_Container;
+    public IndexedCollectionPropertyBagEnumerable`1(IIndexedCollectionPropertyBagEnumerator`1<TContainer> impl, TContainer container);
+    public IndexedCollectionPropertyBagEnumerator`1<TContainer> GetEnumerator();
+}
+internal class Unity.Properties.IndexedCollectionPropertyBagEnumerator`1 : ValueType {
+    
+private IIndexedCollectionPropertyBagEnumerator`1<TContainer> m_Impl;
+    
+private IndexedCollectionSharedPropertyState m_Previous;
+    
+private TContainer m_Container;
+    
+private int m_Position;
+    
+public IProperty`1<TContainer> Current { get; }
+    
+private object System.Collections.IEnumerator.Current { get; }
+    internal IndexedCollectionPropertyBagEnumerator`1(IIndexedCollectionPropertyBagEnumerator`1<TContainer> impl, TContainer container);
+    public sealed virtual IProperty`1<TContainer> get_Current();
+    private sealed virtual override object System.Collections.IEnumerator.get_Current();
+    public sealed virtual bool MoveNext();
+    public sealed virtual void Reset();
+    public sealed virtual void Dispose();
+}
+internal class Unity.Properties.IndexedCollectionSharedPropertyState : ValueType {
+    
+public int Index;
+    
+public bool IsReadOnly;
+}
+public enum Unity.Properties.InstantiationKind : Enum {
+    
+public int value__;
+    
+public static InstantiationKind Activator;
+    
+public static InstantiationKind PropertyBagOverride;
+    
+public static InstantiationKind NotInstantiatable;
+}
+internal class Unity.Properties.Internal.BoundsIntPropertyBag : ContainerPropertyBag`1<BoundsInt> {
+}
+internal class Unity.Properties.Internal.BoundsPropertyBag : ContainerPropertyBag`1<Bounds> {
+}
+internal class Unity.Properties.Internal.ColorPropertyBag : ContainerPropertyBag`1<Color> {
+}
+internal static class Unity.Properties.Internal.DefaultPropertyBagInitializer : object {
+    internal static void Initialize();
+}
+internal interface Unity.Properties.Internal.IAttributes {
+    
+public List`1<Attribute> Attributes { get; public set; }
+    public abstract virtual List`1<Attribute> get_Attributes();
+    public abstract virtual void set_Attributes(List`1<Attribute> value);
+    public abstract virtual void AddAttribute(Attribute attribute);
+    public abstract virtual void AddAttributes(IEnumerable`1<Attribute> attributes);
+    public abstract virtual AttributesScope CreateAttributesScope(IAttributes attributes);
+}
+internal interface Unity.Properties.Internal.IPropertyBagRegister {
+    public abstract virtual void Register();
+}
+internal static class Unity.Properties.Internal.PropertyBagStore : object {
+    
+private static ConcurrentDictionary`2<Type, IPropertyBag> s_PropertyBags;
+    
+private static List`1<Type> s_RegisteredTypes;
+    [CompilerGeneratedAttribute]
+[DebuggerBrowsableAttribute("0")]
+
+private static Action`2<Type, IPropertyBag> NewTypeRegistered;
+    
+private static ReflectedPropertyBagProvider s_PropertyBagProvider;
+    
+internal static bool HasProvider { get; }
+    
+internal static List`1<Type> AllTypes { get; }
+    private static PropertyBagStore();
+    [CompilerGeneratedAttribute]
+internal static void add_NewTypeRegistered(Action`2<Type, IPropertyBag> value);
+    [CompilerGeneratedAttribute]
+internal static void remove_NewTypeRegistered(Action`2<Type, IPropertyBag> value);
+    internal static bool get_HasProvider();
+    internal static List`1<Type> get_AllTypes();
+    internal static void AddPropertyBag(IPropertyBag`1<TContainer> propertyBag);
+    internal static IPropertyBag`1<TContainer> GetPropertyBag();
+    internal static IPropertyBag GetPropertyBag(Type type);
+    internal static bool Exists();
+    internal static bool Exists(Type type);
+    internal static bool Exists(TContainer& value);
+    internal static bool TryGetPropertyBagForValue(TValue& value, IPropertyBag& propertyBag);
+}
+[IsReadOnlyAttribute]
+internal class Unity.Properties.Internal.ReadOnlyAdapterCollection : ValueType {
+    
+private List`1<IPropertyVisitorAdapter> m_Adapters;
+    public ReadOnlyAdapterCollection(List`1<IPropertyVisitorAdapter> adapters);
+    public Enumerator GetEnumerator();
+}
+internal class Unity.Properties.Internal.RectIntPropertyBag : ContainerPropertyBag`1<RectInt> {
+}
+internal class Unity.Properties.Internal.RectPropertyBag : ContainerPropertyBag`1<Rect> {
+}
+[ReflectedPropertyBagAttribute]
+internal class Unity.Properties.Internal.ReflectedPropertyBag`1 : ContainerPropertyBag`1<TContainer> {
+    internal void AddProperty(Property`2<TContainer, TValue> property);
+}
+internal class Unity.Properties.Internal.ReflectedPropertyBagAttribute : Attribute {
+}
+internal class Unity.Properties.Internal.ReflectedPropertyBagProvider : object {
+    
+private MethodInfo m_CreatePropertyMethod;
+    
+private MethodInfo m_CreatePropertyBagMethod;
+    
+private MethodInfo m_CreateIndexedCollectionPropertyBagMethod;
+    
+private MethodInfo m_CreateSetPropertyBagMethod;
+    
+private MethodInfo m_CreateKeyValueCollectionPropertyBagMethod;
+    
+private MethodInfo m_CreateKeyValuePairPropertyBagMethod;
+    
+private MethodInfo m_CreateArrayPropertyBagMethod;
+    
+private MethodInfo m_CreateListPropertyBagMethod;
+    
+private MethodInfo m_CreateHashSetPropertyBagMethod;
+    
+private MethodInfo m_CreateDictionaryPropertyBagMethod;
+    public IPropertyBag CreatePropertyBag(Type type);
+    public IPropertyBag`1<TContainer> CreatePropertyBag();
+    [PreserveAttribute]
+private void CreateProperty(IMemberInfo member, ReflectedPropertyBag`1<TContainer> propertyBag);
+    [PreserveAttribute]
+private IPropertyBag`1<TList> CreateIndexedCollectionPropertyBag();
+    [PreserveAttribute]
+private IPropertyBag`1<TSet> CreateSetPropertyBag();
+    [PreserveAttribute]
+private IPropertyBag`1<TDictionary> CreateKeyValueCollectionPropertyBag();
+    [PreserveAttribute]
+private IPropertyBag`1<KeyValuePair`2<TKey, TValue>> CreateKeyValuePairPropertyBag();
+    [PreserveAttribute]
+private IPropertyBag`1<TElement[]> CreateArrayPropertyBag();
+    [PreserveAttribute]
+private IPropertyBag`1<List`1<TElement>> CreateListPropertyBag();
+    [PreserveAttribute]
+private IPropertyBag`1<HashSet`1<TElement>> CreateHashSetPropertyBag();
+    [PreserveAttribute]
+private IPropertyBag`1<Dictionary`2<TKey, TValue>> CreateDictionaryPropertyBag();
+    [IteratorStateMachineAttribute("Unity.Properties.Internal.ReflectedPropertyBagProvider/<GetPropertyMembers>d__22")]
+private static IEnumerable`1<MemberInfo> GetPropertyMembers(Type type);
+    private static bool IsValidMember(MemberInfo memberInfo);
+    private static bool IsValidPropertyType(Type type);
+}
+internal static class Unity.Properties.Internal.ReflectionUtilities : object {
+    public static string SanitizeMemberName(MemberInfo info);
+}
+internal class Unity.Properties.Internal.SystemVersionPropertyBag : ContainerPropertyBag`1<Version> {
+}
+internal class Unity.Properties.Internal.Vector2IntPropertyBag : ContainerPropertyBag`1<Vector2Int> {
+}
+internal class Unity.Properties.Internal.Vector2PropertyBag : ContainerPropertyBag`1<Vector2> {
+}
+internal class Unity.Properties.Internal.Vector3IntPropertyBag : ContainerPropertyBag`1<Vector3Int> {
+}
+internal class Unity.Properties.Internal.Vector3PropertyBag : ContainerPropertyBag`1<Vector3> {
+}
+internal class Unity.Properties.Internal.Vector4PropertyBag : ContainerPropertyBag`1<Vector4> {
+}
+public class Unity.Properties.InvalidContainerTypeException : Exception {
+    [DebuggerBrowsableAttribute("0")]
+[CompilerGeneratedAttribute]
+
+private Type <Type>k__BackingField;
+    
+public Type Type { get; }
+    public InvalidContainerTypeException(Type type);
+    public InvalidContainerTypeException(Type type, Exception inner);
+    [CompilerGeneratedAttribute]
+public Type get_Type();
+    private static string GetMessageForType(Type type);
+}
+public class Unity.Properties.InvalidPathException : Exception {
+    public InvalidPathException(string message);
+    public InvalidPathException(string message, Exception inner);
+}
+public interface Unity.Properties.IProperty {
+    
+public string Name { get; }
+    
+public bool IsReadOnly { get; }
+    public abstract virtual string get_Name();
+    public abstract virtual bool get_IsReadOnly();
+    public abstract virtual Type DeclaredValueType();
+    public abstract virtual bool HasAttribute();
+    public abstract virtual TAttribute GetAttribute();
+    public abstract virtual IEnumerable`1<TAttribute> GetAttributes();
+    public abstract virtual IEnumerable`1<Attribute> GetAttributes();
+}
+public interface Unity.Properties.IProperty`1 {
+    public abstract virtual object GetValue(TContainer& container);
+    public abstract virtual void SetValue(TContainer& container, object value);
+}
+public interface Unity.Properties.IPropertyAccept`1 {
+    public abstract virtual void Accept(IPropertyVisitor visitor, TContainer& container);
+}
+public interface Unity.Properties.IPropertyBag {
+    public abstract virtual void Accept(ITypeVisitor visitor);
+    public abstract virtual void Accept(IPropertyBagVisitor visitor, Object& container);
+}
+public interface Unity.Properties.IPropertyBag`1 {
+    public abstract virtual PropertyCollection`1<TContainer> GetProperties();
+    public abstract virtual PropertyCollection`1<TContainer> GetProperties(TContainer& container);
+    public abstract virtual TContainer CreateInstance();
+    public abstract virtual bool TryCreateInstance(TContainer& instance);
+    public abstract virtual void Accept(IPropertyBagVisitor visitor, TContainer& container);
+}
+public interface Unity.Properties.IPropertyBagVisitor {
+    public abstract virtual void Visit(IPropertyBag`1<TContainer> properties, TContainer& container);
+}
+public interface Unity.Properties.IPropertyVisitor {
+    public abstract virtual void Visit(Property`2<TContainer, TValue> property, TContainer& container);
+}
+public interface Unity.Properties.IPropertyVisitorAdapter {
+}
+public interface Unity.Properties.ISetElementProperty {
+    
+public object ObjectKey { get; }
+    public abstract virtual object get_ObjectKey();
+}
+public interface Unity.Properties.ISetElementProperty`1 {
+    
+public TKey Key { get; }
+    public abstract virtual TKey get_Key();
+}
+public interface Unity.Properties.ISetPropertyAccept`1 {
+    public abstract virtual void Accept(ISetPropertyVisitor visitor, Property`2<TContainer, TSet> property, TContainer& container, TSet& set);
+}
+public interface Unity.Properties.ISetPropertyBag`2 {
+}
+public interface Unity.Properties.ISetPropertyBagAccept`1 {
+    public abstract virtual void Accept(ISetPropertyBagVisitor visitor, TContainer& container);
+}
+public interface Unity.Properties.ISetPropertyBagVisitor {
+    public abstract virtual void Visit(ISetPropertyBag`2<TSet, TValue> properties, TSet& container);
+}
+public interface Unity.Properties.ISetPropertyVisitor {
+    public abstract virtual void Visit(Property`2<TContainer, TSet> property, TContainer& container, TSet& set);
+}
+public interface Unity.Properties.ITypeVisitor {
+    public abstract virtual void Visit();
+}
+public interface Unity.Properties.IVisitContravariantPropertyAdapter`1 {
+    public abstract virtual void Visit(VisitContext`1& modreq(System.Runtime.InteropServices.InAttribute) context, TContainer& container, TValue value);
+}
+public interface Unity.Properties.IVisitContravariantPropertyAdapter`2 {
+    public abstract virtual void Visit(VisitContext`1& modreq(System.Runtime.InteropServices.InAttribute) context, TContainer& container, TValue value);
+}
+public interface Unity.Properties.IVisitPrimitivesPropertyAdapter {
+}
+public interface Unity.Properties.IVisitPropertyAdapter {
+    public abstract virtual void Visit(VisitContext`2& modreq(System.Runtime.InteropServices.InAttribute) context, TContainer& container, TValue& value);
+}
+public interface Unity.Properties.IVisitPropertyAdapter`1 {
+    public abstract virtual void Visit(VisitContext`2& modreq(System.Runtime.InteropServices.InAttribute) context, TContainer& container, TValue& value);
+}
+public interface Unity.Properties.IVisitPropertyAdapter`2 {
+    public abstract virtual void Visit(VisitContext`2& modreq(System.Runtime.InteropServices.InAttribute) context, TContainer& container, TValue& value);
+}
+public class Unity.Properties.KeyValueCollectionPropertyBag`3 : PropertyBag`1<TDictionary> {
+    
+private KeyValuePairProperty<TDictionary, TKey, TValue> m_KeyValuePairProperty;
+    public virtual PropertyCollection`1<TDictionary> GetProperties();
+    public virtual PropertyCollection`1<TDictionary> GetProperties(TDictionary& container);
+    private sealed virtual override void Unity.Properties.ICollectionPropertyBagAccept<TDictionary>.Accept(ICollectionPropertyBagVisitor visitor, TDictionary& container);
+    private sealed virtual override void Unity.Properties.IDictionaryPropertyBagAccept<TDictionary>.Accept(IDictionaryPropertyBagVisitor visitor, TDictionary& container);
+    private sealed virtual override void Unity.Properties.IDictionaryPropertyAccept<TDictionary>.Accept(IDictionaryPropertyVisitor visitor, Property`2<TContainer, TDictionary> property, TContainer& container, TDictionary& dictionary);
+    private sealed virtual override bool Unity.Properties.IKeyedProperties<TDictionary,System.Object>.TryGetProperty(TDictionary& container, object key, IProperty`1& property);
+}
+public class Unity.Properties.KeyValuePairPropertyBag`2 : PropertyBag`1<KeyValuePair`2<TKey, TValue>> {
+    
+private static DelegateProperty`2<KeyValuePair`2<TKey, TValue>, TKey> s_KeyProperty;
+    
+private static DelegateProperty`2<KeyValuePair`2<TKey, TValue>, TValue> s_ValueProperty;
+    private static KeyValuePairPropertyBag`2();
+    public virtual PropertyCollection`1<KeyValuePair`2<TKey, TValue>> GetProperties();
+    public virtual PropertyCollection`1<KeyValuePair`2<TKey, TValue>> GetProperties(KeyValuePair`2& container);
+    [IteratorStateMachineAttribute("Unity.Properties.KeyValuePairPropertyBag`2/<GetPropertiesEnumerable>d__4")]
+private static IEnumerable`1<IProperty`1<KeyValuePair`2<TKey, TValue>>> GetPropertiesEnumerable();
+    public sealed virtual bool TryGetProperty(KeyValuePair`2& container, string name, IProperty`1& property);
+}
+public class Unity.Properties.ListPropertyBag`1 : IndexedCollectionPropertyBag`2<List`1<TElement>, TElement> {
+    
+protected InstantiationKind InstantiationKind { get; }
+    protected virtual InstantiationKind get_InstantiationKind();
+    protected virtual List`1<TElement> InstantiateWithCount(int count);
+    protected virtual List`1<TElement> Instantiate();
+}
+public class Unity.Properties.MissingPropertyBagException : Exception {
+    [CompilerGeneratedAttribute]
+[DebuggerBrowsableAttribute("0")]
+
+private Type <Type>k__BackingField;
+    
+public Type Type { get; }
+    public MissingPropertyBagException(Type type);
+    public MissingPropertyBagException(Type type, Exception inner);
+    [CompilerGeneratedAttribute]
+public Type get_Type();
+    private static string GetMessageForType(Type type);
+}
+public abstract class Unity.Properties.PathVisitor : object {
+    
+private int m_PathIndex;
+    [CompilerGeneratedAttribute]
+[DebuggerBrowsableAttribute("0")]
+
+private PropertyPath <Path>k__BackingField;
+    [DebuggerBrowsableAttribute("0")]
+[CompilerGeneratedAttribute]
+
+private IProperty <Property>k__BackingField;
+    [CompilerGeneratedAttribute]
+[DebuggerBrowsableAttribute("0")]
+
+private bool <ReadonlyVisit>k__BackingField;
+    [DebuggerBrowsableAttribute("0")]
+[CompilerGeneratedAttribute]
+
+private VisitReturnCode <ReturnCode>k__BackingField;
+    
+public PropertyPath Path { get; public set; }
+    
+private IProperty Property { get; private set; }
+    
+public bool ReadonlyVisit { get; public set; }
+    
+public VisitReturnCode ReturnCode { get; protected set; }
+    [CompilerGeneratedAttribute]
+public PropertyPath get_Path();
+    [CompilerGeneratedAttribute]
+public void set_Path(PropertyPath value);
+    public virtual void Reset();
+    [CompilerGeneratedAttribute]
+private IProperty get_Property();
+    [CompilerGeneratedAttribute]
+private void set_Property(IProperty value);
+    [CompilerGeneratedAttribute]
+public bool get_ReadonlyVisit();
+    [CompilerGeneratedAttribute]
+public void set_ReadonlyVisit(bool value);
+    [CompilerGeneratedAttribute]
+public VisitReturnCode get_ReturnCode();
+    [CompilerGeneratedAttribute]
+protected void set_ReturnCode(VisitReturnCode value);
+    private sealed virtual override void Unity.Properties.IPropertyBagVisitor.Visit(IPropertyBag`1<TContainer> properties, TContainer& container);
+    private sealed virtual override void Unity.Properties.IPropertyVisitor.Visit(Property`2<TContainer, TValue> property, TContainer& container);
+    protected virtual void VisitPath(Property`2<TContainer, TValue> property, TContainer& container, TValue& value);
+}
+public abstract class Unity.Properties.Property`2 : object {
+    
+private List`1<Attribute> m_Attributes;
+    
+private List`1<Attribute> Unity.Properties.Internal.IAttributes.Attributes { get; private set; }
+    
+public string Name { get; }
+    
+public bool IsReadOnly { get; }
+    private sealed virtual override List`1<Attribute> Unity.Properties.Internal.IAttributes.get_Attributes();
+    private sealed virtual override void Unity.Properties.Internal.IAttributes.set_Attributes(List`1<Attribute> value);
+    public abstract virtual string get_Name();
+    public abstract virtual bool get_IsReadOnly();
+    public sealed virtual Type DeclaredValueType();
+    public sealed virtual void Accept(IPropertyVisitor visitor, TContainer& container);
+    private sealed virtual override object Unity.Properties.IProperty<TContainer>.GetValue(TContainer& container);
+    private sealed virtual override void Unity.Properties.IProperty<TContainer>.SetValue(TContainer& container, object value);
+    public abstract virtual TValue GetValue(TContainer& container);
+    public abstract virtual void SetValue(TContainer& container, TValue value);
+    protected void AddAttribute(Attribute attribute);
+    protected void AddAttributes(IEnumerable`1<Attribute> attributes);
+    private sealed virtual override void Unity.Properties.Internal.IAttributes.AddAttribute(Attribute attribute);
+    private sealed virtual override void Unity.Properties.Internal.IAttributes.AddAttributes(IEnumerable`1<Attribute> attributes);
+    public sealed virtual bool HasAttribute();
+    public sealed virtual TAttribute GetAttribute();
+    [IteratorStateMachineAttribute("Unity.Properties.Property`2/<GetAttributes>d__20`1")]
+public sealed virtual IEnumerable`1<TAttribute> GetAttributes();
+    [IteratorStateMachineAttribute("Unity.Properties.Property`2/<GetAttributes>d__21")]
+public sealed virtual IEnumerable`1<Attribute> GetAttributes();
+    private sealed virtual override AttributesScope Unity.Properties.Internal.IAttributes.CreateAttributesScope(IAttributes attributes);
+}
+public static class Unity.Properties.PropertyBag : object {
+    public static void AcceptWithSpecializedVisitor(IPropertyBag`1<TContainer> properties, IPropertyBagVisitor visitor, TContainer& container);
+    public static void Register(PropertyBag`1<TContainer> propertyBag);
+    public static void RegisterArray();
+    public static void RegisterArray();
+    public static void RegisterList();
+    public static void RegisterList();
+    public static void RegisterHashSet();
+    public static void RegisterHashSet();
+    public static void RegisterDictionary();
+    public static void RegisterDictionary();
+    public static void RegisterIList();
+    public static void RegisterIList();
+    public static void RegisterISet();
+    public static void RegisterISet();
+    public static void RegisterIDictionary();
+    public static void RegisterIDictionary();
+    public static TContainer CreateInstance();
+    public static IPropertyBag GetPropertyBag(Type type);
+    public static IPropertyBag`1<TContainer> GetPropertyBag();
+    public static bool TryGetPropertyBagForValue(TValue& value, IPropertyBag& propertyBag);
+    public static bool Exists();
+    public static bool Exists(Type type);
+    public static IEnumerable`1<Type> GetAllTypesWithAPropertyBag();
+}
+public abstract class Unity.Properties.PropertyBag`1 : object {
+    [DebuggerBrowsableAttribute("0")]
+[CompilerGeneratedAttribute]
+
+private InstantiationKind <InstantiationKind>k__BackingField;
+    
+private InstantiationKind Unity.Properties.IConstructor.InstantiationKind { get; }
+    
+protected InstantiationKind InstantiationKind { get; }
+    private static PropertyBag`1();
+    private sealed virtual override void Unity.Properties.Internal.IPropertyBagRegister.Register();
+    public sealed virtual void Accept(ITypeVisitor visitor);
+    private sealed virtual override void Unity.Properties.IPropertyBag.Accept(IPropertyBagVisitor visitor, Object& container);
+    private sealed virtual override void Unity.Properties.IPropertyBag<TContainer>.Accept(IPropertyBagVisitor visitor, TContainer& container);
+    private sealed virtual override PropertyCollection`1<TContainer> Unity.Properties.IPropertyBag<TContainer>.GetProperties();
+    private sealed virtual override PropertyCollection`1<TContainer> Unity.Properties.IPropertyBag<TContainer>.GetProperties(TContainer& container);
+    private sealed virtual override InstantiationKind Unity.Properties.IConstructor.get_InstantiationKind();
+    private sealed virtual override TContainer Unity.Properties.IConstructor<TContainer>.Instantiate();
+    public abstract virtual PropertyCollection`1<TContainer> GetProperties();
+    public abstract virtual PropertyCollection`1<TContainer> GetProperties(TContainer& container);
+    [CompilerGeneratedAttribute]
+protected virtual InstantiationKind get_InstantiationKind();
+    protected virtual TContainer Instantiate();
+    public sealed virtual TContainer CreateInstance();
+    public sealed virtual bool TryCreateInstance(TContainer& instance);
+}
+[IsReadOnlyAttribute]
+public class Unity.Properties.PropertyCollection`1 : ValueType {
+    
+private EnumeratorType<TContainer> m_Type;
+    
+private IEnumerable`1<IProperty`1<TContainer>> m_Enumerable;
+    
+private List`1<IProperty`1<TContainer>> m_Properties;
+    
+private IndexedCollectionPropertyBagEnumerable`1<TContainer> m_IndexedCollectionPropertyBag;
+    [DebuggerBrowsableAttribute("0")]
+[CompilerGeneratedAttribute]
+
+private static PropertyCollection`1<TContainer> <Empty>k__BackingField;
+    
+public static PropertyCollection`1<TContainer> Empty { get; }
+    public PropertyCollection`1(IEnumerable`1<IProperty`1<TContainer>> enumerable);
+    public PropertyCollection`1(List`1<IProperty`1<TContainer>> properties);
+    internal PropertyCollection`1(IndexedCollectionPropertyBagEnumerable`1<TContainer> enumerable);
+    private static PropertyCollection`1();
+    [CompilerGeneratedAttribute]
+public static PropertyCollection`1<TContainer> get_Empty();
+    public Enumerator<TContainer> GetEnumerator();
+    private sealed virtual override IEnumerator`1<IProperty`1<TContainer>> System.Collections.Generic.IEnumerable<Unity.Properties.IProperty<TContainer>>.GetEnumerator();
+    private sealed virtual override IEnumerator System.Collections.IEnumerable.GetEnumerator();
+}
+public static class Unity.Properties.PropertyContainer : object {
+    public static void Accept(IPropertyBagVisitor visitor, TContainer container, VisitParameters parameters);
+    public static void Accept(IPropertyBagVisitor visitor, TContainer& container, VisitParameters parameters);
+    public static bool TryAccept(IPropertyBagVisitor visitor, TContainer& container, VisitParameters parameters);
+    public static bool TryAccept(IPropertyBagVisitor visitor, TContainer& container, VisitReturnCode& returnCode, VisitParameters parameters);
+    public static void Accept(IPropertyVisitor visitor, TContainer& container, PropertyPath& path, VisitParameters parameters);
+    public static bool TryAccept(IPropertyVisitor visitor, TContainer& container, PropertyPath& path, VisitReturnCode& returnCode, VisitParameters parameters);
+    public static IProperty GetProperty(TContainer container, PropertyPath& path);
+    public static IProperty GetProperty(TContainer& container, PropertyPath& path);
+    public static bool TryGetProperty(TContainer container, PropertyPath& path, IProperty& property);
+    public static bool TryGetProperty(TContainer& container, PropertyPath& path, IProperty& property);
+    public static bool TryGetProperty(TContainer& container, PropertyPath& path, IProperty& property, VisitReturnCode& returnCode);
+    public static TValue GetValue(TContainer container, string name);
+    public static TValue GetValue(TContainer& container, string name);
+    public static TValue GetValue(TContainer container, PropertyPath& path);
+    public static TValue GetValue(TContainer& container, PropertyPath& path);
+    public static bool TryGetValue(TContainer container, string name, TValue& value);
+    public static bool TryGetValue(TContainer& container, string name, TValue& value);
+    public static bool TryGetValue(TContainer container, PropertyPath& path, TValue& value);
+    public static bool TryGetValue(TContainer& container, PropertyPath& path, TValue& value);
+    public static bool TryGetValue(TContainer& container, PropertyPath& path, TValue& value, VisitReturnCode& returnCode);
+    public static bool IsPathValid(TContainer container, string path);
+    public static bool IsPathValid(TContainer container, PropertyPath& path);
+    public static bool IsPathValid(TContainer& container, string path);
+    public static bool IsPathValid(TContainer& container, PropertyPath& path);
+    public static void SetValue(TContainer container, string name, TValue value);
+    public static void SetValue(TContainer& container, string name, TValue value);
+    public static void SetValue(TContainer container, PropertyPath& path, TValue value);
+    public static void SetValue(TContainer& container, PropertyPath& path, TValue value);
+    public static bool TrySetValue(TContainer container, string name, TValue value);
+    public static bool TrySetValue(TContainer& container, string name, TValue value);
+    public static bool TrySetValue(TContainer container, PropertyPath& path, TValue value);
+    public static bool TrySetValue(TContainer& container, PropertyPath& path, TValue value);
+    public static bool TrySetValue(TContainer& container, PropertyPath& path, TValue value, VisitReturnCode& returnCode);
+}
+public class Unity.Properties.PropertyGetter`2 : MulticastDelegate {
+    public PropertyGetter`2(object object, IntPtr method);
+    public virtual TValue Invoke(TContainer& container);
+    public virtual IAsyncResult BeginInvoke(TContainer& container, AsyncCallback callback, object object);
+    public virtual TValue EndInvoke(TContainer& container, IAsyncResult result);
+}
+[IsReadOnlyAttribute]
+internal class Unity.Properties.PropertyMember : ValueType {
+    
+internal PropertyInfo m_PropertyInfo;
+    [CompilerGeneratedAttribute]
+[DebuggerBrowsableAttribute("0")]
+
+private string <Name>k__BackingField;
+    
+public string Name { get; }
+    
+public bool IsReadOnly { get; }
+    
+public Type ValueType { get; }
+    public PropertyMember(PropertyInfo propertyInfo);
+    [CompilerGeneratedAttribute]
+public sealed virtual string get_Name();
+    public sealed virtual bool get_IsReadOnly();
+    public sealed virtual Type get_ValueType();
+    public sealed virtual object GetValue(object obj);
+    public sealed virtual void SetValue(object obj, object value);
+    public sealed virtual IEnumerable`1<Attribute> GetCustomAttributes();
+}
+[IsReadOnlyAttribute]
+[DefaultMemberAttribute("Item")]
+public class Unity.Properties.PropertyPath : ValueType {
+    
+internal static int k_InlineCount;
+    
+private PropertyPathPart m_Part0;
+    
+private PropertyPathPart m_Part1;
+    
+private PropertyPathPart m_Part2;
+    
+private PropertyPathPart m_Part3;
+    
+private int m_InlinePartsCount;
+    
+private PropertyPathPart[] m_AdditionalParts;
+    [DebuggerBrowsableAttribute("0")]
+[CompilerGeneratedAttribute]
+
+private int <Length>k__BackingField;
+    
+public int Length { get; }
+    
+public bool IsEmpty { get; }
+    
+public PropertyPathPart Item { get; }
+    public PropertyPath(string path);
+    private PropertyPath(PropertyPathPart& part);
+    private PropertyPath(PropertyPathPart& part0, PropertyPathPart& part1);
+    private PropertyPath(PropertyPathPart& part0, PropertyPathPart& part1, PropertyPathPart& part2);
+    private PropertyPath(PropertyPathPart& part0, PropertyPathPart& part1, PropertyPathPart& part2, PropertyPathPart& part3);
+    internal PropertyPath(List`1<PropertyPathPart> parts);
+    [CompilerGeneratedAttribute]
+public int get_Length();
+    public bool get_IsEmpty();
+    public PropertyPathPart get_Item(int index);
+    public static PropertyPath FromPart(PropertyPathPart& part);
+    public static PropertyPath FromName(string name);
+    public static PropertyPath FromIndex(int index);
+    public static PropertyPath FromKey(object key);
+    public static PropertyPath Combine(PropertyPath& path, PropertyPath& pathToAppend);
+    public static PropertyPath Combine(PropertyPath& path, string pathToAppend);
+    public static PropertyPath AppendPart(PropertyPath& path, PropertyPathPart& part);
+    public static PropertyPath AppendName(PropertyPath& path, string name);
+    public static PropertyPath AppendIndex(PropertyPath& path, int index);
+    public static PropertyPath AppendKey(PropertyPath& path, object key);
+    public static PropertyPath AppendProperty(PropertyPath& path, IProperty property);
+    public static PropertyPath Pop(PropertyPath& path);
+    public static PropertyPath SubPath(PropertyPath& path, int startIndex);
+    public static PropertyPath SubPath(PropertyPath& path, int startIndex, int length);
+    public virtual string ToString();
+    private static void AppendToBuilder(PropertyPathPart& part, StringBuilder builder);
+    private static void GetParts(PropertyPath& path, List`1<PropertyPathPart> parts);
+    private static PropertyPath ConstructFromPath(string path);
+    public sealed virtual bool Equals(PropertyPath other);
+    public virtual bool Equals(object obj);
+    public virtual int GetHashCode();
+    [CompilerGeneratedAttribute]
+internal static void <ConstructFromPath>g__TrimStart|37_0(<>c__DisplayClass37_0& );
+    [CompilerGeneratedAttribute]
+internal static void <ConstructFromPath>g__ReadNext|37_1(<>c__DisplayClass37_0& );
+}
+[IsReadOnlyAttribute]
+public class Unity.Properties.PropertyPathPart : ValueType {
+    
+private PropertyPathPartKind m_Kind;
+    
+private string m_Name;
+    
+private int m_Index;
+    
+private object m_Key;
+    
+public bool IsName { get; }
+    
+public bool IsIndex { get; }
+    
+public bool IsKey { get; }
+    
+public PropertyPathPartKind Kind { get; }
+    
+public string Name { get; }
+    
+public int Index { get; }
+    
+public object Key { get; }
+    public PropertyPathPart(string name);
+    public PropertyPathPart(int index);
+    public PropertyPathPart(object key);
+    public bool get_IsName();
+    public bool get_IsIndex();
+    public bool get_IsKey();
+    public PropertyPathPartKind get_Kind();
+    public string get_Name();
+    public int get_Index();
+    public object get_Key();
+    private void CheckKind(PropertyPathPartKind type);
+    public virtual string ToString();
+    public sealed virtual bool Equals(PropertyPathPart other);
+    public virtual bool Equals(object obj);
+    public virtual int GetHashCode();
+}
+public enum Unity.Properties.PropertyPathPartKind : Enum {
+    
+public int value__;
+    
+public static PropertyPathPartKind Name;
+    
+public static PropertyPathPartKind Index;
+    
+public static PropertyPathPartKind Key;
+}
+public class Unity.Properties.PropertySetter`2 : MulticastDelegate {
+    public PropertySetter`2(object object, IntPtr method);
+    public virtual void Invoke(TContainer& container, TValue value);
+    public virtual IAsyncResult BeginInvoke(TContainer& container, TValue value, AsyncCallback callback, object object);
+    public virtual void EndInvoke(TContainer& container, IAsyncResult result);
+}
+public abstract class Unity.Properties.PropertyVisitor : object {
+    
+private List`1<IPropertyVisitorAdapter> m_Adapters;
+    public void AddAdapter(IPropertyVisitorAdapter adapter);
+    public void RemoveAdapter(IPropertyVisitorAdapter adapter);
+    private sealed virtual override void Unity.Properties.IPropertyBagVisitor.Visit(IPropertyBag`1<TContainer> properties, TContainer& container);
+    private sealed virtual override void Unity.Properties.IListPropertyBagVisitor.Visit(IListPropertyBag`2<TList, TElement> properties, TList& container);
+    private sealed virtual override void Unity.Properties.IDictionaryPropertyBagVisitor.Visit(IDictionaryPropertyBag`3<TDictionary, TKey, TValue> properties, TDictionary& container);
+    private sealed virtual override void Unity.Properties.IPropertyVisitor.Visit(Property`2<TContainer, TValue> property, TContainer& container);
+    internal void ContinueVisitation(Property`2<TContainer, TValue> property, TContainer& container, TValue& value);
+    private sealed virtual override void Unity.Properties.ICollectionPropertyVisitor.Visit(Property`2<TContainer, TCollection> property, TContainer& container, TCollection& collection);
+    private sealed virtual override void Unity.Properties.IListPropertyVisitor.Visit(Property`2<TContainer, TList> property, TContainer& container, TList& list);
+    private sealed virtual override void Unity.Properties.ISetPropertyVisitor.Visit(Property`2<TContainer, TSet> property, TContainer& container, TSet& set);
+    private sealed virtual override void Unity.Properties.IDictionaryPropertyVisitor.Visit(Property`2<TContainer, TDictionary> property, TContainer& container, TDictionary& dictionary);
+    protected virtual bool IsExcluded(Property`2<TContainer, TValue> property, TContainer& container, TValue& value);
+    protected virtual void VisitProperty(Property`2<TContainer, TValue> property, TContainer& container, TValue& value);
+    protected virtual void VisitCollection(Property`2<TContainer, TCollection> property, TContainer& container, TCollection& value);
+    protected virtual void VisitList(Property`2<TContainer, TList> property, TContainer& container, TList& value);
+    protected virtual void VisitSet(Property`2<TContainer, TSet> property, TContainer& container, TSet& value);
+    protected virtual void VisitDictionary(Property`2<TContainer, TDictionary> property, TContainer& container, TDictionary& value);
+    private bool IsExcluded(Property`2<TContainer, TValue> property, Enumerator enumerator, TContainer& container, TValue& value);
+    internal void ContinueVisitation(Property`2<TContainer, TValue> property, Enumerator enumerator, TContainer& container, TValue& value);
+    internal void ContinueVisitationWithoutAdapters(Property`2<TContainer, TValue> property, Enumerator enumerator, TContainer& container, TValue& value);
+}
+public class Unity.Properties.ReflectedMemberProperty`2 : Property`2<TContainer, TValue> {
+    
+private IMemberInfo m_Info;
+    
+private bool m_IsStructContainerType;
+    
+private GetStructValueAction<TContainer, TValue> m_GetStructValueAction;
+    
+private SetStructValueAction<TContainer, TValue> m_SetStructValueAction;
+    
+private GetClassValueAction<TContainer, TValue> m_GetClassValueAction;
+    
+private SetClassValueAction<TContainer, TValue> m_SetClassValueAction;
+    [DebuggerBrowsableAttribute("0")]
+[CompilerGeneratedAttribute]
+
+private string <Name>k__BackingField;
+    [DebuggerBrowsableAttribute("0")]
+[CompilerGeneratedAttribute]
+
+private bool <IsReadOnly>k__BackingField;
+    
+public string Name { get; }
+    
+public bool IsReadOnly { get; }
+    public ReflectedMemberProperty`2(FieldInfo info, string name);
+    public ReflectedMemberProperty`2(PropertyInfo info, string name);
+    internal ReflectedMemberProperty`2(IMemberInfo info, string name);
+    [CompilerGeneratedAttribute]
+public virtual string get_Name();
+    [CompilerGeneratedAttribute]
+public virtual bool get_IsReadOnly();
+    public virtual TValue GetValue(TContainer& container);
+    public virtual void SetValue(TContainer& container, TValue value);
+}
+public class Unity.Properties.SetPropertyBagBase`2 : PropertyBag`1<TSet> {
+    
+private SetElementProperty<TSet, TElement> m_Property;
+    public virtual PropertyCollection`1<TSet> GetProperties();
+    public virtual PropertyCollection`1<TSet> GetProperties(TSet& container);
+    [IteratorStateMachineAttribute("Unity.Properties.SetPropertyBagBase`2/<GetPropertiesEnumerable>d__4")]
+private IEnumerable`1<IProperty`1<TSet>> GetPropertiesEnumerable(TSet container);
+    private sealed virtual override void Unity.Properties.ICollectionPropertyBagAccept<TSet>.Accept(ICollectionPropertyBagVisitor visitor, TSet& container);
+    private sealed virtual override void Unity.Properties.ISetPropertyBagAccept<TSet>.Accept(ISetPropertyBagVisitor visitor, TSet& container);
+    private sealed virtual override void Unity.Properties.ISetPropertyAccept<TSet>.Accept(ISetPropertyVisitor visitor, Property`2<TContainer, TSet> property, TContainer& container, TSet& dictionary);
+    public sealed virtual bool TryGetProperty(TSet& container, object key, IProperty`1& property);
+}
+public static class Unity.Properties.TypeConversion : object {
+    
+private static ConversionRegistry s_GlobalConverters;
+    private static TypeConversion();
+    public static void Register(TypeConverter`2<TSource, TDestination> converter);
+    public static TDestination Convert(TSource& value);
+    public static bool TryConvert(TSource& source, TDestination& destination);
+    private static bool TryConvertToUnityEngineObject(TSource source, TDestination& destination);
+    private static bool IsNumericType(Type t);
+}
+public class Unity.Properties.TypeConverter`2 : MulticastDelegate {
+    public TypeConverter`2(object object, IntPtr method);
+    public virtual TDestination Invoke(TSource& value);
+    public virtual IAsyncResult BeginInvoke(TSource& value, AsyncCallback callback, object object);
+    public virtual TDestination EndInvoke(TSource& value, IAsyncResult result);
+}
+[FlagsAttribute]
+public enum Unity.Properties.TypeGenerationOptions : Enum {
+    
+public int value__;
+    
+public static TypeGenerationOptions None;
+    
+public static TypeGenerationOptions ValueType;
+    
+public static TypeGenerationOptions ReferenceType;
+    
+public static TypeGenerationOptions Default;
+}
+public static class Unity.Properties.TypeTraits : object {
+    public static bool IsContainer(Type type);
+}
+public static class Unity.Properties.TypeTraits`1 : object {
+    [DebuggerBrowsableAttribute("0")]
+[CompilerGeneratedAttribute]
+
+private static bool <IsValueType>k__BackingField;
+    [CompilerGeneratedAttribute]
+[DebuggerBrowsableAttribute("0")]
+
+private static bool <IsPrimitive>k__BackingField;
+    [CompilerGeneratedAttribute]
+[DebuggerBrowsableAttribute("0")]
+
+private static bool <IsInterface>k__BackingField;
+    [DebuggerBrowsableAttribute("0")]
+[CompilerGeneratedAttribute]
+
+private static bool <IsAbstract>k__BackingField;
+    [DebuggerBrowsableAttribute("0")]
+[CompilerGeneratedAttribute]
+
+private static bool <IsArray>k__BackingField;
+    [DebuggerBrowsableAttribute("0")]
+[CompilerGeneratedAttribute]
+
+private static bool <IsMultidimensionalArray>k__BackingField;
+    [CompilerGeneratedAttribute]
+[DebuggerBrowsableAttribute("0")]
+
+private static bool <IsEnum>k__BackingField;
+    [CompilerGeneratedAttribute]
+[DebuggerBrowsableAttribute("0")]
+
+private static bool <IsEnumFlags>k__BackingField;
+    [CompilerGeneratedAttribute]
+[DebuggerBrowsableAttribute("0")]
+
+private static bool <IsNullable>k__BackingField;
+    [CompilerGeneratedAttribute]
+[DebuggerBrowsableAttribute("0")]
+
+private static bool <IsObject>k__BackingField;
+    [DebuggerBrowsableAttribute("0")]
+[CompilerGeneratedAttribute]
+
+private static bool <IsString>k__BackingField;
+    [DebuggerBrowsableAttribute("0")]
+[CompilerGeneratedAttribute]
+
+private static bool <IsContainer>k__BackingField;
+    [DebuggerBrowsableAttribute("0")]
+[CompilerGeneratedAttribute]
+
+private static bool <CanBeNull>k__BackingField;
+    [CompilerGeneratedAttribute]
+[DebuggerBrowsableAttribute("0")]
+
+private static bool <IsPrimitiveOrString>k__BackingField;
+    [CompilerGeneratedAttribute]
+[DebuggerBrowsableAttribute("0")]
+
+private static bool <IsAbstractOrInterface>k__BackingField;
+    [CompilerGeneratedAttribute]
+[DebuggerBrowsableAttribute("0")]
+
+private static bool <IsUnityObject>k__BackingField;
+    [CompilerGeneratedAttribute]
+[DebuggerBrowsableAttribute("0")]
+
+private static bool <IsLazyLoadReference>k__BackingField;
+    
+public static bool IsValueType { get; }
+    
+public static bool IsPrimitive { get; }
+    
+public static bool IsInterface { get; }
+    
+public static bool IsAbstract { get; }
+    
+public static bool IsArray { get; }
+    
+public static bool IsMultidimensionalArray { get; }
+    
+public static bool IsEnum { get; }
+    
+public static bool IsEnumFlags { get; }
+    
+public static bool IsNullable { get; }
+    
+public static bool IsObject { get; }
+    
+public static bool IsString { get; }
+    
+public static bool IsContainer { get; }
+    
+public static bool CanBeNull { get; }
+    
+public static bool IsPrimitiveOrString { get; }
+    
+public static bool IsAbstractOrInterface { get; }
+    
+public static bool IsUnityObject { get; }
+    
+public static bool IsLazyLoadReference { get; }
+    private static TypeTraits`1();
+    [CompilerGeneratedAttribute]
+public static bool get_IsValueType();
+    [CompilerGeneratedAttribute]
+public static bool get_IsPrimitive();
+    [CompilerGeneratedAttribute]
+public static bool get_IsInterface();
+    [CompilerGeneratedAttribute]
+public static bool get_IsAbstract();
+    [CompilerGeneratedAttribute]
+public static bool get_IsArray();
+    [CompilerGeneratedAttribute]
+public static bool get_IsMultidimensionalArray();
+    [CompilerGeneratedAttribute]
+public static bool get_IsEnum();
+    [CompilerGeneratedAttribute]
+public static bool get_IsEnumFlags();
+    [CompilerGeneratedAttribute]
+public static bool get_IsNullable();
+    [CompilerGeneratedAttribute]
+public static bool get_IsObject();
+    [CompilerGeneratedAttribute]
+public static bool get_IsString();
+    [CompilerGeneratedAttribute]
+public static bool get_IsContainer();
+    [CompilerGeneratedAttribute]
+public static bool get_CanBeNull();
+    [CompilerGeneratedAttribute]
+public static bool get_IsPrimitiveOrString();
+    [CompilerGeneratedAttribute]
+public static bool get_IsAbstractOrInterface();
+    [CompilerGeneratedAttribute]
+public static bool get_IsUnityObject();
+    [CompilerGeneratedAttribute]
+public static bool get_IsLazyLoadReference();
+}
+[ExtensionAttribute]
+public static class Unity.Properties.TypeUtility : object {
+    
+private static ConcurrentDictionary`2<Type, ITypeConstructor> s_TypeConstructors;
+    
+private static MethodInfo s_CreateTypeConstructor;
+    
+private static ConcurrentDictionary`2<Type, string> s_CachedResolvedName;
+    
+private static ObjectPool`1<StringBuilder> s_Builders;
+    
+private static object syncedPoolObject;
+    private static TypeUtility();
+    public static string GetTypeDisplayName(Type type);
+    private static string GetTypeDisplayName(Type type, IReadOnlyList`1<Type> args, Int32& argIndex);
+    [ExtensionAttribute]
+public static Type GetRootType(Type type);
+    [PreserveAttribute]
+private static ITypeConstructor CreateTypeConstructor(Type type);
+    private static ITypeConstructor`1<T> CreateTypeConstructor();
+    private static ITypeConstructor GetTypeConstructor(Type type);
+    private static ITypeConstructor`1<T> GetTypeConstructor();
+    public static bool CanBeInstantiated(Type type);
+    public static bool CanBeInstantiated();
+    public static void SetExplicitInstantiationMethod(Func`1<T> constructor);
+    public static T Instantiate();
+    public static bool TryInstantiate(T& instance);
+    public static T Instantiate(Type derivedType);
+    public static bool TryInstantiate(Type derivedType, T& value);
+    public static TArray InstantiateArray(int count);
+    public static bool TryInstantiateArray(int count, TArray& instance);
+    public static TArray InstantiateArray(Type derivedType, int count);
+    private static void CheckIsAssignableFrom(Type type, Type derivedType);
+    private static void CheckCanBeInstantiated(ITypeConstructor`1<T> constructor);
+    private static void CheckCanBeInstantiated(ITypeConstructor constructor, Type type);
+}
+[IsReadOnlyAttribute]
+public class Unity.Properties.VisitContext`1 : ValueType {
+    
+private Enumerator m_Enumerator;
+    
+private PropertyVisitor m_Visitor;
+    
+private VisitDelegate<TContainer> m_Continue;
+    
+private VisitWithoutAdaptersDelegate<TContainer> m_ContinueWithoutAdapters;
+    [DebuggerBrowsableAttribute("0")]
+[CompilerGeneratedAttribute]
+
+private IProperty`1<TContainer> <Property>k__BackingField;
+    
+public IProperty`1<TContainer> Property { get; }
+    private VisitContext`1(PropertyVisitor visitor, Enumerator enumerator, IProperty`1<TContainer> property, VisitDelegate<TContainer> continueVisitation, VisitWithoutAdaptersDelegate<TContainer> continueVisitationWithoutAdapters);
+    internal static VisitContext`1<TContainer> FromProperty(PropertyVisitor visitor, Enumerator enumerator, Property`2<TContainer, TValue> property);
+    [CompilerGeneratedAttribute]
+public IProperty`1<TContainer> get_Property();
+    public void ContinueVisitation(TContainer& container);
+    public void ContinueVisitationWithoutAdapters(TContainer& container);
+}
+[IsReadOnlyAttribute]
+public class Unity.Properties.VisitContext`2 : ValueType {
+    
+private Enumerator m_Enumerator;
+    
+private PropertyVisitor m_Visitor;
+    [DebuggerBrowsableAttribute("0")]
+[CompilerGeneratedAttribute]
+
+private Property`2<TContainer, TValue> <Property>k__BackingField;
+    
+public Property`2<TContainer, TValue> Property { get; }
+    private VisitContext`2(PropertyVisitor visitor, Enumerator enumerator, Property`2<TContainer, TValue> property);
+    internal static VisitContext`2<TContainer, TValue> FromProperty(PropertyVisitor visitor, Enumerator enumerator, Property`2<TContainer, TValue> property);
+    [CompilerGeneratedAttribute]
+public Property`2<TContainer, TValue> get_Property();
+    public void ContinueVisitation(TContainer& container, TValue& value);
+    public void ContinueVisitationWithoutAdapters(TContainer& container, TValue& value);
+}
+[FlagsAttribute]
+public enum Unity.Properties.VisitExceptionKind : Enum {
+    
+public int value__;
+    
+public static VisitExceptionKind None;
+    
+public static VisitExceptionKind Internal;
+    
+public static VisitExceptionKind Visitor;
+    
+public static VisitExceptionKind All;
+}
+public class Unity.Properties.VisitParameters : ValueType {
+    [DebuggerBrowsableAttribute("0")]
+[CompilerGeneratedAttribute]
+
+private VisitExceptionKind <IgnoreExceptions>k__BackingField;
+    
+public VisitExceptionKind IgnoreExceptions { get; public set; }
+    [IsReadOnlyAttribute]
+[CompilerGeneratedAttribute]
+public VisitExceptionKind get_IgnoreExceptions();
+    [CompilerGeneratedAttribute]
+public void set_IgnoreExceptions(VisitExceptionKind value);
+}
+public enum Unity.Properties.VisitReturnCode : Enum {
+    
+public int value__;
+    
+public static VisitReturnCode Ok;
+    
+public static VisitReturnCode NullContainer;
+    
+public static VisitReturnCode InvalidContainerType;
+    
+public static VisitReturnCode MissingPropertyBag;
+    
+public static VisitReturnCode InvalidPath;
+    
+public static VisitReturnCode InvalidCast;
+    
+public static VisitReturnCode AccessViolation;
 }
