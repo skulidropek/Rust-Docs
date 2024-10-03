@@ -1,6 +1,5 @@
 public class Facepunch.Network.Raknet.Client : Client {
-    
-private Peer peer;
+    private Peer peer;
     public virtual bool IsConnected();
     public virtual bool Connect(string strURL, int port);
     internal bool HandleRaknetPacket(byte type, NetRead read);
@@ -46,43 +45,26 @@ public class Facepunch.Network.Raknet.Native : object {
     public static float NETSND_ReadCompressedFloat(IntPtr nw);
 }
 public static class Facepunch.Network.Raknet.PacketType : object {
-    
-public static byte NEW_INCOMING_CONNECTION;
-    
-public static byte CONNECTION_REQUEST_ACCEPTED;
-    
-public static byte CONNECTION_ATTEMPT_FAILED;
-    
-public static byte DISCONNECTION_NOTIFICATION;
-    
-public static byte NO_FREE_INCOMING_CONNECTIONS;
-    
-public static byte CONNECTION_LOST;
-    
-public static byte CONNECTION_BANNED;
+    public static byte NEW_INCOMING_CONNECTION;
+    public static byte CONNECTION_REQUEST_ACCEPTED;
+    public static byte CONNECTION_ATTEMPT_FAILED;
+    public static byte DISCONNECTION_NOTIFICATION;
+    public static byte NO_FREE_INCOMING_CONNECTIONS;
+    public static byte CONNECTION_LOST;
+    public static byte CONNECTION_BANNED;
 }
 [SuppressUnmanagedCodeSecurityAttribute]
 internal class Facepunch.Network.Raknet.Peer : object {
-    
-private IntPtr ptr;
-    
-private static Byte[] ByteBuffer;
-    
-public ulong incomingGUID { get; }
-    
-public UInt32 incomingAddressInt { get; }
-    
-public UInt32 incomingPort { get; }
-    
-public string incomingAddress { get; }
-    
-public int incomingBits { get; }
-    
-public int incomingBitsUnread { get; }
-    
-public int incomingBytes { get; }
-    
-public int incomingBytesUnread { get; }
+    private IntPtr ptr;
+    private static Byte[] ByteBuffer;
+    public ulong incomingGUID { get; }
+    public UInt32 incomingAddressInt { get; }
+    public UInt32 incomingPort { get; }
+    public string incomingAddress { get; }
+    public int incomingBits { get; }
+    public int incomingBitsUnread { get; }
+    public int incomingBytes { get; }
+    public int incomingBytesUnread { get; }
     private static Peer();
     public static Peer CreateServer(string ip, int port, int maxConnections);
     public static Peer CreateConnection(string hostname, int port, int retries, int retryDelay, int timeout);
@@ -126,10 +108,8 @@ public int incomingBytesUnread { get; }
     public virtual ulong GetStat(Connection connection, StatTypeLong type);
 }
 public class Facepunch.Network.Raknet.Server : Server {
-    
-private Peer peer;
-    
-public string ProtocolId { get; }
+    private Peer peer;
+    public string ProtocolId { get; }
     public virtual string get_ProtocolId();
     public virtual bool IsConnected();
     public virtual bool Start();
@@ -141,7 +121,9 @@ public string ProtocolId { get; }
     public virtual void ProcessRead(NetRead read);
     protected virtual bool Receive();
     public virtual string GetDebug(Connection connection);
+    public bool TryGetConnectionStats(Connection connection, RaknetStats& stats);
     public virtual int GetAveragePing(Connection connection);
+    public int GetLatestPing(Connection connection);
     public virtual ulong GetStat(Connection connection, StatTypeLong type);
     public virtual void ProcessWrite(NetWrite write);
     private void ProcessWrite(NetWrite write, Connection connection);

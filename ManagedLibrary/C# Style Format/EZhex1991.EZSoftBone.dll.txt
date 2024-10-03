@@ -5,10 +5,8 @@ public class EZhex1991.EZSoftBone.CustomForce : MulticastDelegate {
     public virtual Vector3 EndInvoke(IAsyncResult result);
 }
 public class EZhex1991.EZSoftBone.EZCurveRectAttribute : PropertyAttribute {
-    
-public Rect rect;
-    
-public Color color;
+    public Rect rect;
+    public Color color;
     public EZCurveRectAttribute(Rect rect);
     public EZCurveRectAttribute(float x, float y, float width, float height);
     public EZCurveRectAttribute(Rect rect, Color color);
@@ -17,102 +15,65 @@ public Color color;
 public class EZhex1991.EZSoftBone.EZNestedEditorAttribute : PropertyAttribute {
 }
 public class EZhex1991.EZSoftBone.EZSoftBone : MonoBehaviour {
-    
-public static float DeltaTime_Min;
-    
-public static int MaxInstanceCount;
-    
-private static float CurrentFrame;
-    
-private static int InstanceNumber;
+    public static float DeltaTime_Min;
+    public static int MaxInstanceCount;
+    private static float CurrentFrame;
+    private static int InstanceNumber;
     [FormerlySerializedAsAttribute("m_RootBones")]
-
 public List`1<Transform> rootBones;
     [FormerlySerializedAsAttribute("m_EndBones")]
-
 public List`1<Transform> endBones;
     [SerializeField]
 [FormerlySerializedAsAttribute("m_Material")]
-
 private EZSoftBoneMaterial _material;
     [FormerlySerializedAsAttribute("m_Start_Depth")]
-
 public int startDepth;
-    
-public int stiffnessDepth;
+    public int stiffnessDepth;
     [FormerlySerializedAsAttribute("m_SiblingConstraints")]
-
 public UnificationMode siblingConstraints;
     [FormerlySerializedAsAttribute("m_LengthUnification")]
-
 public UnificationMode lengthUnification;
     [FormerlySerializedAsAttribute("m_SiblingRotationConstraints")]
-
 public bool siblingRotationConstraints;
     [FormerlySerializedAsAttribute("m_ClosedSiblings")]
-
 public bool closedSiblings;
     [FormerlySerializedAsAttribute("m_CollisionLayers")]
-
 public LayerMask collisionLayers;
     [FormerlySerializedAsAttribute("m_Radius")]
-
 public float radius;
     [FormerlySerializedAsAttribute("m_RadiusCurve")]
 [EZCurveRectAttribute("0", "0", "1", "1")]
-
 public AnimationCurve radiusCurve;
-    
-public float deadZoneRadius;
-    
-public float deadZoneExtent;
+    public float deadZoneRadius;
+    public float deadZoneExtent;
     [FormerlySerializedAsAttribute("m_DeltaTimeMode")]
-
 public DeltaTimeMode deltaTimeMode;
     [FormerlySerializedAsAttribute("m_ConstantDeltaTime")]
-
 public float constantDeltaTime;
     [FormerlySerializedAsAttribute("m_Iterations")]
 [RangeAttribute("1", "10")]
-
 public int iterations;
     [FormerlySerializedAsAttribute("m_SleepThreshold")]
-
 public float sleepThreshold;
     [FormerlySerializedAsAttribute("m_Gravity")]
-
 public Vector3 gravity;
     [SerializeField]
 [FormerlySerializedAsAttribute("m_SimulateSpace")]
-
 private Transform _simulateSpace;
-    
-public float globalRadius;
-    
-public Vector3 globalForce;
-    
-public bool collisionEnabled;
+    public float globalRadius;
+    public Vector3 globalForce;
+    public bool collisionEnabled;
     [SerializeField]
-
 private BoneChain[] structures;
-    
-private Vector3 origin;
-    
-private Vector3 prevOrigin;
-    
-private Vector3 originDelta;
-    
-private bool simulationSpaceChanged;
-    
-private Capsule deadZoneCapsule;
-    
-private bool isVisible;
-    
-private Vector3 forceDirection;
-    
-public EZSoftBoneMaterial sharedMaterial { get; public set; }
-    
-public Transform simulateSpace { get; public set; }
+    private Vector3 origin;
+    private Vector3 prevOrigin;
+    private Vector3 originDelta;
+    private bool simulationSpaceChanged;
+    private Capsule deadZoneCapsule;
+    private bool isVisible;
+    private Vector3 forceDirection;
+    public EZSoftBoneMaterial sharedMaterial { get; public set; }
+    public Transform simulateSpace { get; public set; }
     public EZSoftBoneMaterial get_sharedMaterial();
     public void set_sharedMaterial(EZSoftBoneMaterial value);
     public Transform get_simulateSpace();
@@ -141,8 +102,7 @@ public Transform simulateSpace { get; public set; }
 internal static bool <SetSiblings>g__HasBoneAtDepth|55_1(BoneChain chain, int depth);
 }
 public abstract class EZhex1991.EZSoftBone.EZSoftBoneColliderBase : MonoBehaviour {
-    
-public static ListHashSet`1<EZSoftBoneColliderBase> EnabledColliders;
+    public static ListHashSet`1<EZSoftBoneColliderBase> EnabledColliders;
     private static EZSoftBoneColliderBase();
     protected virtual void OnEnable();
     protected virtual void OnDisable();
@@ -150,15 +110,11 @@ public static ListHashSet`1<EZSoftBoneColliderBase> EnabledColliders;
 }
 public class EZhex1991.EZSoftBone.EZSoftBoneColliderCylinder : EZSoftBoneColliderBase {
     [SerializeField]
-
 private float m_Margin;
     [SerializeField]
-
 private bool m_InsideMode;
-    
-public float margin { get; public set; }
-    
-public bool insideMode { get; public set; }
+    public float margin { get; public set; }
+    public bool insideMode { get; public set; }
     public float get_margin();
     public void set_margin(float value);
     public bool get_insideMode();
@@ -169,56 +125,38 @@ public bool insideMode { get; public set; }
 public class EZhex1991.EZSoftBone.EZSoftBoneMaterial : ScriptableObject {
     [SerializeField]
 [RangeAttribute("0", "1")]
-
 private float m_Damping;
     [SerializeField]
 [EZCurveRectAttribute("0", "0", "1", "1")]
-
 private AnimationCurve m_DampingCurve;
     [SerializeField]
 [RangeAttribute("0", "1")]
-
 private float m_Stiffness;
     [SerializeField]
 [EZCurveRectAttribute("0", "0", "1", "1")]
-
 private AnimationCurve m_StiffnessCurve;
     [SerializeField]
 [RangeAttribute("0", "1")]
-
 private float m_Resistance;
     [SerializeField]
 [EZCurveRectAttribute("0", "0", "1", "1")]
-
 private AnimationCurve m_ResistanceCurve;
     [SerializeField]
 [RangeAttribute("0", "1")]
-
 private float m_Slackness;
     [SerializeField]
 [EZCurveRectAttribute("0", "0", "1", "1")]
-
 private AnimationCurve m_SlacknessCurve;
-    
-private static EZSoftBoneMaterial m_DefaultMaterial;
-    
-public float damping { get; public set; }
-    
-public AnimationCurve dampingCurve { get; }
-    
-public float stiffness { get; public set; }
-    
-public AnimationCurve stiffnessCurve { get; }
-    
-public float resistance { get; public set; }
-    
-public AnimationCurve resistanceCurve { get; }
-    
-public float slackness { get; public set; }
-    
-public AnimationCurve slacknessCurve { get; }
-    
-public static EZSoftBoneMaterial defaultMaterial { get; }
+    private static EZSoftBoneMaterial m_DefaultMaterial;
+    public float damping { get; public set; }
+    public AnimationCurve dampingCurve { get; }
+    public float stiffness { get; public set; }
+    public AnimationCurve stiffnessCurve { get; }
+    public float resistance { get; public set; }
+    public AnimationCurve resistanceCurve { get; }
+    public float slackness { get; public set; }
+    public AnimationCurve slacknessCurve { get; }
+    public static EZSoftBoneMaterial defaultMaterial { get; }
     public float get_damping();
     public void set_damping(float value);
     public AnimationCurve get_dampingCurve();

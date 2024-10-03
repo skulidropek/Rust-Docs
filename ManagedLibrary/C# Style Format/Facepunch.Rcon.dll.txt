@@ -1,24 +1,14 @@
 public class Facepunch.Rcon.Listener : object {
-    
-public string Password;
-    
-public int Port;
-    
-public string Address;
-    
-public string SslCertificate;
-    
-public string SslCertificatePassword;
-    
-public Action`3<IPAddress, int, string> OnMessage;
-    
-private int nextClientId;
-    
-private Dictionary`2<int, RconConnection> clients;
-    
-private List`1<int> deadClients;
-    
-private WebSocketServer server;
+    public string Password;
+    public int Port;
+    public string Address;
+    public string SslCertificate;
+    public string SslCertificatePassword;
+    public Action`3<IPAddress, int, string> OnMessage;
+    private int nextClientId;
+    private Dictionary`2<int, RconConnection> clients;
+    private List`1<int> deadClients;
+    private WebSocketServer server;
     public void Start();
     public void Shutdown();
     public void BroadcastMessage(string str);
@@ -26,73 +16,46 @@ private WebSocketServer server;
     public IList`1<RconClientStats> GetClientStats();
 }
 public class Facepunch.Rcon.RconClientStats : ValueType {
-    
-public int ConnectionId;
-    
-public string IP;
-    
-public int Port;
-    
-public DateTime ConnectedAt;
-    
-public int BroadcastedMessages;
-    
-public int SentMessages;
-    
-public int RecievedMessages;
+    public int ConnectionId;
+    public string IP;
+    public int Port;
+    public DateTime ConnectedAt;
+    public int BroadcastedMessages;
+    public int SentMessages;
+    public int RecievedMessages;
 }
 internal class Facepunch.Rcon.RconConnection : object {
     [CompilerGeneratedAttribute]
-
 private IWebSocketConnection <Socket>k__BackingField;
-    
-public RconClientStats Stats;
-    
-public int ConnectionId { get; }
-    
-public IWebSocketConnection Socket { get; }
+    public RconClientStats Stats;
+    public int ConnectionId { get; }
+    public IWebSocketConnection Socket { get; }
     public RconConnection(IWebSocketConnection connection, int connectionId);
     public int get_ConnectionId();
     [CompilerGeneratedAttribute]
 public IWebSocketConnection get_Socket();
 }
 public class Facepunch.Rust.Profiling.RconConnectionAttempt : ValueType {
-    
-public string IP;
-    
-public int Port;
-    
-public int ConnectionId;
-    
-public bool Success;
-    
-public string PasswordAttempt;
+    public string IP;
+    public int Port;
+    public int ConnectionId;
+    public bool Success;
+    public string PasswordAttempt;
 }
 public class Facepunch.Rust.Profiling.RconMessageStats : ValueType {
-    
-public string IP;
-    
-public int Port;
-    
-public int ConnectionId;
-    
-public string Message;
-    
-public int MessageLength;
+    public string IP;
+    public int Port;
+    public int ConnectionId;
+    public string Message;
+    public int MessageLength;
 }
 public static class Facepunch.Rust.Profiling.RconProfiler : object {
-    
-public static int mode;
-    
-public static int ClampedMessageLength;
-    
-public static TimeSpan ExecutionTime;
-    
-private static RconProfilerStats currentStats;
-    
-private static int lastClientCount;
-    
-private static object Lock;
+    public static int mode;
+    public static int ClampedMessageLength;
+    public static TimeSpan ExecutionTime;
+    private static RconProfilerStats currentStats;
+    private static int lastClientCount;
+    private static object Lock;
     private static RconProfiler();
     public static void OnRconMessage(string ip, int port, int connectionId, string message);
     public static void OnNewConnection(IWebSocketConnection socket, int connectionId);
@@ -103,22 +66,14 @@ private static object Lock;
     public static void Reset();
 }
 public class Facepunch.Rust.Profiling.RconProfilerStats : object {
-    
-public static RconProfilerStats Default;
-    
-public int MessageCount;
-    
-public long MessageLengthSum;
-    
-public int ConnectionCount;
-    
-public int NewConnectionCount;
-    
-public int FailedConnectionCount;
-    
-public List`1<RconMessageStats> Messages;
-    
-public List`1<RconConnectionAttempt> ConnectionAttempts;
+    public static RconProfilerStats Default;
+    public int MessageCount;
+    public long MessageLengthSum;
+    public int ConnectionCount;
+    public int NewConnectionCount;
+    public int FailedConnectionCount;
+    public List`1<RconMessageStats> Messages;
+    public List`1<RconConnectionAttempt> ConnectionAttempts;
     private static RconProfilerStats();
     public sealed virtual void EnterPool();
     public sealed virtual void LeavePool();

@@ -1,19 +1,13 @@
 public class DemoDiskManager : object {
-    
-private DateTime nextDemoDiskQuotaEnforcement;
+    private DateTime nextDemoDiskQuotaEnforcement;
     internal void EnforceDemoDiskSpaceQuota();
 }
 public class DemoUploadManager : object {
-    
-private static string UploadUrl;
-    
-private List`1<UploadResult> history;
-    
-private ConcurrentQueue`1<DemoUploadRequest> queue;
-    
-private long bytesInQueue;
-    
-private Func`1<bool> IsConnected;
+    private static string UploadUrl;
+    private List`1<UploadResult> history;
+    private ConcurrentQueue`1<DemoUploadRequest> queue;
+    private long bytesInQueue;
+    private Func`1<bool> IsConnected;
     internal DemoUploadManager(Func`1<bool> isConnected);
     public void EnqueueUpload(DemoUploadRequest request);
     private int CalculateConcurrency(long requestBytes);
@@ -25,66 +19,40 @@ private Task UploadDemoToAzure(DemoUploadRequest request, int concurrency);
     private void DeleteLocalDemo(DemoUploadRequest request);
 }
 public class DemoUploadRequest : object {
-    
-public DemoChunkHeader Header;
-    
-public string DemoDiskPath;
-    
-public string HeaderDiskPath;
-    
-public string UploadEndpoint;
+    public DemoChunkHeader Header;
+    public string DemoDiskPath;
+    public string HeaderDiskPath;
+    public string UploadEndpoint;
     [CompilerGeneratedAttribute]
-
 private long <BytesToUpload>k__BackingField;
-    
-public DemoUploadState State;
-    
-public long BytesToUpload { get; }
+    public DemoUploadState State;
+    public long BytesToUpload { get; }
     public DemoUploadRequest(DemoChunkHeader header, string demoLocalPath, string headerDiskPath, string containerUrl);
     [CompilerGeneratedAttribute]
 public long get_BytesToUpload();
 }
 public class DemoUploadState : object {
-    
-public bool DemoUploaded;
-    
-public TimeSpan DemoUploadDuration;
-    
-public int Failures;
+    public bool DemoUploaded;
+    public TimeSpan DemoUploadDuration;
+    public int Failures;
 }
 public class FullServerDemos : object {
-    
-private DemoUploadManager upload;
-    
-private DemoDiskManager disk;
-    
-private string sessionId;
-    
-private DateTime sessionStartTime;
-    
-private int chunkIndex;
-    
-private DateTime nextFlushTime;
-    
-private DateTime timeStart;
-    
-private FileStream fileStream;
-    
-private GZipStream zipStream;
-    
-private BinaryWriter writer;
-    
-private long packetCount;
-    
-private int playerIndex;
-    
-private Dictionary`2<ulong, int> playerIndexes;
-    
-private string localChunkFileId;
-    
-private long uncompressedBytes;
-    
-private bool isZipped;
+    private DemoUploadManager upload;
+    private DemoDiskManager disk;
+    private string sessionId;
+    private DateTime sessionStartTime;
+    private int chunkIndex;
+    private DateTime nextFlushTime;
+    private DateTime timeStart;
+    private FileStream fileStream;
+    private GZipStream zipStream;
+    private BinaryWriter writer;
+    private long packetCount;
+    private int playerIndex;
+    private Dictionary`2<ulong, int> playerIndexes;
+    private string localChunkFileId;
+    private long uncompressedBytes;
+    private bool isZipped;
     internal FullServerDemos(Func`1<bool> isConnected);
     internal void OnDemoThreadStart();
     internal void OnDemoThreadStop();
@@ -106,100 +74,53 @@ private Task CreateDemoUploadTask(int concurrencyCount, string pathOverride, int
 internal class Microsoft.CodeAnalysis.EmbeddedAttribute : Attribute {
 }
 public abstract class Network.BaseNetwork : object {
-    
-public static ArrayPool`1<byte> ArrayPool;
-    
-public static bool Multithreading;
-    
-protected object readLock;
-    
-protected object writeLock;
-    
-protected object decryptLock;
-    
-private Stopwatch stopwatch;
-    
-private ConcurrentQueue`1<NetRead> readQueue;
-    
-private ConcurrentQueue`1<NetWrite> writeQueue;
-    
-private ConcurrentQueue`1<DemoQueueItem> demoQueue;
-    
-private ConcurrentQueue`1<NetRead> decryptQueue;
-    
-private int readQueueSizeInBytes;
-    
-private int writeQueueSizeInBytes;
-    
-private int demoQueueSizeInBytes;
-    
-private int decryptQueueSizeInBytes;
-    
-private AutoResetEvent mainThreadReset;
-    
-private AutoResetEvent readThreadReset;
-    
-private AutoResetEvent writeThreadReset;
-    
-private AutoResetEvent decryptThreadReset;
-    
-private AutoResetEvent demoThreadReset;
-    
-private Thread readThread;
-    
-private Thread writeThread;
-    
-private Thread decryptThread;
-    
-private Thread demoThread;
-    
-public INetworkCryptography cryptography;
-    
-private List`1<Connection> tempBufferReadConnections;
-    
-public FullServerDemos serverDemos;
-    
-protected int MaxReceiveTimeValue { get; }
-    
-protected int MaxReadQueueLengthValue { get; }
-    
-protected int MaxWriteQueueLengthValue { get; }
-    
-protected int MaxDecryptQueueLengthValue { get; }
-    
-protected int MaxReadQueueBytesValue { get; }
-    
-protected int MaxWriteQueueBytesValue { get; }
-    
-protected int MaxDecryptQueueBytesValue { get; }
-    
-protected int MaxMainThreadWaitValue { get; }
-    
-protected int MaxReadThreadWaitValue { get; }
-    
-protected int MaxWriteThreadWaitValue { get; }
-    
-protected int MaxDecryptThreadWaitValue { get; }
-    
-public int ReadQueueLength { get; }
-    
-public int WriteQueueLength { get; }
-    
-public int DecryptQueueLength { get; }
-    
-public int ReadQueueBytes { get; }
-    
-public int WriteQueueBytes { get; }
-    
-public int DecryptQueueBytes { get; }
-    
-protected int MaxDemoQueueLengthValue { get; }
-    
-protected int MaxDemoQueueBytesValue { get; }
-    
-protected int MaxDemoThreadWaitValue { get; }
-    
-public bool SupportsServerDemos { get; }
+    public static ArrayPool`1<byte> ArrayPool;
+    public static bool Multithreading;
+    protected object readLock;
+    protected object writeLock;
+    protected object decryptLock;
+    private Stopwatch stopwatch;
+    private ConcurrentQueue`1<NetRead> readQueue;
+    private ConcurrentQueue`1<NetWrite> writeQueue;
+    private ConcurrentQueue`1<DemoQueueItem> demoQueue;
+    private ConcurrentQueue`1<NetRead> decryptQueue;
+    private int readQueueSizeInBytes;
+    private int writeQueueSizeInBytes;
+    private int demoQueueSizeInBytes;
+    private int decryptQueueSizeInBytes;
+    private AutoResetEvent mainThreadReset;
+    private AutoResetEvent readThreadReset;
+    private AutoResetEvent writeThreadReset;
+    private AutoResetEvent decryptThreadReset;
+    private AutoResetEvent demoThreadReset;
+    private Thread readThread;
+    private Thread writeThread;
+    private Thread decryptThread;
+    private Thread demoThread;
+    public INetworkCryptography cryptography;
+    private List`1<Connection> tempBufferReadConnections;
+    public FullServerDemos serverDemos;
+    protected int MaxReceiveTimeValue { get; }
+    protected int MaxReadQueueLengthValue { get; }
+    protected int MaxWriteQueueLengthValue { get; }
+    protected int MaxDecryptQueueLengthValue { get; }
+    protected int MaxReadQueueBytesValue { get; }
+    protected int MaxWriteQueueBytesValue { get; }
+    protected int MaxDecryptQueueBytesValue { get; }
+    protected int MaxMainThreadWaitValue { get; }
+    protected int MaxReadThreadWaitValue { get; }
+    protected int MaxWriteThreadWaitValue { get; }
+    protected int MaxDecryptThreadWaitValue { get; }
+    public int ReadQueueLength { get; }
+    public int WriteQueueLength { get; }
+    public int DecryptQueueLength { get; }
+    public int ReadQueueBytes { get; }
+    public int WriteQueueBytes { get; }
+    public int DecryptQueueBytes { get; }
+    protected int MaxDemoQueueLengthValue { get; }
+    protected int MaxDemoQueueBytesValue { get; }
+    protected int MaxDemoThreadWaitValue { get; }
+    public bool SupportsServerDemos { get; }
     private static BaseNetwork();
     protected abstract virtual int get_MaxReceiveTimeValue();
     protected abstract virtual int get_MaxReadQueueLengthValue();
@@ -251,96 +172,54 @@ public bool SupportsServerDemos { get; }
     public void EnqueueToDemoThread(DemoQueueItem item);
 }
 public class Network.Client : BaseNetwork {
-    
-public static int MaxReceiveTime;
-    
-public static int MaxReadQueueLength;
-    
-public static int MaxWriteQueueLength;
-    
-public static int MaxDecryptQueueLength;
-    
-public static int MaxReadQueueBytes;
-    
-public static int MaxWriteQueueBytes;
-    
-public static int MaxDecryptQueueBytes;
-    
-public static int MaxMainThreadWait;
-    
-public static int MaxReadThreadWait;
-    
-public static int MaxWriteThreadWait;
-    
-public static int MaxDecryptThreadWait;
+    public static int MaxReceiveTime;
+    public static int MaxReadQueueLength;
+    public static int MaxWriteQueueLength;
+    public static int MaxDecryptQueueLength;
+    public static int MaxReadQueueBytes;
+    public static int MaxWriteQueueBytes;
+    public static int MaxDecryptQueueBytes;
+    public static int MaxMainThreadWait;
+    public static int MaxReadThreadWait;
+    public static int MaxWriteThreadWait;
+    public static int MaxDecryptThreadWait;
     [CompilerGeneratedAttribute]
-
 private Connection <Connection>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private bool <IsPlaying>k__BackingField;
-    
-public Manager visibility;
-    
-public static string disconnectReason;
+    public Manager visibility;
+    public static string disconnectReason;
     [CompilerGeneratedAttribute]
-
 private string <ConnectedAddress>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <ConnectedPort>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <ServerName>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private bool <IsOfficialServer>k__BackingField;
-    
-public Stats IncomingStats;
-    
-public IClientCallback callbackHandler;
-    
-public bool SupportsServerDemos { get; }
-    
-protected int MaxReceiveTimeValue { get; }
-    
-protected int MaxReadQueueLengthValue { get; }
-    
-protected int MaxWriteQueueLengthValue { get; }
-    
-protected int MaxDecryptQueueLengthValue { get; }
-    
-protected int MaxReadQueueBytesValue { get; }
-    
-protected int MaxWriteQueueBytesValue { get; }
-    
-protected int MaxDecryptQueueBytesValue { get; }
-    
-protected int MaxMainThreadWaitValue { get; }
-    
-protected int MaxReadThreadWaitValue { get; }
-    
-protected int MaxWriteThreadWaitValue { get; }
-    
-protected int MaxDecryptThreadWaitValue { get; }
-    
-public Connection Connection { get; protected set; }
-    
-public bool IsPlaying { get; }
-    
-public string ConnectedAddress { get; public set; }
-    
-public int ConnectedPort { get; public set; }
-    
-public string ServerName { get; public set; }
-    
-public bool IsOfficialServer { get; public set; }
-    
-public bool IsRecording { get; }
-    
-public string RecordFilename { get; }
-    
-public TimeSpan RecordTimeElapsed { get; }
+    public Stats IncomingStats;
+    public IClientCallback callbackHandler;
+    public bool SupportsServerDemos { get; }
+    protected int MaxReceiveTimeValue { get; }
+    protected int MaxReadQueueLengthValue { get; }
+    protected int MaxWriteQueueLengthValue { get; }
+    protected int MaxDecryptQueueLengthValue { get; }
+    protected int MaxReadQueueBytesValue { get; }
+    protected int MaxWriteQueueBytesValue { get; }
+    protected int MaxDecryptQueueBytesValue { get; }
+    protected int MaxMainThreadWaitValue { get; }
+    protected int MaxReadThreadWaitValue { get; }
+    protected int MaxWriteThreadWaitValue { get; }
+    protected int MaxDecryptThreadWaitValue { get; }
+    public Connection Connection { get; protected set; }
+    public bool IsPlaying { get; }
+    public string ConnectedAddress { get; public set; }
+    public int ConnectedPort { get; public set; }
+    public string ServerName { get; public set; }
+    public bool IsOfficialServer { get; public set; }
+    public bool IsRecording { get; }
+    public string RecordFilename { get; }
+    public TimeSpan RecordTimeElapsed { get; }
     private static Client();
     public virtual bool get_SupportsServerDemos();
     protected virtual int get_MaxReceiveTimeValue();
@@ -391,92 +270,50 @@ public void set_IsOfficialServer(bool value);
     public void StopRecording();
 }
 public class Network.Connection : object {
-    
-private static object recordLock;
-    
-private static MemoryStream reusableStream;
-    
-protected MemoryStream recordStream;
-    
-protected BinaryWriter recordWriter;
-    
-protected Stopwatch recordTime;
-    
-protected string recordFilename;
-    
-protected IDemoHeader recordHeader;
-    
-public static int MaxClientInfoSize;
-    
-public State state;
-    
-public bool active;
-    
-public bool connected;
-    
-public UInt32 authLevel;
-    
-public UInt32 encryptionLevel;
-    
-public bool trusted;
-    
-public bool rejected;
-    
-public Byte[] token;
-    
-public string anticheatId;
-    
-public string anticheatToken;
-    
-public bool hasRequestedWorld;
-    
-public bool globalNetworking;
-    
-public string authStatusSteam;
-    
-public string authStatusEAC;
-    
-public string authStatusNexus;
-    
-public string authStatusCentralizedBans;
-    
-public ulong guid;
-    
-public ulong userid;
-    
-public ulong ownerid;
-    
-public string username;
-    
-public string os;
-    
-public UInt32 protocol;
-    
-public int clientChangeset;
-    
-public long clientBuildTime;
-    
-private TimeAverageValueData[] packetsPerSecond;
-    
-public double connectionTime;
-    
-public string ipaddress;
-    
-public MonoBehaviour player;
-    
-public Validation validate;
-    
-public ClientInfo info;
-    
-public TimeSpan RecordTimeElapsed { get; }
-    
-public string RecordFilename { get; }
-    
-public int RecordFilesize { get; }
-    
-public bool IsRecording { get; }
-    
-public bool isAuthenticated { get; }
+    private static object recordLock;
+    private static MemoryStream reusableStream;
+    protected MemoryStream recordStream;
+    protected BinaryWriter recordWriter;
+    protected Stopwatch recordTime;
+    protected string recordFilename;
+    protected IDemoHeader recordHeader;
+    public static int MaxClientInfoSize;
+    public State state;
+    public bool active;
+    public bool connected;
+    public UInt32 authLevel;
+    public UInt32 encryptionLevel;
+    public bool trusted;
+    public bool rejected;
+    public Byte[] token;
+    public string anticheatId;
+    public string anticheatToken;
+    public bool hasRequestedWorld;
+    public bool globalNetworking;
+    public bool canReserveSlot;
+    public string authStatusSteam;
+    public string authStatusEAC;
+    public string authStatusNexus;
+    public string authStatusCentralizedBans;
+    public ulong guid;
+    public ulong userid;
+    public ulong ownerid;
+    public string username;
+    public string os;
+    public UInt32 protocol;
+    public int clientChangeset;
+    public long clientBuildTime;
+    private TimeAverageValueData[] packetsPerSecond;
+    public double connectionTime;
+    public string ipaddress;
+    public MonoBehaviour player;
+    public Validation validate;
+    public ClientInfo info;
+    public TimeSpan RecordTimeElapsed { get; }
+    public string RecordFilename { get; }
+    public int RecordFilesize { get; }
+    public bool IsRecording { get; }
+    public bool isAuthenticated { get; }
     private static Connection();
     public TimeSpan get_RecordTimeElapsed();
     public string get_RecordFilename();
@@ -499,112 +336,70 @@ public bool isAuthenticated { get; }
     public virtual string ToString();
 }
 public class Network.Defines : object {
-    
-public static byte lowestUserPacket;
-    
-public static int packetHeaderSize;
+    public static byte lowestUserPacket;
+    public static int packetHeaderSize;
 }
 public class Network.DemoChunkHeader : object {
     [CompilerGeneratedAttribute]
-
 private string <ServerId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <SessionId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <LocalChunkId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <ChunkIndex>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private DateTime <SessionStartTime>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private DateTime <TimeStart>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private DateTime <TimeEnd>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private long <BytesDecompressed>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private long <BytesCompressed>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private long <PacketCount>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private bool <IsZipped>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <NetworkVersion>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <Changeset>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <Hostname>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <Seed>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <WorldSize>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <Level>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <LevelUrl>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <Checksum>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private List`1<DemoPlayerInfo> <Players>k__BackingField;
-    
-public string ServerId { get; public set; }
-    
-public string SessionId { get; public set; }
-    
-public string LocalChunkId { get; public set; }
-    
-public int ChunkIndex { get; public set; }
-    
-public DateTime SessionStartTime { get; public set; }
-    
-public DateTime TimeStart { get; public set; }
-    
-public DateTime TimeEnd { get; public set; }
-    
-public long BytesDecompressed { get; public set; }
-    
-public long BytesCompressed { get; public set; }
-    
-public long PacketCount { get; public set; }
-    
-public bool IsZipped { get; public set; }
-    
-public int NetworkVersion { get; public set; }
-    
-public string Changeset { get; public set; }
-    
-public string Hostname { get; public set; }
-    
-public string Seed { get; public set; }
-    
-public string WorldSize { get; public set; }
-    
-public string Level { get; public set; }
-    
-public string LevelUrl { get; public set; }
-    
-public string Checksum { get; public set; }
-    
-public List`1<DemoPlayerInfo> Players { get; public set; }
+    public string ServerId { get; public set; }
+    public string SessionId { get; public set; }
+    public string LocalChunkId { get; public set; }
+    public int ChunkIndex { get; public set; }
+    public DateTime SessionStartTime { get; public set; }
+    public DateTime TimeStart { get; public set; }
+    public DateTime TimeEnd { get; public set; }
+    public long BytesDecompressed { get; public set; }
+    public long BytesCompressed { get; public set; }
+    public long PacketCount { get; public set; }
+    public bool IsZipped { get; public set; }
+    public int NetworkVersion { get; public set; }
+    public string Changeset { get; public set; }
+    public string Hostname { get; public set; }
+    public string Seed { get; public set; }
+    public string WorldSize { get; public set; }
+    public string Level { get; public set; }
+    public string LevelUrl { get; public set; }
+    public string Checksum { get; public set; }
+    public List`1<DemoPlayerInfo> Players { get; public set; }
     [CompilerGeneratedAttribute]
 public string get_ServerId();
     [CompilerGeneratedAttribute]
@@ -687,12 +482,9 @@ public List`1<DemoPlayerInfo> get_Players();
 public void set_Players(List`1<DemoPlayerInfo> value);
 }
 public class Network.DemoClient : Client {
-    
-protected Reader demoFile;
-    
-public bool IsPlaying { get; }
-    
-public bool PlayingFinished { get; }
+    protected Reader demoFile;
+    public bool IsPlaying { get; }
+    public bool PlayingFinished { get; }
     public DemoClient(Reader demoFile);
     public virtual void Dispose();
     public virtual bool IsConnected();
@@ -703,50 +495,28 @@ public bool PlayingFinished { get; }
     private void HandleMessage(IntPtr data, int size);
 }
 public static class Network.DemoConVars : object {
-    
-public static bool UploadDemos;
-    
-public static string UploadEndpoint;
-    
-public static bool ServerDemosEnabled;
-    
-public static string ServerId;
-    
-public static string ServerDemoDirectory;
-    
-public static int ServerDemoFlushIntervalSeconds;
-    
-public static float BandwidthLimitRatio;
-    
-public static bool DeleteDemoAfterUpload;
-    
-public static bool ZipServerDemos;
-    
-public static int MaxDemoDiskSpaceGB;
-    
-public static int DiskCleanupIntervalMinutes;
-    
-public static int MaxUploadConcurrency;
-    
-public static int MinimumConcurrency;
-    
-public static int MaxUploadAttempts;
-    
-public static int NetworkVersion;
-    
-public static string Changeset;
-    
-public static string Hostname;
-    
-public static string Seed;
-    
-public static string WorldSize;
-    
-public static string Level;
-    
-public static string LevelUrl;
-    
-public static string Checksum;
+    public static bool UploadDemos;
+    public static string UploadEndpoint;
+    public static bool ServerDemosEnabled;
+    public static string ServerId;
+    public static string ServerDemoDirectory;
+    public static int ServerDemoFlushIntervalSeconds;
+    public static float BandwidthLimitRatio;
+    public static bool DeleteDemoAfterUpload;
+    public static bool ZipServerDemos;
+    public static int MaxDemoDiskSpaceGB;
+    public static int DiskCleanupIntervalMinutes;
+    public static int MaxUploadConcurrency;
+    public static int MinimumConcurrency;
+    public static int MaxUploadAttempts;
+    public static int NetworkVersion;
+    public static string Changeset;
+    public static string Hostname;
+    public static string Seed;
+    public static string WorldSize;
+    public static string Level;
+    public static string LevelUrl;
+    public static string Checksum;
     private static DemoConVars();
     public static void EnableServerDemos(bool state);
 }
@@ -758,15 +528,11 @@ public static class Network.DemoPaths : object {
 }
 public class Network.DemoPlayerInfo : object {
     [CompilerGeneratedAttribute]
-
 private ulong <Guid>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <ChunkPlayerIndex>k__BackingField;
-    
-public ulong Guid { get; public set; }
-    
-public int ChunkPlayerIndex { get; public set; }
+    public ulong Guid { get; public set; }
+    public int ChunkPlayerIndex { get; public set; }
     [CompilerGeneratedAttribute]
 public ulong get_Guid();
     [CompilerGeneratedAttribute]
@@ -777,12 +543,9 @@ public int get_ChunkPlayerIndex();
 public void set_ChunkPlayerIndex(int value);
 }
 public class Network.DemoQueueItem : ValueType {
-    
-public NetWrite write;
-    
-public NetRead read;
-    
-public bool IgnoreNoConnections;
+    public NetWrite write;
+    public NetRead read;
+    public bool IgnoreNoConnections;
     public DemoQueueItem(NetWrite write);
     public DemoQueueItem(NetRead read);
 }
@@ -791,8 +554,7 @@ public interface Network.IClientCallback {
     public abstract virtual void OnClientDisconnected(string reason);
 }
 public interface Network.IDemoHeader {
-    
-public long Length { get; public set; }
+    public long Length { get; public set; }
     public abstract virtual long get_Length();
     public abstract virtual void set_Length(long value);
     public abstract virtual void Write(BinaryWriter writer);
@@ -808,54 +570,33 @@ public interface Network.IServerCallback {
     public abstract virtual void OnDisconnected(string reason, Connection connection);
 }
 public class Network.Message : object {
-    
-public static Boolean[] EncryptionPerType;
-    
-public Type type;
-    
-public BaseNetwork peer;
-    
-public NetRead read;
-    
-public Connection connection { get; }
+    public static Boolean[] EncryptionPerType;
+    public Type type;
+    public BaseNetwork peer;
+    public NetRead read;
+    public Connection connection { get; }
     private static Message();
     public Connection get_connection();
     private sealed virtual override void Facepunch.Pool.IPooled.LeavePool();
     private sealed virtual override void Facepunch.Pool.IPooled.EnterPool();
 }
 public class Network.NetRead : Stream {
-    
-public Byte[] Data;
-    
-private int _length;
-    
-private int _position;
-    
-public int refCount;
-    
-public ulong guid;
-    
-public string ipaddress;
-    
-public Connection connection;
-    
-private static int bufferSize;
-    
-private static Byte[] byteBuffer;
-    
-private static Char[] charBuffer;
-    
-public int Unread { get; }
-    
-public bool CanRead { get; }
-    
-public bool CanWrite { get; }
-    
-public long Length { get; }
-    
-public long Position { get; public set; }
-    
-public bool CanSeek { get; }
+    public Byte[] Data;
+    private int _length;
+    private int _position;
+    public int refCount;
+    public ulong guid;
+    public string ipaddress;
+    public Connection connection;
+    private static int bufferSize;
+    private static Byte[] byteBuffer;
+    private static Char[] charBuffer;
+    public int Unread { get; }
+    public bool CanRead { get; }
+    public bool CanWrite { get; }
+    public long Length { get; }
+    public long Position { get; public set; }
+    public bool CanSeek { get; }
     private static NetRead();
     public void AddReference();
     public void RemoveReference();
@@ -918,27 +659,17 @@ public bool CanSeek { get; }
     public virtual void WriteByte(byte value);
 }
 public class Network.Networkable : object {
-    
-public NetworkableId ID;
+    public NetworkableId ID;
     [CompilerGeneratedAttribute]
-
 private Connection <connection>k__BackingField;
-    
-public Group group;
-    
-public Group secondaryGroup;
-    
-public Subscriber subscriber;
-    
-public NetworkHandler handler;
-    
-public bool updateSubscriptions;
-    
-public Server sv;
-    
-internal Client cl;
-    
-public Connection connection { get; private set; }
+    public Group group;
+    public Group secondaryGroup;
+    public Subscriber subscriber;
+    public NetworkHandler handler;
+    public bool updateSubscriptions;
+    public Server sv;
+    internal Client cl;
+    public Connection connection { get; private set; }
     [CompilerGeneratedAttribute]
 public Connection get_connection();
     [CompilerGeneratedAttribute]
@@ -967,36 +698,21 @@ public interface Network.NetworkHandler {
     public abstract virtual void OnNetworkGroupEnter(Group group);
 }
 public class Network.NetWrite : Stream {
-    
-private static MemoryStream stringBuffer;
-    
-private BaseNetwork peer;
-    
-public Byte[] Data;
-    
-private int _position;
-    
-private int _length;
-    
-public int refCount;
-    
-public SendMethod method;
-    
-public sbyte channel;
-    
-public Priority priority;
-    
-public List`1<Connection> connections;
-    
-public bool CanSeek { get; }
-    
-public bool CanRead { get; }
-    
-public bool CanWrite { get; }
-    
-public long Length { get; }
-    
-public long Position { get; public set; }
+    private static MemoryStream stringBuffer;
+    private BaseNetwork peer;
+    public Byte[] Data;
+    private int _position;
+    private int _length;
+    public int refCount;
+    public SendMethod method;
+    public sbyte channel;
+    public Priority priority;
+    public List`1<Connection> connections;
+    public bool CanSeek { get; }
+    public bool CanRead { get; }
+    public bool CanWrite { get; }
+    public long Length { get; }
+    public long Position { get; public set; }
     private static NetWrite();
     public void AddReference();
     public void RemoveReference();
@@ -1052,130 +768,75 @@ public long Position { get; public set; }
     public virtual void SetLength(long value);
 }
 public static class Network.PacketProfiler : object {
-    
-public static bool enabled;
-    
-public static Int32[] inboundCount;
-    
-public static Int32[] inboundBytes;
-    
-public static Int32[] outboundCount;
-    
-public static Int32[] outboundSum;
-    
-public static Int32[] outboundBytes;
+    public static bool enabled;
+    public static Int32[] inboundCount;
+    public static Int32[] inboundBytes;
+    public static Int32[] outboundCount;
+    public static Int32[] outboundSum;
+    public static Int32[] outboundBytes;
     private static PacketProfiler();
     public static void LogInbound(Type type, int length);
     public static void LogOutbound(int type, int connectionCount, int length);
     public static void Reset();
 }
 public enum Network.Priority : Enum {
-    
-public int value__;
-    
-public static Priority Immediate;
-    
-public static Priority Normal;
+    public int value__;
+    public static Priority Immediate;
+    public static Priority Normal;
 }
 public class Network.SendInfo : ValueType {
-    
-public SendMethod method;
-    
-public sbyte channel;
-    
-public Priority priority;
-    
-public List`1<Connection> connections;
-    
-public Connection connection;
+    public SendMethod method;
+    public sbyte channel;
+    public Priority priority;
+    public List`1<Connection> connections;
+    public Connection connection;
     public SendInfo(List`1<Connection> connections);
     public SendInfo(Connection connection);
 }
 public enum Network.SendMethod : Enum {
-    
-public int value__;
-    
-public static SendMethod Reliable;
-    
-public static SendMethod ReliableUnordered;
-    
-public static SendMethod Unreliable;
+    public int value__;
+    public static SendMethod Reliable;
+    public static SendMethod ReliableUnordered;
+    public static SendMethod Unreliable;
 }
 public abstract class Network.Server : BaseNetwork {
-    
-public static ulong MaxPacketsPerSecond;
-    
-public static int MaxConnectionsPerIP;
-    
-public static int MaxReceiveTime;
-    
-public static int MaxReadQueueLength;
-    
-public static int MaxWriteQueueLength;
-    
-public static int MaxDecryptQueueLength;
-    
-public static int MaxReadQueueBytes;
-    
-public static int MaxWriteQueueBytes;
-    
-public static int MaxDecryptQueueBytes;
-    
-public static int MaxMainThreadWait;
-    
-public static int MaxReadThreadWait;
-    
-public static int MaxWriteThreadWait;
-    
-public static int MaxDecryptThreadWait;
-    
-public string ip;
-    
-public int port;
-    
-public bool compressionEnabled;
-    
-public bool logging;
-    
-public Manager visibility;
-    
-public IServerCallback callbackHandler;
-    
-public bool debug;
-    
-internal ulong lastValueGiven;
-    
-public List`1<Connection> connections;
-    
-private Dictionary`2<ulong, Connection> connectionByGUID;
-    
-private Dictionary`2<string, List`1<Connection>> connectionsByIP;
-    
-public bool SupportsServerDemos { get; }
-    
-protected int MaxReceiveTimeValue { get; }
-    
-protected int MaxReadQueueLengthValue { get; }
-    
-protected int MaxWriteQueueLengthValue { get; }
-    
-protected int MaxDecryptQueueLengthValue { get; }
-    
-protected int MaxReadQueueBytesValue { get; }
-    
-protected int MaxWriteQueueBytesValue { get; }
-    
-protected int MaxDecryptQueueBytesValue { get; }
-    
-protected int MaxMainThreadWaitValue { get; }
-    
-protected int MaxReadThreadWaitValue { get; }
-    
-protected int MaxWriteThreadWaitValue { get; }
-    
-protected int MaxDecryptThreadWaitValue { get; }
-    
-public string ProtocolId { get; }
+    public static ulong MaxPacketsPerSecond;
+    public static int MaxConnectionsPerIP;
+    public static int MaxReceiveTime;
+    public static int MaxReadQueueLength;
+    public static int MaxWriteQueueLength;
+    public static int MaxDecryptQueueLength;
+    public static int MaxReadQueueBytes;
+    public static int MaxWriteQueueBytes;
+    public static int MaxDecryptQueueBytes;
+    public static int MaxMainThreadWait;
+    public static int MaxReadThreadWait;
+    public static int MaxWriteThreadWait;
+    public static int MaxDecryptThreadWait;
+    public string ip;
+    public int port;
+    public bool compressionEnabled;
+    public bool logging;
+    public Manager visibility;
+    public IServerCallback callbackHandler;
+    public bool debug;
+    internal ulong lastValueGiven;
+    public List`1<Connection> connections;
+    private Dictionary`2<ulong, Connection> connectionByGUID;
+    private Dictionary`2<string, List`1<Connection>> connectionsByIP;
+    public bool SupportsServerDemos { get; }
+    protected int MaxReceiveTimeValue { get; }
+    protected int MaxReadQueueLengthValue { get; }
+    protected int MaxWriteQueueLengthValue { get; }
+    protected int MaxDecryptQueueLengthValue { get; }
+    protected int MaxReadQueueBytesValue { get; }
+    protected int MaxWriteQueueBytesValue { get; }
+    protected int MaxDecryptQueueBytesValue { get; }
+    protected int MaxMainThreadWaitValue { get; }
+    protected int MaxReadThreadWaitValue { get; }
+    protected int MaxWriteThreadWaitValue { get; }
+    protected int MaxDecryptThreadWaitValue { get; }
+    public string ProtocolId { get; }
     private static Server();
     public virtual bool get_SupportsServerDemos();
     protected virtual int get_MaxReceiveTimeValue();
@@ -1213,68 +874,50 @@ public string ProtocolId { get; }
     public virtual int GetAveragePing(Connection connection);
 }
 public class Network.Stats : object {
-    
-public bool Enabled;
-    
-public Node Building;
-    
-public Node Previous;
+    public bool Enabled;
+    public Node Building;
+    public Node Previous;
     public void Add(string Category, string Object, long Bytes);
     public void Add(string Category, long Bytes);
     public void Flip();
 }
 public class Network.TimeAverageValue : object {
-    
-private TimeAverageValueData data;
+    private TimeAverageValueData data;
     public ulong Calculate();
     public void Increment();
     public void Reset();
 }
 public class Network.TimeAverageValueData : ValueType {
-    
-private double refreshTime;
-    
-private ulong counterPrev;
-    
-private ulong counterNext;
+    private double refreshTime;
+    private ulong counterPrev;
+    private ulong counterNext;
     public ulong Calculate();
     public void Increment();
     public void Reset();
 }
 public class Network.TimeAverageValueLookup`1 : object {
-    
-public Dictionary`2<T, TimeAverageValue> dict;
+    public Dictionary`2<T, TimeAverageValue> dict;
     public bool TryIncrement(T id, ulong limit);
     public void Increment(T id);
     public ulong Calculate(T id);
     public void Clear();
 }
 public static class Network.TimeEx : object {
-    
-private static Stopwatch stopwatch;
-    
-public static double realtimeSinceStartup { get; }
-    
-public static double currentTimestamp { get; }
+    private static Stopwatch stopwatch;
+    public static double realtimeSinceStartup { get; }
+    public static double currentTimestamp { get; }
     private static TimeEx();
     public static double get_realtimeSinceStartup();
     public static double get_currentTimestamp();
 }
 public class Network.Visibility.Group : object {
-    
-protected Manager manager;
-    
-public UInt32 ID;
-    
-public Bounds bounds;
-    
-public bool restricted;
-    
-public ListHashSet`1<Networkable> networkables;
-    
-public List`1<Connection> subscribers;
-    
-public bool isGlobal { get; }
+    protected Manager manager;
+    public UInt32 ID;
+    public Bounds bounds;
+    public bool restricted;
+    public ListHashSet`1<Networkable> networkables;
+    public List`1<Connection> subscribers;
+    public bool isGlobal { get; }
     public Group(Manager m, UInt32 id);
     public bool get_isGlobal();
     public virtual void Dispose();
@@ -1286,10 +929,8 @@ public bool isGlobal { get; }
     public virtual string ToString();
 }
 public class Network.Visibility.Manager : object {
-    
-public Dictionary`2<UInt32, Group> groups;
-    
-public Provider provider;
+    public Dictionary`2<UInt32, Group> groups;
+    public Provider provider;
     public Manager(Provider p);
     public virtual void Dispose();
     public Group TryGet(UInt32 ID);
@@ -1309,12 +950,9 @@ public interface Network.Visibility.Provider {
     public abstract virtual void GetVisibleFromNear(Group group, List`1<Group> groups);
 }
 public class Network.Visibility.Subscriber : object {
-    
-internal Manager manager;
-    
-internal Connection connection;
-    
-public ListHashSet`1<Group> subscribed;
+    internal Manager manager;
+    internal Connection connection;
+    public ListHashSet`1<Group> subscribed;
     public Group Subscribe(Group group);
     public Group Subscribe(UInt32 group);
     public bool IsSubscribed(Group group);
@@ -1328,9 +966,9 @@ public ListHashSet`1<Group> subscribed;
 [CompilerGeneratedAttribute]
 internal class System.Runtime.CompilerServices.IsUnmanagedAttribute : Attribute {
 }
+[CompilerGeneratedAttribute]
 [EditorBrowsableAttribute("1")]
 [GeneratedCodeAttribute("Unity.MonoScriptGenerator.MonoScriptInfoGenerator", "")]
-[CompilerGeneratedAttribute]
 internal class UnitySourceGeneratedAssemblyMonoScriptTypes_v1 : object {
     private static MonoScriptData Get();
 }

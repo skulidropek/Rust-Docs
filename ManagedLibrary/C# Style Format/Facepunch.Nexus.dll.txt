@@ -1,12 +1,9 @@
 [IsReadOnlyAttribute]
 internal class Facepunch.Nexus.ApiResult : ValueType {
     [CompilerGeneratedAttribute]
-
 private HttpStatusCode <StatusCode>k__BackingField;
-    
-public HttpStatusCode StatusCode { get; }
-    
-public bool IsSuccess { get; }
+    public HttpStatusCode StatusCode { get; }
+    public bool IsSuccess { get; }
     public ApiResult(HttpStatusCode statusCode);
     [CompilerGeneratedAttribute]
 public HttpStatusCode get_StatusCode();
@@ -16,18 +13,12 @@ public HttpStatusCode get_StatusCode();
 [IsReadOnlyAttribute]
 internal class Facepunch.Nexus.ApiResult`1 : ValueType {
     [CompilerGeneratedAttribute]
-
 private HttpStatusCode <StatusCode>k__BackingField;
-    
-private T _response;
-    
-private bool _hasResponse;
-    
-public HttpStatusCode StatusCode { get; }
-    
-public bool IsSuccess { get; }
-    
-public T Response { get; }
+    private T _response;
+    private bool _hasResponse;
+    public HttpStatusCode StatusCode { get; }
+    public bool IsSuccess { get; }
+    public T Response { get; }
     public ApiResult`1(HttpStatusCode statusCode, T response);
     public ApiResult`1(HttpStatusCode statusCode);
     [CompilerGeneratedAttribute]
@@ -40,25 +31,16 @@ public HttpStatusCode get_StatusCode();
 }
 public abstract class Facepunch.Nexus.BaseNexusClient : NexusAnonymousClient {
     [CompilerGeneratedAttribute]
-
 private NexusVariableChangedHandler OnVariableChanged;
     [CompilerGeneratedAttribute]
-
 private NexusErrorHandler OnError;
-    
-protected IClockProvider Clock;
-    
-protected CancellationToken CancellationToken;
-    
-private CancellationTokenSource _cts;
-    
-private double _updateInterval;
-    
-private bool _disposed;
-    
-private bool _started;
-    
-protected bool ShouldUpdateVariables { get; }
+    protected IClockProvider Clock;
+    protected CancellationToken CancellationToken;
+    private CancellationTokenSource _cts;
+    private double _updateInterval;
+    private bool _disposed;
+    private bool _started;
+    protected bool ShouldUpdateVariables { get; }
     protected BaseNexusClient(INexusConnector connector, IClockProvider clock, double updateInterval);
     [CompilerGeneratedAttribute]
 public void add_OnVariableChanged(NexusVariableChangedHandler value);
@@ -83,36 +65,23 @@ private Task UpdateLoop(CancellationToken ct);
     internal void DispatchError(Exception exception);
 }
 public abstract class Facepunch.Nexus.BaseNexusPlayerClient : BaseNexusClient {
-    
-private protected VariableContainer NexusVariables;
-    
-private protected VariableContainer ZoneVariables;
-    
-private protected VariableContainer PlayerVariables;
+    private protected VariableContainer NexusVariables;
+    private protected VariableContainer ZoneVariables;
+    private protected VariableContainer PlayerVariables;
     [CompilerGeneratedAttribute]
-
 private int <NexusId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <ZoneKey>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private NexusDetails <Nexus>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private PlayerDetails <Player>k__BackingField;
-    
-public int NexusId { get; protected set; }
-    
-public string ZoneKey { get; protected set; }
-    
-public NexusDetails Nexus { get; protected set; }
-    
-public NexusZoneDetails Zone { get; }
-    
-public PlayerDetails Player { get; protected set; }
-    
-protected bool ShouldUpdateVariables { get; }
+    public int NexusId { get; protected set; }
+    public string ZoneKey { get; protected set; }
+    public NexusDetails Nexus { get; protected set; }
+    public NexusZoneDetails Zone { get; }
+    public PlayerDetails Player { get; protected set; }
+    protected bool ShouldUpdateVariables { get; }
     internal BaseNexusPlayerClient(INexusConnector connector, IClockProvider clock, double updateInterval);
     [CompilerGeneratedAttribute]
 public int get_NexusId();
@@ -144,19 +113,14 @@ public ValueTask`1<PlayerDetails> SelectNexus(int nexusId);
     private static NexusZoneDetails FindZone(NexusDetails nexus, string zoneKey);
 }
 internal abstract class Facepunch.Nexus.CachedValue : object {
-    
-internal static double CacheExpirySeconds;
-    
-protected IClockProvider Clock;
+    internal static double CacheExpirySeconds;
+    protected IClockProvider Clock;
     protected CachedValue(IClockProvider clock);
 }
 internal class Facepunch.Nexus.CachedValue`1 : CachedValue {
-    
-private double _expiryTime;
-    
-private bool _hasValue;
-    
-private TValue _value;
+    private double _expiryTime;
+    private bool _hasValue;
+    private TValue _value;
     public CachedValue`1(IClockProvider clock);
     public bool TryGetValue(TValue& value);
     public TValue& modreq(System.Runtime.InteropServices.InAttribute) Update(TValue& value);
@@ -164,7 +128,6 @@ private TValue _value;
 }
 internal class Facepunch.Nexus.CachedValue`2 : CachedValue {
     [TupleElementNamesAttribute("Mono.Cecil.CustomAttributeArgument[]")]
-
 private Dictionary`2<TKey, ValueTuple`2<TValue, double>> _values;
     public CachedValue`2(IClockProvider clock);
     public bool TryGetValue(TKey& key, TValue& value);
@@ -179,10 +142,8 @@ internal interface Facepunch.Nexus.Connector.INexusPlayerConnector {
     public abstract virtual Task`1<PlayerDetails> GetPlayerDetails(int nexusId, string playerAuthToken);
 }
 internal interface Facepunch.Nexus.Connector.INexusSocketConnector {
-    
-public bool IsStarted { get; }
-    
-public bool IsConnected { get; }
+    public bool IsStarted { get; }
+    public bool IsConnected { get; }
     public abstract virtual bool get_IsStarted();
     public abstract virtual bool get_IsConnected();
     public abstract virtual void Start();
@@ -232,18 +193,12 @@ internal interface Facepunch.Nexus.Connector.INexusZoneConnector {
     public abstract virtual Task`1<ApiResult> AddClanScoreEventBatch(List`1<NewClanScoreEventBatchEntry> entries);
 }
 internal class Facepunch.Nexus.Connector.NexusConnector : object {
-    
-private static int MaxRetryCount;
-    
-private static double BaseRetryDelay;
-    
-protected INexusLogger Logger;
-    
-protected string BaseUrl;
-    
-protected HttpClient HttpClient;
-    
-private static Task`1<int> CompletedDummyTask;
+    private static int MaxRetryCount;
+    private static double BaseRetryDelay;
+    protected INexusLogger Logger;
+    protected string BaseUrl;
+    protected HttpClient HttpClient;
+    private static Task`1<int> CompletedDummyTask;
     public NexusConnector(INexusLogger logger, string baseUrl);
     private static NexusConnector();
     [AsyncStateMachineAttribute("Facepunch.Nexus.Connector.NexusConnector/<ListNexuses>d__6")]
@@ -266,35 +221,23 @@ private Task`1<ApiResult> SendRequestWithoutResponse(Request request, string aut
 private Task`1<ApiResult`1<TResponse>> SendRequestImpl(Request request, string authToken, Func`2<HttpResponseMessage, Task`1<TResponse>> responseReader);
 }
 internal class Facepunch.Nexus.Connector.NexusPlayerConnector : NexusConnector {
-    
-private string _playerInfoEndpoint;
+    private string _playerInfoEndpoint;
     public NexusPlayerConnector(INexusLogger logger, string baseUrl);
     [AsyncStateMachineAttribute("Facepunch.Nexus.Connector.NexusPlayerConnector/<GetPlayerDetails>d__2")]
 public sealed virtual Task`1<PlayerDetails> GetPlayerDetails(int nexusId, string playerAuthToken);
 }
 internal class Facepunch.Nexus.Connector.NexusSocketConnector : object {
-    
-private static int MaxMessageIdLength;
-    
-private INexusLogger _logger;
-    
-private CancellationTokenSource _cts;
-    
-private Uri _socketEndpoint;
-    
-private string _secretKey;
-    
-private Queue`1<NexusMessage> _incoming;
-    
-private Channel`1<string> _outgoing;
-    
-private bool _started;
-    
-private ClientWebSocket _socket;
-    
-public bool IsStarted { get; }
-    
-public bool IsConnected { get; }
+    private static int MaxMessageIdLength;
+    private INexusLogger _logger;
+    private CancellationTokenSource _cts;
+    private Uri _socketEndpoint;
+    private string _secretKey;
+    private Queue`1<NexusMessage> _incoming;
+    private Channel`1<string> _outgoing;
+    private bool _started;
+    private ClientWebSocket _socket;
+    public bool IsStarted { get; }
+    public bool IsConnected { get; }
     public NexusSocketConnector(INexusLogger logger, string baseUrl, string secretKey, int lockDuration);
     public sealed virtual bool get_IsStarted();
     public sealed virtual bool get_IsConnected();
@@ -316,32 +259,19 @@ private Task <Start>b__15_0();
 internal static NexusMessage <HandleIncoming>g__ReadMessage|19_0(Byte[] buffer, int length);
 }
 internal class Facepunch.Nexus.Connector.NexusZoneConnector : NexusConnector {
-    
-private string _getZoneInfoEndpoint;
-    
-private string _getPlayerInfoEndpoint;
-    
-private string _playerLoginEndpoint;
-    
-private string _assignEndpoint;
-    
-private string _registerTransferEndpoint;
-    
-private string _completeTransferEndpoint;
-    
-private string _messageEndpoint;
-    
-private string _setNexusVariableEndpoint;
-    
-private string _setZoneVariableEndpoint;
-    
-private string _setPlayerVariableEndpoint;
-    
-private string _findPlayersWithVariableEndpoint;
-    
-private string _mapEndpoint;
-    
-private string _clanEndpoint;
+    private string _getZoneInfoEndpoint;
+    private string _getPlayerInfoEndpoint;
+    private string _playerLoginEndpoint;
+    private string _assignEndpoint;
+    private string _registerTransferEndpoint;
+    private string _completeTransferEndpoint;
+    private string _messageEndpoint;
+    private string _setNexusVariableEndpoint;
+    private string _setZoneVariableEndpoint;
+    private string _setPlayerVariableEndpoint;
+    private string _findPlayersWithVariableEndpoint;
+    private string _mapEndpoint;
+    private string _clanEndpoint;
     public NexusZoneConnector(INexusLogger logger, string baseUrl, string secretKey);
     [AsyncStateMachineAttribute("Facepunch.Nexus.Connector.NexusZoneConnector/<GetZoneDetails>d__14")]
 public sealed virtual Task`1<ZoneDetails> GetZoneDetails();
@@ -409,10 +339,8 @@ public interface Facepunch.Nexus.INexusClanEventListener {
 }
 public class Facepunch.Nexus.Logging.ConsoleLogger : object {
     [CompilerGeneratedAttribute]
-
 private static ConsoleLogger <Instance>k__BackingField;
-    
-public static ConsoleLogger Instance { get; }
+    public static ConsoleLogger Instance { get; }
     private static ConsoleLogger();
     [CompilerGeneratedAttribute]
 public static ConsoleLogger get_Instance();
@@ -431,21 +359,15 @@ public static void LogWarn(INexusLogger logger, string message, Exception except
 public static void LogError(INexusLogger logger, string message, Exception exception);
 }
 public enum Facepunch.Nexus.Logging.NexusLogLevel : Enum {
-    
-public int value__;
-    
-public static NexusLogLevel Info;
-    
-public static NexusLogLevel Warn;
-    
-public static NexusLogLevel Error;
+    public int value__;
+    public static NexusLogLevel Info;
+    public static NexusLogLevel Warn;
+    public static NexusLogLevel Error;
 }
 public class Facepunch.Nexus.Logging.NullLogger : object {
     [CompilerGeneratedAttribute]
-
 private static NullLogger <Instance>k__BackingField;
-    
-public static NullLogger Instance { get; }
+    public static NullLogger Instance { get; }
     private static NullLogger();
     [CompilerGeneratedAttribute]
 public static NullLogger get_Instance();
@@ -453,10 +375,8 @@ public static NullLogger get_Instance();
 }
 public class Facepunch.Nexus.Models.ClanChangedEvent : ValueType {
     [CompilerGeneratedAttribute]
-
 private long <ClanId>k__BackingField;
-    
-public long ClanId { get; public set; }
+    public long ClanId { get; public set; }
     [CompilerGeneratedAttribute]
 public long get_ClanId();
     [CompilerGeneratedAttribute]
@@ -464,45 +384,29 @@ public void set_ClanId(long value);
 }
 public class Facepunch.Nexus.Models.ClanCreateParameters : ValueType {
     [CompilerGeneratedAttribute]
-
 private string <ClanName>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <ClanNameNormalized>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <LeaderPlayerId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <LeaderRoleName>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <MemberRoleName>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private List`1<VariableUpdate> <ClanVariables>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private List`1<VariableUpdate> <LeaderRoleVariables>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private List`1<VariableUpdate> <MemberRoleVariables>k__BackingField;
-    
-public string ClanName { get; public set; }
-    
-public string ClanNameNormalized { get; public set; }
-    
-public string LeaderPlayerId { get; public set; }
-    
-public string LeaderRoleName { get; public set; }
-    
-public string MemberRoleName { get; public set; }
-    
-public List`1<VariableUpdate> ClanVariables { get; public set; }
-    
-public List`1<VariableUpdate> LeaderRoleVariables { get; public set; }
-    
-public List`1<VariableUpdate> MemberRoleVariables { get; public set; }
+    public string ClanName { get; public set; }
+    public string ClanNameNormalized { get; public set; }
+    public string LeaderPlayerId { get; public set; }
+    public string LeaderRoleName { get; public set; }
+    public string MemberRoleName { get; public set; }
+    public List`1<VariableUpdate> ClanVariables { get; public set; }
+    public List`1<VariableUpdate> LeaderRoleVariables { get; public set; }
+    public List`1<VariableUpdate> MemberRoleVariables { get; public set; }
     [CompilerGeneratedAttribute]
 public string get_ClanName();
     [CompilerGeneratedAttribute]
@@ -538,55 +442,35 @@ public void set_MemberRoleVariables(List`1<VariableUpdate> value);
 }
 public class Facepunch.Nexus.Models.ClanDetails : ValueType {
     [CompilerGeneratedAttribute]
-
 private long <ClanId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <Name>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private long <Created>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <Creator>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private long <Score>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private List`1<ClanRole> <Roles>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private List`1<ClanMember> <Members>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <MaxMemberCount>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private List`1<ClanInvite> <Invites>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private VariableDictionary <Variables>k__BackingField;
-    
-public long ClanId { get; public set; }
-    
-public string Name { get; public set; }
-    
-public long Created { get; public set; }
-    
-public string Creator { get; public set; }
-    
-public long Score { get; public set; }
-    
-public List`1<ClanRole> Roles { get; public set; }
-    
-public List`1<ClanMember> Members { get; public set; }
-    
-public int MaxMemberCount { get; public set; }
-    
-public List`1<ClanInvite> Invites { get; public set; }
-    
-public VariableDictionary Variables { get; public set; }
+    public long ClanId { get; public set; }
+    public string Name { get; public set; }
+    public long Created { get; public set; }
+    public string Creator { get; public set; }
+    public long Score { get; public set; }
+    public List`1<ClanRole> Roles { get; public set; }
+    public List`1<ClanMember> Members { get; public set; }
+    public int MaxMemberCount { get; public set; }
+    public List`1<ClanInvite> Invites { get; public set; }
+    public VariableDictionary Variables { get; public set; }
     [CompilerGeneratedAttribute]
 public long get_ClanId();
     [CompilerGeneratedAttribute]
@@ -630,15 +514,11 @@ public void set_Variables(VariableDictionary value);
 }
 public class Facepunch.Nexus.Models.ClanDisbandedEvent : ValueType {
     [CompilerGeneratedAttribute]
-
 private long <ClanId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private List`1<string> <Members>k__BackingField;
-    
-public long ClanId { get; public set; }
-    
-public List`1<string> Members { get; public set; }
+    public long ClanId { get; public set; }
+    public List`1<string> Members { get; public set; }
     [CompilerGeneratedAttribute]
 public long get_ClanId();
     [CompilerGeneratedAttribute]
@@ -650,20 +530,14 @@ public void set_Members(List`1<string> value);
 }
 public class Facepunch.Nexus.Models.ClanInvitation : ValueType {
     [CompilerGeneratedAttribute]
-
 private long <ClanId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <RecruiterPlayerId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private long <Timestamp>k__BackingField;
-    
-public long ClanId { get; public set; }
-    
-public string RecruiterPlayerId { get; public set; }
-    
-public long Timestamp { get; public set; }
+    public long ClanId { get; public set; }
+    public string RecruiterPlayerId { get; public set; }
+    public long Timestamp { get; public set; }
     [CompilerGeneratedAttribute]
 public long get_ClanId();
     [CompilerGeneratedAttribute]
@@ -679,20 +553,14 @@ public void set_Timestamp(long value);
 }
 public class Facepunch.Nexus.Models.ClanInvite : ValueType {
     [CompilerGeneratedAttribute]
-
 private string <PlayerId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <RecruiterPlayerId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private long <Created>k__BackingField;
-    
-public string PlayerId { get; public set; }
-    
-public string RecruiterPlayerId { get; public set; }
-    
-public long Created { get; public set; }
+    public string PlayerId { get; public set; }
+    public string RecruiterPlayerId { get; public set; }
+    public long Created { get; public set; }
     [CompilerGeneratedAttribute]
 public string get_PlayerId();
     [CompilerGeneratedAttribute]
@@ -708,15 +576,11 @@ public void set_Created(long value);
 }
 public class Facepunch.Nexus.Models.ClanInvitedEvent : ValueType {
     [CompilerGeneratedAttribute]
-
 private long <ClanId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <PlayerId>k__BackingField;
-    
-public long ClanId { get; public set; }
-    
-public string PlayerId { get; public set; }
+    public long ClanId { get; public set; }
+    public string PlayerId { get; public set; }
     [CompilerGeneratedAttribute]
 public long get_ClanId();
     [CompilerGeneratedAttribute]
@@ -728,15 +592,11 @@ public void set_PlayerId(string value);
 }
 public class Facepunch.Nexus.Models.ClanJoinedEvent : ValueType {
     [CompilerGeneratedAttribute]
-
 private long <ClanId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <PlayerId>k__BackingField;
-    
-public long ClanId { get; public set; }
-    
-public string PlayerId { get; public set; }
+    public long ClanId { get; public set; }
+    public string PlayerId { get; public set; }
     [CompilerGeneratedAttribute]
 public long get_ClanId();
     [CompilerGeneratedAttribute]
@@ -748,15 +608,11 @@ public void set_PlayerId(string value);
 }
 public class Facepunch.Nexus.Models.ClanKickedEvent : ValueType {
     [CompilerGeneratedAttribute]
-
 private long <ClanId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <PlayerId>k__BackingField;
-    
-public long ClanId { get; public set; }
-    
-public string PlayerId { get; public set; }
+    public long ClanId { get; public set; }
+    public string PlayerId { get; public set; }
     [CompilerGeneratedAttribute]
 public long get_ClanId();
     [CompilerGeneratedAttribute]
@@ -768,20 +624,14 @@ public void set_PlayerId(string value);
 }
 public class Facepunch.Nexus.Models.ClanLeaderboardEntry : ValueType {
     [CompilerGeneratedAttribute]
-
 private long <ClanId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <Name>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private long <Score>k__BackingField;
-    
-public long ClanId { get; public set; }
-    
-public string Name { get; public set; }
-    
-public long Score { get; public set; }
+    public long ClanId { get; public set; }
+    public string Name { get; public set; }
+    public long Score { get; public set; }
     [CompilerGeneratedAttribute]
 public long get_ClanId();
     [CompilerGeneratedAttribute]
@@ -797,35 +647,23 @@ public void set_Score(long value);
 }
 public class Facepunch.Nexus.Models.ClanLogEntry : ValueType {
     [CompilerGeneratedAttribute]
-
 private long <Timestamp>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <EventKey>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <Arg1>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <Arg2>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <Arg3>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <Arg4>k__BackingField;
-    
-public long Timestamp { get; public set; }
-    
-public string EventKey { get; public set; }
-    
-public string Arg1 { get; public set; }
-    
-public string Arg2 { get; public set; }
-    
-public string Arg3 { get; public set; }
-    
-public string Arg4 { get; public set; }
+    public long Timestamp { get; public set; }
+    public string EventKey { get; public set; }
+    public string Arg1 { get; public set; }
+    public string Arg2 { get; public set; }
+    public string Arg3 { get; public set; }
+    public string Arg4 { get; public set; }
     [CompilerGeneratedAttribute]
 public long get_Timestamp();
     [CompilerGeneratedAttribute]
@@ -853,30 +691,20 @@ public void set_Arg4(string value);
 }
 public class Facepunch.Nexus.Models.ClanMember : ValueType {
     [CompilerGeneratedAttribute]
-
 private string <PlayerId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <RoleId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private long <Joined>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private long <LastSeen>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private VariableDictionary <Variables>k__BackingField;
-    
-public string PlayerId { get; public set; }
-    
-public int RoleId { get; public set; }
-    
-public long Joined { get; public set; }
-    
-public long LastSeen { get; public set; }
-    
-public VariableDictionary Variables { get; public set; }
+    public string PlayerId { get; public set; }
+    public int RoleId { get; public set; }
+    public long Joined { get; public set; }
+    public long LastSeen { get; public set; }
+    public VariableDictionary Variables { get; public set; }
     [CompilerGeneratedAttribute]
 public string get_PlayerId();
     [CompilerGeneratedAttribute]
@@ -900,55 +728,35 @@ public void set_Variables(VariableDictionary value);
 }
 public class Facepunch.Nexus.Models.ClanRole : ValueType {
     [CompilerGeneratedAttribute]
-
 private int <RoleId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <Rank>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <Name>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private bool <CanInvite>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private bool <CanKick>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private bool <CanPromote>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private bool <CanDemote>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private bool <CanAccessLogs>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private bool <CanAccessScoreEvents>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private VariableDictionary <Variables>k__BackingField;
-    
-public int RoleId { get; public set; }
-    
-public int Rank { get; public set; }
-    
-public string Name { get; public set; }
-    
-public bool CanInvite { get; public set; }
-    
-public bool CanKick { get; public set; }
-    
-public bool CanPromote { get; public set; }
-    
-public bool CanDemote { get; public set; }
-    
-public bool CanAccessLogs { get; public set; }
-    
-public bool CanAccessScoreEvents { get; public set; }
-    
-public VariableDictionary Variables { get; public set; }
+    public int RoleId { get; public set; }
+    public int Rank { get; public set; }
+    public string Name { get; public set; }
+    public bool CanInvite { get; public set; }
+    public bool CanKick { get; public set; }
+    public bool CanPromote { get; public set; }
+    public bool CanDemote { get; public set; }
+    public bool CanAccessLogs { get; public set; }
+    public bool CanAccessScoreEvents { get; public set; }
+    public VariableDictionary Variables { get; public set; }
     [CompilerGeneratedAttribute]
 public int get_RoleId();
     [CompilerGeneratedAttribute]
@@ -992,45 +800,29 @@ public void set_Variables(VariableDictionary value);
 }
 public class Facepunch.Nexus.Models.ClanRoleParameters : ValueType {
     [CompilerGeneratedAttribute]
-
 private string <Name>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private bool <CanInvite>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private bool <CanKick>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private bool <CanPromote>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private bool <CanDemote>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private bool <CanAccessLogs>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private bool <CanAccessScoreEvents>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private List`1<VariableUpdate> <Variables>k__BackingField;
-    
-public string Name { get; public set; }
-    
-public bool CanInvite { get; public set; }
-    
-public bool CanKick { get; public set; }
-    
-public bool CanPromote { get; public set; }
-    
-public bool CanDemote { get; public set; }
-    
-public bool CanAccessLogs { get; public set; }
-    
-public bool CanAccessScoreEvents { get; public set; }
-    
-public List`1<VariableUpdate> Variables { get; public set; }
+    public string Name { get; public set; }
+    public bool CanInvite { get; public set; }
+    public bool CanKick { get; public set; }
+    public bool CanPromote { get; public set; }
+    public bool CanDemote { get; public set; }
+    public bool CanAccessLogs { get; public set; }
+    public bool CanAccessScoreEvents { get; public set; }
+    public List`1<VariableUpdate> Variables { get; public set; }
     [CompilerGeneratedAttribute]
 public string get_Name();
     [CompilerGeneratedAttribute]
@@ -1066,50 +858,32 @@ public void set_Variables(List`1<VariableUpdate> value);
 }
 public class Facepunch.Nexus.Models.ClanScoreEventEntry : ValueType {
     [CompilerGeneratedAttribute]
-
 private long <Timestamp>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <Type>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <Score>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <Multiplier>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <PlayerId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <OtherPlayerId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private Nullable`1<long> <OtherClanId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <Arg1>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <Arg2>k__BackingField;
-    
-public long Timestamp { get; public set; }
-    
-public int Type { get; public set; }
-    
-public int Score { get; public set; }
-    
-public int Multiplier { get; public set; }
-    
-public string PlayerId { get; public set; }
-    
-public string OtherPlayerId { get; public set; }
-    
-public Nullable`1<long> OtherClanId { get; public set; }
-    
-public string Arg1 { get; public set; }
-    
-public string Arg2 { get; public set; }
+    public long Timestamp { get; public set; }
+    public int Type { get; public set; }
+    public int Score { get; public set; }
+    public int Multiplier { get; public set; }
+    public string PlayerId { get; public set; }
+    public string OtherPlayerId { get; public set; }
+    public Nullable`1<long> OtherClanId { get; public set; }
+    public string Arg1 { get; public set; }
+    public string Arg2 { get; public set; }
     [CompilerGeneratedAttribute]
 public long get_Timestamp();
     [CompilerGeneratedAttribute]
@@ -1149,35 +923,23 @@ public void set_Arg2(string value);
 }
 public class Facepunch.Nexus.Models.ClanVariablesUpdate : ValueType {
     [CompilerGeneratedAttribute]
-
 private List`1<VariableUpdate> <Variables>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <EventKey>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <Arg1>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <Arg2>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <Arg3>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <Arg4>k__BackingField;
-    
-public List`1<VariableUpdate> Variables { get; public set; }
-    
-public string EventKey { get; public set; }
-    
-public string Arg1 { get; public set; }
-    
-public string Arg2 { get; public set; }
-    
-public string Arg3 { get; public set; }
-    
-public string Arg4 { get; public set; }
+    public List`1<VariableUpdate> Variables { get; public set; }
+    public string EventKey { get; public set; }
+    public string Arg1 { get; public set; }
+    public string Arg2 { get; public set; }
+    public string Arg3 { get; public set; }
+    public string Arg4 { get; public set; }
     [CompilerGeneratedAttribute]
 public List`1<VariableUpdate> get_Variables();
     [CompilerGeneratedAttribute]
@@ -1205,10 +967,8 @@ public void set_Arg4(string value);
 }
 internal class Facepunch.Nexus.Models.CompleteTransfersRequest : ValueType {
     [CompilerGeneratedAttribute]
-
 private IEnumerable`1<string> <PlayerIds>k__BackingField;
-    
-public IEnumerable`1<string> PlayerIds { get; public set; }
+    public IEnumerable`1<string> PlayerIds { get; public set; }
     [CompilerGeneratedAttribute]
 public IEnumerable`1<string> get_PlayerIds();
     [CompilerGeneratedAttribute]
@@ -1218,25 +978,18 @@ internal class Facepunch.Nexus.Models.CompleteTransfersResponse : ValueType {
 }
 internal class Facepunch.Nexus.Models.IncomingMessage : ValueType {
     [CompilerGeneratedAttribute]
-
 private string <MessageId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <ContentType>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private Byte[] <Data>k__BackingField;
     [JsonPropertyAttribute("i")]
-
 public string MessageId { get; public set; }
     [JsonIgnoreAttribute]
-
 public Guid Id { get; }
     [JsonPropertyAttribute("t")]
-
 public string ContentType { get; public set; }
     [JsonPropertyAttribute("p")]
-
 public Byte[] Data { get; public set; }
     [CompilerGeneratedAttribute]
 public string get_MessageId();
@@ -1254,50 +1007,32 @@ public void set_Data(Byte[] value);
 }
 public class Facepunch.Nexus.Models.NewClanScoreEventBatchEntry : ValueType {
     [CompilerGeneratedAttribute]
-
 private long <ClanId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <Type>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <Score>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <Multiplier>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <PlayerId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <OtherPlayerId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private Nullable`1<long> <OtherClanId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <Arg1>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <Arg2>k__BackingField;
-    
-public long ClanId { get; public set; }
-    
-public int Type { get; public set; }
-    
-public int Score { get; public set; }
-    
-public int Multiplier { get; public set; }
-    
-public string PlayerId { get; public set; }
-    
-public string OtherPlayerId { get; public set; }
-    
-public Nullable`1<long> OtherClanId { get; public set; }
-    
-public string Arg1 { get; public set; }
-    
-public string Arg2 { get; public set; }
+    public long ClanId { get; public set; }
+    public int Type { get; public set; }
+    public int Score { get; public set; }
+    public int Multiplier { get; public set; }
+    public string PlayerId { get; public set; }
+    public string OtherPlayerId { get; public set; }
+    public Nullable`1<long> OtherClanId { get; public set; }
+    public string Arg1 { get; public set; }
+    public string Arg2 { get; public set; }
     [CompilerGeneratedAttribute]
 public long get_ClanId();
     [CompilerGeneratedAttribute]
@@ -1337,45 +1072,29 @@ public void set_Arg2(string value);
 }
 public class Facepunch.Nexus.Models.NewClanScoreEventEntry : ValueType {
     [CompilerGeneratedAttribute]
-
 private int <Type>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <Score>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <Multiplier>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <PlayerId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <OtherPlayerId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private Nullable`1<long> <OtherClanId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <Arg1>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <Arg2>k__BackingField;
-    
-public int Type { get; public set; }
-    
-public int Score { get; public set; }
-    
-public int Multiplier { get; public set; }
-    
-public string PlayerId { get; public set; }
-    
-public string OtherPlayerId { get; public set; }
-    
-public Nullable`1<long> OtherClanId { get; public set; }
-    
-public string Arg1 { get; public set; }
-    
-public string Arg2 { get; public set; }
+    public int Type { get; public set; }
+    public int Score { get; public set; }
+    public int Multiplier { get; public set; }
+    public string PlayerId { get; public set; }
+    public string OtherPlayerId { get; public set; }
+    public Nullable`1<long> OtherClanId { get; public set; }
+    public string Arg1 { get; public set; }
+    public string Arg2 { get; public set; }
     [CompilerGeneratedAttribute]
 public int get_Type();
     [CompilerGeneratedAttribute]
@@ -1411,55 +1130,35 @@ public void set_Arg2(string value);
 }
 public class Facepunch.Nexus.Models.Nexus : object {
     [CompilerGeneratedAttribute]
-
 private int <NexusId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <Name>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private long <LastReset>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <ZoneCount>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <MaxPlayers>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <OnlinePlayers>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <QueuedPlayers>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <Build>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <Protocol>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <Tags>k__BackingField;
-    
-public int NexusId { get; public set; }
-    
-public string Name { get; public set; }
-    
-public long LastReset { get; public set; }
-    
-public int ZoneCount { get; public set; }
-    
-public int MaxPlayers { get; public set; }
-    
-public int OnlinePlayers { get; public set; }
-    
-public int QueuedPlayers { get; public set; }
-    
-public int Build { get; public set; }
-    
-public int Protocol { get; public set; }
-    
-public string Tags { get; public set; }
+    public int NexusId { get; public set; }
+    public string Name { get; public set; }
+    public long LastReset { get; public set; }
+    public int ZoneCount { get; public set; }
+    public int MaxPlayers { get; public set; }
+    public int OnlinePlayers { get; public set; }
+    public int QueuedPlayers { get; public set; }
+    public int Build { get; public set; }
+    public int Protocol { get; public set; }
+    public string Tags { get; public set; }
     [CompilerGeneratedAttribute]
 public int get_NexusId();
     [CompilerGeneratedAttribute]
@@ -1503,50 +1202,32 @@ public void set_Tags(string value);
 }
 public class Facepunch.Nexus.Models.NexusDetails : object {
     [CompilerGeneratedAttribute]
-
 private string <Name>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private long <LastReset>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <MaxPlayers>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <OnlinePlayers>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <QueuedPlayers>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <Build>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <Protocol>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private List`1<NexusZoneDetails> <Zones>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private VariableDictionary <Variables>k__BackingField;
-    
-public string Name { get; public set; }
-    
-public long LastReset { get; public set; }
-    
-public int MaxPlayers { get; public set; }
-    
-public int OnlinePlayers { get; public set; }
-    
-public int QueuedPlayers { get; public set; }
-    
-public int Build { get; public set; }
-    
-public int Protocol { get; public set; }
-    
-public List`1<NexusZoneDetails> Zones { get; public set; }
-    
-public VariableDictionary Variables { get; public set; }
+    public string Name { get; public set; }
+    public long LastReset { get; public set; }
+    public int MaxPlayers { get; public set; }
+    public int OnlinePlayers { get; public set; }
+    public int QueuedPlayers { get; public set; }
+    public int Build { get; public set; }
+    public int Protocol { get; public set; }
+    public List`1<NexusZoneDetails> Zones { get; public set; }
+    public VariableDictionary Variables { get; public set; }
     [CompilerGeneratedAttribute]
 public string get_Name();
     [CompilerGeneratedAttribute]
@@ -1586,98 +1267,63 @@ public void set_Variables(VariableDictionary value);
 }
 public class Facepunch.Nexus.Models.NexusListing : ValueType {
     [CompilerGeneratedAttribute]
-
 private List`1<Nexus> <Nexuses>k__BackingField;
-    
-public List`1<Nexus> Nexuses { get; public set; }
+    public List`1<Nexus> Nexuses { get; public set; }
     [CompilerGeneratedAttribute]
 public List`1<Nexus> get_Nexuses();
     [CompilerGeneratedAttribute]
 public void set_Nexuses(List`1<Nexus> value);
 }
 public enum Facepunch.Nexus.Models.NexusRealm : Enum {
-    
-public byte value__;
-    
-public static NexusRealm Development;
-    
-public static NexusRealm Staging;
-    
-public static NexusRealm Production;
-    
-public static NexusRealm Count;
+    public byte value__;
+    public static NexusRealm Development;
+    public static NexusRealm Staging;
+    public static NexusRealm Production;
+    public static NexusRealm Count;
 }
 public class Facepunch.Nexus.Models.NexusZoneDetails : object {
     [CompilerGeneratedAttribute]
-
 private int <Id>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <Key>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <Name>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private double <PositionX>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private double <PositionY>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <IpAddress>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <GamePort>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <QueryPort>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <MaxPlayers>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <OnlinePlayers>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <QueuedPlayers>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <Build>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <Protocol>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private VariableDictionary <Variables>k__BackingField;
-    
-public int Id { get; public set; }
-    
-public string Key { get; public set; }
-    
-public string Name { get; public set; }
-    
-public double PositionX { get; public set; }
-    
-public double PositionY { get; public set; }
-    
-public string IpAddress { get; public set; }
-    
-public int GamePort { get; public set; }
-    
-public int QueryPort { get; public set; }
-    
-public int MaxPlayers { get; public set; }
-    
-public int OnlinePlayers { get; public set; }
-    
-public int QueuedPlayers { get; public set; }
-    
-public int Build { get; public set; }
-    
-public int Protocol { get; public set; }
-    
-public VariableDictionary Variables { get; public set; }
+    public int Id { get; public set; }
+    public string Key { get; public set; }
+    public string Name { get; public set; }
+    public double PositionX { get; public set; }
+    public double PositionY { get; public set; }
+    public string IpAddress { get; public set; }
+    public int GamePort { get; public set; }
+    public int QueryPort { get; public set; }
+    public int MaxPlayers { get; public set; }
+    public int OnlinePlayers { get; public set; }
+    public int QueuedPlayers { get; public set; }
+    public int Build { get; public set; }
+    public int Protocol { get; public set; }
+    public VariableDictionary Variables { get; public set; }
     [CompilerGeneratedAttribute]
 public int get_Id();
     [CompilerGeneratedAttribute]
@@ -1737,45 +1383,29 @@ public void set_Variables(VariableDictionary value);
 }
 public class Facepunch.Nexus.Models.PlayerDetails : object {
     [CompilerGeneratedAttribute]
-
 private string <PlayerId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private long <LastSeen>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <AssignedZoneKey>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private VariableDictionary <Variables>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <ConnectZoneKey>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <ConnectIpAddress>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private Nullable`1<int> <ConnectGamePort>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private Nullable`1<int> <ConnectQueryPort>k__BackingField;
-    
-public string PlayerId { get; public set; }
-    
-public long LastSeen { get; public set; }
-    
-public string AssignedZoneKey { get; public set; }
-    
-public VariableDictionary Variables { get; public set; }
-    
-public string ConnectZoneKey { get; public set; }
-    
-public string ConnectIpAddress { get; public set; }
-    
-public Nullable`1<int> ConnectGamePort { get; public set; }
-    
-public Nullable`1<int> ConnectQueryPort { get; public set; }
+    public string PlayerId { get; public set; }
+    public long LastSeen { get; public set; }
+    public string AssignedZoneKey { get; public set; }
+    public VariableDictionary Variables { get; public set; }
+    public string ConnectZoneKey { get; public set; }
+    public string ConnectIpAddress { get; public set; }
+    public Nullable`1<int> ConnectGamePort { get; public set; }
+    public Nullable`1<int> ConnectQueryPort { get; public set; }
     [CompilerGeneratedAttribute]
 public string get_PlayerId();
     [CompilerGeneratedAttribute]
@@ -1811,15 +1441,11 @@ public void set_ConnectQueryPort(Nullable`1<int> value);
 }
 internal class Facepunch.Nexus.Models.RegisterTransfersRequest : ValueType {
     [CompilerGeneratedAttribute]
-
 private IEnumerable`1<string> <PlayerIds>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <ToZoneKey>k__BackingField;
-    
-public IEnumerable`1<string> PlayerIds { get; public set; }
-    
-public string ToZoneKey { get; public set; }
+    public IEnumerable`1<string> PlayerIds { get; public set; }
+    public string ToZoneKey { get; public set; }
     [CompilerGeneratedAttribute]
 public IEnumerable`1<string> get_PlayerIds();
     [CompilerGeneratedAttribute]
@@ -1833,20 +1459,14 @@ internal class Facepunch.Nexus.Models.RegisterTransfersResponse : ValueType {
 }
 public class Facepunch.Nexus.Models.VariableData : ValueType {
     [CompilerGeneratedAttribute]
-
 private string <Value>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private VariableType <Type>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private long <LastUpdated>k__BackingField;
-    
-public string Value { get; public set; }
-    
-public VariableType Type { get; public set; }
-    
-public long LastUpdated { get; public set; }
+    public string Value { get; public set; }
+    public VariableType Type { get; public set; }
+    public long LastUpdated { get; public set; }
     [CompilerGeneratedAttribute]
 public string get_Value();
     [CompilerGeneratedAttribute]
@@ -1863,41 +1483,27 @@ public void set_LastUpdated(long value);
 public class Facepunch.Nexus.Models.VariableDictionary : Dictionary`2<string, VariableData> {
 }
 public enum Facepunch.Nexus.Models.VariableType : Enum {
-    
-public byte value__;
-    
-public static VariableType Binary;
-    
-public static VariableType String;
+    public byte value__;
+    public static VariableType Binary;
+    public static VariableType String;
 }
 [IsReadOnlyAttribute]
 public class Facepunch.Nexus.Models.VariableUpdate : ValueType {
     [CompilerGeneratedAttribute]
-
 private string <Key>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private VariableType <Type>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private Nullable`1<bool> <Transient>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private Nullable`1<bool> <Secret>k__BackingField;
-    
-private Memory`1<byte> _binaryValue;
-    
-private string _stringValue;
-    
-public string Key { get; }
-    
-public VariableType Type { get; }
-    
-public Nullable`1<bool> Transient { get; }
-    
-public Nullable`1<bool> Secret { get; }
-    
-public string Value { get; }
+    private Memory`1<byte> _binaryValue;
+    private string _stringValue;
+    public string Key { get; }
+    public VariableType Type { get; }
+    public Nullable`1<bool> Transient { get; }
+    public Nullable`1<bool> Secret { get; }
+    public string Value { get; }
     public VariableUpdate(string key, Memory`1<byte> value, Nullable`1<bool> transient, Nullable`1<bool> secret);
     public VariableUpdate(string key, string value, Nullable`1<bool> transient, Nullable`1<bool> secret);
     [CompilerGeneratedAttribute]
@@ -1912,50 +1518,32 @@ public Nullable`1<bool> get_Secret();
 }
 public class Facepunch.Nexus.Models.ZoneDetails : object {
     [CompilerGeneratedAttribute]
-
 private int <NexusId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <ZoneId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <Key>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <Name>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private double <PositionX>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private double <PositionY>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private VariableDictionary <Variables>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <NexusName>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private VariableDictionary <NexusVariables>k__BackingField;
-    
-public int NexusId { get; public set; }
-    
-public int ZoneId { get; public set; }
-    
-public string Key { get; public set; }
-    
-public string Name { get; public set; }
-    
-public double PositionX { get; public set; }
-    
-public double PositionY { get; public set; }
-    
-public VariableDictionary Variables { get; public set; }
-    
-public string NexusName { get; public set; }
-    
-public VariableDictionary NexusVariables { get; public set; }
+    public int NexusId { get; public set; }
+    public int ZoneId { get; public set; }
+    public string Key { get; public set; }
+    public string Name { get; public set; }
+    public double PositionX { get; public set; }
+    public double PositionY { get; public set; }
+    public VariableDictionary Variables { get; public set; }
+    public string NexusName { get; public set; }
+    public VariableDictionary NexusVariables { get; public set; }
     [CompilerGeneratedAttribute]
 public int get_NexusId();
     [CompilerGeneratedAttribute]
@@ -1995,15 +1583,11 @@ public void set_NexusVariables(VariableDictionary value);
 }
 public class Facepunch.Nexus.Models.ZoneMapCheckResult : object {
     [CompilerGeneratedAttribute]
-
 private string <Key>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private DateTimeOffset <LastUpdated>k__BackingField;
-    
-public string Key { get; public set; }
-    
-public DateTimeOffset LastUpdated { get; public set; }
+    public string Key { get; public set; }
+    public DateTimeOffset LastUpdated { get; public set; }
     [CompilerGeneratedAttribute]
 public string get_Key();
     [CompilerGeneratedAttribute]
@@ -2015,25 +1599,17 @@ public void set_LastUpdated(DateTimeOffset value);
 }
 public class Facepunch.Nexus.Models.ZonePlayerDetails : object {
     [CompilerGeneratedAttribute]
-
 private string <PlayerId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private long <LastSeen>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private Dictionary`2<string, VariableData> <Variables>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <AssignedZoneKey>k__BackingField;
-    
-public string PlayerId { get; public set; }
-    
-public long LastSeen { get; public set; }
-    
-public Dictionary`2<string, VariableData> Variables { get; public set; }
-    
-public string AssignedZoneKey { get; public set; }
+    public string PlayerId { get; public set; }
+    public long LastSeen { get; public set; }
+    public Dictionary`2<string, VariableData> Variables { get; public set; }
+    public string AssignedZoneKey { get; public set; }
     [CompilerGeneratedAttribute]
 public string get_PlayerId();
     [CompilerGeneratedAttribute]
@@ -2053,20 +1629,14 @@ public void set_AssignedZoneKey(string value);
 }
 internal class Facepunch.Nexus.Models.ZonePlayerLogin : ZonePlayerDetails {
     [CompilerGeneratedAttribute]
-
 private string <RedirectIpAddress>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private Nullable`1<int> <RedirectGamePort>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private Nullable`1<int> <RedirectQueryPort>k__BackingField;
-    
-public string RedirectIpAddress { get; public set; }
-    
-public Nullable`1<int> RedirectGamePort { get; public set; }
-    
-public Nullable`1<int> RedirectQueryPort { get; public set; }
+    public string RedirectIpAddress { get; public set; }
+    public Nullable`1<int> RedirectGamePort { get; public set; }
+    public Nullable`1<int> RedirectQueryPort { get; public set; }
     [CompilerGeneratedAttribute]
 public string get_RedirectIpAddress();
     [CompilerGeneratedAttribute]
@@ -2081,12 +1651,9 @@ public Nullable`1<int> get_RedirectQueryPort();
 public void set_RedirectQueryPort(Nullable`1<int> value);
 }
 public class Facepunch.Nexus.NexusAnonymousClient : object {
-    
-private INexusConnector _connector;
-    
-private CachedValue`1<List`1<Nexus>> _cachedNexusList;
-    
-private CachedValue`2<int, NexusDetails> _cachedNexusDetails;
+    private INexusConnector _connector;
+    private CachedValue`1<List`1<Nexus>> _cachedNexusList;
+    private CachedValue`2<int, NexusDetails> _cachedNexusDetails;
     public NexusAnonymousClient(INexusLogger logger, IClockProvider clock, string baseUrl);
     internal NexusAnonymousClient(INexusConnector connector, IClockProvider clock);
     [AsyncStateMachineAttribute("Facepunch.Nexus.NexusAnonymousClient/<GetNexusList>d__5")]
@@ -2096,67 +1663,41 @@ public ValueTask`1<NexusDetails> GetNexusDetails(int nexusId);
     protected virtual void OnNexusDetailsUpdated(int nexusId, NexusDetails details);
 }
 public class Facepunch.Nexus.NexusClan : object {
-    
-private static double RefreshInterval;
+    private static double RefreshInterval;
     [CompilerGeneratedAttribute]
-
 private long <ClanId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <Name>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private long <Created>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <Creator>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private long <Score>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private List`1<NexusClanRole> <Roles>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private List`1<NexusClanMember> <Members>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <MaxMemberCount>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private List`1<ClanInvite> <Invites>k__BackingField;
-    
-private NexusZoneClient _client;
-    
-private INexusZoneConnector _zoneConnector;
-    
-private IClockProvider _clockProvider;
-    
-private INexusLogger _logger;
-    
-private VariableContainer _variables;
-    
-private double _lastRefreshed;
-    
-public long ClanId { get; }
-    
-public string Name { get; private set; }
-    
-public long Created { get; private set; }
-    
-public string Creator { get; private set; }
-    
-public long Score { get; private set; }
-    
-public List`1<NexusClanRole> Roles { get; }
-    
-public List`1<NexusClanMember> Members { get; }
-    
-public int MaxMemberCount { get; private set; }
-    
-public List`1<ClanInvite> Invites { get; }
-    
-public IEnumerable`1<KeyValuePair`2<string, Variable>> Variables { get; }
+    private NexusZoneClient _client;
+    private INexusZoneConnector _zoneConnector;
+    private IClockProvider _clockProvider;
+    private INexusLogger _logger;
+    private VariableContainer _variables;
+    private double _lastRefreshed;
+    public long ClanId { get; }
+    public string Name { get; private set; }
+    public long Created { get; private set; }
+    public string Creator { get; private set; }
+    public long Score { get; private set; }
+    public List`1<NexusClanRole> Roles { get; }
+    public List`1<NexusClanMember> Members { get; }
+    public int MaxMemberCount { get; private set; }
+    public List`1<ClanInvite> Invites { get; }
+    public IEnumerable`1<KeyValuePair`2<string, Variable>> Variables { get; }
     internal NexusClan(NexusZoneClient client, INexusZoneConnector zoneConnector, IClockProvider clockProvider, INexusLogger logger, long clanId);
     [CompilerGeneratedAttribute]
 public long get_ClanId();
@@ -2230,29 +1771,19 @@ public Task`1<NexusClanResultCode> Disband(string byPlayerId);
 }
 public class Facepunch.Nexus.NexusClanMember : object {
     [CompilerGeneratedAttribute]
-
 private string <PlayerId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <RoleId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private long <Joined>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private long <LastSeen>k__BackingField;
-    
-private VariableContainer _variables;
-    
-public string PlayerId { get; public set; }
-    
-public int RoleId { get; public set; }
-    
-public long Joined { get; public set; }
-    
-public long LastSeen { get; public set; }
-    
-public IEnumerable`1<KeyValuePair`2<string, Variable>> Variables { get; }
+    private VariableContainer _variables;
+    public string PlayerId { get; public set; }
+    public int RoleId { get; public set; }
+    public long Joined { get; public set; }
+    public long LastSeen { get; public set; }
+    public IEnumerable`1<KeyValuePair`2<string, Variable>> Variables { get; }
     public NexusClanMember(ClanMember details);
     [CompilerGeneratedAttribute]
 public string get_PlayerId();
@@ -2277,16 +1808,11 @@ public void set_LastSeen(long value);
 [IsReadOnlyAttribute]
 public class Facepunch.Nexus.NexusClanResult`1 : ValueType {
     [CompilerGeneratedAttribute]
-
 private NexusClanResultCode <ResultCode>k__BackingField;
-    
-private T _response;
-    
-private bool _hasResponse;
-    
-public NexusClanResultCode ResultCode { get; }
-    
-public bool IsSuccess { get; }
+    private T _response;
+    private bool _hasResponse;
+    public NexusClanResultCode ResultCode { get; }
+    public bool IsSuccess { get; }
     internal NexusClanResult`1(NexusClanResultCode resultCode);
     internal NexusClanResult`1(T response);
     [CompilerGeneratedAttribute]
@@ -2295,85 +1821,51 @@ public NexusClanResultCode get_ResultCode();
     public bool TryGetResponse(T& response);
 }
 public enum Facepunch.Nexus.NexusClanResultCode : Enum {
-    
-public int value__;
-    
-public static NexusClanResultCode Fail;
-    
-public static NexusClanResultCode Success;
-    
-public static NexusClanResultCode NoClan;
-    
-public static NexusClanResultCode NotFound;
-    
-public static NexusClanResultCode NoPermission;
-    
-public static NexusClanResultCode DuplicateName;
-    
-public static NexusClanResultCode RoleNotEmpty;
-    
-public static NexusClanResultCode CannotSwapLeader;
-    
-public static NexusClanResultCode CannotDeleteLeader;
-    
-public static NexusClanResultCode CannotKickLeader;
-    
-public static NexusClanResultCode CannotDemoteLeader;
-    
-public static NexusClanResultCode AlreadyInAClan;
-    
-public static NexusClanResultCode ClanIsFull;
+    public int value__;
+    public static NexusClanResultCode Fail;
+    public static NexusClanResultCode Success;
+    public static NexusClanResultCode NoClan;
+    public static NexusClanResultCode NotFound;
+    public static NexusClanResultCode NoPermission;
+    public static NexusClanResultCode DuplicateName;
+    public static NexusClanResultCode RoleNotEmpty;
+    public static NexusClanResultCode CannotSwapLeader;
+    public static NexusClanResultCode CannotDeleteLeader;
+    public static NexusClanResultCode CannotKickLeader;
+    public static NexusClanResultCode CannotDemoteLeader;
+    public static NexusClanResultCode AlreadyInAClan;
+    public static NexusClanResultCode ClanIsFull;
 }
 public class Facepunch.Nexus.NexusClanRole : object {
     [CompilerGeneratedAttribute]
-
 private int <RoleId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <Rank>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <Name>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private bool <CanInvite>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private bool <CanKick>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private bool <CanPromote>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private bool <CanDemote>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private bool <CanAccessLogs>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private bool <CanAccessScoreEvents>k__BackingField;
-    
-private VariableContainer _variables;
-    
-public int RoleId { get; public set; }
-    
-public int Rank { get; public set; }
-    
-public string Name { get; public set; }
-    
-public bool CanInvite { get; public set; }
-    
-public bool CanKick { get; public set; }
-    
-public bool CanPromote { get; public set; }
-    
-public bool CanDemote { get; public set; }
-    
-public bool CanAccessLogs { get; public set; }
-    
-public bool CanAccessScoreEvents { get; public set; }
-    
-public IEnumerable`1<KeyValuePair`2<string, Variable>> Variables { get; }
+    private VariableContainer _variables;
+    public int RoleId { get; public set; }
+    public int Rank { get; public set; }
+    public string Name { get; public set; }
+    public bool CanInvite { get; public set; }
+    public bool CanKick { get; public set; }
+    public bool CanPromote { get; public set; }
+    public bool CanDemote { get; public set; }
+    public bool CanAccessLogs { get; public set; }
+    public bool CanAccessScoreEvents { get; public set; }
+    public IEnumerable`1<KeyValuePair`2<string, Variable>> Variables { get; }
     public NexusClanRole(ClanRole details);
     [CompilerGeneratedAttribute]
 public int get_RoleId();
@@ -2429,24 +1921,15 @@ public class Facepunch.Nexus.NexusInitializedHandler : MulticastDelegate {
 }
 [IsReadOnlyAttribute]
 public class Facepunch.Nexus.NexusLoginResult : ValueType {
-    
-private ZonePlayerLogin _login;
-    
-public string PlayerId { get; }
-    
-public long LastSeen { get; }
-    
-public Dictionary`2<string, VariableData> Variables { get; }
-    
-public string AssignedZoneKey { get; }
-    
-public bool IsRedirect { get; }
-    
-public string RedirectIpAddress { get; }
-    
-public int RedirectGamePort { get; }
-    
-public int RedirectQueryPort { get; }
+    private ZonePlayerLogin _login;
+    public string PlayerId { get; }
+    public long LastSeen { get; }
+    public Dictionary`2<string, VariableData> Variables { get; }
+    public string AssignedZoneKey { get; }
+    public bool IsRedirect { get; }
+    public string RedirectIpAddress { get; }
+    public int RedirectGamePort { get; }
+    public int RedirectQueryPort { get; }
     internal NexusLoginResult(ZonePlayerLogin login);
     public string get_PlayerId();
     public long get_LastSeen();
@@ -2459,33 +1942,21 @@ public int RedirectQueryPort { get; }
 }
 [IsReadOnlyAttribute]
 public class Facepunch.Nexus.NexusMessage : ValueType {
-    
-private string _stringData;
-    
-private Byte[] _binaryData;
+    private string _stringData;
+    private Byte[] _binaryData;
     [CompilerGeneratedAttribute]
-
 private string <MessageId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private Uuid <Id>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <ContentType>k__BackingField;
-    
-internal string MessageId { get; }
-    
-public Uuid Id { get; }
-    
-public string ContentType { get; }
-    
-public bool IsString { get; }
-    
-public bool IsBinary { get; }
-    
-public string AsString { get; }
-    
-public Byte[] AsBinary { get; }
+    internal string MessageId { get; }
+    public Uuid Id { get; }
+    public string ContentType { get; }
+    public bool IsString { get; }
+    public bool IsBinary { get; }
+    public string AsString { get; }
+    public Byte[] AsBinary { get; }
     internal NexusMessage(string messageId, Guid id, string contentType, string data);
     internal NexusMessage(string messageId, Guid id, string contentType, Byte[] data);
     [CompilerGeneratedAttribute]
@@ -2500,30 +1971,19 @@ public string get_ContentType();
     public Byte[] get_AsBinary();
 }
 public class Facepunch.Nexus.NexusPlayer : object {
-    
-private static double RefreshInterval;
-    
-private INexusLogger _logger;
-    
-private INexusZoneConnector _zoneConnector;
-    
-private IClockProvider _clockProvider;
-    
-private VariableContainer _variables;
-    
-private double _lastRefreshed;
+    private static double RefreshInterval;
+    private INexusLogger _logger;
+    private INexusZoneConnector _zoneConnector;
+    private IClockProvider _clockProvider;
+    private VariableContainer _variables;
+    private double _lastRefreshed;
     [CompilerGeneratedAttribute]
-
 private string <PlayerId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private string <AssignedZoneKey>k__BackingField;
-    
-public string PlayerId { get; }
-    
-public string AssignedZoneKey { get; private set; }
-    
-public IEnumerable`1<KeyValuePair`2<string, Variable>> Variables { get; }
+    public string PlayerId { get; }
+    public string AssignedZoneKey { get; private set; }
+    public IEnumerable`1<KeyValuePair`2<string, Variable>> Variables { get; }
     internal NexusPlayer(INexusLogger logger, INexusZoneConnector zoneConnector, IClockProvider clockProvider, string playerId);
     [CompilerGeneratedAttribute]
 public string get_PlayerId();
@@ -2546,12 +2006,9 @@ internal Task Refresh();
     internal void UpdateVariables(Dictionary`2<string, VariableData> variables);
 }
 public class Facepunch.Nexus.NexusPlayerClient : BaseNexusPlayerClient {
-    
-private INexusPlayerConnector _connector;
-    
-private AuthHandler _authHandler;
-    
-private CachedValue`2<int, PlayerDetails> _cachedPlayerInfo;
+    private INexusPlayerConnector _connector;
+    private AuthHandler _authHandler;
+    private CachedValue`2<int, PlayerDetails> _cachedPlayerInfo;
     public NexusPlayerClient(INexusLogger logger, string baseUrl, AuthHandler authHandler);
     internal NexusPlayerClient(INexusPlayerConnector connector, IClockProvider clock, double updateInterval, AuthHandler authHandler);
     [AsyncStateMachineAttribute("Facepunch.Nexus.NexusPlayerClient/<Update>d__6")]
@@ -2567,46 +2024,27 @@ public class Facepunch.Nexus.NexusVariableChangedHandler : MulticastDelegate {
 }
 public class Facepunch.Nexus.NexusZoneClient : BaseNexusClient {
     [CompilerGeneratedAttribute]
-
 private INexusClanEventListener <ClanEventListener>k__BackingField;
-    
-private INexusLogger _logger;
-    
-private INexusZoneConnector _connector;
-    
-private INexusSocketConnector _socket;
-    
-private IClockProvider _clock;
-    
-private VariableContainer _nexusVariables;
-    
-private VariableContainer _zoneVariables;
-    
-private CachedValue`1<ZoneDetails> _cachedZoneInfo;
-    
-private CachedValue`1<NexusDetails> _cachedNexusInfo;
-    
-private Dictionary`2<string, NexusPlayer> _players;
-    
-private Dictionary`2<long, NexusClan> _clans;
-    
-private Queue`1<NewClanScoreEventBatchEntry> _scoreEventQueue;
-    
-private List`1<NewClanScoreEventBatchEntry> _scoreEventBatch;
-    
-private bool _submittingScoreEventsBatch;
+    private INexusLogger _logger;
+    private INexusZoneConnector _connector;
+    private INexusSocketConnector _socket;
+    private IClockProvider _clock;
+    private VariableContainer _nexusVariables;
+    private VariableContainer _zoneVariables;
+    private CachedValue`1<ZoneDetails> _cachedZoneInfo;
+    private CachedValue`1<NexusDetails> _cachedNexusInfo;
+    private Dictionary`2<string, NexusPlayer> _players;
+    private Dictionary`2<long, NexusClan> _clans;
+    private Queue`1<NewClanScoreEventBatchEntry> _scoreEventQueue;
+    private List`1<NewClanScoreEventBatchEntry> _scoreEventBatch;
+    private bool _submittingScoreEventsBatch;
     [CompilerGeneratedAttribute]
-
 private ZoneDetails <Zone>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private NexusDetails <Nexus>k__BackingField;
-    
-public INexusClanEventListener ClanEventListener { get; public set; }
-    
-public ZoneDetails Zone { get; private set; }
-    
-public NexusDetails Nexus { get; private set; }
+    public INexusClanEventListener ClanEventListener { get; public set; }
+    public ZoneDetails Zone { get; private set; }
+    public NexusDetails Nexus { get; private set; }
     public NexusZoneClient(INexusLogger logger, string baseUrl, string secretKey, int lockDuration);
     internal NexusZoneClient(INexusLogger logger, INexusZoneConnector connector, INexusSocketConnector socket, IClockProvider clock, double updateInterval);
     [CompilerGeneratedAttribute]
@@ -2682,12 +2120,9 @@ internal ValueTask`1<NexusDetails> GetNexusDetails(int nexusId);
 }
 public class Facepunch.Nexus.Time.DefaultClockProvider : object {
     [CompilerGeneratedAttribute]
-
 private static DefaultClockProvider <Instance>k__BackingField;
-    
-public static DefaultClockProvider Instance { get; }
-    
-public double Timestamp { get; }
+    public static DefaultClockProvider Instance { get; }
+    public double Timestamp { get; }
     private static DefaultClockProvider();
     [CompilerGeneratedAttribute]
 public static DefaultClockProvider get_Instance();
@@ -2695,8 +2130,7 @@ public static DefaultClockProvider get_Instance();
     public sealed virtual Task Delay(double seconds);
 }
 public interface Facepunch.Nexus.Time.IClockProvider {
-    
-public double Timestamp { get; }
+    public double Timestamp { get; }
     public abstract virtual double get_Timestamp();
     public abstract virtual Task Delay(double seconds);
 }
@@ -2707,31 +2141,20 @@ internal static class Facepunch.Nexus.Util : object {
 public static bool Resize(List`1<T> list, int newCount);
 }
 public class Facepunch.Nexus.Uuid : ValueType {
-    
-public static Uuid Empty;
+    public static Uuid Empty;
     [CompilerGeneratedAttribute]
-
 private int <NodeId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <Sequence>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private ulong <Timestamp>k__BackingField;
-    
-private static object _syncRoot;
-    
-private static int _nodeId;
-    
-private static int _sequence;
-    
-private static ulong _previousTimestamp;
-    
-public int NodeId { get; public set; }
-    
-public int Sequence { get; public set; }
-    
-public ulong Timestamp { get; public set; }
+    private static object _syncRoot;
+    private static int _nodeId;
+    private static int _sequence;
+    private static ulong _previousTimestamp;
+    public int NodeId { get; public set; }
+    public int Sequence { get; public set; }
+    public ulong Timestamp { get; public set; }
     public Uuid(int nodeId, int sequence, ulong timestamp);
     private static Uuid();
     [CompilerGeneratedAttribute]
@@ -2757,20 +2180,14 @@ public void set_Timestamp(ulong value);
     public static Uuid Generate();
 }
 public class Facepunch.Nexus.Variable : object {
-    
-private string _rawValue;
-    
-private Byte[] _binaryValue;
+    private string _rawValue;
+    private Byte[] _binaryValue;
     [CompilerGeneratedAttribute]
-
 private VariableType <Type>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private long <LastUpdated>k__BackingField;
-    
-public VariableType Type { get; private set; }
-    
-public long LastUpdated { get; private set; }
+    public VariableType Type { get; private set; }
+    public long LastUpdated { get; private set; }
     [CompilerGeneratedAttribute]
 public VariableType get_Type();
     [CompilerGeneratedAttribute]
@@ -2790,10 +2207,8 @@ private void set_LastUpdated(long value);
     public static bool op_Inequality(Variable variable, Byte[] value);
 }
 internal class Facepunch.Nexus.VariableContainer : object {
-    
-private Dictionary`2<string, Variable> _variables;
-    
-public int Count { get; }
+    private Dictionary`2<string, Variable> _variables;
+    public int Count { get; }
     public int get_Count();
     public bool UpdateFromModel(Dictionary`2<string, VariableData> data, HashSet`1<string> changedKeys);
     public bool UpdateFromModel(string key, VariableData data);

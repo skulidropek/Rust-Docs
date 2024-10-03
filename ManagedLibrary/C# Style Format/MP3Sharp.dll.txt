@@ -1,18 +1,11 @@
 public class MP3Sharp.Buffer16BitStereo : ABuffer {
-    
-internal bool DoubleMonoToStereo;
-    
-private static int OUTPUT_CHANNELS;
-    
-private Byte[] _Buffer;
-    
-private Int32[] _BufferChannelOffsets;
-    
-private int _End;
-    
-private int _Offset;
-    
-internal int BytesLeft { get; }
+    internal bool DoubleMonoToStereo;
+    private static int OUTPUT_CHANNELS;
+    private Byte[] _Buffer;
+    private Int32[] _BufferChannelOffsets;
+    private int _End;
+    private int _Offset;
+    internal int BytesLeft { get; }
     internal int get_BytesLeft();
     internal int Read(Byte[] bufferOut, int offset, int count);
     protected virtual void Append(int channel, short sampleValue);
@@ -23,10 +16,8 @@ internal int BytesLeft { get; }
     internal virtual void Close();
 }
 public abstract class MP3Sharp.Decoding.ABuffer : object {
-    
-internal static int OBUFFERSIZE;
-    
-internal static int MAXCHANNELS;
+    internal static int OBUFFERSIZE;
+    internal static int MAXCHANNELS;
     protected abstract virtual void Append(int channel, short sampleValue);
     internal virtual void AppendSamples(int channel, Single[] samples);
     private static short Clip(float sample);
@@ -36,18 +27,12 @@ internal static int MAXCHANNELS;
     internal abstract virtual void SetStopFlag();
 }
 internal class MP3Sharp.Decoding.BitReserve : object {
-    
-private static int BUFSIZE;
-    
-private static int BUFSIZE_MASK;
-    
-private Int32[] _Buffer;
-    
-private int _Offset;
-    
-private int _Totbit;
-    
-private int _BufByteIdx;
+    private static int BUFSIZE;
+    private static int BUFSIZE_MASK;
+    private Int32[] _Buffer;
+    private int _Offset;
+    private int _Totbit;
+    private int _BufByteIdx;
     private void InitBlock();
     internal int HssTell();
     internal int ReadBits(int n);
@@ -57,36 +42,21 @@ private int _BufByteIdx;
     internal void RewindStreamBytes(int byteCount);
 }
 public class MP3Sharp.Decoding.Bitstream : object {
-    
-private static int BUFFER_INT_SIZE;
-    
-internal static sbyte INITIAL_SYNC;
-    
-internal static sbyte STRICT_SYNC;
-    
-private Int32[] _Bitmask;
-    
-private PushbackStream _SourceStream;
-    
-private int _BitIndex;
-    
-private Crc16[] _CRC;
-    
-private SByte[] _FrameBytes;
-    
-private Int32[] _FrameBuffer;
-    
-private int _FrameSize;
-    
-private Header _Header;
-    
-private bool _SingleChMode;
-    
-private SByte[] _SyncBuffer;
-    
-private int _SyncWord;
-    
-private int _WordPointer;
+    private static int BUFFER_INT_SIZE;
+    internal static sbyte INITIAL_SYNC;
+    internal static sbyte STRICT_SYNC;
+    private Int32[] _Bitmask;
+    private PushbackStream _SourceStream;
+    private int _BitIndex;
+    private Crc16[] _CRC;
+    private SByte[] _FrameBytes;
+    private Int32[] _FrameBuffer;
+    private int _FrameSize;
+    private Header _Header;
+    private bool _SingleChMode;
+    private SByte[] _SyncBuffer;
+    private int _SyncWord;
+    private int _WordPointer;
     internal Bitstream(PushbackStream stream);
     private void InitBlock();
     internal void Close();
@@ -109,28 +79,18 @@ private int _WordPointer;
     private int ReadBytes(SByte[] b, int offs, int len);
 }
 internal class MP3Sharp.Decoding.BitstreamErrors : ValueType {
-    
-internal static int UNKNOWN_ERROR;
-    
-internal static int UNKNOWN_SAMPLE_RATE;
-    
-internal static int STREA_ERROR;
-    
-internal static int UNEXPECTED_EOF;
-    
-internal static int STREA_EOF;
-    
-internal static int BITSTREA_LAST;
-    
-internal static int BITSTREAM_ERROR;
-    
-internal static int DECODER_ERROR;
+    internal static int UNKNOWN_ERROR;
+    internal static int UNKNOWN_SAMPLE_RATE;
+    internal static int STREA_ERROR;
+    internal static int UNEXPECTED_EOF;
+    internal static int STREA_EOF;
+    internal static int BITSTREA_LAST;
+    internal static int BITSTREAM_ERROR;
+    internal static int DECODER_ERROR;
 }
 public class MP3Sharp.Decoding.BitstreamException : MP3SharpException {
-    
-private int _ErrorCode;
-    
-internal int ErrorCode { get; }
+    private int _ErrorCode;
+    internal int ErrorCode { get; }
     internal BitstreamException(string message, Exception inner);
     internal BitstreamException(int errorcode, Exception inner);
     protected BitstreamException(SerializationInfo info, StreamingContext context);
@@ -141,20 +101,13 @@ internal int ErrorCode { get; }
 }
 [DefaultMemberAttribute("Item")]
 internal class MP3Sharp.Decoding.CircularByteBuffer : object {
-    
-private Byte[] _DataArray;
-    
-private int _Index;
-    
-private int _Length;
-    
-private int _NumValid;
-    
-internal int BufferSize { get; internal set; }
-    
-internal byte Item { get; internal set; }
-    
-internal int NumValid { get; internal set; }
+    private Byte[] _DataArray;
+    private int _Index;
+    private int _Length;
+    private int _NumValid;
+    internal int BufferSize { get; internal set; }
+    internal byte Item { get; internal set; }
+    internal int NumValid { get; internal set; }
     internal CircularByteBuffer(int size);
     internal CircularByteBuffer(CircularByteBuffer cdb);
     internal int get_BufferSize();
@@ -174,49 +127,30 @@ internal int NumValid { get; internal set; }
     public virtual string ToString();
 }
 public class MP3Sharp.Decoding.Crc16 : object {
-    
-private static short Polynomial;
-    
-private short _CRC;
+    private static short Polynomial;
+    private short _CRC;
     private static Crc16();
     internal void AddBits(int bitstring, int length);
     internal short Checksum();
 }
 public class MP3Sharp.Decoding.Decoder : object {
-    
-private static Params DecoderDefaultParams;
-    
-private Equalizer _Equalizer;
-    
-private SynthesisFilter _LeftChannelFilter;
-    
-private SynthesisFilter _RightChannelFilter;
-    
-private bool _IsInitialized;
-    
-private LayerIDecoder _L1Decoder;
-    
-private LayerIIDecoder _L2Decoder;
-    
-private LayerIIIDecoder _L3Decoder;
-    
-private ABuffer _Output;
-    
-private int _OutputChannels;
-    
-private int _OutputFrequency;
-    
-internal static Params DefaultParams { get; }
-    
-unknown Equalizer Equalizer {internal set; }
-    
-unknown ABuffer OutputBuffer {internal set; }
-    
-internal int OutputFrequency { get; }
-    
-internal int OutputChannels { get; }
-    
-internal int OutputBlockSize { get; }
+    private static Params DecoderDefaultParams;
+    private Equalizer _Equalizer;
+    private SynthesisFilter _LeftChannelFilter;
+    private SynthesisFilter _RightChannelFilter;
+    private bool _IsInitialized;
+    private LayerIDecoder _L1Decoder;
+    private LayerIIDecoder _L2Decoder;
+    private LayerIIIDecoder _L3Decoder;
+    private ABuffer _Output;
+    private int _OutputChannels;
+    private int _OutputFrequency;
+    internal static Params DefaultParams { get; }
+    unknown Equalizer Equalizer {internal set; }
+    unknown ABuffer OutputBuffer {internal set; }
+    internal int OutputFrequency { get; }
+    internal int OutputChannels { get; }
+    internal int OutputBlockSize { get; }
     internal Decoder(Params params0);
     private static Decoder();
     internal static Params get_DefaultParams();
@@ -233,16 +167,12 @@ internal int OutputBlockSize { get; }
     private void Initialize(Header header);
 }
 internal class MP3Sharp.Decoding.DecoderErrors : ValueType {
-    
-internal static int UNKNOWN_ERROR;
-    
-internal static int UNSUPPORTED_LAYER;
+    internal static int UNKNOWN_ERROR;
+    internal static int UNSUPPORTED_LAYER;
 }
 public class MP3Sharp.Decoding.DecoderException : MP3SharpException {
-    
-private int _ErrorCode;
-    
-internal int ErrorCode { get; }
+    private int _ErrorCode;
+    internal int ErrorCode { get; }
     internal DecoderException(string message, Exception inner);
     internal DecoderException(int errorcode, Exception inner);
     protected DecoderException(SerializationInfo info, StreamingContext context);
@@ -252,8 +182,7 @@ internal int ErrorCode { get; }
     internal static string GetErrorString(int errorcode);
 }
 public abstract class MP3Sharp.Decoding.Decoders.ASubband : object {
-    
-internal static Single[] ScaleFactors;
+    internal static Single[] ScaleFactors;
     private static ASubband();
     internal abstract virtual void ReadAllocation(Bitstream stream, Header header, Crc16 crc);
     internal abstract virtual void ReadScaleFactor(Bitstream stream, Header header);
@@ -264,26 +193,16 @@ public interface MP3Sharp.Decoding.Decoders.IFrameDecoder {
     public abstract virtual void DecodeFrame();
 }
 public class MP3Sharp.Decoding.Decoders.LayerI.SubbandLayer1 : ASubband {
-    
-internal static Single[] TableFactor;
-    
-internal static Single[] TableOffset;
-    
-protected int Allocation;
-    
-protected float Factor;
-    
-protected float Offset;
-    
-protected float Sample;
-    
-protected int Samplelength;
-    
-protected int Samplenumber;
-    
-protected float Scalefactor;
-    
-protected int Subbandnumber;
+    internal static Single[] TableFactor;
+    internal static Single[] TableOffset;
+    protected int Allocation;
+    protected float Factor;
+    protected float Offset;
+    protected float Sample;
+    protected int Samplelength;
+    protected int Samplenumber;
+    protected float Scalefactor;
+    protected int Subbandnumber;
     internal SubbandLayer1(int subbandnumber);
     private static SubbandLayer1();
     internal virtual void ReadAllocation(Bitstream stream, Header header, Crc16 crc);
@@ -292,25 +211,18 @@ protected int Subbandnumber;
     internal virtual bool PutNextSample(int channels, SynthesisFilter filter1, SynthesisFilter filter2);
 }
 public class MP3Sharp.Decoding.Decoders.LayerI.SubbandLayer1IntensityStereo : SubbandLayer1 {
-    
-protected float Channel2Scalefactor;
+    protected float Channel2Scalefactor;
     internal SubbandLayer1IntensityStereo(int subbandnumber);
     internal virtual void ReadScaleFactor(Bitstream stream, Header header);
     internal virtual bool PutNextSample(int channels, SynthesisFilter filter1, SynthesisFilter filter2);
 }
 public class MP3Sharp.Decoding.Decoders.LayerI.SubbandLayer1Stereo : SubbandLayer1 {
-    
-protected int Channel2Allocation;
-    
-protected float Channel2Factor;
-    
-protected float Channel2Offset;
-    
-protected float Channel2Sample;
-    
-protected int Channel2Samplelength;
-    
-protected float Channel2Scalefactor;
+    protected int Channel2Allocation;
+    protected float Channel2Factor;
+    protected float Channel2Offset;
+    protected float Channel2Sample;
+    protected int Channel2Samplelength;
+    protected float Channel2Scalefactor;
     internal SubbandLayer1Stereo(int subbandnumber);
     internal virtual void ReadAllocation(Bitstream stream, Header header, Crc16 crc);
     internal virtual void ReadScaleFactor(Bitstream stream, Header header);
@@ -318,26 +230,16 @@ protected float Channel2Scalefactor;
     internal virtual bool PutNextSample(int channels, SynthesisFilter filter1, SynthesisFilter filter2);
 }
 public class MP3Sharp.Decoding.Decoders.LayerIDecoder : object {
-    
-protected ABuffer Buffer;
-    
-protected Crc16 CRC;
-    
-protected SynthesisFilter Filter1;
-    
-protected SynthesisFilter Filter2;
-    
-protected Header Header;
-    
-protected int Mode;
-    
-protected int NuSubbands;
-    
-protected Bitstream Stream;
-    
-protected ASubband[] Subbands;
-    
-protected int WhichChannels;
+    protected ABuffer Buffer;
+    protected Crc16 CRC;
+    protected SynthesisFilter Filter1;
+    protected SynthesisFilter Filter2;
+    protected Header Header;
+    protected int Mode;
+    protected int NuSubbands;
+    protected Bitstream Stream;
+    protected ASubband[] Subbands;
+    protected int WhichChannels;
     public virtual void DecodeFrame();
     internal virtual void Create(Bitstream stream0, Header header0, SynthesisFilter filtera, SynthesisFilter filterb, ABuffer buffer0, int whichCh0);
     protected virtual void CreateSubbands();
@@ -347,86 +249,46 @@ protected int WhichChannels;
     protected virtual void ReadSampleData();
 }
 public class MP3Sharp.Decoding.Decoders.LayerII.SubbandLayer2 : ASubband {
-    
-internal static Single[] Grouping5Bits;
-    
-internal static Single[] Grouping7Bits;
-    
-internal static Single[] Grouping10Bits;
-    
-internal static Int32[] TableAb1Codelength;
-    
-internal static Single[][] TableAb1Groupingtables;
-    
-internal static Single[] TableAb1Factor;
-    
-internal static Single[] TableAb1C;
-    
-internal static Single[] TableAb1D;
-    
-internal static Single[][] TableAb234Groupingtables;
-    
-internal static Int32[] TableAb2Codelength;
-    
-internal static Single[] TableAb2Factor;
-    
-internal static Single[] TableAb2C;
-    
-internal static Single[] TableAb2D;
-    
-internal static Int32[] TableAb3Codelength;
-    
-internal static Single[] TableAb3Factor;
-    
-internal static Single[] TableAb3C;
-    
-internal static Single[] TableAb3D;
-    
-internal static Int32[] TableAb4Codelength;
-    
-internal static Single[] TableAb4Factor;
-    
-internal static Single[] TableAb4C;
-    
-internal static Single[] TableAb4D;
-    
-internal static Int32[] TableCdCodelength;
-    
-internal static Single[][] TableCdGroupingtables;
-    
-internal static Single[] TableCdFactor;
-    
-internal static Single[] TableCdC;
-    
-internal static Single[] TableCdD;
-    
-protected int Allocation;
-    
-protected Single[] CFactor;
-    
-protected Int32[] Codelength;
-    
-protected Single[] D;
-    
-protected Single[] Factor;
-    
-protected Single[][] Groupingtable;
-    
-protected int Groupnumber;
-    
-protected int Samplenumber;
-    
-protected Single[] Samples;
-    
-protected float Scalefactor1;
-    
-protected float Scalefactor2;
-    
-protected float Scalefactor3;
-    
-protected int Scfsi;
-    
-protected int Subbandnumber;
+    internal static Single[] Grouping5Bits;
+    internal static Single[] Grouping7Bits;
+    internal static Single[] Grouping10Bits;
+    internal static Int32[] TableAb1Codelength;
+    internal static Single[][] TableAb1Groupingtables;
+    internal static Single[] TableAb1Factor;
+    internal static Single[] TableAb1C;
+    internal static Single[] TableAb1D;
+    internal static Single[][] TableAb234Groupingtables;
+    internal static Int32[] TableAb2Codelength;
+    internal static Single[] TableAb2Factor;
+    internal static Single[] TableAb2C;
+    internal static Single[] TableAb2D;
+    internal static Int32[] TableAb3Codelength;
+    internal static Single[] TableAb3Factor;
+    internal static Single[] TableAb3C;
+    internal static Single[] TableAb3D;
+    internal static Int32[] TableAb4Codelength;
+    internal static Single[] TableAb4Factor;
+    internal static Single[] TableAb4C;
+    internal static Single[] TableAb4D;
+    internal static Int32[] TableCdCodelength;
+    internal static Single[][] TableCdGroupingtables;
+    internal static Single[] TableCdFactor;
+    internal static Single[] TableCdC;
+    internal static Single[] TableCdD;
+    protected int Allocation;
+    protected Single[] CFactor;
+    protected Int32[] Codelength;
+    protected Single[] D;
+    protected Single[] Factor;
+    protected Single[][] Groupingtable;
+    protected int Groupnumber;
+    protected int Samplenumber;
+    protected Single[] Samples;
+    protected float Scalefactor1;
+    protected float Scalefactor2;
+    protected float Scalefactor3;
+    protected int Scfsi;
+    protected int Subbandnumber;
     internal SubbandLayer2(int subbandnumber);
     private static SubbandLayer2();
     private void InitBlock();
@@ -439,40 +301,26 @@ protected int Subbandnumber;
     internal virtual bool PutNextSample(int channels, SynthesisFilter filter1, SynthesisFilter filter2);
 }
 public class MP3Sharp.Decoding.Decoders.LayerII.SubbandLayer2IntensityStereo : SubbandLayer2 {
-    
-protected float Channel2Scalefactor1;
-    
-protected float Channel2Scalefactor2;
-    
-protected float Channel2Scalefactor3;
-    
-protected int Channel2Scfsi;
+    protected float Channel2Scalefactor1;
+    protected float Channel2Scalefactor2;
+    protected float Channel2Scalefactor3;
+    protected int Channel2Scfsi;
     internal SubbandLayer2IntensityStereo(int subbandnumber);
     internal virtual void ReadScaleFactorSelection(Bitstream stream, Crc16 crc);
     internal virtual void ReadScaleFactor(Bitstream stream, Header header);
     internal virtual bool PutNextSample(int channels, SynthesisFilter filter1, SynthesisFilter filter2);
 }
 public class MP3Sharp.Decoding.Decoders.LayerII.SubbandLayer2Stereo : SubbandLayer2 {
-    
-protected int Channel2Allocation;
-    
-protected Single[] Channel2C;
-    
-protected Int32[] Channel2Codelength;
-    
-protected Single[] Channel2D;
-    
-protected Single[] Channel2Factor;
-    
-protected Single[] Channel2Samples;
-    
-protected float Channel2Scalefactor1;
-    
-protected float Channel2Scalefactor2;
-    
-protected float Channel2Scalefactor3;
-    
-protected int Channel2Scfsi;
+    protected int Channel2Allocation;
+    protected Single[] Channel2C;
+    protected Int32[] Channel2Codelength;
+    protected Single[] Channel2D;
+    protected Single[] Channel2Factor;
+    protected Single[] Channel2Samples;
+    protected float Channel2Scalefactor1;
+    protected float Channel2Scalefactor2;
+    protected float Channel2Scalefactor3;
+    protected int Channel2Scfsi;
     internal SubbandLayer2Stereo(int subbandnumber);
     internal virtual void ReadAllocation(Bitstream stream, Header header, Crc16 crc);
     internal virtual void ReadScaleFactorSelection(Bitstream stream, Crc16 crc);
@@ -485,179 +333,101 @@ public class MP3Sharp.Decoding.Decoders.LayerIIDecoder : LayerIDecoder {
     protected virtual void ReadScaleFactorSelection();
 }
 public class MP3Sharp.Decoding.Decoders.LayerIII.ChannelData : object {
-    
-internal GranuleInfo[] Granules;
-    
-internal Int32[] ScaleFactorBits;
+    internal GranuleInfo[] Granules;
+    internal Int32[] ScaleFactorBits;
 }
 public class MP3Sharp.Decoding.Decoders.LayerIII.GranuleInfo : object {
-    
-internal int BigValues;
-    
-internal int BlockType;
-    
-internal int Count1TableSelect;
-    
-internal int GlobalGain;
-    
-internal int MixedBlockFlag;
-    
-internal int Part23Length;
-    
-internal int Preflag;
-    
-internal int Region0Count;
-    
-internal int Region1Count;
-    
-internal int ScaleFacCompress;
-    
-internal int ScaleFacScale;
-    
-internal Int32[] SubblockGain;
-    
-internal Int32[] TableSelect;
-    
-internal int WindowSwitchingFlag;
+    internal int BigValues;
+    internal int BlockType;
+    internal int Count1TableSelect;
+    internal int GlobalGain;
+    internal int MixedBlockFlag;
+    internal int Part23Length;
+    internal int Preflag;
+    internal int Region0Count;
+    internal int Region1Count;
+    internal int ScaleFacCompress;
+    internal int ScaleFacScale;
+    internal Int32[] SubblockGain;
+    internal Int32[] TableSelect;
+    internal int WindowSwitchingFlag;
 }
 public class MP3Sharp.Decoding.Decoders.LayerIII.Layer3SideInfo : object {
-    
-internal ChannelData[] Channels;
-    
-internal int MainDataBegin;
-    
-internal int PrivateBits;
+    internal ChannelData[] Channels;
+    internal int MainDataBegin;
+    internal int PrivateBits;
 }
 public class MP3Sharp.Decoding.Decoders.LayerIII.SBI : object {
-    
-internal Int32[] L;
-    
-internal Int32[] S;
+    internal Int32[] L;
+    internal Int32[] S;
     internal SBI(Int32[] thel, Int32[] thes);
 }
 public class MP3Sharp.Decoding.Decoders.LayerIII.ScaleFactorData : object {
-    
-internal Int32[] L;
-    
-internal Int32[][] S;
+    internal Int32[] L;
+    internal Int32[][] S;
 }
 public class MP3Sharp.Decoding.Decoders.LayerIII.ScaleFactorTable : object {
-    
-internal Int32[] L;
-    
-internal Int32[] S;
-    
-private LayerIIIDecoder _EnclosingInstance;
-    
-internal LayerIIIDecoder EnclosingInstance { get; }
+    internal Int32[] L;
+    internal Int32[] S;
+    private LayerIIIDecoder _EnclosingInstance;
+    internal LayerIIIDecoder EnclosingInstance { get; }
     internal ScaleFactorTable(LayerIIIDecoder enclosingInstance);
     internal ScaleFactorTable(LayerIIIDecoder enclosingInstance, Int32[] thel, Int32[] thes);
     internal LayerIIIDecoder get_EnclosingInstance();
     private void InitBlock(LayerIIIDecoder enclosingInstance);
 }
 internal class MP3Sharp.Decoding.Decoders.LayerIIIDecoder : object {
-    
-private static int SSLIMIT;
-    
-private static int SBLIMIT;
-    
-private static Int32[][] Slen;
-    
-internal static Int32[] Pretab;
-    
-internal static Single[] TwoToNegativeHalfPow;
-    
-internal static Single[] PowerTable;
-    
-internal static Single[][] Io;
-    
-internal static Single[] Tan12;
-    
-private static Int32[][] _reorderTable;
-    
-private static Single[] Cs;
-    
-private static Single[] Ca;
-    
-internal static Single[][] Win;
-    
-internal static Int32[][][] NrOfSfbBlock;
-    
-private ABuffer _Buffer;
-    
-private int _Channels;
-    
-private SynthesisFilter _Filter1;
-    
-private SynthesisFilter _Filter2;
-    
-private int _FirstChannel;
-    
-private Header _Header;
-    
-private Int32[] _Is1D;
-    
-private Single[][] _K;
-    
-private int _LastChannel;
-    
-private Single[][][] _Lr;
-    
-private int _MaxGr;
-    
-private Int32[] _Nonzero;
-    
-private Single[] _Out1D;
-    
-private Single[][] _Prevblck;
-    
-private Single[][][] _Ro;
-    
-private ScaleFactorData[] _Scalefac;
-    
-private SBI[] _SfBandIndex;
-    
-private int _Sfreq;
-    
-private Layer3SideInfo _SideInfo;
-    
-private Bitstream _Stream;
-    
-private int _WhichChannels;
-    
-private BitReserve _BitReserve;
-    
-private int _CheckSumHuff;
-    
-private int _FrameStart;
-    
-internal Int32[] IsPos;
-    
-internal Single[] IsRatio;
-    
-private Int32[] _NewSlen;
-    
-private int _Part2Start;
-    
-internal Single[] Rawout;
-    
-private Single[] _Samples1;
-    
-private Single[] _Samples2;
-    
-internal Int32[] ScalefacBuffer;
-    
-internal ScaleFactorTable Sftable;
-    
-internal Single[] TsOutCopy;
-    
-internal Int32[] V;
-    
-internal Int32[] W;
-    
-internal Int32[] X;
-    
-internal Int32[] Y;
+    private static int SSLIMIT;
+    private static int SBLIMIT;
+    private static Int32[][] Slen;
+    internal static Int32[] Pretab;
+    internal static Single[] TwoToNegativeHalfPow;
+    internal static Single[] PowerTable;
+    internal static Single[][] Io;
+    internal static Single[] Tan12;
+    private static Int32[][] _reorderTable;
+    private static Single[] Cs;
+    private static Single[] Ca;
+    internal static Single[][] Win;
+    internal static Int32[][][] NrOfSfbBlock;
+    private ABuffer _Buffer;
+    private int _Channels;
+    private SynthesisFilter _Filter1;
+    private SynthesisFilter _Filter2;
+    private int _FirstChannel;
+    private Header _Header;
+    private Int32[] _Is1D;
+    private Single[][] _K;
+    private int _LastChannel;
+    private Single[][][] _Lr;
+    private int _MaxGr;
+    private Int32[] _Nonzero;
+    private Single[] _Out1D;
+    private Single[][] _Prevblck;
+    private Single[][][] _Ro;
+    private ScaleFactorData[] _Scalefac;
+    private SBI[] _SfBandIndex;
+    private int _Sfreq;
+    private Layer3SideInfo _SideInfo;
+    private Bitstream _Stream;
+    private int _WhichChannels;
+    private BitReserve _BitReserve;
+    private int _CheckSumHuff;
+    private int _FrameStart;
+    internal Int32[] IsPos;
+    internal Single[] IsRatio;
+    private Int32[] _NewSlen;
+    private int _Part2Start;
+    internal Single[] Rawout;
+    private Single[] _Samples1;
+    private Single[] _Samples2;
+    internal Int32[] ScalefacBuffer;
+    internal ScaleFactorTable Sftable;
+    internal Single[] TsOutCopy;
+    internal Int32[] V;
+    internal Int32[] W;
+    internal Int32[] X;
+    internal Int32[] Y;
     private static LayerIIIDecoder();
     internal LayerIIIDecoder(Bitstream stream, Header header, SynthesisFilter filtera, SynthesisFilter filterb, ABuffer buffer, int whichCh);
     public sealed virtual void DecodeFrame();
@@ -681,24 +451,15 @@ internal Int32[] Y;
     internal static Int32[] Reorder(Int32[] scalefacBand);
 }
 public class MP3Sharp.Decoding.Equalizer : object {
-    
-private static int BANDS;
-    
-internal static float BAND_NOT_PRESENT;
-    
-internal static Equalizer PassThruEq;
-    
-private Single[] _Settings;
-    
-unknown Single[] FromFloatArray {internal set; }
-    
-unknown Equalizer FromEqualizer {internal set; }
-    
-unknown EQFunction FromEQFunction {internal set; }
-    
-internal int BandCount { get; }
-    
-internal Single[] BandFactors { get; }
+    private static int BANDS;
+    internal static float BAND_NOT_PRESENT;
+    internal static Equalizer PassThruEq;
+    private Single[] _Settings;
+    unknown Single[] FromFloatArray {internal set; }
+    unknown Equalizer FromEqualizer {internal set; }
+    unknown EQFunction FromEQFunction {internal set; }
+    internal int BandCount { get; }
+    internal Single[] BandFactors { get; }
     internal Equalizer(Single[] settings);
     internal Equalizer(EQFunction eq);
     private static Equalizer();
@@ -715,70 +476,38 @@ internal Single[] BandFactors { get; }
     internal float GetBandFactor(float eq);
 }
 public class MP3Sharp.Decoding.Header : object {
-    
-internal static int MPEG2_LSF;
-    
-internal static int MPEG25_LSF;
-    
-internal static int MPEG1;
-    
-internal static int STEREO;
-    
-internal static int JOINT_STEREO;
-    
-internal static int DUAL_CHANNEL;
-    
-internal static int SINGLE_CHANNEL;
-    
-internal static int FOURTYFOUR_POINT_ONE;
-    
-internal static int FOURTYEIGHT;
-    
-internal static int THIRTYTWO;
-    
-internal static Int32[][] Frequencies;
-    
-internal static Int32[][][] Bitrates;
-    
-internal static String[][][] BitrateStr;
-    
-internal short Checksum;
-    
-internal int NSlots;
-    
-private Crc16 _CRC;
-    
-internal int Framesize;
-    
-private bool _Copyright;
-    
-private bool _Original;
-    
-private int _Headerstring;
-    
-private int _Layer;
-    
-private int _ProtectionBit;
-    
-private int _BitrateIndex;
-    
-private int _PaddingBit;
-    
-private int _ModeExtension;
-    
-private int _Mode;
-    
-private int _NumberOfSubbands;
-    
-private int _IntensityStereoBound;
-    
-private int _SampleFrequency;
-    
-private sbyte _Syncmode;
-    
-private int _Version;
-    
-internal int SyncHeader { get; }
+    internal static int MPEG2_LSF;
+    internal static int MPEG25_LSF;
+    internal static int MPEG1;
+    internal static int STEREO;
+    internal static int JOINT_STEREO;
+    internal static int DUAL_CHANNEL;
+    internal static int SINGLE_CHANNEL;
+    internal static int FOURTYFOUR_POINT_ONE;
+    internal static int FOURTYEIGHT;
+    internal static int THIRTYTWO;
+    internal static Int32[][] Frequencies;
+    internal static Int32[][][] Bitrates;
+    internal static String[][][] BitrateStr;
+    internal short Checksum;
+    internal int NSlots;
+    private Crc16 _CRC;
+    internal int Framesize;
+    private bool _Copyright;
+    private bool _Original;
+    private int _Headerstring;
+    private int _Layer;
+    private int _ProtectionBit;
+    private int _BitrateIndex;
+    private int _PaddingBit;
+    private int _ModeExtension;
+    private int _Mode;
+    private int _NumberOfSubbands;
+    private int _IntensityStereoBound;
+    private int _SampleFrequency;
+    private sbyte _Syncmode;
+    private int _Version;
+    internal int SyncHeader { get; }
     private static Header();
     internal virtual int get_SyncHeader();
     private void InitBlock();
@@ -811,104 +540,58 @@ internal int SyncHeader { get; }
     internal int IntensityStereoBound();
 }
 internal class MP3Sharp.Decoding.Huffman : object {
-    
-private static int MXOFF;
-    
-private static int HTN;
-    
-private static Int32[][] ValTab0;
-    
-private static Int32[][] ValTab1;
-    
-private static Int32[][] ValTab2;
-    
-private static Int32[][] ValTab3;
-    
-private static Int32[][] ValTab4;
-    
-private static Int32[][] ValTab5;
-    
-private static Int32[][] ValTab6;
-    
-private static Int32[][] ValTab7;
-    
-private static Int32[][] ValTab8;
-    
-private static Int32[][] ValTab9;
-    
-private static Int32[][] ValTab10;
-    
-private static Int32[][] ValTab11;
-    
-private static Int32[][] ValTab12;
-    
-private static Int32[][] ValTab13;
-    
-private static Int32[][] ValTab14;
-    
-private static Int32[][] ValTab15;
-    
-private static Int32[][] ValTab16;
-    
-private static Int32[][] ValTab24;
-    
-private static Int32[][] ValTab32;
-    
-private static Int32[][] ValTab33;
-    
-internal static Huffman[] HuffmanTable;
-    
-private int _Linbits;
-    
-private char _Tablename0;
-    
-private char _Tablename1;
-    
-private int _Treelen;
-    
-private Int32[][] _Val;
-    
-private int _Xlen;
-    
-private int _Ylen;
-    
-private Int32[] _Hlen;
-    
-private int _Linmax;
-    
-private int _RefRenamed;
-    
-private Int32[] _Table;
-    
-private char _Tablename2;
+    private static int MXOFF;
+    private static int HTN;
+    private static Int32[][] ValTab0;
+    private static Int32[][] ValTab1;
+    private static Int32[][] ValTab2;
+    private static Int32[][] ValTab3;
+    private static Int32[][] ValTab4;
+    private static Int32[][] ValTab5;
+    private static Int32[][] ValTab6;
+    private static Int32[][] ValTab7;
+    private static Int32[][] ValTab8;
+    private static Int32[][] ValTab9;
+    private static Int32[][] ValTab10;
+    private static Int32[][] ValTab11;
+    private static Int32[][] ValTab12;
+    private static Int32[][] ValTab13;
+    private static Int32[][] ValTab14;
+    private static Int32[][] ValTab15;
+    private static Int32[][] ValTab16;
+    private static Int32[][] ValTab24;
+    private static Int32[][] ValTab32;
+    private static Int32[][] ValTab33;
+    internal static Huffman[] HuffmanTable;
+    private int _Linbits;
+    private char _Tablename0;
+    private char _Tablename1;
+    private int _Treelen;
+    private Int32[][] _Val;
+    private int _Xlen;
+    private int _Ylen;
+    private Int32[] _Hlen;
+    private int _Linmax;
+    private int _RefRenamed;
+    private Int32[] _Table;
+    private char _Tablename2;
     private static Huffman();
     private Huffman(string s, int xlen, int ylen, int linbits, int linmax, int ref, Int32[] table, Int32[] hlen, Int32[][] val, int treelen);
     internal static int Decode(Huffman h, Int32[] x, Int32[] y, Int32[] v, Int32[] w, BitReserve br);
     internal static void Initialize();
 }
 public class MP3Sharp.Decoding.OutputChannels : object {
-    
-internal static int BOTH_CHANNELS;
-    
-internal static int LEFT_CHANNEL;
-    
-internal static int RIGHT_CHANNEL;
-    
-internal static int DOWNMIX_CHANNELS;
-    
-internal static OutputChannels Left;
-    
-internal static OutputChannels Right;
-    
-internal static OutputChannels Both;
-    
-internal static OutputChannels DownMix;
-    
-private int _OutputChannels;
-    
-internal int ChannelsOutputCode { get; }
-    
-internal int ChannelCount { get; }
+    internal static int BOTH_CHANNELS;
+    internal static int LEFT_CHANNEL;
+    internal static int RIGHT_CHANNEL;
+    internal static int DOWNMIX_CHANNELS;
+    internal static OutputChannels Left;
+    internal static OutputChannels Right;
+    internal static OutputChannels Both;
+    internal static OutputChannels DownMix;
+    private int _OutputChannels;
+    internal int ChannelsOutputCode { get; }
+    internal int ChannelCount { get; }
     private OutputChannels(int channels);
     private static OutputChannels();
     internal virtual int get_ChannelsOutputCode();
@@ -918,50 +601,32 @@ internal int ChannelCount { get; }
     public virtual int GetHashCode();
 }
 internal enum MP3Sharp.Decoding.OutputChannelsEnum : Enum {
-    
-public int value__;
-    
-public static OutputChannelsEnum BothChannels;
-    
-public static OutputChannelsEnum LeftChannel;
-    
-public static OutputChannelsEnum RightChannel;
-    
-public static OutputChannelsEnum DownmixChannels;
+    public int value__;
+    public static OutputChannelsEnum BothChannels;
+    public static OutputChannelsEnum LeftChannel;
+    public static OutputChannelsEnum RightChannel;
+    public static OutputChannelsEnum DownmixChannels;
 }
 public class MP3Sharp.Decoding.PushbackStream : object {
-    
-private int _BackBufferSize;
-    
-private CircularByteBuffer _CircularByteBuffer;
-    
-private Stream _Stream;
-    
-private Byte[] _TemporaryBuffer;
-    
-private int _NumForwardBytesInBuffer;
+    private int _BackBufferSize;
+    private CircularByteBuffer _CircularByteBuffer;
+    private Stream _Stream;
+    private Byte[] _TemporaryBuffer;
+    private int _NumForwardBytesInBuffer;
     internal PushbackStream(Stream s, int backBufferSize);
     internal int Read(SByte[] toRead, int offset, int length);
     internal void UnRead(int length);
     internal void Close();
 }
 public class MP3Sharp.Decoding.SampleBuffer : ABuffer {
-    
-private Int16[] _Buffer;
-    
-private Int32[] _Bufferp;
-    
-private int _Channels;
-    
-private int _Frequency;
-    
-internal int ChannelCount { get; }
-    
-internal int SampleFrequency { get; }
-    
-internal Int16[] Buffer { get; }
-    
-internal int BufferLength { get; }
+    private Int16[] _Buffer;
+    private Int32[] _Bufferp;
+    private int _Channels;
+    private int _Frequency;
+    internal int ChannelCount { get; }
+    internal int SampleFrequency { get; }
+    internal Int16[] Buffer { get; }
+    internal int BufferLength { get; }
     internal SampleBuffer(int sampleFrequency, int numberOfChannels);
     internal virtual int get_ChannelCount();
     internal virtual int get_SampleFrequency();
@@ -975,96 +640,51 @@ internal int BufferLength { get; }
     internal virtual void SetStopFlag();
 }
 public class MP3Sharp.Decoding.SynthesisFilter : object {
-    
-private static double MY_PI;
-    
-private static float Cos164;
-    
-private static float Cos364;
-    
-private static float Cos564;
-    
-private static float Cos764;
-    
-private static float Cos964;
-    
-private static float Cos1164;
-    
-private static float Cos1364;
-    
-private static float Cos1564;
-    
-private static float Cos1764;
-    
-private static float Cos1964;
-    
-private static float Cos2164;
-    
-private static float Cos2364;
-    
-private static float Cos2564;
-    
-private static float Cos2764;
-    
-private static float Cos2964;
-    
-private static float Cos3164;
-    
-private static float Cos132;
-    
-private static float Cos332;
-    
-private static float Cos532;
-    
-private static float Cos732;
-    
-private static float Cos932;
-    
-private static float Cos1132;
-    
-private static float Cos1332;
-    
-private static float Cos1532;
-    
-private static float Cos116;
-    
-private static float Cos316;
-    
-private static float Cos516;
-    
-private static float Cos716;
-    
-private static float Cos18;
-    
-private static float Cos38;
-    
-private static float Cos14;
-    
-private static Single[] _d;
-    
-private static Single[][] _d16;
-    
-private static Single[] DData;
-    
-private int _Channel;
-    
-private Single[] _Samples;
-    
-private float _Scalefactor;
-    
-private Single[] _V1;
-    
-private Single[] _V2;
-    
-private Single[] _TmpOut;
-    
-private Single[] _ActualV;
-    
-private int _ActualWritePos;
-    
-private Single[] _Eq;
-    
-unknown Single[] Eq {internal set; }
+    private static double MY_PI;
+    private static float Cos164;
+    private static float Cos364;
+    private static float Cos564;
+    private static float Cos764;
+    private static float Cos964;
+    private static float Cos1164;
+    private static float Cos1364;
+    private static float Cos1564;
+    private static float Cos1764;
+    private static float Cos1964;
+    private static float Cos2164;
+    private static float Cos2364;
+    private static float Cos2564;
+    private static float Cos2764;
+    private static float Cos2964;
+    private static float Cos3164;
+    private static float Cos132;
+    private static float Cos332;
+    private static float Cos532;
+    private static float Cos732;
+    private static float Cos932;
+    private static float Cos1132;
+    private static float Cos1332;
+    private static float Cos1532;
+    private static float Cos116;
+    private static float Cos316;
+    private static float Cos516;
+    private static float Cos716;
+    private static float Cos18;
+    private static float Cos38;
+    private static float Cos14;
+    private static Single[] _d;
+    private static Single[][] _d16;
+    private static Single[] DData;
+    private int _Channel;
+    private Single[] _Samples;
+    private float _Scalefactor;
+    private Single[] _V1;
+    private Single[] _V2;
+    private Single[] _TmpOut;
+    private Single[] _ActualV;
+    private int _ActualWritePos;
+    private Single[] _Eq;
+    unknown Single[] Eq {internal set; }
     internal SynthesisFilter(int channelnumber, float factor, Single[] eq0);
     private static SynthesisFilter();
     internal void set_Eq(Single[] value);
@@ -1098,32 +718,19 @@ public class MP3Sharp.IO.RandomAccessFileStream : object {
     internal static FileStream CreateRandomAccessFile(string fileName, string mode);
 }
 public class MP3Sharp.IO.RiffFile : object {
-    
-protected static int DDC_SUCCESS;
-    
-protected static int DDC_FAILURE;
-    
-protected static int DDC_OUT_OF_MEMORY;
-    
-protected static int DDC_FILE_ERROR;
-    
-protected static int DDC_INVALID_CALL;
-    
-protected static int DDC_USER_ABORT;
-    
-protected static int DDC_INVALID_FILE;
-    
-protected static int RF_UNKNOWN;
-    
-protected static int RF_WRITE;
-    
-protected static int RF_READ;
-    
-private RiffChunkHeader _RiffHeader;
-    
-protected int Fmode;
-    
-private Stream _File;
+    protected static int DDC_SUCCESS;
+    protected static int DDC_FAILURE;
+    protected static int DDC_OUT_OF_MEMORY;
+    protected static int DDC_FILE_ERROR;
+    protected static int DDC_INVALID_CALL;
+    protected static int DDC_USER_ABORT;
+    protected static int DDC_INVALID_FILE;
+    protected static int RF_UNKNOWN;
+    protected static int RF_WRITE;
+    protected static int RF_READ;
+    private RiffChunkHeader _RiffHeader;
+    protected int Fmode;
+    private Stream _File;
     internal int CurrentFileMode();
     internal virtual int Open(string filename, int newMode);
     internal virtual int Open(Stream stream, int newMode);
@@ -1142,18 +749,12 @@ private Stream _File;
     internal static int FourCC(string chunkName);
 }
 public class MP3Sharp.IO.WaveFile : RiffFile {
-    
-internal static int MAX_WAVE_CHANNELS;
-    
-private int _NumSamples;
-    
-private RiffChunkHeader _PcmData;
-    
-private WaveFormatChunk _WaveFormat;
-    
-private bool _JustWriteLengthBytes;
-    
-private long _PcmDataOffset;
+    internal static int MAX_WAVE_CHANNELS;
+    private int _NumSamples;
+    private RiffChunkHeader _PcmData;
+    private WaveFormatChunk _WaveFormat;
+    private bool _JustWriteLengthBytes;
+    private long _PcmDataOffset;
     internal virtual int OpenForWrite(string filename, Stream stream, int samplingRate, short bitsPerSample, short numChannels);
     internal virtual int WriteData(Int16[] data, int numData);
     internal virtual int Close();
@@ -1165,14 +766,10 @@ private long _PcmDataOffset;
     internal virtual int OpenForWrite(string filename, WaveFile otherWave);
 }
 public class MP3Sharp.IO.WaveFileBuffer : ABuffer {
-    
-private Int16[] _Buffer;
-    
-private Int16[] _Bufferp;
-    
-private int _Channels;
-    
-private WaveFile _OutWave;
+    private Int16[] _Buffer;
+    private Int16[] _Bufferp;
+    private int _Channels;
+    private WaveFile _OutWave;
     internal WaveFileBuffer(int numberOfChannels, int freq, string fileName);
     internal WaveFileBuffer(int numberOfChannels, int freq, Stream stream);
     protected virtual void Append(int channel, short valueRenamed);
@@ -1190,45 +787,26 @@ public class MP3Sharp.MP3SharpException : Exception {
     internal void PrintStackTrace(StreamWriter ps);
 }
 public class MP3Sharp.MP3Stream : Stream {
-    
-private Bitstream _BitStream;
-    
-private Decoder _Decoder;
-    
-private Buffer16BitStereo _Buffer;
-    
-private Stream _SourceStream;
-    
-private static int BACK_STREAM_BYTE_COUNT_REP;
-    
-private short _ChannelCountRep;
-    
-private SoundFormat FormatRep;
-    
-private int _FrequencyRep;
+    private Bitstream _BitStream;
+    private Decoder _Decoder;
+    private Buffer16BitStereo _Buffer;
+    private Stream _SourceStream;
+    private static int BACK_STREAM_BYTE_COUNT_REP;
+    private short _ChannelCountRep;
+    private SoundFormat FormatRep;
+    private int _FrequencyRep;
     [CompilerGeneratedAttribute]
-
 private bool <IsEOF>k__BackingField;
-    
-public bool IsEOF { get; protected set; }
-    
-internal int ChunkSize { get; }
-    
-public bool CanRead { get; }
-    
-public bool CanSeek { get; }
-    
-public bool CanWrite { get; }
-    
-public long Length { get; }
-    
-public long Position { get; public set; }
-    
-public int Frequency { get; }
-    
-internal short ChannelCount { get; }
-    
-internal SoundFormat Format { get; }
+    public bool IsEOF { get; protected set; }
+    internal int ChunkSize { get; }
+    public bool CanRead { get; }
+    public bool CanSeek { get; }
+    public bool CanWrite { get; }
+    public long Length { get; }
+    public long Position { get; public set; }
+    public int Frequency { get; }
+    internal short ChannelCount { get; }
+    internal SoundFormat Format { get; }
     public MP3Stream(string fileName);
     public MP3Stream(string fileName, int chunkSize);
     public MP3Stream(Stream sourceStream);
@@ -1257,12 +835,9 @@ protected void set_IsEOF(bool value);
     private bool ReadFrame();
 }
 public enum MP3Sharp.SoundFormat : Enum {
-    
-public int value__;
-    
-public static SoundFormat Pcm16BitMono;
-    
-public static SoundFormat Pcm16BitStereo;
+    public int value__;
+    public static SoundFormat Pcm16BitMono;
+    public static SoundFormat Pcm16BitStereo;
 }
 public class MP3Sharp.Support.SupportClass : object {
     internal static int URShift(int number, int bits);

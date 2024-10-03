@@ -1,23 +1,17 @@
 public abstract class UnityEngine.EventSystems.AbstractEventData : object {
-    
-protected bool m_Used;
-    
-public bool used { get; }
+    protected bool m_Used;
+    public bool used { get; }
     public virtual void Reset();
     public virtual void Use();
     public virtual bool get_used();
 }
 public class UnityEngine.EventSystems.AxisEventData : BaseEventData {
     [CompilerGeneratedAttribute]
-
 private Vector2 <moveVector>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private MoveDirection <moveDir>k__BackingField;
-    
-public Vector2 moveVector { get; public set; }
-    
-public MoveDirection moveDir { get; public set; }
+    public Vector2 moveVector { get; public set; }
+    public MoveDirection moveDir { get; public set; }
     public AxisEventData(EventSystem eventSystem);
     [CompilerGeneratedAttribute]
 public Vector2 get_moveVector();
@@ -29,34 +23,23 @@ public MoveDirection get_moveDir();
 public void set_moveDir(MoveDirection value);
 }
 public class UnityEngine.EventSystems.BaseEventData : AbstractEventData {
-    
-private EventSystem m_EventSystem;
-    
-public BaseInputModule currentInputModule { get; }
-    
-public GameObject selectedObject { get; public set; }
+    private EventSystem m_EventSystem;
+    public BaseInputModule currentInputModule { get; }
+    public GameObject selectedObject { get; public set; }
     public BaseEventData(EventSystem eventSystem);
     public BaseInputModule get_currentInputModule();
     public GameObject get_selectedObject();
     public void set_selectedObject(GameObject value);
 }
 public class UnityEngine.EventSystems.BaseInput : UIBehaviour {
-    
-public string compositionString { get; }
-    
-public IMECompositionMode imeCompositionMode { get; public set; }
-    
-public Vector2 compositionCursorPos { get; public set; }
-    
-public bool mousePresent { get; }
-    
-public Vector2 mousePosition { get; }
-    
-public Vector2 mouseScrollDelta { get; }
-    
-public bool touchSupported { get; }
-    
-public int touchCount { get; }
+    public string compositionString { get; }
+    public IMECompositionMode imeCompositionMode { get; public set; }
+    public Vector2 compositionCursorPos { get; public set; }
+    public bool mousePresent { get; }
+    public Vector2 mousePosition { get; }
+    public Vector2 mouseScrollDelta { get; }
+    public bool touchSupported { get; }
+    public int touchCount { get; }
     public virtual string get_compositionString();
     public virtual IMECompositionMode get_imeCompositionMode();
     public virtual void set_imeCompositionMode(IMECompositionMode value);
@@ -76,24 +59,15 @@ public int touchCount { get; }
 }
 [RequireComponent("UnityEngine.EventSystems.EventSystem")]
 public abstract class UnityEngine.EventSystems.BaseInputModule : UIBehaviour {
-    
-protected List`1<RaycastResult> m_RaycastResultCache;
-    
-private AxisEventData m_AxisEventData;
-    
-private EventSystem m_EventSystem;
-    
-private BaseEventData m_BaseEventData;
-    
-protected BaseInput m_InputOverride;
-    
-private BaseInput m_DefaultInput;
-    
-public BaseInput input { get; }
-    
-public BaseInput inputOverride { get; public set; }
-    
-protected EventSystem eventSystem { get; }
+    protected List`1<RaycastResult> m_RaycastResultCache;
+    private AxisEventData m_AxisEventData;
+    private EventSystem m_EventSystem;
+    private BaseEventData m_BaseEventData;
+    protected BaseInput m_InputOverride;
+    private BaseInput m_DefaultInput;
+    public BaseInput input { get; }
+    public BaseInput inputOverride { get; public set; }
+    protected EventSystem eventSystem { get; }
     public BaseInput get_input();
     public BaseInput get_inputOverride();
     public void set_inputOverride(BaseInput value);
@@ -116,19 +90,13 @@ protected EventSystem eventSystem { get; }
     public virtual bool IsModuleSupported();
 }
 public abstract class UnityEngine.EventSystems.BaseRaycaster : UIBehaviour {
-    
-private BaseRaycaster m_RootRaycaster;
-    
-public Camera eventCamera { get; }
+    private BaseRaycaster m_RootRaycaster;
+    public Camera eventCamera { get; }
     [ObsoleteAttribute("Please use sortOrderPriority and renderOrderPriority", "False")]
-
 public int priority { get; }
-    
-public int sortOrderPriority { get; }
-    
-public int renderOrderPriority { get; }
-    
-public BaseRaycaster rootRaycaster { get; }
+    public int sortOrderPriority { get; }
+    public int renderOrderPriority { get; }
+    public BaseRaycaster rootRaycaster { get; }
     public abstract virtual void Raycast(PointerEventData eventData, List`1<RaycastResult> resultAppendList);
     public abstract virtual Camera get_eventCamera();
     public virtual int get_priority();
@@ -143,62 +111,38 @@ public BaseRaycaster rootRaycaster { get; }
 }
 [FlagsAttribute]
 public enum UnityEngine.EventSystems.EventHandle : Enum {
-    
-public int value__;
-    
-public static EventHandle Unused;
-    
-public static EventHandle Used;
+    public int value__;
+    public static EventHandle Unused;
+    public static EventHandle Used;
 }
 [AddComponentMenu("Event/Event System")]
 public class UnityEngine.EventSystems.EventSystem : UIBehaviour {
-    
-private List`1<BaseInputModule> m_SystemInputModules;
-    
-private BaseInputModule m_CurrentInputModule;
-    
-private static List`1<EventSystem> m_EventSystems;
+    private List`1<BaseInputModule> m_SystemInputModules;
+    private BaseInputModule m_CurrentInputModule;
+    private static List`1<EventSystem> m_EventSystems;
     [SerializeField]
 [FormerlySerializedAsAttribute("m_Selected")]
-
 private GameObject m_FirstSelected;
     [SerializeField]
-
 private bool m_sendNavigationEvents;
     [SerializeField]
-
 private int m_DragThreshold;
-    
-private GameObject m_CurrentSelected;
-    
-private bool m_HasFocus;
-    
-private bool m_SelectionGuard;
-    
-private BaseEventData m_DummyData;
-    
-private static Comparison`1<RaycastResult> s_RaycastComparer;
-    
-public static EventSystem current { get; public set; }
-    
-public bool sendNavigationEvents { get; public set; }
-    
-public int pixelDragThreshold { get; public set; }
-    
-public BaseInputModule currentInputModule { get; }
-    
-public GameObject firstSelectedGameObject { get; public set; }
-    
-public GameObject currentSelectedGameObject { get; }
+    private GameObject m_CurrentSelected;
+    private bool m_HasFocus;
+    private bool m_SelectionGuard;
+    private BaseEventData m_DummyData;
+    private static Comparison`1<RaycastResult> s_RaycastComparer;
+    public static EventSystem current { get; public set; }
+    public bool sendNavigationEvents { get; public set; }
+    public int pixelDragThreshold { get; public set; }
+    public BaseInputModule currentInputModule { get; }
+    public GameObject firstSelectedGameObject { get; public set; }
+    public GameObject currentSelectedGameObject { get; }
     [ObsoleteAttribute("lastSelectedGameObject is no longer supported")]
-
 public GameObject lastSelectedGameObject { get; }
-    
-public bool isFocused { get; }
-    
-public bool alreadySelecting { get; }
-    
-private BaseEventData baseEventDataCache { get; }
+    public bool isFocused { get; }
+    public bool alreadySelecting { get; }
+    private BaseEventData baseEventDataCache { get; }
     private static EventSystem();
     public static EventSystem get_current();
     public static void set_current(EventSystem value);
@@ -233,14 +177,11 @@ private BaseEventData baseEventDataCache { get; }
 public class UnityEngine.EventSystems.EventTrigger : MonoBehaviour {
     [FormerlySerializedAsAttribute("delegates")]
 [SerializeField]
-
 private List`1<Entry> m_Delegates;
     [EditorBrowsableAttribute("1")]
 [ObsoleteAttribute("Please use triggers instead (UnityUpgradable) -> triggers", "True")]
-
 public List`1<Entry> delegates { get; public set; }
-    
-public List`1<Entry> triggers { get; public set; }
+    public List`1<Entry> triggers { get; public set; }
     public List`1<Entry> get_delegates();
     public void set_delegates(List`1<Entry> value);
     public List`1<Entry> get_triggers();
@@ -265,116 +206,62 @@ public List`1<Entry> triggers { get; public set; }
     public virtual void OnCancel(BaseEventData eventData);
 }
 public enum UnityEngine.EventSystems.EventTriggerType : Enum {
-    
-public int value__;
-    
-public static EventTriggerType PointerEnter;
-    
-public static EventTriggerType PointerExit;
-    
-public static EventTriggerType PointerDown;
-    
-public static EventTriggerType PointerUp;
-    
-public static EventTriggerType PointerClick;
-    
-public static EventTriggerType Drag;
-    
-public static EventTriggerType Drop;
-    
-public static EventTriggerType Scroll;
-    
-public static EventTriggerType UpdateSelected;
-    
-public static EventTriggerType Select;
-    
-public static EventTriggerType Deselect;
-    
-public static EventTriggerType Move;
-    
-public static EventTriggerType InitializePotentialDrag;
-    
-public static EventTriggerType BeginDrag;
-    
-public static EventTriggerType EndDrag;
-    
-public static EventTriggerType Submit;
-    
-public static EventTriggerType Cancel;
+    public int value__;
+    public static EventTriggerType PointerEnter;
+    public static EventTriggerType PointerExit;
+    public static EventTriggerType PointerDown;
+    public static EventTriggerType PointerUp;
+    public static EventTriggerType PointerClick;
+    public static EventTriggerType Drag;
+    public static EventTriggerType Drop;
+    public static EventTriggerType Scroll;
+    public static EventTriggerType UpdateSelected;
+    public static EventTriggerType Select;
+    public static EventTriggerType Deselect;
+    public static EventTriggerType Move;
+    public static EventTriggerType InitializePotentialDrag;
+    public static EventTriggerType BeginDrag;
+    public static EventTriggerType EndDrag;
+    public static EventTriggerType Submit;
+    public static EventTriggerType Cancel;
 }
 public static class UnityEngine.EventSystems.ExecuteEvents : object {
-    
-private static EventFunction`1<IPointerEnterHandler> s_PointerEnterHandler;
-    
-private static EventFunction`1<IPointerExitHandler> s_PointerExitHandler;
-    
-private static EventFunction`1<IPointerDownHandler> s_PointerDownHandler;
-    
-private static EventFunction`1<IPointerUpHandler> s_PointerUpHandler;
-    
-private static EventFunction`1<IPointerClickHandler> s_PointerClickHandler;
-    
-private static EventFunction`1<IInitializePotentialDragHandler> s_InitializePotentialDragHandler;
-    
-private static EventFunction`1<IBeginDragHandler> s_BeginDragHandler;
-    
-private static EventFunction`1<IDragHandler> s_DragHandler;
-    
-private static EventFunction`1<IEndDragHandler> s_EndDragHandler;
-    
-private static EventFunction`1<IDropHandler> s_DropHandler;
-    
-private static EventFunction`1<IScrollHandler> s_ScrollHandler;
-    
-private static EventFunction`1<IUpdateSelectedHandler> s_UpdateSelectedHandler;
-    
-private static EventFunction`1<ISelectHandler> s_SelectHandler;
-    
-private static EventFunction`1<IDeselectHandler> s_DeselectHandler;
-    
-private static EventFunction`1<IMoveHandler> s_MoveHandler;
-    
-private static EventFunction`1<ISubmitHandler> s_SubmitHandler;
-    
-private static EventFunction`1<ICancelHandler> s_CancelHandler;
-    
-private static ObjectPool`1<List`1<IEventSystemHandler>> s_HandlerListPool;
-    
-private static List`1<Transform> s_InternalTransformList;
-    
-public static EventFunction`1<IPointerEnterHandler> pointerEnterHandler { get; }
-    
-public static EventFunction`1<IPointerExitHandler> pointerExitHandler { get; }
-    
-public static EventFunction`1<IPointerDownHandler> pointerDownHandler { get; }
-    
-public static EventFunction`1<IPointerUpHandler> pointerUpHandler { get; }
-    
-public static EventFunction`1<IPointerClickHandler> pointerClickHandler { get; }
-    
-public static EventFunction`1<IInitializePotentialDragHandler> initializePotentialDrag { get; }
-    
-public static EventFunction`1<IBeginDragHandler> beginDragHandler { get; }
-    
-public static EventFunction`1<IDragHandler> dragHandler { get; }
-    
-public static EventFunction`1<IEndDragHandler> endDragHandler { get; }
-    
-public static EventFunction`1<IDropHandler> dropHandler { get; }
-    
-public static EventFunction`1<IScrollHandler> scrollHandler { get; }
-    
-public static EventFunction`1<IUpdateSelectedHandler> updateSelectedHandler { get; }
-    
-public static EventFunction`1<ISelectHandler> selectHandler { get; }
-    
-public static EventFunction`1<IDeselectHandler> deselectHandler { get; }
-    
-public static EventFunction`1<IMoveHandler> moveHandler { get; }
-    
-public static EventFunction`1<ISubmitHandler> submitHandler { get; }
-    
-public static EventFunction`1<ICancelHandler> cancelHandler { get; }
+    private static EventFunction`1<IPointerEnterHandler> s_PointerEnterHandler;
+    private static EventFunction`1<IPointerExitHandler> s_PointerExitHandler;
+    private static EventFunction`1<IPointerDownHandler> s_PointerDownHandler;
+    private static EventFunction`1<IPointerUpHandler> s_PointerUpHandler;
+    private static EventFunction`1<IPointerClickHandler> s_PointerClickHandler;
+    private static EventFunction`1<IInitializePotentialDragHandler> s_InitializePotentialDragHandler;
+    private static EventFunction`1<IBeginDragHandler> s_BeginDragHandler;
+    private static EventFunction`1<IDragHandler> s_DragHandler;
+    private static EventFunction`1<IEndDragHandler> s_EndDragHandler;
+    private static EventFunction`1<IDropHandler> s_DropHandler;
+    private static EventFunction`1<IScrollHandler> s_ScrollHandler;
+    private static EventFunction`1<IUpdateSelectedHandler> s_UpdateSelectedHandler;
+    private static EventFunction`1<ISelectHandler> s_SelectHandler;
+    private static EventFunction`1<IDeselectHandler> s_DeselectHandler;
+    private static EventFunction`1<IMoveHandler> s_MoveHandler;
+    private static EventFunction`1<ISubmitHandler> s_SubmitHandler;
+    private static EventFunction`1<ICancelHandler> s_CancelHandler;
+    private static ObjectPool`1<List`1<IEventSystemHandler>> s_HandlerListPool;
+    private static List`1<Transform> s_InternalTransformList;
+    public static EventFunction`1<IPointerEnterHandler> pointerEnterHandler { get; }
+    public static EventFunction`1<IPointerExitHandler> pointerExitHandler { get; }
+    public static EventFunction`1<IPointerDownHandler> pointerDownHandler { get; }
+    public static EventFunction`1<IPointerUpHandler> pointerUpHandler { get; }
+    public static EventFunction`1<IPointerClickHandler> pointerClickHandler { get; }
+    public static EventFunction`1<IInitializePotentialDragHandler> initializePotentialDrag { get; }
+    public static EventFunction`1<IBeginDragHandler> beginDragHandler { get; }
+    public static EventFunction`1<IDragHandler> dragHandler { get; }
+    public static EventFunction`1<IEndDragHandler> endDragHandler { get; }
+    public static EventFunction`1<IDropHandler> dropHandler { get; }
+    public static EventFunction`1<IScrollHandler> scrollHandler { get; }
+    public static EventFunction`1<IUpdateSelectedHandler> updateSelectedHandler { get; }
+    public static EventFunction`1<ISelectHandler> selectHandler { get; }
+    public static EventFunction`1<IDeselectHandler> deselectHandler { get; }
+    public static EventFunction`1<IMoveHandler> moveHandler { get; }
+    public static EventFunction`1<ISubmitHandler> submitHandler { get; }
+    public static EventFunction`1<ICancelHandler> cancelHandler { get; }
     private static ExecuteEvents();
     public static T ValidateEventData(BaseEventData data);
     private static void Execute(IPointerEnterHandler handler, BaseEventData eventData);
@@ -473,53 +360,35 @@ public interface UnityEngine.EventSystems.IUpdateSelectedHandler {
     public abstract virtual void OnUpdateSelected(BaseEventData eventData);
 }
 public enum UnityEngine.EventSystems.MoveDirection : Enum {
-    
-public int value__;
-    
-public static MoveDirection Left;
-    
-public static MoveDirection Up;
-    
-public static MoveDirection Right;
-    
-public static MoveDirection Down;
-    
-public static MoveDirection None;
+    public int value__;
+    public static MoveDirection Left;
+    public static MoveDirection Up;
+    public static MoveDirection Right;
+    public static MoveDirection Down;
+    public static MoveDirection None;
 }
 [AddComponentMenu("Event/Physics 2D Raycaster")]
 [RequireComponent("UnityEngine.Camera")]
 public class UnityEngine.EventSystems.Physics2DRaycaster : PhysicsRaycaster {
-    
-private RaycastHit2D[] m_Hits;
+    private RaycastHit2D[] m_Hits;
     public virtual void Raycast(PointerEventData eventData, List`1<RaycastResult> resultAppendList);
 }
 [AddComponentMenu("Event/Physics Raycaster")]
 [RequireComponent("UnityEngine.Camera")]
 public class UnityEngine.EventSystems.PhysicsRaycaster : BaseRaycaster {
-    
-protected static int kNoEventMaskSet;
-    
-protected Camera m_EventCamera;
+    protected static int kNoEventMaskSet;
+    protected Camera m_EventCamera;
     [SerializeField]
-
 protected LayerMask m_EventMask;
     [SerializeField]
-
 protected int m_MaxRayIntersections;
-    
-protected int m_LastMaxRayIntersections;
-    
-private RaycastHit[] m_Hits;
-    
-public Camera eventCamera { get; }
-    
-public int depth { get; }
-    
-public int finalEventMask { get; }
-    
-public LayerMask eventMask { get; public set; }
-    
-public int maxRayIntersections { get; public set; }
+    protected int m_LastMaxRayIntersections;
+    private RaycastHit[] m_Hits;
+    public Camera eventCamera { get; }
+    public int depth { get; }
+    public int finalEventMask { get; }
+    public LayerMask eventMask { get; public set; }
+    public int maxRayIntersections { get; public set; }
     public virtual Camera get_eventCamera();
     public virtual int get_depth();
     public int get_finalEventMask();
@@ -532,112 +401,69 @@ public int maxRayIntersections { get; public set; }
 }
 public class UnityEngine.EventSystems.PointerEventData : BaseEventData {
     [CompilerGeneratedAttribute]
-
 private GameObject <pointerEnter>k__BackingField;
-    
-private GameObject m_PointerPress;
+    private GameObject m_PointerPress;
     [CompilerGeneratedAttribute]
-
 private GameObject <lastPress>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private GameObject <rawPointerPress>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private GameObject <pointerDrag>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private RaycastResult <pointerCurrentRaycast>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private RaycastResult <pointerPressRaycast>k__BackingField;
-    
-public List`1<GameObject> hovered;
+    public List`1<GameObject> hovered;
     [CompilerGeneratedAttribute]
-
 private bool <eligibleForClick>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <pointerId>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private Vector2 <position>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private Vector2 <delta>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private Vector2 <pressPosition>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private Vector3 <worldPosition>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private Vector3 <worldNormal>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private float <clickTime>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private int <clickCount>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private Vector2 <scrollDelta>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private bool <useDragThreshold>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private bool <dragging>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private InputButton <button>k__BackingField;
-    
-public GameObject pointerEnter { get; public set; }
-    
-public GameObject lastPress { get; private set; }
-    
-public GameObject rawPointerPress { get; public set; }
-    
-public GameObject pointerDrag { get; public set; }
-    
-public RaycastResult pointerCurrentRaycast { get; public set; }
-    
-public RaycastResult pointerPressRaycast { get; public set; }
-    
-public bool eligibleForClick { get; public set; }
-    
-public int pointerId { get; public set; }
-    
-public Vector2 position { get; public set; }
-    
-public Vector2 delta { get; public set; }
-    
-public Vector2 pressPosition { get; public set; }
+    public GameObject pointerEnter { get; public set; }
+    public GameObject lastPress { get; private set; }
+    public GameObject rawPointerPress { get; public set; }
+    public GameObject pointerDrag { get; public set; }
+    public RaycastResult pointerCurrentRaycast { get; public set; }
+    public RaycastResult pointerPressRaycast { get; public set; }
+    public bool eligibleForClick { get; public set; }
+    public int pointerId { get; public set; }
+    public Vector2 position { get; public set; }
+    public Vector2 delta { get; public set; }
+    public Vector2 pressPosition { get; public set; }
     [ObsoleteAttribute("Use either pointerCurrentRaycast.worldPosition or pointerPressRaycast.worldPosition")]
-
 public Vector3 worldPosition { get; public set; }
     [ObsoleteAttribute("Use either pointerCurrentRaycast.worldNormal or pointerPressRaycast.worldNormal")]
-
 public Vector3 worldNormal { get; public set; }
-    
-public float clickTime { get; public set; }
-    
-public int clickCount { get; public set; }
-    
-public Vector2 scrollDelta { get; public set; }
-    
-public bool useDragThreshold { get; public set; }
-    
-public bool dragging { get; public set; }
-    
-public InputButton button { get; public set; }
-    
-public Camera enterEventCamera { get; }
-    
-public Camera pressEventCamera { get; }
-    
-public GameObject pointerPress { get; public set; }
+    public float clickTime { get; public set; }
+    public int clickCount { get; public set; }
+    public Vector2 scrollDelta { get; public set; }
+    public bool useDragThreshold { get; public set; }
+    public bool dragging { get; public set; }
+    public InputButton button { get; public set; }
+    public Camera enterEventCamera { get; }
+    public Camera pressEventCamera { get; }
+    public GameObject pointerPress { get; public set; }
     public PointerEventData(EventSystem eventSystem);
     [CompilerGeneratedAttribute]
 public GameObject get_pointerEnter();
@@ -724,18 +550,12 @@ public void set_button(InputButton value);
     public virtual string ToString();
 }
 public abstract class UnityEngine.EventSystems.PointerInputModule : BaseInputModule {
-    
-public static int kMouseLeftId;
-    
-public static int kMouseRightId;
-    
-public static int kMouseMiddleId;
-    
-public static int kFakeTouchesId;
-    
-protected Dictionary`2<int, PointerEventData> m_PointerData;
-    
-private MouseState m_MouseState;
+    public static int kMouseLeftId;
+    public static int kMouseRightId;
+    public static int kMouseMiddleId;
+    public static int kFakeTouchesId;
+    protected Dictionary`2<int, PointerEventData> m_PointerData;
+    private MouseState m_MouseState;
     protected bool GetPointerData(int id, PointerEventData& data, bool create);
     protected void RemovePointerData(PointerEventData data);
     protected PointerEventData GetTouchPointerEventData(Touch input, Boolean& pressed, Boolean& released);
@@ -753,38 +573,25 @@ private MouseState m_MouseState;
     protected void DeselectIfSelectionChanged(GameObject currentOverGo, BaseEventData pointerEvent);
 }
 internal static class UnityEngine.EventSystems.RaycasterManager : object {
-    
-private static List`1<BaseRaycaster> s_Raycasters;
+    private static List`1<BaseRaycaster> s_Raycasters;
     private static RaycasterManager();
     public static void AddRaycaster(BaseRaycaster baseRaycaster);
     public static List`1<BaseRaycaster> GetRaycasters();
     public static void RemoveRaycasters(BaseRaycaster baseRaycaster);
 }
 public class UnityEngine.EventSystems.RaycastResult : ValueType {
-    
-private GameObject m_GameObject;
-    
-public BaseRaycaster module;
-    
-public float distance;
-    
-public float index;
-    
-public int depth;
-    
-public int sortingLayer;
-    
-public int sortingOrder;
-    
-public Vector3 worldPosition;
-    
-public Vector3 worldNormal;
-    
-public Vector2 screenPosition;
-    
-public GameObject gameObject { get; public set; }
-    
-public bool isValid { get; }
+    private GameObject m_GameObject;
+    public BaseRaycaster module;
+    public float distance;
+    public float index;
+    public int depth;
+    public int sortingLayer;
+    public int sortingOrder;
+    public Vector3 worldPosition;
+    public Vector3 worldNormal;
+    public Vector2 screenPosition;
+    public GameObject gameObject { get; public set; }
+    public bool isValid { get; }
     public GameObject get_gameObject();
     public void set_gameObject(GameObject value);
     public bool get_isValid();
@@ -793,62 +600,39 @@ public bool isValid { get; }
 }
 [AddComponentMenu("Event/Standalone Input Module")]
 public class UnityEngine.EventSystems.StandaloneInputModule : PointerInputModule {
-    
-private float m_PrevActionTime;
-    
-private Vector2 m_LastMoveVector;
-    
-private int m_ConsecutiveMoveCount;
-    
-private Vector2 m_LastMousePosition;
-    
-private Vector2 m_MousePosition;
-    
-private GameObject m_CurrentFocusedGameObject;
-    
-private PointerEventData m_InputPointerEvent;
+    private float m_PrevActionTime;
+    private Vector2 m_LastMoveVector;
+    private int m_ConsecutiveMoveCount;
+    private Vector2 m_LastMousePosition;
+    private Vector2 m_MousePosition;
+    private GameObject m_CurrentFocusedGameObject;
+    private PointerEventData m_InputPointerEvent;
     [SerializeField]
-
 private string m_HorizontalAxis;
     [SerializeField]
-
 private string m_VerticalAxis;
     [SerializeField]
-
 private string m_SubmitButton;
     [SerializeField]
-
 private string m_CancelButton;
     [SerializeField]
-
 private float m_InputActionsPerSecond;
     [SerializeField]
-
 private float m_RepeatDelay;
     [SerializeField]
 [FormerlySerializedAsAttribute("m_AllowActivationOnMobileDevice")]
-
 private bool m_ForceModuleActive;
     [ObsoleteAttribute("Mode is no longer needed on input module as it handles both mouse and keyboard simultaneously.", "False")]
-
 public InputMode inputMode { get; }
     [ObsoleteAttribute("allowActivationOnMobileDevice has been deprecated. Use forceModuleActive instead (UnityUpgradable) -> forceModuleActive")]
-
 public bool allowActivationOnMobileDevice { get; public set; }
-    
-public bool forceModuleActive { get; public set; }
-    
-public float inputActionsPerSecond { get; public set; }
-    
-public float repeatDelay { get; public set; }
-    
-public string horizontalAxis { get; public set; }
-    
-public string verticalAxis { get; public set; }
-    
-public string submitButton { get; public set; }
-    
-public string cancelButton { get; public set; }
+    public bool forceModuleActive { get; public set; }
+    public float inputActionsPerSecond { get; public set; }
+    public float repeatDelay { get; public set; }
+    public string horizontalAxis { get; public set; }
+    public string verticalAxis { get; public set; }
+    public string submitButton { get; public set; }
+    public string cancelButton { get; public set; }
     public InputMode get_inputMode();
     public bool get_allowActivationOnMobileDevice();
     public void set_allowActivationOnMobileDevice(bool value);
@@ -890,21 +674,15 @@ protected virtual bool ForceAutoSelect();
 [ObsoleteAttribute("TouchInputModule is no longer required as Touch input is now handled in StandaloneInputModule.")]
 [AddComponentMenu("Event/Touch Input Module")]
 public class UnityEngine.EventSystems.TouchInputModule : PointerInputModule {
-    
-private Vector2 m_LastMousePosition;
-    
-private Vector2 m_MousePosition;
-    
-private PointerEventData m_InputPointerEvent;
+    private Vector2 m_LastMousePosition;
+    private Vector2 m_MousePosition;
+    private PointerEventData m_InputPointerEvent;
     [SerializeField]
 [FormerlySerializedAsAttribute("m_AllowActivationOnStandalone")]
-
 private bool m_ForceModuleActive;
     [ObsoleteAttribute("allowActivationOnStandalone has been deprecated. Use forceModuleActive instead (UnityUpgradable) -> forceModuleActive")]
-
 public bool allowActivationOnStandalone { get; public set; }
-    
-public bool forceModuleActive { get; public set; }
+    public bool forceModuleActive { get; public set; }
     public bool get_allowActivationOnStandalone();
     public void set_allowActivationOnStandalone(bool value);
     public bool get_forceModuleActive();
@@ -936,46 +714,31 @@ public abstract class UnityEngine.EventSystems.UIBehaviour : MonoBehaviour {
     public sealed virtual bool IsDestroyed();
 }
 public class UnityEngine.UI.AnimationTriggers : object {
-    
-private static string kDefaultNormalAnimName;
-    
-private static string kDefaultHighlightedAnimName;
-    
-private static string kDefaultPressedAnimName;
-    
-private static string kDefaultSelectedAnimName;
-    
-private static string kDefaultDisabledAnimName;
+    private static string kDefaultNormalAnimName;
+    private static string kDefaultHighlightedAnimName;
+    private static string kDefaultPressedAnimName;
+    private static string kDefaultSelectedAnimName;
+    private static string kDefaultDisabledAnimName;
     [FormerlySerializedAsAttribute("normalTrigger")]
 [SerializeField]
-
 private string m_NormalTrigger;
     [FormerlySerializedAsAttribute("highlightedTrigger")]
 [SerializeField]
-
 private string m_HighlightedTrigger;
     [FormerlySerializedAsAttribute("pressedTrigger")]
 [SerializeField]
-
 private string m_PressedTrigger;
     [FormerlySerializedAsAttribute("m_HighlightedTrigger")]
 [SerializeField]
-
 private string m_SelectedTrigger;
     [FormerlySerializedAsAttribute("disabledTrigger")]
 [SerializeField]
-
 private string m_DisabledTrigger;
-    
-public string normalTrigger { get; public set; }
-    
-public string highlightedTrigger { get; public set; }
-    
-public string pressedTrigger { get; public set; }
-    
-public string selectedTrigger { get; public set; }
-    
-public string disabledTrigger { get; public set; }
+    public string normalTrigger { get; public set; }
+    public string highlightedTrigger { get; public set; }
+    public string pressedTrigger { get; public set; }
+    public string selectedTrigger { get; public set; }
+    public string disabledTrigger { get; public set; }
     public string get_normalTrigger();
     public void set_normalTrigger(string value);
     public string get_highlightedTrigger();
@@ -993,23 +756,15 @@ public string disabledTrigger { get; public set; }
 [DisallowMultipleComponent]
 public class UnityEngine.UI.AspectRatioFitter : UIBehaviour {
     [SerializeField]
-
 private AspectMode m_AspectMode;
     [SerializeField]
-
 private float m_AspectRatio;
-    
-private RectTransform m_Rect;
-    
-private bool m_DelayedSetDirty;
-    
-private DrivenRectTransformTracker m_Tracker;
-    
-public AspectMode aspectMode { get; public set; }
-    
-public float aspectRatio { get; public set; }
-    
-private RectTransform rectTransform { get; }
+    private RectTransform m_Rect;
+    private bool m_DelayedSetDirty;
+    private DrivenRectTransformTracker m_Tracker;
+    public AspectMode aspectMode { get; public set; }
+    public float aspectRatio { get; public set; }
+    private RectTransform rectTransform { get; }
     public AspectMode get_aspectMode();
     public void set_aspectMode(AspectMode value);
     public float get_aspectRatio();
@@ -1028,10 +783,8 @@ private RectTransform rectTransform { get; }
 }
 [ExecuteAlways]
 public abstract class UnityEngine.UI.BaseMeshEffect : UIBehaviour {
-    
-private Graphic m_Graphic;
-    
-protected Graphic graphic { get; }
+    private Graphic m_Graphic;
+    protected Graphic graphic { get; }
     protected Graphic get_graphic();
     protected virtual void OnEnable();
     protected virtual void OnDisable();
@@ -1049,10 +802,8 @@ public abstract virtual void ModifyVertices(List`1<UIVertex> vertices);
 public class UnityEngine.UI.Button : Selectable {
     [FormerlySerializedAsAttribute("onClick")]
 [SerializeField]
-
 private ButtonClickedEvent m_OnClick;
-    
-public ButtonClickedEvent onClick { get; public set; }
+    public ButtonClickedEvent onClick { get; public set; }
     public ButtonClickedEvent get_onClick();
     public void set_onClick(ButtonClickedEvent value);
     private void Press();
@@ -1068,73 +819,49 @@ private IEnumerator OnFinishSubmit();
 public class UnityEngine.UI.CanvasScaler : UIBehaviour {
     [TooltipAttribute("Determines how UI elements in the Canvas are scaled.")]
 [SerializeField]
-
 private ScaleMode m_UiScaleMode;
     [TooltipAttribute("If a sprite has this 'Pixels Per Unit' setting, then one pixel in the sprite will cover one unit in the UI.")]
 [SerializeField]
-
 protected float m_ReferencePixelsPerUnit;
     [TooltipAttribute("Scales all UI elements in the Canvas by this factor.")]
 [SerializeField]
-
 protected float m_ScaleFactor;
     [TooltipAttribute("The resolution the UI layout is designed for. If the screen resolution is larger, the UI will be scaled up, and if it's smaller, the UI will be scaled down. This is done in accordance with the Screen Match Mode.")]
 [SerializeField]
-
 protected Vector2 m_ReferenceResolution;
     [TooltipAttribute("A mode used to scale the canvas area if the aspect ratio of the current resolution doesn't fit the reference resolution.")]
 [SerializeField]
-
 protected ScreenMatchMode m_ScreenMatchMode;
     [TooltipAttribute("Determines if the scaling is using the width or height as reference, or a mix in between.")]
 [RangeAttribute("0", "1")]
 [SerializeField]
-
 protected float m_MatchWidthOrHeight;
-    
-private static float kLogBase;
+    private static float kLogBase;
     [TooltipAttribute("The physical unit to specify positions and sizes in.")]
 [SerializeField]
-
 protected Unit m_PhysicalUnit;
     [TooltipAttribute("The DPI to assume if the screen DPI is not known.")]
 [SerializeField]
-
 protected float m_FallbackScreenDPI;
     [TooltipAttribute("The pixels per inch to use for sprites that have a 'Pixels Per Unit' setting that matches the 'Reference Pixels Per Unit' setting.")]
 [SerializeField]
-
 protected float m_DefaultSpriteDPI;
     [TooltipAttribute("The amount of pixels per unit to use for dynamically created bitmaps in the UI, such as Text.")]
 [SerializeField]
-
 protected float m_DynamicPixelsPerUnit;
-    
-private Canvas m_Canvas;
-    
-private float m_PrevScaleFactor;
-    
-private float m_PrevReferencePixelsPerUnit;
-    
-public ScaleMode uiScaleMode { get; public set; }
-    
-public float referencePixelsPerUnit { get; public set; }
-    
-public float scaleFactor { get; public set; }
-    
-public Vector2 referenceResolution { get; public set; }
-    
-public ScreenMatchMode screenMatchMode { get; public set; }
-    
-public float matchWidthOrHeight { get; public set; }
-    
-public Unit physicalUnit { get; public set; }
-    
-public float fallbackScreenDPI { get; public set; }
-    
-public float defaultSpriteDPI { get; public set; }
-    
-public float dynamicPixelsPerUnit { get; public set; }
+    private Canvas m_Canvas;
+    private float m_PrevScaleFactor;
+    private float m_PrevReferencePixelsPerUnit;
+    public ScaleMode uiScaleMode { get; public set; }
+    public float referencePixelsPerUnit { get; public set; }
+    public float scaleFactor { get; public set; }
+    public Vector2 referenceResolution { get; public set; }
+    public ScreenMatchMode screenMatchMode { get; public set; }
+    public float matchWidthOrHeight { get; public set; }
+    public Unit physicalUnit { get; public set; }
+    public float fallbackScreenDPI { get; public set; }
+    public float defaultSpriteDPI { get; public set; }
+    public float dynamicPixelsPerUnit { get; public set; }
     public ScaleMode get_uiScaleMode();
     public void set_uiScaleMode(ScaleMode value);
     public float get_referencePixelsPerUnit();
@@ -1167,36 +894,22 @@ public float dynamicPixelsPerUnit { get; public set; }
     protected void SetReferencePixelsPerUnit(float referencePixelsPerUnit);
 }
 public enum UnityEngine.UI.CanvasUpdate : Enum {
-    
-public int value__;
-    
-public static CanvasUpdate Prelayout;
-    
-public static CanvasUpdate Layout;
-    
-public static CanvasUpdate PostLayout;
-    
-public static CanvasUpdate PreRender;
-    
-public static CanvasUpdate LatePreRender;
-    
-public static CanvasUpdate MaxUpdateValue;
+    public int value__;
+    public static CanvasUpdate Prelayout;
+    public static CanvasUpdate Layout;
+    public static CanvasUpdate PostLayout;
+    public static CanvasUpdate PreRender;
+    public static CanvasUpdate LatePreRender;
+    public static CanvasUpdate MaxUpdateValue;
 }
 public class UnityEngine.UI.CanvasUpdateRegistry : object {
-    
-private static CanvasUpdateRegistry s_Instance;
-    
-private bool m_PerformingLayoutUpdate;
-    
-private bool m_PerformingGraphicUpdate;
-    
-private IndexedSet`1<ICanvasElement> m_LayoutRebuildQueue;
-    
-private IndexedSet`1<ICanvasElement> m_GraphicRebuildQueue;
-    
-private static Comparison`1<ICanvasElement> s_SortLayoutFunction;
-    
-public static CanvasUpdateRegistry instance { get; }
+    private static CanvasUpdateRegistry s_Instance;
+    private bool m_PerformingLayoutUpdate;
+    private bool m_PerformingGraphicUpdate;
+    private IndexedSet`1<ICanvasElement> m_LayoutRebuildQueue;
+    private IndexedSet`1<ICanvasElement> m_GraphicRebuildQueue;
+    private static Comparison`1<ICanvasElement> s_SortLayoutFunction;
+    public static CanvasUpdateRegistry instance { get; }
     private static CanvasUpdateRegistry();
     public static CanvasUpdateRegistry get_instance();
     private bool ObjectValidForUpdate(ICanvasElement element);
@@ -1217,12 +930,9 @@ public static CanvasUpdateRegistry instance { get; }
     public static bool IsRebuildingGraphics();
 }
 public class UnityEngine.UI.ClipperRegistry : object {
-    
-private static ClipperRegistry s_Instance;
-    
-private IndexedSet`1<IClipper> m_Clippers;
-    
-public static ClipperRegistry instance { get; }
+    private static ClipperRegistry s_Instance;
+    private IndexedSet`1<IClipper> m_Clippers;
+    public static ClipperRegistry instance { get; }
     public static ClipperRegistry get_instance();
     public void Cull();
     public static void Register(IClipper c);
@@ -1233,16 +943,11 @@ public static class UnityEngine.UI.Clipping : object {
 }
 [DefaultMemberAttribute("Item")]
 internal class UnityEngine.UI.Collections.IndexedSet`1 : object {
-    
-private List`1<T> m_List;
-    
-private Dictionary`2<T, int> m_Dictionary;
-    
-public int Count { get; }
-    
-public bool IsReadOnly { get; }
-    
-public T Item { get; public set; }
+    private List`1<T> m_List;
+    private Dictionary`2<T, int> m_Dictionary;
+    public int Count { get; }
+    public bool IsReadOnly { get; }
+    public T Item { get; public set; }
     public sealed virtual void Add(T item);
     public bool AddUnique(T item);
     public sealed virtual bool Remove(T item);
@@ -1264,48 +969,33 @@ public T Item { get; public set; }
 public class UnityEngine.UI.ColorBlock : ValueType {
     [FormerlySerializedAsAttribute("normalColor")]
 [SerializeField]
-
 private Color m_NormalColor;
     [FormerlySerializedAsAttribute("highlightedColor")]
 [SerializeField]
-
 private Color m_HighlightedColor;
     [FormerlySerializedAsAttribute("pressedColor")]
 [SerializeField]
-
 private Color m_PressedColor;
     [FormerlySerializedAsAttribute("m_HighlightedColor")]
 [SerializeField]
-
 private Color m_SelectedColor;
     [FormerlySerializedAsAttribute("disabledColor")]
 [SerializeField]
-
 private Color m_DisabledColor;
     [RangeAttribute("1", "5")]
 [SerializeField]
-
 private float m_ColorMultiplier;
     [FormerlySerializedAsAttribute("fadeDuration")]
 [SerializeField]
-
 private float m_FadeDuration;
-    
-public Color normalColor { get; public set; }
-    
-public Color highlightedColor { get; public set; }
-    
-public Color pressedColor { get; public set; }
-    
-public Color selectedColor { get; public set; }
-    
-public Color disabledColor { get; public set; }
-    
-public float colorMultiplier { get; public set; }
-    
-public float fadeDuration { get; public set; }
-    
-public static ColorBlock defaultColorBlock { get; }
+    public Color normalColor { get; public set; }
+    public Color highlightedColor { get; public set; }
+    public Color pressedColor { get; public set; }
+    public Color selectedColor { get; public set; }
+    public Color disabledColor { get; public set; }
+    public float colorMultiplier { get; public set; }
+    public float fadeDuration { get; public set; }
+    public static ColorBlock defaultColorBlock { get; }
     public Color get_normalColor();
     public void set_normalColor(Color value);
     public Color get_highlightedColor();
@@ -1332,21 +1022,14 @@ public static ColorBlock defaultColorBlock { get; }
 [RequireComponent("UnityEngine.RectTransform")]
 public class UnityEngine.UI.ContentSizeFitter : UIBehaviour {
     [SerializeField]
-
 protected FitMode m_HorizontalFit;
     [SerializeField]
-
 protected FitMode m_VerticalFit;
-    
-private RectTransform m_Rect;
-    
-private DrivenRectTransformTracker m_Tracker;
-    
-public FitMode horizontalFit { get; public set; }
-    
-public FitMode verticalFit { get; public set; }
-    
-private RectTransform rectTransform { get; }
+    private RectTransform m_Rect;
+    private DrivenRectTransformTracker m_Tracker;
+    public FitMode horizontalFit { get; public set; }
+    public FitMode verticalFit { get; public set; }
+    private RectTransform rectTransform { get; }
     public FitMode get_horizontalFit();
     public void set_horizontalFit(FitMode value);
     public FitMode get_verticalFit();
@@ -1361,28 +1044,17 @@ private RectTransform rectTransform { get; }
     protected void SetDirty();
 }
 internal class UnityEngine.UI.CoroutineTween.ColorTween : ValueType {
-    
-private ColorTweenCallback m_Target;
-    
-private Color m_StartColor;
-    
-private Color m_TargetColor;
-    
-private ColorTweenMode m_TweenMode;
-    
-private float m_Duration;
-    
-private bool m_IgnoreTimeScale;
-    
-public Color startColor { get; public set; }
-    
-public Color targetColor { get; public set; }
-    
-public ColorTweenMode tweenMode { get; public set; }
-    
-public float duration { get; public set; }
-    
-public bool ignoreTimeScale { get; public set; }
+    private ColorTweenCallback m_Target;
+    private Color m_StartColor;
+    private Color m_TargetColor;
+    private ColorTweenMode m_TweenMode;
+    private float m_Duration;
+    private bool m_IgnoreTimeScale;
+    public Color startColor { get; public set; }
+    public Color targetColor { get; public set; }
+    public ColorTweenMode tweenMode { get; public set; }
+    public float duration { get; public set; }
+    public bool ignoreTimeScale { get; public set; }
     public Color get_startColor();
     public void set_startColor(Color value);
     public Color get_targetColor();
@@ -1400,24 +1072,15 @@ public bool ignoreTimeScale { get; public set; }
     public sealed virtual bool ValidTarget();
 }
 internal class UnityEngine.UI.CoroutineTween.FloatTween : ValueType {
-    
-private FloatTweenCallback m_Target;
-    
-private float m_StartValue;
-    
-private float m_TargetValue;
-    
-private float m_Duration;
-    
-private bool m_IgnoreTimeScale;
-    
-public float startValue { get; public set; }
-    
-public float targetValue { get; public set; }
-    
-public float duration { get; public set; }
-    
-public bool ignoreTimeScale { get; public set; }
+    private FloatTweenCallback m_Target;
+    private float m_StartValue;
+    private float m_TargetValue;
+    private float m_Duration;
+    private bool m_IgnoreTimeScale;
+    public float startValue { get; public set; }
+    public float targetValue { get; public set; }
+    public float duration { get; public set; }
+    public bool ignoreTimeScale { get; public set; }
     public float get_startValue();
     public void set_startValue(float value);
     public float get_targetValue();
@@ -1433,20 +1096,16 @@ public bool ignoreTimeScale { get; public set; }
     public sealed virtual bool ValidTarget();
 }
 internal interface UnityEngine.UI.CoroutineTween.ITweenValue {
-    
-public bool ignoreTimeScale { get; }
-    
-public float duration { get; }
+    public bool ignoreTimeScale { get; }
+    public float duration { get; }
     public abstract virtual void TweenValue(float floatPercentage);
     public abstract virtual bool get_ignoreTimeScale();
     public abstract virtual float get_duration();
     public abstract virtual bool ValidTarget();
 }
 internal class UnityEngine.UI.CoroutineTween.TweenRunner`1 : object {
-    
-protected MonoBehaviour m_CoroutineContainer;
-    
-protected IEnumerator m_Tween;
+    protected MonoBehaviour m_CoroutineContainer;
+    protected IEnumerator m_Tween;
     [IteratorStateMachineAttribute("UnityEngine.UI.CoroutineTween.TweenRunner`1/<Start>d__2")]
 private static IEnumerator Start(T tweenInfo);
     public void Init(MonoBehaviour coroutineContainer);
@@ -1454,28 +1113,17 @@ private static IEnumerator Start(T tweenInfo);
     public void StopTween();
 }
 public static class UnityEngine.UI.DefaultControls : object {
-    
-private static IFactoryControls m_CurrentFactory;
-    
-private static float kWidth;
-    
-private static float kThickHeight;
-    
-private static float kThinHeight;
-    
-private static Vector2 s_ThickElementSize;
-    
-private static Vector2 s_ThinElementSize;
-    
-private static Vector2 s_ImageElementSize;
-    
-private static Color s_DefaultSelectableColor;
-    
-private static Color s_PanelColor;
-    
-private static Color s_TextColor;
-    
-public static IFactoryControls factory { get; }
+    private static IFactoryControls m_CurrentFactory;
+    private static float kWidth;
+    private static float kThickHeight;
+    private static float kThinHeight;
+    private static Vector2 s_ThickElementSize;
+    private static Vector2 s_ThinElementSize;
+    private static Vector2 s_ImageElementSize;
+    private static Color s_DefaultSelectableColor;
+    private static Color s_PanelColor;
+    private static Color s_TextColor;
+    public static IFactoryControls factory { get; }
     private static DefaultControls();
     public static IFactoryControls get_factory();
     private static GameObject CreateUIElementRoot(string name, Vector2 size, Type[] components);
@@ -1500,66 +1148,42 @@ public static IFactoryControls factory { get; }
 [RequireComponent("UnityEngine.RectTransform")]
 public class UnityEngine.UI.Dropdown : Selectable {
     [SerializeField]
-
 private RectTransform m_Template;
     [SerializeField]
-
 private Text m_CaptionText;
     [SerializeField]
-
 private Image m_CaptionImage;
     [SpaceAttribute]
 [SerializeField]
-
 private Text m_ItemText;
     [SerializeField]
-
 private Image m_ItemImage;
     [SpaceAttribute]
 [SerializeField]
-
 private int m_Value;
     [SpaceAttribute]
 [SerializeField]
-
 private OptionDataList m_Options;
     [SpaceAttribute]
 [SerializeField]
-
 private DropdownEvent m_OnValueChanged;
     [SerializeField]
-
 private float m_AlphaFadeSpeed;
-    
-private GameObject m_Dropdown;
-    
-private GameObject m_Blocker;
-    
-private List`1<DropdownItem> m_Items;
-    
-private TweenRunner`1<FloatTween> m_AlphaTweenRunner;
-    
-private bool validTemplate;
-    
-private static OptionData s_NoOptionData;
-    
-public RectTransform template { get; public set; }
-    
-public Text captionText { get; public set; }
-    
-public Image captionImage { get; public set; }
-    
-public Text itemText { get; public set; }
-    
-public Image itemImage { get; public set; }
-    
-public List`1<OptionData> options { get; public set; }
-    
-public DropdownEvent onValueChanged { get; public set; }
-    
-public float alphaFadeSpeed { get; public set; }
-    
-public int value { get; public set; }
+    private GameObject m_Dropdown;
+    private GameObject m_Blocker;
+    private List`1<DropdownItem> m_Items;
+    private TweenRunner`1<FloatTween> m_AlphaTweenRunner;
+    private bool validTemplate;
+    private static OptionData s_NoOptionData;
+    public RectTransform template { get; public set; }
+    public Text captionText { get; public set; }
+    public Image captionImage { get; public set; }
+    public Text itemText { get; public set; }
+    public Image itemImage { get; public set; }
+    public List`1<OptionData> options { get; public set; }
+    public DropdownEvent onValueChanged { get; public set; }
+    public float alphaFadeSpeed { get; public set; }
+    public int value { get; public set; }
     private static Dropdown();
     public RectTransform get_template();
     public void set_template(RectTransform value);
@@ -1614,71 +1238,46 @@ private IEnumerator DelayedDestroyDropdownList(float delay);
 public class UnityEngine.UI.FontData : object {
     [SerializeField]
 [FormerlySerializedAsAttribute("font")]
-
 private Font m_Font;
     [SerializeField]
 [FormerlySerializedAsAttribute("fontSize")]
-
 private int m_FontSize;
     [SerializeField]
 [FormerlySerializedAsAttribute("fontStyle")]
-
 private FontStyle m_FontStyle;
     [SerializeField]
-
 private bool m_BestFit;
     [SerializeField]
-
 private int m_MinSize;
     [SerializeField]
-
 private int m_MaxSize;
     [SerializeField]
 [FormerlySerializedAsAttribute("alignment")]
-
 private TextAnchor m_Alignment;
     [SerializeField]
-
 private bool m_AlignByGeometry;
     [SerializeField]
 [FormerlySerializedAsAttribute("richText")]
-
 private bool m_RichText;
     [SerializeField]
-
 private HorizontalWrapMode m_HorizontalOverflow;
     [SerializeField]
-
 private VerticalWrapMode m_VerticalOverflow;
     [SerializeField]
-
 private float m_LineSpacing;
-    
-public static FontData defaultFontData { get; }
-    
-public Font font { get; public set; }
-    
-public int fontSize { get; public set; }
-    
-public FontStyle fontStyle { get; public set; }
-    
-public bool bestFit { get; public set; }
-    
-public int minSize { get; public set; }
-    
-public int maxSize { get; public set; }
-    
-public TextAnchor alignment { get; public set; }
-    
-public bool alignByGeometry { get; public set; }
-    
-public bool richText { get; public set; }
-    
-public HorizontalWrapMode horizontalOverflow { get; public set; }
-    
-public VerticalWrapMode verticalOverflow { get; public set; }
-    
-public float lineSpacing { get; public set; }
+    public static FontData defaultFontData { get; }
+    public Font font { get; public set; }
+    public int fontSize { get; public set; }
+    public FontStyle fontStyle { get; public set; }
+    public bool bestFit { get; public set; }
+    public int minSize { get; public set; }
+    public int maxSize { get; public set; }
+    public TextAnchor alignment { get; public set; }
+    public bool alignByGeometry { get; public set; }
+    public bool richText { get; public set; }
+    public HorizontalWrapMode horizontalOverflow { get; public set; }
+    public VerticalWrapMode verticalOverflow { get; public set; }
+    public float lineSpacing { get; public set; }
     public static FontData get_defaultFontData();
     public Font get_font();
     public void set_font(Font value);
@@ -1708,8 +1307,7 @@ public float lineSpacing { get; public set; }
     private sealed virtual override void UnityEngine.ISerializationCallbackReceiver.OnAfterDeserialize();
 }
 public static class UnityEngine.UI.FontUpdateTracker : object {
-    
-private static Dictionary`2<Font, HashSet`1<Text>> m_Tracked;
+    private static Dictionary`2<Font, HashSet`1<Text>> m_Tracked;
     private static FontUpdateTracker();
     public static void TrackText(Text t);
     private static void RebuildForFont(Font f);
@@ -1720,79 +1318,45 @@ private static Dictionary`2<Font, HashSet`1<Text>> m_Tracked;
 [RequireComponent("UnityEngine.RectTransform")]
 [ExecuteAlways]
 public abstract class UnityEngine.UI.Graphic : UIBehaviour {
-    
-protected static Material s_DefaultUI;
-    
-protected static Texture2D s_WhiteTexture;
+    protected static Material s_DefaultUI;
+    protected static Texture2D s_WhiteTexture;
     [FormerlySerializedAsAttribute("m_Mat")]
 [SerializeField]
-
 protected Material m_Material;
     [SerializeField]
-
 private Color m_Color;
-    
-protected bool m_SkipLayoutUpdate;
-    
-protected bool m_SkipMaterialUpdate;
+    protected bool m_SkipLayoutUpdate;
+    protected bool m_SkipMaterialUpdate;
     [SerializeField]
-
 private bool m_RaycastTarget;
-    
-private RectTransform m_RectTransform;
-    
-private CanvasRenderer m_CanvasRenderer;
-    
-private Canvas m_Canvas;
-    
-private bool m_VertsDirty;
-    
-private bool m_MaterialDirty;
-    
-protected UnityAction m_OnDirtyLayoutCallback;
-    
-protected UnityAction m_OnDirtyVertsCallback;
-    
-protected UnityAction m_OnDirtyMaterialCallback;
-    
-protected static Mesh s_Mesh;
-    
-private static VertexHelper s_VertexHelper;
-    
-protected Mesh m_CachedMesh;
-    
-protected Vector2[] m_CachedUvs;
-    
-private TweenRunner`1<ColorTween> m_ColorTweenRunner;
+    private RectTransform m_RectTransform;
+    private CanvasRenderer m_CanvasRenderer;
+    private Canvas m_Canvas;
+    private bool m_VertsDirty;
+    private bool m_MaterialDirty;
+    protected UnityAction m_OnDirtyLayoutCallback;
+    protected UnityAction m_OnDirtyVertsCallback;
+    protected UnityAction m_OnDirtyMaterialCallback;
+    protected static Mesh s_Mesh;
+    private static VertexHelper s_VertexHelper;
+    protected Mesh m_CachedMesh;
+    protected Vector2[] m_CachedUvs;
+    private TweenRunner`1<ColorTween> m_ColorTweenRunner;
     [CompilerGeneratedAttribute]
-
 private bool <useLegacyMeshGeneration>k__BackingField;
-    
-public static Material defaultGraphicMaterial { get; }
-    
-public Color color { get; public set; }
-    
-public bool raycastTarget { get; public set; }
-    
-protected bool useLegacyMeshGeneration { get; protected set; }
-    
-public int depth { get; }
-    
-public RectTransform rectTransform { get; }
-    
-public Canvas canvas { get; }
-    
-public CanvasRenderer canvasRenderer { get; }
-    
-public Material defaultMaterial { get; }
-    
-public Material material { get; public set; }
-    
-public Material materialForRendering { get; }
-    
-public Texture mainTexture { get; }
-    
-protected static Mesh workerMesh { get; }
+    public static Material defaultGraphicMaterial { get; }
+    public Color color { get; public set; }
+    public bool raycastTarget { get; public set; }
+    protected bool useLegacyMeshGeneration { get; protected set; }
+    public int depth { get; }
+    public RectTransform rectTransform { get; }
+    public Canvas canvas { get; }
+    public CanvasRenderer canvasRenderer { get; }
+    public Material defaultMaterial { get; }
+    public Material material { get; public set; }
+    public Material materialForRendering { get; }
+    public Texture mainTexture { get; }
+    protected static Mesh workerMesh { get; }
     private static Graphic();
     public static Material get_defaultGraphicMaterial();
     public virtual Color get_color();
@@ -1859,37 +1423,24 @@ protected virtual void OnPopulateMesh(Mesh m);
 [AddComponentMenu("Event/Graphic Raycaster")]
 [RequireComponent("UnityEngine.Canvas")]
 public class UnityEngine.UI.GraphicRaycaster : BaseRaycaster {
-    
-protected static int kNoEventMaskSet;
+    protected static int kNoEventMaskSet;
     [FormerlySerializedAsAttribute("ignoreReversedGraphics")]
 [SerializeField]
-
 private bool m_IgnoreReversedGraphics;
     [FormerlySerializedAsAttribute("blockingObjects")]
 [SerializeField]
-
 private BlockingObjects m_BlockingObjects;
     [SerializeField]
-
 protected LayerMask m_BlockingMask;
-    
-private Canvas m_Canvas;
-    
-private List`1<Graphic> m_RaycastResults;
-    
-private static List`1<Graphic> s_SortedGraphics;
-    
-public int sortOrderPriority { get; }
-    
-public int renderOrderPriority { get; }
-    
-public bool ignoreReversedGraphics { get; public set; }
-    
-public BlockingObjects blockingObjects { get; public set; }
-    
-private Canvas canvas { get; }
-    
-public Camera eventCamera { get; }
+    private Canvas m_Canvas;
+    private List`1<Graphic> m_RaycastResults;
+    private static List`1<Graphic> s_SortedGraphics;
+    public int sortOrderPriority { get; }
+    public int renderOrderPriority { get; }
+    public bool ignoreReversedGraphics { get; public set; }
+    public BlockingObjects blockingObjects { get; public set; }
+    private Canvas canvas { get; }
+    public Camera eventCamera { get; }
     private static GraphicRaycaster();
     public virtual int get_sortOrderPriority();
     public virtual int get_renderOrderPriority();
@@ -1903,14 +1454,10 @@ public Camera eventCamera { get; }
     private static void Raycast(Canvas canvas, Camera eventCamera, Vector2 pointerPosition, IList`1<Graphic> foundGraphics, List`1<Graphic> results);
 }
 public class UnityEngine.UI.GraphicRegistry : object {
-    
-private static GraphicRegistry s_Instance;
-    
-private Dictionary`2<Canvas, IndexedSet`1<Graphic>> m_Graphics;
-    
-private static List`1<Graphic> s_EmptyList;
-    
-public static GraphicRegistry instance { get; }
+    private static GraphicRegistry s_Instance;
+    private Dictionary`2<Canvas, IndexedSet`1<Graphic>> m_Graphics;
+    private static List`1<Graphic> s_EmptyList;
+    public static GraphicRegistry instance { get; }
     private static GraphicRegistry();
     public static GraphicRegistry get_instance();
     public static void RegisterGraphicForCanvas(Canvas c, Graphic graphic);
@@ -1920,35 +1467,23 @@ public static GraphicRegistry instance { get; }
 [AddComponentMenu("Layout/Grid Layout Group", "152")]
 public class UnityEngine.UI.GridLayoutGroup : LayoutGroup {
     [SerializeField]
-
 protected Corner m_StartCorner;
     [SerializeField]
-
 protected Axis m_StartAxis;
     [SerializeField]
-
 protected Vector2 m_CellSize;
     [SerializeField]
-
 protected Vector2 m_Spacing;
     [SerializeField]
-
 protected Constraint m_Constraint;
     [SerializeField]
-
 protected int m_ConstraintCount;
-    
-public Corner startCorner { get; public set; }
-    
-public Axis startAxis { get; public set; }
-    
-public Vector2 cellSize { get; public set; }
-    
-public Vector2 spacing { get; public set; }
-    
-public Constraint constraint { get; public set; }
-    
-public int constraintCount { get; public set; }
+    public Corner startCorner { get; public set; }
+    public Axis startAxis { get; public set; }
+    public Vector2 cellSize { get; public set; }
+    public Vector2 spacing { get; public set; }
+    public Constraint constraint { get; public set; }
+    public int constraintCount { get; public set; }
     public Corner get_startCorner();
     public void set_startCorner(Corner value);
     public Axis get_startAxis();
@@ -1977,40 +1512,26 @@ public class UnityEngine.UI.HorizontalLayoutGroup : HorizontalOrVerticalLayoutGr
 [ExecuteAlways]
 public abstract class UnityEngine.UI.HorizontalOrVerticalLayoutGroup : LayoutGroup {
     [SerializeField]
-
 protected float m_Spacing;
     [SerializeField]
-
 protected bool m_ChildForceExpandWidth;
     [SerializeField]
-
 protected bool m_ChildForceExpandHeight;
     [SerializeField]
-
 protected bool m_ChildControlWidth;
     [SerializeField]
-
 protected bool m_ChildControlHeight;
     [SerializeField]
-
 protected bool m_ChildScaleWidth;
     [SerializeField]
-
 protected bool m_ChildScaleHeight;
-    
-public float spacing { get; public set; }
-    
-public bool childForceExpandWidth { get; public set; }
-    
-public bool childForceExpandHeight { get; public set; }
-    
-public bool childControlWidth { get; public set; }
-    
-public bool childControlHeight { get; public set; }
-    
-public bool childScaleWidth { get; public set; }
-    
-public bool childScaleHeight { get; public set; }
+    public float spacing { get; public set; }
+    public bool childForceExpandWidth { get; public set; }
+    public bool childForceExpandHeight { get; public set; }
+    public bool childControlWidth { get; public set; }
+    public bool childControlHeight { get; public set; }
+    public bool childScaleWidth { get; public set; }
+    public bool childScaleHeight { get; public set; }
     public float get_spacing();
     public void set_spacing(float value);
     public bool get_childForceExpandWidth();
@@ -2030,8 +1551,7 @@ public bool childScaleHeight { get; public set; }
     private void GetChildSizes(RectTransform child, int axis, bool controlSize, bool childForceExpand, Single& min, Single& preferred, Single& flexible);
 }
 public interface UnityEngine.UI.ICanvasElement {
-    
-public Transform transform { get; }
+    public Transform transform { get; }
     public abstract virtual void Rebuild(CanvasUpdate executing);
     public abstract virtual Transform get_transform();
     public abstract virtual void LayoutComplete();
@@ -2039,10 +1559,8 @@ public Transform transform { get; }
     public abstract virtual bool IsDestroyed();
 }
 public interface UnityEngine.UI.IClippable {
-    
-public GameObject gameObject { get; }
-    
-public RectTransform rectTransform { get; }
+    public GameObject gameObject { get; }
+    public RectTransform rectTransform { get; }
     public abstract virtual GameObject get_gameObject();
     public abstract virtual void RecalculateClipping();
     public abstract virtual RectTransform get_rectTransform();
@@ -2061,20 +1579,13 @@ public interface UnityEngine.UI.ILayoutController {
     public abstract virtual void SetLayoutVertical();
 }
 public interface UnityEngine.UI.ILayoutElement {
-    
-public float minWidth { get; }
-    
-public float preferredWidth { get; }
-    
-public float flexibleWidth { get; }
-    
-public float minHeight { get; }
-    
-public float preferredHeight { get; }
-    
-public float flexibleHeight { get; }
-    
-public int layoutPriority { get; }
+    public float minWidth { get; }
+    public float preferredWidth { get; }
+    public float flexibleWidth { get; }
+    public float minHeight { get; }
+    public float preferredHeight { get; }
+    public float flexibleHeight { get; }
+    public int layoutPriority { get; }
     public abstract virtual void CalculateLayoutInputHorizontal();
     public abstract virtual void CalculateLayoutInputVertical();
     public abstract virtual float get_minWidth();
@@ -2088,123 +1599,74 @@ public int layoutPriority { get; }
 public interface UnityEngine.UI.ILayoutGroup {
 }
 public interface UnityEngine.UI.ILayoutIgnorer {
-    
-public bool ignoreLayout { get; }
+    public bool ignoreLayout { get; }
     public abstract virtual bool get_ignoreLayout();
 }
 public interface UnityEngine.UI.ILayoutSelfController {
 }
 [AddComponentMenu("UI/Image", "11")]
 public class UnityEngine.UI.Image : MaskableGraphic {
-    
-protected static Material s_ETC1DefaultUI;
+    protected static Material s_ETC1DefaultUI;
     [FormerlySerializedAsAttribute("m_Frame")]
 [SerializeField]
-
 private Sprite m_Sprite;
-    
-private Sprite m_OverrideSprite;
+    private Sprite m_OverrideSprite;
     [SerializeField]
-
 private Type m_Type;
     [SerializeField]
-
 private bool m_PreserveAspect;
     [SerializeField]
-
 private bool m_FillCenter;
     [SerializeField]
-
 private FillMethod m_FillMethod;
     [RangeAttribute("0", "1")]
 [SerializeField]
-
 private float m_FillAmount;
     [SerializeField]
-
 private bool m_FillClockwise;
     [SerializeField]
-
 private int m_FillOrigin;
-    
-private float m_AlphaHitTestMinimumThreshold;
-    
-private bool m_Tracked;
+    private float m_AlphaHitTestMinimumThreshold;
+    private bool m_Tracked;
     [SerializeField]
-
 private bool m_UseSpriteMesh;
     [SerializeField]
-
 private float m_PixelsPerUnitMultiplier;
-    
-private float m_CachedReferencePixelsPerUnit;
-    
-private static Vector2[] s_VertScratch;
-    
-private static Vector2[] s_UVScratch;
-    
-private static Vector3[] s_Xy;
-    
-private static Vector3[] s_Uv;
-    
-private static List`1<Image> m_TrackedTexturelessImages;
-    
-private static bool s_Initialized;
-    
-public Sprite sprite { get; public set; }
-    
-public Sprite overrideSprite { get; public set; }
-    
-private Sprite activeSprite { get; }
-    
-public Type type { get; public set; }
-    
-public bool preserveAspect { get; public set; }
-    
-public bool fillCenter { get; public set; }
-    
-public FillMethod fillMethod { get; public set; }
-    
-public float fillAmount { get; public set; }
-    
-public bool fillClockwise { get; public set; }
-    
-public int fillOrigin { get; public set; }
+    private float m_CachedReferencePixelsPerUnit;
+    private static Vector2[] s_VertScratch;
+    private static Vector2[] s_UVScratch;
+    private static Vector3[] s_Xy;
+    private static Vector3[] s_Uv;
+    private static List`1<Image> m_TrackedTexturelessImages;
+    private static bool s_Initialized;
+    public Sprite sprite { get; public set; }
+    public Sprite overrideSprite { get; public set; }
+    private Sprite activeSprite { get; }
+    public Type type { get; public set; }
+    public bool preserveAspect { get; public set; }
+    public bool fillCenter { get; public set; }
+    public FillMethod fillMethod { get; public set; }
+    public float fillAmount { get; public set; }
+    public bool fillClockwise { get; public set; }
+    public int fillOrigin { get; public set; }
     [ObsoleteAttribute("eventAlphaThreshold has been deprecated. Use eventMinimumAlphaThreshold instead (UnityUpgradable) -> alphaHitTestMinimumThreshold")]
-
 public float eventAlphaThreshold { get; public set; }
-    
-public float alphaHitTestMinimumThreshold { get; public set; }
-    
-public bool useSpriteMesh { get; public set; }
-    
-public static Material defaultETC1GraphicMaterial { get; }
-    
-public Texture mainTexture { get; }
-    
-public bool hasBorder { get; }
-    
-public float pixelsPerUnitMultiplier { get; public set; }
-    
-public float pixelsPerUnit { get; }
-    
-protected float multipliedPixelsPerUnit { get; }
-    
-public Material material { get; public set; }
-    
-public float minWidth { get; }
-    
-public float preferredWidth { get; }
-    
-public float flexibleWidth { get; }
-    
-public float minHeight { get; }
-    
-public float preferredHeight { get; }
-    
-public float flexibleHeight { get; }
-    
-public int layoutPriority { get; }
+    public float alphaHitTestMinimumThreshold { get; public set; }
+    public bool useSpriteMesh { get; public set; }
+    public static Material defaultETC1GraphicMaterial { get; }
+    public Texture mainTexture { get; }
+    public bool hasBorder { get; }
+    public float pixelsPerUnitMultiplier { get; public set; }
+    public float pixelsPerUnit { get; }
+    protected float multipliedPixelsPerUnit { get; }
+    public Material material { get; public set; }
+    public float minWidth { get; }
+    public float preferredWidth { get; }
+    public float flexibleWidth { get; }
+    public float minHeight { get; }
+    public float preferredHeight { get; }
+    public float flexibleHeight { get; }
+    public int layoutPriority { get; }
     private static Image();
     public Sprite get_sprite();
     public void set_sprite(Sprite value);
@@ -2282,8 +1744,7 @@ public int layoutPriority { get; }
 [EditorBrowsableAttribute("1")]
 [ObsoleteAttribute("Not supported anymore.", "True")]
 public interface UnityEngine.UI.IMask {
-    
-public RectTransform rectTransform { get; }
+    public RectTransform rectTransform { get; }
     public abstract virtual bool Enabled();
     public abstract virtual RectTransform get_rectTransform();
 }
@@ -2300,232 +1761,138 @@ public abstract virtual void ModifyMesh(Mesh mesh);
 }
 [AddComponentMenu("")]
 public class UnityEngine.UI.InputField : Selectable {
-    
-protected TouchScreenKeyboard m_Keyboard;
-    
-private static Char[] kSeparators;
+    protected TouchScreenKeyboard m_Keyboard;
+    private static Char[] kSeparators;
     [SerializeField]
 [FormerlySerializedAsAttribute("text")]
-
 protected Text m_TextComponent;
     [SerializeField]
-
 protected Graphic m_Placeholder;
     [SerializeField]
-
 private ContentType m_ContentType;
     [FormerlySerializedAsAttribute("inputType")]
 [SerializeField]
-
 private InputType m_InputType;
     [FormerlySerializedAsAttribute("asteriskChar")]
 [SerializeField]
-
 private char m_AsteriskChar;
     [FormerlySerializedAsAttribute("keyboardType")]
 [SerializeField]
-
 private TouchScreenKeyboardType m_KeyboardType;
     [SerializeField]
-
 private LineType m_LineType;
     [FormerlySerializedAsAttribute("hideMobileInput")]
 [SerializeField]
-
 private bool m_HideMobileInput;
     [FormerlySerializedAsAttribute("validation")]
 [SerializeField]
-
 private CharacterValidation m_CharacterValidation;
     [FormerlySerializedAsAttribute("characterLimit")]
 [SerializeField]
-
 private int m_CharacterLimit;
     [FormerlySerializedAsAttribute("onSubmit")]
 [FormerlySerializedAsAttribute("m_OnSubmit")]
 [FormerlySerializedAsAttribute("m_EndEdit")]
 [SerializeField]
-
 private SubmitEvent m_OnEndEdit;
     [FormerlySerializedAsAttribute("onValueChange")]
 [FormerlySerializedAsAttribute("m_OnValueChange")]
 [SerializeField]
-
 private OnChangeEvent m_OnValueChanged;
     [FormerlySerializedAsAttribute("onValidateInput")]
 [SerializeField]
-
 private OnValidateInput m_OnValidateInput;
     [FormerlySerializedAsAttribute("selectionColor")]
 [SerializeField]
-
 private Color m_CaretColor;
     [SerializeField]
-
 private bool m_CustomCaretColor;
     [SerializeField]
-
 private Color m_SelectionColor;
     [SerializeField]
 [FormerlySerializedAsAttribute("mValue")]
-
 protected string m_Text;
     [SerializeField]
 [RangeAttribute("0", "4")]
-
 private float m_CaretBlinkRate;
     [SerializeField]
 [RangeAttribute("1", "5")]
-
 private int m_CaretWidth;
     [SerializeField]
-
 private bool m_ReadOnly;
-    
-protected int m_CaretPosition;
-    
-protected int m_CaretSelectPosition;
-    
-private RectTransform caretRectTrans;
-    
-protected UIVertex[] m_CursorVerts;
-    
-private TextGenerator m_InputTextCache;
-    
-private CanvasRenderer m_CachedInputRenderer;
-    
-private bool m_PreventFontCallback;
-    
-protected Mesh m_Mesh;
-    
-private bool m_AllowInput;
-    
-private bool m_ShouldActivateNextUpdate;
-    
-private bool m_UpdateDrag;
-    
-private bool m_DragPositionOutOfBounds;
-    
-private static float kHScrollSpeed;
-    
-private static float kVScrollSpeed;
-    
-protected bool m_CaretVisible;
-    
-private Coroutine m_BlinkCoroutine;
-    
-private float m_BlinkStartTime;
-    
-protected int m_DrawStart;
-    
-protected int m_DrawEnd;
-    
-private Coroutine m_DragCoroutine;
-    
-private string m_OriginalText;
-    
-private bool m_WasCanceled;
-    
-private bool m_HasDoneFocusTransition;
-    
-private WaitForSecondsRealtime m_WaitForSecondsRealtime;
-    
-private bool m_TouchKeyboardAllowsInPlaceEditing;
-    
-private static string kEmailSpecialCharacters;
-    
-private Event m_ProcessingEvent;
-    
-private static int k_MaxTextLength;
-    
-private BaseInput input { get; }
-    
-private string compositionString { get; }
-    
-protected Mesh mesh { get; }
-    
-protected TextGenerator cachedInputTextGenerator { get; }
-    
-public bool shouldHideMobileInput { get; public set; }
-    
-private bool shouldActivateOnSelect { get; }
-    
-public string text { get; public set; }
-    
-public bool isFocused { get; }
-    
-public float caretBlinkRate { get; public set; }
-    
-public int caretWidth { get; public set; }
-    
-public Text textComponent { get; public set; }
-    
-public Graphic placeholder { get; public set; }
-    
-public Color caretColor { get; public set; }
-    
-public bool customCaretColor { get; public set; }
-    
-public Color selectionColor { get; public set; }
-    
-public SubmitEvent onEndEdit { get; public set; }
+    protected int m_CaretPosition;
+    protected int m_CaretSelectPosition;
+    private RectTransform caretRectTrans;
+    protected UIVertex[] m_CursorVerts;
+    private TextGenerator m_InputTextCache;
+    private CanvasRenderer m_CachedInputRenderer;
+    private bool m_PreventFontCallback;
+    protected Mesh m_Mesh;
+    private bool m_AllowInput;
+    private bool m_ShouldActivateNextUpdate;
+    private bool m_UpdateDrag;
+    private bool m_DragPositionOutOfBounds;
+    private static float kHScrollSpeed;
+    private static float kVScrollSpeed;
+    protected bool m_CaretVisible;
+    private Coroutine m_BlinkCoroutine;
+    private float m_BlinkStartTime;
+    protected int m_DrawStart;
+    protected int m_DrawEnd;
+    private Coroutine m_DragCoroutine;
+    private string m_OriginalText;
+    private bool m_WasCanceled;
+    private bool m_HasDoneFocusTransition;
+    private WaitForSecondsRealtime m_WaitForSecondsRealtime;
+    private bool m_TouchKeyboardAllowsInPlaceEditing;
+    private static string kEmailSpecialCharacters;
+    private Event m_ProcessingEvent;
+    private static int k_MaxTextLength;
+    private BaseInput input { get; }
+    private string compositionString { get; }
+    protected Mesh mesh { get; }
+    protected TextGenerator cachedInputTextGenerator { get; }
+    public bool shouldHideMobileInput { get; public set; }
+    private bool shouldActivateOnSelect { get; }
+    public string text { get; public set; }
+    public bool isFocused { get; }
+    public float caretBlinkRate { get; public set; }
+    public int caretWidth { get; public set; }
+    public Text textComponent { get; public set; }
+    public Graphic placeholder { get; public set; }
+    public Color caretColor { get; public set; }
+    public bool customCaretColor { get; public set; }
+    public Color selectionColor { get; public set; }
+    public SubmitEvent onEndEdit { get; public set; }
     [ObsoleteAttribute("onValueChange has been renamed to onValueChanged")]
-
 public OnChangeEvent onValueChange { get; public set; }
-    
-public OnChangeEvent onValueChanged { get; public set; }
-    
-public OnValidateInput onValidateInput { get; public set; }
-    
-public int characterLimit { get; public set; }
-    
-public ContentType contentType { get; public set; }
-    
-public LineType lineType { get; public set; }
-    
-public InputType inputType { get; public set; }
-    
-public TouchScreenKeyboard touchScreenKeyboard { get; }
-    
-public TouchScreenKeyboardType keyboardType { get; public set; }
-    
-public CharacterValidation characterValidation { get; public set; }
-    
-public bool readOnly { get; public set; }
-    
-public bool multiLine { get; }
-    
-public char asteriskChar { get; public set; }
-    
-public bool wasCanceled { get; }
-    
-protected int caretPositionInternal { get; protected set; }
-    
-protected int caretSelectPositionInternal { get; protected set; }
-    
-private bool hasSelection { get; }
-    
-public int caretPosition { get; public set; }
-    
-public int selectionAnchorPosition { get; public set; }
-    
-public int selectionFocusPosition { get; public set; }
-    
-private static string clipboard { get; private set; }
-    
-public float minWidth { get; }
-    
-public float preferredWidth { get; }
-    
-public float flexibleWidth { get; }
-    
-public float minHeight { get; }
-    
-public float preferredHeight { get; }
-    
-public float flexibleHeight { get; }
-    
-public int layoutPriority { get; }
+    public OnChangeEvent onValueChanged { get; public set; }
+    public OnValidateInput onValidateInput { get; public set; }
+    public int characterLimit { get; public set; }
+    public ContentType contentType { get; public set; }
+    public LineType lineType { get; public set; }
+    public InputType inputType { get; public set; }
+    public TouchScreenKeyboard touchScreenKeyboard { get; }
+    public TouchScreenKeyboardType keyboardType { get; public set; }
+    public CharacterValidation characterValidation { get; public set; }
+    public bool readOnly { get; public set; }
+    public bool multiLine { get; }
+    public char asteriskChar { get; public set; }
+    public bool wasCanceled { get; }
+    protected int caretPositionInternal { get; protected set; }
+    protected int caretSelectPositionInternal { get; protected set; }
+    private bool hasSelection { get; }
+    public int caretPosition { get; public set; }
+    public int selectionAnchorPosition { get; public set; }
+    public int selectionFocusPosition { get; public set; }
+    private static string clipboard { get; private set; }
+    public float minWidth { get; }
+    public float preferredWidth { get; }
+    public float flexibleWidth { get; }
+    public float minHeight { get; }
+    public float preferredHeight { get; }
+    public float flexibleHeight { get; }
+    public int layoutPriority { get; }
     private static InputField();
     private BaseInput get_input();
     private string get_compositionString();
@@ -2697,45 +2064,29 @@ public abstract virtual void ModifyVertices(List`1<UIVertex> verts);
 [ExecuteAlways]
 public class UnityEngine.UI.LayoutElement : UIBehaviour {
     [SerializeField]
-
 private bool m_IgnoreLayout;
     [SerializeField]
-
 private float m_MinWidth;
     [SerializeField]
-
 private float m_MinHeight;
     [SerializeField]
-
 private float m_PreferredWidth;
     [SerializeField]
-
 private float m_PreferredHeight;
     [SerializeField]
-
 private float m_FlexibleWidth;
     [SerializeField]
-
 private float m_FlexibleHeight;
     [SerializeField]
-
 private int m_LayoutPriority;
-    
-public bool ignoreLayout { get; public set; }
-    
-public float minWidth { get; public set; }
-    
-public float minHeight { get; public set; }
-    
-public float preferredWidth { get; public set; }
-    
-public float preferredHeight { get; public set; }
-    
-public float flexibleWidth { get; public set; }
-    
-public float flexibleHeight { get; public set; }
-    
-public int layoutPriority { get; public set; }
+    public bool ignoreLayout { get; public set; }
+    public float minWidth { get; public set; }
+    public float minHeight { get; public set; }
+    public float preferredWidth { get; public set; }
+    public float preferredHeight { get; public set; }
+    public float flexibleWidth { get; public set; }
+    public float flexibleHeight { get; public set; }
+    public int layoutPriority { get; public set; }
     public virtual bool get_ignoreLayout();
     public virtual void set_ignoreLayout(bool value);
     public virtual void CalculateLayoutInputHorizontal();
@@ -2766,47 +2117,27 @@ public int layoutPriority { get; public set; }
 [RequireComponent("UnityEngine.RectTransform")]
 public abstract class UnityEngine.UI.LayoutGroup : UIBehaviour {
     [SerializeField]
-
 protected RectOffset m_Padding;
     [SerializeField]
-
 protected TextAnchor m_ChildAlignment;
-    
-private RectTransform m_Rect;
-    
-protected DrivenRectTransformTracker m_Tracker;
-    
-private Vector2 m_TotalMinSize;
-    
-private Vector2 m_TotalPreferredSize;
-    
-private Vector2 m_TotalFlexibleSize;
-    
-private List`1<RectTransform> m_RectChildren;
-    
-public RectOffset padding { get; public set; }
-    
-public TextAnchor childAlignment { get; public set; }
-    
-protected RectTransform rectTransform { get; }
-    
-protected List`1<RectTransform> rectChildren { get; }
-    
-public float minWidth { get; }
-    
-public float preferredWidth { get; }
-    
-public float flexibleWidth { get; }
-    
-public float minHeight { get; }
-    
-public float preferredHeight { get; }
-    
-public float flexibleHeight { get; }
-    
-public int layoutPriority { get; }
-    
-private bool isRootLayoutGroup { get; }
+    private RectTransform m_Rect;
+    protected DrivenRectTransformTracker m_Tracker;
+    private Vector2 m_TotalMinSize;
+    private Vector2 m_TotalPreferredSize;
+    private Vector2 m_TotalFlexibleSize;
+    private List`1<RectTransform> m_RectChildren;
+    public RectOffset padding { get; public set; }
+    public TextAnchor childAlignment { get; public set; }
+    protected RectTransform rectTransform { get; }
+    protected List`1<RectTransform> rectChildren { get; }
+    public float minWidth { get; }
+    public float preferredWidth { get; }
+    public float flexibleWidth { get; }
+    public float minHeight { get; }
+    public float preferredHeight { get; }
+    public float flexibleHeight { get; }
+    public int layoutPriority { get; }
+    private bool isRootLayoutGroup { get; }
     public RectOffset get_padding();
     public void set_padding(RectOffset value);
     public TextAnchor get_childAlignment();
@@ -2846,14 +2177,10 @@ private bool isRootLayoutGroup { get; }
 private IEnumerator DelayedSetDirty(RectTransform rectTransform);
 }
 public class UnityEngine.UI.LayoutRebuilder : object {
-    
-private RectTransform m_ToRebuild;
-    
-private int m_CachedHashFromTransform;
-    
-private static ObjectPool`1<LayoutRebuilder> s_Rebuilders;
-    
-public Transform transform { get; }
+    private RectTransform m_ToRebuild;
+    private int m_CachedHashFromTransform;
+    private static ObjectPool`1<LayoutRebuilder> s_Rebuilders;
+    public Transform transform { get; }
     private static LayoutRebuilder();
     private void Initialize(RectTransform controller);
     private void Clear();
@@ -2888,8 +2215,7 @@ public static class UnityEngine.UI.LayoutUtility : object {
     public static float GetLayoutProperty(RectTransform rect, Func`2<ILayoutElement, float> property, float defaultValue, ILayoutElement& source);
 }
 public static class UnityEngine.UI.ListPool`1 : object {
-    
-private static ObjectPool`1<List`1<T>> s_ListPool;
+    private static ObjectPool`1<List`1<T>> s_ListPool;
     private static ListPool`1();
     private static void Clear(List`1<T> l);
     public static List`1<T> Get();
@@ -2900,23 +2226,15 @@ private static ObjectPool`1<List`1<T>> s_ListPool;
 [RequireComponent("UnityEngine.RectTransform")]
 [DisallowMultipleComponent]
 public class UnityEngine.UI.Mask : UIBehaviour {
-    
-private RectTransform m_RectTransform;
+    private RectTransform m_RectTransform;
     [SerializeField]
-
 private bool m_ShowMaskGraphic;
-    
-private Graphic m_Graphic;
-    
-private Material m_MaskMaterial;
-    
-private Material m_UnmaskMaterial;
-    
-public RectTransform rectTransform { get; }
-    
-public bool showMaskGraphic { get; public set; }
-    
-public Graphic graphic { get; }
+    private Graphic m_Graphic;
+    private Material m_MaskMaterial;
+    private Material m_UnmaskMaterial;
+    public RectTransform rectTransform { get; }
+    public bool showMaskGraphic { get; public set; }
+    public Graphic graphic { get; }
     public RectTransform get_rectTransform();
     public bool get_showMaskGraphic();
     public void set_showMaskGraphic(bool value);
@@ -2930,35 +2248,23 @@ public virtual void OnSiblingGraphicEnabledDisabled();
     public virtual Material GetModifiedMaterial(Material baseMaterial);
 }
 public abstract class UnityEngine.UI.MaskableGraphic : Graphic {
-    
-protected bool m_ShouldRecalculateStencil;
-    
-protected Material m_MaskMaterial;
-    
-private RectMask2D m_ParentMask;
-    
-private bool m_Maskable;
+    protected bool m_ShouldRecalculateStencil;
+    protected Material m_MaskMaterial;
+    private RectMask2D m_ParentMask;
+    private bool m_Maskable;
     [EditorBrowsableAttribute("1")]
 [ObsoleteAttribute("Not used anymore.", "True")]
-
 protected bool m_IncludeForMasking;
     [SerializeField]
-
 private CullStateChangedEvent m_OnCullStateChanged;
     [EditorBrowsableAttribute("1")]
 [ObsoleteAttribute("Not used anymore", "True")]
-
 protected bool m_ShouldRecalculate;
-    
-protected int m_StencilValue;
-    
-private Vector3[] m_Corners;
-    
-public CullStateChangedEvent onCullStateChanged { get; public set; }
-    
-public bool maskable { get; public set; }
-    
-private Rect rootCanvasRect { get; }
+    protected int m_StencilValue;
+    private Vector3[] m_Corners;
+    public CullStateChangedEvent onCullStateChanged { get; public set; }
+    public bool maskable { get; public set; }
+    private Rect rootCanvasRect { get; }
     public CullStateChangedEvent get_onCullStateChanged();
     public void set_onCullStateChanged(CullStateChangedEvent value);
     public bool get_maskable();
@@ -2995,32 +2301,21 @@ internal static class UnityEngine.UI.Misc : object {
 }
 public class UnityEngine.UI.Navigation : ValueType {
     [SerializeField]
-
 private Mode m_Mode;
     [SerializeField]
-
 private Selectable m_SelectOnUp;
     [SerializeField]
-
 private Selectable m_SelectOnDown;
     [SerializeField]
-
 private Selectable m_SelectOnLeft;
     [SerializeField]
-
 private Selectable m_SelectOnRight;
-    
-public Mode mode { get; public set; }
-    
-public Selectable selectOnUp { get; public set; }
-    
-public Selectable selectOnDown { get; public set; }
-    
-public Selectable selectOnLeft { get; public set; }
-    
-public Selectable selectOnRight { get; public set; }
-    
-public static Navigation defaultNavigation { get; }
+    public Mode mode { get; public set; }
+    public Selectable selectOnUp { get; public set; }
+    public Selectable selectOnDown { get; public set; }
+    public Selectable selectOnLeft { get; public set; }
+    public Selectable selectOnRight { get; public set; }
+    public static Navigation defaultNavigation { get; }
     public Mode get_mode();
     public void set_mode(Mode value);
     public Selectable get_selectOnUp();
@@ -3035,21 +2330,14 @@ public static Navigation defaultNavigation { get; }
     public sealed virtual bool Equals(Navigation other);
 }
 internal class UnityEngine.UI.ObjectPool`1 : object {
-    
-private Stack`1<T> m_Stack;
-    
-private UnityAction`1<T> m_ActionOnGet;
-    
-private UnityAction`1<T> m_ActionOnRelease;
+    private Stack`1<T> m_Stack;
+    private UnityAction`1<T> m_ActionOnGet;
+    private UnityAction`1<T> m_ActionOnRelease;
     [CompilerGeneratedAttribute]
-
 private int <countAll>k__BackingField;
-    
-public int countAll { get; private set; }
-    
-public int countActive { get; }
-    
-public int countInactive { get; }
+    public int countAll { get; private set; }
+    public int countActive { get; }
+    public int countInactive { get; }
     public ObjectPool`1(UnityAction`1<T> actionOnGet, UnityAction`1<T> actionOnRelease);
     [CompilerGeneratedAttribute]
 public int get_countAll();
@@ -3072,17 +2360,12 @@ public class UnityEngine.UI.PositionAsUV1 : BaseMeshEffect {
 public class UnityEngine.UI.RawImage : MaskableGraphic {
     [FormerlySerializedAsAttribute("m_Tex")]
 [SerializeField]
-
 private Texture m_Texture;
     [SerializeField]
-
 private Rect m_UVRect;
-    
-public Texture mainTexture { get; }
-    
-public Texture texture { get; public set; }
-    
-public Rect uvRect { get; public set; }
+    public Texture mainTexture { get; }
+    public Texture texture { get; public set; }
+    public Rect uvRect { get; public set; }
     public virtual Texture get_mainTexture();
     public Texture get_texture();
     public void set_texture(Texture value);
@@ -3093,10 +2376,8 @@ public Rect uvRect { get; public set; }
     protected virtual void OnDidApplyAnimationProperties();
 }
 internal class UnityEngine.UI.RectangularVertexClipper : object {
-    
-private Vector3[] m_WorldCorners;
-    
-private Vector3[] m_CanvasCorners;
+    private Vector3[] m_WorldCorners;
+    private Vector3[] m_CanvasCorners;
     public Rect GetCanvasRect(RectTransform t, Canvas c);
 }
 [AddComponentMenu("UI/Rect Mask 2D", "13")]
@@ -3104,34 +2385,20 @@ private Vector3[] m_CanvasCorners;
 [DisallowMultipleComponent]
 [RequireComponent("UnityEngine.RectTransform")]
 public class UnityEngine.UI.RectMask2D : UIBehaviour {
-    
-private RectangularVertexClipper m_VertexClipper;
-    
-private RectTransform m_RectTransform;
-    
-private HashSet`1<MaskableGraphic> m_MaskableTargets;
-    
-private HashSet`1<IClippable> m_ClipTargets;
-    
-private bool m_ShouldRecalculateClipRects;
-    
-private List`1<RectMask2D> m_Clippers;
-    
-private Rect m_LastClipRectCanvasSpace;
-    
-private bool m_ForceClip;
-    
-private Canvas m_Canvas;
-    
-private Vector3[] m_Corners;
-    
-private Canvas Canvas { get; }
-    
-public Rect canvasRect { get; }
-    
-public RectTransform rectTransform { get; }
-    
-private Rect rootCanvasRect { get; }
+    private RectangularVertexClipper m_VertexClipper;
+    private RectTransform m_RectTransform;
+    private HashSet`1<MaskableGraphic> m_MaskableTargets;
+    private HashSet`1<IClippable> m_ClipTargets;
+    private bool m_ShouldRecalculateClipRects;
+    private List`1<RectMask2D> m_Clippers;
+    private Rect m_LastClipRectCanvasSpace;
+    private bool m_ForceClip;
+    private Canvas m_Canvas;
+    private Vector3[] m_Corners;
+    private Canvas Canvas { get; }
+    public Rect canvasRect { get; }
+    public RectTransform rectTransform { get; }
+    private Rect rootCanvasRect { get; }
     private Canvas get_Canvas();
     public Rect get_canvasRect();
     public RectTransform get_rectTransform();
@@ -3146,22 +2413,14 @@ private Rect rootCanvasRect { get; }
     protected virtual void OnCanvasHierarchyChanged();
 }
 internal class UnityEngine.UI.ReflectionMethodsCache : object {
-    
-public Raycast3DCallback raycast3D;
-    
-public RaycastAllCallback raycast3DAll;
-    
-public Raycast2DCallback raycast2D;
-    
-public GetRayIntersectionAllCallback getRayIntersectionAll;
-    
-public GetRayIntersectionAllNonAllocCallback getRayIntersectionAllNonAlloc;
-    
-public GetRaycastNonAllocCallback getRaycastNonAlloc;
-    
-private static ReflectionMethodsCache s_ReflectionMethodsCache;
-    
-public static ReflectionMethodsCache Singleton { get; }
+    public Raycast3DCallback raycast3D;
+    public RaycastAllCallback raycast3DAll;
+    public Raycast2DCallback raycast2D;
+    public GetRayIntersectionAllCallback getRayIntersectionAll;
+    public GetRayIntersectionAllNonAllocCallback getRayIntersectionAllNonAlloc;
+    public GetRaycastNonAllocCallback getRaycastNonAlloc;
+    private static ReflectionMethodsCache s_ReflectionMethodsCache;
+    public static ReflectionMethodsCache Singleton { get; }
     public static ReflectionMethodsCache get_Singleton();
 }
 [AddComponentMenu("UI/Scrollbar", "34")]
@@ -3169,57 +2428,36 @@ public static ReflectionMethodsCache Singleton { get; }
 [RequireComponent("UnityEngine.RectTransform")]
 public class UnityEngine.UI.Scrollbar : Selectable {
     [SerializeField]
-
 private RectTransform m_HandleRect;
     [SerializeField]
-
 private Direction m_Direction;
     [RangeAttribute("0", "1")]
 [SerializeField]
-
 private float m_Value;
     [RangeAttribute("0", "1")]
 [SerializeField]
-
 private float m_Size;
     [RangeAttribute("0", "11")]
 [SerializeField]
-
 private int m_NumberOfSteps;
     [SpaceAttribute("6")]
 [SerializeField]
-
 private ScrollEvent m_OnValueChanged;
-    
-private RectTransform m_ContainerRect;
-    
-private Vector2 m_Offset;
-    
-private DrivenRectTransformTracker m_Tracker;
-    
-private Coroutine m_PointerDownRepeat;
-    
-private bool isPointerDownAndNotDragging;
-    
-private bool m_DelayedUpdateVisuals;
-    
-public RectTransform handleRect { get; public set; }
-    
-public Direction direction { get; public set; }
-    
-public float value { get; public set; }
-    
-public float size { get; public set; }
-    
-public int numberOfSteps { get; public set; }
-    
-public ScrollEvent onValueChanged { get; public set; }
-    
-private float stepSize { get; }
-    
-private Axis axis { get; }
-    
-private bool reverseValue { get; }
+    private RectTransform m_ContainerRect;
+    private Vector2 m_Offset;
+    private DrivenRectTransformTracker m_Tracker;
+    private Coroutine m_PointerDownRepeat;
+    private bool isPointerDownAndNotDragging;
+    private bool m_DelayedUpdateVisuals;
+    public RectTransform handleRect { get; public set; }
+    public Direction direction { get; public set; }
+    public float value { get; public set; }
+    public float size { get; public set; }
+    public int numberOfSteps { get; public set; }
+    public ScrollEvent onValueChanged { get; public set; }
+    private float stepSize { get; }
+    private Axis axis { get; }
+    private bool reverseValue { get; }
     public RectTransform get_handleRect();
     public void set_handleRect(RectTransform value);
     public Direction get_direction();
@@ -3271,157 +2509,89 @@ protected IEnumerator ClickRepeat(PointerEventData eventData);
 [RequireComponent("UnityEngine.RectTransform")]
 public class UnityEngine.UI.ScrollRect : UIBehaviour {
     [SerializeField]
-
 private RectTransform m_Content;
     [SerializeField]
-
 private bool m_Horizontal;
     [SerializeField]
-
 private bool m_Vertical;
     [SerializeField]
-
 private MovementType m_MovementType;
     [SerializeField]
-
 private float m_Elasticity;
     [SerializeField]
-
 private bool m_Inertia;
     [SerializeField]
-
 private float m_DecelerationRate;
     [SerializeField]
-
 private float m_ScrollSensitivity;
     [SerializeField]
-
 private RectTransform m_Viewport;
     [SerializeField]
-
 private Scrollbar m_HorizontalScrollbar;
     [SerializeField]
-
 private Scrollbar m_VerticalScrollbar;
     [SerializeField]
-
 private ScrollbarVisibility m_HorizontalScrollbarVisibility;
     [SerializeField]
-
 private ScrollbarVisibility m_VerticalScrollbarVisibility;
     [SerializeField]
-
 private float m_HorizontalScrollbarSpacing;
     [SerializeField]
-
 private float m_VerticalScrollbarSpacing;
     [SerializeField]
-
 private ScrollRectEvent m_OnValueChanged;
-    
-private Vector2 m_PointerStartLocalCursor;
-    
-protected Vector2 m_ContentStartPosition;
-    
-private RectTransform m_ViewRect;
-    
-protected Bounds m_ContentBounds;
-    
-private Bounds m_ViewBounds;
-    
-private Vector2 m_Velocity;
-    
-private bool m_Dragging;
-    
-private bool m_Scrolling;
-    
-private Vector2 m_PrevPosition;
-    
-private Bounds m_PrevContentBounds;
-    
-private Bounds m_PrevViewBounds;
-    
-private bool m_HasRebuiltLayout;
-    
-private bool m_HSliderExpand;
-    
-private bool m_VSliderExpand;
-    
-private float m_HSliderHeight;
-    
-private float m_VSliderWidth;
-    
-private RectTransform m_Rect;
-    
-private RectTransform m_HorizontalScrollbarRect;
-    
-private RectTransform m_VerticalScrollbarRect;
-    
-private DrivenRectTransformTracker m_Tracker;
-    
-private Vector3[] m_Corners;
-    
-public RectTransform content { get; public set; }
-    
-public bool horizontal { get; public set; }
-    
-public bool vertical { get; public set; }
-    
-public MovementType movementType { get; public set; }
-    
-public float elasticity { get; public set; }
-    
-public bool inertia { get; public set; }
-    
-public float decelerationRate { get; public set; }
-    
-public float scrollSensitivity { get; public set; }
-    
-public RectTransform viewport { get; public set; }
-    
-public Scrollbar horizontalScrollbar { get; public set; }
-    
-public Scrollbar verticalScrollbar { get; public set; }
-    
-public ScrollbarVisibility horizontalScrollbarVisibility { get; public set; }
-    
-public ScrollbarVisibility verticalScrollbarVisibility { get; public set; }
-    
-public float horizontalScrollbarSpacing { get; public set; }
-    
-public float verticalScrollbarSpacing { get; public set; }
-    
-public ScrollRectEvent onValueChanged { get; public set; }
-    
-protected RectTransform viewRect { get; }
-    
-public Vector2 velocity { get; public set; }
-    
-private RectTransform rectTransform { get; }
-    
-public Vector2 normalizedPosition { get; public set; }
-    
-public float horizontalNormalizedPosition { get; public set; }
-    
-public float verticalNormalizedPosition { get; public set; }
-    
-private bool hScrollingNeeded { get; }
-    
-private bool vScrollingNeeded { get; }
-    
-public float minWidth { get; }
-    
-public float preferredWidth { get; }
-    
-public float flexibleWidth { get; }
-    
-public float minHeight { get; }
-    
-public float preferredHeight { get; }
-    
-public float flexibleHeight { get; }
-    
-public int layoutPriority { get; }
+    private Vector2 m_PointerStartLocalCursor;
+    protected Vector2 m_ContentStartPosition;
+    private RectTransform m_ViewRect;
+    protected Bounds m_ContentBounds;
+    private Bounds m_ViewBounds;
+    private Vector2 m_Velocity;
+    private bool m_Dragging;
+    private bool m_Scrolling;
+    private Vector2 m_PrevPosition;
+    private Bounds m_PrevContentBounds;
+    private Bounds m_PrevViewBounds;
+    private bool m_HasRebuiltLayout;
+    private bool m_HSliderExpand;
+    private bool m_VSliderExpand;
+    private float m_HSliderHeight;
+    private float m_VSliderWidth;
+    private RectTransform m_Rect;
+    private RectTransform m_HorizontalScrollbarRect;
+    private RectTransform m_VerticalScrollbarRect;
+    private DrivenRectTransformTracker m_Tracker;
+    private Vector3[] m_Corners;
+    public RectTransform content { get; public set; }
+    public bool horizontal { get; public set; }
+    public bool vertical { get; public set; }
+    public MovementType movementType { get; public set; }
+    public float elasticity { get; public set; }
+    public bool inertia { get; public set; }
+    public float decelerationRate { get; public set; }
+    public float scrollSensitivity { get; public set; }
+    public RectTransform viewport { get; public set; }
+    public Scrollbar horizontalScrollbar { get; public set; }
+    public Scrollbar verticalScrollbar { get; public set; }
+    public ScrollbarVisibility horizontalScrollbarVisibility { get; public set; }
+    public ScrollbarVisibility verticalScrollbarVisibility { get; public set; }
+    public float horizontalScrollbarSpacing { get; public set; }
+    public float verticalScrollbarSpacing { get; public set; }
+    public ScrollRectEvent onValueChanged { get; public set; }
+    protected RectTransform viewRect { get; }
+    public Vector2 velocity { get; public set; }
+    private RectTransform rectTransform { get; }
+    public Vector2 normalizedPosition { get; public set; }
+    public float horizontalNormalizedPosition { get; public set; }
+    public float verticalNormalizedPosition { get; public set; }
+    private bool hScrollingNeeded { get; }
+    private bool vScrollingNeeded { get; }
+    public float minWidth { get; }
+    public float preferredWidth { get; }
+    public float flexibleWidth { get; }
+    public float minHeight { get; }
+    public float preferredHeight { get; }
+    public float flexibleHeight { get; }
+    public int layoutPriority { get; }
     public RectTransform get_content();
     public void set_content(RectTransform value);
     public bool get_horizontal();
@@ -3518,89 +2688,57 @@ public int layoutPriority { get; }
 [SelectionBaseAttribute]
 [DisallowMultipleComponent]
 public class UnityEngine.UI.Selectable : UIBehaviour {
-    
-private static Selectable[] s_Selectables;
-    
-private static int s_SelectableCount;
-    
-private static bool s_IsDirty;
+    private static Selectable[] s_Selectables;
+    private static int s_SelectableCount;
+    private static bool s_IsDirty;
     [FormerlySerializedAsAttribute("navigation")]
 [SerializeField]
-
 private Navigation m_Navigation;
     [FormerlySerializedAsAttribute("transition")]
 [SerializeField]
-
 private Transition m_Transition;
     [FormerlySerializedAsAttribute("colors")]
 [SerializeField]
-
 private ColorBlock m_Colors;
     [FormerlySerializedAsAttribute("spriteState")]
 [SerializeField]
-
 private SpriteState m_SpriteState;
     [FormerlySerializedAsAttribute("animationTriggers")]
 [SerializeField]
-
 private AnimationTriggers m_AnimationTriggers;
     [TooltipAttribute("Can the Selectable be interacted with?")]
 [SerializeField]
-
 private bool m_Interactable;
     [FormerlySerializedAsAttribute("highlightGraphic")]
 [FormerlySerializedAsAttribute("m_HighlightGraphic")]
 [SerializeField]
-
 private Graphic m_TargetGraphic;
-    
-private bool m_GroupsAllowInteraction;
-    
-private bool m_WillRemove;
+    private bool m_GroupsAllowInteraction;
+    private bool m_WillRemove;
     [CompilerGeneratedAttribute]
-
 private bool <isPointerInside>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private bool <isPointerDown>k__BackingField;
     [CompilerGeneratedAttribute]
-
 private bool <hasSelection>k__BackingField;
-    
-private List`1<CanvasGroup> m_CanvasGroupCache;
-    
-public static Selectable[] allSelectablesArray { get; }
-    
-public static int allSelectableCount { get; }
+    private List`1<CanvasGroup> m_CanvasGroupCache;
+    public static Selectable[] allSelectablesArray { get; }
+    public static int allSelectableCount { get; }
     [ObsoleteAttribute("Replaced with allSelectablesArray to have better performance when disabling a element", "False")]
-
 public static List`1<Selectable> allSelectables { get; }
-    
-public Navigation navigation { get; public set; }
-    
-public Transition transition { get; public set; }
-    
-public ColorBlock colors { get; public set; }
-    
-public SpriteState spriteState { get; public set; }
-    
-public AnimationTriggers animationTriggers { get; public set; }
-    
-public Graphic targetGraphic { get; public set; }
-    
-public bool interactable { get; public set; }
-    
-private bool isPointerInside { get; private set; }
-    
-private bool isPointerDown { get; private set; }
-    
-private bool hasSelection { get; private set; }
-    
-public Image image { get; public set; }
-    
-public Animator animator { get; }
-    
-protected SelectionState currentSelectionState { get; }
+    public Navigation navigation { get; public set; }
+    public Transition transition { get; public set; }
+    public ColorBlock colors { get; public set; }
+    public SpriteState spriteState { get; public set; }
+    public AnimationTriggers animationTriggers { get; public set; }
+    public Graphic targetGraphic { get; public set; }
+    public bool interactable { get; public set; }
+    private bool isPointerInside { get; private set; }
+    private bool isPointerDown { get; private set; }
+    private bool hasSelection { get; private set; }
+    public Image image { get; public set; }
+    public Animator animator { get; }
+    protected SelectionState currentSelectionState { get; }
     private static Selectable();
     public static Selectable[] get_allSelectablesArray();
     public static int get_allSelectableCount();
@@ -3677,22 +2815,15 @@ internal static class UnityEngine.UI.SetPropertyUtility : object {
 [AddComponentMenu("UI/Effects/Shadow", "14")]
 public class UnityEngine.UI.Shadow : BaseMeshEffect {
     [SerializeField]
-
 private Color m_EffectColor;
     [SerializeField]
-
 private Vector2 m_EffectDistance;
     [SerializeField]
-
 private bool m_UseGraphicAlpha;
-    
-private static float kMaxEffectDistance;
-    
-public Color effectColor { get; public set; }
-    
-public Vector2 effectDistance { get; public set; }
-    
-public bool useGraphicAlpha { get; public set; }
+    private static float kMaxEffectDistance;
+    public Color effectColor { get; public set; }
+    public Vector2 effectDistance { get; public set; }
+    public bool useGraphicAlpha { get; public set; }
     public Color get_effectColor();
     public void set_effectColor(Color value);
     public Vector2 get_effectDistance();
@@ -3708,71 +2839,43 @@ public bool useGraphicAlpha { get; public set; }
 [RequireComponent("UnityEngine.RectTransform")]
 public class UnityEngine.UI.Slider : Selectable {
     [SerializeField]
-
 private RectTransform m_FillRect;
     [SerializeField]
-
 private RectTransform m_HandleRect;
     [SpaceAttribute]
 [SerializeField]
-
 private Direction m_Direction;
     [SerializeField]
-
 private float m_MinValue;
     [SerializeField]
-
 private float m_MaxValue;
     [SerializeField]
-
 private bool m_WholeNumbers;
     [SerializeField]
-
 protected float m_Value;
     [SpaceAttribute]
 [SerializeField]
-
 private SliderEvent m_OnValueChanged;
-    
-private Image m_FillImage;
-    
-private Transform m_FillTransform;
-    
-private RectTransform m_FillContainerRect;
-    
-private Transform m_HandleTransform;
-    
-private RectTransform m_HandleContainerRect;
-    
-private Vector2 m_Offset;
-    
-private DrivenRectTransformTracker m_Tracker;
-    
-private bool m_DelayedUpdateVisuals;
-    
-public RectTransform fillRect { get; public set; }
-    
-public RectTransform handleRect { get; public set; }
-    
-public Direction direction { get; public set; }
-    
-public float minValue { get; public set; }
-    
-public float maxValue { get; public set; }
-    
-public bool wholeNumbers { get; public set; }
-    
-public float value { get; public set; }
-    
-public float normalizedValue { get; public set; }
-    
-public SliderEvent onValueChanged { get; public set; }
-    
-private float stepSize { get; }
-    
-private Axis axis { get; }
-    
-private bool reverseValue { get; }
+    private Image m_FillImage;
+    private Transform m_FillTransform;
+    private RectTransform m_FillContainerRect;
+    private Transform m_HandleTransform;
+    private RectTransform m_HandleContainerRect;
+    private Vector2 m_Offset;
+    private DrivenRectTransformTracker m_Tracker;
+    private bool m_DelayedUpdateVisuals;
+    public RectTransform fillRect { get; public set; }
+    public RectTransform handleRect { get; public set; }
+    public Direction direction { get; public set; }
+    public float minValue { get; public set; }
+    public float maxValue { get; public set; }
+    public bool wholeNumbers { get; public set; }
+    public float value { get; public set; }
+    public float normalizedValue { get; public set; }
+    public SliderEvent onValueChanged { get; public set; }
+    private float stepSize { get; }
+    private Axis axis { get; }
+    private bool reverseValue { get; }
     public RectTransform get_fillRect();
     public void set_fillRect(RectTransform value);
     public RectTransform get_handleRect();
@@ -3822,26 +2925,18 @@ private bool reverseValue { get; }
 }
 public class UnityEngine.UI.SpriteState : ValueType {
     [SerializeField]
-
 private Sprite m_HighlightedSprite;
     [SerializeField]
-
 private Sprite m_PressedSprite;
     [FormerlySerializedAsAttribute("m_HighlightedSprite")]
 [SerializeField]
-
 private Sprite m_SelectedSprite;
     [SerializeField]
-
 private Sprite m_DisabledSprite;
-    
-public Sprite highlightedSprite { get; public set; }
-    
-public Sprite pressedSprite { get; public set; }
-    
-public Sprite selectedSprite { get; public set; }
-    
-public Sprite disabledSprite { get; public set; }
+    public Sprite highlightedSprite { get; public set; }
+    public Sprite pressedSprite { get; public set; }
+    public Sprite selectedSprite { get; public set; }
+    public Sprite disabledSprite { get; public set; }
     public Sprite get_highlightedSprite();
     public void set_highlightedSprite(Sprite value);
     public Sprite get_pressedSprite();
@@ -3853,8 +2948,7 @@ public Sprite disabledSprite { get; public set; }
     public sealed virtual bool Equals(SpriteState other);
 }
 public static class UnityEngine.UI.StencilMaterial : object {
-    
-private static List`1<MatEntry> m_List;
+    private static List`1<MatEntry> m_List;
     private static StencilMaterial();
     [EditorBrowsableAttribute("1")]
 [ObsoleteAttribute("Use Material.Add instead.", "True")]
@@ -3867,70 +2961,39 @@ public static Material Add(Material baseMat, int stencilID);
 [AddComponentMenu("")]
 public class UnityEngine.UI.Text : MaskableGraphic {
     [SerializeField]
-
 private FontData m_FontData;
     [TextAreaAttribute("3", "10")]
 [SerializeField]
-
 protected string m_Text;
-    
-private TextGenerator m_TextCache;
-    
-private TextGenerator m_TextCacheForLayout;
-    
-protected static Material s_DefaultText;
-    
-protected bool m_DisableFontTextureRebuiltCallback;
-    
-private UIVertex[] m_TempVerts;
-    
-public TextGenerator cachedTextGenerator { get; }
-    
-public TextGenerator cachedTextGeneratorForLayout { get; }
-    
-public Texture mainTexture { get; }
-    
-public Font font { get; public set; }
-    
-public string text { get; public set; }
-    
-public bool supportRichText { get; public set; }
-    
-public bool resizeTextForBestFit { get; public set; }
-    
-public int resizeTextMinSize { get; public set; }
-    
-public int resizeTextMaxSize { get; public set; }
-    
-public TextAnchor alignment { get; public set; }
-    
-public bool alignByGeometry { get; public set; }
-    
-public int fontSize { get; public set; }
-    
-public HorizontalWrapMode horizontalOverflow { get; public set; }
-    
-public VerticalWrapMode verticalOverflow { get; public set; }
-    
-public float lineSpacing { get; public set; }
-    
-public FontStyle fontStyle { get; public set; }
-    
-public float pixelsPerUnit { get; }
-    
-public float minWidth { get; }
-    
-public float preferredWidth { get; }
-    
-public float flexibleWidth { get; }
-    
-public float minHeight { get; }
-    
-public float preferredHeight { get; }
-    
-public float flexibleHeight { get; }
-    
-public int layoutPriority { get; }
+    private TextGenerator m_TextCache;
+    private TextGenerator m_TextCacheForLayout;
+    protected static Material s_DefaultText;
+    protected bool m_DisableFontTextureRebuiltCallback;
+    private UIVertex[] m_TempVerts;
+    public TextGenerator cachedTextGenerator { get; }
+    public TextGenerator cachedTextGeneratorForLayout { get; }
+    public Texture mainTexture { get; }
+    public Font font { get; public set; }
+    public string text { get; public set; }
+    public bool supportRichText { get; public set; }
+    public bool resizeTextForBestFit { get; public set; }
+    public int resizeTextMinSize { get; public set; }
+    public int resizeTextMaxSize { get; public set; }
+    public TextAnchor alignment { get; public set; }
+    public bool alignByGeometry { get; public set; }
+    public int fontSize { get; public set; }
+    public HorizontalWrapMode horizontalOverflow { get; public set; }
+    public VerticalWrapMode verticalOverflow { get; public set; }
+    public float lineSpacing { get; public set; }
+    public FontStyle fontStyle { get; public set; }
+    public float pixelsPerUnit { get; }
+    public float minWidth { get; }
+    public float preferredWidth { get; }
+    public float flexibleWidth { get; }
+    public float minHeight { get; }
+    public float preferredHeight { get; }
+    public float flexibleHeight { get; }
+    public int layoutPriority { get; }
     public TextGenerator get_cachedTextGenerator();
     public TextGenerator get_cachedTextGeneratorForLayout();
     public virtual Texture get_mainTexture();
@@ -3982,23 +3045,16 @@ public int layoutPriority { get; }
 [AddComponentMenu("", "31")]
 [RequireComponent("UnityEngine.RectTransform")]
 public class UnityEngine.UI.Toggle : Selectable {
-    
-public ToggleTransition toggleTransition;
-    
-public Graphic graphic;
+    public ToggleTransition toggleTransition;
+    public Graphic graphic;
     [SerializeField]
-
 private ToggleGroup m_Group;
-    
-public ToggleEvent onValueChanged;
+    public ToggleEvent onValueChanged;
     [TooltipAttribute("Is the toggle currently on or off?")]
 [SerializeField]
-
 private bool m_IsOn;
-    
-public ToggleGroup group { get; public set; }
-    
-public bool isOn { get; public set; }
+    public ToggleGroup group { get; public set; }
+    public bool isOn { get; public set; }
     public ToggleGroup get_group();
     public void set_group(ToggleGroup value);
     public virtual void Rebuild(CanvasUpdate executing);
@@ -4024,12 +3080,9 @@ public bool isOn { get; public set; }
 [DisallowMultipleComponent]
 public class UnityEngine.UI.ToggleGroup : UIBehaviour {
     [SerializeField]
-
 private bool m_AllowSwitchOff;
-    
-private List`1<Toggle> m_Toggles;
-    
-public bool allowSwitchOff { get; public set; }
+    private List`1<Toggle> m_Toggles;
+    public bool allowSwitchOff { get; public set; }
     public bool get_allowSwitchOff();
     public void set_allowSwitchOff(bool value);
     protected virtual void Start();
@@ -4043,34 +3096,20 @@ public bool allowSwitchOff { get; public set; }
     public void SetAllTogglesOff(bool sendCallback);
 }
 public class UnityEngine.UI.VertexHelper : object {
-    
-private List`1<Vector3> m_Positions;
-    
-private List`1<Color32> m_Colors;
-    
-private List`1<Vector4> m_Uv0S;
-    
-private List`1<Vector4> m_Uv1S;
-    
-private List`1<Vector4> m_Uv2S;
-    
-private List`1<Vector4> m_Uv3S;
-    
-private List`1<Vector3> m_Normals;
-    
-private List`1<Vector4> m_Tangents;
-    
-private List`1<int> m_Indices;
-    
-private static Vector4 s_DefaultTangent;
-    
-private static Vector3 s_DefaultNormal;
-    
-private bool m_ListsInitalized;
-    
-public int currentVertCount { get; }
-    
-public int currentIndexCount { get; }
+    private List`1<Vector3> m_Positions;
+    private List`1<Color32> m_Colors;
+    private List`1<Vector4> m_Uv0S;
+    private List`1<Vector4> m_Uv1S;
+    private List`1<Vector4> m_Uv2S;
+    private List`1<Vector4> m_Uv3S;
+    private List`1<Vector3> m_Normals;
+    private List`1<Vector4> m_Tangents;
+    private List`1<int> m_Indices;
+    private static Vector4 s_DefaultTangent;
+    private static Vector3 s_DefaultNormal;
+    private bool m_ListsInitalized;
+    public int currentVertCount { get; }
+    public int currentIndexCount { get; }
     public VertexHelper(Mesh m);
     private static VertexHelper();
     private void InitializeListIfRequired();

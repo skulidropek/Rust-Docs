@@ -1,44 +1,27 @@
 internal interface LZ4.ILZ4Service {
-    
-public string CodecName { get; }
+    public string CodecName { get; }
     public abstract virtual string get_CodecName();
     public abstract virtual int Encode(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength);
     public abstract virtual int EncodeHC(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength);
     public abstract virtual int Decode(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength, bool knownOutputLength);
 }
 public static class LZ4.LZ4Codec : object {
-    
-private static int WRAP_OFFSET_0;
-    
-private static int WRAP_OFFSET_4;
-    
-private static int WRAP_OFFSET_8;
-    
-private static int WRAP_LENGTH;
-    
-private static ILZ4Service Encoder;
-    
-private static ILZ4Service EncoderHC;
-    
-private static ILZ4Service Decoder;
-    
-private static ILZ4Service _service_MM32;
-    
-private static ILZ4Service _service_MM64;
-    
-private static ILZ4Service _service_CC32;
-    
-private static ILZ4Service _service_CC64;
-    
-private static ILZ4Service _service_N32;
-    
-private static ILZ4Service _service_N64;
-    
-private static ILZ4Service _service_S32;
-    
-private static ILZ4Service _service_S64;
-    
-public static string CodecName { get; }
+    private static int WRAP_OFFSET_0;
+    private static int WRAP_OFFSET_4;
+    private static int WRAP_OFFSET_8;
+    private static int WRAP_LENGTH;
+    private static ILZ4Service Encoder;
+    private static ILZ4Service EncoderHC;
+    private static ILZ4Service Decoder;
+    private static ILZ4Service _service_MM32;
+    private static ILZ4Service _service_MM64;
+    private static ILZ4Service _service_CC32;
+    private static ILZ4Service _service_CC64;
+    private static ILZ4Service _service_N32;
+    private static ILZ4Service _service_N64;
+    private static ILZ4Service _service_S32;
+    private static ILZ4Service _service_S64;
+    public static string CodecName { get; }
     private static LZ4Codec();
     private static bool Has2010Runtime();
     private static void InitializeLZ4mm();
@@ -66,34 +49,20 @@ public static string CodecName { get; }
     public static Byte[] Unwrap(Byte[] inputBuffer, int inputOffset);
 }
 public class LZ4.LZ4Stream : Stream {
-    
-private Stream _innerStream;
-    
-private LZ4StreamMode _compressionMode;
-    
-private bool _highCompression;
-    
-private bool _interactiveRead;
-    
-private bool _isolateInnerStream;
-    
-private int _blockSize;
-    
-private Byte[] _buffer;
-    
-private int _bufferLength;
-    
-private int _bufferOffset;
-    
-public bool CanRead { get; }
-    
-public bool CanSeek { get; }
-    
-public bool CanWrite { get; }
-    
-public long Length { get; }
-    
-public long Position { get; public set; }
+    private Stream _innerStream;
+    private LZ4StreamMode _compressionMode;
+    private bool _highCompression;
+    private bool _interactiveRead;
+    private bool _isolateInnerStream;
+    private int _blockSize;
+    private Byte[] _buffer;
+    private int _bufferLength;
+    private int _bufferOffset;
+    public bool CanRead { get; }
+    public bool CanSeek { get; }
+    public bool CanWrite { get; }
+    public long Length { get; }
+    public long Position { get; public set; }
     [ObsoleteAttribute("This constructor is obsolete")]
 public LZ4Stream(Stream innerStream, LZ4StreamMode compressionMode, bool highCompression, int blockSize, bool interactiveRead);
     public LZ4Stream(Stream innerStream, LZ4StreamMode compressionMode, LZ4StreamFlags compressionFlags, int blockSize);
@@ -122,130 +91,82 @@ public LZ4Stream(Stream innerStream, LZ4StreamMode compressionMode, bool highCom
 }
 [FlagsAttribute]
 public enum LZ4.LZ4StreamFlags : Enum {
-    
-public int value__;
-    
-public static LZ4StreamFlags None;
-    
-public static LZ4StreamFlags InteractiveRead;
-    
-public static LZ4StreamFlags HighCompression;
-    
-public static LZ4StreamFlags IsolateInnerStream;
-    
-public static LZ4StreamFlags Default;
+    public int value__;
+    public static LZ4StreamFlags None;
+    public static LZ4StreamFlags InteractiveRead;
+    public static LZ4StreamFlags HighCompression;
+    public static LZ4StreamFlags IsolateInnerStream;
+    public static LZ4StreamFlags Default;
 }
 public enum LZ4.LZ4StreamMode : Enum {
-    
-public int value__;
-    
-public static LZ4StreamMode Compress;
-    
-public static LZ4StreamMode Decompress;
+    public int value__;
+    public static LZ4StreamMode Compress;
+    public static LZ4StreamMode Decompress;
 }
 internal class LZ4.Services.Safe32LZ4Service : object {
-    
-public string CodecName { get; }
+    public string CodecName { get; }
     public sealed virtual string get_CodecName();
     public sealed virtual int Encode(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength);
     public sealed virtual int Decode(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength, bool knownOutputLength);
     public sealed virtual int EncodeHC(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength);
 }
 internal class LZ4.Services.Safe64LZ4Service : object {
-    
-public string CodecName { get; }
+    public string CodecName { get; }
     public sealed virtual string get_CodecName();
     public sealed virtual int Encode(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength);
     public sealed virtual int Decode(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength, bool knownOutputLength);
     public sealed virtual int EncodeHC(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength);
 }
 internal class LZ4.Services.Unsafe32LZ4Service : object {
-    
-public string CodecName { get; }
+    public string CodecName { get; }
     public sealed virtual string get_CodecName();
     public sealed virtual int Encode(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength);
     public sealed virtual int Decode(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength, bool knownOutputLength);
     public sealed virtual int EncodeHC(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength);
 }
 internal class LZ4.Services.Unsafe64LZ4Service : object {
-    
-public string CodecName { get; }
+    public string CodecName { get; }
     public sealed virtual string get_CodecName();
     public sealed virtual int Encode(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength);
     public sealed virtual int Decode(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength, bool knownOutputLength);
     public sealed virtual int EncodeHC(Byte[] input, int inputOffset, int inputLength, Byte[] output, int outputOffset, int outputLength);
 }
 public static class LZ4ps.LZ4Codec : object {
-    
-private static int MEMORY_USAGE;
-    
-private static int NOTCOMPRESSIBLE_DETECTIONLEVEL;
-    
-private static int BLOCK_COPY_LIMIT;
-    
-private static int MINMATCH;
-    
-private static int SKIPSTRENGTH;
-    
-private static int COPYLENGTH;
-    
-private static int LASTLITERALS;
-    
-private static int MFLIMIT;
-    
-private static int MINLENGTH;
-    
-private static int MAXD_LOG;
-    
-private static int MAXD;
-    
-private static int MAXD_MASK;
-    
-private static int MAX_DISTANCE;
-    
-private static int ML_BITS;
-    
-private static int ML_MASK;
-    
-private static int RUN_BITS;
-    
-private static int RUN_MASK;
-    
-private static int STEPSIZE_64;
-    
-private static int STEPSIZE_32;
-    
-private static int LZ4_64KLIMIT;
-    
-private static int HASH_LOG;
-    
-private static int HASH_TABLESIZE;
-    
-private static int HASH_ADJUST;
-    
-private static int HASH64K_LOG;
-    
-private static int HASH64K_TABLESIZE;
-    
-private static int HASH64K_ADJUST;
-    
-private static int HASHHC_LOG;
-    
-private static int HASHHC_TABLESIZE;
-    
-private static int HASHHC_ADJUST;
-    
-private static int MAX_NB_ATTEMPTS;
-    
-private static int OPTIMAL_ML;
-    
-private static Int32[] DECODER_TABLE_32;
-    
-private static Int32[] DECODER_TABLE_64;
-    
-private static Int32[] DEBRUIJN_TABLE_32;
-    
-private static Int32[] DEBRUIJN_TABLE_64;
+    private static int MEMORY_USAGE;
+    private static int NOTCOMPRESSIBLE_DETECTIONLEVEL;
+    private static int BLOCK_COPY_LIMIT;
+    private static int MINMATCH;
+    private static int SKIPSTRENGTH;
+    private static int COPYLENGTH;
+    private static int LASTLITERALS;
+    private static int MFLIMIT;
+    private static int MINLENGTH;
+    private static int MAXD_LOG;
+    private static int MAXD;
+    private static int MAXD_MASK;
+    private static int MAX_DISTANCE;
+    private static int ML_BITS;
+    private static int ML_MASK;
+    private static int RUN_BITS;
+    private static int RUN_MASK;
+    private static int STEPSIZE_64;
+    private static int STEPSIZE_32;
+    private static int LZ4_64KLIMIT;
+    private static int HASH_LOG;
+    private static int HASH_TABLESIZE;
+    private static int HASH_ADJUST;
+    private static int HASH64K_LOG;
+    private static int HASH64K_TABLESIZE;
+    private static int HASH64K_ADJUST;
+    private static int HASHHC_LOG;
+    private static int HASHHC_TABLESIZE;
+    private static int HASHHC_ADJUST;
+    private static int MAX_NB_ATTEMPTS;
+    private static int OPTIMAL_ML;
+    private static Int32[] DECODER_TABLE_32;
+    private static Int32[] DECODER_TABLE_64;
+    private static Int32[] DEBRUIJN_TABLE_32;
+    private static Int32[] DEBRUIJN_TABLE_64;
     private static LZ4Codec();
     public static int MaximumOutputLength(int inputLength);
     internal static void CheckArguments(Byte[] input, int inputOffset, Int32& inputLength, Byte[] output, int outputOffset, Int32& outputLength);
