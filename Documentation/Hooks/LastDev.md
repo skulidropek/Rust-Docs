@@ -5,24 +5,16 @@
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player starts spectating another player or entity.
+/// Called when a player starts spectating another entity or player.
 /// </summary>
 /// <param name="player">The player who is starting to spectate.</param>
-/// <param name="filter">The filter used to determine what the player is spectating (e.g., player name or ID).</param>
+/// <param name="filter">The filter used to determine what the player is spectating.</param>
 /// <returns>
 /// Returns `null` to allow the player to start spectating, or any non-null value to prevent them from spectating.
 /// </returns>
 object OnPlayerSpectate(BasePlayer player, string filter)
 {
-    Puts($"Player {player.displayName} is attempting to spectate with filter: {filter}.");
-    
-    // Example condition to block spectating
-    if (filter == "blockedPlayer")
-    {
-        Puts($"Player {player.displayName} is not allowed to spectate {filter}.");
-        return "You cannot spectate this player.";
-    }
-    
+    Puts($"Player {player} is attempting to spectate with filter: {filter}.");
     return null;
 }
 ```
@@ -51,24 +43,18 @@ object OnPlayerSpectate(BasePlayer player, string filter)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when fuel is consumed by the oven.
+/// Called when fuel is consumed by an oven.
 /// </summary>
 /// <param name="oven">The oven consuming the fuel.</param>
 /// <param name="fuel">The fuel item being consumed.</param>
 /// <param name="burnable">The burnable item mod associated with the fuel.</param>
-/// <returns>No return behavior.</returns>
-void OnFuelConsumed(BaseOven oven, Item fuel, ItemModBurnable burnable)
+/// <returns>
+/// Returns a non-null value to prevent the default fuel consumption behavior; otherwise, returns null to allow it. (object)
+/// </returns>
+object OnFuelConsumed(BaseOven oven, Item fuel, ItemModBurnable burnable)
 {
-    Puts($"Fuel consumed in oven: {oven.net.ID}, Fuel: {fuel.info.displayName.english}, Burnable: {burnable.shortname}");
-    
-    if (fuel.amount <= 0)
-    {
-        Puts("No fuel left to consume.");
-    }
-    else
-    {
-        Puts($"Remaining fuel amount: {fuel.amount}");
-    }
+    Puts($"Fuel consumed: {fuel} in oven {oven} with burnable {burnable}.");
+    return null;
 }
 ```
 ```
@@ -116,18 +102,13 @@ void OnFuelConsumed(BaseOven oven, Item fuel, ItemModBurnable burnable)
 /// </summary>
 /// <param name="npc">The NPC that the player is talking to.</param>
 /// <param name="player">The player initiating the conversation.</param>
-/// <param name="conversationData">The data related to the conversation.</param>
-/// <returns>Returns `null` to allow the conversation to proceed, or any non-null value to prevent it.</returns>
+/// <param name="conversationData">The data related to the conversation being started.</param>
+/// <returns>
+/// Returns `null` to allow the conversation to proceed, or a non-null value to prevent it. (object)
+/// </returns>
 object OnNpcConversationStart(NPCTalking npc, BasePlayer player, ConversationData conversationData)
 {
-    Puts($"Player {player.displayName} has started a conversation with NPC: {npc.name}.");
-    
-    if (player.HasAchievement("NoTalk"))
-    {
-        Puts($"Player {player.displayName} is not allowed to talk to NPCs.");
-        return "You cannot talk to NPCs.";
-    }
-    
+    Puts($"Player {player} has started a conversation with NPC {npc}.");
     return null;
 }
 ```
@@ -174,7 +155,7 @@ object OnNpcConversationStart(NPCTalking npc, BasePlayer player, ConversationDat
 /// <returns>No return behavior.</returns>
 void OnCrateHack(HackableLockedCrate crate)
 {
-    Puts($"Hacking started on crate ID: {crate.net.ID} by player {crate.OwnerID}.");
+    Puts($"Hacking started on crate: {crate}.");
 }
 ```
 ```
@@ -200,31 +181,18 @@ void OnCrateHack(HackableLockedCrate crate)
 ```csharp
 ```csharp
 /// <summary>
-/// Determines if a player can afford to place a construction using a planner.
+/// Called to determine if a player can afford to place a construction using a planner.
 /// </summary>
 /// <param name="player">The player attempting to place the construction.</param>
 /// <param name="planner">The planner being used for the construction.</param>
 /// <param name="construction">The construction being placed.</param>
 /// <returns>
 /// Returns `true` if the player can afford to place the construction, or `false` if they cannot.
-/// If the method returns `null`, the default game logic will determine if the player can afford the placement.
+/// If the method returns `null`, the default game logic will determine if the player can afford the placement. (bool)
 /// </returns>
-bool? CanAffordToPlace(BasePlayer player, Planner planner, Construction construction)
+object CanAffordToPlace(BasePlayer player, Planner planner, Construction construction)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to place a {construction.fullName} using a planner.");
-
-    if (construction.fullName == "foundation.stone")
-    {
-        Puts($"Player {player.displayName} is not allowed to place a stone foundation.");
-        return false;
-    }
-
-    if (player.IsInCreativeMode)
-    {
-        Puts($"Player {player.displayName} is in creative mode and can place constructions without resource checks.");
-        return true;
-    }
-
+    Puts($"Player {player} is attempting to place a {construction} using planner {planner}.");
     return null;
 }
 ```
@@ -273,14 +241,12 @@ bool? CanAffordToPlace(BasePlayer player, Planner planner, Construction construc
 /// <summary>
 /// Called when a player knocks on a door.
 /// </summary>
-/// <param name="doorKnocker">The door that was knocked on.</param>
-/// <param name="player">The player who knocked on the door.</param>
+/// <param name="doorKnocker">The door that is being knocked on.</param>
+/// <param name="player">The player who is knocking on the door.</param>
 /// <returns>No return behavior.</returns>
 void OnDoorKnocked(DoorKnocker doorKnocker, BasePlayer player)
 {
-    Puts($"Player {player.displayName} knocked on the door at position: {doorKnocker.transform.position}.");
-    
-    // Additional logic can be added here, such as triggering sounds or animations.
+    Puts($"Player {player} knocked on door {doorKnocker}.");
 }
 ```
 ```
@@ -302,31 +268,18 @@ void OnDoorKnocked(DoorKnocker doorKnocker, BasePlayer player)
 ```csharp
 ```csharp
 /// <summary>
-/// Determines whether a player can lock a modular car with a code lock.
+/// Called to determine if a player can lock a modular car with a code lock.
 /// </summary>
 /// <param name="player">The player attempting to lock the car.</param>
 /// <param name="car">The modular car being locked.</param>
 /// <param name="codeLock">The code lock being used.</param>
 /// <returns>
-/// Returns `true` if the player can lock the car, or `false` if they cannot.
-/// If the method returns `null`, the default game logic will determine if the player can lock the car.
+/// Returns `true` if the player can lock the car; otherwise, returns `false`. 
+/// If the method returns `null`, the default locking logic will be applied. (bool)
 /// </returns>
-bool? CanLock(BasePlayer player, ModularCar car, ModularCarCodeLock codeLock)
+object CanLock(BasePlayer player, ModularCar car, ModularCarCodeLock codeLock)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to lock the car {car.net.ID}.");
-
-    if (car.HasALock)
-    {
-        Puts($"Car {car.net.ID} already has a lock.");
-        return false;
-    }
-
-    if (player.IsDead())
-    {
-        Puts($"Player {player.displayName} is dead and cannot lock the car.");
-        return false;
-    }
-
+    Puts($"Player {player} is attempting to lock the car {car} with a code lock.");
     return null;
 }
 ```
@@ -366,15 +319,13 @@ bool? CanLock(BasePlayer player, ModularCar car, ModularCarCodeLock codeLock)
 /// <param name="growable">The growable entity being harvested.</param>
 /// <param name="player">The player attempting to gather resources.</param>
 /// <param name="eat">Indicates whether the player intends to eat the gathered fruit.</param>
-/// <returns>No return behavior.</returns>
-void OnGrowableGather(GrowableEntity growable, BasePlayer player, bool eat)
+/// <returns>
+/// Returns `null` to allow the gathering; any non-null value will prevent the action. (object)
+/// </returns>
+object OnGrowableGather(GrowableEntity growable, BasePlayer player, bool eat)
 {
-    Puts($"Player {player.displayName} is attempting to gather from {growable.prefabID} (Eat: {eat}).");
-    
-    if (growable.harvests >= growable.Properties.maxHarvests)
-    {
-        Puts($"The growable entity {growable.prefabID} has reached its maximum harvest limit.");
-    }
+    Puts($"Player {player} is attempting to gather from {growable} with eat flag set to {eat}.");
+    return null;
 }
 ```
 ```
@@ -431,13 +382,12 @@ void OnGrowableGather(GrowableEntity growable, BasePlayer player, bool eat)
 /// <param name="helicopter">The player-controlled helicopter to check.</param>
 /// <returns>
 /// Returns `true` if the helicopter can be targeted by homing missiles; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will be used to determine if the helicopter can be targeted.
+/// If the method returns `null`, the default game logic will be used to determine if the helicopter can be targeted. (bool)
 /// </returns>
-bool? CanBeHomingTargeted(PlayerHelicopter helicopter)
+object CanBeHomingTargeted(PlayerHelicopter helicopter)
 {
-    Puts($"Checking if Helicopter ID: {helicopter.net.ID} can be targeted by homing missiles.");
-    // Additional logic can be added here if needed
-    return null; // Default behavior will be used
+    Puts($"Checking if helicopter {helicopter} can be targeted by homing missiles.");
+    return null;
 }
 ```
 ```
@@ -466,12 +416,13 @@ bool? CanBeHomingTargeted(PlayerHelicopter helicopter)
 /// Called when an item is unlocked.
 /// </summary>
 /// <param name="item">The item that has been unlocked.</param>
-/// <returns>No return behavior.</returns>
-void OnItemUnlock(Item item)
+/// <returns>
+/// Returns a non-null value to prevent the item from being unlocked; otherwise, returns null to allow the unlock action. (object)
+/// </returns>
+object OnItemUnlock(Item item)
 {
-    Puts($"Item {item.info.displayName.english} (ID: {item.info.itemid}) has been unlocked.");
-    
-    // Additional logic can be added here, such as notifying players or updating inventory.
+    Puts($"Item {item} has been unlocked.");
+    return null;
 }
 ```
 ```
@@ -499,26 +450,13 @@ void OnItemUnlock(Item item)
 /// Called to determine if a player can use a helicopter.
 /// </summary>
 /// <param name="player">The player attempting to use the helicopter.</param>
-/// <param name="helicopter">The helicopter that the player is trying to use.</param>
+/// <param name="helicopter">The helicopter that the player wants to use.</param>
 /// <returns>
-/// Returns `null` to allow the player to use the helicopter, or any non-null value to prevent usage.
+/// Returns `null` to allow the player to use the helicopter, or a non-null value to prevent usage. (object)
 /// </returns>
 object CanUseHelicopter(BasePlayer player, CH47HelicopterAIController helicopter)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to use the helicopter.");
-
-    if (player.IsDead())
-    {
-        Puts($"Player {player.displayName} cannot use the helicopter while dead.");
-        return "You cannot use the helicopter while dead.";
-    }
-
-    if (player.inventory.armorAmount < 50)
-    {
-        Puts($"Player {player.displayName} does not have enough armor to use the helicopter.");
-        return "You need more armor to use the helicopter.";
-    }
-
+    Puts($"Player {player} is attempting to use helicopter {helicopter}.");
     return null;
 }
 ```
@@ -543,17 +481,15 @@ object CanUseHelicopter(BasePlayer player, CH47HelicopterAIController helicopter
 ```csharp
 ```csharp
 /// <summary>
-/// Called when an object is detected by a trap trigger.
+/// Called when an object is detected by the trap trigger, indicating that the trap has been activated.
 /// </summary>
 /// <param name="trap">The trap that has been triggered.</param>
-/// <param name="triggeredObject">The game object that triggered the trap.</param>
-/// <param name="collider">The collider of the triggered object.</param>
+/// <param name="obj">The game object that triggered the trap.</param>
+/// <param name="col">The collider associated with the triggering object.</param>
 /// <returns>No return behavior.</returns>
-void OnTrapSnapped(BaseTrapTrigger trap, UnityEngine.GameObject triggeredObject, UnityEngine.Collider collider)
+void OnTrapSnapped(BaseTrapTrigger trap, GameObject obj, Collider col)
 {
-    Puts($"Trap {trap.gameObject.name} has been triggered by {triggeredObject.name}.");
-    
-    // Additional logic can be added here, such as applying effects to the triggered object.
+    Puts($"Trap {trap} has been triggered by object: {obj}.");
 }
 ```
 ```
@@ -584,16 +520,7 @@ void OnTrapSnapped(BaseTrapTrigger trap, UnityEngine.GameObject triggeredObject,
 /// <returns>No return behavior.</returns>
 void OnBoomboxToggle(BoomBox boombox, BasePlayer player, bool isPlaying)
 {
-    Puts($"Boombox {boombox.net.ID} toggled by {player.displayName}. Now playing: {isPlaying}");
-    
-    if (isPlaying)
-    {
-        Puts($"Boombox {boombox.net.ID} is now playing music.");
-    }
-    else
-    {
-        Puts($"Boombox {boombox.net.ID} has been stopped.");
-    }
+    Puts($"Boombox {boombox} toggled by {player}. IsPlaying: {isPlaying}");
 }
 ```
 ```
@@ -621,14 +548,14 @@ void OnBoomboxToggle(BoomBox boombox, BasePlayer player, bool isPlaying)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a demo recording is stopped.
+/// Called when demo recording has been stopped for a player.
 /// </summary>
-/// <param name="filename">The name of the recording file that was stopped.</param>
-/// <param name="player">The player who stopped the recording.</param>
+/// <param name="filename">The filename of the recorded demo.</param>
+/// <param name="player">The player for whom the demo recording was stopped.</param>
 /// <returns>No return behavior.</returns>
 void OnDemoRecordingStopped(string filename, BasePlayer player)
 {
-    Puts($"Demo recording stopped for player {player.displayName} (ID: {player.UserIDString}). Filename: {filename}");
+    Puts($"Demo recording stopped for player {player} with filename: {filename}");
 }
 ```
 ```
@@ -655,27 +582,18 @@ void OnDemoRecordingStopped(string filename, BasePlayer player)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a code is entered into the code lock.
+/// Called when a code is entered into a code lock by a player.
 /// </summary>
-/// <param name="codeLock">The code lock that received the code entry.</param>
+/// <param name="codeLock">The code lock that is being interacted with.</param>
 /// <param name="player">The player who entered the code.</param>
 /// <param name="code">The code that was entered.</param>
 /// <returns>
-/// Returns a non-null value to prevent the default behavior of the code entry. 
-/// If `null` is returned, the code entry will proceed as normal.
+/// Returns a non-null value to prevent the default behavior of the code entry. If null is returned, the default behavior proceeds. (object)
 /// </returns>
 object OnCodeEntered(CodeLock codeLock, BasePlayer player, string code)
 {
-    Puts($"Player {player.displayName} entered code: {code} on CodeLock ID: {codeLock.net.ID}");
-
-    if (code == "1234")
-    {
-        Puts("Access granted with the default code.");
-        return null; // Allow default behavior
-    }
-
-    Puts("Access denied: Invalid code entered.");
-    return true; // Prevent default behavior
+    Puts($"Player {player} entered code: {code} on CodeLock {codeLock}.");
+    return null;
 }
 ```
 ```
@@ -747,7 +665,7 @@ object OnCodeEntered(CodeLock codeLock, BasePlayer player, string code)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when the code for a code lock is changed.
+/// Called when the code for a code lock is changed by a player.
 /// </summary>
 /// <param name="player">The player who is changing the code.</param>
 /// <param name="codeLock">The code lock being modified.</param>
@@ -756,16 +674,7 @@ object OnCodeEntered(CodeLock codeLock, BasePlayer player, string code)
 /// <returns>No return behavior.</returns>
 void OnCodeChanged(BasePlayer player, CodeLock codeLock, string newCode, bool isGuestCode)
 {
-    Puts($"Player {player.displayName} changed the code for {codeLock.name} to {newCode}. Guest code: {isGuestCode}");
-
-    if (isGuestCode)
-    {
-        Puts($"Guest code set by {player.displayName} for {codeLock.name}.");
-    }
-    else
-    {
-        Puts($"Main code set by {player.displayName} for {codeLock.name}.");
-    }
+    Puts($"Player {player} changed the code on {codeLock} to {newCode}. Guest code: {isGuestCode}");
 }
 ```
 ```
@@ -820,20 +729,13 @@ void OnCodeChanged(BasePlayer player, CodeLock codeLock, string newCode, bool is
 /// <summary>
 /// Called when an item crafting task is completed.
 /// </summary>
-/// <param name="task">The crafting task that has been finished.</param>
+/// <param name="task">The item crafting task that has been finished.</param>
 /// <param name="item">The item that was crafted.</param>
 /// <param name="craftingStation">The entity or station that performed the crafting.</param>
 /// <returns>No return behavior.</returns>
 void OnItemCraftFinished(ItemCraftTask task, Item item, ItemCrafter craftingStation)
 {
-    Puts($"Crafting finished: {item.info.displayName.english} (ID: {item.info.itemid}) crafted by {craftingStation?.gameObject.name ?? "unknown"}.");
-
-    if (item.info.shortname == "explosive.timed")
-    {
-        Puts("Warning: A timed explosive has been crafted!");
-    }
-
-    // Additional logic can be added here if needed
+    Puts($"Crafting finished: {item} (Shortname: {item.info.shortname}) for task UID: {task.taskUID}.");
 }
 ```
 ```
@@ -914,23 +816,15 @@ void OnItemCraftFinished(ItemCraftTask task, Item item, ItemCrafter craftingStat
 /// <summary>
 /// Called to determine if an item can be accepted into a storage container based on its category.
 /// </summary>
-/// <param name="item">The item being filtered.</param>
-/// <param name="storage">The storage container that is receiving the item.</param>
-/// <param name="targetSlot">The slot in the storage container where the item is being placed.</param>
+/// <param name="item">The item being evaluated for storage.</param>
+/// <param name="targetSlot">The target slot in the storage container.</param>
 /// <returns>
-/// Returns `true` if the item can be accepted, or `false` if it cannot. 
-/// If the method returns `null`, the default filtering logic will be applied.
+/// Returns `true` if the item can be stored, or `false` if it cannot. 
+/// If the method returns `null`, the default filtering logic will be applied. (bool)
 /// </returns>
-bool? OnItemFilter(Item item, StorageContainer storage, int targetSlot)
+object OnItemFilter(Item item, StorageContainer storage, int targetSlot)
 {
-    Puts($"Filtering item: {item.info.displayName.english} for storage in slot {targetSlot}.");
-
-    if (item.info.shortname == "wood")
-    {
-        Puts("Wood is always accepted.");
-        return true;
-    }
-
+    Puts($"Filtering item {item} for storage in slot {targetSlot}.");
     return null;
 }
 ```
@@ -965,21 +859,14 @@ bool? OnItemFilter(Item item, StorageContainer storage, int targetSlot)
 /// </summary>
 /// <param name="player">The player attempting to unlock the code lock.</param>
 /// <param name="codeLock">The modular car's code lock being unlocked.</param>
-/// <param name="codeEntered">The code entered by the player.</param>
+/// <param name="code">The code entered by the player.</param>
 /// <returns>
 /// Returns `true` if the player can unlock the code lock, or `false` if they cannot.
-/// If the method returns `null`, the default game logic will determine if the player can unlock the code lock.
+/// If the method returns `null`, the default game logic will determine if the player can unlock the code lock. (bool)
 /// </returns>
-bool? CanUnlock(BasePlayer player, ModularCarCodeLock codeLock, string codeEntered)
+object CanUnlock(BasePlayer player, ModularCarCodeLock codeLock, string code)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to unlock the code lock with code: {codeEntered}.");
-
-    if (codeEntered.Length < 4)
-    {
-        Puts($"Player {player.displayName} entered an invalid code length.");
-        return false;
-    }
-
+    Puts($"Player {player} is attempting to unlock the code lock with code: {code}.");
     return null;
 }
 ```
@@ -1035,22 +922,16 @@ bool? CanUnlock(BasePlayer player, ModularCarCodeLock codeLock, string codeEnter
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a signal is broadcasted from a server entity.
+/// Called when a signal is broadcasted from a base entity.
 /// </summary>
-/// <param name="entity">The entity that is broadcasting the signal.</param>
-/// <returns>Returns `null` to allow the broadcast, or any non-null value to prevent it.</returns>
+/// <param name="entity">The base entity that is broadcasting the signal.</param>
+/// <returns>
+/// Returns `null` to allow the signal broadcast to proceed, or a non-null value to prevent the broadcast. (object)
+/// </returns>
 object OnSignalBroadcast(BaseEntity entity)
 {
-    Puts($"Signal broadcasted from entity: {entity.net.ID} ({entity.ShortPrefabName})");
-
-    // Example condition to prevent broadcasting
-    if (entity.ShortPrefabName == "restricted.signal.entity")
-    {
-        Puts("Broadcasting is restricted for this entity.");
-        return true; // Prevent the broadcast
-    }
-
-    return null; // Allow the broadcast
+    Puts($"Signal broadcast from entity: {entity}.");
+    return null;
 }
 ```
 ```
@@ -1078,18 +959,13 @@ object OnSignalBroadcast(BaseEntity entity)
 /// </summary>
 /// <param name="calendar">The advent calendar instance managing the gifts.</param>
 /// <param name="player">The player receiving the gift.</param>
-/// <returns>No return behavior.</returns>
-void OnAdventGiftAward(AdventCalendar calendar, BasePlayer player)
+/// <returns>
+/// Returns a non-null value to prevent the gift from being awarded. If null is returned, the gift is awarded as normal. (object)
+/// </returns>
+object OnAdventGiftAward(AdventCalendar calendar, BasePlayer player)
 {
-    Puts($"Awarding advent gift to player {player.displayName} (ID: {player.userID}).");
-    
-    if (player.IsBanned)
-    {
-        Puts($"Player {player.displayName} is banned and cannot receive gifts.");
-        return;
-    }
-    
-    Puts($"Player {player.displayName} is eligible for the advent gift.");
+    Puts($"Awarding advent gift to player {player}.");
+    return null;
 }
 ```
 ```
@@ -1138,20 +1014,13 @@ void OnAdventGiftAward(AdventCalendar calendar, BasePlayer player)
 /// Called to determine if a player can unlock a key lock.
 /// </summary>
 /// <param name="player">The player attempting to unlock the key lock.</param>
-/// <param name="keyLock">The key lock being unlocked.</param>
+/// <param name="keyLock">The key lock that is being unlocked.</param>
 /// <returns>
-/// Returns `null` to allow the unlocking, or any non-null value to prevent the unlocking action.
+/// Returns `null` to allow the unlocking, or a non-null value to prevent it. (object)
 /// </returns>
 object CanUnlock(BasePlayer player, KeyLock keyLock)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to unlock a key lock.");
-
-    if (player.inventory.GetAmount("key") < 1)
-    {
-        Puts($"Player {player.displayName} does not have a key to unlock the lock.");
-        return "You need a key to unlock this.";
-    }
-
+    Puts($"Player {player} is attempting to unlock {keyLock}.");
     return null;
 }
 ```
@@ -1179,24 +1048,15 @@ object CanUnlock(BasePlayer player, KeyLock keyLock)
 ```csharp
 ```csharp
 /// <summary>
-/// Called to scan for nearby turrets and update their references.
+/// Called to scan for nearby turrets and update their relationships based on the scan results.
 /// </summary>
-/// <param name="turret">The turret performing the scan.</param>
+/// <param name="turret">The turret that is performing the scan.</param>
 /// <param name="nearbyTurrets">A list of nearby turrets found during the scan.</param>
-/// <param name="created">Indicates whether the turrets were newly created or not.</param>
+/// <param name="created">Indicates whether the turrets were just created or are being removed.</param>
 /// <returns>No return behavior.</returns>
 void OnNearbyTurretsScan(AutoTurret turret, List<AutoTurret> nearbyTurrets, bool created)
 {
-    Puts($"Scanning for nearby turrets around turret ID: {turret.net.ID}, Created: {created}");
-    
-    if (created)
-    {
-        Puts($"New turrets detected around turret ID: {turret.net.ID}");
-    }
-    else
-    {
-        Puts($"Updating existing turrets around turret ID: {turret.net.ID}");
-    }
+    Puts($"Scanning for nearby turrets around {turret}.");
 }
 ```
 ```
@@ -1244,21 +1104,10 @@ void OnNearbyTurretsScan(AutoTurret turret, List<AutoTurret> nearbyTurrets, bool
 /// Called when the CH47 helicopter AI controller is destroyed.
 /// </summary>
 /// <param name="helicopter">The helicopter that is being destroyed.</param>
-/// <returns>
-/// Returns `null` to allow the default destruction behavior, or any non-null value to prevent it.
-/// </returns>
-object OnEntityDestroy(CH47HelicopterAIController helicopter)
+/// <returns>No return behavior.</returns>
+void OnEntityDestroy(CH47HelicopterAIController helicopter)
 {
-    Puts($"Helicopter {helicopter.net.ID} is being destroyed.");
-    
-    // Example condition to prevent destruction
-    if (helicopter.HasActiveMission())
-    {
-        Puts($"Helicopter {helicopter.net.ID} cannot be destroyed while on a mission.");
-        return true; // Prevent destruction
-    }
-    
-    return null; // Allow destruction
+    Puts($"Helicopter {helicopter} is being destroyed.");
 }
 ```
 ```
@@ -1286,22 +1135,13 @@ object OnEntityDestroy(CH47HelicopterAIController helicopter)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when an experiment at the workbench has completed.
+/// Called when an experiment at the workbench has ended.
 /// </summary>
 /// <param name="workbench">The workbench where the experiment was conducted.</param>
 /// <returns>No return behavior.</returns>
 void OnExperimentEnded(Workbench workbench)
 {
-    Puts($"Experiment ended at Workbench ID: {workbench.net.ID}. Pending blueprint: {workbench.pendingBlueprint?.itemid ?? "None"}");
-
-    if (workbench.pendingBlueprint == null)
-    {
-        Puts("No pending blueprint to process after experiment.");
-    }
-    else
-    {
-        Puts($"Blueprint {workbench.pendingBlueprint.itemid} is ready for crafting.");
-    }
+    Puts($"Experiment ended at workbench: {workbench}.");
 }
 ```
 ```
@@ -1352,26 +1192,18 @@ void OnExperimentEnded(Workbench workbench)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a fish is successfully caught by a player.
+/// Called when a fish is caught by a player using a fishing rod.
 /// </summary>
 /// <param name="item">The item representing the caught fish.</param>
-/// <param name="fishingRod">The fishing rod used to catch the fish.</param>
+/// <param name="rod">The fishing rod used to catch the fish.</param>
 /// <param name="player">The player who caught the fish.</param>
 /// <returns>
-/// Returns an item to replace the caught fish if needed, or `null` to proceed with the caught fish.
+/// Returns a modified item if the hook alters the default behavior; otherwise, returns the original item. (Item)
 /// </returns>
-object OnFishCatch(Item item, BaseFishingRod fishingRod, BasePlayer player)
+object OnFishCatch(Item item, BaseFishingRod rod, BasePlayer player)
 {
-    Puts($"Player {player.displayName} has caught a fish: {item.info.displayName.english} (Item ID: {item.info.itemid}).");
-
-    if (item.info.shortname == "fish.tuna")
-    {
-        Puts("A rare tuna has been caught!");
-        // Potentially replace the item with a special version
-        return ItemManager.Create("fish.tuna.special", 1, 0uL);
-    }
-
-    return null; // Proceed with the caught fish as is
+    Puts($"Player {player} caught a fish: {item} using {rod}.");
+    return null;
 }
 ```
 ```
@@ -1582,19 +1414,17 @@ object OnFishCatch(Item item, BaseFishingRod fishingRod, BasePlayer player)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a wildlife trap successfully traps a wild animal.
+/// Called when a wildlife trap successfully traps an animal.
 /// </summary>
-/// <param name="trap">The wildlife trap that captured the animal.</param>
-/// <param name="wildlife">The wild animal that was trapped.</param>
-/// <returns>No return behavior.</returns>
-void OnWildlifeTrap(WildlifeTrap trap, TrappableWildlife wildlife)
+/// <param name="trap">The wildlife trap that is used.</param>
+/// <param name="wildlife">The wildlife that has been trapped.</param>
+/// <returns>
+/// Returns a non-null value to prevent the trapping action; otherwise, returns null to allow the default behavior. (object)
+/// </returns>
+object OnWildlifeTrap(WildlifeTrap trap, TrappableWildlife wildlife)
 {
-    Puts($"Wildlife trap {trap.name} has captured a {wildlife.displayName}.");
-    
-    if (wildlife.isRare)
-    {
-        Puts($"A rare wildlife has been trapped: {wildlife.displayName}!");
-    }
+    Puts($"Wildlife trap {trap} has trapped {wildlife}.");
+    return null;
 }
 ```
 ```
@@ -1627,25 +1457,17 @@ void OnWildlifeTrap(WildlifeTrap trap, TrappableWildlife wildlife)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when an NPC equips a weapon.
+/// Called when an NPC equips a weapon, allowing for modifications or additional actions.
 /// </summary>
 /// <param name="npc">The NPC that is equipping the weapon.</param>
 /// <param name="item">The item being equipped as a weapon.</param>
 /// <returns>
-/// Returns a non-null value to prevent the NPC from equipping the weapon. 
-/// If `null` is returned, the NPC will proceed to equip the weapon as normal.
+/// Returns a non-null value to prevent the NPC from equipping the weapon, or `null` to allow the default behavior. (object)
 /// </returns>
 object OnNpcEquipWeapon(ScientistNPC npc, Item item)
 {
-    Puts($"NPC {npc.displayName} is attempting to equip weapon: {item.info.displayName.english}.");
-
-    if (item.info.shortname == "weapon.semiauto")
-    {
-        Puts($"NPC {npc.displayName} is not allowed to equip a semi-automatic weapon.");
-        return true; // Prevent equipping
-    }
-
-    return null; // Allow equipping
+    Puts($"NPC {npc} is attempting to equip weapon: {item}.");
+    return null;
 }
 ```
 ```
@@ -1704,18 +1526,11 @@ object OnNpcEquipWeapon(ScientistNPC npc, Item item)
 /// <param name="recycler">The recycler that is attempting to recycle the item.</param>
 /// <returns>
 /// Returns `true` if the item can be recycled; otherwise, returns `false`. 
-/// If the method returns `null`, the default game logic will determine if the item can be recycled.
+/// If the method returns `null`, the default game logic will determine if the item can be recycled. (bool)
 /// </returns>
-bool? CanBeRecycled(Item item, Recycler recycler)
+object CanBeRecycled(Item item, Recycler recycler)
 {
-    Puts($"Checking recyclability for item: {item.info.displayName.english} (ID: {item.info.itemid}) at recycler: {recycler.gameObject.name}.");
-
-    if (item.info.shortname == "wood")
-    {
-        Puts("Wood can always be recycled.");
-        return true;
-    }
-
+    Puts($"Checking if item {item} can be recycled at {recycler}.");
     return null;
 }
 ```
@@ -1746,25 +1561,18 @@ bool? CanBeRecycled(Item item, Recycler recycler)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when the mining quarry consumes fuel.
+/// Called when the quarry consumes fuel to check if it can continue operating.
 /// </summary>
 /// <param name="quarry">The mining quarry that is consuming fuel.</param>
 /// <param name="fuelItem">The item being used as fuel.</param>
 /// <returns>
-/// Returns the item that was consumed as fuel, or `null` if no fuel was consumed.
+/// Returns the fuel item if it has been modified by the hook; otherwise, returns the original item. 
+/// If the item is null or insufficient, the quarry cannot continue operating. (Item)
 /// </returns>
-Item OnQuarryConsumeFuel(MiningQuarry quarry, Item fuelItem)
+object OnQuarryConsumeFuel(MiningQuarry quarry, Item fuelItem)
 {
-    Puts($"Mining Quarry {quarry.net.ID} is attempting to consume fuel: {fuelItem?.info.displayName.english ?? "None"}.");
-
-    if (fuelItem != null && fuelItem.info.shortname == "diesel_barrel")
-    {
-        Puts($"Fuel consumed: {fuelItem.info.displayName.english}.");
-        return fuelItem; // Return the consumed fuel item
-    }
-
-    Puts("No valid fuel item was consumed.");
-    return null; // No fuel consumed
+    Puts($"Quarry {quarry} is attempting to consume fuel: {fuelItem}.");
+    return fuelItem;
 }
 ```
 ```
@@ -1804,14 +1612,12 @@ Item OnQuarryConsumeFuel(MiningQuarry quarry, Item fuelItem)
 /// <summary>
 /// Called when an admin opens the vending machine interface.
 /// </summary>
-/// <param name="vendingMachine">The vending machine being accessed.</param>
-/// <param name="adminPlayer">The player who is an admin and opening the vending machine.</param>
+/// <param name="vendingMachine">The vending machine being accessed by the admin.</param>
+/// <param name="adminPlayer">The player who is an admin and is opening the vending machine.</param>
 /// <returns>No return behavior.</returns>
 void OnOpenVendingAdmin(VendingMachine vendingMachine, BasePlayer adminPlayer)
 {
-    Puts($"Admin {adminPlayer.displayName} has opened the vending machine: {vendingMachine.net.ID}.");
-    
-    // Additional logic can be added here if needed
+    Puts($"Admin {adminPlayer} opened the vending machine: {vendingMachine}.");
 }
 ```
 ```
@@ -1820,8 +1626,8 @@ void OnOpenVendingAdmin(VendingMachine vendingMachine, BasePlayer adminPlayer)
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.IsVisible(3f)]
+	[RPC_Server]
 	public void RPC_OpenAdmin(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -1840,29 +1646,16 @@ void OnOpenVendingAdmin(VendingMachine vendingMachine, BasePlayer adminPlayer)
 ```csharp
 ```csharp
 /// <summary>
-/// Determines whether the phone controller can receive calls.
+/// Determines whether the phone can receive a call based on its current state and conditions.
 /// </summary>
-/// <param name="phoneController">The phone controller instance checking for call reception.</param>
+/// <param name="phoneController">The phone controller attempting to receive a call.</param>
 /// <returns>
-/// Returns `true` if the phone can receive calls; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will be used to determine call reception capability.
+/// Returns `true` if the phone can receive a call; otherwise, returns `false`. 
+/// If the method returns `null`, the default game logic will determine if the phone can receive calls. (bool)
 /// </returns>
-bool? CanReceiveCall(PhoneController phoneController)
+object CanReceiveCall(PhoneController phoneController)
 {
-    Puts($"Checking if PhoneController (ID: {phoneController.net.ID}) can receive calls.");
-
-    if (!phoneController.IsPowered())
-    {
-        Puts("PhoneController is not powered and cannot receive calls.");
-        return false;
-    }
-
-    if (phoneController.RequireParent && !phoneController.baseEntity.HasParent())
-    {
-        Puts("PhoneController requires a parent entity to receive calls.");
-        return false;
-    }
-
+    Puts($"Checking if phone controlled by {phoneController} can receive calls.");
     return null;
 }
 ```
@@ -1897,23 +1690,14 @@ bool? CanReceiveCall(PhoneController phoneController)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when an auto turret acquires or loses a target.
+/// Called when an auto turret acquires a new target.
 /// </summary>
-/// <param name="turret">The auto turret that is targeting.</param>
-/// <param name="target">The target entity being acquired or lost.</param>
+/// <param name="turret">The auto turret that is acquiring the target.</param>
+/// <param name="target">The target entity that the turret is aiming at.</param>
 /// <returns>No return behavior.</returns>
 void OnTurretTarget(AutoTurret turret, BaseCombatEntity target)
 {
-    Puts($"Turret {turret.net.ID} has changed target to {target?.net.ID ?? "none"}.");
-    
-    if (target != null)
-    {
-        Puts($"Turret {turret.net.ID} is now targeting entity {target.net.ID}.");
-    }
-    else
-    {
-        Puts($"Turret {turret.net.ID} has lost its target.");
-    }
+    Puts($"Turret {turret} has targeted {target}.");
 }
 ```
 ```
@@ -1948,22 +1732,15 @@ void OnTurretTarget(AutoTurret turret, BaseCombatEntity target)
 /// </summary>
 /// <param name="entity">The entity being checked for activity.</param>
 /// <param name="player">The player attempting to interact with the entity.</param>
-/// <param name="id">A unique identifier for the check.</param>
+/// <param name="id">An identifier for the check.</param>
 /// <param name="debugName">A debug name for logging purposes.</param>
 /// <returns>
-/// Returns `true` if the player can interact with the entity, `false` otherwise.
-/// If the method returns `null`, the default game logic will determine the interaction validity.
+/// Returns `true` if the player can interact with the entity; otherwise, returns `false`. 
+/// If the method returns `null`, the default game logic will determine the interaction validity. (bool)
 /// </returns>
-bool? OnEntityActiveCheck(BaseEntity entity, BasePlayer player, uint id, string debugName)
+object OnEntityActiveCheck(BaseEntity entity, BasePlayer player, uint id, string debugName)
 {
-    Puts($"Checking activity for Player {player.displayName} on Entity {entity?.name} (ID: {entity?.net.ID}) with debug name: {debugName}");
-
-    if (entity == null || player == null)
-    {
-        Puts("Entity or player is null, cannot proceed with the check.");
-        return false;
-    }
-
+    Puts($"Checking activity for entity {entity} by player {player} with ID {id} and debug name {debugName}.");
     return null;
 }
 ```
@@ -2014,24 +1791,16 @@ bool? OnEntityActiveCheck(BaseEntity entity, BasePlayer player, uint id, string 
 ```csharp
 ```csharp
 /// <summary>
-/// Determines whether the helicopter can use napalm based on cooldown and external hooks.
+/// Determines whether the patrol helicopter can use napalm.
 /// </summary>
-/// <param name="helicopter">The helicopter instance attempting to use napalm.</param>
+/// <param name="helicopter">The patrol helicopter AI instance checking for napalm usage.</param>
 /// <returns>
-/// Returns `true` if the helicopter can use napalm, or `false` if it cannot.
-/// If the method returns `null`, the default cooldown logic will be applied.
+/// Returns `true` if the helicopter can use napalm; otherwise, returns `false`.
+/// If the method returns `null`, the default cooldown logic will be applied. (bool)
 /// </returns>
-bool? CanHelicopterUseNapalm(PatrolHelicopterAI helicopter)
+object CanHelicopterUseNapalm(PatrolHelicopterAI helicopter)
 {
-    Puts($"Checking if helicopter {helicopter.net.ID} can use napalm.");
-    
-    // Example condition to block napalm usage
-    if (helicopter.IsUnderAttack)
-    {
-        Puts($"Helicopter {helicopter.net.ID} is under attack and cannot use napalm.");
-        return false;
-    }
-
+    Puts($"Checking if helicopter {helicopter} can use napalm.");
     return null;
 }
 ```
@@ -2058,20 +1827,15 @@ bool? CanHelicopterUseNapalm(PatrolHelicopterAI helicopter)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a phone call is successfully started.
+/// Called when a phone call is successfully started between two phone controllers.
 /// </summary>
 /// <param name="caller">The phone controller initiating the call.</param>
 /// <param name="receiver">The phone controller receiving the call.</param>
-/// <param name="player">The player involved in the call.</param>
+/// <param name="player">The player associated with the call.</param>
 /// <returns>No return behavior.</returns>
 void OnPhoneCallStarted(PhoneController caller, PhoneController receiver, BasePlayer player)
 {
-    Puts($"Phone call started from {caller} to {receiver} by player {player.displayName} (ID: {player.UserIDString}).");
-    
-    if (receiver != null && receiver.RequirePower)
-    {
-        Puts($"Call cannot proceed: {receiver} requires power.");
-    }
+    Puts($"Phone call started from {caller} to {receiver} by player {player}.");
 }
 ```
 ```
@@ -2108,16 +1872,7 @@ void OnPhoneCallStarted(PhoneController caller, PhoneController receiver, BasePl
 /// <returns>No return behavior.</returns>
 void OnSignUpdated(CarvablePumpkin pumpkin, BasePlayer player)
 {
-    Puts($"Sign updated by player {player.displayName} on CarvablePumpkin ID: {pumpkin.net.ID}.");
-    
-    if (player.IsAdmin)
-    {
-        Puts($"Admin {player.displayName} has updated the sign successfully.");
-    }
-    else
-    {
-        Puts($"Player {player.displayName} updated the sign but is not an admin.");
-    }
+    Puts($"Sign updated by player {player} on pumpkin {pumpkin}.");
 }
 ```
 ```
@@ -2183,15 +1938,13 @@ void OnSignUpdated(CarvablePumpkin pumpkin, BasePlayer player)
 /// </summary>
 /// <param name="vendingMachine">The vending machine being opened.</param>
 /// <param name="player">The player attempting to open the vending shop.</param>
-/// <returns>No return behavior.</returns>
-void OnVendingShopOpen(VendingMachine vendingMachine, BasePlayer player)
+/// <returns>
+/// Returns `null` to allow the shop to open, or any non-null value to prevent it from opening. (object)
+/// </returns>
+object OnVendingShopOpen(VendingMachine vendingMachine, BasePlayer player)
 {
-    Puts($"Player {player.displayName} is attempting to open the vending shop at {vendingMachine.transform.position}.");
-    
-    if (player.IsBannedFromVending())
-    {
-        Puts($"Player {player.displayName} is banned from using vending machines.");
-    }
+    Puts($"Player {player} is attempting to open the vending shop: {vendingMachine}.");
+    return null;
 }
 ```
 ```
@@ -2224,7 +1977,7 @@ void OnVendingShopOpen(VendingMachine vendingMachine, BasePlayer player)
 /// <returns>No return behavior.</returns>
 void OnExcavatorMiningToggled(ExcavatorArm excavator)
 {
-    Puts($"Excavator {excavator.net.ID} mining state toggled. Current state: {(excavator.IsMining() ? "Mining" : "Not Mining")}");
+    Puts($"Excavator mining toggled for {excavator}.");
 }
 ```
 ```
@@ -2267,23 +2020,16 @@ void OnExcavatorMiningToggled(ExcavatorArm excavator)
 /// <summary>
 /// Called when a projectile effect is created on the client side.
 /// </summary>
-/// <param name="connection">The network connection of the player for whom the effect is being created.</param>
+/// <param name="connection">The network connection of the client creating the projectile effect.</param>
 /// <param name="projectile">The projectile associated with the effect.</param>
 /// <param name="prefabName">The name of the prefab for the projectile effect.</param>
 /// <returns>
-/// Returns `null` to allow the default effect creation behavior, or any non-null value to prevent it.
+/// Returns `null` to allow the default effect creation, or a non-null value to prevent it. (object)
 /// </returns>
 object OnClientProjectileEffectCreate(Network.Connection connection, BaseProjectile projectile, string prefabName)
 {
-    Puts($"Creating client projectile effect for {prefabName} from connection {connection.address}.");
-    
-    if (prefabName == "explosive.projectile")
-    {
-        Puts("Preventing explosive projectile effect from being created on the client.");
-        return true; // Prevent the effect
-    }
-    
-    return null; // Allow the effect to be created
+    Puts($"Client {connection} is creating projectile effect: {prefabName} for projectile {projectile}.");
+    return null;
 }
 ```
 ```
@@ -2320,21 +2066,14 @@ object OnClientProjectileEffectCreate(Network.Connection connection, BaseProject
 /// <summary>
 /// Called when a player attempts to lead a horse.
 /// </summary>
-/// <param name="horse">The horse being led.</param>
+/// <param name="horse">The horse that is being led.</param>
 /// <param name="player">The player attempting to lead the horse.</param>
 /// <returns>
-/// Returns `null` to allow the leading action, or any non-null value to prevent the action.
+/// Returns `null` to allow the leading action, or any non-null value to prevent it. (object)
 /// </returns>
 object OnHorseLead(BaseRidableAnimal horse, BasePlayer player)
 {
-    Puts($"Player {player.displayName} is attempting to lead horse ID: {horse.net.ID}.");
-
-    if (player.IsInCombat)
-    {
-        Puts($"Player {player.displayName} cannot lead the horse while in combat.");
-        return "You cannot lead a horse while in combat.";
-    }
-
+    Puts($"Player {player} is attempting to lead horse {horse}.");
     return null;
 }
 ```
@@ -2371,22 +2110,14 @@ object OnHorseLead(BaseRidableAnimal horse, BasePlayer player)
 /// Called when a base combat entity is hurt.
 /// </summary>
 /// <param name="entity">The base combat entity that is being hurt.</param>
-/// <param name="hitInfo">Information about the hit, including damage and the attacker.</param>
+/// <param name="hitInfo">Information about the hit, including damage and source.</param>
 /// <returns>
-/// Returns a non-null value to prevent further processing of the hurt event. 
-/// If `null` is returned, the default damage handling will proceed.
+/// Returns a non-null value to override the default damage handling behavior. If null is returned, the default behavior will proceed. (object)
 /// </returns>
 object IOnBaseCombatEntityHurt(BaseCombatEntity entity, HitInfo hitInfo)
 {
-    Puts($"Entity {entity.net.ID} is being hurt by {hitInfo.Initiator?.net.ID} with damage: {hitInfo.damageTypes.Total()}");
-
-    if (hitInfo.damageTypes.GetMajorityDamageType() == DamageType.Explosive)
-    {
-        Puts($"Entity {entity.net.ID} cannot be hurt by explosives.");
-        return true; // Prevents further processing
-    }
-
-    return null; // Allow default processing
+    Puts($"Entity {entity} is being hurt with damage: {hitInfo.damageTypes.Total()}.");
+    return null;
 }
 ```
 ```
@@ -2491,20 +2222,14 @@ object IOnBaseCombatEntityHurt(BaseCombatEntity entity, HitInfo hitInfo)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a new vending offer is added to the vending machine.
+/// Called when a new selling offer is added to a vending machine.
 /// </summary>
-/// <param name="vendingMachine">The vending machine where the offer is being added.</param>
-/// <param name="sellOrder">The details of the sell order being added.</param>
+/// <param name="vendingMachine">The vending machine to which the offer is being added.</param>
+/// <param name="sellOrder">The sell order being added, containing details about the item and currency.</param>
 /// <returns>No return behavior.</returns>
 void OnAddVendingOffer(VendingMachine vendingMachine, ProtoBuf.VendingMachine.SellOrder sellOrder)
 {
-    Puts($"New vending offer added: Sell {sellOrder.itemToSellAmount} of item ID {sellOrder.itemToSellID} " +
-         $"for {sellOrder.currencyAmountPerItem} of currency ID {sellOrder.currencyID}.");
-
-    if (sellOrder.currencyIsBP)
-    {
-        Puts("This offer uses blueprint currency.");
-    }
+    Puts($"Adding sell order: {sellOrder.itemToSellID} x{sellOrder.itemToSellAmount} for {sellOrder.currencyAmountPerItem} {sellOrder.currencyID}.");
 }
 ```
 ```
@@ -2550,11 +2275,7 @@ void OnAddVendingOffer(VendingMachine vendingMachine, ProtoBuf.VendingMachine.Se
 /// <returns>No return behavior.</returns>
 void OnHelicopterRetire(PatrolHelicopterAI helicopter)
 {
-    Puts($"Patrol Helicopter ID: {helicopter.net.ID} is retiring.");
-    if (helicopter.isRetiring)
-    {
-        Puts($"Helicopter ID: {helicopter.net.ID} is already in the process of retiring.");
-    }
+    Puts($"Patrol helicopter {helicopter} is retiring.");
 }
 ```
 ```
@@ -2588,22 +2309,16 @@ void OnHelicopterRetire(PatrolHelicopterAI helicopter)
 ```csharp
 ```csharp
 /// <summary>
-/// Determines whether the elevator lift can move based on its current state and contents.
+/// Determines whether the elevator lift can move based on current conditions and hooks.
 /// </summary>
 /// <param name="elevator">The elevator lift being checked for movement capability.</param>
 /// <returns>
-/// Returns `true` if the elevator lift can move; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will be used to determine if the elevator can move.
+/// Returns `true` if the elevator lift can move; otherwise, returns `false`. 
+/// If the method returns `null`, the default game logic will determine if the elevator can move. (bool)
 /// </returns>
-bool? CanElevatorLiftMove(ElevatorLift elevator)
+object CanElevatorLiftMove(ElevatorLift elevator)
 {
-    Puts($"Checking if ElevatorLift ID: {elevator.net.ID} can move.");
-
-    if (elevator.VehicleTrigger.HasContents)
-    {
-        Puts("Elevator has contents, checking for valid entities.");
-    }
-
+    Puts($"Checking if elevator lift {elevator} can move.");
     return null;
 }
 ```
@@ -2643,14 +2358,13 @@ bool? CanElevatorLiftMove(ElevatorLift elevator)
 /// Called when the oven starts cooking.
 /// </summary>
 /// <param name="oven">The oven that is starting to cook.</param>
-/// <returns>No return behavior.</returns>
-void OnOvenStart(BaseOven oven)
+/// <returns>
+/// Returns `null` to allow the oven to start cooking, or any non-null value to prevent it from starting. (object)
+/// </returns>
+object OnOvenStart(BaseOven oven)
 {
-    Puts($"Oven {oven.net.ID} is starting to cook.");
-    if (oven.inventory.temperature > 100)
-    {
-        Puts($"Oven {oven.net.ID} is already at a high temperature.");
-    }
+    Puts($"Oven {oven} is attempting to start cooking.");
+    return null;
 }
 ```
 ```
@@ -2678,12 +2392,12 @@ void OnOvenStart(BaseOven oven)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a map image is updated by a player.
+/// Called when a map image is updated, either fog or paint.
 /// </summary>
 /// <returns>No return behavior.</returns>
 void OnMapImageUpdated()
 {
-    Puts("A map image has been updated.");
+    Puts("Map image has been updated.");
 }
 ```
 ```
@@ -2693,8 +2407,8 @@ void OnMapImageUpdated()
 ```csharp
 
 	[RPC_Server]
-	[RPC_Server.FromOwner]
 	[RPC_Server.CallsPerSecond(1uL)]
+	[RPC_Server.FromOwner]
 	public void ImageUpdate(RPCMessage msg)
 	{
 		if (msg.player == null)
@@ -2734,25 +2448,18 @@ void OnMapImageUpdated()
 ```csharp
 ```csharp
 /// <summary>
-/// Called to determine how much a NPC wants to attack a given target.
+/// Called to determine how much an NPC wants to attack a given target entity.
 /// </summary>
 /// <param name="npc">The NPC that is considering the attack.</param>
-/// <param name="target">The target entity that the NPC may attack.</param>
+/// <param name="target">The target entity that may be attacked.</param>
 /// <returns>
-/// Returns a float value representing the NPC's desire to attack the target. 
-/// If the method returns `null`, the default logic will be used to determine the attack desire.
+/// Returns a float representing the NPC's desire to attack the target. 
+/// If the method returns `null`, the default attack logic will be used. (float)
 /// </returns>
-float? IOnNpcTarget(BaseNpc npc, BaseEntity target)
+object IOnNpcTarget(BaseNpc npc, BaseEntity target)
 {
-    Puts($"NPC {npc.displayName} is evaluating attack on target: {target?.ShortPrefabName ?? "Unknown"}.");
-
-    if (target is PlayerEntity)
-    {
-        Puts($"NPC {npc.displayName} has a strong desire to attack a player.");
-        return 10.0f; // High desire to attack players
-    }
-
-    return null; // Use default logic if no specific condition is met
+    Puts($"NPC {npc} is evaluating attack on target: {target}.");
+    return null;
 }
 ```
 ```
@@ -2780,12 +2487,12 @@ float? IOnNpcTarget(BaseNpc npc, BaseEntity target)
 /// <summary>
 /// Called when a sign is locked by a player.
 /// </summary>
-/// <param name="sign">The sign that is being locked.</param>
+/// <param name="sign">The photo frame sign that is being locked.</param>
 /// <param name="player">The player who is locking the sign.</param>
 /// <returns>No return behavior.</returns>
 void OnSignLocked(PhotoFrame sign, BasePlayer player)
 {
-    Puts($"Sign locked by player {player.displayName} (ID: {player.UserIDString}). Sign ID: {sign.net.ID}");
+    Puts($"Sign {sign} has been locked by player {player} (ID: {player.userID}).");
 }
 ```
 ```
@@ -2820,24 +2527,11 @@ void OnSignLocked(PhotoFrame sign, BasePlayer player)
 /// <param name="target">The player being looted.</param>
 /// <returns>
 /// Returns `true` if the looter can loot the target player; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will determine if looting is allowed.
+/// If the method returns `null`, the default game logic will be used to determine looting permissions. (bool)
 /// </returns>
-bool? CanLootPlayer(BasePlayer looter, BasePlayer target)
+object CanLootPlayer(BasePlayer looter, BasePlayer target)
 {
-    Puts($"Player {looter.displayName} is attempting to loot {target.displayName}.");
-
-    if (target.IsSleeping())
-    {
-        Puts($"{target.displayName} is sleeping and cannot be looted.");
-        return false;
-    }
-
-    if (target.IsWounded())
-    {
-        Puts($"{target.displayName} is wounded and can be looted.");
-        return true;
-    }
-
+    Puts($"Player {looter} is attempting to loot {target}.");
     return null;
 }
 ```
@@ -2875,21 +2569,14 @@ bool? CanLootPlayer(BasePlayer looter, BasePlayer target)
 /// Called to determine if a player can loot a specific entity.
 /// </summary>
 /// <param name="player">The player attempting to loot the entity.</param>
-/// <param name="animal">The entity being looted, which is a BaseRidableAnimal.</param>
+/// <param name="animal">The ridable animal that is being looted.</param>
 /// <returns>
 /// Returns `true` if the player can loot the entity, or `false` if they cannot.
-/// If the method returns `null`, the default game logic will determine if the player can loot the entity.
+/// If the method returns `null`, the default game logic will determine if the player can loot the entity. (bool)
 /// </returns>
-bool? CanLootEntity(BasePlayer player, BaseRidableAnimal animal)
+object CanLootEntity(BasePlayer player, BaseRidableAnimal animal)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to loot {animal.displayName}.");
-
-    if (animal.IsSleeping())
-    {
-        Puts($"Player {player.displayName} cannot loot a sleeping animal.");
-        return false;
-    }
-
+    Puts($"Player {player} is attempting to loot entity: {animal}.");
     return null;
 }
 ```
@@ -2939,12 +2626,7 @@ bool? CanLootEntity(BasePlayer player, BaseRidableAnimal animal)
 /// <returns>No return behavior.</returns>
 void OnWorldPrefabSpawned(UnityEngine.GameObject spawnedObject, string category)
 {
-    Puts($"Prefab of category '{category}' has been spawned: {spawnedObject.name} at position {spawnedObject.transform.position}.");
-    
-    if (category == "enemy")
-    {
-        Puts("An enemy prefab has been spawned! Prepare for battle!");
-    }
+    Puts($"Prefab of category '{category}' has been spawned: {spawnedObject.name}");
 }
 ```
 ```
@@ -2989,20 +2671,15 @@ void OnWorldPrefabSpawned(UnityEngine.GameObject spawnedObject, string category)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when two items are stacked together in a container.
+/// Called when items are stacked in a container.
 /// </summary>
-/// <param name="stackedItem">The item that is being stacked on top.</param>
+/// <param name="stackedItem">The item that is being stacked.</param>
 /// <param name="sourceItem">The item that is being added to the stack.</param>
-/// <param name="container">The container where the stacking occurs.</param>
+/// <param name="container">The container where the stacking is occurring.</param>
 /// <returns>No return behavior.</returns>
 void OnItemStacked(Item stackedItem, Item sourceItem, ItemContainer container)
 {
-    Puts($"Items stacked: {sourceItem.info.displayName.english} onto {stackedItem.info.displayName.english} in container {container.name}.");
-    
-    if (stackedItem.amount > stackedItem.MaxStackable())
-    {
-        Puts($"Warning: Stacked item {stackedItem.info.displayName.english} exceeds max stack limit.");
-    }
+    Puts($"Item {sourceItem} stacked onto {stackedItem} in container {container}.");
 }
 ```
 ```
@@ -3210,22 +2887,15 @@ void OnItemStacked(Item stackedItem, Item sourceItem, ItemContainer container)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when the input state of an IOEntity is updated.
+/// Called to update the input state of an IOEntity based on the provided input amount and slot.
 /// </summary>
+/// <param name="entity">The IOEntity receiving the input update.</param>
 /// <param name="inputAmount">The amount of input received.</param>
-/// <param name="inputSlot">The slot number of the input being updated.</param>
+/// <param name="inputSlot">The specific input slot that received the input.</param>
 /// <returns>No return behavior.</returns>
 void OnInputUpdate(IOEntity entity, int inputAmount, int inputSlot)
 {
-    Puts($"Input updated for entity {entity.net.ID} with amount: {inputAmount} on slot: {inputSlot}");
-    
-    if (inputAmount < 0)
-    {
-        Puts("Received negative input amount, ignoring update.");
-        return;
-    }
-    
-    // Additional logic can be added here if needed
+    Puts($"Input updated for entity {entity} with amount {inputAmount} on slot {inputSlot}.");
 }
 ```
 ```
@@ -3266,7 +2936,7 @@ void OnInputUpdate(IOEntity entity, int inputAmount, int inputSlot)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player attempts to connect two IO entities with a wire.
+/// Called when a player connects two IO entities with a wire.
 /// </summary>
 /// <param name="player">The player making the connection.</param>
 /// <param name="inputEntity">The input IO entity being connected.</param>
@@ -3275,18 +2945,11 @@ void OnInputUpdate(IOEntity entity, int inputAmount, int inputSlot)
 /// <param name="outputIndex">The index of the output on the output entity.</param>
 /// <param name="linePoints">The points that define the wire's path.</param>
 /// <param name="slackLevels">The slack levels for the wire connection.</param>
-/// <returns>No return behavior.</returns>
-void OnWireConnect(BasePlayer player, IOEntity inputEntity, int inputIndex, IOEntity outputEntity, int outputIndex, List<Vector3> linePoints, List<float> slackLevels)
+/// <returns>Returns `null` to allow the connection, or a non-null value to prevent it.</returns>
+object OnWireConnect(BasePlayer player, IOEntity inputEntity, int inputIndex, IOEntity outputEntity, int outputIndex, List<Vector3> linePoints, List<float> slackLevels)
 {
-    Puts($"Player {player.displayName} is attempting to connect {inputEntity.name} (Input Index: {inputIndex}) to {outputEntity.name} (Output Index: {outputIndex}).");
-
-    if (inputEntity == null || outputEntity == null)
-    {
-        Puts("Connection failed: One of the entities is null.");
-        return;
-    }
-
-    Puts($"Connection established between {inputEntity.name} and {outputEntity.name}.");
+    Puts($"Player {player} is attempting to connect {inputEntity} (Input Index: {inputIndex}) to {outputEntity} (Output Index: {outputIndex}).");
+    return null;
 }
 ```
 ```
@@ -3352,17 +3015,12 @@ void OnWireConnect(BasePlayer player, IOEntity inputEntity, int inputIndex, IOEn
 /// Called when a scientist NPC is initialized and spawned in the game world.
 /// </summary>
 /// <param name="apc">The Bradley APC associated with the scientist.</param>
-/// <param name="scientist">The scientist NPC that has been initialized.</param>
+/// <param name="scientist">The scientist NPC that is being initialized.</param>
 /// <param name="spawnPosition">The position where the scientist is spawned.</param>
 /// <returns>No return behavior.</returns>
 void OnScientistInitialized(BradleyAPC apc, ScientistNPC scientist, Vector3 spawnPosition)
 {
-    Puts($"Scientist {scientist.displayName} initialized at position {spawnPosition} for APC {apc.net.ID}.");
-    
-    if (scientist.IsHostile)
-    {
-        Puts($"Warning: Scientist {scientist.displayName} is hostile and may attack players.");
-    }
+    Puts($"Scientist {scientist} initialized at position {spawnPosition} associated with APC {apc}.");
 }
 ```
 ```
@@ -3418,7 +3076,7 @@ void OnScientistInitialized(BradleyAPC apc, ScientistNPC scientist, Vector3 spaw
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player pays for an upgrade on a building block.
+/// Called when a player pays for an upgrade to a building block.
 /// </summary>
 /// <param name="player">The player who is paying for the upgrade.</param>
 /// <param name="block">The building block being upgraded.</param>
@@ -3426,15 +3084,7 @@ void OnScientistInitialized(BradleyAPC apc, ScientistNPC scientist, Vector3 spaw
 /// <returns>No return behavior.</returns>
 void OnPayForUpgrade(BasePlayer player, BuildingBlock block, ConstructionGrade grade)
 {
-    Puts($"Player {player.displayName} is attempting to pay for an upgrade to {block.name} at grade {grade.name}.");
-
-    if (player.IsInCreativeMode)
-    {
-        Puts($"Player {player.displayName} is in creative mode and does not need to pay for upgrades.");
-        return;
-    }
-
-    // Additional logic can be added here if needed
+    Puts($"Player {player} is paying for an upgrade to {block} with grade {grade}.");
 }
 ```
 ```
@@ -3475,19 +3125,11 @@ void OnPayForUpgrade(BasePlayer player, BuildingBlock block, ConstructionGrade g
 /// <param name="notice">The notice message to display to players about the restart.</param>
 /// <param name="seconds">The number of seconds until the server restarts.</param>
 /// <returns>
-/// Returns a non-null value to interrupt the server restart process. 
-/// If `null` is returned, the server will proceed with the restart.
+/// Returns a non-null value to interrupt the server restart process; otherwise, returns null to allow the restart to proceed. (object)
 /// </returns>
 object OnServerRestart(string notice, int seconds)
 {
-    Puts($"Server restart initiated with notice: '{notice}' in {seconds} seconds.");
-    
-    if (seconds < 10)
-    {
-        Puts("Restart is too soon! Cancelling the restart.");
-        return "Restart too soon!";
-    }
-    
+    Puts($"Server is scheduled to restart in {seconds} seconds. Notice: {notice}");
     return null;
 }
 ```
@@ -3530,14 +3172,12 @@ object OnServerRestart(string notice, int seconds)
 /// <summary>
 /// Called when a phone call is answered by a player.
 /// </summary>
-/// <param name="caller">The phone controller of the caller who initiated the call.</param>
-/// <param name="receiver">The phone controller of the receiver who answered the call.</param>
+/// <param name="caller">The phone controller that is answering the call.</param>
+/// <param name="receiver">The phone controller that is being answered.</param>
 /// <returns>No return behavior.</returns>
 void OnPhoneAnswer(PhoneController caller, PhoneController receiver)
 {
-    Puts($"Phone call answered from {caller.GetPlayer().displayName} to {receiver.GetPlayer().displayName}.");
-    
-    // Additional logic can be added here if needed
+    Puts($"Phone answered: Caller {caller}, Receiver {receiver}.");
 }
 ```
 ```
@@ -3577,21 +3217,12 @@ void OnPhoneAnswer(PhoneController caller, PhoneController receiver)
 /// <param name="oven">The oven instance for which the temperature is being queried.</param>
 /// <param name="slot">The slot number for which the temperature is requested.</param>
 /// <returns>
-/// Returns the current temperature of the specified slot in the oven. 
-/// If the method returns `null`, the default temperature logic will be used.
+/// Returns the temperature of the specified slot as a float. If the hook returns a float, that value is used; otherwise, the default temperature is returned. (float)
 /// </returns>
-float? OnOvenTemperature(BaseOven oven, int slot)
+object OnOvenTemperature(BaseOven oven, int slot)
 {
-    Puts($"Checking temperature for Oven ID: {oven.net.ID}, Slot: {slot}");
-    
-    // Example condition to modify temperature
-    if (slot == 0)
-    {
-        Puts("Slot 0 is currently set to a special temperature.");
-        return 200f; // Custom temperature for slot 0
-    }
-
-    return null; // Allow default temperature logic to apply
+    Puts($"Retrieving temperature for oven {oven} at slot {slot}.");
+    return null;
 }
 ```
 ```
@@ -3624,20 +3255,13 @@ float? OnOvenTemperature(BaseOven oven, int slot)
 /// Called when a player starts using a coaling tower.
 /// </summary>
 /// <param name="tower">The coaling tower being used.</param>
-/// <param name="player">The player who is attempting to use the coaling tower.</param>
+/// <param name="player">The player interacting with the coaling tower.</param>
 /// <returns>
-/// Returns `null` to allow the action to proceed, or any non-null value to prevent the action.
+/// Returns `null` to allow the default behavior, or a non-null value to prevent the action. (object)
 /// </returns>
 object OnCoalingTowerStart(CoalingTower tower, BasePlayer player)
 {
-    Puts($"Player {player.displayName} is attempting to start using the coaling tower at {tower.transform.position}.");
-
-    if (player.IsInSafeZone())
-    {
-        Puts($"Player {player.displayName} cannot use the coaling tower while in a safe zone.");
-        return "You cannot use the coaling tower in a safe zone.";
-    }
-
+    Puts($"Player {player} has started using the coaling tower: {tower}.");
     return null;
 }
 ```
@@ -3664,30 +3288,17 @@ object OnCoalingTowerStart(CoalingTower tower, BasePlayer player)
 ```csharp
 ```csharp
 /// <summary>
-/// Determines whether the patrol helicopter can target a specific player.
+/// Called to determine if a patrol helicopter can target a specific player.
 /// </summary>
 /// <param name="helicopter">The patrol helicopter attempting to target the player.</param>
-/// <param name="player">The player being targeted.</param>
+/// <param name="player">The player being evaluated as a target.</param>
 /// <returns>
-/// Returns `true` if the helicopter can target the player; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will be used to determine targeting eligibility.
+/// Returns `true` if the helicopter can target the player, or `false` if it cannot.
+/// If the method returns `null`, the default targeting logic will be applied. (bool)
 /// </returns>
-bool? CanHelicopterTarget(PatrolHelicopterAI helicopter, BasePlayer player)
+object CanHelicopterTarget(PatrolHelicopterAI helicopter, BasePlayer player)
 {
-    Puts($"Helicopter {helicopter.net.ID} is checking if it can target player {player.displayName} (ID: {player.UserIDString}).");
-
-    if (player.IsDead())
-    {
-        Puts($"Player {player.displayName} is dead and cannot be targeted.");
-        return false;
-    }
-
-    if (player.IsInSafeZone())
-    {
-        Puts($"Player {player.displayName} is in a safe zone and cannot be targeted.");
-        return false;
-    }
-
+    Puts($"Evaluating targeting for player {player} by helicopter {helicopter}.");
     return null;
 }
 ```
@@ -3736,19 +3347,12 @@ bool? CanHelicopterTarget(PatrolHelicopterAI helicopter, BasePlayer player)
 /// <param name="car">The modular car that has the lock.</param>
 /// <param name="viaModule">The vehicle module being used to attempt the destruction.</param>
 /// <returns>
-/// Returns `true` if the player can destroy the lock; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will determine if the player can destroy the lock.
+/// Returns `true` if the player can destroy the lock; otherwise, returns `false`. 
+/// If the method returns `null`, the default game logic will determine if the player can destroy the lock. (bool)
 /// </returns>
-bool? CanDestroyLock(BasePlayer player, ModularCar car, BaseVehicleModule viaModule)
+object CanDestroyLock(BasePlayer player, ModularCar car, BaseVehicleModule viaModule)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to destroy a lock on {car.name} using {viaModule.name}.");
-
-    if (player.IsAdmin)
-    {
-        Puts($"Player {player.displayName} is an admin and can destroy locks.");
-        return true;
-    }
-
+    Puts($"Player {player} is attempting to destroy the lock on car {car} using module {viaModule}.");
     return null;
 }
 ```
@@ -3778,21 +3382,12 @@ bool? CanDestroyLock(BasePlayer player, ModularCar car, BaseVehicleModule viaMod
 /// Called when a player's health changes.
 /// </summary>
 /// <param name="player">The player whose health has changed.</param>
-/// <param name="oldHealth">The player's health before the change.</param>
-/// <param name="newHealth">The player's health after the change.</param>
+/// <param name="oldValue">The player's health before the change.</param>
+/// <param name="newValue">The player's health after the change.</param>
 /// <returns>No return behavior.</returns>
-void OnPlayerHealthChange(BasePlayer player, float oldHealth, float newHealth)
+void OnPlayerHealthChange(BasePlayer player, float oldValue, float newValue)
 {
-    Puts($"Player {player.displayName} health changed from {oldHealth} to {newHealth}.");
-
-    if (newHealth < oldHealth)
-    {
-        Puts($"Player {player.displayName} took damage: {oldHealth - newHealth}.");
-    }
-    else if (newHealth > oldHealth)
-    {
-        Puts($"Player {player.displayName} healed: {newHealth - oldHealth}.");
-    }
+    Puts($"Player {player} health changed from {oldValue} to {newValue}.");
 }
 ```
 ```
@@ -3834,18 +3429,11 @@ void OnPlayerHealthChange(BasePlayer player, float oldHealth, float newHealth)
 /// <param name="filePath">The file path where the demo will be saved.</param>
 /// <param name="player">The player who is starting the demo recording.</param>
 /// <returns>
-/// Returns `null` to allow the recording to start, or any non-null value to prevent the recording from starting.
+/// Returns `null` to allow the recording to start, or any non-null value to prevent it from starting. (object)
 /// </returns>
 object OnDemoRecordingStart(string filePath, BasePlayer player)
 {
-    Puts($"Demo recording for player {player.displayName} is starting. File path: {filePath}");
-    
-    if (player.IsInCreativeMode)
-    {
-        Puts($"Player {player.displayName} is in creative mode and cannot start demo recordings.");
-        return "Recording is disabled in creative mode.";
-    }
-    
+    Puts($"Demo recording for player {player} will be saved to: {filePath}");
     return null;
 }
 ```
@@ -3895,20 +3483,18 @@ object OnDemoRecordingStart(string filePath, BasePlayer player)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when an item is submitted to a mailbox.
+/// Called when an item is submitted to a mailbox by a player.
 /// </summary>
 /// <param name="item">The item being submitted.</param>
 /// <param name="mailbox">The mailbox receiving the item.</param>
 /// <param name="fromPlayer">The player submitting the item.</param>
-/// <returns>No return behavior.</returns>
-void OnItemSubmit(Item item, Mailbox mailbox, BasePlayer fromPlayer)
+/// <returns>
+/// Returns a non-null value to prevent the item submission; otherwise, returns null to allow it. (object)
+/// </returns>
+object OnItemSubmit(Item item, Mailbox mailbox, BasePlayer fromPlayer)
 {
-    Puts($"Item {item.info.displayName.english} submitted to mailbox by {fromPlayer.displayName}.");
-    
-    if (item.info.shortname == "special.item")
-    {
-        Puts($"Player {fromPlayer.displayName} submitted a special item!");
-    }
+    Puts($"Player {fromPlayer} submitted item {item} to mailbox {mailbox}.");
+    return null;
 }
 ```
 ```
@@ -3953,24 +3539,11 @@ void OnItemSubmit(Item item, Mailbox mailbox, BasePlayer fromPlayer)
 /// <param name="structure">The structure that is being repaired.</param>
 /// <param name="player">The player attempting to repair the structure.</param>
 /// <returns>
-/// Returns `null` to allow the repair to proceed, or any non-null value to prevent the repair action.
+/// Returns `null` to allow the repair to proceed, or any non-null value to prevent the repair action. (object)
 /// </returns>
 object OnStructureRepair(BaseCombatEntity structure, BasePlayer player)
 {
-    Puts($"Player {player.displayName} is attempting to repair structure: {structure.ShortPrefabName}.");
-
-    if (structure.Health() >= structure.MaxHealth())
-    {
-        Puts($"Repair attempt by {player.displayName} failed: Structure is already at full health.");
-        return "Structure is already fully repaired.";
-    }
-
-    if (player.inventory.GetAmount("repair.tool") < 1)
-    {
-        Puts($"Repair attempt by {player.displayName} failed: Not enough resources.");
-        return "You need a repair tool to perform this action.";
-    }
-
+    Puts($"Player {player} is attempting to repair structure {structure}.");
     return null;
 }
 ```
@@ -4067,24 +3640,17 @@ object OnStructureRepair(BaseCombatEntity structure, BasePlayer player)
 ```csharp
 ```csharp
 /// <summary>
-/// Determines if the specified player can be targeted for strafe attacks by the helicopter.
+/// Determines whether the specified player can be targeted for strafing by the helicopter.
 /// </summary>
 /// <param name="helicopter">The patrol helicopter attempting to strafe.</param>
 /// <param name="player">The player being evaluated as a target.</param>
 /// <returns>
-/// Returns `true` if the player can be targeted for strafe attacks; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will be used to determine if the player can be targeted.
+/// Returns `true` if the player can be targeted for strafing; otherwise, returns `false`. 
+/// If the method returns `null`, the default game logic will be used to determine if the player can be targeted. (bool)
 /// </returns>
-bool? CanHelicopterStrafeTarget(PatrolHelicopterAI helicopter, BasePlayer player)
+object CanHelicopterStrafeTarget(PatrolHelicopterAI helicopter, BasePlayer player)
 {
-    Puts($"Evaluating strafe target for player {player.displayName} (ID: {player.UserIDString}) by helicopter.");
-
-    if (player.IsInSafeZone())
-    {
-        Puts($"Player {player.displayName} is in a safe zone and cannot be targeted.");
-        return false;
-    }
-
+    Puts($"Evaluating if player {player} can be targeted by helicopter {helicopter} for strafing.");
     return null;
 }
 ```
@@ -4122,12 +3688,7 @@ bool? CanHelicopterStrafeTarget(PatrolHelicopterAI helicopter, BasePlayer player
 /// <returns>No return behavior.</returns>
 void OnStashExposed(StashContainer stash, BasePlayer player)
 {
-    Puts($"Stash {stash.net.ID} has been exposed to player {player.displayName} (ID: {player.UserIDString}).");
-
-    if (stash.IsLocked())
-    {
-        Puts($"Stash {stash.net.ID} is locked and cannot be accessed by {player.displayName}.");
-    }
+    Puts($"Stash {stash} has been exposed to player {player}.");
 }
 ```
 ```
@@ -4175,22 +3736,15 @@ void OnStashExposed(StashContainer stash, BasePlayer player)
 /// <summary>
 /// Called to determine if a player can loot a storage container.
 /// </summary>
-/// <param name="player">The player attempting to loot the container.</param>
+/// <param name="player">The player attempting to loot the entity.</param>
 /// <param name="container">The storage container being looted.</param>
 /// <returns>
-/// Returns `true` if the player is allowed to loot the container; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will determine if the player can loot the container.
+/// Returns `true` if the player can loot the entity; otherwise, returns `false`. 
+/// If the method returns a non-null value, it prevents the player from looting. (bool)
 /// </returns>
-bool? CanLootEntity(BasePlayer player, StorageContainer container)
+object CanLootEntity(BasePlayer player, StorageContainer container)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to loot container: {container.name}.");
-
-    if (container.IsLocked())
-    {
-        Puts($"Container {container.name} is locked. Player {player.displayName} cannot loot.");
-        return false;
-    }
-
+    Puts($"Player {player} is attempting to loot container {container}.");
     return null;
 }
 ```
@@ -4249,13 +3803,12 @@ bool? CanLootEntity(BasePlayer player, StorageContainer container)
 /// <param name="receiver">The phone controller that was being called.</param>
 /// <param name="player">The player associated with the call.</param>
 /// <returns>
-/// Returns a non-null value to prevent the default timeout behavior. 
-/// If `null` is returned, the default timeout actions will be executed.
+/// Returns `null` to allow the default timeout behavior, or a non-null value to override it. (object)
 /// </returns>
 object OnPhoneDialTimeout(PhoneController caller, PhoneController receiver, BasePlayer player)
 {
-    Puts($"Phone call from {player.displayName} to {receiver.phoneNumber} has timed out.");
-    return null; // Allow default behavior to proceed
+    Puts($"Phone dialing timeout: Caller {caller}, Receiver {receiver}, Player {player}.");
+    return null;
 }
 ```
 ```
@@ -4284,19 +3837,17 @@ object OnPhoneDialTimeout(PhoneController caller, PhoneController receiver, Base
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player attempts to open a vending shop.
+/// Called when a player attempts to open a vending shop managed by an NPC.
 /// </summary>
-/// <param name="vendingMachine">The vending machine being accessed.</param>
+/// <param name="vendingMachine">The NPC vending machine being accessed.</param>
 /// <param name="player">The player attempting to open the vending shop.</param>
-/// <returns>No return behavior.</returns>
-void OnVendingShopOpen(NPCVendingMachine vendingMachine, BasePlayer player)
+/// <returns>
+/// Returns `null` to allow the shop to open, or any non-null value to prevent the shop from opening. (object)
+/// </returns>
+object OnVendingShopOpen(NPCVendingMachine vendingMachine, BasePlayer player)
 {
-    Puts($"Player {player.displayName} is attempting to open the vending shop: {vendingMachine.name}.");
-    
-    if (vendingMachine.IsOutOfStock())
-    {
-        Puts($"Vending shop {vendingMachine.name} is out of stock for player {player.displayName}.");
-    }
+    Puts($"Player {player} is attempting to open the vending shop: {vendingMachine}.");
+    return null;
 }
 ```
 ```
@@ -4327,24 +3878,17 @@ void OnVendingShopOpen(NPCVendingMachine vendingMachine, BasePlayer player)
 ```csharp
 ```csharp
 /// <summary>
-/// Called to determine if an item can be recycled at a recycler.
+/// Called to determine if an item can be recycled by a recycler.
 /// </summary>
 /// <param name="recycler">The recycler attempting to recycle the item.</param>
 /// <param name="item">The item being checked for recyclability.</param>
 /// <returns>
-/// Returns `true` if the item can be recycled, or `false` if it cannot.
-/// If the method returns `null`, the default game logic will determine if the item can be recycled.
+/// Returns `true` if the item can be recycled; otherwise, returns `false`. 
+/// If the method returns `null`, the default game logic will determine if the item can be recycled. (bool)
 /// </returns>
-bool? CanRecycle(Recycler recycler, Item item)
+object CanRecycle(Recycler recycler, Item item)
 {
-    Puts($"Checking recyclability for item: {item.info.displayName.english} (ID: {item.info.itemid}) at recycler: {recycler.name}.");
-
-    if (item.info.shortname == "wood")
-    {
-        Puts("Wood can always be recycled.");
-        return true;
-    }
-
+    Puts($"Checking recyclability for item {item} in recycler {recycler}.");
     return null;
 }
 ```
@@ -4385,20 +3929,13 @@ bool? CanRecycle(Recycler recycler, Item item)
 /// Called when the direction of a CCTV camera is changed by a player.
 /// </summary>
 /// <param name="cctv">The CCTV camera whose direction is being changed.</param>
-/// <param name="player">The player changing the direction of the CCTV camera.</param>
+/// <param name="player">The player changing the CCTV direction.</param>
 /// <returns>
-/// Returns `null` to allow the direction change, or any non-null value to prevent it.
+/// Returns `null` to allow the direction change, or a non-null value to prevent it. (object)
 /// </returns>
 object OnCCTVDirectionChange(CCTV_RC cctv, BasePlayer player)
 {
-    Puts($"Player {player.displayName} is changing the direction of CCTV at {cctv.transform.position}.");
-    
-    if (player.IsInRestrictedArea())
-    {
-        Puts($"Player {player.displayName} is in a restricted area and cannot change CCTV direction.");
-        return "You cannot change the CCTV direction from this location.";
-    }
-    
+    Puts($"Player {player} is changing the direction of CCTV {cctv}.");
     return null;
 }
 ```
@@ -4433,23 +3970,15 @@ object OnCCTVDirectionChange(CCTV_RC cctv, BasePlayer player)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when water is collected from a water catcher.
+/// Called when attempting to collect water from a water catcher.
 /// </summary>
 /// <param name="catcher">The water catcher that is collecting water.</param>
 /// <returns>
-/// Returns `null` to allow the water collection to proceed, or any non-null value to prevent it.
+/// Returns `null` to allow the default water collection behavior, or any non-null value to prevent collection.
 /// </returns>
 object OnWaterCollect(WaterCatcher catcher)
 {
-    Puts($"Water collection initiated for catcher at position: {catcher.transform.position}.");
-    
-    // Example condition to prevent water collection
-    if (catcher.IsFull())
-    {
-        Puts("Water catcher is already full. Collection cannot proceed.");
-        return "Water catcher is full.";
-    }
-    
+    Puts($"Water collection attempted by catcher at position: {catcher.transform.position}.");
     return null;
 }
 ```
@@ -4481,23 +4010,16 @@ object OnWaterCollect(WaterCatcher catcher)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player is promoted to team leader within their team.
+/// Called when a player is promoted within their team.
 /// </summary>
 /// <param name="team">The team to which the player belongs.</param>
-/// <param name="newLeader">The player being promoted to team leader.</param>
+/// <param name="player">The player being promoted to team leader.</param>
 /// <returns>
-/// Returns `null` to allow the promotion, or any non-null value to prevent the promotion.
+/// Returns `null` to allow the promotion, or any non-null value to prevent the promotion. (object)
 /// </returns>
-object OnTeamPromote(RelationshipManager.PlayerTeam team, BasePlayer newLeader)
+object OnTeamPromote(RelationshipManager.PlayerTeam team, BasePlayer player)
 {
-    Puts($"Player {newLeader.displayName} has been promoted to team leader of team ID: {team.teamID}.");
-    
-    if (newLeader.IsBannedFromLeadership())
-    {
-        Puts($"Player {newLeader.displayName} is banned from being a team leader.");
-        return "You are banned from being a team leader.";
-    }
-    
+    Puts($"Player {player} has been promoted in team {team}.");
     return null;
 }
 ```
@@ -4533,23 +4055,16 @@ object OnTeamPromote(RelationshipManager.PlayerTeam team, BasePlayer newLeader)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player clears their map markers.
+/// Called when a player requests to clear their map markers.
 /// </summary>
-/// <param name="player">The player who is clearing the map markers.</param>
-/// <param name="mapNotes">The list of map notes that are being cleared.</param>
+/// <param name="player">The player requesting to clear their map markers.</param>
+/// <param name="mapNotes">The list of map notes that are currently set for the player.</param>
 /// <returns>
-/// Returns a non-null value to prevent the clearing of map markers. If `null` is returned, the markers will be cleared as normal.
+/// Returns a non-null value to prevent the clearing of map markers; otherwise, returns null to allow the action. (object)
 /// </returns>
 object OnMapMarkersClear(BasePlayer player, List<ProtoBuf.MapNote> mapNotes)
 {
-    Puts($"Player {player.displayName} is attempting to clear map markers. Total markers: {mapNotes.Count}");
-
-    if (player.IsInSafeZone())
-    {
-        Puts($"Player {player.displayName} is in a safe zone and cannot clear map markers.");
-        return "You cannot clear map markers while in a safe zone.";
-    }
-
+    Puts($"Player {player} is attempting to clear map markers.");
     return null;
 }
 ```
@@ -4559,8 +4074,8 @@ object OnMapMarkersClear(BasePlayer player, List<ProtoBuf.MapNote> mapNotes)
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.FromOwner]
+	[RPC_Server]
 	[RPC_Server.CallsPerSecond(1uL)]
 	public void Server_ClearMapMarkers(RPCMessage msg)
 	{
@@ -4590,25 +4105,17 @@ object OnMapMarkersClear(BasePlayer player, List<ProtoBuf.MapNote> mapNotes)
 ```csharp
 ```csharp
 /// <summary>
-/// Called to check if the entity has sufficient fuel for operation.
+/// Called to check if the entity has fuel available for operation.
 /// </summary>
 /// <param name="fuelSystem">The fuel system of the entity being checked.</param>
 /// <returns>
-/// Returns `true` if the entity has fuel, `false` if it does not, 
-/// or `null` to allow the default fuel check logic to proceed.
+/// Returns `true` if the entity has fuel; otherwise, returns `false`. 
+/// If the method returns `null`, the default fuel check logic will be used. (bool)
 /// </returns>
-bool? OnFuelCheck(EntityFuelSystem fuelSystem)
+object OnFuelCheck(EntityFuelSystem fuelSystem)
 {
-    Puts($"Checking fuel status for entity: {fuelSystem.gameObject.name} (ID: {fuelSystem.GetInstanceID()})");
-    
-    // Example condition to block fuel usage
-    if (fuelSystem.GetFuelAmount() < 10f)
-    {
-        Puts($"Entity {fuelSystem.gameObject.name} does not have enough fuel.");
-        return false;
-    }
-
-    return null; // Allow default logic to determine fuel status
+    Puts($"Checking fuel status for entity: {fuelSystem}.");
+    return null;
 }
 ```
 ```
@@ -4646,20 +4153,7 @@ bool? OnFuelCheck(EntityFuelSystem fuelSystem)
 /// <returns>No return behavior.</returns>
 void OnSamSiteTargetScan(SamSite samSite, List<SamSite.ISamSiteTarget> targets)
 {
-    Puts($"Scanning for targets by SAM site at position: {samSite.transform.position}");
-
-    // Example logic to add a target
-    if (targets.Count == 0)
-    {
-        Puts("No targets found during the scan.");
-    }
-    else
-    {
-        foreach (var target in targets)
-        {
-            Puts($"Target detected: {target.GetType().Name} at {target.CenterPoint()}");
-        }
-    }
+    Puts($"Scanning for targets at SAM site: {samSite}.");
 }
 ```
 ```
@@ -4739,24 +4233,17 @@ void OnSamSiteTargetScan(SamSite samSite, List<SamSite.ISamSiteTarget> targets)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player provides input while interacting with a computer station's bookmark feature.
+/// Called when a player provides input to a computer station's bookmark feature.
 /// </summary>
 /// <param name="station">The computer station receiving the input.</param>
 /// <param name="player">The player providing the input.</param>
-/// <param name="inputState">The state of the input provided by the player.</param>
+/// <param name="inputState">The state of the input from the player.</param>
 /// <returns>
-/// Returns `null` to allow the default input handling, or any non-null value to override the default behavior.
+/// Returns `null` to allow the default input handling, or a non-null value to override the default behavior. (object)
 /// </returns>
 object OnBookmarkInput(ComputerStation station, BasePlayer player, InputState inputState)
 {
-    Puts($"Player {player.displayName} provided input on bookmark at station {station.net.ID}.");
-    
-    if (inputState.IsPressed(InputButton.Cancel))
-    {
-        Puts($"Player {player.displayName} canceled the bookmark action.");
-        return "Bookmark action canceled.";
-    }
-
+    Puts($"Player {player} provided input to bookmark on station {station}.");
     return null;
 }
 ```
@@ -4789,20 +4276,12 @@ object OnBookmarkInput(ComputerStation station, BasePlayer player, InputState in
 /// <param name="repairBench">The repair bench where the skin change is taking place.</param>
 /// <param name="player">The player changing the skin.</param>
 /// <returns>
-/// Returns a non-null value to prevent the skin change from occurring. 
-/// If `null` is returned, the skin change proceeds as normal.
+/// Returns a non-null value to prevent the skin change, or `null` to allow it. (object)
 /// </returns>
 object OnItemSkinChange(int skinId, Item item, RepairBench repairBench, BasePlayer player)
 {
-    Puts($"Player {player.displayName} is attempting to change skin of {item.info.displayName.english} to skin ID {skinId}.");
-
-    if (skinId == 12345) // Example of a restricted skin ID
-    {
-        Puts($"Player {player.displayName} is not allowed to use skin ID {skinId}.");
-        return "You cannot use this skin.";
-    }
-
-    return null; // Allow the skin change to proceed
+    Puts($"Player {player} is changing skin of item {item} to skin ID {skinId}.");
+    return null;
 }
 ```
 ```
@@ -4811,8 +4290,8 @@ object OnItemSkinChange(int skinId, Item item, RepairBench repairBench, BasePlay
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.IsVisible(3f)]
+	[RPC_Server]
 	public void ChangeSkin(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -4937,14 +4416,14 @@ object OnItemSkinChange(int skinId, Item item, RepairBench repairBench, BasePlay
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a supply drop has been successfully dropped from the cargo plane.
+/// Called when a supply drop is dropped from the cargo plane.
 /// </summary>
-/// <param name="supplyDrop">The entity representing the dropped supply drop.</param>
-/// <param name="cargoPlane">The cargo plane that released the supply drop.</param>
+/// <param name="entity">The entity representing the supply drop.</param>
+/// <param name="cargoPlane">The cargo plane that dropped the supply.</param>
 /// <returns>No return behavior.</returns>
-void OnSupplyDropDropped(BaseEntity supplyDrop, CargoPlane cargoPlane)
+void OnSupplyDropDropped(BaseEntity entity, CargoPlane cargoPlane)
 {
-    Puts($"Supply drop {supplyDrop.net.ID} has been dropped from cargo plane {cargoPlane.net.ID} at position {supplyDrop.transform.position}.");
+    Puts($"Supply drop {entity} has been dropped from cargo plane {cargoPlane}.");
 }
 ```
 ```
@@ -4992,22 +4471,15 @@ void OnSupplyDropDropped(BaseEntity supplyDrop, CargoPlane cargoPlane)
 /// <param name="fuelSystem">The fuel system attempting to use the fuel.</param>
 /// <param name="fuelContainer">The storage container holding the fuel.</param>
 /// <param name="seconds">The duration for which fuel is requested.</param>
-/// <param name="fuelUsedPerSecond">The amount of fuel used per second.</param>
+/// <param name="fuelUsedPerSecond">The amount of fuel consumed per second.</param>
 /// <returns>
-/// Returns the amount of fuel successfully used. If the method returns `0`, no fuel was used.
-/// If a non-zero integer is returned, that amount of fuel was consumed from the container.
+/// Returns the amount of fuel that can be used. If the method returns `0`, no fuel can be used. 
+/// If a non-zero integer is returned, that amount of fuel will be consumed. (int)
 /// </returns>
-int CanUseFuel(EntityFuelSystem fuelSystem, StorageContainer fuelContainer, float seconds, float fuelUsedPerSecond)
+object CanUseFuel(EntityFuelSystem fuelSystem, StorageContainer fuelContainer, float seconds, float fuelUsedPerSecond)
 {
-    Puts($"Attempting to use fuel for {seconds} seconds at a rate of {fuelUsedPerSecond} units per second.");
-    
-    if (fuelContainer == null || fuelContainer.inventory.GetSlot(0) == null)
-    {
-        Puts("No fuel container or fuel item found.");
-        return 0;
-    }
-
-    return 1; // Simulating successful fuel usage for demonstration
+    Puts($"Checking fuel usage for {fuelSystem} from container {fuelContainer} for {seconds} seconds at {fuelUsedPerSecond} per second.");
+    return null;
 }
 ```
 ```
@@ -5054,18 +4526,14 @@ int CanUseFuel(EntityFuelSystem fuelSystem, StorageContainer fuelContainer, floa
 /// <summary>
 /// Called when loot is spawned in a loot container.
 /// </summary>
-/// <param name="container">The loot container where the loot is being spawned.</param>
-/// <returns>No return behavior.</returns>
-void OnLootSpawn(LootContainer container)
+/// <param name="lootContainer">The loot container where loot is being spawned.</param>
+/// <returns>
+/// Returns `null` to allow the default loot spawning behavior, or a non-null value to override it. (object)
+/// </returns>
+object OnLootSpawn(LootContainer lootContainer)
 {
-    Puts($"Loot is being spawned in container: {container.gameObject.name} (ID: {container.net.ID})");
-    
-    // Example condition to prevent spawning loot in certain containers
-    if (container.gameObject.name.Contains("Restricted"))
-    {
-        Puts("Loot spawning is restricted for this container.");
-        return;
-    }
+    Puts($"Loot is being spawned in container: {lootContainer}.");
+    return null;
 }
 ```
 ```
@@ -5105,18 +4573,11 @@ void OnLootSpawn(LootContainer container)
 /// <param name="assistedPlayer">The player who is being assisted.</param>
 /// <param name="assistingPlayer">The player who is providing assistance.</param>
 /// <returns>
-/// Returns `null` to allow the assistance action, or any non-null value to prevent it.
+/// Returns `null` to allow the assistance action, or any non-null value to prevent it. (object)
 /// </returns>
 object OnPlayerAssist(BasePlayer assistedPlayer, BasePlayer assistingPlayer)
 {
-    Puts($"Player {assistingPlayer.displayName} is assisting wounded player {assistedPlayer.displayName}.");
-    
-    if (assistedPlayer.IsInSafeZone())
-    {
-        Puts($"Assistance denied: {assistedPlayer.displayName} is in a safe zone.");
-        return "Cannot assist players in safe zones.";
-    }
-
+    Puts($"Player {assistingPlayer} is assisting wounded player {assistedPlayer}.");
     return null;
 }
 ```
@@ -5145,13 +4606,12 @@ object OnPlayerAssist(BasePlayer assistedPlayer, BasePlayer assistingPlayer)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when the server has been initialized and is ready to accept connections.
+/// Called when the server has been fully initialized and is ready to accept connections.
 /// </summary>
 /// <returns>No return behavior.</returns>
 void IOnServerInitialized()
 {
     Puts("Server has been initialized and is ready for connections.");
-    // Additional initialization logic can be added here.
 }
 ```
 ```
@@ -5203,24 +4663,16 @@ void IOnServerInitialized()
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a decay event occurs, allowing for custom damage handling during decay.
+/// Called when an entity is subjected to decay damage.
 /// </summary>
-/// <param name="decayEntity">The entity that is undergoing decay.</param>
+/// <param name="decayEntity">The entity that is decaying.</param>
 /// <returns>
-/// Returns a non-null value to override the default decay damage behavior. 
-/// If `null` is returned, the default decay damage will be applied.
+/// Returns `null` to allow the default decay damage behavior, or a non-null value to override it. (object)
 /// </returns>
 object OnDecayDamage(DecayEntity decayEntity)
 {
-    Puts($"Decay event triggered for entity: {decayEntity.gameObject.name} (ID: {decayEntity.net.ID})");
-
-    if (decayEntity.healthFraction < 0.5f)
-    {
-        Puts($"Entity {decayEntity.gameObject.name} is critically decayed and will take additional damage.");
-        return true; // Indicate that custom damage handling should occur
-    }
-
-    return null; // Allow default decay damage to proceed
+    Puts($"Decay damage check for entity: {decayEntity}.");
+    return null;
 }
 ```
 ```
@@ -5306,18 +4758,11 @@ object OnDecayDamage(DecayEntity decayEntity)
 /// <param name="previousItem">The item that was previously active.</param>
 /// <param name="newItemId">The ID of the new active item.</param>
 /// <returns>
-/// Returns `null` to allow the item change, or any non-null value to prevent the change.
+/// Returns a non-null value to prevent the active item change; otherwise, returns null to allow the change. (object)
 /// </returns>
 object OnActiveItemChange(BasePlayer player, Item previousItem, ItemId newItemId)
 {
-    Puts($"Player {player.displayName} is changing active item from {previousItem?.info.displayName.english ?? "none"} to item ID: {newItemId}.");
-
-    if (newItemId == ItemId.Invalid)
-    {
-        Puts($"Player {player.displayName} attempted to equip an invalid item.");
-        return "Invalid item cannot be equipped.";
-    }
-
+    Puts($"Player {player} changed active item from {previousItem} to item ID {newItemId}.");
     return null;
 }
 ```
@@ -5386,9 +4831,7 @@ object OnActiveItemChange(BasePlayer player, Item previousItem, ItemId newItemId
 /// <returns>No return behavior.</returns>
 void OnOvenStarted(BaseOven oven)
 {
-    Puts($"Oven {oven.net.ID} has started cooking at temperature: {oven.inventory.temperature}.");
-    
-    // Additional logic can be added here if needed
+    Puts($"Oven {oven} has started cooking.");
 }
 ```
 ```
@@ -5423,7 +4866,6 @@ void OnOvenStarted(BaseOven oven)
 void OnSupplyDropLanded(SupplyDrop supplyDrop)
 {
     Puts($"Supply drop landed at position: {supplyDrop.transform.position}.");
-    // Additional logic can be added here if needed.
 }
 ```
 ```
@@ -5454,23 +4896,17 @@ void OnSupplyDropLanded(SupplyDrop supplyDrop)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a signal is broadcasted from a networked entity.
+/// Called when a signal is broadcasted from the server to connected clients.
 /// </summary>
 /// <param name="entity">The entity that is broadcasting the signal.</param>
-/// <param name="connection">The network connection from which the signal is sent.</param>
-/// <returns>Returns `null` to allow the signal broadcast, or any non-null value to prevent it.</returns>
+/// <param name="connection">The connection from which the signal is being sent.</param>
+/// <returns>
+/// Returns `null` to allow the signal to be broadcasted; any non-null value will prevent the broadcast. (object)
+/// </returns>
 object OnSignalBroadcast(BaseEntity entity, Network.Connection connection)
 {
-    Puts($"Signal broadcast from entity {entity.net.ID} with connection ID: {connection?.userid ?? 0}.");
-    
-    // Example condition to block the signal
-    if (entity.net.ID == 12345) // Replace with actual condition
-    {
-        Puts("Broadcast blocked for this entity.");
-        return true; // Prevent the broadcast
-    }
-    
-    return null; // Allow the broadcast
+    Puts($"Broadcasting signal from entity {entity} to connection {connection}.");
+    return null;
 }
 ```
 ```
@@ -5498,16 +4934,11 @@ object OnSignalBroadcast(BaseEntity entity, Network.Connection connection)
 /// </summary>
 /// <param name="oven">The oven that cooked the item.</param>
 /// <param name="item">The item that was cooked.</param>
-/// <param name="cookingEntity">The entity that is associated with the cooking process.</param>
+/// <param name="entity">The entity associated with the cooking process.</param>
 /// <returns>No return behavior.</returns>
-void OnOvenCooked(BaseOven oven, Item item, BaseEntity cookingEntity)
+void OnOvenCooked(BaseOven oven, Item item, BaseEntity entity)
 {
-    Puts($"Oven {oven.net.ID} has finished cooking item: {item.info.displayName.english} (ID: {item.info.itemid}).");
-
-    if (item.info.shortname == "food.cooked.chicken")
-    {
-        Puts("Cooked chicken is ready! Enjoy your meal!");
-    }
+    Puts($"Oven {oven} has finished cooking item {item} for entity {entity}.");
 }
 ```
 ```
@@ -5574,24 +5005,16 @@ void OnOvenCooked(BaseOven oven, Item item, BaseEntity cookingEntity)
 /// Called when a construction is placed in the game world.
 /// </summary>
 /// <param name="entity">The entity being placed.</param>
-/// <param name="construction">The construction component being used.</param>
-/// <param name="placement">The target placement location for the construction.</param>
+/// <param name="component">The construction component being used.</param>
+/// <param name="placement">The target location for the construction.</param>
 /// <param name="player">The player who is placing the construction.</param>
 /// <returns>
-/// Returns the GameObject of the placed construction if successful; otherwise, returns `null`.
-/// If the method returns a non-null value, the placement is considered valid.
+/// Returns `null` to allow the construction to be placed, or any non-null value to prevent placement. (object)
 /// </returns>
-GameObject OnConstructionPlace(BaseEntity entity, Construction construction, Construction.Target placement, BasePlayer player)
+object OnConstructionPlace(BaseEntity entity, Construction component, Construction.Target placement, BasePlayer player)
 {
-    Puts($"Player {player.displayName} is placing a construction at {placement.position}.");
-
-    if (placement.position.y < 0)
-    {
-        Puts("Invalid placement position: below ground.");
-        return null;
-    }
-
-    return entity.gameObject; // Simulate successful placement
+    Puts($"Player {player} is attempting to place {entity} at {placement}.");
+    return null;
 }
 ```
 ```
@@ -5680,21 +5103,14 @@ GameObject OnConstructionPlace(BaseEntity entity, Construction construction, Con
 /// Called when the state of a growable entity changes.
 /// </summary>
 /// <param name="growable">The growable entity whose state is changing.</param>
-/// <param name="newState">The new state of the growable entity.</param>
+/// <param name="newState">The new state that the growable entity is transitioning to.</param>
 /// <returns>
-/// Returns a non-null value to prevent the state change, or `null` to allow it.
+/// Returns a non-null value to prevent the state change; otherwise, returns null to allow the change. (object)
 /// </returns>
 object OnGrowableStateChange(GrowableEntity growable, PlantProperties.State newState)
 {
-    Puts($"Growable entity {growable.GetInstanceID()} is attempting to change state to {newState}.");
-    
-    if (newState == PlantProperties.State.Dead)
-    {
-        Puts($"Growable entity {growable.GetInstanceID()} cannot change to Dead state.");
-        return true; // Prevent state change
-    }
-    
-    return null; // Allow state change
+    Puts($"Growable entity {growable} is changing state to {newState}.");
+    return null;
 }
 ```
 ```
@@ -5746,11 +5162,11 @@ object OnGrowableStateChange(GrowableEntity growable, PlantProperties.State newS
 /// Called when a player stops looting an entity.
 /// </summary>
 /// <param name="player">The player who has stopped looting.</param>
-/// <param name="container">The container entity that was being looted.</param>
+/// <param name="entity">The entity that was being looted.</param>
 /// <returns>No return behavior.</returns>
-void OnLootEntityEnd(BasePlayer player, ContainerIOEntity container)
+void OnLootEntityEnd(BasePlayer player, ContainerIOEntity entity)
 {
-    Puts($"Player {player.displayName} has stopped looting the container: {container.name}.");
+    Puts($"Player {player} has stopped looting entity {entity}.");
 }
 ```
 ```
@@ -5778,19 +5194,12 @@ void OnLootEntityEnd(BasePlayer player, ContainerIOEntity container)
 /// <param name="target">The potential target entity.</param>
 /// <param name="turret">The helicopter turret attempting to target the entity.</param>
 /// <returns>
-/// Returns `true` if the target can be engaged; otherwise, returns `false`.
-/// If the method returns `null`, the default targeting logic will be applied.
+/// Returns `true` if the target can be engaged; otherwise, returns `false`. 
+/// If the method returns `null`, the default targeting logic will be applied. (bool)
 /// </returns>
-bool? CanBeTargeted(BaseCombatEntity target, HelicopterTurret turret)
+object CanBeTargeted(BaseCombatEntity target, HelicopterTurret turret)
 {
-    Puts($"Checking if target {target.displayName} can be engaged by turret {turret.net.ID}.");
-
-    if (target.IsDead())
-    {
-        Puts($"Target {target.displayName} is dead and cannot be targeted.");
-        return false;
-    }
-
+    Puts($"Checking if target {target} can be engaged by turret {turret}.");
     return null;
 }
 ```
@@ -5817,33 +5226,19 @@ bool? CanBeTargeted(BaseCombatEntity target, HelicopterTurret turret)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a weapon is loaded with ammo on a weapon rack.
+/// Called when a weapon is loaded onto a weapon rack.
 /// </summary>
-/// <param name="slot">The item representing the weapon being loaded.</param>
-/// <param name="ammoDefinition">The definition of the ammo being loaded into the weapon.</param>
+/// <param name="item">The item being loaded onto the weapon rack.</param>
+/// <param name="itemDefinition">The definition of the item being loaded.</param>
 /// <param name="player">The player loading the weapon.</param>
-/// <param name="weaponRack">The weapon rack where the loading occurs.</param>
+/// <param name="weaponRack">The weapon rack where the item is being loaded.</param>
 /// <returns>
-/// Returns a non-null value to prevent the weapon from being loaded. 
-/// If `null` is returned, the weapon will be loaded as normal.
+/// Returns a non-null value to prevent the loading action; otherwise, returns null to allow it. (object)
 /// </returns>
-object OnRackedWeaponLoad(Item slot, ItemDefinition ammoDefinition, BasePlayer player, WeaponRack weaponRack)
+object OnRackedWeaponLoad(Item item, ItemDefinition itemDefinition, BasePlayer player, WeaponRack weaponRack)
 {
-    Puts($"Player {player.displayName} is attempting to load {ammoDefinition.displayName.english} into {slot.info.displayName.english} on the weapon rack.");
-
-    if (ammoDefinition == null)
-    {
-        Puts("Attempted to load null ammo definition.");
-        return "Invalid ammo type.";
-    }
-
-    if (ammoDefinition.itemid == 12345) // Example item ID for a restricted ammo type
-    {
-        Puts($"Player {player.displayName} is not allowed to load restricted ammo.");
-        return "You cannot load this type of ammo.";
-    }
-
-    return null; // Allow the loading to proceed
+    Puts($"Player {player} is loading {item} (ID: {itemDefinition.itemid}) onto the weapon rack.");
+    return null;
 }
 ```
 ```
@@ -5926,20 +5321,15 @@ object OnRackedWeaponLoad(Item slot, ItemDefinition ammoDefinition, BasePlayer p
 /// <summary>
 /// Called when a player's team information is updated.
 /// </summary>
-/// <param name="teamId">The unique identifier of the team being updated.</param>
+/// <param name="teamId">The ID of the team that has been updated.</param>
 /// <param name="teamData">The updated team data containing members and their statuses.</param>
 /// <param name="updatingPlayer">The player who initiated the team update.</param>
-/// <returns>Returns `null` to allow the default update behavior, or a non-null value to override it.</returns>
+/// <returns>
+/// Returns a non-null value to override the default team update behavior; otherwise, returns null. (object)
+/// </returns>
 object OnTeamUpdated(ulong teamId, ProtoBuf.PlayerTeam teamData, BasePlayer updatingPlayer)
 {
-    Puts($"Team update received for Team ID: {teamId} by Player: {updatingPlayer.displayName}");
-
-    if (teamData.members.Count < 1)
-    {
-        Puts($"Team ID: {teamId} has no members.");
-        return "No members in the team.";
-    }
-
+    Puts($"Team {teamId} updated by player {updatingPlayer} with {teamData.members.Count} members.");
     return null;
 }
 ```
@@ -6059,22 +5449,15 @@ object OnTeamUpdated(ulong teamId, ProtoBuf.PlayerTeam teamData, BasePlayer upda
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a new RCON connection is established.
+/// Called when a new RCON connection is attempted.
 /// </summary>
 /// <param name="ipAddress">The IP address of the connecting client.</param>
 /// <returns>
-/// Returns a non-null value to reject the connection, or `null` to allow the connection to proceed.
+/// Returns a non-null value to reject the connection; otherwise, returns null to allow the connection. (object)
 /// </returns>
 object OnRconConnection(System.Net.IPAddress ipAddress)
 {
-    Puts($"New RCON connection attempt from IP: {ipAddress}");
-
-    if (ipAddress.ToString() == "192.168.0.100")
-    {
-        Puts($"Connection from {ipAddress} is not allowed.");
-        return "Access denied for this IP address.";
-    }
-
+    Puts($"RCON connection attempt from IP: {ipAddress}");
     return null;
 }
 ```
@@ -6119,23 +5502,15 @@ object OnRconConnection(System.Net.IPAddress ipAddress)
 /// <summary>
 /// Called when an entity takes damage.
 /// </summary>
-/// <param name="entity">The entity that is taking damage.</param>
-/// <param name="hitInfo">Information about the hit, including damage type and amount.</param>
+/// <param name="entity">The resource entity that is taking damage.</param>
+/// <param name="hitInfo">Information about the hit, including damage details.</param>
 /// <returns>
-/// Returns a non-null value to prevent the damage from being applied. 
-/// If `null` is returned, the damage will be processed as normal.
+/// Returns a non-null value to prevent the default damage handling; otherwise, returns null to allow it. (object)
 /// </returns>
 object OnEntityTakeDamage(ResourceEntity entity, HitInfo hitInfo)
 {
-    Puts($"Entity {entity.net.ID} is taking damage: {hitInfo.damageTypes.Total()} from {hitInfo.Initiator?.ToString() ?? "unknown source"}.");
-
-    if (hitInfo.damageTypes.GetMajorityDamageType() == DamageType.Explosion)
-    {
-        Puts($"Entity {entity.net.ID} is immune to explosion damage.");
-        return true; // Prevent damage from explosions
-    }
-
-    return null; // Allow normal damage processing
+    Puts($"Entity {entity} is taking damage: {hitInfo.damageTypes.Total()}.");
+    return null;
 }
 ```
 ```
@@ -6180,15 +5555,13 @@ object OnEntityTakeDamage(ResourceEntity entity, HitInfo hitInfo)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when the outputs of an IOEntity are updated.
+/// Called to update the outputs of an IO entity.
 /// </summary>
-/// <param name="entity">The IOEntity whose outputs are being updated.</param>
+/// <param name="entity">The IO entity whose outputs are being updated.</param>
 /// <returns>No return behavior.</returns>
 void OnOutputUpdate(IOEntity entity)
 {
-    Puts($"Output update triggered for IOEntity: {entity.name} (ID: {entity.net.ID})");
-    
-    // Additional logic can be added here if needed
+    Puts($"Updating outputs for IOEntity: {entity}.");
 }
 ```
 ```
@@ -6240,30 +5613,16 @@ void OnOutputUpdate(IOEntity entity)
 /// <summary>
 /// Called when the resource target for an excavator is set by a player.
 /// </summary>
-/// <param name="excavator">The excavator arm that is being set.</param>
-/// <param name="resourceType">The type of resource being targeted (e.g., HQM, Sulfur, Stone, Metal).</param>
+/// <param name="excavator">The excavator arm that is being configured.</param>
+/// <param name="resourceType">The type of resource being targeted (e.g., "HQM", "Sulfur", "Stone", "Metal").</param>
 /// <param name="player">The player who set the resource target.</param>
-/// <returns>No return behavior.</returns>
-void OnExcavatorResourceSet(ExcavatorArm excavator, string resourceType, BasePlayer player)
+/// <returns>
+/// Returns `null` to allow the default behavior, or a non-null value to override it. (object)
+/// </returns>
+object OnExcavatorResourceSet(ExcavatorArm excavator, string resourceType, BasePlayer player)
 {
-    Puts($"Player {player.displayName} set the excavator resource target to: {resourceType}.");
-    
-    if (resourceType == "HQM")
-    {
-        Puts("High Quality Metal is now the target resource.");
-    }
-    else if (resourceType == "Sulfur")
-    {
-        Puts("Sulfur is now the target resource.");
-    }
-    else if (resourceType == "Stone")
-    {
-        Puts("Stone is now the target resource.");
-    }
-    else if (resourceType == "Metal")
-    {
-        Puts("Metal is now the target resource.");
-    }
+    Puts($"Player {player} set resource target to {resourceType} for excavator {excavator}.");
+    return null;
 }
 ```
 ```
@@ -6272,8 +5631,8 @@ void OnExcavatorResourceSet(ExcavatorArm excavator, string resourceType, BasePla
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.MaxDistance(3f)]
+	[RPC_Server]
 	public void RPC_SetResourceTarget(RPCMessage msg)
 	{
 		string text = msg.read.String();
@@ -6308,20 +5667,18 @@ void OnExcavatorResourceSet(ExcavatorArm excavator, string resourceType, BasePla
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player attempts to deal damage in a PvE environment.
+/// Called when a player attempts to deal damage to a building block in a PvE environment.
 /// </summary>
-/// <param name="initiator">The entity initiating the damage (usually a player).</param>
+/// <param name="attacker">The entity initiating the damage (usually a player).</param>
 /// <param name="hitInfo">Information about the hit, including damage types and amounts.</param>
 /// <param name="buildingBlock">The building block that is being damaged.</param>
-/// <returns>No return behavior.</returns>
-void OnPlayerPveDamage(BaseEntity initiator, HitInfo hitInfo, BuildingBlock buildingBlock)
+/// <returns>
+/// Returns `null` to allow the default damage behavior, or any non-null value to prevent damage from occurring. (object)
+/// </returns>
+object OnPlayerPveDamage(BaseEntity attacker, HitInfo hitInfo, BuildingBlock buildingBlock)
 {
-    Puts($"Player {initiator?.ToString() ?? "Unknown"} attempted to deal PvE damage to {buildingBlock?.ToString() ?? "a building block"}.");
-    
-    if (initiator is BasePlayer player)
-    {
-        Puts($"Player {player.displayName} is dealing PvE damage.");
-    }
+    Puts($"Player {attacker} attempted to damage building block {buildingBlock} with hit info: {hitInfo}.");
+    return null;
 }
 ```
 ```
@@ -6389,18 +5746,11 @@ void OnPlayerPveDamage(BaseEntity initiator, HitInfo hitInfo, BuildingBlock buil
 /// </summary>
 /// <param name="container">The item container from which items are being dropped.</param>
 /// <returns>
-/// Returns a non-null value to prevent items from being dropped, or `null` to allow the drop operation to proceed.
+/// Returns a non-null value to prevent items from being dropped, or `null` to allow the default drop behavior.
 /// </returns>
 object OnContainerDropItems(ItemContainer container)
 {
-    Puts($"Dropping items from container owned by: {container.entityOwner?.name ?? "Unknown"}");
-
-    if (container.itemList.Count == 0)
-    {
-        Puts("No items to drop from the container.");
-        return "Container is empty.";
-    }
-
+    Puts($"Dropping items from container: {container}.");
     return null;
 }
 ```
@@ -6449,17 +5799,12 @@ object OnContainerDropItems(ItemContainer container)
 /// Called when a growable entity is gathered by a player.
 /// </summary>
 /// <param name="growable">The growable entity that was gathered.</param>
-/// <param name="item">The item that was harvested from the growable entity.</param>
+/// <param name="item">The item that was gathered from the growable entity.</param>
 /// <param name="player">The player who gathered the item.</param>
 /// <returns>No return behavior.</returns>
 void OnGrowableGathered(GrowableEntity growable, Item item, BasePlayer player)
 {
-    Puts($"Player {player.displayName} gathered {item.amount} of {item.info.displayName.english} from {growable.gameObject.name}.");
-    
-    if (item.info.shortname == "berry")
-    {
-        Puts($"Player {player.displayName} has gathered berries, a nutritious snack!");
-    }
+    Puts($"Player {player} gathered {item.amount} of {item.info.shortname} from {growable}.");
 }
 ```
 ```
@@ -6503,20 +5848,15 @@ void OnGrowableGathered(GrowableEntity growable, Item item, BasePlayer player)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when an item is successfully deployed in the game world.
+/// Called when an item is deployed by a player.
 /// </summary>
-/// <param name="deployer">The player who deployed the item.</param>
-/// <param name="baseEntity">The base entity to which the item is being deployed.</param>
+/// <param name="deployer">The player who is deploying the item.</param>
+/// <param name="baseEntity">The entity that the item is being deployed onto.</param>
 /// <param name="deployedEntity">The entity that has been deployed.</param>
 /// <returns>No return behavior.</returns>
-void OnItemDeployed(Deployer deployer, BaseEntity baseEntity, BaseEntity deployedEntity)
+void OnItemDeployed(BasePlayer deployer, BaseEntity baseEntity, BaseEntity deployedEntity)
 {
-    Puts($"Item deployed by {deployer.OwnerID} at position {deployedEntity.transform.position} on {baseEntity.name}.");
-    
-    if (deployedEntity is Deployable deployable)
-    {
-        Puts($"Deployable item {deployable.name} has been placed successfully.");
-    }
+    Puts($"Item deployed by {deployer} onto {baseEntity}. Deployed entity: {deployedEntity}.");
 }
 ```
 ```
@@ -6613,7 +5953,7 @@ void OnItemDeployed(Deployer deployer, BaseEntity baseEntity, BaseEntity deploye
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a structure is upgraded to a new building grade.
+/// Called when a structure is upgraded to a new grade.
 /// </summary>
 /// <param name="buildingBlock">The building block being upgraded.</param>
 /// <param name="player">The player performing the upgrade.</param>
@@ -6622,12 +5962,7 @@ void OnItemDeployed(Deployer deployer, BaseEntity baseEntity, BaseEntity deploye
 /// <returns>No return behavior.</returns>
 void OnStructureUpgrade(BuildingBlock buildingBlock, BasePlayer player, BuildingGrade.Enum newGrade, ulong skinId)
 {
-    Puts($"Player {player.displayName} upgraded structure {buildingBlock.net.ID} to grade {newGrade} with skin ID {skinId}.");
-    
-    if (newGrade == BuildingGrade.Enum.Stone)
-    {
-        Puts($"Structure {buildingBlock.net.ID} upgraded to Stone grade by {player.displayName}.");
-    }
+    Puts($"Player {player} upgraded {buildingBlock} to grade {newGrade} with skin ID {skinId}.");
 }
 ```
 ```
@@ -6711,24 +6046,17 @@ void OnStructureUpgrade(BuildingBlock buildingBlock, BasePlayer player, Building
 ```csharp
 ```csharp
 /// <summary>
-/// Determines whether a player can use the mailbox.
+/// Called to determine if a player can use a mailbox.
 /// </summary>
 /// <param name="player">The player attempting to use the mailbox.</param>
 /// <param name="mailbox">The mailbox being accessed.</param>
 /// <returns>
-/// Returns `true` if the player can use the mailbox; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will determine if the player can use the mailbox.
+/// Returns `true` if the player can use the mailbox, or `false` if they cannot.
+/// If the method returns `null`, the default game logic will determine if the player can use the mailbox. (bool)
 /// </returns>
-bool? CanUseMailbox(BasePlayer player, Mailbox mailbox)
+object CanUseMailbox(BasePlayer player, Mailbox mailbox)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to use the mailbox.");
-
-    if (player.IsBannedFromMailboxes)
-    {
-        Puts($"Player {player.displayName} is banned from using mailboxes.");
-        return false;
-    }
-
+    Puts($"Checking mailbox access for player {player}.");
     return null;
 }
 ```
@@ -6758,16 +6086,14 @@ bool? CanUseMailbox(BasePlayer player, Mailbox mailbox)
 /// Called when a vending machine is rotated by a player.
 /// </summary>
 /// <param name="vendingMachine">The vending machine being rotated.</param>
-/// <param name="player">The player who is rotating the vending machine.</param>
-/// <returns>No return behavior.</returns>
-void OnRotateVendingMachine(VendingMachine vendingMachine, BasePlayer player)
+/// <param name="player">The player who is attempting to rotate the vending machine.</param>
+/// <returns>
+/// Returns `null` to allow the rotation, or any non-null value to prevent the rotation from occurring. (object)
+/// </returns>
+object OnRotateVendingMachine(VendingMachine vendingMachine, BasePlayer player)
 {
-    Puts($"Vending machine at {vendingMachine.transform.position} rotated by player {player.displayName} (ID: {player.UserIDString}).");
-    
-    if (!player.CanBuild())
-    {
-        Puts($"Player {player.displayName} does not have permission to build.");
-    }
+    Puts($"Player {player} is attempting to rotate vending machine {vendingMachine}.");
+    return null;
 }
 ```
 ```
@@ -6776,8 +6102,8 @@ void OnRotateVendingMachine(VendingMachine vendingMachine, BasePlayer player)
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.IsVisible(3f)]
+	[RPC_Server]
 	public void RPC_RotateVM(RPCMessage msg)
 	{
 		if (Interface.CallHook("OnRotateVendingMachine", this, msg.player) == null && CanRotate())
@@ -6798,14 +6124,14 @@ void OnRotateVendingMachine(VendingMachine vendingMachine, BasePlayer player)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player stops looting a lootable entity.
+/// Called when a player stops looting a lootable entity or corpse.
 /// </summary>
 /// <param name="player">The player who has stopped looting.</param>
 /// <param name="corpse">The lootable corpse that was being looted.</param>
 /// <returns>No return behavior.</returns>
 void OnLootEntityEnd(BasePlayer player, LootableCorpse corpse)
 {
-    Puts($"Player {player.displayName} has stopped looting the corpse.");
+    Puts($"Player {player} has stopped looting the corpse {corpse}.");
 }
 ```
 ```
@@ -6829,25 +6155,17 @@ void OnLootEntityEnd(BasePlayer player, LootableCorpse corpse)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a landmine trap is disarmed by a player.
+/// Called when a player attempts to disarm a landmine trap.
 /// </summary>
-/// <param name="landmine">The landmine trap that is being disarmed.</param>
-/// <param name="disarmer">The player who is attempting to disarm the trap.</param>
+/// <param name="landmine">The landmine that is being disarmed.</param>
+/// <param name="player">The player attempting to disarm the trap.</param>
 /// <returns>
-/// Returns `null` to allow the disarm action, or any non-null value to prevent it.
+/// Returns `null` to allow the disarm action, or any non-null value to prevent it. (object)
 /// </returns>
-object OnTrapDisarm(Landmine landmine, BasePlayer disarmer)
+object OnTrapDisarm(Landmine landmine, BasePlayer player)
 {
-    Puts($"Player {disarmer.displayName} is attempting to disarm a landmine.");
-    
-    if (disarmer.IsAdmin)
-    {
-        Puts($"Admin {disarmer.displayName} has disarmed the landmine successfully.");
-        return null; // Allow disarm
-    }
-
-    Puts($"Player {disarmer.displayName} is not authorized to disarm this landmine.");
-    return "You are not allowed to disarm this trap."; // Prevent disarm
+    Puts($"Player {player} is attempting to disarm landmine {landmine}.");
+    return null;
 }
 ```
 ```
@@ -6880,23 +6198,16 @@ object OnTrapDisarm(Landmine landmine, BasePlayer disarmer)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when an auto turret rotates.
+/// Called when an auto turret rotates, typically in response to player interaction.
 /// </summary>
 /// <param name="turret">The auto turret that is rotating.</param>
 /// <param name="player">The player who triggered the rotation.</param>
 /// <returns>
-/// Returns `null` to allow the turret to rotate, or any non-null value to prevent the rotation.
+/// Returns `null` to allow the turret to rotate as normal, or a non-null value to prevent the rotation. (object)
 /// </returns>
 object OnTurretRotate(AutoTurret turret, BasePlayer player)
 {
-    Puts($"Turret {turret.net.ID} is rotating due to player {player.displayName} (ID: {player.UserIDString}).");
-    
-    if (player.IsInSafeZone())
-    {
-        Puts($"Player {player.displayName} is in a safe zone; turret rotation is blocked.");
-        return "Turret rotation is not allowed in safe zones.";
-    }
-    
+    Puts($"Turret {turret} is rotating due to player {player}.");
     return null;
 }
 ```
@@ -6932,16 +6243,7 @@ object OnTurretRotate(AutoTurret turret, BasePlayer player)
 /// <returns>No return behavior.</returns>
 void OnBookmarkControlEnded(ComputerStation station, BasePlayer player, IRemoteControllable remoteControllable)
 {
-    Puts($"Player {player.displayName} has ended control of {remoteControllable.GetEnt()?.name ?? "an unknown entity"}.");
-    
-    if (remoteControllable != null)
-    {
-        Puts($"Remote controllable entity {remoteControllable.GetEnt().name} has been released by {player.displayName}.");
-    }
-    else
-    {
-        Puts($"No remote controllable entity was found for player {player.displayName}.");
-    }
+    Puts($"Player {player} has ended control of {remoteControllable} at station {station}.");
 }
 ```
 ```
@@ -7005,30 +6307,17 @@ void OnBookmarkControlEnded(ComputerStation station, BasePlayer player, IRemoteC
 ```csharp
 ```csharp
 /// <summary>
-/// Determines whether a player can use a specific gesture based on various conditions.
+/// Called to determine if a player can use a specific gesture.
 /// </summary>
 /// <param name="player">The player attempting to use the gesture.</param>
 /// <param name="gestureConfig">The configuration of the gesture being used.</param>
 /// <returns>
 /// Returns `true` if the player can use the gesture; otherwise, returns `false`. 
-/// If the method returns `null`, the default game logic will determine if the gesture can be used.
+/// If the method returns `null`, the default game logic will determine if the gesture can be used. (bool)
 /// </returns>
-bool? CanUseGesture(BasePlayer player, GestureConfig gestureConfig)
+object CanUseGesture(BasePlayer player, GestureConfig gestureConfig)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to use gesture: {gestureConfig.gestureName}.");
-
-    if (gestureConfig.gestureType == GestureType.Cinematic && !player.IsAdmin)
-    {
-        Puts($"Player {player.displayName} is not an admin and cannot use cinematic gestures.");
-        return false;
-    }
-
-    if (gestureConfig.dlcItem != null && !gestureConfig.dlcItem.CanUse(player))
-    {
-        Puts($"Player {player.displayName} does not own the required DLC to use this gesture.");
-        return false;
-    }
-
+    Puts($"Player {player} is attempting to use gesture: {gestureConfig}.");
     return null;
 }
 ```
@@ -7082,11 +6371,7 @@ bool? CanUseGesture(BasePlayer player, GestureConfig gestureConfig)
 /// <returns>No return behavior.</returns>
 void OnClientDisconnect(Network.Connection connection, string reason)
 {
-    Puts($"Client {connection.address} has disconnected. Reason: {reason}");
-    if (reason.Contains("timeout"))
-    {
-        Puts($"Client {connection.address} disconnected due to timeout.");
-    }
+    Puts($"Client {connection} has disconnected. Reason: {reason}");
 }
 ```
 ```
@@ -7120,11 +6405,7 @@ void OnClientDisconnect(Network.Connection connection, string reason)
 /// <returns>No return behavior.</returns>
 void OnEntityMarkHostile(BaseCombatEntity entity, float duration)
 {
-    Puts($"Entity {entity.net.ID} marked as hostile for {duration} seconds.");
-    if (duration > 120f)
-    {
-        Puts($"Warning: Entity {entity.net.ID} marked hostile for an unusually long duration.");
-    }
+    Puts($"Entity {entity} marked as hostile for {duration} seconds.");
 }
 ```
 ```
@@ -7149,23 +6430,16 @@ void OnEntityMarkHostile(BaseCombatEntity entity, float duration)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a spray can is removed from a player.
+/// Called when a spray is removed from the game.
 /// </summary>
 /// <param name="spray">The spray can spray that is being removed.</param>
-/// <param name="player">The player who is removing the spray can.</param>
+/// <param name="player">The player who initiated the removal of the spray.</param>
 /// <returns>
-/// Returns `null` to allow the spray can to be removed, or any non-null value to prevent the removal.
+/// Returns `null` to allow the spray to be removed, or any non-null value to prevent the removal. (object)
 /// </returns>
 object OnSprayRemove(SprayCanSpray spray, BasePlayer player)
 {
-    Puts($"Player {player.displayName} is attempting to remove spray: {spray.name}.");
-    
-    if (player.inventory.GetAmount(spray.itemID) < 1)
-    {
-        Puts($"Player {player.displayName} does not have the spray can to remove.");
-        return "You do not have the spray can.";
-    }
-    
+    Puts($"Spray {spray} is being removed by player {player}.");
     return null;
 }
 ```
@@ -7192,16 +6466,15 @@ object OnSprayRemove(SprayCanSpray spray, BasePlayer player)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a server restart is interrupted.
+/// Called when a server restart is interrupted by an external event or player action.
 /// </summary>
 /// <returns>
-/// Returns a non-null value to prevent the default behavior of the server restart interruption.
-/// If `null` is returned, the default interruption behavior will proceed.
+/// Returns a non-null value to prevent the server from being interrupted. If `null` is returned, the interruption proceeds as normal. (object)
 /// </returns>
 object OnServerRestartInterrupt()
 {
-    Puts("Server restart has been interrupted by a hook.");
-    return null; // Returning null allows the default behavior to continue.
+    Puts("Server restart has been interrupted.");
+    return null;
 }
 ```
 ```
@@ -7246,20 +6519,12 @@ object OnServerRestartInterrupt()
 /// <param name="reviver">The player who is reviving another player.</param>
 /// <param name="revived">The player being revived.</param>
 /// <returns>
-/// Returns `null` to allow the revival process to continue, or any non-null value to prevent the revival.
+/// Returns a non-null value to prevent the default revival behavior; otherwise, returns null to allow the revival. (object)
 /// </returns>
 object OnPlayerRevive(BasePlayer reviver, BasePlayer revived)
 {
-    Puts($"Player {reviver.displayName} is attempting to revive {revived.displayName}.");
-
-    if (revived.IsWounded())
-    {
-        Puts($"{revived.displayName} is currently wounded and can be revived.");
-        return null; // Allow the revival
-    }
-    
-    Puts($"{revived.displayName} is not in a state to be revived.");
-    return "Player is not wounded."; // Prevent the revival
+    Puts($"Player {revived} has been revived by {reviver}.");
+    return null;
 }
 ```
 ```
@@ -7329,20 +6594,12 @@ object OnPlayerRevive(BasePlayer reviver, BasePlayer revived)
 /// </summary>
 /// <param name="npc">The NPC that is playing the radio chatter.</param>
 /// <returns>
-/// Returns `null` to allow the radio chatter to play, or any non-null value to prevent it from playing.
+/// Returns `null` to allow the default radio chatter behavior, or a non-null value to prevent it. (object)
 /// </returns>
 object OnNpcRadioChatter(ScientistNPC npc)
 {
-    Puts($"NPC {npc.displayName} is attempting to play radio chatter.");
-    
-    // Example condition to prevent radio chatter
-    if (npc.IsSilent)
-    {
-        Puts($"NPC {npc.displayName} is currently silent and cannot play radio chatter.");
-        return true; // Prevents chatter
-    }
-    
-    return null; // Allows chatter
+    Puts($"NPC {npc} is attempting to play radio chatter.");
+    return null;
 }
 ```
 ```
@@ -7374,20 +6631,18 @@ object OnNpcRadioChatter(ScientistNPC npc)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a technology tree node is unlocked by a player.
+/// Called when a technology tree node is unlocked by a player at a workbench.
 /// </summary>
-/// <param name="workbench">The workbench associated with the unlocking action.</param>
+/// <param name="workbench">The workbench where the node is being unlocked.</param>
 /// <param name="node">The technology tree node that has been unlocked.</param>
-/// <param name="player">The player who unlocked the technology tree node.</param>
-/// <returns>No return behavior.</returns>
-void OnTechTreeNodeUnlocked(Workbench workbench, TechTreeData.NodeInstance node, BasePlayer player)
+/// <param name="player">The player who unlocked the node.</param>
+/// <returns>
+/// Returns `null` to allow the default unlocking behavior, or a non-null value to prevent the unlock. (object)
+/// </returns>
+object OnTechTreeNodeUnlocked(Workbench workbench, TechTreeData.NodeInstance node, BasePlayer player)
 {
-    Puts($"Player {player.displayName} has unlocked the tech tree node: {node.itemDef?.shortname ?? "Unknown"} at workbench: {workbench.name}.");
-    
-    if (node.itemDef != null)
-    {
-        Puts($"Node unlocked: {node.itemDef.displayName.english} (ID: {node.itemDef.itemid})");
-    }
+    Puts($"Player {player} unlocked tech tree node: {node.id} at workbench: {workbench}.");
+    return null;
 }
 ```
 ```
@@ -7461,19 +6716,11 @@ void OnTechTreeNodeUnlocked(Workbench workbench, TechTreeData.NodeInstance node,
 /// <param name="item">The item representing the ammo being unloaded.</param>
 /// <param name="player">The player performing the unload action.</param>
 /// <returns>
-/// Returns a non-null value to prevent the ammo unload action from proceeding. 
-/// If `null` is returned, the ammo unload will continue as normal.
+/// Returns a non-null value to prevent the ammo from being unloaded, or `null` to allow the action. (object)
 /// </returns>
 object OnAmmoUnload(BaseProjectile projectile, Item item, BasePlayer player)
 {
-    Puts($"Player {player.displayName} is attempting to unload ammo from {projectile.info.displayName.english}.");
-
-    if (projectile.primaryMagazine.contents > 10)
-    {
-        Puts($"Ammo unload blocked: {player.displayName} has too much ammo in the magazine.");
-        return "Cannot unload ammo while magazine is over 10 rounds.";
-    }
-
+    Puts($"Player {player} is attempting to unload ammo from {projectile}.");
     return null;
 }
 ```
@@ -7529,9 +6776,7 @@ object OnAmmoUnload(BaseProjectile projectile, Item item, BasePlayer player)
 /// <returns>No return behavior.</returns>
 void OnPlayerRecovered(BasePlayer player)
 {
-    Puts($"Player {player.displayName} has recovered from being wounded.");
-    
-    // Additional logic can be added here, such as notifying other players or updating stats.
+    Puts($"Player {player} has recovered from being wounded.");
 }
 ```
 ```
@@ -7573,12 +6818,7 @@ void OnPlayerRecovered(BasePlayer player)
 /// <returns>No return behavior.</returns>
 void OnLiquidWeaponFired(LiquidWeapon liquidWeapon, BasePlayer player)
 {
-    Puts($"Player {player.displayName} fired the liquid weapon: {liquidWeapon.info.displayName.english}.");
-    
-    if (player.IsInSafeZone())
-    {
-        Puts($"Player {player.displayName} is in a safe zone and cannot fire the weapon.");
-    }
+    Puts($"Liquid weapon {liquidWeapon} fired by player {player}.");
 }
 ```
 ```
@@ -7621,13 +6861,14 @@ void OnLiquidWeaponFired(LiquidWeapon liquidWeapon, BasePlayer player)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a network group is entered by a networkable entity.
+/// Called when an entity enters a network visibility group.
 /// </summary>
-/// <param name="group">The network visibility group that has been entered.</param>
+/// <param name="entity">The entity that has entered the network group.</param>
+/// <param name="group">The network visibility group that the entity has entered.</param>
 /// <returns>No return behavior.</returns>
 void OnNetworkGroupEntered(BaseNetworkable entity, Network.Visibility.Group group)
 {
-    Puts($"Entity {entity.net.ID} has entered the network group: {group.name}.");
+    Puts($"Entity {entity} has entered network group: {group}.");
 }
 ```
 ```
@@ -7652,20 +6893,12 @@ void OnNetworkGroupEntered(BaseNetworkable entity, Network.Visibility.Group grou
 /// </summary>
 /// <param name="item">The item to check for stacking compatibility.</param>
 /// <returns>
-/// Returns `true` if the items can be stacked, or `false` if they cannot.
-/// If the method returns `null`, the default game logic will determine if the items can be stacked.
+/// Returns `true` if the items can be stacked; otherwise, returns `false`.
+/// If the method returns `null`, the default stacking logic will be applied. (bool)
 /// </returns>
-bool? CanStackItem(Item item)
+object CanStackItem(Item item)
 {
-    Puts($"Checking if items can stack: {this.info.displayName.english} and {item.info.displayName.english}");
-
-    if (item.info.itemid == this.info.itemid)
-    {
-        Puts("Items can stack because they are of the same type.");
-        return true;
-    }
-
-    Puts("Items cannot stack due to different item types.");
+    Puts($"Checking if item {this} can stack with item {item}.");
     return null;
 }
 ```
@@ -7749,13 +6982,13 @@ bool? CanStackItem(Item item)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when the diesel engine is toggled on or off.
+/// Called when the diesel engine is toggled off.
 /// </summary>
 /// <param name="engine">The diesel engine that has been toggled.</param>
 /// <returns>No return behavior.</returns>
 void OnDieselEngineToggled(DieselEngine engine)
 {
-    Puts($"Diesel engine {engine.net.ID} has been toggled. Current state: {(engine.HasFlag(Flags.On) ? "On" : "Off")}");
+    Puts($"Diesel engine {engine} has been toggled off.");
 }
 ```
 ```
@@ -7778,24 +7011,17 @@ void OnDieselEngineToggled(DieselEngine engine)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player attempts to dial a phone number.
+/// Called when a phone is dialed to initiate a call.
 /// </summary>
-/// <param name="caller">The phone controller of the caller.</param>
-/// <param name="receiver">The phone controller of the receiver.</param>
-/// <param name="player">The player who is making the call.</param>
+/// <param name="caller">The phone controller initiating the call.</param>
+/// <param name="receiver">The phone controller being called.</param>
+/// <param name="player">The player making the call.</param>
 /// <returns>
-/// Returns `null` to allow the call to proceed, or any non-null value to prevent the call from being connected.
+/// Returns `null` to allow the call to proceed, or a non-null value to prevent the call from being established. (object)
 /// </returns>
 object OnPhoneDial(PhoneController caller, PhoneController receiver, BasePlayer player)
 {
-    Puts($"Player {player.displayName} is attempting to call {receiver.PhoneNumber} from {caller.PhoneNumber}.");
-
-    if (receiver.serverState == Telephone.CallState.Busy)
-    {
-        Puts($"Call from {player.displayName} to {receiver.PhoneNumber} failed: receiver is busy.");
-        return "The line is currently busy.";
-    }
-
+    Puts($"Player {player} is dialing from {caller} to {receiver}.");
     return null;
 }
 ```
@@ -7856,16 +7082,7 @@ object OnPhoneDial(PhoneController caller, PhoneController receiver, BasePlayer 
 /// <returns>No return behavior.</returns>
 void OnLootEntityEnd(BasePlayer player, DroppedItemContainer container)
 {
-    Puts($"Player {player.displayName} has stopped looting the container with ID: {container.net.ID}.");
-    
-    if (container.inventory != null && container.inventory.itemList.Count > 0)
-    {
-        Puts($"Container still has items. Player {player.displayName} may return to loot.");
-    }
-    else
-    {
-        Puts($"Container is empty. It will be removed.");
-    }
+    Puts($"Player {player} has stopped looting the container: {container}.");
 }
 ```
 ```
@@ -7901,22 +7118,16 @@ void OnLootEntityEnd(BasePlayer player, DroppedItemContainer container)
 /// </summary>
 /// <param name="inventory">The player's inventory from which items are being taken.</param>
 /// <param name="collect">The list of items being collected.</param>
-/// <param name="itemId">The ID of the item being taken.</param>
+/// <param name="itemId">The ID of the item to take.</param>
 /// <param name="amount">The amount of the item to take.</param>
 /// <returns>
-/// Returns the actual amount of items taken. If a non-null integer is returned, it overrides the default behavior.
+/// Returns the number of items successfully taken from the inventory. 
+/// If the hook returns a non-null integer, that value will be used instead. (int)
 /// </returns>
-int OnInventoryItemsTake(PlayerInventory inventory, List<Item> collect, int itemId, int amount)
+object OnInventoryItemsTake(PlayerInventory inventory, List<Item> collect, int itemId, int amount)
 {
-    Puts($"Attempting to take {amount} of item ID {itemId} from inventory.");
-
-    if (itemId == 12345) // Example item ID for a restricted item
-    {
-        Puts("Taking this item is not allowed.");
-        return 0; // Prevent taking the item
-    }
-
-    return amount; // Allow taking the specified amount
+    Puts($"Taking {amount} of item ID {itemId} from inventory.");
+    return null;
 }
 ```
 ```
@@ -7969,16 +7180,17 @@ int OnInventoryItemsTake(PlayerInventory inventory, List<Item> collect, int item
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a cargo ship approaches the harbor.
+/// Called when a cargo ship approaches a harbor.
 /// </summary>
 /// <param name="cargoShip">The cargo ship that is approaching the harbor.</param>
 /// <param name="notifier">The notifier that provides information about the cargo ship's approach.</param>
-/// <returns>No return behavior.</returns>
-void OnCargoShipHarborApproach(CargoShip cargoShip, CargoNotifier notifier)
+/// <returns>
+/// Returns a non-null value to prevent the default harbor approach behavior; otherwise, returns null to allow the approach to proceed. (object)
+/// </returns>
+object OnCargoShipHarborApproach(CargoShip cargoShip, CargoNotifier notifier)
 {
-    Puts($"Cargo ship {cargoShip.net.ID} is approaching the harbor with notifier ID: {notifier?.ID}");
-    
-    // Additional logic can be added here if needed
+    Puts($"Cargo ship {cargoShip} is approaching the harbor with notifier {notifier}.");
+    return null;
 }
 ```
 ```
@@ -8023,21 +7235,13 @@ void OnCargoShipHarborApproach(CargoShip cargoShip, CargoNotifier notifier)
 /// <param name="item1">The first dropped item.</param>
 /// <param name="item2">The second dropped item.</param>
 /// <returns>
-/// Returns `true` if the items can be combined, or `false` if they cannot. 
-/// If the method returns `null`, the default game logic will determine if the items can be combined.
+/// Returns `true` if the items can be combined; otherwise, returns `false`. 
+/// If the method returns `null`, the default game logic will determine if the items can be combined. (bool)
 /// </returns>
-bool? CanCombineDroppedItem(DroppedItem item1, DroppedItem item2)
+object CanCombineDroppedItem(DroppedItem item1, DroppedItem item2)
 {
-    Puts($"Checking if items {item1.item.info.displayName.english} and {item2.item.info.displayName.english} can be combined.");
-
-    if (item1.item.info.itemid == item2.item.info.itemid)
-    {
-        Puts("Items can be combined.");
-        return true;
-    }
-
-    Puts("Items cannot be combined due to different item IDs.");
-    return false;
+    Puts($"Checking if items {item1} and {item2} can be combined.");
+    return null;
 }
 ```
 ```
@@ -8101,18 +7305,13 @@ bool? CanCombineDroppedItem(DroppedItem item1, DroppedItem item2)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when default items are given to a player.
+/// Called when default items are received by a player's inventory.
 /// </summary>
 /// <param name="inventory">The player's inventory receiving the default items.</param>
 /// <returns>No return behavior.</returns>
 void OnDefaultItemsReceived(PlayerInventory inventory)
 {
-    Puts($"Default items have been given to player with inventory ID: {inventory.ID}.");
-    
-    if (inventory.IsFull())
-    {
-        Puts("Player's inventory is full; cannot give default items.");
-    }
+    Puts($"Default items have been received for inventory: {inventory}.");
 }
 ```
 ```
@@ -8195,18 +7394,13 @@ void OnDefaultItemsReceived(PlayerInventory inventory)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when an entity leaves the comfort trigger area.
+/// Called when an entity leaves the trigger area.
 /// </summary>
 /// <param name="entity">The entity that has left the trigger area.</param>
 /// <returns>No return behavior.</returns>
 void OnEntityLeave(TriggerComfort trigger, BaseEntity entity)
 {
-    Puts($"Entity {entity?.name} has left the comfort trigger area.");
-    
-    if (entity is BasePlayer player)
-    {
-        Puts($"Player {player.displayName} has exited the comfort zone.");
-    }
+    Puts($"Entity {entity} has left the trigger area.");
 }
 ```
 ```
@@ -8236,13 +7430,12 @@ void OnEntityLeave(TriggerComfort trigger, BaseEntity entity)
 /// <param name="helicopter">The patrol helicopter to check.</param>
 /// <returns>
 /// Returns `true` if the helicopter can be targeted by homing missiles; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will be used to determine if the helicopter can be targeted.
+/// If the method returns `null`, the default game logic will be used to determine if the helicopter can be targeted. (bool)
 /// </returns>
-bool? CanBeHomingTargeted(PatrolHelicopter helicopter)
+object CanBeHomingTargeted(PatrolHelicopter helicopter)
 {
-    Puts($"Checking if Patrol Helicopter ID: {helicopter.net.ID} can be targeted by homing missiles.");
-    // Additional logic can be added here if needed
-    return null; // Default behavior will be used
+    Puts($"Checking homing target for Patrol Helicopter ID: {helicopter.net.ID}, Position: {helicopter.transform.position}.");
+    return null;
 }
 ```
 ```
@@ -8268,24 +7461,16 @@ bool? CanBeHomingTargeted(PatrolHelicopter helicopter)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when the Bradley APC is patrolling its designated path.
+/// Called when the Bradley APC is about to patrol its designated path.
 /// </summary>
-/// <param name="apc">The Bradley APC that is currently patrolling.</param>
+/// <param name="apc">The Bradley APC that is patrolling.</param>
 /// <returns>
-/// Returns `null` to allow the APC to continue its patrol, or any non-null value to interrupt the patrol behavior.
+/// Returns a non-null value to override the default patrol behavior, or `null` to allow the patrol to proceed as normal. (object)
 /// </returns>
 object OnBradleyApcPatrol(BradleyAPC apc)
 {
-    Puts($"Bradley APC (ID: {apc.net.ID}) is patrolling. Current position: {apc.transform.position}.");
-
-    // Example condition to interrupt patrol
-    if (apc.IsUnderAttack())
-    {
-        Puts("Bradley APC is under attack! Interrupting patrol.");
-        return true; // Interrupt patrol
-    }
-
-    return null; // Continue patrol
+    Puts($"Bradley APC {apc} is preparing to patrol.");
+    return null;
 }
 ```
 ```
@@ -8362,22 +7547,14 @@ object OnBradleyApcPatrol(BradleyAPC apc)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player is awarded a gift from the Advent Calendar.
+/// Called when an advent gift is awarded to a player.
 /// </summary>
-/// <param name="calendar">The Advent Calendar instance awarding the gift.</param>
+/// <param name="calendar">The advent calendar instance managing the gifts.</param>
 /// <param name="player">The player receiving the gift.</param>
 /// <returns>No return behavior.</returns>
 void OnAdventGiftAwarded(AdventCalendar calendar, BasePlayer player)
 {
-    Puts($"Player {player.displayName} has been awarded a gift from the Advent Calendar.");
-    
-    if (player.IsBanned)
-    {
-        Puts($"Player {player.displayName} is banned and cannot receive gifts.");
-        return;
-    }
-    
-    // Additional logic for awarding gifts can be added here.
+    Puts($"Gift awarded to player {player} from advent calendar {calendar}.");
 }
 ```
 ```
@@ -8423,20 +7600,13 @@ void OnAdventGiftAwarded(AdventCalendar calendar, BasePlayer player)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player finishes sleeping.
+/// Called when a player ends their sleep state.
 /// </summary>
 /// <param name="player">The player who has ended their sleep.</param>
 /// <returns>No return behavior.</returns>
 void OnPlayerSleepEnded(BasePlayer player)
 {
-    Puts($"Player {player.displayName} has woken up from sleep.");
-    
-    if (player.IsRestrained)
-    {
-        Puts($"Player {player.displayName} is restrained and cannot move immediately.");
-    }
-    
-    // Additional logic can be added here if needed
+    Puts($"Player {player} has ended their sleep.");
 }
 ```
 ```
@@ -8499,24 +7669,17 @@ void OnPlayerSleepEnded(BasePlayer player)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player switches the ammo type of a projectile weapon.
+/// Called when a player switches the ammunition type for a projectile weapon.
 /// </summary>
-/// <param name="projectile">The projectile weapon whose ammo is being switched.</param>
-/// <param name="player">The player performing the ammo switch.</param>
-/// <param name="newAmmo">The new ammo type being switched to.</param>
+/// <param name="projectile">The projectile weapon that is having its ammo switched.</param>
+/// <param name="player">The player who is switching the ammo.</param>
+/// <param name="newAmmo">The new ammunition type being switched to.</param>
 /// <returns>
-/// Returns `null` to allow the ammo switch, or any non-null value to prevent the switch.
+/// Returns `null` to allow the ammo switch, or a non-null value to prevent it. (object)
 /// </returns>
 object OnAmmoSwitch(BaseProjectile projectile, BasePlayer player, ItemDefinition newAmmo)
 {
-    Puts($"Player {player.displayName} is switching ammo to {newAmmo.displayName.english} for {projectile.info.displayName.english}.");
-    
-    if (newAmmo.shortname == "explosive.splash")
-    {
-        Puts($"Player {player.displayName} is not allowed to switch to explosive ammo.");
-        return "You cannot switch to explosive ammo.";
-    }
-    
+    Puts($"Player {player} is switching ammo to {newAmmo} for projectile {projectile}.");
     return null;
 }
 ```
@@ -8567,13 +7730,13 @@ object OnAmmoSwitch(BaseProjectile projectile, BasePlayer player, ItemDefinition
 ```csharp
 ```csharp
 /// <summary>
-/// Called to update interference status for nearby turrets.
+/// Called to update interference status for other auto turrets in the vicinity.
 /// </summary>
 /// <param name="turret">The auto turret that is updating its interference status.</param>
 /// <returns>No return behavior.</returns>
 void OnInterferenceOthersUpdate(AutoTurret turret)
 {
-    Puts($"Updating interference status for turret ID: {turret.net.ID} at position: {turret.transform.position}");
+    Puts($"Updating interference status for turret: {turret}.");
 }
 ```
 ```
@@ -8604,14 +7767,14 @@ void OnInterferenceOthersUpdate(AutoTurret turret)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a resource entity is killed.
+/// Called when an entity is killed.
 /// </summary>
 /// <param name="entity">The resource entity that has died.</param>
 /// <param name="hitInfo">Information about the hit that caused the death.</param>
 /// <returns>No return behavior.</returns>
 void OnEntityDeath(ResourceEntity entity, HitInfo hitInfo)
 {
-    Puts($"Entity {entity.name} has been killed. Damage dealt: {hitInfo.damageTypes.Total()} by {hitInfo.Initiator?.name ?? "unknown source"}.");
+    Puts($"Entity {entity} has been killed. Hit info: {hitInfo}.");
 }
 ```
 ```
@@ -8634,13 +7797,13 @@ void OnEntityDeath(ResourceEntity entity, HitInfo hitInfo)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a firework has exhausted its fuel and is no longer active.
+/// Called when a firework has exhausted its fuel and finished its display.
 /// </summary>
 /// <param name="firework">The firework that has been exhausted.</param>
 /// <returns>No return behavior.</returns>
 void OnFireworkExhausted(BaseFirework firework)
 {
-    Puts($"Firework {firework.net.ID} has exhausted its fuel and is now inactive.");
+    Puts($"Firework {firework} has exhausted its fuel and is now finished.");
 }
 ```
 ```
@@ -8671,17 +7834,15 @@ void OnFireworkExhausted(BaseFirework firework)
 /// Called when a player requests to add a lock to a vehicle.
 /// </summary>
 /// <param name="garage">The modular car garage where the lock is being requested.</param>
-/// <param name="player">The player requesting to add the lock.</param>
-/// <param name="lockCode">The code for the lock being added.</param>
-/// <returns>No return behavior.</returns>
-void OnVehicleLockRequest(ModularCarGarage garage, BasePlayer player, string lockCode)
+/// <param name="player">The player making the lock request.</param>
+/// <param name="lockCode">The code for the lock being requested.</param>
+/// <returns>
+/// Returns `null` to allow the lock to be added, or any non-null value to prevent the action. (object)
+/// </returns>
+object OnVehicleLockRequest(ModularCarGarage garage, BasePlayer player, string lockCode)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) requested to add a lock with code: {lockCode} to the vehicle in garage {garage.net.ID}.");
-    
-    if (string.IsNullOrEmpty(lockCode))
-    {
-        Puts("Lock code cannot be empty.");
-    }
+    Puts($"Player {player} requested to add a lock with code '{lockCode}' to the vehicle in garage {garage}.");
+    return null;
 }
 ```
 ```
@@ -8691,8 +7852,8 @@ void OnVehicleLockRequest(ModularCarGarage garage, BasePlayer player, string loc
 ```csharp
 
 	[RPC_Server]
-	[RPC_Server.MaxDistance(3f)]
 	[RPC_Server.IsVisible(3f)]
+	[RPC_Server.MaxDistance(3f)]
 	public void RPC_RequestAddLock(RPCMessage msg)
 	{
 		if (!HasOccupant || carOccupant.CarLock.HasALock)
@@ -8723,13 +7884,12 @@ void OnVehicleLockRequest(ModularCarGarage garage, BasePlayer player, string loc
 ```csharp
 ```csharp
 /// <summary>
-/// Called when the server information is updated, including server name, player count, and other metadata.
+/// Called when the server information is updated, allowing for external hooks to modify or respond to the update.
 /// </summary>
 /// <returns>No return behavior.</returns>
 void OnServerInformationUpdated()
 {
-    Puts("Server information has been updated successfully.");
-    // Additional logging or actions can be added here if needed.
+    Puts("Server information has been updated.");
 }
 ```
 ```
@@ -8829,19 +7989,18 @@ void OnServerInformationUpdated()
 ```csharp
 ```csharp
 /// <summary>
-/// Called when the quarry gathers resources.
+/// Called when a quarry gathers resources and produces items.
 /// </summary>
 /// <param name="quarry">The mining quarry that is gathering resources.</param>
-/// <param name="item">The item that has been gathered by the quarry.</param>
-/// <returns>No return behavior.</returns>
-void OnQuarryGather(MiningQuarry quarry, Item item)
+/// <param name="item">The item that has been produced by the quarry.</param>
+/// <returns>
+/// Returns a non-null value to prevent the item from being added to the container. 
+/// If `null` is returned, the item will be processed normally. (object)
+/// </returns>
+object OnQuarryGather(MiningQuarry quarry, Item item)
 {
-    Puts($"Quarry {quarry.net.ID} has gathered {item.amount} of {item.info.displayName.english}.");
-
-    if (item.info.shortname == "stone")
-    {
-        Puts("Stone has been gathered, check inventory for capacity.");
-    }
+    Puts($"Quarry {quarry} has gathered item: {item.info.shortname} (Amount: {item.amount}).");
+    return null;
 }
 ```
 ```
@@ -8901,25 +8060,17 @@ void OnQuarryGather(MiningQuarry quarry, Item item)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player selects a module for a vehicle.
+/// Called when a player selects a vehicle module from the garage.
 /// </summary>
 /// <param name="item">The item representing the vehicle module being selected.</param>
-/// <param name="garage">The garage or entity that contains the vehicle.</param>
-/// <param name="player">The player who is selecting the vehicle module.</param>
+/// <param name="garage">The modular car garage from which the module is being selected.</param>
+/// <param name="player">The player who is selecting the module.</param>
 /// <returns>
-/// Returns a non-null value to prevent the selection of the vehicle module. 
-/// If `null` is returned, the selection proceeds as normal.
+/// Returns a non-null value to prevent the selection action; otherwise, returns null to allow it. (object)
 /// </returns>
 object OnVehicleModuleSelect(Item item, ModularCarGarage garage, BasePlayer player)
 {
-    Puts($"Player {player.displayName} selected module: {item.info.displayName.english} for vehicle in garage.");
-
-    if (item.info.shortname == "vehicle.module.restricted")
-    {
-        Puts($"Player {player.displayName} attempted to select a restricted module.");
-        return "You cannot select this module.";
-    }
-
+    Puts($"Player {player} selected vehicle module: {item} from garage: {garage}.");
     return null;
 }
 ```
@@ -8980,25 +8131,15 @@ object OnVehicleModuleSelect(Item item, ModularCarGarage garage, BasePlayer play
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a weapon is taken from a weapon rack.
+/// Called when a weapon is taken from a weapon rack by a player.
 /// </summary>
 /// <param name="item">The item that represents the weapon being taken.</param>
 /// <param name="player">The player who is taking the weapon.</param>
-/// <param name="weaponRack">The weapon rack from which the weapon is being taken.</param>
-/// <returns>
-/// Returns a non-null value to prevent the weapon from being taken, or `null` to allow the action.
-/// </returns>
-object OnRackedWeaponTaken(Item item, BasePlayer player, WeaponRack weaponRack)
+/// <param name="rack">The weapon rack from which the weapon is being taken.</param>
+/// <returns>No return behavior.</returns>
+void OnRackedWeaponTaken(Item item, BasePlayer player, WeaponRack rack)
 {
-    Puts($"Player {player.displayName} is attempting to take weapon: {item.info.displayName.english} from the weapon rack.");
-    
-    if (player.IsInSafeZone())
-    {
-        Puts($"Player {player.displayName} cannot take weapons from the rack while in a safe zone.");
-        return "You cannot take weapons from here.";
-    }
-
-    return null;
+    Puts($"Player {player} has taken weapon {item} from rack {rack}.");
 }
 ```
 ```
@@ -9051,32 +8192,19 @@ object OnRackedWeaponTaken(Item item, BasePlayer player, WeaponRack weaponRack)
 ```csharp
 ```csharp
 /// <summary>
-/// Determines if a player can afford to upgrade a building block to a specified grade.
+/// Called to determine if a player can afford to upgrade a building block to a specified grade.
 /// </summary>
 /// <param name="player">The player attempting to perform the upgrade.</param>
 /// <param name="block">The building block being upgraded.</param>
 /// <param name="grade">The target grade for the upgrade.</param>
-/// <param name="skin">The skin ID for the building block.</param>
+/// <param name="skin">The skin ID for the upgrade.</param>
 /// <returns>
 /// Returns `true` if the player can afford the upgrade, or `false` if they cannot.
-/// If the method returns `null`, the default game logic will determine if the player can afford the upgrade.
+/// If the method returns `null`, the default game logic will determine if the player can afford the upgrade. (bool)
 /// </returns>
-bool? CanAffordUpgrade(BasePlayer player, BuildingBlock block, BuildingGrade.Enum grade, ulong skin)
+object CanAffordUpgrade(BasePlayer player, BuildingBlock block, BuildingGrade.Enum grade, ulong skin)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to upgrade a building block to grade {grade}.");
-
-    if (grade == BuildingGrade.Enum.Twigs)
-    {
-        Puts($"Player {player.displayName} is not allowed to upgrade to Twigs grade.");
-        return false;
-    }
-
-    if (player.IsInCreativeMode)
-    {
-        Puts($"Player {player.displayName} is in creative mode and can upgrade without resource checks.");
-        return true;
-    }
-
+    Puts($"Player {player} is attempting to upgrade {block} to grade {grade} with skin {skin}.");
     return null;
 }
 ```
@@ -9119,25 +8247,12 @@ bool? CanAffordUpgrade(BasePlayer player, BuildingBlock block, BuildingGrade.Enu
 /// <param name="player">The player attempting to loot the entity.</param>
 /// <param name="entity">The entity that is being looted.</param>
 /// <returns>
-/// Returns `true` if the player can loot the entity; otherwise, returns `false`.
-/// If the method returns a non-null value, it indicates that looting is not allowed.
+/// Returns `true` if the player can loot the entity; otherwise, returns `false`. 
+/// If the method returns a non-null value, it indicates that looting is not allowed. (bool)
 /// </returns>
-bool? CanLootEntity(BasePlayer player, ContainerIOEntity entity)
+object CanLootEntity(BasePlayer player, ContainerIOEntity entity)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to loot entity: {entity.name}.");
-
-    if (entity.IsLocked())
-    {
-        Puts($"Entity {entity.name} is locked and cannot be looted.");
-        return false;
-    }
-
-    if (player.IsInSafeZone())
-    {
-        Puts($"Player {player.displayName} is in a safe zone and cannot loot.");
-        return false;
-    }
-
+    Puts($"Player {player} is attempting to loot entity {entity}.");
     return null;
 }
 ```
@@ -9185,32 +8300,19 @@ bool? CanLootEntity(BasePlayer player, ContainerIOEntity entity)
 ```csharp
 ```csharp
 /// <summary>
-/// Called to check if a player is the owner of a specific entity.
+/// Called to check if an entity belongs to a specific player based on ownership rules.
 /// </summary>
-/// <param name="entityId">The unique identifier of the entity.</param>
+/// <param name="entity">The entity being checked for ownership.</param>
+/// <param name="player">The player whose ownership is being verified.</param>
+/// <param name="id">An identifier for the check operation.</param>
 /// <param name="debugName">A debug name for logging purposes.</param>
-/// <param name="entity">The entity being checked.</param>
-/// <param name="player">The player attempting to access the entity.</param>
 /// <returns>
-/// Returns `true` if the player is the owner of the entity, `false` if not, 
-/// or `null` if the default ownership check should be applied.
+/// Returns `true` if the entity belongs to the player, `false` otherwise. 
+/// If the method returns `null`, the default ownership logic will be applied. (bool)
 /// </returns>
-bool? OnEntityFromOwnerCheck(uint entityId, string debugName, BaseEntity entity, BasePlayer player)
+object OnEntityFromOwnerCheck(BaseEntity entity, BasePlayer player, uint id, string debugName)
 {
-    Puts($"Checking ownership for Entity ID: {entityId}, Debug Name: {debugName}, Player: {player.displayName}");
-
-    if (entity == null || player == null)
-    {
-        Puts("Entity or player is null, returning false.");
-        return false;
-    }
-
-    if (entity.net.ID == player.net.ID)
-    {
-        Puts($"Player {player.displayName} is the owner of the entity.");
-        return true;
-    }
-
+    Puts($"Checking ownership for entity {entity} by player {player} with ID {id}.");
     return null;
 }
 ```
@@ -9257,18 +8359,11 @@ bool? OnEntityFromOwnerCheck(uint entityId, string debugName, BaseEntity entity,
 /// <param name="cupboard">The cupboard being authorized.</param>
 /// <param name="player">The player being authorized to the cupboard.</param>
 /// <returns>
-/// Returns `null` to allow the authorization, or any non-null value to prevent the player from being authorized.
+/// Returns a non-null value to prevent the player from being authorized; otherwise, returns null to allow authorization. (object)
 /// </returns>
 object OnCupboardAuthorize(BuildingPrivlidge cupboard, BasePlayer player)
 {
-    Puts($"Player {player.displayName} is attempting to authorize to cupboard ID: {cupboard.net.ID}.");
-
-    if (player.IsBannedFromCupboard())
-    {
-        Puts($"Player {player.displayName} is banned from authorizing to cupboards.");
-        return "You are banned from using this cupboard.";
-    }
-
+    Puts($"Player {player} is attempting to authorize to cupboard {cupboard}.");
     return null;
 }
 ```
@@ -9297,19 +8392,17 @@ object OnCupboardAuthorize(BuildingPrivlidge cupboard, BasePlayer player)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player entity is marked as hostile for a specified duration.
+/// Called when an entity is marked as hostile for a specified duration.
 /// </summary>
 /// <param name="player">The player entity being marked as hostile.</param>
-/// <param name="duration">The duration in seconds for which the player is marked hostile.</param>
-/// <returns>No return behavior.</returns>
-void OnEntityMarkHostile(BasePlayer player, float duration)
+/// <param name="duration">The duration in seconds for which the entity is marked hostile.</param>
+/// <returns>
+/// Returns `null` to allow the default hostile marking behavior, or any non-null value to override it. (object)
+/// </returns>
+object OnEntityMarkHostile(BasePlayer player, float duration)
 {
-    Puts($"Player {player.displayName} has been marked hostile for {duration} seconds.");
-    
-    if (duration > 120f)
-    {
-        Puts($"Warning: Player {player.displayName} is marked hostile for an unusually long duration.");
-    }
+    Puts($"Entity {player} marked as hostile for {duration} seconds.");
+    return null;
 }
 ```
 ```
@@ -9338,25 +8431,18 @@ void OnEntityMarkHostile(BasePlayer player, float duration)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a magazine is reloaded for a projectile weapon.
+/// Called when attempting to reload the magazine of a projectile weapon.
 /// </summary>
-/// <param name="projectile">The projectile weapon being reloaded.</param>
-/// <param name="ammoSource">The source of the ammunition for the reload.</param>
-/// <param name="player">The player who owns the projectile weapon.</param>
+/// <param name="projectile">The projectile weapon that is being reloaded.</param>
+/// <param name="ammoSource">The source of the ammunition for reloading.</param>
+/// <param name="player">The player who owns the weapon.</param>
 /// <returns>
 /// Returns `true` if the magazine was successfully reloaded; otherwise, returns `false`. 
-/// If the method returns `null`, the default reload logic will be applied.
+/// If the method returns `null`, the default reload logic will be applied. (bool)
 /// </returns>
-bool? OnMagazineReload(BaseProjectile projectile, IAmmoContainer ammoSource, BasePlayer player)
+object OnMagazineReload(BaseProjectile projectile, IAmmoContainer ammoSource, BasePlayer player)
 {
-    Puts($"Player {player.displayName} is attempting to reload the magazine of {projectile.info.displayName.english}.");
-
-    if (ammoSource.GetAmount() < 1)
-    {
-        Puts($"Player {player.displayName} cannot reload because there is no ammunition available.");
-        return false;
-    }
-
+    Puts($"Attempting to reload magazine for {projectile} by player {player}.");
     return null;
 }
 ```
@@ -9394,21 +8480,16 @@ bool? OnMagazineReload(BaseProjectile projectile, IAmmoContainer ammoSource, Bas
 ```csharp
 ```csharp
 /// <summary>
-/// Called when the model state of a player needs to be sent to clients.
+/// Called when sending the model state of a player to clients.
 /// </summary>
 /// <param name="player">The player whose model state is being sent.</param>
-/// <returns>No return behavior.</returns>
-void OnSendModelState(BasePlayer player)
+/// <returns>
+/// Returns `null` to allow the default model state to be sent. If a non-null value is returned, it overrides the default behavior. (object)
+/// </returns>
+object OnSendModelState(BasePlayer player)
 {
-    Puts($"Sending model state for player: {player.displayName} (ID: {player.UserIDString}).");
-    
-    if (player.IsDead())
-    {
-        Puts($"Player {player.displayName} is dead; model state will not be sent.");
-        return;
-    }
-
-    // Additional logic can be added here if needed
+    Puts($"Sending model state for player {player}.");
+    return null;
 }
 ```
 ```
@@ -9447,20 +8528,18 @@ void OnSendModelState(BasePlayer player)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player changes the design of a firework.
+/// Called when the design of a firework is changed by a player.
 /// </summary>
 /// <param name="firework">The firework whose design is being changed.</param>
 /// <param name="design">The new design for the firework.</param>
-/// <param name="player">The player making the design change.</param>
-/// <returns>No return behavior.</returns>
-void OnFireworkDesignChange(PatternFirework firework, ProtoBuf.PatternFirework.Design design, BasePlayer player)
+/// <param name="player">The player making the change.</param>
+/// <returns>
+/// Returns a non-null value to prevent the design change, or `null` to allow it. (object)
+/// </returns>
+object OnFireworkDesignChange(PatternFirework firework, ProtoBuf.PatternFirework.Design design, BasePlayer player)
 {
-    Puts($"Player {player.displayName} changed the firework design to {design?.ToString() ?? "default"} for firework ID: {firework.net.ID}.");
-    
-    if (design?.stars.Count > 0)
-    {
-        Puts($"New design includes {design.stars.Count} stars.");
-    }
+    Puts($"Player {player} is changing the design of firework {firework}.");
+    return null;
 }
 ```
 ```
@@ -9511,25 +8590,18 @@ void OnFireworkDesignChange(PatternFirework firework, ProtoBuf.PatternFirework.D
 ```csharp
 ```csharp
 /// <summary>
-/// Determines whether a vending machine can accept a specific item for a given slot.
+/// Called to determine if a vending machine can accept a specific item for a given slot.
 /// </summary>
 /// <param name="vendingMachine">The vending machine attempting to accept the item.</param>
 /// <param name="item">The item being offered to the vending machine.</param>
 /// <param name="targetSlot">The slot in the vending machine where the item is to be placed.</param>
 /// <returns>
-/// Returns `true` if the item can be accepted by the vending machine; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will determine if the item can be accepted.
+/// Returns `true` if the item can be accepted by the vending machine; otherwise, returns `false`. 
+/// If the method returns `null`, the default acceptance logic will be applied. (bool)
 /// </returns>
-bool? CanVendingAcceptItem(VendingMachine vendingMachine, Item item, int targetSlot)
+object CanVendingAcceptItem(VendingMachine vendingMachine, Item item, int targetSlot)
 {
-    Puts($"Checking if vending machine can accept item: {item.info.displayName.english} (ID: {item.info.itemid}) for slot {targetSlot}.");
-
-    if (item.info.shortname == "restricted.item")
-    {
-        Puts("This item is restricted and cannot be accepted.");
-        return false;
-    }
-
+    Puts($"Checking if vending machine can accept item {item} in slot {targetSlot}.");
     return null;
 }
 ```
@@ -9580,12 +8652,7 @@ bool? CanVendingAcceptItem(VendingMachine vendingMachine, Item item, int targetS
 /// <returns>No return behavior.</returns>
 void OnItemAddedToContainer(ItemContainer container, Item item)
 {
-    Puts($"Item {item.info.displayName.english} (ID: {item.info.itemid}) has been added to container {container.name}.");
-    
-    if (item.info.itemid == 12345) // Example item ID for a special item
-    {
-        Puts($"Special item {item.info.displayName.english} added to container!");
-    }
+    Puts($"Item {item} has been added to container {container}.");
 }
 ```
 ```
@@ -9626,21 +8693,20 @@ void OnItemAddedToContainer(ItemContainer container, Item item)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player reports feedback regarding an issue or suggestion.
+/// Called when feedback is reported by a player.
 /// </summary>
 /// <param name="player">The player who reported the feedback.</param>
 /// <param name="subject">The subject of the feedback report.</param>
 /// <param name="message">The detailed message of the feedback report.</param>
 /// <param name="reportType">The type of report being submitted.</param>
-/// <returns>No return behavior.</returns>
-void OnFeedbackReported(BasePlayer player, string subject, string message, Facepunch.Models.ReportType reportType)
+/// <returns>
+/// Returns a non-null value to override the default feedback reporting behavior. 
+/// If `null` is returned, the feedback will be processed as normal. (object)
+/// </returns>
+object OnFeedbackReported(BasePlayer player, string subject, string message, Facepunch.Models.ReportType reportType)
 {
-    Puts($"Feedback reported by {player.displayName} (ID: {player.UserIDString}): Subject - \"{subject}\", Message - \"{message}\", Type - {reportType}.");
-
-    if (reportType == Facepunch.Models.ReportType.Bug)
-    {
-        Puts("A bug report has been submitted. Investigate promptly!");
-    }
+    Puts($"Feedback reported by {player.displayName}: {subject} - {message} (Type: {reportType})");
+    return null;
 }
 ```
 ```
@@ -9689,20 +8755,13 @@ void OnFeedbackReported(BasePlayer player, string subject, string message, Facep
 ```csharp
 ```csharp
 /// <summary>
-/// Called to cycle through the queue of players waiting to join the game.
+/// Called to handle the cycling of a queue, allowing players to join the game if slots are available.
 /// </summary>
-/// <param name="availableSlots">The number of available slots for players to join.</param>
+/// <param name="availableSlots">The number of slots available for players to join.</param>
 /// <returns>No return behavior.</returns>
 void OnQueueCycle(int availableSlots)
 {
     Puts($"Queue cycle initiated with {availableSlots} available slots.");
-    if (availableSlots <= 0)
-    {
-        Puts("No available slots for players to join.");
-        return;
-    }
-    
-    // Additional logic can be added here if needed
 }
 ```
 ```
@@ -9743,30 +8802,18 @@ void OnQueueCycle(int availableSlots)
 /// </summary>
 /// <param name="item">The item being moved.</param>
 /// <param name="playerInventory">The inventory of the player attempting to move the item.</param>
-/// <param name="containerId">The ID of the container the item is being moved to.</param>
+/// <param name="itemContainerId">The ID of the container the item is being moved to.</param>
 /// <param name="slot">The slot in the target container where the item will be placed.</param>
 /// <param name="amount">The amount of the item to move.</param>
 /// <param name="modifier">Any modifiers affecting the item move operation.</param>
 /// <returns>
-/// Returns `true` if the item can be moved, `false` if it cannot, or `null` to allow default game logic to determine the outcome.
+/// Returns `true` if the item can be moved; otherwise, returns `false`. 
+/// If the method returns `null`, the default game logic will determine if the item can be moved. (bool)
 /// </returns>
-bool? CanMoveItem(Item item, PlayerInventory playerInventory, ItemContainerId containerId, int slot, int amount, ItemMoveModifier modifier)
+object CanMoveItem(Item item, PlayerInventory playerInventory, ItemContainerId itemContainerId, int slot, int amount, ItemMoveModifier modifier)
 {
-    Puts($"Attempting to move item {item.info.displayName.english} (ID: {item.info.itemid}) to container {containerId} at slot {slot}.");
-
-    if (item.amount <= 0)
-    {
-        Puts("Cannot move item: amount is zero or less.");
-        return false;
-    }
-
-    if (playerInventory.IsFull())
-    {
-        Puts("Cannot move item: player's inventory is full.");
-        return false;
-    }
-
-    return null; // Allow default logic to handle the move
+    Puts($"Checking if item {item} can be moved to container {itemContainerId} at slot {slot}.");
+    return null;
 }
 ```
 ```
@@ -9935,21 +8982,15 @@ bool? CanMoveItem(Item item, PlayerInventory playerInventory, ItemContainerId co
 ```csharp
 ```csharp
 /// <summary>
-/// Called when two buildings are merged into one.
+/// Called when two buildings are merged in the server's building manager.
 /// </summary>
 /// <param name="manager">The server building manager handling the merge.</param>
-/// <param name="building1">The first building that is being merged.</param>
-/// <param name="building2">The second building that is being merged.</param>
+/// <param name="building1">The first building involved in the merge.</param>
+/// <param name="building2">The second building involved in the merge.</param>
 /// <returns>No return behavior.</returns>
 void OnBuildingMerge(ServerBuildingManager manager, BuildingManager.Building building1, BuildingManager.Building building2)
 {
     Puts($"Merging buildings: {building1.ID} and {building2.ID}.");
-    
-    if (building1.IsProtected() || building2.IsProtected())
-    {
-        Puts("One of the buildings is protected and cannot be merged.");
-        return;
-    }
 }
 ```
 ```
@@ -9987,24 +9028,11 @@ void OnBuildingMerge(ServerBuildingManager manager, BuildingManager.Building bui
 /// <param name="player">The player attempting to lock the code lock.</param>
 /// <param name="codeLock">The code lock being interacted with.</param>
 /// <returns>
-/// Returns `null` to allow the locking action, or any non-null value to prevent it.
+/// Returns `null` to allow the locking action, or a non-null value to prevent it. (object)
 /// </returns>
 object CanLock(BasePlayer player, CodeLock codeLock)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to lock the code lock.");
-
-    if (player.IsAdmin)
-    {
-        Puts($"Player {player.displayName} is an admin and can lock the code lock.");
-        return null;
-    }
-
-    if (codeLock.IsLocked())
-    {
-        Puts($"Code lock is already locked. Player {player.displayName} cannot lock it again.");
-        return "Code lock is already locked.";
-    }
-
+    Puts($"Player {player} is attempting to lock the code lock: {codeLock}.");
     return null;
 }
 ```
@@ -10039,7 +9067,7 @@ object CanLock(BasePlayer player, CodeLock codeLock)
 /// <returns>No return behavior.</returns>
 void OnCrateDropped(HackableLockedCrate crate)
 {
-    Puts($"A hackable locked crate has been dropped at position: {crate.transform.position}.");
+    Puts($"Hackable locked crate {crate} has been dropped.");
 }
 ```
 ```
@@ -10066,19 +9094,11 @@ void OnCrateDropped(HackableLockedCrate crate)
 /// <param name="connection">The connection that is being dequeued.</param>
 /// <returns>
 /// Returns a non-null value to prevent the connection from being removed from the queue. 
-/// If `null` is returned, the connection will be removed as normal.
+/// If `null` is returned, the connection will be removed as normal. (object)
 /// </returns>
 object OnConnectionDequeue(Network.Connection connection)
 {
-    Puts($"Connection from {connection.address} is being dequeued.");
-    
-    // Example condition to block a specific IP address
-    if (connection.address == "192.168.1.100")
-    {
-        Puts($"Connection from {connection.address} is blocked from dequeuing.");
-        return "Blocked: Unauthorized IP address.";
-    }
-    
+    Puts($"Connection {connection} is being dequeued.");
     return null;
 }
 ```
@@ -10110,21 +9130,14 @@ object OnConnectionDequeue(Network.Connection connection)
 /// Called when a command is sent to a client.
 /// </summary>
 /// <param name="connection">The network connection of the client receiving the command.</param>
-/// <param name="command">The command being sent to the client.</param>
+/// <param name="command">The command being sent.</param>
 /// <param name="args">The arguments associated with the command.</param>
 /// <returns>
-/// Returns `null` to allow the command to be sent, or any non-null value to prevent the command from being sent.
+/// Returns `null` to allow the command to be sent, or any non-null value to prevent the command from being sent. (object)
 /// </returns>
 object OnSendCommand(Network.Connection connection, string command, object[] args)
 {
-    Puts($"Sending command '{command}' to client with connection ID: {connection.userid}.");
-
-    if (command == "kick")
-    {
-        Puts($"Command '{command}' is not allowed to be sent to the client.");
-        return "You cannot send kick command.";
-    }
-
+    Puts($"Sending command '{command}' to connection {connection} with arguments: {string.Join(", ", args)}");
     return null;
 }
 ```
@@ -10153,23 +9166,15 @@ object OnSendCommand(Network.Connection connection, string command, object[] arg
 ```csharp
 ```csharp
 /// <summary>
-/// Called to update the loot network for a player.
+/// Called to update the loot network state for a player.
 /// </summary>
-/// <param name="loot">The loot instance being updated.</param>
+/// <param name="loot">The player loot instance that is being updated.</param>
 /// <returns>
-/// Returns `null` to allow the default loot update behavior, or any non-null value to prevent the update.
+/// Returns `null` to allow the default update behavior, or any non-null value to prevent the update. (object)
 /// </returns>
 object OnLootNetworkUpdate(PlayerLoot loot)
 {
-    Puts($"Updating loot network for player: {loot.baseEntity.displayName} (ID: {loot.baseEntity.net.ID})");
-
-    // Example condition to prevent loot update
-    if (loot.containers.Count == 0)
-    {
-        Puts("No containers available for loot update.");
-        return "No loot to update.";
-    }
-
+    Puts($"Updating loot network for player loot: {loot}.");
     return null;
 }
 ```
@@ -10213,25 +9218,18 @@ object OnLootNetworkUpdate(PlayerLoot loot)
 ```csharp
 ```csharp
 /// <summary>
-/// Determines if a player can unlock a specific node in the tech tree.
+/// Called to determine if a player can unlock a specific node in the tech tree.
 /// </summary>
 /// <param name="player">The player attempting to unlock the tech tree node.</param>
-/// <param name="node">The tech tree node instance that the player wants to unlock.</param>
-/// <param name="techTree">The tech tree data containing all nodes and paths.</param>
+/// <param name="node">The tech tree node that the player wants to unlock.</param>
+/// <param name="techTree">The tech tree containing the node.</param>
 /// <returns>
-/// Returns `true` if the player can unlock the node, `false` if they cannot, 
-/// or `null` if the decision is deferred to the hook implementation.
+/// Returns `true` if the player can unlock the node, or `false` if they cannot.
+/// If the method returns `null`, the default game logic will determine if the player can unlock the node. (bool)
 /// </returns>
-bool? CanUnlockTechTreeNode(BasePlayer player, TechTreeData.NodeInstance node, TechTreeData techTree)
+object CanUnlockTechTreeNode(BasePlayer player, TechTreeData.NodeInstance node, TechTreeData techTree)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to unlock node: {node.nodeName}.");
-
-    if (node.nodeName == "advancedCrafting")
-    {
-        Puts($"Player {player.displayName} does not have permission to unlock advanced crafting.");
-        return false;
-    }
-
+    Puts($"Player {player} is attempting to unlock tech tree node: {node}.");
     return null;
 }
 ```
@@ -10262,24 +9260,17 @@ bool? CanUnlockTechTreeNode(BasePlayer player, TechTreeData.NodeInstance node, T
 ```csharp
 ```csharp
 /// <summary>
-/// Determines whether the specified combat entity can be targeted by the auto turret.
+/// Determines whether a specified combat entity can be targeted by an auto turret.
 /// </summary>
 /// <param name="target">The combat entity that is being checked for targeting.</param>
 /// <param name="turret">The auto turret attempting to target the entity.</param>
 /// <returns>
-/// Returns `true` if the entity can be targeted; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will determine if the entity can be targeted.
+/// Returns `true` if the entity can be targeted; otherwise, returns `false`. 
+/// If the method returns `null`, the default targeting logic will be applied. (bool)
 /// </returns>
-bool? CanBeTargeted(BaseCombatEntity target, AutoTurret turret)
+object CanBeTargeted(BaseCombatEntity target, AutoTurret turret)
 {
-    Puts($"Checking if {target.displayName} can be targeted by turret {turret.net.ID}.");
-
-    if (target.IsDead())
-    {
-        Puts($"Target {target.displayName} is dead and cannot be targeted.");
-        return false;
-    }
-
+    Puts($"Checking if {target} can be targeted by turret {turret}.");
     return null;
 }
 ```
@@ -10343,22 +9334,14 @@ bool? CanBeTargeted(BaseCombatEntity target, AutoTurret turret)
 /// </summary>
 /// <param name="collectible">The collectible entity being picked up.</param>
 /// <param name="player">The player who is picking up the collectible.</param>
-/// <param name="eat">Indicates whether the item should be consumed immediately (for food items).</param>
-/// <returns>No return behavior.</returns>
-void OnCollectiblePickup(CollectibleEntity collectible, BasePlayer player, bool eat)
+/// <param name="eat">Indicates whether the item should be consumed immediately if it's food.</param>
+/// <returns>
+/// Returns `null` to allow the pickup, or any non-null value to prevent it. (object)
+/// </returns>
+object OnCollectiblePickup(CollectibleEntity collectible, BasePlayer player, bool eat)
 {
-    Puts($"Player {player.displayName} is attempting to pick up {collectible.name} (Eat: {eat}).");
-
-    if (collectible.itemList == null)
-    {
-        Puts("No items to pick up.");
-        return;
-    }
-
-    if (eat)
-    {
-        Puts($"Player {player.displayName} will consume the item.");
-    }
+    Puts($"Player {player} is attempting to pick up collectible {collectible} with eat flag set to {eat}.");
+    return null;
 }
 ```
 ```
@@ -10433,12 +9416,7 @@ void OnCollectiblePickup(CollectibleEntity collectible, BasePlayer player, bool 
 /// <returns>No return behavior.</returns>
 void OnBoomboxStationUpdate(BoomBox boombox, string ip, BasePlayer player)
 {
-    Puts($"Boombox station updated by {player.displayName} to IP: {ip}.");
-    
-    if (ip == "192.168.0.1")
-    {
-        Puts("Attempt to set an invalid IP address was blocked.");
-    }
+    Puts($"Boombox {boombox} updated to new IP: {ip} by player {player}.");
 }
 ```
 ```
@@ -10478,16 +9456,11 @@ void OnBoomboxStationUpdate(BoomBox boombox, string ip, BasePlayer player)
 /// </summary>
 /// <param name="dispenser">The resource dispenser providing the bonus.</param>
 /// <param name="player">The player receiving the bonus item.</param>
-/// <param name="item">The item that has been granted as a bonus.</param>
+/// <param name="item">The item that is being given as a bonus.</param>
 /// <returns>No return behavior.</returns>
 void OnDispenserBonusReceived(ResourceDispenser dispenser, BasePlayer player, Item item)
 {
-    Puts($"Player {player.displayName} received bonus item: {item.info.displayName.english} from dispenser: {dispenser.gameObject.name}.");
-    
-    if (item.info.shortname == "wood")
-    {
-        Puts($"Player {player.displayName} received a wood bonus!");
-    }
+    Puts($"Player {player} received bonus item: {item} from dispenser: {dispenser}.");
 }
 ```
 ```
@@ -10535,22 +9508,15 @@ void OnDispenserBonusReceived(ResourceDispenser dispenser, BasePlayer player, It
 /// <summary>
 /// Called when a base player is attacked.
 /// </summary>
-/// <param name="player">The player who is being attacked.</param>
-/// <param name="info">Information about the attack, including damage and initiator.</param>
+/// <param name="player">The player that is being attacked.</param>
+/// <param name="info">Information about the hit, including damage and initiator.</param>
 /// <returns>
-/// Returns a non-null value to prevent the default attack behavior. 
-/// If `null` is returned, the default attack logic will proceed.
+/// Returns a non-null value to prevent the default attack behavior; otherwise, returns null to allow it. (object)
 /// </returns>
 object IOnBasePlayerAttacked(BasePlayer player, HitInfo info)
 {
-    Puts($"Player {player.displayName} is under attack! Damage: {info.damageTypes.Total()} from {info.Initiator?.displayName ?? "unknown"}.");
-
-    if (info.damageTypes.Total() > 50)
-    {
-        Puts($"Warning: High damage attack detected on {player.displayName}!");
-    }
-
-    return null; // Allow default behavior to continue
+    Puts($"Player {player} was attacked with info: {info}.");
+    return null;
 }
 ```
 ```
@@ -10688,14 +9654,15 @@ object IOnBasePlayerAttacked(BasePlayer player, HitInfo info)
 /// <summary>
 /// Called when the MLRS (Multiple Launch Rocket System) is fired.
 /// </summary>
-/// <param name="mlrs">The MLRS instance that is being fired.</param>
-/// <param name="owner">The player who owns and is firing the MLRS.</param>
-/// <returns>No return behavior.</returns>
-void OnMlrsFire(MLRS mlrs, BasePlayer owner)
+/// <param name="mlrs">The MLRS instance that is firing.</param>
+/// <param name="owner">The player who owns the MLRS and is firing it.</param>
+/// <returns>
+/// Returns `null` to allow the firing action, or any non-null value to prevent it. (object)
+/// </returns>
+object OnMlrsFire(MLRS mlrs, BasePlayer owner)
 {
-    Puts($"MLRS fired by player {owner.displayName} (ID: {owner.UserIDString}).");
-    
-    // Additional logic can be added here, such as logging or triggering events.
+    Puts($"MLRS fired by player {owner}.");
+    return null;
 }
 ```
 ```
@@ -10727,17 +9694,12 @@ void OnMlrsFire(MLRS mlrs, BasePlayer owner)
 /// <summary>
 /// Called when a flame thrower burns an entity.
 /// </summary>
-/// <param name="flameThrower">The flame thrower that caused the burn.</param>
-/// <param name="burnedEntity">The entity that was burned by the flame thrower.</param>
+/// <param name="flameThrower">The flame thrower that is causing the burn.</param>
+/// <param name="target">The entity that is being burned.</param>
 /// <returns>No return behavior.</returns>
-void OnFlameThrowerBurn(FlameThrower flameThrower, BaseEntity burnedEntity)
+void OnFlameThrowerBurn(FlameThrower flameThrower, BaseEntity target)
 {
-    Puts($"Flame thrower {flameThrower.net.ID} burned entity {burnedEntity.net.ID} at position {burnedEntity.transform.position}.");
-    
-    if (burnedEntity is BasePlayer player)
-    {
-        Puts($"Player {player.displayName} was burned by the flame thrower!");
-    }
+    Puts($"FlameThrower {flameThrower} is burning target: {target}.");
 }
 ```
 ```
@@ -10813,14 +9775,14 @@ void OnFlameThrowerBurn(FlameThrower flameThrower, BaseEntity burnedEntity)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player's pings are sent to the client.
+/// Called when sending player pings to the client.
 /// </summary>
 /// <param name="player">The player whose pings are being sent.</param>
 /// <param name="mapNoteList">The list of map notes containing the pings.</param>
 /// <returns>No return behavior.</returns>
 void OnPlayerPingsSend(BasePlayer player, ProtoBuf.MapNoteList mapNoteList)
 {
-    Puts($"Sending {mapNoteList.notes.Count} pings to player {player.displayName} (ID: {player.UserIDString}).");
+    Puts($"Sending pings to player {player} with {mapNoteList.notes.Count} notes.");
 }
 ```
 ```
@@ -10853,13 +9815,7 @@ void OnPlayerPingsSend(BasePlayer player, ProtoBuf.MapNoteList mapNoteList)
 /// <returns>No return behavior.</returns>
 void OnTimedExplosiveExplode(TimedExplosive explosive, Vector3 explosionPosition)
 {
-    Puts($"Timed explosive {explosive.net.ID} exploded at position {explosionPosition}.");
-
-    // Additional logic can be added here, such as logging or triggering other effects.
-    if (explosive.damageTypes.Count > 0)
-    {
-        Puts("Damage types are present, processing damage.");
-    }
+    Puts($"Timed explosive {explosive} exploded at position {explosionPosition}.");
 }
 ```
 ```
@@ -10990,27 +9946,14 @@ void OnTimedExplosiveExplode(TimedExplosive explosive, Vector3 explosionPosition
 /// Called to determine if a player can loot a specific entity, such as a corpse.
 /// </summary>
 /// <param name="player">The player attempting to loot the entity.</param>
-/// <param name="corpse">The lootable corpse being targeted.</param>
+/// <param name="corpse">The lootable corpse being accessed.</param>
 /// <returns>
-/// Returns `true` if the player is allowed to loot the entity; otherwise, returns `false`.
-/// If the method returns a non-null value, it overrides the default looting behavior.
+/// Returns `true` if the player can loot the entity; otherwise, returns `false`. 
+/// If the method returns a non-null value, it overrides the default looting behavior. (bool)
 /// </returns>
-bool? CanLootEntity(BasePlayer player, LootableCorpse corpse)
+object CanLootEntity(BasePlayer player, LootableCorpse corpse)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to loot a corpse.");
-
-    if (player.IsDead())
-    {
-        Puts($"Player {player.displayName} cannot loot while dead.");
-        return false;
-    }
-
-    if (corpse.IsLooted())
-    {
-        Puts($"The corpse has already been looted by another player.");
-        return false;
-    }
-
+    Puts($"Player {player} is attempting to loot corpse {corpse}.");
     return null;
 }
 ```
@@ -11056,15 +9999,13 @@ bool? CanLootEntity(BasePlayer player, LootableCorpse corpse)
 /// <param name="oldTeam">The player's previous team ID.</param>
 /// <param name="newTeam">The player's new team ID.</param>
 /// <param name="player">The player whose team is being updated.</param>
-/// <returns>No return behavior.</returns>
-void OnTeamUpdate(ulong oldTeam, ulong newTeam, BasePlayer player)
+/// <returns>
+/// Returns `null` to allow the team update, or any non-null value to prevent the update. (object)
+/// </returns>
+object OnTeamUpdate(ulong oldTeam, ulong newTeam, BasePlayer player)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) updated team from {oldTeam} to {newTeam}.");
-    
-    if (newTeam == 0)
-    {
-        Puts($"Player {player.displayName} has left the team.");
-    }
+    Puts($"Player {player} is changing team from {oldTeam} to {newTeam}.");
+    return null;
 }
 ```
 ```
@@ -11099,16 +10040,11 @@ void OnTeamUpdate(ulong oldTeam, ulong newTeam, BasePlayer player)
 /// <summary>
 /// Called when a player successfully connects to the server.
 /// </summary>
-/// <param name="player">The player who has connected.</param>
+/// <param name="player">The player that has connected.</param>
 /// <returns>No return behavior.</returns>
 void IOnPlayerConnected(BasePlayer player)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) has connected to the server.");
-    
-    if (player.IsAdmin)
-    {
-        Puts($"Admin {player.displayName} has connected. Checking anti-hack settings...");
-    }
+    Puts($"Player {player.displayName} with ID {player.userID} has connected to the server.");
 }
 ```
 ```
@@ -11207,20 +10143,12 @@ void IOnPlayerConnected(BasePlayer player)
 /// </summary>
 /// <param name="item">The item for which the maximum stackable amount is being queried.</param>
 /// <returns>
-/// Returns the maximum stackable amount for the item. If a non-null value is returned from the hook, that value will be used instead.
+/// Returns the maximum stackable amount for the item. If the hook returns a value, that value will be used instead. (int)
 /// </returns>
-int OnMaxStackable(Item item)
+object OnMaxStackable(Item item)
 {
-    Puts($"Calculating max stackable for item: {item.info.displayName.english} (ID: {item.info.itemid})");
-    
-    // Example condition to limit stacking
-    if (item.info.itemid == 12345) // Replace with actual item ID
-    {
-        Puts("This item has a custom max stackable limit.");
-        return 10; // Custom limit
-    }
-
-    return item.info.stackable; // Default behavior
+    Puts($"Calculating max stackable for item: {item}.");
+    return null;
 }
 ```
 ```
@@ -11255,16 +10183,14 @@ int OnMaxStackable(Item item)
 /// </summary>
 /// <param name="firework">The firework whose design is being changed.</param>
 /// <param name="design">The new design for the firework.</param>
-/// <param name="player">The player who is changing the firework design.</param>
-/// <returns>No return behavior.</returns>
-void OnFireworkDesignChanged(PatternFirework firework, ProtoBuf.PatternFirework.Design design, BasePlayer player)
+/// <param name="player">The player who is changing the design.</param>
+/// <returns>
+/// Returns a non-null value to prevent the design change, or `null` to allow it. (object)
+/// </returns>
+object OnFireworkDesignChanged(PatternFirework firework, ProtoBuf.PatternFirework.Design design, BasePlayer player)
 {
-    Puts($"Firework design changed by {player.displayName}. New design: {design?.ToString() ?? "None"}");
-    
-    if (design != null && design.stars.Count > 0)
-    {
-        Puts($"New design has {design.stars.Count} stars.");
-    }
+    Puts($"Firework design changed by {player} for firework {firework}.");
+    return null;
 }
 ```
 ```
@@ -11322,15 +10248,7 @@ void OnFireworkDesignChanged(PatternFirework firework, ProtoBuf.PatternFirework.
 /// <returns>No return behavior.</returns>
 void OnVendingShopOpen(InvisibleVendingMachine vendingMachine, BasePlayer player)
 {
-    Puts($"Player {player.displayName} is opening the vending shop at {vendingMachine.transform.position}.");
-    
-    if (vendingMachine.IsOutOfStock())
-    {
-        Puts($"Vending shop is out of stock for player {player.displayName}.");
-        return;
-    }
-
-    // Additional logic for opening the vending shop can be added here.
+    Puts($"Player {player} is attempting to open the vending shop at {vendingMachine}.");
 }
 ```
 ```
@@ -11410,19 +10328,14 @@ void OnVendingShopOpen(InvisibleVendingMachine vendingMachine, BasePlayer player
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a demo recording has started for a player.
+/// Called when demo recording has started for a player.
 /// </summary>
 /// <param name="filePath">The file path where the demo is being recorded.</param>
 /// <param name="player">The player who started the demo recording.</param>
 /// <returns>No return behavior.</returns>
 void OnDemoRecordingStarted(string filePath, BasePlayer player)
 {
-    Puts($"Demo recording started for player {player.displayName} at {filePath}.");
-    
-    if (player.IsAdmin)
-    {
-        Puts($"Admin {player.displayName} has started a demo recording.");
-    }
+    Puts($"Demo recording started for player {player} at {filePath}.");
 }
 ```
 ```
@@ -11476,19 +10389,11 @@ void OnDemoRecordingStarted(string filePath, BasePlayer player)
 /// <param name="healingItem">The medical tool being used.</param>
 /// <param name="targetPlayer">The player receiving the healing effects.</param>
 /// <returns>
-/// Returns a non-null value to prevent the healing effects from being applied. 
-/// If `null` is returned, the healing effects will be applied as normal.
+/// Returns `null` to allow the healing effects to proceed, or any non-null value to prevent the healing. (object)
 /// </returns>
 object OnHealingItemUse(MedicalTool healingItem, BasePlayer targetPlayer)
 {
-    Puts($"Healing item {healingItem.name} used on player {targetPlayer.displayName} (ID: {targetPlayer.UserIDString}).");
-
-    if (targetPlayer.health < 20)
-    {
-        Puts($"Player {targetPlayer.displayName} is too injured to receive healing.");
-        return "Player is too injured to heal.";
-    }
-
+    Puts($"Healing item {healingItem} used on player {targetPlayer}.");
     return null;
 }
 ```
@@ -11555,23 +10460,16 @@ object OnHealingItemUse(MedicalTool healingItem, BasePlayer targetPlayer)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a sleeping bag is destroyed.
+/// Called when a sleeping bag is about to be destroyed.
 /// </summary>
 /// <param name="sleepingBag">The sleeping bag that is being destroyed.</param>
 /// <param name="userId">The ID of the user who owns the sleeping bag.</param>
 /// <returns>
-/// Returns `null` to allow the destruction of the sleeping bag, or any non-null value to prevent it.
+/// Returns `null` to allow the destruction of the sleeping bag, or any non-null value to prevent it. (object)
 /// </returns>
 object OnSleepingBagDestroy(SleepingBag sleepingBag, ulong userId)
 {
-    Puts($"Sleeping bag owned by user {userId} is being destroyed.");
-    
-    if (sleepingBag.IsInUse)
-    {
-        Puts($"Sleeping bag owned by user {userId} cannot be destroyed while in use.");
-        return "Cannot destroy sleeping bag while in use.";
-    }
-    
+    Puts($"Attempting to destroy sleeping bag {sleepingBag} for user {userId}.");
     return null;
 }
 ```
@@ -11616,19 +10514,12 @@ object OnSleepingBagDestroy(SleepingBag sleepingBag, ulong userId)
 /// </summary>
 /// <returns>
 /// Returns a list of <c>Vector3</c> points representing the generated patrol path. 
-/// If the hook returns a non-null value, that value will be used instead of the generated path.
+/// If the hook returns a non-null value, that value will be used instead of the generated path. (List<Vector3>)
 /// </returns>
-List<Vector3> OnBoatPathGenerate()
+object OnBoatPathGenerate()
 {
-    Puts("Generating ocean patrol path for boats.");
-    object obj = Interface.CallHook("OnBoatPathGenerate");
-    if (obj is List<Vector3> customPath)
-    {
-        Puts("Using custom boat path provided by hook.");
-        return customPath;
-    }
-    Puts("No custom path provided, generating default path.");
-    return GenerateOceanPatrolPath();
+    Puts("Generating boat patrol path.");
+    return null;
 }
 ```
 ```
@@ -11729,25 +10620,12 @@ List<Vector3> OnBoatPathGenerate()
 /// </summary>
 /// <param name="player">The player attempting to use wires.</param>
 /// <returns>
-/// Returns `true` if the player can use wires; otherwise, returns `false`. 
-/// If the method returns `null`, the default game logic will be used to determine if the player can use wires.
+/// Returns `true` if the player can use wires; otherwise, returns `false`.
+/// If the method returns `null`, the default game logic will be used to determine if the player can use wires. (bool)
 /// </returns>
-bool? CanUseWires(BasePlayer player)
+object CanUseWires(BasePlayer player)
 {
-    Puts($"Checking wire usage for player: {player.displayName} (ID: {player.UserIDString})");
-
-    if (player.IsInCreativeMode)
-    {
-        Puts($"Player {player.displayName} is in creative mode and can use wires without restrictions.");
-        return true;
-    }
-
-    if (!player.CanBuild())
-    {
-        Puts($"Player {player.displayName} cannot build and thus cannot use wires.");
-        return false;
-    }
-
+    Puts($"Checking if player {player} can use wires.");
     return null;
 }
 ```
@@ -11800,19 +10678,11 @@ bool? CanUseWires(BasePlayer player)
 /// <param name="player">The player who is unloading the weapon.</param>
 /// <param name="weaponRack">The weapon rack from which the weapon is being unloaded.</param>
 /// <returns>
-/// Returns a non-null value to prevent the weapon from being unloaded. 
-/// If `null` is returned, the weapon unload proceeds as normal.
+/// Returns a non-null value to prevent the weapon from being unloaded; otherwise, returns null to allow the action. (object)
 /// </returns>
 object OnRackedWeaponUnload(Item item, BasePlayer player, WeaponRack weaponRack)
 {
-    Puts($"Player {player.displayName} is attempting to unload weapon: {item.info.displayName.english} from the weapon rack.");
-    
-    if (item.info.shortname == "rifle.semiauto")
-    {
-        Puts($"Player {player.displayName} is not allowed to unload a semi-auto rifle.");
-        return "You cannot unload this weapon.";
-    }
-    
+    Puts($"Player {player} is unloading weapon: {item} from weapon rack: {weaponRack}.");
     return null;
 }
 ```
@@ -11861,18 +10731,14 @@ object OnRackedWeaponUnload(Item item, BasePlayer player, WeaponRack weaponRack)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when an entity enters the trigger area.
+/// Called when an entity enters a trigger area.
 /// </summary>
+/// <param name="trigger">The trigger that the entity has entered.</param>
 /// <param name="entity">The entity that has entered the trigger.</param>
 /// <returns>No return behavior.</returns>
-void OnEntityEnter(BaseEntity entity)
+void OnEntityEnter(TriggerBase trigger, BaseEntity entity)
 {
-    Puts($"Entity {entity?.name} (ID: {entity?.net.ID}) has entered the trigger.");
-
-    if (entity is Player player)
-    {
-        Puts($"Welcome, player {player.displayName}!");
-    }
+    Puts($"Entity {entity} has entered the trigger {trigger}.");
 }
 ```
 ```
@@ -11904,19 +10770,17 @@ void OnEntityEnter(BaseEntity entity)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player is authorized to use an automated turret.
+/// Called to determine if a player is authorized to control the turret.
 /// </summary>
-/// <param name="turret">The automated turret being authorized.</param>
-/// <param name="player">The player being authorized to use the turret.</param>
-/// <returns>No return behavior.</returns>
-void OnTurretAuthorize(AutoTurret turret, BasePlayer player)
+/// <param name="turret">The turret that the player is attempting to authorize.</param>
+/// <param name="player">The player attempting to authorize themselves.</param>
+/// <returns>
+/// Returns `null` to allow authorization, or a non-null value to prevent it. (object)
+/// </returns>
+object OnTurretAuthorize(AutoTurret turret, BasePlayer player)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) has been authorized to use turret {turret.net.ID}.");
-    
-    if (player.IsAdmin)
-    {
-        Puts($"Admin {player.displayName} has been authorized, granting full access.");
-    }
+    Puts($"Player {player.displayName} is attempting to authorize on turret {turret}.");
+    return null;
 }
 ```
 ```
@@ -11950,21 +10814,14 @@ void OnTurretAuthorize(AutoTurret turret, BasePlayer player)
 /// <summary>
 /// Called when an entity is killed.
 /// </summary>
-/// <param name="entity">The entity that has been killed.</param>
+/// <param name="entity">The entity that is being killed.</param>
 /// <returns>
-/// Returns `null` to allow the default kill behavior, or any non-null value to prevent the entity from being killed.
+/// Returns a non-null value to prevent the entity from being killed; otherwise, returns null to allow the default kill behavior. (object)
 /// </returns>
 object OnEntityKill(BaseNetworkable entity)
 {
-    Puts($"Entity {entity.net.ID} ({entity.GetType().Name}) has been killed.");
-    
-    if (entity is SomeSpecificEntity)
-    {
-        Puts("Preventing the kill of a specific entity type.");
-        return true; // Prevent the entity from being killed
-    }
-    
-    return null; // Allow the default kill behavior
+    Puts($"Entity {entity} is being killed.");
+    return null;
 }
 ```
 ```
@@ -12001,24 +10858,15 @@ object OnEntityKill(BaseNetworkable entity)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player's clothing item is changed (added or removed).
+/// Called when a clothing item is added or removed from a player's inventory.
 /// </summary>
-/// <param name="inventory">The player's inventory where the change occurred.</param>
-/// <param name="item">The clothing item that was added or removed.</param>
+/// <param name="inventory">The player's inventory that is being modified.</param>
+/// <param name="item">The clothing item that has been changed.</param>
 /// <param name="bAdded">Indicates whether the item was added (<c>true</c>) or removed (<c>false</c>).</param>
 /// <returns>No return behavior.</returns>
 void OnClothingItemChanged(PlayerInventory inventory, Item item, bool bAdded)
 {
-    Puts($"Clothing item changed: {item.info.displayName.english} was {(bAdded ? "added" : "removed")}.");
-    
-    if (bAdded)
-    {
-        Puts($"Player {inventory.owner.displayName} has equipped {item.info.displayName.english}.");
-    }
-    else
-    {
-        Puts($"Player {inventory.owner.displayName} has unequipped {item.info.displayName.english}.");
-    }
+    Puts($"Clothing item changed: {item} was {(bAdded ? "added" : "removed")}.");
 }
 ```
 ```
@@ -12059,31 +10907,18 @@ void OnClothingItemChanged(PlayerInventory inventory, Item item, bool bAdded)
 ```csharp
 ```csharp
 /// <summary>
-/// Determines if a player can catch a fish using a fishing rod.
+/// Called to determine if a player can catch a fish with the given fishing rod and item.
 /// </summary>
 /// <param name="player">The player attempting to catch the fish.</param>
 /// <param name="fishingRod">The fishing rod being used.</param>
-/// <param name="fishItem">The item representing the fish that is being caught.</param>
+/// <param name="fishItem">The item representing the fish being caught.</param>
 /// <returns>
-/// Returns `true` if the player can catch the fish, or `false` if they cannot.
-/// If the method returns `null`, the default game logic will determine if the fish can be caught.
+/// Returns `true` if the player can catch the fish; otherwise, returns `false`. 
+/// If the method returns `null`, the default game logic will determine if the fish can be caught. (bool)
 /// </returns>
-bool? CanCatchFish(BasePlayer player, BaseFishingRod fishingRod, Item fishItem)
+object CanCatchFish(BasePlayer player, BaseFishingRod fishingRod, Item fishItem)
 {
-    Puts($"Player {player.displayName} is attempting to catch a fish with {fishingRod.info.displayName.english}.");
-
-    if (player.IsWounded())
-    {
-        Puts($"Player {player.displayName} cannot catch fish while wounded.");
-        return false;
-    }
-
-    if (fishingRod.IsBroken())
-    {
-        Puts($"Player {player.displayName}'s fishing rod is broken.");
-        return false;
-    }
-
+    Puts($"Player {player} is attempting to catch a fish with rod {fishingRod}.");
     return null;
 }
 ```
@@ -12295,24 +11130,17 @@ bool? CanCatchFish(BasePlayer player, BaseFishingRod fishingRod, Item fishItem)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player's phone name is updated.
+/// Called when the name of a phone is updated.
 /// </summary>
 /// <param name="phone">The phone controller that is being updated.</param>
 /// <param name="newName">The new name for the phone.</param>
-/// <param name="player">The player who is updating the phone name.</param>
+/// <param name="player">The player who initiated the name update.</param>
 /// <returns>
-/// Returns `null` to allow the name update, or any non-null value to prevent the update.
+/// Returns `null` to allow the name update, or any non-null value to prevent the update. (object)
 /// </returns>
 object OnPhoneNameUpdate(PhoneController phone, string newName, BasePlayer player)
 {
-    Puts($"Player {player.displayName} is attempting to update phone name to: {newName}");
-
-    if (newName.Contains("badword"))
-    {
-        Puts($"Player {player.displayName} tried to use a prohibited name.");
-        return "Name contains prohibited content.";
-    }
-
+    Puts($"Phone name update requested by {player}: New Name = {newName}");
     return null;
 }
 ```
@@ -12347,24 +11175,17 @@ object OnPhoneNameUpdate(PhoneController phone, string newName, BasePlayer playe
 ```csharp
 ```csharp
 /// <summary>
-/// Called to determine if a player can loot a dropped item container.
+/// Called to determine if a player can loot a specific entity.
 /// </summary>
-/// <param name="player">The player attempting to loot the container.</param>
+/// <param name="player">The player attempting to loot the entity.</param>
 /// <param name="container">The dropped item container being looted.</param>
 /// <returns>
-/// Returns `true` if the player can loot the container, or `false` if they cannot.
-/// If the method returns `null`, the default game logic will determine if the player can loot the container.
+/// Returns `true` if the player can loot the entity, or `false` if they cannot.
+/// If the method returns `null`, the default game logic will determine if the player can loot the entity. (bool)
 /// </returns>
-bool? CanLootEntity(BasePlayer player, DroppedItemContainer container)
+object CanLootEntity(BasePlayer player, DroppedItemContainer container)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to loot container: {container.net.ID}.");
-
-    if (player.IsDead())
-    {
-        Puts($"Player {player.displayName} cannot loot while dead.");
-        return false;
-    }
-
+    Puts($"Player {player} is attempting to loot container {container}.");
     return null;
 }
 ```
@@ -12405,8 +11226,7 @@ bool? CanLootEntity(BasePlayer player, DroppedItemContainer container)
 /// <returns>No return behavior.</returns>
 void OnCargoShipHarborLeave(CargoShip cargoShip)
 {
-    Puts($"Cargo ship {cargoShip.net.ID} is leaving the harbor.");
-    // Additional logic can be added here if needed.
+    Puts($"Cargo ship {cargoShip} is leaving the harbor.");
 }
 ```
 ```
@@ -12435,23 +11255,15 @@ void OnCargoShipHarborLeave(CargoShip cargoShip)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when an Xmas stocking is filled with loot.
+/// Called when filling an Xmas stocking with loot.
 /// </summary>
 /// <param name="stocking">The Xmas stocking that is being filled.</param>
 /// <returns>
-/// Returns `null` to allow the default filling behavior, or any non-null value to prevent the stocking from being filled.
+/// Returns `null` to allow the default filling behavior, or a non-null value to override it. (object)
 /// </returns>
 object OnXmasStockingFill(Stocking stocking)
 {
-    Puts($"Filling Xmas stocking: {stocking.name}.");
-    
-    // Example condition to prevent filling
-    if (stocking.IsSpecial())
-    {
-        Puts($"Stocking {stocking.name} is special and cannot be filled.");
-        return "This stocking cannot be filled.";
-    }
-    
+    Puts($"Filling Xmas stocking: {stocking}.");
     return null;
 }
 ```
@@ -12485,21 +11297,14 @@ object OnXmasStockingFill(Stocking stocking)
 /// Determines whether the specified player can network to this entity.
 /// </summary>
 /// <param name="entity">The networkable entity.</param>
-/// <param name="player">The player attempting to network to the entity.</param>
+/// <param name="player">The player attempting to connect to the entity.</param>
 /// <returns>
 /// Returns `true` if the player can network to the entity; otherwise, returns `false`.
-/// If the method returns `null`, the default networking logic will be applied.
+/// If the method returns `null`, the default networking logic will be applied. (bool)
 /// </returns>
-bool? CanNetworkTo(BaseNetworkable entity, BasePlayer player)
+object CanNetworkTo(BaseNetworkable entity, BasePlayer player)
 {
-    Puts($"Checking network access for Player {player.displayName} to Entity ID: {entity.net.ID}");
-
-    if (player.IsAdmin)
-    {
-        Puts($"Player {player.displayName} is an admin and can network to any entity.");
-        return true;
-    }
-
+    Puts($"Checking network access for player {player} to entity {entity}.");
     return null;
 }
 ```
@@ -12530,23 +11335,16 @@ bool? CanNetworkTo(BaseNetworkable entity, BasePlayer player)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player toggles the state of the recycler (on/off).
+/// Called when a player toggles the state of a recycler (on/off).
 /// </summary>
 /// <param name="recycler">The recycler being toggled.</param>
 /// <param name="player">The player who is toggling the recycler.</param>
 /// <returns>
-/// Returns a non-null value to prevent the toggle action, or `null` to allow it.
+/// Returns `null` to allow the toggle action, or any non-null value to prevent it. (object)
 /// </returns>
 object OnRecyclerToggle(Recycler recycler, BasePlayer player)
 {
-    Puts($"Player {player.displayName} toggled the recycler (ID: {recycler.net.ID}).");
-
-    if (player.inventory.loot.entitySource == recycler)
-    {
-        Puts($"Player {player.displayName} is currently looting the recycler and cannot toggle it.");
-        return "You cannot toggle the recycler while looting.";
-    }
-
+    Puts($"Player {player} toggled the recycler: {recycler}.");
     return null;
 }
 ```
@@ -12556,8 +11354,8 @@ object OnRecyclerToggle(Recycler recycler, BasePlayer player)
 
 ```csharp
 
-	[RPC_Server.MaxDistance(3f)]
 	[RPC_Server]
+	[RPC_Server.MaxDistance(3f)]
 	private void SVSwitch(RPCMessage msg)
 	{
 		bool flag = msg.read.Bit();
@@ -12590,19 +11388,12 @@ object OnRecyclerToggle(Recycler recycler, BasePlayer player)
 /// </summary>
 /// <param name="player">The player whose threat level is being updated.</param>
 /// <returns>
-/// Returns `null` to allow the default threat level calculation, or any non-null value to override it.
+/// Returns a non-null value to override the default threat level calculation. If `null` is returned, the default logic will be applied. (object)
 /// </returns>
 object OnThreatLevelUpdate(BasePlayer player)
 {
-    Puts($"Updating threat level for player {player.displayName} (ID: {player.UserIDString}).");
-
-    if (player.IsInSafeZone())
-    {
-        Puts($"Player {player.displayName} is in a safe zone; threat level remains unchanged.");
-        return true; // Prevents threat level increase
-    }
-
-    return null; // Allow default threat level calculation
+    Puts($"Updating threat level for player {player}.");
+    return null;
 }
 ```
 ```
@@ -12650,12 +11441,12 @@ object OnThreatLevelUpdate(BasePlayer player)
 /// <param name="helicopter">The helicopter to check for homing missile targeting.</param>
 /// <returns>
 /// Returns `true` if the helicopter can be targeted by homing missiles; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will be used to determine if the helicopter can be targeted.
+/// If the method returns `null`, the default game logic will be used to determine if the helicopter can be targeted. (bool)
 /// </returns>
-bool? CanBeHomingTargeted(BaseHelicopter helicopter)
+object CanBeHomingTargeted(BaseHelicopter helicopter)
 {
-    Puts($"Checking if helicopter ID: {helicopter.net.ID} can be targeted by homing missiles.");
-    return null; // Default behavior will be used
+    Puts($"Checking if helicopter {helicopter} can be targeted by homing missiles.");
+    return null;
 }
 ```
 ```
@@ -12686,18 +11477,11 @@ bool? CanBeHomingTargeted(BaseHelicopter helicopter)
 /// <param name="entity">The combat entity to check for hostility.</param>
 /// <returns>
 /// Returns `true` if the entity is considered hostile; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will be used to determine hostility.
+/// If the method returns `null`, the default game logic will determine the hostility status. (bool)
 /// </returns>
-bool? CanEntityBeHostile(BaseCombatEntity entity)
+object CanEntityBeHostile(BaseCombatEntity entity)
 {
-    Puts($"Checking hostility for entity ID: {entity.net.ID}, Type: {entity.GetType().Name}");
-
-    if (entity is AnimalNPC)
-    {
-        Puts($"Entity {entity.net.ID} is an animal and is not hostile.");
-        return false;
-    }
-
+    Puts($"Checking hostility for entity: {entity}.");
     return null;
 }
 ```
@@ -12724,23 +11508,16 @@ bool? CanEntityBeHostile(BaseCombatEntity entity)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player studies a blueprint to unlock its crafting recipe.
+/// Called when a player studies a blueprint item.
 /// </summary>
 /// <param name="player">The player studying the blueprint.</param>
 /// <param name="item">The blueprint item being studied.</param>
 /// <returns>
-/// Returns `null` to allow the default behavior of studying the blueprint, or any non-null value to prevent it.
+/// Returns a non-null value to prevent the default study behavior, or `null` to allow it. (object)
 /// </returns>
 object OnPlayerStudyBlueprint(BasePlayer player, Item item)
 {
-    Puts($"Player {player.displayName} is attempting to study blueprint: {item.info.displayName.english}.");
-
-    if (item.info.shortname == "blueprint.special")
-    {
-        Puts($"Player {player.displayName} is not allowed to study this special blueprint.");
-        return "You cannot study this blueprint.";
-    }
-
+    Puts($"Player {player} is studying blueprint: {item.info.shortname}.");
     return null;
 }
 ```
@@ -12809,15 +11586,14 @@ object OnPlayerStudyBlueprint(BasePlayer player, Item item)
 /// </summary>
 /// <param name="clock">The digital clock instance where alarms are being set.</param>
 /// <param name="message">The message containing the alarm settings.</param>
-/// <returns>No return behavior.</returns>
-void OnDigitalClockAlarmsSet(DigitalClock clock, ProtoBuf.DigitalClockMessage message)
+/// <returns>
+/// Returns a non-null value to prevent the default behavior of setting alarms. 
+/// If `null` is returned, the alarms will be set as specified in the message. (object)
+/// </returns>
+object OnDigitalClockAlarmsSet(DigitalClock clock, ProtoBuf.DigitalClockMessage message)
 {
-    Puts($"Alarms set on Digital Clock ID: {clock.net.ID} with {message.alarms.Count} alarms.");
-    
-    foreach (var alarm in message.alarms)
-    {
-        Puts($"Alarm set for {DigitalClockEx.ToTimeSpan(alarm.time)} - Active: {alarm.active}");
-    }
+    Puts($"Setting alarms for Digital Clock: {clock} with message: {message}.");
+    return null;
 }
 ```
 ```
@@ -12859,24 +11635,17 @@ void OnDigitalClockAlarmsSet(DigitalClock clock, ProtoBuf.DigitalClockMessage me
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a sensor detects a player entity.
+/// Called when a sensor detects a player entity within its range.
 /// </summary>
 /// <param name="sensor">The sensor that detected the player.</param>
 /// <param name="player">The player that was detected by the sensor.</param>
 /// <returns>
-/// Returns `null` to allow the default detection behavior, or a non-null value to override it.
+/// Returns `null` to allow the default detection behavior, or a non-null value to override it. (object)
 /// </returns>
 object OnSensorDetect(HBHFSensor sensor, BasePlayer player)
 {
-    Puts($"Sensor {sensor.net.ID} detected player {player.displayName} (ID: {player.UserIDString}).");
-
-    if (player.IsInvisible())
-    {
-        Puts($"Player {player.displayName} is invisible and will not be counted.");
-        return true; // Prevents counting this player
-    }
-
-    return null; // Allow default behavior
+    Puts($"Sensor {sensor} detected player {player}.");
+    return null;
 }
 ```
 ```
@@ -12935,21 +11704,12 @@ object OnSensorDetect(HBHFSensor sensor, BasePlayer player)
 /// <summary>
 /// Called when a wallpaper is removed from a building block.
 /// </summary>
-/// <param name="buildingBlock">The building block from which the wallpaper is being removed.</param>
+/// <param name="block">The building block from which the wallpaper is being removed.</param>
 /// <param name="side">The side of the building block from which the wallpaper is removed (0 for one side, 1 for the other).</param>
 /// <returns>No return behavior.</returns>
-void OnWallpaperRemove(BuildingBlock buildingBlock, int side)
+void OnWallpaperRemove(BuildingBlock block, int side)
 {
-    Puts($"Wallpaper removed from BuildingBlock ID: {buildingBlock.net.ID} on side: {side}.");
-    
-    if (side == 0)
-    {
-        Puts("Removing wallpaper from the left side.");
-    }
-    else if (side == 1)
-    {
-        Puts("Removing wallpaper from the right side.");
-    }
+    Puts($"Wallpaper removed from side {side} of building block {block}.");
 }
 ```
 ```
@@ -12993,15 +11753,13 @@ void OnWallpaperRemove(BuildingBlock buildingBlock, int side)
 /// </summary>
 /// <param name="oven">The oven that is performing the cooking.</param>
 /// <param name="item">The item being cooked in the oven.</param>
-/// <returns>No return behavior.</returns>
-void OnOvenCook(BaseOven oven, Item item)
+/// <returns>
+/// Returns a non-null value to prevent the cooking process; otherwise, returns null to allow it to proceed. (object)
+/// </returns>
+object OnOvenCook(BaseOven oven, Item item)
 {
-    Puts($"Oven {oven.net.ID} is cooking item: {item.info.displayName.english} (ID: {item.info.itemid}).");
-
-    if (item.info.shortname == "raw.meat")
-    {
-        Puts("Cooking raw meat! Ensure proper cooking to avoid food poisoning.");
-    }
+    Puts($"Oven {oven} is attempting to cook item: {item}.");
+    return null;
 }
 ```
 ```
@@ -13072,9 +11830,7 @@ void OnOvenCook(BaseOven oven, Item item)
 /// <returns>No return behavior.</returns>
 void OnVendingShopOpened(InvisibleVendingMachine vendingMachine, BasePlayer player)
 {
-    Puts($"Player {player.displayName} has opened the vending shop at {vendingMachine.transform.position}.");
-    
-    // Additional logic can be added here, such as logging or triggering events.
+    Puts($"Player {player} has opened the vending shop: {vendingMachine}.");
 }
 ```
 ```
@@ -13154,24 +11910,17 @@ void OnVendingShopOpened(InvisibleVendingMachine vendingMachine, BasePlayer play
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player requests to change the code for a modular car's lock.
+/// Called when a player requests to change the lock code of a modular car.
 /// </summary>
 /// <param name="car">The modular car whose code is being changed.</param>
 /// <param name="player">The player requesting the code change.</param>
 /// <param name="newCode">The new code that the player wants to set.</param>
 /// <returns>
-/// Returns `null` to allow the code change, or any non-null value to prevent the code from being changed.
+/// Returns `null` to allow the code change, or a non-null value to prevent it. (object)
 /// </returns>
 object OnCodeChange(ModularCar car, BasePlayer player, string newCode)
 {
-    Puts($"Player {player.displayName} is attempting to change the lock code for car ID: {car.net.ID} to {newCode}.");
-
-    if (newCode.Length < 4)
-    {
-        Puts($"Player {player.displayName} provided an invalid code. Code must be at least 4 characters long.");
-        return "Invalid code length.";
-    }
-
+    Puts($"Player {player} is attempting to change the code of car {car} to {newCode}.");
     return null;
 }
 ```
@@ -13211,22 +11960,14 @@ object OnCodeChange(ModularCar car, BasePlayer player, string newCode)
 /// Called when a patrol helicopter takes damage.
 /// </summary>
 /// <param name="helicopter">The patrol helicopter that is taking damage.</param>
-/// <param name="hitInfo">Information about the hit, including damage type and amount.</param>
+/// <param name="hitInfo">Information about the hit, including damage details.</param>
 /// <returns>
-/// Returns a non-null value to prevent further damage processing. 
-/// If `null` is returned, the default damage handling will proceed.
+/// Returns a non-null value to override the default damage behavior; otherwise, returns null to allow normal processing. (object)
 /// </returns>
 object OnPatrolHelicopterTakeDamage(PatrolHelicopter helicopter, HitInfo hitInfo)
 {
-    Puts($"Patrol Helicopter (ID: {helicopter.net.ID}) took damage: {hitInfo.damageTypes.Total()} from {hitInfo.Initiator?.displayName ?? "unknown source"}.");
-
-    if (hitInfo.damageTypes.Total() > 500)
-    {
-        Puts("Damage is too high, preventing further processing.");
-        return true; // Prevent further damage processing
-    }
-
-    return null; // Allow default damage handling
+    Puts($"Patrol helicopter {helicopter} is taking damage: {hitInfo.damageTypes.Total()}.");
+    return null;
 }
 ```
 ```
@@ -13282,21 +12023,14 @@ object OnPatrolHelicopterTakeDamage(PatrolHelicopter helicopter, HitInfo hitInfo
 /// <summary>
 /// Determines whether the patrol helicopter can perform a strafe maneuver.
 /// </summary>
-/// <param name="helicopter">The patrol helicopter AI instance checking for strafe capability.</param>
+/// <param name="helicopter">The patrol helicopter AI instance.</param>
 /// <returns>
-/// Returns `true` if the helicopter can strafe, `false` if it cannot, 
-/// or `null` if the default game logic should be used to determine strafe capability.
+/// Returns `true` if the helicopter can strafe; otherwise, returns `false`. 
+/// If the method returns `null`, the default game logic will determine if strafing is allowed. (bool)
 /// </returns>
-bool? CanHelicopterStrafe(PatrolHelicopterAI helicopter)
+object CanHelicopterStrafe(PatrolHelicopterAI helicopter)
 {
-    Puts($"Checking strafe capability for Helicopter ID: {helicopter.net.ID} at time: {UnityEngine.Time.realtimeSinceStartup}.");
-
-    if (helicopter.lastStrafeTime + 20f > UnityEngine.Time.realtimeSinceStartup)
-    {
-        Puts("Helicopter is not ready to strafe yet.");
-        return false;
-    }
-
+    Puts($"Checking if helicopter {helicopter} can strafe.");
     return null;
 }
 ```
@@ -13333,12 +12067,7 @@ bool? CanHelicopterStrafe(PatrolHelicopterAI helicopter)
 /// <returns>No return behavior.</returns>
 void OnWindmillUpdate(ElectricWindmill windmill)
 {
-    Puts($"Updating windmill: {windmill.net.ID}, Current Energy: {windmill.currentEnergy}, Wind Speed: {windmill.GetWindSpeedScale()}");
-    
-    if (windmill.currentEnergy > windmill.maxPowerGeneration)
-    {
-        Puts("Warning: Current energy exceeds maximum power generation capacity!");
-    }
+    Puts($"Updating windmill state: {windmill} with current wind speed.");
 }
 ```
 ```
@@ -13375,13 +12104,13 @@ void OnWindmillUpdate(ElectricWindmill windmill)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a helicopter drops a supply crate.
+/// Called when a helicopter drops a crate.
 /// </summary>
 /// <param name="helicopter">The helicopter that is dropping the crate.</param>
 /// <returns>No return behavior.</returns>
 void OnHelicopterDropCrate(CH47HelicopterAIController helicopter)
 {
-    Puts($"Helicopter {helicopter.net.ID} has dropped a crate at position: {helicopter.transform.position}.");
+    Puts($"Helicopter {helicopter} is dropping a crate.");
 }
 ```
 ```
@@ -13414,20 +12143,18 @@ void OnHelicopterDropCrate(CH47HelicopterAIController helicopter)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player researches an item at the research table.
+/// Called when an item is being researched at a research table.
 /// </summary>
 /// <param name="researchTable">The research table where the item is being researched.</param>
 /// <param name="item">The item that is being researched.</param>
-/// <param name="player">The player who is performing the research.</param>
-/// <returns>No return behavior.</returns>
-void OnItemResearch(ResearchTable researchTable, Item item, BasePlayer player)
+/// <param name="player">The player who is conducting the research.</param>
+/// <returns>
+/// Returns a non-null value to prevent the research from proceeding, or `null` to allow it. (object)
+/// </returns>
+object OnItemResearch(ResearchTable researchTable, Item item, BasePlayer player)
 {
-    Puts($"Player {player.displayName} is researching item: {item.info.displayName.english} (ID: {item.info.itemid}) at {researchTable.gameObject.name}.");
-    
-    if (item.info.shortname == "blueprint")
-    {
-        Puts($"Player {player.displayName} has researched a blueprint!");
-    }
+    Puts($"Player {player} is researching item {item} at {researchTable}.");
+    return null;
 }
 ```
 ```
@@ -13436,8 +12163,8 @@ void OnItemResearch(ResearchTable researchTable, Item item, BasePlayer player)
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.IsVisible(3f)]
+	[RPC_Server]
 	public void DoResearch(RPCMessage msg)
 	{
 		if (IsResearching())
@@ -13476,11 +12203,13 @@ void OnItemResearch(ResearchTable researchTable, Item item, BasePlayer player)
 /// Called when the cargo ship is starting to egress from the harbor.
 /// </summary>
 /// <param name="cargoShip">The cargo ship that is egressing.</param>
-/// <returns>No return behavior.</returns>
-void OnCargoShipEgress(CargoShip cargoShip)
+/// <returns>
+/// Returns `null` to allow the default egress behavior, or any non-null value to prevent the egress from occurring. (object)
+/// </returns>
+object OnCargoShipEgress(CargoShip cargoShip)
 {
-    Puts($"Cargo ship {cargoShip.net.ID} is starting to egress from the harbor.");
-    // Additional logic can be added here if needed.
+    Puts($"Cargo ship {cargoShip} is starting to egress.");
+    return null;
 }
 ```
 ```
@@ -13518,18 +12247,11 @@ void OnCargoShipEgress(CargoShip cargoShip)
 /// <param name="trap">The gun trap attempting to target the player.</param>
 /// <returns>
 /// Returns `true` if the player can be targeted by the gun trap; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will determine if the player can be targeted.
+/// If the method returns `null`, the default game logic will determine if the player can be targeted. (bool)
 /// </returns>
-bool? CanBeTargeted(BasePlayer player, GunTrap trap)
+object CanBeTargeted(BasePlayer player, GunTrap trap)
 {
-    Puts($"Checking if player {player.displayName} (ID: {player.UserIDString}) can be targeted by the gun trap.");
-
-    if (player.IsInSafeZone())
-    {
-        Puts($"Player {player.displayName} is in a safe zone and cannot be targeted.");
-        return false;
-    }
-
+    Puts($"Checking if player {player} can be targeted by trap {trap}.");
     return null;
 }
 ```
@@ -13601,27 +12323,13 @@ bool? CanBeTargeted(BasePlayer player, GunTrap trap)
 /// </summary>
 /// <param name="samSite">The SAM site attempting to shoot.</param>
 /// <returns>
-/// Returns `true` if the SAM site is allowed to shoot, or `false` if it cannot.
-/// If the method returns `null`, the default game logic will determine if the SAM site can shoot.
+/// Returns `true` if the SAM site is allowed to shoot; otherwise, returns `false`. 
+/// If the method returns `null`, the default game logic will determine if the SAM site can shoot. (bool)
 /// </returns>
-bool? CanSamSiteShoot(SamSite samSite)
+object CanSamSiteShoot(SamSite samSite)
 {
-    Puts($"SAM Site ID: {samSite.net.ID} is checking if it can shoot.");
-    
-    if (!samSite.IsPowered())
-    {
-        Puts("SAM Site is not powered and cannot shoot.");
-        return false;
-    }
-
-    if (samSite.HasAmmo())
-    {
-        Puts("SAM Site has ammo and is ready to shoot.");
-        return true;
-    }
-
-    Puts("SAM Site has no ammo and cannot shoot.");
-    return false;
+    Puts($"Checking if SAM site {samSite} can shoot.");
+    return null;
 }
 ```
 ```
@@ -13687,16 +12395,11 @@ bool? CanSamSiteShoot(SamSite samSite)
 /// </summary>
 /// <param name="dispenser">The resource dispenser being gathered from.</param>
 /// <param name="player">The player who is gathering the resources.</param>
-/// <param name="item">The item that was gathered from the dispenser.</param>
+/// <param name="item">The item that is being gathered.</param>
 /// <returns>No return behavior.</returns>
 void OnDispenserGathered(ResourceDispenser dispenser, BasePlayer player, Item item)
 {
-    Puts($"Player {player.displayName} gathered {item.amount} of {item.info.displayName.english} from dispenser {dispenser.net.ID}.");
-    
-    if (item.info.shortname == "wood")
-    {
-        Puts($"Player {player.displayName} has gathered wood, which is a valuable resource!");
-    }
+    Puts($"Player {player} gathered {item.amount} of {item.info.shortname} from dispenser {dispenser}.");
 }
 ```
 ```
@@ -13755,23 +12458,16 @@ void OnDispenserGathered(ResourceDispenser dispenser, BasePlayer player, Item it
 ```csharp
 ```csharp
 /// <summary>
-/// Determines whether a player can bypass the connection queue.
+/// Called to determine if a player can bypass the connection queue.
 /// </summary>
 /// <param name="connection">The network connection of the player attempting to join.</param>
 /// <returns>
-/// Returns `true` if the player can bypass the queue, `false` if they cannot, 
-/// or `null` if the default queue logic should be applied.
+/// Returns `true` if the player can bypass the queue; otherwise, returns `false`.
+/// If the method returns `null`, the default queue behavior will be applied. (bool)
 /// </returns>
-bool? CanBypassQueue(Network.Connection connection)
+object CanBypassQueue(Network.Connection connection)
 {
     Puts($"Checking if connection {connection.userid} can bypass the queue.");
-
-    if (connection.userid == 123456) // Example for a specific user ID
-    {
-        Puts($"Connection {connection.userid} is a special case and can bypass the queue.");
-        return true;
-    }
-
     return null;
 }
 ```
@@ -13827,20 +12523,13 @@ bool? CanBypassQueue(Network.Connection connection)
 /// <param name="npc">The NPC that the player is conversing with.</param>
 /// <param name="player">The player responding to the conversation.</param>
 /// <param name="conversation">The conversation data associated with the interaction.</param>
-/// <param name="response">The specific response node selected by the player.</param>
+/// <param name="response">The specific response node chosen by the player.</param>
 /// <returns>
-/// Returns `null` to allow the response to proceed, or any non-null value to prevent the response from being processed.
+/// Returns `null` to allow the default response behavior, or any non-null value to override it. (object)
 /// </returns>
 object OnNpcConversationRespond(NPCTalking npc, BasePlayer player, ConversationData conversation, ConversationData.ResponseNode response)
 {
-    Puts($"Player {player.displayName} responded to NPC {npc.name} with response: {response.text}");
-
-    if (response.text.Contains("attack"))
-    {
-        Puts($"Player {player.displayName} is attempting to attack the NPC!");
-        return "You cannot attack this NPC.";
-    }
-
+    Puts($"Player {player} responded to NPC {npc} with response: {response}.");
     return null;
 }
 ```
@@ -13903,18 +12592,11 @@ object OnNpcConversationRespond(NPCTalking npc, BasePlayer player, ConversationD
 /// <param name="crate">The hackable locked crate being attacked.</param>
 /// <param name="hitInfo">Information about the hit, including damage and position.</param>
 /// <returns>
-/// Returns a non-null value to prevent further processing of the attack; otherwise, returns `null` to allow normal processing.
+/// Returns a non-null value to override the default attack behavior; otherwise, returns null to allow normal processing. (object)
 /// </returns>
 object OnCrateLaptopAttack(HackableLockedCrate crate, HitInfo hitInfo)
 {
-    Puts($"Laptop on crate attacked! Damage dealt: {hitInfo.damageTypes.Total()} by {hitInfo.Initiator?.displayName ?? "unknown"}.");
-    
-    if (hitInfo.damageTypes.Total() > 100)
-    {
-        Puts("Attack too strong! Laptop is destroyed.");
-        return "Laptop destroyed due to excessive damage.";
-    }
-    
+    Puts($"Laptop on crate {crate} was attacked with damage: {hitInfo.damageTypes.Total()}.");
     return null;
 }
 ```
@@ -13957,23 +12639,13 @@ object OnCrateLaptopAttack(HackableLockedCrate crate, HitInfo hitInfo)
 /// </summary>
 /// <param name="player">The player for whom the spawn point is being found.</param>
 /// <returns>
-/// Returns a <c>BasePlayer.SpawnPoint</c> object representing the chosen spawn point.
-/// If a custom spawn point is provided by a hook, it will be returned; otherwise, a default spawn point will be determined.
+/// Returns a <c>BasePlayer.SpawnPoint</c> object representing the chosen spawn point. 
+/// If the hook returns a non-null value, that value will be used as the spawn point. (BasePlayer.SpawnPoint)
 /// </returns>
-BasePlayer.SpawnPoint OnFindSpawnPoint(BasePlayer player)
+object OnFindSpawnPoint(BasePlayer player)
 {
-    Puts($"Finding spawn point for player: {player.displayName} (ID: {player.UserIDString})");
-
-    if (player.IsInTutorial)
-    {
-        Puts($"Player {player.displayName} is in tutorial mode. Finding tutorial spawn point.");
-    }
-
-    return new BasePlayer.SpawnPoint
-    {
-        pos = new Vector3(0, 0, 0), // Placeholder for actual spawn logic
-        rot = Quaternion.identity // Placeholder for actual rotation logic
-    };
+    Puts($"Finding spawn point for player {player}.");
+    return null;
 }
 ```
 ```
@@ -14067,23 +12739,16 @@ BasePlayer.SpawnPoint OnFindSpawnPoint(BasePlayer player)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when an event is triggered to spawn a specified prefab.
+/// Called when an event is triggered to handle the spawning of associated entities.
 /// </summary>
 /// <param name="eventPrefab">The prefab associated with the triggered event.</param>
-/// <returns>No return behavior.</returns>
-void OnEventTrigger(TriggeredEventPrefab eventPrefab)
+/// <returns>
+/// Returns a non-null value to prevent the default event behavior from executing; otherwise, returns null to allow it. (object)
+/// </returns>
+object OnEventTrigger(TriggeredEventPrefab eventPrefab)
 {
     Puts($"Event triggered for prefab: {eventPrefab.resourcePath}");
-    if (eventPrefab.shouldBroadcastSpawn)
-    {
-        foreach (BasePlayer player in BasePlayer.activePlayerList)
-        {
-            if (player.IsConnected && !player.IsInTutorial)
-            {
-                player.ShowToast(GameTip.Styles.Server_Event, "An event has occurred!", false);
-            }
-        }
-    }
+    return null;
 }
 ```
 ```
@@ -14127,20 +12792,18 @@ void OnEventTrigger(TriggeredEventPrefab eventPrefab)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when fuel is consumed by the oven.
+/// Called when fuel is consumed by an oven.
 /// </summary>
 /// <param name="oven">The oven consuming the fuel.</param>
 /// <param name="fuel">The fuel item being consumed.</param>
 /// <param name="burnable">The burnable item modifier associated with the fuel.</param>
-/// <returns>No return behavior.</returns>
-void OnFuelConsume(BaseOven oven, Item fuel, ItemModBurnable burnable)
+/// <returns>
+/// Returns a non-null value to prevent the default fuel consumption behavior; otherwise, returns null to allow it. (object)
+/// </returns>
+object OnFuelConsume(BaseOven oven, Item fuel, ItemModBurnable burnable)
 {
-    Puts($"Fuel consumed: {fuel.info.displayName.english} in oven ID: {oven.net.ID}.");
-
-    if (fuel.amount < 1)
-    {
-        Puts("Fuel amount is insufficient for consumption.");
-    }
+    Puts($"Fuel consumption event for oven {oven} with fuel {fuel} and burnable {burnable}.");
+    return null;
 }
 ```
 ```
@@ -14184,23 +12847,17 @@ void OnFuelConsume(BaseOven oven, Item fuel, ItemModBurnable burnable)
 ```csharp
 ```csharp
 /// <summary>
-/// Determines whether a player can pick up a specific entity.
+/// Determines whether a player can pick up the specified entity.
 /// </summary>
 /// <param name="player">The player attempting to pick up the entity.</param>
+/// <param name="entity">The entity that is being picked up.</param>
 /// <returns>
-/// Returns `true` if the player can pick up the entity; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will determine if the player can pick up the entity.
+/// Returns `true` if the player can pick up the entity; otherwise, returns `false`. 
+/// If the method returns `null`, the default game logic will determine if the player can pick it up. (bool)
 /// </returns>
-bool? CanPickupEntity(BasePlayer player, BaseCombatEntity entity)
+object CanPickupEntity(BasePlayer player, BaseCombatEntity entity)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to pick up the entity: {entity.name}.");
-
-    if (player.IsInTutorial)
-    {
-        Puts($"Player {player.displayName} is in a tutorial and cannot pick up entities.");
-        return false;
-    }
-
+    Puts($"Checking if player {player} can pick up entity {entity}.");
     return null;
 }
 ```
@@ -14238,22 +12895,15 @@ bool? CanPickupEntity(BasePlayer player, BaseCombatEntity entity)
 /// Called when a player attempts to buy an item from a vending machine.
 /// </summary>
 /// <param name="vendingMachine">The vending machine from which the item is being purchased.</param>
-/// <param name="buyer">The player attempting to buy the item.</param>
+/// <param name="player">The player attempting to buy the item.</param>
 /// <param name="itemId">The ID of the item being purchased.</param>
 /// <param name="amount">The amount of the item being purchased.</param>
 /// <returns>
-/// Returns `null` to allow the purchase, or any non-null value to prevent the purchase.
+/// Returns `null` to allow the purchase to proceed, or a non-null value to prevent the purchase. (object)
 /// </returns>
-object OnBuyVendingItem(VendingMachine vendingMachine, BasePlayer buyer, int itemId, int amount)
+object OnBuyVendingItem(VendingMachine vendingMachine, BasePlayer player, int itemId, int amount)
 {
-    Puts($"Player {buyer.displayName} is attempting to buy {amount} of item ID {itemId} from vending machine {vendingMachine.net.ID}.");
-
-    if (amount > 10)
-    {
-        Puts($"Purchase denied: {buyer.displayName} tried to buy too many items.");
-        return "You cannot buy more than 10 items at once.";
-    }
-
+    Puts($"Player {player} is attempting to buy item {itemId} (Amount: {amount}) from vending machine {vendingMachine}.");
     return null;
 }
 ```
@@ -14263,9 +12913,9 @@ object OnBuyVendingItem(VendingMachine vendingMachine, BasePlayer buyer, int ite
 
 ```csharp
 
+	[RPC_Server.CallsPerSecond(5uL)]
 	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
-	[RPC_Server.CallsPerSecond(5uL)]
 	public void BuyItem(RPCMessage rpc)
 	{
 		if (OccupiedCheck(rpc.player))
@@ -14297,18 +12947,11 @@ object OnBuyVendingItem(VendingMachine vendingMachine, BasePlayer buyer, int ite
 /// <param name="playerId">The ID of the player to whom the turret is being assigned.</param>
 /// <param name="assigner">The player who is assigning the turret.</param>
 /// <returns>
-/// Returns `null` to allow the assignment, or any non-null value to prevent the assignment.
+/// Returns `null` to allow the assignment, or any non-null value to prevent the assignment. (object)
 /// </returns>
 object OnTurretAssign(AutoTurret turret, ulong playerId, BasePlayer assigner)
 {
-    Puts($"Turret {turret.net.ID} is being assigned to player ID: {playerId} by {assigner.displayName}.");
-    
-    if (playerId == 123456789) // Example condition to block assignment
-    {
-        Puts($"Assignment to player ID {playerId} is not allowed.");
-        return "You cannot assign this turret to this player.";
-    }
-
+    Puts($"Turret {turret} is being assigned to player ID: {playerId} by {assigner}.");
     return null;
 }
 ```
@@ -14348,26 +12991,19 @@ object OnTurretAssign(AutoTurret turret, ulong playerId, BasePlayer assigner)
 ```csharp
 ```csharp
 /// <summary>
-/// Called to determine if a player can cast their fishing rod at a specified position.
+/// Called to determine if a player can cast their fishing rod at a specified position with a given lure.
 /// </summary>
 /// <param name="player">The player attempting to cast the fishing rod.</param>
 /// <param name="fishingRod">The fishing rod being used for the cast.</param>
-/// <param name="lure">The lure currently attached to the fishing rod.</param>
-/// <param name="castPosition">The position where the player is attempting to cast the fishing rod.</param>
+/// <param name="lure">The lure item being used for the cast.</param>
+/// <param name="castPosition">The position where the player intends to cast the fishing rod.</param>
 /// <returns>
-/// Returns `true` if the player can cast the fishing rod, or `false` if they cannot. 
-/// If the method returns `null`, the default game logic will determine if the cast is valid.
+/// Returns `true` if the player can cast the fishing rod; otherwise, returns `false`. 
+/// If the method returns `null`, the default game logic will determine if the cast is valid. (bool)
 /// </returns>
-bool? CanCastFishingRod(BasePlayer player, BaseFishingRod fishingRod, Item lure, Vector3 castPosition)
+object CanCastFishingRod(BasePlayer player, BaseFishingRod fishingRod, Item lure, Vector3 castPosition)
 {
-    Puts($"Player {player.displayName} is attempting to cast fishing rod at position {castPosition} with lure {lure.info.displayName.english}.");
-
-    if (lure.info.shortname == "special_lure")
-    {
-        Puts($"Player {player.displayName} cannot use the special lure for casting.");
-        return false;
-    }
-
+    Puts($"Player {player} is attempting to cast fishing rod at position {castPosition} using lure {lure}.");
     return null;
 }
 ```
@@ -14437,20 +13073,12 @@ bool? CanCastFishingRod(BasePlayer player, BaseFishingRod fishingRod, Item lure,
 /// </summary>
 /// <param name="oven">The oven instance that is searching for a burnable item.</param>
 /// <returns>
-/// Returns an <c>Item</c> if a burnable item is found; otherwise, returns <c>null</c>.
-/// If the method returns a non-null value, it overrides the default item search logic.
+/// Returns a burnable item if found; otherwise, returns `null`. 
+/// If the hook returns a non-null item, that item will be used instead of the default search result. (Item | null)
 /// </returns>
-Item OnFindBurnable(BaseOven oven)
+object OnFindBurnable(BaseOven oven)
 {
-    Puts($"Searching for burnable items in the oven with ID: {oven.net.ID}.");
-
-    // Example condition to block a specific item
-    if (oven.inventory != null && oven.inventory.itemList.Any(i => i.info.shortname == "wood"))
-    {
-        Puts("Wood is available and will be used as a burnable item.");
-        return oven.inventory.itemList.First(i => i.info.shortname == "wood");
-    }
-
+    Puts($"Searching for burnable item in oven {oven}.");
     return null;
 }
 ```
@@ -14490,17 +13118,12 @@ Item OnFindBurnable(BaseOven oven)
 /// <summary>
 /// Called when a vehicle module is deselected by a player in the garage.
 /// </summary>
-/// <param name="garage">The modular car garage from which the module is being deselected.</param>
+/// <param name="garage">The garage containing the vehicle module.</param>
 /// <param name="player">The player who deselected the vehicle module.</param>
 /// <returns>No return behavior.</returns>
 void OnVehicleModuleDeselected(ModularCarGarage garage, BasePlayer player)
 {
-    Puts($"Player {player.displayName} has deselected a module from the garage: {garage.name}.");
-    
-    if (player.inventory.loot.IsLooting())
-    {
-        Puts($"Player {player.displayName} is currently looting.");
-    }
+    Puts($"Player {player} has deselected a module in garage {garage}.");
 }
 ```
 ```
@@ -14509,8 +13132,8 @@ void OnVehicleModuleDeselected(ModularCarGarage garage, BasePlayer player)
 
 ```csharp
 
-	[RPC_Server.MaxDistance(3f)]
 	[RPC_Server]
+	[RPC_Server.MaxDistance(3f)]
 	public void RPC_DeselectedLootItem(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -14531,13 +13154,13 @@ void OnVehicleModuleDeselected(ModularCarGarage garage, BasePlayer player)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player's map markers are cleared.
+/// Called when the map markers for a player are cleared.
 /// </summary>
 /// <param name="player">The player whose map markers have been cleared.</param>
 /// <returns>No return behavior.</returns>
 void OnMapMarkersCleared(BasePlayer player)
 {
-    Puts($"Map markers cleared for player: {player.displayName} (ID: {player.UserIDString})");
+    Puts($"Map markers cleared for player {player}.");
 }
 ```
 ```
@@ -14546,8 +13169,8 @@ void OnMapMarkersCleared(BasePlayer player)
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.FromOwner]
+	[RPC_Server]
 	[RPC_Server.CallsPerSecond(1uL)]
 	public void Server_ClearMapMarkers(RPCMessage msg)
 	{
@@ -14582,20 +13205,12 @@ void OnMapMarkersCleared(BasePlayer player)
 /// <param name="turret">The turret whose authorization list is being cleared.</param>
 /// <param name="player">The player who initiated the clear action.</param>
 /// <returns>
-/// Returns `null` to allow the action, or any non-null value to prevent the authorization list from being cleared.
+/// Returns `null` to allow the list to be cleared, or any non-null value to prevent the action. (object)
 /// </returns>
 object OnTurretClearList(AutoTurret turret, BasePlayer player)
 {
-    Puts($"Turret {turret.net.ID} authorization list cleared by player {player.displayName} (ID: {player.UserIDString}).");
-    
-    if (player.IsAdmin)
-    {
-        Puts($"Admin {player.displayName} cleared the turret authorization list.");
-        return null; // Allow the action
-    }
-    
-    Puts($"Player {player.displayName} is not authorized to clear the turret list.");
-    return "You are not authorized to clear this turret's authorization list."; // Prevent the action
+    Puts($"Authorization list cleared for turret {turret} by player {player}.");
+    return null;
 }
 ```
 ```
@@ -14632,12 +13247,7 @@ object OnTurretClearList(AutoTurret turret, BasePlayer player)
 /// <returns>No return behavior.</returns>
 void OnTeamCreated(BasePlayer player, RelationshipManager.PlayerTeam team)
 {
-    Puts($"Team created by player {player.displayName} (ID: {player.UserIDString}). Team ID: {team.teamID}, Members: {team.members.Count}");
-    
-    if (team.members.Count > 5)
-    {
-        Puts($"Warning: Team {team.teamID} has exceeded the recommended size with {team.members.Count} members.");
-    }
+    Puts($"Team created by player {player} with Team ID: {team.teamID}.");
 }
 ```
 ```
@@ -14675,23 +13285,16 @@ void OnTeamCreated(BasePlayer player, RelationshipManager.PlayerTeam team)
 /// <summary>
 /// Called when an item crafting task is initiated.
 /// </summary>
-/// <param name="task">The item crafting task that is being created.</param>
+/// <param name="task">The crafting task that is being created.</param>
 /// <param name="owner">The player who is crafting the item.</param>
-/// <param name="fromTempBlueprint">An optional temporary blueprint used for crafting.</param>
+/// <param name="item">The item being crafted, if applicable.</param>
 /// <returns>
-/// Returns `true` if the crafting process can proceed, or `false` if it cannot. 
-/// If the method returns `null`, the default crafting logic will be applied.
+/// Returns `true` if the crafting can proceed, or `false` if it cannot. 
+/// If the method returns `null`, the default crafting logic will be used. (bool)
 /// </returns>
-object OnItemCraft(ItemCraftTask task, BasePlayer owner, Item fromTempBlueprint)
+object OnItemCraft(ItemCraftTask task, BasePlayer owner, Item item)
 {
-    Puts($"Player {owner.displayName} is crafting item with Task UID: {task.taskUID}.");
-
-    if (task.blueprint.targetItem.itemid == 12345) // Example item ID
-    {
-        Puts($"Player {owner.displayName} is attempting to craft a restricted item.");
-        return "You cannot craft this item.";
-    }
-
+    Puts($"Crafting initiated by {owner} for item: {item} with task UID: {task.taskUID}.");
     return null;
 }
 ```
@@ -14762,7 +13365,7 @@ object OnItemCraft(ItemCraftTask task, BasePlayer owner, Item fromTempBlueprint)
 /// <returns>No return behavior.</returns>
 void OnTerrainInitialized()
 {
-    Puts("Terrain has been successfully initialized and all components are set up.");
+    Puts("Terrain has been initialized and components are set up.");
 }
 ```
 ```
@@ -14796,20 +13399,13 @@ void OnTerrainInitialized()
 /// <param name="vendingMachine">The vending machine from which the item is being purchased.</param>
 /// <param name="targetContainer">The container where the item will be placed, if applicable.</param>
 /// <returns>
-/// Returns `true` if the player can purchase the item, `false` if they cannot, 
-/// or a non-null value to override the default purchase behavior.
+/// Returns `true` if the player can afford to purchase the item; otherwise, returns `false`. 
+/// If the method returns a non-null value, it overrides the default purchase behavior. (bool)
 /// </returns>
 object CanPurchaseItem(BasePlayer buyer, Item item, Action<BasePlayer, Item> onItemPurchased, VendingMachine vendingMachine, ItemContainer targetContainer)
 {
-    Puts($"Player {buyer.displayName} is attempting to purchase {item.info.displayName.english} from vending machine.");
-
-    if (item.info.shortname == "restricted.item")
-    {
-        Puts($"Player {buyer.displayName} is not allowed to purchase {item.info.displayName.english}.");
-        return false;
-    }
-
-    return null; // Allow default purchase logic to proceed
+    Puts($"Player {buyer} is attempting to purchase item {item} from vending machine {vendingMachine}.");
+    return null;
 }
 ```
 ```
@@ -14940,21 +13536,13 @@ object CanPurchaseItem(BasePlayer buyer, Item item, Action<BasePlayer, Item> onI
 /// Called to determine if a player can dismount from an entity.
 /// </summary>
 /// <param name="player">The player attempting to dismount.</param>
-/// <param name="mountable">The mountable entity the player is currently on.</param>
+/// <param name="mountable">The entity from which the player is dismounting.</param>
 /// <returns>
-/// Returns `true` if the player can dismount from the entity; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will determine if the player can dismount.
+/// Returns `null` to allow the dismount, or any non-null value to prevent the dismount. (object)
 /// </returns>
-bool? CanDismountEntity(BasePlayer player, BaseMountable mountable)
+object CanDismountEntity(BasePlayer player, BaseMountable mountable)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to dismount from {mountable.gameObject.name}.");
-
-    if (player.IsInCombat())
-    {
-        Puts($"Player {player.displayName} cannot dismount while in combat.");
-        return false;
-    }
-
+    Puts($"Player {player} is attempting to dismount from {mountable}.");
     return null;
 }
 ```
@@ -15049,17 +13637,11 @@ bool? CanDismountEntity(BasePlayer player, BaseMountable mountable)
 /// <summary>
 /// Called when the sprinkler has splashed water on nearby entities.
 /// </summary>
-/// <param name="sprinkler">The sprinkler that performed the splash.</param>
+/// <param name="sprinkler">The sprinkler that performed the splash action.</param>
 /// <returns>No return behavior.</returns>
 void OnSprinklerSplashed(Sprinkler sprinkler)
 {
-    Puts($"Sprinkler at position {sprinkler.transform.position} has splashed water.");
-    
-    // Additional logic can be added here to handle the splash event
-    if (sprinkler.cachedSplashables.Count > 0)
-    {
-        Puts($"Number of entities splashed: {sprinkler.cachedSplashables.Count}");
-    }
+    Puts($"Sprinkler {sprinkler} has splashed water.");
 }
 ```
 ```
@@ -15135,11 +13717,11 @@ void OnSprinklerSplashed(Sprinkler sprinkler)
 /// <summary>
 /// Called when the Bradley APC is initialized.
 /// </summary>
-/// <param name="apc">The instance of the Bradley APC being initialized.</param>
+/// <param name="apc">The Bradley APC that is being initialized.</param>
 /// <returns>No return behavior.</returns>
 void OnBradleyApcInitialize(BradleyAPC apc)
 {
-    Puts($"Initializing Bradley APC with ID: {apc.net.ID} at position: {apc.transform.position}");
+    Puts($"Initializing Bradley APC with ID: {apc.net.ID}.");
 }
 ```
 ```
@@ -15169,20 +13751,13 @@ void OnBradleyApcInitialize(BradleyAPC apc)
 /// </summary>
 /// <param name="player">The player attempting to deploy the item.</param>
 /// <param name="deployer">The deployable item being placed.</param>
-/// <param name="networkableId">The networkable ID of the deployable item.</param>
+/// <param name="networkableId">The networkable ID of the item being deployed.</param>
 /// <returns>
-/// Returns `null` to allow the deployment, or any non-null value to prevent it.
+/// Returns `null` to allow the deployment, or a non-null value to prevent it. (object)
 /// </returns>
 object CanDeployItem(BasePlayer player, Deployer deployer, NetworkableId networkableId)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to deploy item with Networkable ID: {networkableId}.");
-
-    if (player.IsInSafeZone())
-    {
-        Puts($"Player {player.displayName} cannot deploy items in a safe zone.");
-        return "You cannot deploy items in a safe zone.";
-    }
-
+    Puts($"Player {player} is attempting to deploy item with ID {networkableId}.");
     return null;
 }
 ```
@@ -15232,18 +13807,11 @@ object CanDeployItem(BasePlayer player, Deployer deployer, NetworkableId network
 /// <param name="player">The player who is adding the map marker.</param>
 /// <param name="mapNote">The details of the map marker being added.</param>
 /// <returns>
-/// Returns `null` to allow the marker to be added, or any non-null value to prevent the addition of the marker.
+/// Returns `null` to allow the marker to be added, or a non-null value to prevent the addition of the marker. (object)
 /// </returns>
 object OnMapMarkerAdd(BasePlayer player, ProtoBuf.MapNote mapNote)
 {
-    Puts($"Player {player.displayName} is attempting to add a map marker at position: {mapNote.position}.");
-
-    if (mapNote.title == "Restricted Area")
-    {
-        Puts($"Player {player.displayName} tried to add a restricted area marker.");
-        return "You cannot add markers in restricted areas.";
-    }
-
+    Puts($"Player {player} is adding a map marker: {mapNote}.");
     return null;
 }
 ```
@@ -15253,8 +13821,8 @@ object OnMapMarkerAdd(BasePlayer player, ProtoBuf.MapNote mapNote)
 
 ```csharp
 
-	[RPC_Server.FromOwner]
 	[RPC_Server]
+	[RPC_Server.FromOwner]
 	[RPC_Server.CallsPerSecond(8uL)]
 	public void Server_AddMarker(RPCMessage msg)
 	{
@@ -15291,21 +13859,14 @@ object OnMapMarkerAdd(BasePlayer player, ProtoBuf.MapNote mapNote)
 /// Called to determine if a player can mount a specific entity.
 /// </summary>
 /// <param name="player">The player attempting to mount the entity.</param>
-/// <param name="mountable">The mountable entity that the player wants to mount.</param>
+/// <param name="mountable">The entity that is being mounted.</param>
 /// <returns>
 /// Returns `true` if the player can mount the entity, or `false` if they cannot.
-/// If the method returns `null`, the default game logic will determine if the player can mount the entity.
+/// If the method returns `null`, the default game logic will be used to determine if the player can mount the entity. (bool)
 /// </returns>
-bool? CanMountEntity(BasePlayer player, BaseMountable mountable)
+object CanMountEntity(BasePlayer player, BaseMountable mountable)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to mount the entity {mountable.net.ID}.");
-
-    if (player.IsInCombat)
-    {
-        Puts($"Player {player.displayName} cannot mount while in combat.");
-        return false;
-    }
-
+    Puts($"Player {player} is attempting to mount entity {mountable}.");
     return null;
 }
 ```
@@ -15349,20 +13910,13 @@ bool? CanMountEntity(BasePlayer player, BaseMountable mountable)
 /// Called when water is collected from a water pump.
 /// </summary>
 /// <param name="pump">The water pump that is collecting water.</param>
-/// <param name="itemDefinition">The definition of the water item being collected.</param>
+/// <param name="itemDefinition">The item definition of the water being collected.</param>
 /// <returns>
-/// Returns `null` to allow the water collection, or any non-null value to prevent it.
+/// Returns a non-null value to prevent the water collection, or `null` to allow it. (object)
 /// </returns>
 object OnWaterCollect(WaterPump pump, ItemDefinition itemDefinition)
 {
-    Puts($"Water collected from pump at {pump.transform.position}. Item: {itemDefinition.displayName.english}");
-    
-    if (itemDefinition.shortname == "water.purified")
-    {
-        Puts("Purified water collection is restricted.");
-        return "Collection of purified water is not allowed.";
-    }
-    
+    Puts($"Water collected from pump {pump} for item {itemDefinition}.");
     return null;
 }
 ```
@@ -15392,16 +13946,14 @@ object OnWaterCollect(WaterPump pump, ItemDefinition itemDefinition)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when the engine of the motorized rowboat is started.
+/// Called when the engine of the motorized rowboat has started.
 /// </summary>
-/// <param name="rowboat">The motorized rowboat whose engine is being started.</param>
+/// <param name="rowboat">The motorized rowboat whose engine has started.</param>
 /// <param name="driver">The player who is driving the rowboat.</param>
 /// <returns>No return behavior.</returns>
 void OnEngineStarted(MotorRowboat rowboat, BasePlayer driver)
 {
-    Puts($"Engine started for rowboat driven by {driver.displayName} (ID: {driver.UserIDString}).");
-    
-    // Additional logic can be added here, such as logging or triggering events.
+    Puts($"Engine started for rowboat driven by {driver}.");
 }
 ```
 ```
@@ -15447,18 +13999,11 @@ void OnEngineStarted(MotorRowboat rowboat, BasePlayer driver)
 /// <param name="amount">The amount of liquid to splash.</param>
 /// <returns>
 /// Returns `true` if the splash can occur, or `false` if it cannot. 
-/// If the method returns `null`, the default game logic will be used to determine if the splash can occur.
+/// If the method returns `null`, the default game logic will be used to determine if the splash can occur. (bool)
 /// </returns>
-bool? CanWaterBallSplash(ItemDefinition liquidDef, Vector3 position, float radius, int amount)
+object CanWaterBallSplash(ItemDefinition liquidDef, Vector3 position, float radius, int amount)
 {
-    Puts($"Checking if splash can occur with {liquidDef.displayName.english} at position {position} with radius {radius} and amount {amount}.");
-
-    if (liquidDef.itemid == 12345) // Example item ID for a restricted liquid
-    {
-        Puts("Splashing this liquid is not allowed.");
-        return false;
-    }
-
+    Puts($"Checking if water splash can occur with {liquidDef} at {position} with radius {radius} and amount {amount}.");
     return null;
 }
 ```
@@ -15525,7 +14070,7 @@ bool? CanWaterBallSplash(ItemDefinition liquidDef, Vector3 position, float radiu
 ```csharp
 ```csharp
 /// <summary>
-/// Called when an NPC vending machine gives a sold item to a player.
+/// Called when an NPC vending machine gives an item to a player.
 /// </summary>
 /// <param name="vendingMachine">The NPC vending machine that is selling the item.</param>
 /// <param name="soldItem">The item that is being sold.</param>
@@ -15533,7 +14078,7 @@ bool? CanWaterBallSplash(ItemDefinition liquidDef, Vector3 position, float radiu
 /// <returns>No return behavior.</returns>
 void OnNpcGiveSoldItem(NPCVendingMachine vendingMachine, Item soldItem, BasePlayer buyer)
 {
-    Puts($"NPC Vending Machine {vendingMachine.net.ID} is giving item {soldItem.info.displayName.english} to player {buyer.displayName}.");
+    Puts($"NPC Vending Machine {vendingMachine} sold item {soldItem} to player {buyer}.");
 }
 ```
 ```
@@ -15561,17 +14106,11 @@ void OnNpcGiveSoldItem(NPCVendingMachine vendingMachine, Item soldItem, BasePlay
 /// </summary>
 /// <param name="item">The item that is being locked or unlocked.</param>
 /// <returns>
-/// Returns a non-null value to prevent the item from being locked or unlocked. 
-/// If `null` is returned, the lock/unlock action proceeds as normal.
+/// Returns `null` to allow the locking/unlocking action, or any non-null value to prevent it. (object)
 /// </returns>
 object OnItemLock(Item item)
 {
-    Puts($"Item {item.info.displayName.english} (ID: {item.net.ID}) is being locked.");
-    if (item.amount > 10)
-    {
-        Puts($"Item {item.info.displayName.english} cannot be locked because it has more than 10 units.");
-        return "Cannot lock items with more than 10 units.";
-    }
+    Puts($"Item {item} is being locked.");
     return null;
 }
 ```
@@ -15597,23 +14136,16 @@ object OnItemLock(Item item)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player rejects a team invite.
+/// Called when a player rejects an invitation to join a team.
 /// </summary>
-/// <param name="player">The player who rejected the invite.</param>
-/// <param name="team">The team from which the invite was rejected.</param>
+/// <param name="player">The player who rejected the team invite.</param>
+/// <param name="team">The team that the player was invited to join.</param>
 /// <returns>
-/// Returns `null` to allow the rejection to proceed, or any non-null value to prevent the rejection.
+/// Returns `null` to allow the default rejection behavior, or a non-null value to override it. (object)
 /// </returns>
 object OnTeamRejectInvite(BasePlayer player, RelationshipManager.PlayerTeam team)
 {
-    Puts($"Player {player.displayName} has rejected the invite from team {team.TeamName}.");
-
-    if (team.TeamName == "VIPs")
-    {
-        Puts($"Player {player.displayName} cannot reject invites from VIP teams.");
-        return "You cannot reject invites from VIP teams.";
-    }
-
+    Puts($"Player {player} has rejected the invite to team {team}.");
     return null;
 }
 ```
@@ -15651,11 +14183,11 @@ object OnTeamRejectInvite(BasePlayer player, RelationshipManager.PlayerTeam team
 /// <summary>
 /// Called when the firing of a liquid weapon has stopped.
 /// </summary>
-/// <param name="liquidWeapon">The liquid weapon that has stopped firing.</param>
+/// <param name="weapon">The liquid weapon that has stopped firing.</param>
 /// <returns>No return behavior.</returns>
-void OnLiquidWeaponFiringStopped(LiquidWeapon liquidWeapon)
+void OnLiquidWeaponFiringStopped(LiquidWeapon weapon)
 {
-    Puts($"Liquid weapon {liquidWeapon.net.ID} has stopped firing.");
+    Puts($"Liquid weapon {weapon} has stopped firing.");
 }
 ```
 ```
@@ -15688,14 +14220,13 @@ void OnLiquidWeaponFiringStopped(LiquidWeapon liquidWeapon)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a firework is started.
+/// Called when a firework is started and begins its display.
 /// </summary>
 /// <param name="firework">The firework that has been started.</param>
 /// <returns>No return behavior.</returns>
 void OnFireworkStarted(BaseFirework firework)
 {
-    Puts($"Firework {firework.net.ID} has been started.");
-    // Additional logic can be added here if needed.
+    Puts($"Firework {firework} has started.");
 }
 ```
 ```
@@ -15722,21 +14253,14 @@ void OnFireworkStarted(BaseFirework firework)
 /// <summary>
 /// Called when a wildlife trap successfully catches an item.
 /// </summary>
-/// <param name="trap">The wildlife trap that caught the item.</param>
+/// <param name="trap">The survival fish trap that caught the item.</param>
 /// <param name="itemDefinition">The definition of the item that was caught.</param>
 /// <returns>
-/// Returns `null` to allow the default behavior of the trap, or any non-null value to prevent the item from being caught.
+/// Returns `null` to allow the default behavior of item spawning, or a non-null value to prevent it. (object)
 /// </returns>
 object OnWildlifeTrap(SurvivalFishTrap trap, ItemDefinition itemDefinition)
 {
-    Puts($"Wildlife trap at {trap.transform.position} caught a {itemDefinition.displayName.english}.");
-    
-    if (itemDefinition.shortname == "fish.mackerel")
-    {
-        Puts("Mackerel caught! Special handling applied.");
-        return "Caught a mackerel!";
-    }
-    
+    Puts($"Wildlife trap {trap} caught item: {itemDefinition}.");
     return null;
 }
 ```
@@ -15794,20 +14318,15 @@ object OnWildlifeTrap(SurvivalFishTrap trap, ItemDefinition itemDefinition)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a mission is successfully completed.
+/// Called when a mission is successfully completed by a player.
 /// </summary>
 /// <param name="mission">The mission that was completed.</param>
-/// <param name="instance">The instance of the mission that was accomplished.</param>
+/// <param name="instance">The specific instance of the mission that was accomplished.</param>
 /// <param name="player">The player who completed the mission.</param>
 /// <returns>No return behavior.</returns>
 void OnMissionSucceeded(BaseMission mission, BaseMission.MissionInstance instance, BasePlayer player)
 {
-    Puts($"Mission {mission.missionName} succeeded for player {player.displayName} (ID: {player.UserIDString}).");
-
-    if (player.HasAchievement("MissionMaster"))
-    {
-        Puts($"Player {player.displayName} has completed a mission and earned the 'MissionMaster' achievement!");
-    }
+    Puts($"Mission {mission} succeeded for player {player}.");
 }
 ```
 ```
@@ -15831,25 +14350,18 @@ void OnMissionSucceeded(BaseMission mission, BaseMission.MissionInstance instanc
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a vehicle module is moved by a player.
+/// Called to determine if a vehicle module can be moved by a player.
 /// </summary>
-/// <param name="module">The vehicle module being moved.</param>
+/// <param name="module">The vehicle module that is being moved.</param>
 /// <param name="vehicle">The vehicle that contains the module.</param>
 /// <param name="player">The player attempting to move the module.</param>
 /// <returns>
-/// Returns `true` if the module can be moved, `false` if it cannot be moved, 
-/// or `null` to allow the default game logic to determine the outcome.
+/// Returns `true` if the module can be moved, or `false` if it cannot. 
+/// If the method returns `null`, the default game logic will determine if the module can be moved. (bool)
 /// </returns>
 object OnVehicleModuleMove(BaseVehicleModule module, BaseModularVehicle vehicle, BasePlayer player)
 {
-    Puts($"Player {player.displayName} is attempting to move module {module.moduleName} from vehicle {vehicle.net.ID}.");
-
-    if (module.IsLocked)
-    {
-        Puts($"Module {module.moduleName} is locked and cannot be moved.");
-        return false;
-    }
-
+    Puts($"Player {player} is attempting to move module {module} from vehicle {vehicle}.");
     return null;
 }
 ```
@@ -15888,21 +14400,14 @@ object OnVehicleModuleMove(BaseVehicleModule module, BaseModularVehicle vehicle,
 /// Determines whether this player can network to another player.
 /// </summary>
 /// <param name="sourcePlayer">The player attempting to network.</param>
-/// <param name="targetPlayer">The player to which the network connection is being evaluated.</param>
+/// <param name="targetPlayer">The player to which the networking is being checked.</param>
 /// <returns>
 /// Returns `true` if the source player can network to the target player; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will determine the networking conditions.
+/// If the method returns `null`, the default networking logic will be applied. (bool)
 /// </returns>
-bool? CanNetworkTo(BasePlayer sourcePlayer, BasePlayer targetPlayer)
+object CanNetworkTo(BasePlayer sourcePlayer, BasePlayer targetPlayer)
 {
-    Puts($"Checking network connection from {sourcePlayer.displayName} to {targetPlayer.displayName}.");
-
-    if (targetPlayer.IsDead())
-    {
-        Puts($"Cannot network to {targetPlayer.displayName} because they are dead.");
-        return false;
-    }
-
+    Puts($"Checking network capability from {sourcePlayer} to {targetPlayer}.");
     return null;
 }
 ```
@@ -15942,14 +14447,13 @@ bool? CanNetworkTo(BasePlayer sourcePlayer, BasePlayer targetPlayer)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a new terrain is being created.
+/// Called when creating a new terrain in the game world.
 /// </summary>
 /// <param name="generator">The terrain generator responsible for creating the terrain.</param>
 /// <returns>No return behavior.</returns>
 void OnTerrainCreate(TerrainGenerator generator)
 {
-    Puts($"Creating terrain with generator: {generator.GetType().Name}");
-    // Additional logic can be added here if needed for terrain creation.
+    Puts($"Creating terrain with generator: {generator}.");
 }
 ```
 ```
@@ -16002,19 +14506,17 @@ void OnTerrainCreate(TerrainGenerator generator)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when the cupboard protection time is calculated.
+/// Called when calculating the protection time provided by a cupboard.
 /// </summary>
 /// <param name="cupboard">The building privilege associated with the cupboard.</param>
 /// <param name="protectedMinutes">The calculated protected minutes for the cupboard.</param>
-/// <returns>No return behavior.</returns>
-void OnCupboardProtectionCalculated(BuildingPrivlidge cupboard, float protectedMinutes)
+/// <returns>
+/// Returns a modified float value if the hook alters the default protection time; otherwise, returns the original protected minutes. (float)
+/// </returns>
+object OnCupboardProtectionCalculated(BuildingPrivlidge cupboard, float protectedMinutes)
 {
-    Puts($"Cupboard protection calculated: {protectedMinutes} minutes for cupboard at {cupboard.transform.position}.");
-    
-    if (protectedMinutes < 10f)
-    {
-        Puts("Warning: Cupboard protection is below the minimum threshold!");
-    }
+    Puts($"Calculating protection for cupboard {cupboard} with initial protected minutes: {protectedMinutes}.");
+    return protectedMinutes; // Allowing the default value to be returned
 }
 ```
 ```
@@ -16074,23 +14576,16 @@ void OnCupboardProtectionCalculated(BuildingPrivlidge cupboard, float protectedM
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a bonus item is dropped for a player after an action.
+/// Called when a bonus item is about to be dropped for a player.
 /// </summary>
 /// <param name="item">The bonus item that is being dropped.</param>
-/// <param name="player">The player who is receiving the bonus item.</param>
+/// <param name="player">The player receiving the bonus item.</param>
 /// <returns>
-/// Returns a non-null value to prevent the item from being dropped, or `null` to allow the drop to proceed.
+/// Returns `null` to allow the item to be dropped as normal. If a non-null value is returned, the drop is canceled. (object)
 /// </returns>
 object OnBonusItemDrop(Item item, BasePlayer player)
 {
-    Puts($"Bonus item {item.info.displayName.english} is being dropped for player {player.displayName} (ID: {player.UserIDString}).");
-
-    if (player.inventory.GetAmount(item.info.itemid) >= 100)
-    {
-        Puts($"Player {player.displayName} cannot receive more of {item.info.displayName.english} as they already have enough.");
-        return "Inventory full for this item.";
-    }
-
+    Puts($"Dropping bonus item {item} for player {player}.");
     return null;
 }
 ```
@@ -16153,12 +14648,7 @@ object OnBonusItemDrop(Item item, BasePlayer player)
 /// <returns>No return behavior.</returns>
 void OnFireBallDamage(FireBall fireball, BaseCombatEntity target, HitInfo hitInfo)
 {
-    Puts($"Fireball from {fireball.creatorEntity?.name ?? "unknown"} hit {target.name} for {hitInfo.damageTypes.Get(DamageType.Heat)} damage.");
-    
-    if (target is BasePlayer player)
-    {
-        Puts($"Player {player.displayName} is taking fire damage!");
-    }
+    Puts($"Fireball from {fireball} hit {target} at position {hitInfo.HitPositionWorld}.");
 }
 ```
 ```
@@ -16203,20 +14693,15 @@ void OnFireBallDamage(FireBall fireball, BaseCombatEntity target, HitInfo hitInf
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player's phone name is updated.
+/// Called when the name of a phone is updated.
 /// </summary>
-/// <param name="phoneController">The phone controller that manages the phone.</param>
+/// <param name="phone">The phone controller whose name is being updated.</param>
 /// <param name="newName">The new name for the phone.</param>
-/// <param name="player">The player who updated the phone name.</param>
+/// <param name="player">The player who initiated the name update.</param>
 /// <returns>No return behavior.</returns>
-void OnPhoneNameUpdated(PhoneController phoneController, string newName, BasePlayer player)
+void OnPhoneNameUpdated(PhoneController phone, string newName, BasePlayer player)
 {
-    Puts($"Player {player.displayName} updated their phone name to: {newName}");
-    
-    if (newName == "Emergency")
-    {
-        Puts("Warning: Player has set their phone name to 'Emergency'.");
-    }
+    Puts($"Phone name updated to '{newName}' by player {player}.");
 }
 ```
 ```
@@ -16250,24 +14735,17 @@ void OnPhoneNameUpdated(PhoneController phoneController, string newName, BasePla
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a liquid vessel is filled by a player or a liquid container.
+/// Called when a liquid vessel is filled by a player or from the world.
 /// </summary>
 /// <param name="vessel">The liquid vessel being filled.</param>
 /// <param name="player">The player attempting to fill the vessel.</param>
 /// <param name="liquidContainer">The liquid container being used to fill the vessel.</param>
 /// <returns>
-/// Returns a non-null value to prevent the filling action, or `null` to allow it.
+/// Returns a non-null value to prevent the filling action, or `null` to allow it. (object)
 /// </returns>
 object OnLiquidVesselFill(BaseLiquidVessel vessel, BasePlayer player, LiquidContainer liquidContainer)
 {
-    Puts($"Player {player.displayName} is attempting to fill the vessel with liquid from {liquidContainer?.name ?? "world"}.");
-
-    if (liquidContainer != null && !liquidContainer.HasLiquidItem())
-    {
-        Puts($"Filling failed: {liquidContainer.name} has no liquid.");
-        return "No liquid available in the container.";
-    }
-
+    Puts($"Player {player} is attempting to fill the liquid vessel {vessel} from {liquidContainer}.");
     return null;
 }
 ```
@@ -16336,23 +14814,15 @@ object OnLiquidVesselFill(BaseLiquidVessel vessel, BasePlayer player, LiquidCont
 /// <summary>
 /// Called when the turret mode is toggled by a player.
 /// </summary>
-/// <param name="turret">The auto turret whose mode is being toggled.</param>
+/// <param name="turret">The auto turret that is having its mode toggled.</param>
 /// <param name="player">The player who is toggling the turret mode.</param>
 /// <returns>
-/// Returns `null` to allow the mode toggle, or any non-null value to prevent the toggle action.
+/// Returns `null` to allow the default behavior, or a non-null value to prevent the mode toggle. (object)
 /// </returns>
 object OnTurretModeToggle(AutoTurret turret, BasePlayer player)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) toggled turret mode for turret ID: {turret.net.ID}.");
-    
-    if (player.IsAdmin)
-    {
-        Puts($"Admin {player.displayName} is allowed to toggle turret mode.");
-        return null;
-    }
-    
-    Puts($"Player {player.displayName} is not authorized to toggle turret mode.");
-    return "You are not authorized to toggle this turret.";
+    Puts($"Turret mode toggled by player {player} for turret {turret}.");
+    return null;
 }
 ```
 ```
@@ -16380,21 +14850,14 @@ object OnTurretModeToggle(AutoTurret turret, BasePlayer player)
 /// <summary>
 /// Called when a player performs a melee attack.
 /// </summary>
-/// <param name="attacker">The player who is attacking.</param>
-/// <param name="hitInfo">Information about the hit, including the target and damage details.</param>
+/// <param name="player">The player initiating the melee attack.</param>
+/// <param name="hitInfo">Information about the hit, including target and damage details.</param>
 /// <returns>
-/// Returns `null` to allow the attack to proceed, or any non-null value to prevent the attack.
+/// Returns `null` to allow the attack to proceed, or any non-null value to prevent the attack from happening. (object)
 /// </returns>
-object OnMeleeAttack(BasePlayer attacker, HitInfo hitInfo)
+object OnMeleeAttack(BasePlayer player, HitInfo hitInfo)
 {
-    Puts($"Player {attacker.displayName} is attempting a melee attack on {hitInfo.HitEntity?.ShortPrefabName ?? "an unknown target"}.");
-
-    if (hitInfo.HitEntity is BasePlayer targetPlayer && targetPlayer.IsSleeping())
-    {
-        Puts($"Player {attacker.displayName} cannot attack a sleeping player.");
-        return "Cannot attack sleeping players.";
-    }
-
+    Puts($"Player {player} initiated a melee attack with hit info: {hitInfo}.");
     return null;
 }
 ```
@@ -16404,8 +14867,8 @@ object OnMeleeAttack(BasePlayer attacker, HitInfo hitInfo)
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.IsActiveItem]
+	[RPC_Server]
 	public void PlayerAttack(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -16563,13 +15026,13 @@ object OnMeleeAttack(BasePlayer attacker, HitInfo hitInfo)
 							vector3 = (pointStart - position).normalized * ConVar.AntiHack.melee_backtracking;
 							vector4 = (vector - pointStart).normalized * ConVar.AntiHack.melee_backtracking;
 						}
-						if (GamePhysics.LineOfSight(center - vector2, position + vector2, num5) && GamePhysics.LineOfSight(position - vector3, pointStart + vector3, num5) && GamePhysics.LineOfSight(pointStart - vector4, vector, num5))
+						if (GamePhysics.LineOfSight(center - vector2, position + vector2, num5) && GamePhysics.LineOfSight(position - vector3, pointStart + vector3, num5) && GamePhysics.LineOfSight(pointStart - vector4, vector, num5) && GamePhysics.LineOfSight(vector, hitPositionWorld, num5))
 						{
-							num16 = (GamePhysics.LineOfSight(vector, hitPositionWorld, num5) ? 1 : 0);
+							num16 = (GamePhysics.LineOfSight(position, hitPositionWorld, num5) ? 1 : 0);
 							if (num16 != 0)
 							{
 								player.stats.Add("hit_" + hitEntity.Categorize() + "_direct_los", 1, Stats.Server);
-								goto IL_07c7;
+								goto IL_07d5;
 							}
 						}
 						else
@@ -16577,95 +15040,94 @@ object OnMeleeAttack(BasePlayer attacker, HitInfo hitInfo)
 							num16 = 0;
 						}
 						player.stats.Add("hit_" + hitEntity.Categorize() + "_indirect_los", 1, Stats.Server);
-						goto IL_07c7;
+						goto IL_07d5;
 					}
-					goto IL_08b5;
+					goto IL_08c3;
 				}
-				goto IL_0a1c;
+				goto IL_0a2a;
 			}
-			goto IL_0a2e;
-			IL_07c7:
+			goto IL_0a3c;
+			IL_08c3:
+			if (flag8 && flag && !flag7)
+			{
+				Vector3 hitPositionWorld2 = obj.HitPositionWorld;
+				Vector3 position2 = basePlayer.eyes.position;
+				Vector3 vector5 = basePlayer.CenterPoint();
+				float melee_losforgiveness = ConVar.AntiHack.melee_losforgiveness;
+				bool flag9 = GamePhysics.LineOfSight(hitPositionWorld2, position2, num5, 0f, melee_losforgiveness) && GamePhysics.LineOfSight(position2, hitPositionWorld2, num5, melee_losforgiveness, 0f);
+				if (!flag9)
+				{
+					flag9 = GamePhysics.LineOfSight(hitPositionWorld2, vector5, num5, 0f, melee_losforgiveness) && GamePhysics.LineOfSight(vector5, hitPositionWorld2, num5, melee_losforgiveness, 0f);
+				}
+				if (!flag9)
+				{
+					string shortPrefabName10 = base.ShortPrefabName;
+					string shortPrefabName11 = basePlayer.ShortPrefabName;
+					string[] obj2 = new string[12]
+					{
+						"Line of sight (", shortPrefabName10, " on ", shortPrefabName11, ") ", null, null, null, null, null,
+						null, null
+					};
+					Vector3 vector6 = hitPositionWorld2;
+					obj2[5] = vector6.ToString();
+					obj2[6] = " ";
+					vector6 = position2;
+					obj2[7] = vector6.ToString();
+					obj2[8] = " or ";
+					vector6 = hitPositionWorld2;
+					obj2[9] = vector6.ToString();
+					obj2[10] = " ";
+					vector6 = vector5;
+					obj2[11] = vector6.ToString();
+					AntiHack.Log(player, AntiHackType.MeleeHack, string.Concat(obj2));
+					player.stats.combat.LogInvalid(obj, "melee_los");
+					flag8 = false;
+				}
+			}
+			goto IL_0a2a;
+			IL_0a2a:
+			if (!flag8)
+			{
+				AntiHack.AddViolation(player, AntiHackType.MeleeHack, ConVar.AntiHack.melee_penalty);
+				return;
+			}
+			goto IL_0a3c;
+			IL_07d5:
 			if (num16 == 0)
 			{
-				string shortPrefabName10 = base.ShortPrefabName;
-				string shortPrefabName11 = hitEntity.ShortPrefabName;
-				string[] obj2 = new string[14]
+				string shortPrefabName12 = base.ShortPrefabName;
+				string shortPrefabName13 = hitEntity.ShortPrefabName;
+				string[] obj3 = new string[14]
 				{
-					"Line of sight (", shortPrefabName10, " on ", shortPrefabName11, ") ", null, null, null, null, null,
+					"Line of sight (", shortPrefabName12, " on ", shortPrefabName13, ") ", null, null, null, null, null,
 					null, null, null, null
 				};
-				Vector3 vector5 = center;
-				obj2[5] = vector5.ToString();
-				obj2[6] = " ";
-				vector5 = position;
-				obj2[7] = vector5.ToString();
-				obj2[8] = " ";
-				vector5 = pointStart;
-				obj2[9] = vector5.ToString();
-				obj2[10] = " ";
-				vector5 = vector;
-				obj2[11] = vector5.ToString();
-				obj2[12] = " ";
-				vector5 = hitPositionWorld;
-				obj2[13] = vector5.ToString();
-				AntiHack.Log(player, AntiHackType.MeleeHack, string.Concat(obj2));
+				Vector3 vector6 = center;
+				obj3[5] = vector6.ToString();
+				obj3[6] = " ";
+				vector6 = position;
+				obj3[7] = vector6.ToString();
+				obj3[8] = " ";
+				vector6 = pointStart;
+				obj3[9] = vector6.ToString();
+				obj3[10] = " ";
+				vector6 = vector;
+				obj3[11] = vector6.ToString();
+				obj3[12] = " ";
+				vector6 = hitPositionWorld;
+				obj3[13] = vector6.ToString();
+				AntiHack.Log(player, AntiHackType.MeleeHack, string.Concat(obj3));
 				player.stats.combat.LogInvalid(obj, "melee_los");
 				flag8 = false;
 			}
-			goto IL_08b5;
-			IL_0a2e:
+			goto IL_08c3;
+			IL_0a3c:
 			player.metabolism.UseHeart(heartStress * 0.2f);
 			using (TimeWarning.New("DoAttackShared", 50))
 			{
 				DoAttackShared(obj);
 			}
 			Facepunch.Pool.Free(ref obj);
-			return;
-			IL_0a1c:
-			if (!flag8)
-			{
-				AntiHack.AddViolation(player, AntiHackType.MeleeHack, ConVar.AntiHack.melee_penalty);
-				return;
-			}
-			goto IL_0a2e;
-			IL_08b5:
-			if (flag8 && flag && !flag7)
-			{
-				Vector3 hitPositionWorld2 = obj.HitPositionWorld;
-				Vector3 position2 = basePlayer.eyes.position;
-				Vector3 vector6 = basePlayer.CenterPoint();
-				float melee_losforgiveness = ConVar.AntiHack.melee_losforgiveness;
-				bool flag9 = GamePhysics.LineOfSight(hitPositionWorld2, position2, num5, 0f, melee_losforgiveness) && GamePhysics.LineOfSight(position2, hitPositionWorld2, num5, melee_losforgiveness, 0f);
-				if (!flag9)
-				{
-					flag9 = GamePhysics.LineOfSight(hitPositionWorld2, vector6, num5, 0f, melee_losforgiveness) && GamePhysics.LineOfSight(vector6, hitPositionWorld2, num5, melee_losforgiveness, 0f);
-				}
-				if (!flag9)
-				{
-					string shortPrefabName12 = base.ShortPrefabName;
-					string shortPrefabName13 = basePlayer.ShortPrefabName;
-					string[] obj3 = new string[12]
-					{
-						"Line of sight (", shortPrefabName12, " on ", shortPrefabName13, ") ", null, null, null, null, null,
-						null, null
-					};
-					Vector3 vector5 = hitPositionWorld2;
-					obj3[5] = vector5.ToString();
-					obj3[6] = " ";
-					vector5 = position2;
-					obj3[7] = vector5.ToString();
-					obj3[8] = " or ";
-					vector5 = hitPositionWorld2;
-					obj3[9] = vector5.ToString();
-					obj3[10] = " ";
-					vector5 = vector6;
-					obj3[11] = vector5.ToString();
-					AntiHack.Log(player, AntiHackType.MeleeHack, string.Concat(obj3));
-					player.stats.combat.LogInvalid(obj, "melee_los");
-					flag8 = false;
-				}
-			}
-			goto IL_0a1c;
 		}
 	}
 
@@ -16681,18 +15143,11 @@ object OnMeleeAttack(BasePlayer attacker, HitInfo hitInfo)
 /// <param name="team">The team that the player is leaving.</param>
 /// <param name="player">The player who is leaving the team.</param>
 /// <returns>
-/// Returns `null` to allow the player to leave the team, or any non-null value to prevent the action.
+/// Returns `null` to allow the player to leave the team, or any non-null value to prevent the action. (object)
 /// </returns>
 object OnTeamLeave(RelationshipManager.PlayerTeam team, BasePlayer player)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) has left the team {team.TeamID}.");
-    
-    if (player.IsBannedFromTeam(team.TeamID))
-    {
-        Puts($"Player {player.displayName} is banned from leaving team {team.TeamID}.");
-        return "You are banned from leaving this team.";
-    }
-    
+    Puts($"Player {player} is leaving team {team}.");
     return null;
 }
 ```
@@ -16724,25 +15179,17 @@ object OnTeamLeave(RelationshipManager.PlayerTeam team, BasePlayer player)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player removes a map marker from their map.
+/// Called when a player removes a map marker from their points of interest.
 /// </summary>
 /// <param name="player">The player who is removing the map marker.</param>
 /// <param name="markers">The list of current map markers.</param>
 /// <param name="index">The index of the marker to be removed.</param>
 /// <returns>
-/// Returns `null` to allow the removal of the marker, or any non-null value to prevent it.
+/// Returns `null` to allow the removal of the marker, or a non-null value to prevent it. (object)
 /// </returns>
 object OnMapMarkerRemove(BasePlayer player, List<ProtoBuf.MapNote> markers, int index)
 {
-    Puts($"Player {player.displayName} is attempting to remove map marker at index {index}.");
-
-    if (index < 0 || index >= markers.Count)
-    {
-        Puts($"Invalid index {index} for player {player.displayName}. No marker removed.");
-        return "Invalid marker index.";
-    }
-
-    Puts($"Map marker at index {index} removed by player {player.displayName}.");
+    Puts($"Player {player} is attempting to remove map marker at index {index}.");
     return null;
 }
 ```
@@ -16753,8 +15200,8 @@ object OnMapMarkerRemove(BasePlayer player, List<ProtoBuf.MapNote> markers, int 
 ```csharp
 
 	[RPC_Server.CallsPerSecond(10uL)]
-	[RPC_Server.FromOwner]
 	[RPC_Server]
+	[RPC_Server.FromOwner]
 	public void Server_RemovePointOfInterest(RPCMessage msg)
 	{
 		int num = msg.read.Int32();
@@ -16780,21 +15227,13 @@ object OnMapMarkerRemove(BasePlayer player, List<ProtoBuf.MapNote> markers, int 
 /// <param name="turret">The auto turret being controlled.</param>
 /// <param name="playerId">The ID of the player attempting to control the turret.</param>
 /// <returns>
-/// Returns `true` if the player can control the turret; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will be used to determine control permissions.
+/// Returns `true` if the player can control the turret; otherwise, returns `false`. 
+/// If the method returns `null`, the default game logic will determine control eligibility. (bool)
 /// </returns>
-bool? OnEntityControl(AutoTurret turret, ulong playerId)
+object OnEntityControl(AutoTurret turret, ulong playerId)
 {
-    Puts($"Player with ID {playerId} is attempting to control the turret {turret.net.ID}.");
-
-    if (turret.IsPowered() && !turret.PeacekeeperMode())
-    {
-        Puts($"Player {playerId} can control the turret.");
-        return true;
-    }
-
-    Puts($"Player {playerId} cannot control the turret due to power or peacekeeper mode.");
-    return false;
+    Puts($"Player {playerId} is attempting to control turret {turret}.");
+    return null;
 }
 ```
 ```
@@ -16828,24 +15267,16 @@ bool? OnEntityControl(AutoTurret turret, ulong playerId)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player is hurt by an attack.
+/// Called when a base player is hurt by an attack.
 /// </summary>
-/// <param name="player">The player who is being hurt.</param>
+/// <param name="player">The player that is being hurt.</param>
 /// <param name="info">Information about the hit, including damage types and initiator.</param>
 /// <returns>
-/// Returns a non-null value to prevent further processing of the hurt event. 
-/// If `null` is returned, the default hurt logic will proceed.
+/// Returns a non-null value to prevent further processing of the hurt event. If null is returned, the default hurt logic will proceed. (object)
 /// </returns>
 object IOnBasePlayerHurt(BasePlayer player, HitInfo info)
 {
-    Puts($"Player {player.displayName} is being hurt by {info.InitiatorPlayer?.displayName ?? "unknown"} with damage: {info.damageTypes.Total()}.");
-
-    if (info.damageTypes.Has(DamageType.Explosion))
-    {
-        Puts($"Explosion damage detected on player {player.displayName}.");
-        return "Explosion damage is not allowed.";
-    }
-
+    Puts($"Player {player} has been hurt with damage info: {info}.");
     return null;
 }
 ```
@@ -16965,25 +15396,16 @@ object IOnBasePlayerHurt(BasePlayer player, HitInfo info)
 ```csharp
 ```csharp
 /// <summary>
-/// Called to determine the scrap cost for researching an item.
+/// Called to determine the research cost for a given item.
 /// </summary>
 /// <param name="item">The item for which the research cost is being determined.</param>
 /// <returns>
-/// Returns the amount of scrap required to research the item. 
-/// If the method returns `null`, the default research cost logic will be applied.
+/// Returns the amount of scrap required for research. If the method returns `null`, the default research cost will be used. (int)
 /// </returns>
-int OnResearchCostDetermine(Item item)
+object OnResearchCostDetermine(Item item)
 {
-    Puts($"Determining research cost for item: {item.info.displayName.english} (ID: {item.info.itemid})");
-    
-    // Example condition to override default research cost
-    if (item.info.itemid == 12345) // Replace with actual item ID
-    {
-        Puts("Custom research cost applied for this item.");
-        return 50; // Custom scrap cost
-    }
-
-    return 0; // Default case, no custom cost applied
+    Puts($"Determining research cost for item: {item} (ID: {item.info.itemid})");
+    return null;
 }
 ```
 ```
@@ -17015,7 +15437,7 @@ int OnResearchCostDetermine(Item item)
 /// <returns>No return behavior.</returns>
 void OnEntityLeave(TriggerBase trigger, BaseEntity entity)
 {
-    Puts($"Entity {entity.displayName} (ID: {entity.net.ID}) has left the trigger area: {trigger.name}.");
+    Puts($"Entity {entity} has left the trigger {trigger}.");
 }
 ```
 ```
@@ -17040,32 +15462,19 @@ void OnEntityLeave(TriggerBase trigger, BaseEntity entity)
 ```csharp
 ```csharp
 /// <summary>
-/// Determines whether a player can change the grade of a building block.
+/// Called to determine if a player can change the grade of a building block.
 /// </summary>
 /// <param name="player">The player attempting to change the grade.</param>
-/// <param name="buildingBlock">The building block whose grade is being changed.</param>
-/// <param name="newGrade">The new grade to which the building block is being changed.</param>
-/// <param name="skinId">The skin ID for the building block.</param>
+/// <param name="block">The building block being modified.</param>
+/// <param name="newGrade">The new grade to which the block is being changed.</param>
+/// <param name="skinId">The skin ID associated with the new grade.</param>
 /// <returns>
-/// Returns `true` if the player can change the grade, `false` if they cannot, 
-/// or `null` if the default game logic should be used to determine the outcome.
+/// Returns `true` if the player can change the grade, or `false` if they cannot.
+/// If the method returns `null`, the default game logic will determine if the grade change is allowed. (bool)
 /// </returns>
-bool? CanChangeGrade(BasePlayer player, BuildingBlock buildingBlock, BuildingGrade.Enum newGrade, ulong skinId)
+object CanChangeGrade(BasePlayer player, BuildingBlock block, BuildingGrade.Enum newGrade, ulong skinId)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to change grade to {newGrade} for {buildingBlock.name}.");
-
-    if (newGrade == BuildingGrade.Enum.Stone)
-    {
-        Puts($"Player {player.displayName} is not allowed to change to stone grade.");
-        return false;
-    }
-
-    if (player.IsInCreativeMode)
-    {
-        Puts($"Player {player.displayName} is in creative mode and can change grades freely.");
-        return true;
-    }
-
+    Puts($"Player {player} is attempting to change the grade of {block} to {newGrade}.");
     return null;
 }
 ```
@@ -17100,19 +15509,17 @@ bool? CanChangeGrade(BasePlayer player, BuildingBlock buildingBlock, BuildingGra
 ```csharp
 ```csharp
 /// <summary>
-/// Called when modules are assigned to a modular vehicle.
+/// Called when assigning modules to a modular vehicle.
 /// </summary>
-/// <param name="vehicle">The modular vehicle to which modules are being assigned.</param>
-/// <param name="modules">An array of vehicle modules being assigned to the vehicle.</param>
-/// <returns>No return behavior.</returns>
-void OnVehicleModulesAssign(ModularCar vehicle, Rust.Modular.ItemModVehicleModule[] modules)
+/// <param name="vehicle">The modular car to which modules are being assigned.</param>
+/// <param name="modules">An array of vehicle modules to be assigned to the vehicle.</param>
+/// <returns>
+/// Returns a non-null value to prevent the assignment of modules, or `null` to allow the assignment to proceed. (object)
+/// </returns>
+object OnVehicleModulesAssign(ModularCar vehicle, ItemModVehicleModule[] modules)
 {
-    Puts($"Assigning modules to vehicle ID: {vehicle.net.ID} with {modules.Length} modules.");
-
-    foreach (var module in modules)
-    {
-        Puts($"Module assigned: {module?.GetType().Name ?? "Unknown Module"}");
-    }
+    Puts($"Assigning modules to vehicle {vehicle} with {modules.Length} modules.");
+    return null;
 }
 ```
 ```
@@ -17162,12 +15569,12 @@ void OnVehicleModulesAssign(ModularCar vehicle, Rust.Modular.ItemModVehicleModul
 /// <param name="flare">The road flare to check for homing missile targeting.</param>
 /// <returns>
 /// Returns `true` if the road flare can be targeted by homing missiles; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will be used to determine if the flare can be targeted.
+/// If the method returns `null`, the default game logic will be used to determine if the flare can be targeted. (bool)
 /// </returns>
-bool? CanBeHomingTargeted(RoadFlare flare)
+object CanBeHomingTargeted(RoadFlare flare)
 {
-    Puts($"Checking homing target status for Road Flare ID: {flare.net.ID}, Position: {flare.transform.position}");
-    return true; // Allow targeting by default
+    Puts($"Checking homing target for Road Flare ID: {flare.net.ID}, Position: {flare.transform.position}.");
+    return true;
 }
 ```
 ```
@@ -17193,24 +15600,15 @@ bool? CanBeHomingTargeted(RoadFlare flare)
 ```csharp
 ```csharp
 /// <summary>
-/// Called to approve a user connection to the server.
+/// Called to approve a user's connection to the server.
 /// </summary>
 /// <param name="connection">The network connection of the user attempting to connect.</param>
 /// <returns>
-/// Returns a non-null value to override the default approval behavior. 
-/// If a string is returned, the user will be kicked with the provided message as the reason. 
-/// If `null` is returned, the user is approved as normal.
+/// Returns a non-null value to override the default approval behavior. If `null` is returned, the user is approved to connect. (object)
 /// </returns>
 object IOnUserApprove(Network.Connection connection)
 {
-    Puts($"User {connection.userid} is attempting to connect with token: {connection.token}.");
-
-    if (connection.token == "malicious_token")
-    {
-        Puts($"User {connection.userid} has been rejected due to a malicious token.");
-        return "Connection rejected: Invalid token.";
-    }
-
+    Puts($"Approving connection for user with ID: {connection.userid} and token: {connection.token}.");
     return null;
 }
 ```
@@ -17279,19 +15677,17 @@ object IOnUserApprove(Network.Connection connection)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when an item is used, allowing for custom behavior before consumption.
+/// Called when an item is used, allowing for custom behavior or adjustments to the amount consumed.
 /// </summary>
 /// <param name="item">The item being used.</param>
 /// <param name="amount">The amount to consume from the item.</param>
-/// <returns>No return behavior.</returns>
-void OnItemUse(Item item, int amount)
+/// <returns>
+/// Returns the adjusted amount to consume. If the hook returns a non-integer value, the default amount will be used. (int)
+/// </returns>
+object OnItemUse(Item item, int amount)
 {
-    Puts($"Item {item.info.displayName.english} (ID: {item.info.itemid}) is being used. Amount to consume: {amount}.");
-
-    if (item.info.shortname == "healthkit")
-    {
-        Puts("Health kit is being used! Restoring health.");
-    }
+    Puts($"Using item {item} with initial amount: {amount}.");
+    return null;
 }
 ```
 ```
@@ -17334,25 +15730,12 @@ void OnItemUse(Item item, int amount)
 /// <param name="player">The player attempting to loot the entity.</param>
 /// <param name="crafter">The industrial crafter being looted.</param>
 /// <returns>
-/// Returns `true` if the player is allowed to loot the entity; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will determine if the player can loot the entity.
+/// Returns `true` if the player can loot the entity; otherwise, returns `false`. 
+/// If the method returns a non-null value, it indicates that looting is not allowed. (bool)
 /// </returns>
-bool? CanLootEntity(BasePlayer player, IndustrialCrafter crafter)
+object CanLootEntity(BasePlayer player, IndustrialCrafter crafter)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to loot the Industrial Crafter.");
-
-    if (player.IsDead())
-    {
-        Puts($"Player {player.displayName} cannot loot while dead.");
-        return false;
-    }
-
-    if (crafter.IsLocked())
-    {
-        Puts($"The Industrial Crafter is locked and cannot be looted.");
-        return false;
-    }
-
+    Puts($"Player {player} is attempting to loot entity {crafter}.");
     return null;
 }
 ```
@@ -17403,16 +15786,7 @@ bool? CanLootEntity(BasePlayer player, IndustrialCrafter crafter)
 /// <returns>No return behavior.</returns>
 void OnLootPlayer(BasePlayer looter, BasePlayer target)
 {
-    Puts($"{looter.displayName} is attempting to loot {target.displayName}.");
-    
-    if (target.IsDead())
-    {
-        Puts($"{target.displayName} has been successfully looted.");
-    }
-    else
-    {
-        Puts($"{target.displayName} is not dead and cannot be looted.");
-    }
+    Puts($"{looter} is attempting to loot {target}.");
 }
 ```
 ```
@@ -17453,12 +15827,7 @@ void OnLootPlayer(BasePlayer looter, BasePlayer target)
 /// <returns>No return behavior.</returns>
 void OnTurretAssigned(AutoTurret turret, ulong playerId, BasePlayer player)
 {
-    Puts($"Turret {turret.net.ID} has been assigned to player {player.displayName} (ID: {playerId}).");
-    
-    if (playerId == 0)
-    {
-        Puts("Attempted to assign turret to an invalid player ID.");
-    }
+    Puts($"Turret {turret} assigned to player {player} with ID {playerId}.");
 }
 ```
 ```
@@ -17503,11 +15872,7 @@ void OnTurretAssigned(AutoTurret turret, ulong playerId, BasePlayer player)
 /// <returns>No return behavior.</returns>
 void OnTurretShutdown(AutoTurret turret)
 {
-    Puts($"Auto turret {turret.net.ID} is shutting down.");
-    if (turret.IsOffline())
-    {
-        Puts($"Turret {turret.net.ID} is already offline.");
-    }
+    Puts($"Auto turret {turret} is shutting down.");
 }
 ```
 ```
@@ -17541,12 +15906,7 @@ void OnTurretShutdown(AutoTurret turret)
 /// <returns>No return behavior.</returns>
 void OnSurveyGather(SurveyCharge surveyCharge, Item item)
 {
-    Puts($"Survey charge at {surveyCharge.transform.position} gathered item: {item.info.displayName.english} (ID: {item.info.itemid})");
-    
-    if (item.info.shortname == "scrap")
-    {
-        Puts("Scrap has been gathered from the survey!");
-    }
+    Puts($"Survey charge at {surveyCharge.transform.position} gathered item: {item.info.shortname}.");
 }
 ```
 ```
@@ -17625,16 +15985,11 @@ void OnSurveyGather(SurveyCharge surveyCharge, Item item)
 /// Called when sending player markers to the client.
 /// </summary>
 /// <param name="player">The player receiving the markers.</param>
-/// <param name="mapNoteList">The list of map notes to be sent to the client.</param>
+/// <param name="mapNoteList">The list of map notes to be sent to the player.</param>
 /// <returns>No return behavior.</returns>
 void OnPlayerMarkersSend(BasePlayer player, ProtoBuf.MapNoteList mapNoteList)
 {
-    Puts($"Sending {mapNoteList.notes.Count} markers to player {player.displayName} (ID: {player.UserIDString}).");
-    
-    if (mapNoteList.notes.Count == 0)
-    {
-        Puts($"No markers available to send to player {player.displayName}.");
-    }
+    Puts($"Sending markers to player {player} with {mapNoteList.notes.Count} notes.");
 }
 ```
 ```
@@ -17669,19 +16024,13 @@ void OnPlayerMarkersSend(BasePlayer player, ProtoBuf.MapNoteList mapNoteList)
 /// <summary>
 /// Called to find ammunition of a specified type in the player's inventory.
 /// </summary>
-/// <param name="inventory">The player's inventory where the search is conducted.</param>
+/// <param name="inventory">The player's inventory from which to find ammo.</param>
 /// <param name="ammoList">A list to populate with found ammunition items.</param>
 /// <param name="ammoType">The type of ammunition to search for.</param>
 /// <returns>No return behavior.</returns>
 void OnInventoryAmmoFind(PlayerInventory inventory, List<Item> ammoList, AmmoTypes ammoType)
 {
-    Puts($"Searching for {ammoType} ammunition in inventory of player {inventory.Owner.displayName}.");
-    
-    // Example logic to handle specific ammo types
-    if (ammoType == AmmoTypes.Rifle)
-    {
-        Puts("Rifle ammunition search initiated.");
-    }
+    Puts($"Searching for {ammoType} ammo in inventory.");
 }
 ```
 ```
@@ -17713,12 +16062,7 @@ void OnInventoryAmmoFind(PlayerInventory inventory, List<Item> ammoList, AmmoTyp
 /// <returns>No return behavior.</returns>
 void OnPlayerDisconnected(BasePlayer player, string reason)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) has disconnected. Reason: {reason}");
-    
-    if (reason == "timeout")
-    {
-        Puts($"Player {player.displayName} disconnected due to timeout.");
-    }
+    Puts($"Player {player} has disconnected. Reason: {reason}");
 }
 ```
 ```
@@ -17758,23 +16102,14 @@ void OnPlayerDisconnected(BasePlayer player, string reason)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player toggles the vending machine's broadcast setting.
+/// Called when a player toggles the vending machine's broadcast status.
 /// </summary>
-/// <param name="vendingMachine">The vending machine whose broadcast setting is being toggled.</param>
-/// <param name="player">The player who toggled the broadcast setting.</param>
+/// <param name="vendingMachine">The vending machine whose broadcast status is being toggled.</param>
+/// <param name="player">The player who toggled the broadcast status.</param>
 /// <returns>No return behavior.</returns>
 void OnToggleVendingBroadcast(VendingMachine vendingMachine, BasePlayer player)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) toggled the broadcast for vending machine {vendingMachine.net.ID}.");
-    
-    if (vendingMachine.HasFlag(Flags.Reserved4))
-    {
-        Puts("Broadcast is now enabled.");
-    }
-    else
-    {
-        Puts("Broadcast is now disabled.");
-    }
+    Puts($"Player {player} toggled the broadcast status for vending machine {vendingMachine}.");
 }
 ```
 ```
@@ -17783,8 +16118,8 @@ void OnToggleVendingBroadcast(VendingMachine vendingMachine, BasePlayer player)
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.IsVisible(3f)]
+	[RPC_Server]
 	public void RPC_Broadcast(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -17810,18 +16145,11 @@ void OnToggleVendingBroadcast(VendingMachine vendingMachine, BasePlayer player)
 /// <param name="reason">The reason for the dialing failure.</param>
 /// <param name="player">The player who attempted to make the call.</param>
 /// <returns>
-/// Returns `null` to allow the default failure handling, or any non-null value to override it.
+/// Returns a non-null value to override the default failure behavior. If `null` is returned, the default behavior will proceed. (object)
 /// </returns>
 object OnPhoneDialFail(PhoneController phone, Telephone.DialFailReason reason, BasePlayer player)
 {
-    Puts($"Player {player.displayName} failed to dial with reason: {reason}.");
-    
-    if (reason == Telephone.DialFailReason.NoSignal)
-    {
-        Puts("Dial failed due to no signal. Please try again later.");
-        return "No signal available.";
-    }
-    
+    Puts($"Phone dialing failed for player {player} due to reason: {reason}.");
     return null;
 }
 ```
@@ -17861,20 +16189,13 @@ object OnPhoneDialFail(PhoneController phone, Telephone.DialFailReason reason, B
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player respawns in the game.
+/// Called when a player has respawned in the game.
 /// </summary>
 /// <param name="player">The player who has respawned.</param>
 /// <returns>No return behavior.</returns>
 void OnPlayerRespawned(BasePlayer player)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) has respawned.");
-    
-    if (player.IsWounded())
-    {
-        Puts($"Player {player.displayName} was wounded and has now respawned.");
-    }
-    
-    // Additional logic can be added here if needed
+    Puts($"Player {player} has respawned.");
 }
 ```
 ```
@@ -17957,20 +16278,18 @@ void OnPlayerRespawned(BasePlayer player)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when the helicopter begins a strafe maneuver targeting a player.
+/// Called when a helicopter begins a strafing run on a target player.
 /// </summary>
 /// <param name="helicopter">The helicopter initiating the strafe.</param>
 /// <param name="targetPosition">The position of the target player.</param>
-/// <param name="targetPlayer">The player being targeted by the helicopter.</param>
-/// <returns>No return behavior.</returns>
-void OnHelicopterStrafeEnter(PatrolHelicopterAI helicopter, Vector3 targetPosition, BasePlayer targetPlayer)
+/// <param name="targetPlayer">The player being targeted for the strafe.</param>
+/// <returns>
+/// Returns `null` to allow the strafe to proceed, or a non-null value to prevent the strafe from occurring. (object)
+/// </returns>
+object OnHelicopterStrafeEnter(PatrolHelicopterAI helicopter, Vector3 targetPosition, BasePlayer targetPlayer)
 {
-    Puts($"Helicopter {helicopter.net.ID} is strafing towards player {targetPlayer.displayName} at position {targetPosition}.");
-    
-    if (targetPlayer.IsInSafeZone())
-    {
-        Puts($"Strafe action canceled: {targetPlayer.displayName} is in a safe zone.");
-    }
+    Puts($"Helicopter {helicopter} is attempting to strafe player {targetPlayer} at position {targetPosition}.");
+    return null;
 }
 ```
 ```
@@ -18016,18 +16335,11 @@ void OnHelicopterStrafeEnter(PatrolHelicopterAI helicopter, Vector3 targetPositi
 /// <param name="firework">The firework that has been damaged.</param>
 /// <param name="hitInfo">Information about the hit, including damage type and amount.</param>
 /// <returns>
-/// Returns `null` to allow the default damage behavior, or any non-null value to prevent further processing.
+/// Returns `null` to allow the default damage behavior, or a non-null value to override it. (object)
 /// </returns>
 object OnFireworkDamage(BaseFirework firework, HitInfo hitInfo)
 {
-    Puts($"Firework {firework.net.ID} was damaged with {hitInfo.damageTypes.Get(DamageType.Heat)} damage.");
-    
-    if (hitInfo.damageTypes.Has(DamageType.Explosion))
-    {
-        Puts("Firework damage caused by an explosion, triggering special effects.");
-        // Additional logic for explosion damage can be added here.
-    }
-
+    Puts($"Firework {firework} was damaged with hit info: {hitInfo}.");
     return null;
 }
 ```
@@ -18053,25 +16365,16 @@ object OnFireworkDamage(BaseFirework firework, HitInfo hitInfo)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when the Bradley APC is in hunt mode to determine its behavior.
+/// Called when the Bradley APC is hunting for a target.
 /// </summary>
 /// <param name="apc">The Bradley APC that is hunting.</param>
 /// <returns>
-/// Returns a non-null value to override the default hunting behavior. 
-/// If `null` is returned, the APC will proceed with its normal hunting logic.
+/// Returns a non-null value to override the default hunting behavior. If `null` is returned, the APC will proceed with its normal hunting logic. (object)
 /// </returns>
 object OnBradleyApcHunt(BradleyAPC apc)
 {
-    Puts($"Bradley APC (ID: {apc.net.ID}) is attempting to hunt for targets.");
-    
-    // Example condition to prevent hunting
-    if (apc.IsUnderRepair)
-    {
-        Puts("Bradley APC is under repair and cannot hunt.");
-        return true; // Prevents hunting
-    }
-
-    return null; // Allows normal hunting behavior
+    Puts($"Bradley APC {apc} is initiating a hunt.");
+    return null;
 }
 ```
 ```
@@ -18179,20 +16482,13 @@ object OnBradleyApcHunt(BradleyAPC apc)
 /// <param name="player">The player who is mounting the weapon.</param>
 /// <param name="rack">The weapon rack where the weapon is being mounted.</param>
 /// <returns>
-/// Returns `true` if the weapon was successfully mounted, or `false` if it was not.
-/// If a non-null value is returned from the hook, it will override the default behavior.
+/// Returns `true` if the weapon was successfully mounted, or `false` if it could not be mounted.
+/// If the method returns a non-null value, it overrides the default mounting behavior. (bool)
 /// </returns>
-bool OnRackedWeaponMount(Item item, BasePlayer player, WeaponRack rack)
+object OnRackedWeaponMount(Item item, BasePlayer player, WeaponRack rack)
 {
-    Puts($"Player {player.displayName} is attempting to mount weapon: {item.info.displayName.english} on the rack.");
-    
-    if (item.info.shortname == "pistol.revolver")
-    {
-        Puts("Revolvers cannot be mounted on this rack.");
-        return false;
-    }
-
-    return true;
+    Puts($"Player {player} is attempting to mount weapon {item} on rack {rack}.");
+    return null;
 }
 ```
 ```
@@ -18261,26 +16557,14 @@ bool OnRackedWeaponMount(Item item, BasePlayer player, WeaponRack rack)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player expresses a desire to mount a vehicle or mountable object.
+/// Called when a player expresses a desire to mount a vehicle or object.
 /// </summary>
-/// <param name="player">The player who wants to mount the object.</param>
+/// <param name="player">The player who wants to mount.</param>
 /// <param name="mountable">The mountable object the player wants to interact with.</param>
 /// <returns>No return behavior.</returns>
 void OnPlayerWantsMount(BasePlayer player, BaseMountable mountable)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) wants to mount {mountable.GetType().Name}.");
-    
-    if (!player.IsValid())
-    {
-        Puts($"Player {player.displayName} is not a valid player.");
-        return;
-    }
-
-    if (!player.CanInteract())
-    {
-        Puts($"Player {player.displayName} cannot interact with the mountable.");
-        return;
-    }
+    Puts($"Player {player} wants to mount {mountable}.");
 }
 ```
 ```
@@ -18320,7 +16604,7 @@ void OnPlayerWantsMount(BasePlayer player, BaseMountable mountable)
 /// <returns>No return behavior.</returns>
 void OnDigitalClockRingStop(DigitalClock clock)
 {
-    Puts($"Digital clock {clock.net.ID} has stopped ringing.");
+    Puts($"Digital clock {clock} has stopped ringing.");
 }
 ```
 ```
@@ -18346,22 +16630,14 @@ void OnDigitalClockRingStop(DigitalClock clock)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when an entity is loaded from a save file or during server startup.
+/// Called when an entity is loaded from a save file or network.
 /// </summary>
 /// <param name="entity">The entity that is being loaded.</param>
-/// <param name="loadInfo">The load information containing data about the entity.</param>
+/// <param name="loadInfo">The information related to the loading process.</param>
 /// <returns>No return behavior.</returns>
 void OnEntityLoaded(BaseNetworkable entity, BaseNetworkable.LoadInfo loadInfo)
 {
-    Puts($"Entity {entity.prefabID} is being loaded with LoadInfo: {loadInfo}");
-    
-    if (loadInfo.msg.baseNetworkable == null)
-    {
-        Puts("LoadInfo does not contain a valid BaseNetworkable.");
-        return;
-    }
-
-    Puts($"Entity {entity.prefabID} loaded successfully.");
+    Puts($"Entity {entity} is being loaded with prefab ID: {loadInfo.msg.baseNetworkable.prefabID}.");
 }
 ```
 ```
@@ -18398,9 +16674,7 @@ void OnEntityLoaded(BaseNetworkable entity, BaseNetworkable.LoadInfo loadInfo)
 /// <returns>No return behavior.</returns>
 void OnBuildingSplit(BuildingManager.Building building, uint newBuildingID)
 {
-    Puts($"Building with ID {building.ID} has been split. New Building ID: {newBuildingID}");
-    
-    // Additional logic can be added here if needed
+    Puts($"Building {building} has been split. New Building ID: {newBuildingID}.");
 }
 ```
 ```
@@ -18455,15 +16729,7 @@ void OnBuildingSplit(BuildingManager.Building building, uint newBuildingID)
 /// <returns>No return behavior.</returns>
 void OnPortalUsed(BasePlayer player, BasePortal portal)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) has used the portal: {portal.name}.");
-    
-    if (player.IsInCombat)
-    {
-        Puts($"Player {player.displayName} cannot use the portal while in combat.");
-        return;
-    }
-
-    // Additional logic can be added here if needed
+    Puts($"Player {player} has used the portal {portal}.");
 }
 ```
 ```
@@ -18538,18 +16804,11 @@ void OnPortalUsed(BasePlayer player, BasePortal portal)
 /// <param name="crate">The hackable locked crate being targeted.</param>
 /// <returns>
 /// Returns `true` if the player can hack the crate, or `false` if they cannot.
-/// If the method returns `null`, the default game logic will determine if the player can hack the crate.
+/// If the method returns `null`, the default game logic will determine if the player can hack the crate. (bool)
 /// </returns>
-bool? CanHackCrate(BasePlayer player, HackableLockedCrate crate)
+object CanHackCrate(BasePlayer player, HackableLockedCrate crate)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to hack a crate.");
-
-    if (player.IsInSafeZone())
-    {
-        Puts($"Player {player.displayName} is in a safe zone and cannot hack crates.");
-        return false;
-    }
-
+    Puts($"Player {player} is attempting to hack crate {crate}.");
     return null;
 }
 ```
@@ -18559,8 +16818,8 @@ bool? CanHackCrate(BasePlayer player, HackableLockedCrate crate)
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.IsVisible(3f)]
+	[RPC_Server]
 	public void RPC_Hack(RPCMessage msg)
 	{
 		if (!IsBeingHacked() && Interface.CallHook("CanHackCrate", msg.player, this) == null)
@@ -18585,16 +16844,7 @@ bool? CanHackCrate(BasePlayer player, HackableLockedCrate crate)
 /// <returns>No return behavior.</returns>
 void OnTurretToggle(AutoTurret turret)
 {
-    Puts($"Turret {turret.net.ID} has been toggled. Current state: {(turret.IsOn() ? "Online" : "Offline")}");
-    
-    if (turret.IsOn())
-    {
-        Puts($"Turret {turret.net.ID} is now active and ready to engage targets.");
-    }
-    else
-    {
-        Puts($"Turret {turret.net.ID} is now inactive and will not engage targets.");
-    }
+    Puts($"Turret {turret} has been toggled. Current state: {(turret.IsOn() ? "Online" : "Offline")}.");
 }
 ```
 ```
@@ -18645,22 +16895,11 @@ void OnTurretToggle(AutoTurret turret)
 /// <param name="player">The player providing the input.</param>
 /// <param name="inputState">The current state of the player's input.</param>
 /// <returns>
-/// Returns `null` to allow the default input processing, or any non-null value to override the default behavior.
+/// Returns `null` to allow default input processing, or a non-null value to override the default behavior. (object)
 /// </returns>
 object OnPlayerInput(BasePlayer player, InputState inputState)
 {
-    Puts($"Player {player.displayName} is providing input: {inputState.ToString()}");
-
-    if (inputState.IsJumping)
-    {
-        Puts($"Player {player.displayName} is attempting to jump.");
-    }
-
-    if (inputState.IsMoving)
-    {
-        Puts($"Player {player.displayName} is moving.");
-    }
-
+    Puts($"Player {player} input received: {inputState}");
     return null;
 }
 ```
@@ -18809,28 +17048,15 @@ object OnPlayerInput(BasePlayer player, InputState inputState)
 /// <summary>
 /// Called to determine if two train cars can couple together.
 /// </summary>
-/// <param name="thisCar">The train car attempting to couple.</param>
-/// <param name="otherCar">The train car being coupled to.</param>
+/// <param name="trainCarA">The first train car attempting to couple.</param>
+/// <param name="trainCarB">The second train car attempting to couple.</param>
 /// <returns>
 /// Returns `true` if the train cars can couple, or `false` if they cannot.
-/// If the method returns `null`, the default game logic will determine if the coupling is allowed.
+/// If the method returns `null`, the default game logic will determine if the coupling is allowed. (bool)
 /// </returns>
-bool? CanTrainCarCouple(TrainCar thisCar, TrainCar otherCar)
+object CanTrainCarCouple(TrainCar trainCarA, TrainCar trainCarB)
 {
-    Puts($"Attempting to couple TrainCar ID: {thisCar.net.ID} with TrainCar ID: {otherCar.net.ID}.");
-
-    if (thisCar.IsCoupled)
-    {
-        Puts($"TrainCar ID: {thisCar.net.ID} is already coupled.");
-        return false;
-    }
-
-    if (otherCar.IsCoupled)
-    {
-        Puts($"TrainCar ID: {otherCar.net.ID} is already coupled.");
-        return false;
-    }
-
+    Puts($"Checking if TrainCar {trainCarA} can couple with TrainCar {trainCarB}.");
     return null;
 }
 ```
@@ -18876,19 +17102,14 @@ bool? CanTrainCarCouple(TrainCar thisCar, TrainCar otherCar)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a flame explosive detonates, triggering an explosion effect.
+/// Called when a flame explosion occurs, allowing for additional effects or modifications.
 /// </summary>
 /// <param name="explosive">The flame explosive that triggered the explosion.</param>
 /// <param name="collider">The collider associated with the explosion.</param>
 /// <returns>No return behavior.</returns>
 void OnFlameExplosion(FlameExplosive explosive, UnityEngine.Collider collider)
 {
-    Puts($"Flame explosion triggered by {explosive.gameObject.name} at position {explosive.transform.position}.");
-    
-    if (collider != null)
-    {
-        Puts($"Explosion collider: {collider.gameObject.name}.");
-    }
+    Puts($"Flame explosion triggered by {explosive} with collider {collider}.");
 }
 ```
 ```
@@ -18951,17 +17172,12 @@ void OnFlameExplosion(FlameExplosive explosive, UnityEngine.Collider collider)
 /// <summary>
 /// Called when a player mounts an entity.
 /// </summary>
-/// <param name="mountable">The mountable entity being used.</param>
+/// <param name="mountable">The mountable entity being mounted.</param>
 /// <param name="player">The player who is mounting the entity.</param>
 /// <returns>No return behavior.</returns>
 void OnEntityMounted(BaseMountable mountable, BasePlayer player)
 {
-    Puts($"Player {player.displayName} has mounted the entity: {mountable.GetType().Name} (ID: {mountable.net.ID}).");
-    
-    if (mountable is Vehicle)
-    {
-        Puts($"Player {player.displayName} is now driving the vehicle.");
-    }
+    Puts($"Player {player} has mounted the entity {mountable}.");
 }
 ```
 ```
@@ -19008,12 +17224,7 @@ void OnEntityMounted(BaseMountable mountable, BasePlayer player)
 /// <returns>No return behavior.</returns>
 void OnSignLocked(Signage sign, BasePlayer player)
 {
-    Puts($"Sign {sign.net.ID} has been locked by player {player.displayName} (ID: {player.UserIDString}).");
-    
-    if (player.IsAdmin)
-    {
-        Puts($"Admin {player.displayName} locked the sign, bypassing any restrictions.");
-    }
+    Puts($"Sign {sign} has been locked by player {player} (ID: {player.userID}).");
 }
 ```
 ```
@@ -19022,8 +17233,8 @@ void OnSignLocked(Signage sign, BasePlayer player)
 
 ```csharp
 
-	[RPC_Server.MaxDistance(3f)]
 	[RPC_Server]
+	[RPC_Server.MaxDistance(3f)]
 	public void LockSign(RPCMessage msg)
 	{
 		if (msg.player.CanInteract() && CanUpdateSign(msg.player))
@@ -19042,30 +17253,17 @@ void OnSignLocked(Signage sign, BasePlayer player)
 ```csharp
 ```csharp
 /// <summary>
-/// Determines whether a player can update the sign associated with this object.
+/// Determines whether a player can update the sign associated with this photo frame.
 /// </summary>
 /// <param name="player">The player attempting to update the sign.</param>
-/// <param name="sign">The sign that the player wants to update.</param>
+/// <param name="photoFrame">The photo frame being updated.</param>
 /// <returns>
-/// Returns `true` if the player is allowed to update the sign; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will be used to determine if the player can update the sign.
+/// Returns `true` if the player can update the sign; otherwise, returns `false`. 
+/// If the method returns `null`, the default game logic will determine if the player can update the sign. (bool)
 /// </returns>
-bool? CanUpdateSign(BasePlayer player, PhotoFrame sign)
+object CanUpdateSign(BasePlayer player, PhotoFrame photoFrame)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to update a sign.");
-
-    if (player.IsAdmin)
-    {
-        Puts($"Player {player.displayName} is an admin and can update the sign.");
-        return true;
-    }
-
-    if (sign.IsLocked() && (ulong)player.userID != sign.OwnerID)
-    {
-        Puts($"Player {player.displayName} cannot update the sign because it is locked.");
-        return false;
-    }
-
+    Puts($"Player {player} is attempting to update the sign on photo frame {photoFrame}.");
     return null;
 }
 ```
@@ -19104,23 +17302,16 @@ bool? CanUpdateSign(BasePlayer player, PhotoFrame sign)
 ```csharp
 ```csharp
 /// <summary>
-/// Determines whether the helicopter can drop a supply crate.
+/// Determines whether the helicopter can drop a crate.
 /// </summary>
-/// <param name="helicopter">The helicopter attempting to drop a crate.</param>
+/// <param name="helicopter">The helicopter AI controller attempting to drop a crate.</param>
 /// <returns>
-/// Returns `true` if the helicopter can drop a crate; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will be used to determine if a crate can be dropped.
+/// Returns `true` if the helicopter can drop a crate; otherwise, returns `false`. 
+/// If the method returns `null`, the default game logic will be used to determine if a crate can be dropped. (bool)
 /// </returns>
-bool? CanHelicopterDropCrate(CH47HelicopterAIController helicopter)
+object CanHelicopterDropCrate(CH47HelicopterAIController helicopter)
 {
-    Puts($"Helicopter {helicopter.net.ID} is checking if it can drop a crate.");
-    
-    if (helicopter.numCrates <= 0)
-    {
-        Puts($"Helicopter {helicopter.net.ID} has no crates to drop.");
-        return false;
-    }
-
+    Puts($"Checking if helicopter {helicopter} can drop a crate.");
     return null;
 }
 ```
@@ -19147,23 +17338,14 @@ bool? CanHelicopterDropCrate(CH47HelicopterAIController helicopter)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player toggles the state of an oven (turns it on or off).
+/// Called when an oven is toggled on or off by a player.
 /// </summary>
-/// <param name="oven">The oven being toggled.</param>
+/// <param name="oven">The oven that is being toggled.</param>
 /// <param name="player">The player who is toggling the oven.</param>
 /// <returns>No return behavior.</returns>
 void OnOvenToggle(BaseOven oven, BasePlayer player)
 {
-    Puts($"Player {player.displayName} toggled the oven (ID: {oven.net.ID}). Current state: {(oven.IsOn() ? "On" : "Off")}");
-    
-    if (oven.IsOn())
-    {
-        Puts($"Oven (ID: {oven.net.ID}) is now cooking.");
-    }
-    else
-    {
-        Puts($"Oven (ID: {oven.net.ID}) has stopped cooking.");
-    }
+    Puts($"Player {player} toggled the oven {oven}.");
 }
 ```
 ```
@@ -19206,16 +17388,16 @@ void OnOvenToggle(BaseOven oven, BasePlayer player)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a timed explosive becomes a dud instead of detonating.
+/// Called when a timed explosive becomes a dud and fails to detonate.
 /// </summary>
-/// <param name="dud">The dud timed explosive that failed to detonate.</param>
+/// <param name="explosive">The dud timed explosive that failed to detonate.</param>
 /// <returns>
-/// Returns `null` to allow the default behavior, or any non-null value to prevent the explosive from becoming a dud.
+/// Returns `null` to allow the default behavior, or any non-null value to override the dud behavior. (object)
 /// </returns>
-object OnExplosiveDud(DudTimedExplosive dud)
+object OnExplosiveDud(DudTimedExplosive explosive)
 {
-    Puts($"Explosive {dud.net.ID} has become a dud and will not detonate.");
-    return null; // Allow the default behavior unless overridden
+    Puts($"Explosive {explosive} has become a dud and will not detonate.");
+    return null;
 }
 ```
 ```
@@ -19255,12 +17437,7 @@ object OnExplosiveDud(DudTimedExplosive dud)
 /// <returns>No return behavior.</returns>
 void OnGiveSoldItem(VendingMachine vendingMachine, Item soldItem, BasePlayer buyer)
 {
-    Puts($"Item {soldItem.info.displayName.english} is being given to {buyer.displayName} from vending machine {vendingMachine.net.ID}.");
-
-    if (soldItem.info.shortname == "special.item")
-    {
-        Puts($"Player {buyer.displayName} has received a special item!");
-    }
+    Puts($"Item {soldItem} given to player {buyer} from vending machine {vendingMachine}.");
 }
 ```
 ```
@@ -19289,23 +17466,17 @@ void OnGiveSoldItem(VendingMachine vendingMachine, Item soldItem, BasePlayer buy
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player's corpse is spawned after their death.
+/// Called when a player's corpse is spawned after death.
 /// </summary>
 /// <param name="player">The player whose corpse is being spawned.</param>
 /// <param name="corpse">The corpse that has been created.</param>
-/// <returns>No return behavior.</returns>
-void OnPlayerCorpseSpawned(BasePlayer player, PlayerCorpse corpse)
+/// <returns>
+/// Returns a modified corpse if the hook alters the default behavior; otherwise, returns the original corpse. (BaseCorpse)
+/// </returns>
+object OnPlayerCorpseSpawned(BasePlayer player, PlayerCorpse corpse)
 {
-    Puts($"Corpse spawned for player {player.displayName} (ID: {player.UserIDString}).");
-    
-    if (corpse != null)
-    {
-        Puts($"Corpse details: Name: {corpse.playerName}, SteamID: {corpse.playerSteamID}");
-    }
-    else
-    {
-        Puts("Corpse creation failed.");
-    }
+    Puts($"Corpse spawned for player {player} with SteamID {player.userID}.");
+    return null;
 }
 ```
 ```
@@ -19395,20 +17566,12 @@ void OnPlayerCorpseSpawned(BasePlayer player, PlayerCorpse corpse)
 /// <param name="owner">The NPC that is sensing the target.</param>
 /// <param name="brainSenses">The AI brain senses associated with the NPC.</param>
 /// <returns>
-/// Returns a non-null value to override the default sensing behavior. 
-/// If `null` is returned, the NPC will proceed with its normal sensing logic.
+/// Returns a non-null value to override the default sensing behavior. If `null` is returned, the default logic will apply. (object)
 /// </returns>
 object OnNpcTargetSense(BaseEntity target, BaseEntity owner, AIBrainSenses brainSenses)
 {
-    Puts($"NPC {owner?.name} is sensing target: {target?.name}");
-
-    if (target is BasePlayer player && player.IsInvisible)
-    {
-        Puts($"NPC {owner?.name} cannot sense invisible player: {player.name}");
-        return true; // Prevents further processing
-    }
-
-    return null; // Allow default behavior
+    Puts($"NPC {owner} senses target {target}.");
+    return null;
 }
 ```
 ```
@@ -19492,20 +17655,12 @@ object OnNpcTargetSense(BaseEntity target, BaseEntity owner, AIBrainSenses brain
 /// <param name="npc">The NPC player that has died.</param>
 /// <param name="corpse">The corpse that is being populated.</param>
 /// <returns>
-/// Returns a modified corpse if the hook alters the default behavior; otherwise, returns the original corpse.
+/// Returns a modified corpse if the hook alters the default behavior; otherwise, returns the original corpse. (BaseCorpse)
 /// </returns>
-BaseCorpse OnCorpsePopulate(NPCPlayer npc, NPCPlayerCorpse corpse)
+object OnCorpsePopulate(NPCPlayer npc, NPCPlayerCorpse corpse)
 {
-    Puts($"Populating corpse for NPC {npc.displayName} with SteamID {npc.userID}.");
-
-    // Example modification: Add a special item to the corpse
-    if (npc.HasSpecialItem)
-    {
-        corpse.AddItem(specialItem);
-        Puts($"Added special item to {npc.displayName}'s corpse.");
-    }
-
-    return corpse; // Return the modified or original corpse
+    Puts($"Populating corpse for NPC {npc} with SteamID {npc.userID}.");
+    return null;
 }
 ```
 ```
@@ -19572,22 +17727,15 @@ BaseCorpse OnCorpsePopulate(NPCPlayer npc, NPCPlayerCorpse corpse)
 /// Called to check if a sleeping bag is valid for a specific player.
 /// </summary>
 /// <param name="sleepingBag">The sleeping bag being checked.</param>
-/// <param name="playerID">The ID of the player attempting to use the sleeping bag.</param>
+/// <param name="playerId">The ID of the player attempting to use the sleeping bag.</param>
 /// <param name="ignoreTimers">Whether to ignore any timers associated with the sleeping bag.</param>
 /// <returns>
 /// Returns `true` if the sleeping bag is valid for the player, or `false` if it is not.
-/// If the method returns `null`, the default game logic will determine the validity.
+/// If the method returns `null`, the default game logic will determine the validity. (bool)
 /// </returns>
-bool? OnSleepingBagValidCheck(SleepingBag sleepingBag, ulong playerID, bool ignoreTimers)
+object OnSleepingBagValidCheck(SleepingBag sleepingBag, ulong playerId, bool ignoreTimers)
 {
-    Puts($"Checking validity of sleeping bag for player ID: {playerID}, ignoreTimers: {ignoreTimers}");
-
-    if (sleepingBag.deployerUserID == playerID)
-    {
-        Puts($"Player {playerID} is the deployer of this sleeping bag.");
-        return !ignoreTimers || sleepingBag.unlockTime < UnityEngine.Time.realtimeSinceStartup;
-    }
-
+    Puts($"Checking validity of sleeping bag for player ID: {playerId}.");
     return null;
 }
 ```
@@ -19627,18 +17775,11 @@ bool? OnSleepingBagValidCheck(SleepingBag sleepingBag, ulong playerID, bool igno
 /// <param name="player">The player attempting to take a cutting.</param>
 /// <param name="growable">The growable entity from which the cutting is being taken.</param>
 /// <returns>
-/// Returns `null` to allow the player to take a cutting, or any non-null value to prevent the action.
+/// Returns `null` to allow the action, or any non-null value to prevent the player from taking a cutting. (object)
 /// </returns>
 object CanTakeCutting(BasePlayer player, GrowableEntity growable)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to take a cutting from {growable.displayName}.");
-
-    if (player.inventory.GetAmount("scissors") < 1)
-    {
-        Puts($"Player {player.displayName} does not have scissors to take a cutting.");
-        return "You need scissors to take a cutting.";
-    }
-
+    Puts($"Player {player} is attempting to take a cutting from {growable}.");
     return null;
 }
 ```
@@ -19677,26 +17818,18 @@ object CanTakeCutting(BasePlayer player, GrowableEntity growable)
 ```csharp
 ```csharp
 /// <summary>
-/// Determines whether the NPC can eat the specified entity.
+/// Called to determine if an NPC can eat a specified entity.
 /// </summary>
-/// <param name="npc">The NPC attempting to eat.</param>
+/// <param name="npc">The NPC that is considering eating.</param>
 /// <param name="entity">The entity that may be eaten.</param>
 /// <returns>
-/// Returns `true` if the NPC can eat the entity, or `false` if it cannot.
-/// If the method returns `null`, the default game logic will determine if the NPC can eat the entity.
+/// Returns `true` if the NPC can eat the entity; otherwise, returns `false`. 
+/// If the method returns `null`, the default game logic will determine if the NPC can eat the entity. (bool)
 /// </returns>
-bool? CanNpcEat(BaseNpc npc, BaseEntity entity)
+object CanNpcEat(BaseNpc npc, BaseEntity entity)
 {
-    Puts($"NPC {npc.displayName} is evaluating whether to eat {entity.displayName}.");
-
-    if (entity.HasTrait(TraitFlag.Food))
-    {
-        Puts($"{entity.displayName} is considered food.");
-        return true;
-    }
-
-    Puts($"{entity.displayName} is not food or is alive, NPC cannot eat.");
-    return false;
+    Puts($"NPC {npc} is evaluating whether to eat entity {entity}.");
+    return null;
 }
 ```
 ```
@@ -19732,18 +17865,13 @@ bool? CanNpcEat(BaseNpc npc, BaseEntity entity)
 /// <summary>
 /// Called when a target position is set for the Multiple Launch Rocket System (MLRS).
 /// </summary>
-/// <param name="mlrs">The MLRS instance setting the target.</param>
+/// <param name="mlrs">The MLRS instance that is setting the target.</param>
 /// <param name="targetPosition">The world position being set as the target.</param>
 /// <param name="player">The player who set the target position.</param>
 /// <returns>No return behavior.</returns>
 void OnMlrsTargetSet(MLRS mlrs, Vector3 targetPosition, BasePlayer player)
 {
-    Puts($"MLRS target set by {player.displayName} at position: {targetPosition}.");
-    
-    if (Vector3.Distance(targetPosition, mlrs.UserTargetHitPos) < 5f)
-    {
-        Puts($"Target position {targetPosition} is too close to the previous target.");
-    }
+    Puts($"MLRS target set by {player} at position {targetPosition}.");
 }
 ```
 ```
@@ -19804,10 +17932,13 @@ void OnMlrsTargetSet(MLRS mlrs, Vector3 targetPosition, BasePlayer player)
 /// <param name="station">The computer station from which the bookmark is being deleted.</param>
 /// <param name="player">The player who is deleting the bookmark.</param>
 /// <param name="bookmarkId">The identifier of the bookmark being deleted.</param>
-/// <returns>No return behavior.</returns>
-void OnBookmarkDelete(ComputerStation station, BasePlayer player, string bookmarkId)
+/// <returns>
+/// Returns `null` to allow the deletion, or a non-null value to prevent it. (object)
+/// </returns>
+object OnBookmarkDelete(ComputerStation station, BasePlayer player, string bookmarkId)
 {
-    Puts($"Bookmark '{bookmarkId}' deleted by player {player.displayName} (ID: {player.UserIDString}) from station {station.name}.");
+    Puts($"Player {player} is attempting to delete bookmark: {bookmarkId} from station {station}.");
+    return null;
 }
 ```
 ```
@@ -19851,7 +17982,7 @@ void OnBookmarkDelete(ComputerStation station, BasePlayer player, string bookmar
 /// <returns>No return behavior.</returns>
 void OnStashHidden(StashContainer stash, BasePlayer player)
 {
-    Puts($"Stash container {stash.net.ID} has been hidden by player {player.displayName} (ID: {player.UserIDString}).");
+    Puts($"Stash {stash} has been hidden by player {player}.");
 }
 ```
 ```
@@ -19879,15 +18010,17 @@ void OnStashHidden(StashContainer stash, BasePlayer player)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when an experiment at the workbench is completed.
+/// Called when an experiment at the workbench has completed.
 /// </summary>
 /// <param name="workbench">The workbench where the experiment was conducted.</param>
-/// <returns>No return behavior.</returns>
-void OnExperimentEnd(Workbench workbench)
+/// <returns>
+/// Returns a non-null value to override the default experiment completion behavior. 
+/// If `null` is returned, the experiment completes as normal. (object)
+/// </returns>
+object OnExperimentEnd(Workbench workbench)
 {
-    Puts($"Experiment completed at Workbench ID: {workbench.net.ID}.");
-    
-    // Additional logic can be added here if needed
+    Puts($"Experiment completed at workbench: {workbench}.");
+    return null;
 }
 ```
 ```
@@ -19938,24 +18071,17 @@ void OnExperimentEnd(Workbench workbench)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player lands after a fall, allowing for custom fall damage handling.
+/// Called when a player lands after a fall, allowing for custom fall damage calculations.
 /// </summary>
 /// <param name="player">The player who has landed.</param>
 /// <param name="fallVelocity">The velocity at which the player landed.</param>
 /// <returns>
-/// Returns `null` to allow the default fall damage calculation, or any non-null value to override it.
+/// Returns `null` to allow the default fall damage calculation, or a non-null value to override it. (object)
 /// </returns>
 object OnPlayerLand(BasePlayer player, float fallVelocity)
 {
-    Puts($"Player {player.displayName} landed with a velocity of {fallVelocity}.");
-
-    if (fallVelocity < -20f)
-    {
-        Puts($"Player {player.displayName} experienced a hard landing!");
-        return true; // Prevent default damage handling
-    }
-
-    return null; // Allow default damage handling
+    Puts($"Player {player} has landed with a fall velocity of {fallVelocity}.");
+    return null;
 }
 ```
 ```
@@ -19998,12 +18124,7 @@ object OnPlayerLand(BasePlayer player, float fallVelocity)
 /// <returns>No return behavior.</returns>
 void OnEntitySpawned(BaseNetworkable entity)
 {
-    Puts($"Entity of type {entity.GetType().Name} has been spawned with ID: {entity.net.ID}.");
-    
-    if (entity is BaseEntity baseEntity)
-    {
-        Puts($"Entity {baseEntity.displayName} has been initialized and is now active.");
-    }
+    Puts($"Entity {entity} has been spawned.");
 }
 ```
 ```
@@ -20048,19 +18169,14 @@ void OnEntitySpawned(BaseNetworkable entity)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when an entity dies.
+/// Called when an entity dies, allowing for additional processing upon death.
 /// </summary>
 /// <param name="entity">The entity that has died.</param>
-/// <param name="hitInfo">Information about the hit that caused the death, including the initiator.</param>
+/// <param name="hitInfo">Information about the hit that caused the death.</param>
 /// <returns>No return behavior.</returns>
 void OnEntityDeath(BaseCombatEntity entity, HitInfo hitInfo)
 {
-    Puts($"Entity {entity.prefabID} has died. Initiator: {hitInfo?.InitiatorPlayer?.displayName ?? "Unknown"}");
-
-    if (hitInfo != null && hitInfo.InitiatorPlayer != null)
-    {
-        Puts($"Player {hitInfo.InitiatorPlayer.displayName} was responsible for the death of entity {entity.prefabID}.");
-    }
+    Puts($"Entity {entity} has died due to {hitInfo}.");
 }
 ```
 ```
@@ -20106,18 +18222,11 @@ void OnEntityDeath(BaseCombatEntity entity, HitInfo hitInfo)
 /// <param name="item">The item that the player wants to research.</param>
 /// <returns>
 /// Returns `true` if the player can research the item, or `false` if they cannot.
-/// If the method returns `null`, the default game logic will determine if the item can be researched.
+/// If the method returns `null`, the default game logic will determine if the item can be researched. (bool)
 /// </returns>
-bool? CanResearchItem(BasePlayer player, Item item)
+object CanResearchItem(BasePlayer player, Item item)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to research item: {item.info.displayName.english}.");
-
-    if (item.info.shortname == "blueprint")
-    {
-        Puts($"Player {player.displayName} cannot research blueprints.");
-        return false;
-    }
-
+    Puts($"Player {player} is attempting to research item: {item}.");
     return null;
 }
 ```
@@ -20127,8 +18236,8 @@ bool? CanResearchItem(BasePlayer player, Item item)
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.IsVisible(3f)]
+	[RPC_Server]
 	public void DoResearch(RPCMessage msg)
 	{
 		if (IsResearching())
@@ -20164,19 +18273,14 @@ bool? CanResearchItem(BasePlayer player, Item item)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a bonus item is dropped for a player after crafting or other actions.
+/// Called when a bonus item is dropped for a player after an event or action.
 /// </summary>
-/// <param name="item">The bonus item that has been dropped.</param>
-/// <param name="player">The player who receives the bonus item.</param>
+/// <param name="item">The bonus item that is being dropped.</param>
+/// <param name="player">The player who will receive the bonus item.</param>
 /// <returns>No return behavior.</returns>
 void OnBonusItemDropped(Item item, BasePlayer player)
 {
-    Puts($"Bonus item {item.info.displayName.english} has been dropped for player {player.displayName} (ID: {player.UserIDString}).");
-
-    if (item.info.shortname == "scrap")
-    {
-        Puts($"Player {player.displayName} received bonus scrap!");
-    }
+    Puts($"Bonus item {item} dropped for player {player}.");
 }
 ```
 ```
@@ -20234,15 +18338,13 @@ void OnBonusItemDropped(Item item, BasePlayer player)
 /// </summary>
 /// <param name="player">The player who performed the hammer hit.</param>
 /// <param name="hitInfo">Information about the hit, including the target entity and damage details.</param>
-/// <returns>No return behavior.</returns>
-void OnHammerHit(BasePlayer player, HitInfo hitInfo)
+/// <returns>
+/// Returns a non-null value to prevent the default hammer hit behavior; otherwise, returns null to allow it. (object)
+/// </returns>
+object OnHammerHit(BasePlayer player, HitInfo hitInfo)
 {
-    Puts($"Player {player.displayName} hit an entity with a hammer. Target: {hitInfo.HitEntity?.ShortPrefabName ?? "None"}");
-
-    if (hitInfo.HitEntity is BaseCombatEntity entity)
-    {
-        Puts($"Entity {entity.ShortPrefabName} was hit for repair.");
-    }
+    Puts($"Player {player} hit an entity with a hammer. Target: {hitInfo.HitEntity}");
+    return null;
 }
 ```
 ```
@@ -20284,26 +18386,17 @@ void OnHammerHit(BasePlayer player, HitInfo hitInfo)
 ```csharp
 ```csharp
 /// <summary>
-/// Called to retrieve the building privilege associated with a given bounding box.
+/// Called to retrieve the building privilege associated with a specific bounding box (OBB).
 /// </summary>
 /// <param name="entity">The entity requesting the building privilege.</param>
-/// <param name="obb">The oriented bounding box used to check for building privileges.</param>
+/// <param name="obb">The OBB representing the area to check for building privileges.</param>
 /// <returns>
-/// Returns a <c>BuildingPrivlidge</c> object if a privilege is found; otherwise, returns <c>null</c>.
-/// If the method returns a non-null value, it overrides the default privilege retrieval logic.
+/// Returns a <c>BuildingPrivlidge</c> if one is found; otherwise, returns <c>null</c> if no privilege is associated with the given OBB.
 /// </returns>
 BuildingPrivlidge OnBuildingPrivilege(BaseEntity entity, OBB obb)
 {
-    Puts($"Checking building privilege for entity {entity.net.ID} in area defined by OBB at position {obb.position}.");
-    
-    // Example condition to restrict building privilege
-    if (obb.position.y < 0)
-    {
-        Puts("Building privilege denied: Position is below ground level.");
-        return null;
-    }
-
-    return null; // Allow default behavior if no specific privilege is found
+    Puts($"Checking building privilege for entity {entity} in area defined by OBB: {obb}.");
+    return null;
 }
 ```
 ```
@@ -20354,21 +18447,14 @@ BuildingPrivlidge OnBuildingPrivilege(BaseEntity entity, OBB obb)
 /// <summary>
 /// Called when a player accepts an invitation to join a team.
 /// </summary>
-/// <param name="team">The team that the player is accepting an invitation to join.</param>
-/// <param name="player">The player who is accepting the invitation.</param>
+/// <param name="team">The team that the player is invited to join.</param>
+/// <param name="player">The player who accepted the invitation.</param>
 /// <returns>
-/// Returns `null` to allow the player to join the team, or any non-null value to prevent the action.
+/// Returns `null` to allow the player to join the team, or any non-null value to prevent the action. (object)
 /// </returns>
 object OnTeamAcceptInvite(RelationshipManager.PlayerTeam team, BasePlayer player)
 {
-    Puts($"Player {player.displayName} is accepting an invite to team {team.TeamName}.");
-
-    if (team.IsFull())
-    {
-        Puts($"Player {player.displayName} cannot join team {team.TeamName} because it is full.");
-        return "Team is full.";
-    }
-
+    Puts($"Player {player} accepted invite to team {team}.");
     return null;
 }
 ```
@@ -20406,20 +18492,14 @@ object OnTeamAcceptInvite(RelationshipManager.PlayerTeam team, BasePlayer player
 /// <summary>
 /// Called periodically to update the AI behavior of the Bradley APC.
 /// </summary>
-/// <param name="apc">The Bradley APC instance being updated.</param>
-/// <returns>No return behavior.</returns>
-void OnBradleyApcThink(BradleyAPC apc)
+/// <param name="apc">The Bradley APC instance that is being updated.</param>
+/// <returns>
+/// Returns `null` to allow the default AI behavior to proceed, or a non-null value to override it. (object)
+/// </returns>
+object OnBradleyApcThink(BradleyAPC apc)
 {
-    Puts($"Updating AI for Bradley APC at position: {apc.transform.position}");
-
-    if (apc.IsOnFire())
-    {
-        Puts("Bradley APC is on fire! Taking necessary actions.");
-    }
-    else if (apc.IsEngagedInCombat())
-    {
-        Puts("Bradley APC is engaged in combat. Adjusting tactics.");
-    }
+    Puts($"Updating AI for Bradley APC at position: {apc.transform.position}.");
+    return null;
 }
 ```
 ```
@@ -20516,23 +18596,16 @@ void OnBradleyApcThink(BradleyAPC apc)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player dies in the game.
+/// Called when a player dies, allowing for custom behavior upon death.
 /// </summary>
-/// <param name="player">The player who has died.</param>
+/// <param name="player">The player that has died.</param>
 /// <param name="hitInfo">Information about the hit that caused the death.</param>
 /// <returns>
-/// Returns `null` to allow the default death behavior, or any non-null value to override it.
+/// Returns `null` to allow the default death behavior, or a non-null value to override it. (object)
 /// </returns>
 object OnPlayerDeath(BasePlayer player, HitInfo hitInfo)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) has died due to {hitInfo?.damageTypes?.Get(0)?.type}.");
-
-    if (hitInfo?.damageTypes?.Get(0)?.type == DamageType.Explosion)
-    {
-        Puts($"Player {player.displayName} was killed by an explosion!");
-        return "You have been killed by an explosion.";
-    }
-
+    Puts($"Player {player} has died due to: {hitInfo}.");
     return null;
 }
 ```
@@ -20586,9 +18659,7 @@ object OnPlayerDeath(BasePlayer player, HitInfo hitInfo)
 /// <returns>No return behavior.</returns>
 void OnVendingShopOpened(VendingMachine vendingMachine, BasePlayer player)
 {
-    Puts($"Vending shop opened by player {player.displayName} (ID: {player.UserIDString}) at machine {vendingMachine.net.ID}.");
-    
-    // Additional logic can be added here, such as logging or triggering events.
+    Puts($"Vending shop opened by player {player} at machine {vendingMachine}.");
 }
 ```
 ```
@@ -20618,22 +18689,11 @@ void OnVendingShopOpened(VendingMachine vendingMachine, BasePlayer player)
 /// Called when a player attempts to loot an entity.
 /// </summary>
 /// <param name="player">The player who is looting the entity.</param>
-/// <param name="targetEntity">The entity being looted.</param>
-/// <returns>
-/// Returns `true` if the looting process can proceed; otherwise, returns `false`. 
-/// If the method returns a non-null value, it will override the default looting behavior.
-/// </returns>
-object OnLootEntity(BasePlayer player, BaseEntity targetEntity)
+/// <param name="entity">The entity being looted.</param>
+/// <returns>No return behavior.</returns>
+void OnLootEntity(BasePlayer player, BaseEntity entity)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to loot {targetEntity.name}.");
-
-    if (targetEntity is LootableCorpse)
-    {
-        Puts($"Player {player.displayName} cannot loot corpses.");
-        return false;
-    }
-
-    return null;
+    Puts($"Player {player} is attempting to loot entity {entity}.");
 }
 ```
 ```
@@ -20673,21 +18733,16 @@ object OnLootEntity(BasePlayer player, BaseEntity targetEntity)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a mission fails for a player.
+/// Called when a mission fails, allowing for additional processing or notifications.
 /// </summary>
 /// <param name="mission">The mission that has failed.</param>
-/// <param name="instance">The instance of the mission that failed.</param>
+/// <param name="instance">The instance of the mission that was assigned to the player.</param>
 /// <param name="assignee">The player who was assigned the mission.</param>
 /// <param name="failReason">The reason for the mission failure.</param>
 /// <returns>No return behavior.</returns>
 void OnMissionFailed(BaseMission mission, BaseMission.MissionInstance instance, BasePlayer assignee, BaseMission.MissionFailReason failReason)
 {
-    Puts($"Mission '{mission.missionName.english}' failed for player {assignee.displayName}. Reason: {failReason}.");
-
-    if (failReason == BaseMission.MissionFailReason.TimeExpired)
-    {
-        Puts($"Player {assignee.displayName} ran out of time to complete the mission.");
-    }
+    Puts($"Mission {mission} failed for player {assignee} due to {failReason}.");
 }
 ```
 ```
@@ -20717,13 +18772,13 @@ void OnMissionFailed(BaseMission mission, BaseMission.MissionInstance instance, 
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a reactive target is reset.
+/// Called when a reactive target is reset to its initial state.
 /// </summary>
 /// <param name="target">The reactive target that is being reset.</param>
 /// <returns>No return behavior.</returns>
 void OnReactiveTargetReset(ReactiveTarget target)
 {
-    Puts($"Reactive target {target.gameObject.name} has been reset.");
+    Puts($"Reactive target {target} has been reset.");
 }
 ```
 ```
@@ -20752,31 +18807,18 @@ void OnReactiveTargetReset(ReactiveTarget target)
 ```csharp
 ```csharp
 /// <summary>
-/// Determines whether scientists can be deployed at the specified positions.
+/// Determines whether scientists can be deployed from the specified attacker entity.
 /// </summary>
 /// <param name="attacker">The entity attempting to deploy the scientists.</param>
 /// <param name="scientistPrefabs">A list of scientist prefab references to be deployed.</param>
-/// <param name="spawnPositions">A list to store valid spawn positions for the scientists.</param>
+/// <param name="spawnPositions">A list to populate with valid spawn positions for the scientists.</param>
 /// <returns>
 /// Returns `true` if scientists can be deployed; otherwise, returns `false`. 
-/// If the method returns `null`, the default game logic will determine if deployment is allowed.
+/// If the method returns `null`, the default game logic will determine if deployment is possible. (bool)
 /// </returns>
-bool? CanDeployScientists(BaseEntity attacker, List<GameObjectRef> scientistPrefabs, List<Vector3> spawnPositions)
+object CanDeployScientists(BradleyAPC attacker, List<GameObjectRef> scientistPrefabs, List<Vector3> spawnPositions)
 {
-    Puts($"Attempting to deploy scientists by {attacker?.gameObject.name ?? "unknown entity"}.");
-
-    if (scientistPrefabs.Count == 0)
-    {
-        Puts("No scientist prefabs provided for deployment.");
-        return false;
-    }
-
-    if (Vector3.Distance(attacker.transform.position, transform.position) > DeployAttackDistanceMax)
-    {
-        Puts("Attacker is too far away to deploy scientists.");
-        return false;
-    }
-
+    Puts($"Attempting to deploy scientists from {attacker}.");
     return null;
 }
 ```
@@ -20838,18 +18880,11 @@ bool? CanDeployScientists(BaseEntity attacker, List<GameObjectRef> scientistPref
 /// <param name="inviter">The player who is sending the team invite.</param>
 /// <param name="invitee">The player being invited to join the team.</param>
 /// <returns>
-/// Returns `null` to allow the invite to proceed, or any non-null value to prevent the invite.
+/// Returns `null` to allow the invite to proceed, or a non-null value to prevent the invite. (object)
 /// </returns>
 object OnTeamInvite(BasePlayer inviter, BasePlayer invitee)
 {
-    Puts($"Player {inviter.displayName} is inviting {invitee.displayName} to join their team.");
-    
-    if (invitee.IsBannedFromTeams)
-    {
-        Puts($"Player {invitee.displayName} is banned from joining teams.");
-        return "You are banned from joining teams.";
-    }
-
+    Puts($"Player {inviter} is inviting {invitee} to join their team.");
     return null;
 }
 ```
@@ -20891,19 +18926,14 @@ object OnTeamInvite(BasePlayer inviter, BasePlayer invitee)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player has landed after a fall.
+/// Called when a player lands after a fall, allowing for additional effects or modifications to fall damage.
 /// </summary>
 /// <param name="player">The player who has landed.</param>
-/// <param name="fallImpact">The impact force of the fall.</param>
+/// <param name="fallDamage">The calculated fall damage based on the player's velocity.</param>
 /// <returns>No return behavior.</returns>
-void OnPlayerLanded(BasePlayer player, float fallImpact)
+void OnPlayerLanded(BasePlayer player, float fallDamage)
 {
-    Puts($"Player {player.displayName} has landed with an impact force of {fallImpact}.");
-    
-    if (fallImpact > 50f)
-    {
-        Puts($"Warning: Player {player.displayName} landed hard! Potential fall damage.");
-    }
+    Puts($"Player {player} has landed with fall damage: {fallDamage}.");
 }
 ```
 ```
@@ -20943,17 +18973,12 @@ void OnPlayerLanded(BasePlayer player, float fallImpact)
 /// Called when a player sets their information, such as username or other attributes.
 /// </summary>
 /// <param name="connection">The network connection of the player setting the information.</param>
-/// <param name="key">The key representing the type of information being set.</param>
-/// <param name="val">The value being assigned to the specified key.</param>
+/// <param name="key">The key representing the information being set.</param>
+/// <param name="val">The value being assigned to the key.</param>
 /// <returns>No return behavior.</returns>
 void OnPlayerSetInfo(Network.Connection connection, string key, string val)
 {
-    Puts($"Player {connection.username} is setting info: {key} = {val}");
-    
-    if (key == "username" && string.IsNullOrWhiteSpace(val))
-    {
-        Puts("Username cannot be empty.");
-    }
+    Puts($"Player {connection} set info: {key} = {val}");
 }
 ```
 ```
@@ -20984,18 +19009,11 @@ void OnPlayerSetInfo(Network.Connection connection, string key, string val)
 /// <param name="player">The player who is demolishing the structure.</param>
 /// <param name="isInstant">Indicates whether the demolition is instant.</param>
 /// <returns>
-/// Returns `null` to allow the demolition, or any non-null value to prevent it.
+/// Returns `null` to allow the demolition, or a non-null value to prevent it. (object)
 /// </returns>
 object OnStructureDemolish(StabilityEntity structure, BasePlayer player, bool isInstant)
 {
-    Puts($"Player {player.displayName} is attempting to demolish structure {structure.net.ID}.");
-
-    if (structure.IsProtected())
-    {
-        Puts($"Demolition of structure {structure.net.ID} is blocked for player {player.displayName}.");
-        return "You cannot demolish this structure.";
-    }
-
+    Puts($"Player {player} is attempting to demolish structure {structure}.");
     return null;
 }
 ```
@@ -21005,8 +19023,8 @@ object OnStructureDemolish(StabilityEntity structure, BasePlayer player, bool is
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.MaxDistance(3f)]
+	[RPC_Server]
 	public void DoDemolish(RPCMessage msg)
 	{
 		if (msg.player.CanInteract() && CanDemolish(msg.player) && Interface.CallHook("OnStructureDemolish", this, msg.player, false) == null)
@@ -21023,22 +19041,17 @@ object OnStructureDemolish(StabilityEntity structure, BasePlayer player, bool is
 ```csharp
 ```csharp
 /// <summary>
-/// Called to perform a stability check on the entity.
+/// Called to check the stability of an entity in the game world.
 /// </summary>
 /// <param name="entity">The stability entity being checked.</param>
-/// <returns>No return behavior.</returns>
-void OnEntityStabilityCheck(StabilityEntity entity)
+/// <returns>
+/// Returns a non-null value to override the default stability check behavior. 
+/// If `null` is returned, the default stability logic will be applied. (object)
+/// </returns>
+object OnEntityStabilityCheck(StabilityEntity entity)
 {
-    Puts($"Stability check initiated for entity ID: {entity.net.ID}.");
-    
-    if (entity.IsDestroyed)
-    {
-        Puts($"Entity ID: {entity.net.ID} is already destroyed. Stability check aborted.");
-        return;
-    }
-
-    // Additional logic can be added here to handle specific stability conditions
-    Puts($"Entity ID: {entity.net.ID} is undergoing stability evaluation.");
+    Puts($"Stability check initiated for entity: {entity}.");
+    return null;
 }
 ```
 ```
@@ -21108,28 +19121,14 @@ void OnEntityStabilityCheck(StabilityEntity entity)
 /// <summary>
 /// Called to determine if a player can set a sleeping bag to public.
 /// </summary>
-/// <param name="player">The player attempting to set the sleeping bag as public.</param>
+/// <param name="player">The player attempting to set the sleeping bag public.</param>
 /// <param name="sleepingBag">The sleeping bag being modified.</param>
 /// <returns>
-/// Returns `true` if the player can set the sleeping bag to public; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will determine if the player can set the sleeping bag public.
+/// Returns `null` to allow the action, or any non-null value to prevent the sleeping bag from being set to public. (object)
 /// </returns>
-bool? CanSetBedPublic(BasePlayer player, SleepingBag sleepingBag)
+object CanSetBedPublic(BasePlayer player, SleepingBag sleepingBag)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to set sleeping bag {sleepingBag.ID} to public.");
-
-    if (player.IsInCreativeMode)
-    {
-        Puts($"Player {player.displayName} is in creative mode and can set the sleeping bag to public.");
-        return true;
-    }
-
-    if (sleepingBag.IsPublic())
-    {
-        Puts($"Sleeping bag {sleepingBag.ID} is already public.");
-        return false;
-    }
-
+    Puts($"Player {player} is attempting to set sleeping bag {sleepingBag} to public.");
     return null;
 }
 ```
@@ -21139,8 +19138,8 @@ bool? CanSetBedPublic(BasePlayer player, SleepingBag sleepingBag)
 
 ```csharp
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	public virtual void RPC_MakePublic(RPCMessage msg)
 	{
 		if (!canBePublic || !msg.player.CanInteract() || (deployerUserID != (ulong)msg.player.userID && !msg.player.CanBuild()))
@@ -21197,14 +19196,15 @@ bool? CanSetBedPublic(BasePlayer player, SleepingBag sleepingBag)
 /// <summary>
 /// Called when a patrol helicopter is killed.
 /// </summary>
-/// <param name="helicopter">The patrol helicopter that was killed.</param>
-/// <param name="hitInfo">Information about the hit that caused the helicopter's death.</param>
-/// <returns>No return behavior.</returns>
-void OnPatrolHelicopterKill(PatrolHelicopter helicopter, HitInfo hitInfo)
+/// <param name="helicopter">The patrol helicopter that has been killed.</param>
+/// <param name="hitInfo">Information about the hit that caused the kill.</param>
+/// <returns>
+/// Returns a non-null value to override the default kill behavior, or `null` to allow the default behavior to proceed. (object)
+/// </returns>
+object OnPatrolHelicopterKill(PatrolHelicopter helicopter, HitInfo hitInfo)
 {
-    Puts($"Patrol helicopter {helicopter.net.ID} has been killed by {hitInfo.Initiator?.displayName ?? "unknown"} with damage type: {hitInfo.damageTypes.GetMajority()}.");
-    
-    // Additional logic can be added here, such as spawning loot or triggering events.
+    Puts($"Patrol helicopter {helicopter} has been killed by hit info: {hitInfo}.");
+    return null;
 }
 ```
 ```
@@ -21260,18 +19260,12 @@ void OnPatrolHelicopterKill(PatrolHelicopter helicopter, HitInfo hitInfo)
 /// <summary>
 /// Called to provide respawn options to a player after they have died.
 /// </summary>
-/// <param name="player">The player receiving the respawn information.</param>
+/// <param name="player">The player receiving the respawn options.</param>
 /// <param name="spawnOptions">A list of available spawn options for the player.</param>
 /// <returns>No return behavior.</returns>
 void OnRespawnInformationGiven(BasePlayer player, List<ProtoBuf.RespawnInformation.SpawnOptions> spawnOptions)
 {
-    Puts($"Respawn information sent to player {player.displayName} (ID: {player.UserIDString}). " +
-         $"Available spawn options: {spawnOptions.Count}.");
-
-    if (spawnOptions.Count == 0)
-    {
-        Puts($"No spawn options available for player {player.displayName}.");
-    }
+    Puts($"Providing respawn options to player {player} with {spawnOptions.Count} options available.");
 }
 ```
 ```
@@ -21366,23 +19360,16 @@ void OnRespawnInformationGiven(BasePlayer player, List<ProtoBuf.RespawnInformati
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player requests to dismount from a mountable object.
+/// Called when a player requests to dismount from a mountable entity.
 /// </summary>
 /// <param name="player">The player who wants to dismount.</param>
-/// <param name="mountable">The mountable object the player is currently on.</param>
+/// <param name="mountable">The mountable entity the player is currently on.</param>
 /// <returns>
-/// Returns `null` to allow the dismount action, or any non-null value to prevent the dismount.
+/// Returns `null` to allow the dismount, or any non-null value to prevent the dismount. (object)
 /// </returns>
 object OnPlayerWantsDismount(BasePlayer player, BaseMountable mountable)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) wants to dismount from {mountable.gameObject.name}.");
-
-    if (player.IsInSafeZone())
-    {
-        Puts($"Player {player.displayName} cannot dismount while in a safe zone.");
-        return "You cannot dismount in a safe zone.";
-    }
-
+    Puts($"Player {player} wants to dismount from {mountable}.");
     return null;
 }
 ```
@@ -21418,20 +19405,12 @@ object OnPlayerWantsDismount(BasePlayer player, BaseMountable mountable)
 /// <param name="fuelSystem">The entity fuel system being checked.</param>
 /// <param name="fuelItem">The item representing the fuel.</param>
 /// <returns>
-/// Returns the amount of fuel available. If the hook returns a non-null integer, that value is used; otherwise, 
-/// the amount of the fuel item is returned, or 0 if no fuel item is present.
+/// Returns the amount of fuel available. If the hook returns a value, that value is used; otherwise, the default amount is returned. (int)
 /// </returns>
-int OnFuelAmountCheck(EntityFuelSystem fuelSystem, Item fuelItem)
+object OnFuelAmountCheck(EntityFuelSystem fuelSystem, Item fuelItem)
 {
-    Puts($"Checking fuel amount for {fuelSystem.gameObject.name}. Current fuel item: {fuelItem?.info.displayName.english ?? "None"}");
-
-    if (fuelItem != null && fuelItem.amount > 10)
-    {
-        Puts("Fuel amount is sufficient.");
-        return fuelItem.amount; // Example condition
-    }
-
-    return 0; // Default return if no fuel or insufficient amount
+    Puts($"Checking fuel amount for {fuelSystem} with fuel item: {fuelItem}.");
+    return null;
 }
 ```
 ```
@@ -21462,21 +19441,19 @@ int OnFuelAmountCheck(EntityFuelSystem fuelSystem, Item fuelItem)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a weapon is fired by a player.
+/// Called when a weapon is fired by a player, allowing for additional processing or validation.
 /// </summary>
 /// <param name="projectile">The projectile being fired.</param>
 /// <param name="player">The player who fired the weapon.</param>
 /// <param name="itemMod">The item modification associated with the projectile.</param>
 /// <param name="projectileShoot">The data related to the projectile shoot action.</param>
-/// <returns>No return behavior.</returns>
-void OnWeaponFired(BaseProjectile projectile, BasePlayer player, ItemModProjectile itemMod, ProtoBuf.ProjectileShoot projectileShoot)
+/// <returns>
+/// Returns `null` to allow the default firing behavior, or a non-null value to override it. (object)
+/// </returns>
+object OnWeaponFired(BaseProjectile projectile, BasePlayer player, ItemModProjectile itemMod, ProtoBuf.ProjectileShoot projectileShoot)
 {
-    Puts($"Player {player.displayName} fired {projectile.ShortPrefabName} with {projectileShoot.projectiles.Count} projectiles.");
-    
-    if (projectileShoot.projectiles.Count > itemMod.numProjectiles)
-    {
-        Puts($"Warning: Player {player.displayName} attempted to fire more projectiles than allowed.");
-    }
+    Puts($"Weapon fired by {player} with projectile {projectile}.");
+    return null;
 }
 ```
 ```
@@ -21610,23 +19587,17 @@ void OnWeaponFired(BaseProjectile projectile, BasePlayer player, ItemModProjecti
 ```csharp
 ```csharp
 /// <summary>
-/// Called when the SAM site scans for potential targets.
+/// Called when scanning for potential targets by the SAM site.
 /// </summary>
 /// <param name="samSite">The SAM site performing the target scan.</param>
-/// <param name="target">The potential target detected by the SAM site.</param>
-/// <returns>No return behavior.</returns>
-void OnSamSiteTarget(SamSite samSite, ISamSiteTarget target)
+/// <param name="target">The potential target being evaluated.</param>
+/// <returns>
+/// Returns `null` to allow the default target scanning behavior, or a non-null value to override it. (object)
+/// </returns>
+object OnSamSiteTarget(SamSite samSite, ISamSiteTarget target)
 {
-    Puts($"SAM Site {samSite.net.ID} has detected a target: {target.GetType().Name} at position {target.CenterPoint()}.");
-
-    if (target.IsVisible(samSite.eyePoint.transform.position, samSite.targetTypeVehicle.scanRadius))
-    {
-        Puts($"Target {target.GetType().Name} is visible and valid for engagement.");
-    }
-    else
-    {
-        Puts($"Target {target.GetType().Name} is not visible or valid.");
-    }
+    Puts($"SAM Site {samSite} is scanning for target: {target}.");
+    return null;
 }
 ```
 ```
@@ -21710,20 +19681,12 @@ void OnSamSiteTarget(SamSite samSite, ISamSiteTarget target)
 /// </summary>
 /// <param name="item">The item that is being removed.</param>
 /// <returns>
-/// Returns a non-null value to prevent the item from being removed. 
-/// If `null` is returned, the item will be removed as normal.
+/// Returns a non-null value to prevent the item from being removed; otherwise, returns null to allow removal. (object)
 /// </returns>
 object OnItemRemove(Item item)
 {
-    Puts($"Item {item.info.displayName.english} (ID: {item.net.ID}) is being removed from the game.");
-    
-    if (item.amount > 0)
-    {
-        Puts($"Item {item.info.displayName.english} cannot be removed because there are still {item.amount} left.");
-        return true; // Prevent removal
-    }
-    
-    return null; // Allow removal
+    Puts($"Item {item} is being removed from the game.");
+    return null;
 }
 ```
 ```
@@ -21762,22 +19725,13 @@ object OnItemRemove(Item item)
 /// <summary>
 /// Called when a sign is updated by a player.
 /// </summary>
-/// <param name="sign">The sign that has been updated.</param>
-/// <param name="player">The player who updated the sign.</param>
+/// <param name="sign">The signage that is being updated.</param>
+/// <param name="player">The player who is updating the sign.</param>
 /// <param name="textureIndex">The index of the texture being updated.</param>
 /// <returns>No return behavior.</returns>
 void OnSignUpdated(Signage sign, BasePlayer player, int textureIndex)
 {
-    Puts($"Sign updated by {player.displayName} (ID: {player.UserIDString}) at texture index {textureIndex}.");
-    
-    if (textureIndex < 0)
-    {
-        Puts("Invalid texture index provided.");
-    }
-    else
-    {
-        Puts($"Texture index {textureIndex} successfully updated for sign ID: {sign.net.ID}.");
-    }
+    Puts($"Sign updated by {player} at texture index {textureIndex}.");
 }
 ```
 ```
@@ -21839,26 +19793,18 @@ void OnSignUpdated(Signage sign, BasePlayer player, int textureIndex)
 ```csharp
 ```csharp
 /// <summary>
-/// Called to find an ammo item in a player's inventory.
+/// Called to find an ammo item in a player's inventory based on the specified item definition.
 /// </summary>
 /// <param name="inventory">The player's inventory being searched.</param>
-/// <param name="ammoType">The type of ammo being searched for.</param>
+/// <param name="itemDef">The item definition of the ammo type to find.</param>
 /// <returns>
-/// Returns the found <c>Item</c> if an ammo item is located; otherwise, returns <c>null</c>.
-/// If the method returns a non-null value, it overrides the default search behavior.
+/// Returns the found ammo item if it exists; otherwise, returns `null`. 
+/// If the hook returns a non-null item, that item will be used instead of the default search result. (Item)
 /// </returns>
-Item OnInventoryAmmoItemFind(PlayerInventory inventory, ItemDefinition ammoType)
+object OnInventoryAmmoItemFind(PlayerInventory inventory, ItemDefinition itemDef)
 {
-    Puts($"Searching for ammo of type: {ammoType.shortname} in inventory of player: {inventory.GetOwnerPlayer().displayName}");
-    
-    // Example condition to block certain ammo types
-    if (ammoType.shortname == "explosive.satchel")
-    {
-        Puts("Explosive satchel ammo cannot be found.");
-        return null;
-    }
-
-    return null; // Allow default behavior to find the item
+    Puts($"Searching for ammo item of type: {itemDef.shortname} in inventory.");
+    return null;
 }
 ```
 ```
@@ -21889,19 +19835,14 @@ Item OnInventoryAmmoItemFind(PlayerInventory inventory, ItemDefinition ammoType)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a new no-go zone is added to the patrol helicopter's AI.
+/// Called when a new no-go zone is added to the patrol helicopter's awareness.
 /// </summary>
-/// <param name="helicopter">The patrol helicopter AI that is affected by the no-go zone.</param>
+/// <param name="helicopter">The patrol helicopter AI that is aware of the no-go zone.</param>
 /// <param name="zone">The danger zone that has been added.</param>
 /// <returns>No return behavior.</returns>
 void OnNoGoZoneAdded(PatrolHelicopterAI helicopter, PatrolHelicopterAI.DangerZone zone)
 {
-    Puts($"No-go zone added: {zone.name} for Helicopter ID: {helicopter.net.ID} at position: {helicopter.transform.position}");
-    
-    if (zone.IsPointInside(helicopter.transform.position))
-    {
-        Puts($"Helicopter ID: {helicopter.net.ID} is currently inside the no-go zone: {zone.name}.");
-    }
+    Puts($"No-go zone added for helicopter {helicopter} at zone: {zone}.");
 }
 ```
 ```
@@ -21933,19 +19874,13 @@ void OnNoGoZoneAdded(PatrolHelicopterAI helicopter, PatrolHelicopterAI.DangerZon
 /// </summary>
 /// <param name="engine">The diesel engine being toggled.</param>
 /// <param name="player">The player who is toggling the engine.</param>
-/// <returns>No return behavior.</returns>
-void OnDieselEngineToggle(DieselEngine engine, BasePlayer player)
+/// <returns>
+/// Returns a non-null value to prevent the default toggle behavior; otherwise, returns null to allow the toggle. (object)
+/// </returns>
+object OnDieselEngineToggle(DieselEngine engine, BasePlayer player)
 {
-    Puts($"Player {player.displayName} toggled the diesel engine (ID: {engine.net.ID}).");
-
-    if (engine.IsRunning())
-    {
-        Puts($"The diesel engine is currently running.");
-    }
-    else
-    {
-        Puts($"The diesel engine is currently off.");
-    }
+    Puts($"Player {player} toggled the diesel engine: {engine}.");
+    return null;
 }
 ```
 ```
@@ -21995,12 +19930,7 @@ void OnDieselEngineToggle(DieselEngine engine, BasePlayer player)
 /// <returns>No return behavior.</returns>
 void OnLootItem(BasePlayer player, Item item)
 {
-    Puts($"Player {player.displayName} is looting item: {item.info.displayName.english} (ID: {item.info.itemid}).");
-
-    if (item.info.shortname == "forbidden.item")
-    {
-        Puts($"Player {player.displayName} attempted to loot a forbidden item.");
-    }
+    Puts($"Player {player} is looting item: {item} (ID: {item.info.itemid}).");
 }
 ```
 ```
@@ -22034,12 +19964,13 @@ void OnLootItem(BasePlayer player, Item item)
 /// Called when a planter box is fertilized.
 /// </summary>
 /// <param name="planterBox">The planter box being fertilized.</param>
-/// <returns>No return behavior.</returns>
-void OnPlanterBoxFertilize(PlanterBox planterBox)
+/// <returns>
+/// Returns a non-null value to prevent the fertilization process; otherwise, returns null to allow it. (object)
+/// </returns>
+object OnPlanterBoxFertilize(PlanterBox planterBox)
 {
-    Puts($"Planter box {planterBox.net.ID} is being fertilized.");
-    
-    // Additional logic can be added here if needed
+    Puts($"Planter box {planterBox} is being fertilized.");
+    return null;
 }
 ```
 ```
@@ -22085,20 +20016,14 @@ void OnPlanterBoxFertilize(PlanterBox planterBox)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a vending shop is opened by a player.
+/// Called when a player opens a vending shop managed by an NPC vending machine.
 /// </summary>
-/// <param name="vendingMachine">The vending machine that is being opened.</param>
+/// <param name="vendingMachine">The NPC vending machine that is being accessed.</param>
 /// <param name="player">The player who opened the vending shop.</param>
 /// <returns>No return behavior.</returns>
 void OnVendingShopOpened(NPCVendingMachine vendingMachine, BasePlayer player)
 {
-    Puts($"Vending shop opened by {player.displayName} at machine {vendingMachine.net.ID}.");
-    
-    if (player.inventory.GetAmount("special_token") > 0)
-    {
-        Puts($"{player.displayName} has a special token and receives a bonus item!");
-        // Logic to give bonus item can be added here
-    }
+    Puts($"Player {player} has opened the vending shop at {vendingMachine}.");
 }
 ```
 ```
@@ -22129,22 +20054,15 @@ void OnVendingShopOpened(NPCVendingMachine vendingMachine, BasePlayer player)
 ```csharp
 ```csharp
 /// <summary>
-/// Called on each tick for a player to process input and game state updates.
+/// Called every tick for a player to process input and game state updates.
 /// </summary>
 /// <param name="player">The player whose tick is being processed.</param>
-/// <param name="msg">The input state and other relevant data for the tick.</param>
+/// <param name="msg">The tick message containing input state and other data.</param>
 /// <param name="wasPlayerStalled">Indicates if the player was stalled during the last tick.</param>
 /// <returns>No return behavior.</returns>
 void OnPlayerTick(BasePlayer player, PlayerTick msg, bool wasPlayerStalled)
 {
-    Puts($"Processing tick for player {player.displayName} (ID: {player.UserIDString}).");
-
-    if (wasPlayerStalled)
-    {
-        Puts($"Player {player.displayName} was stalled during the last tick.");
-    }
-
-    // Additional logic can be added here to handle player-specific tick events.
+    Puts($"Processing tick for player {player} with input state: {msg.inputState}.");
 }
 ```
 ```
@@ -22290,23 +20208,14 @@ void OnPlayerTick(BasePlayer player, PlayerTick msg, bool wasPlayerStalled)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when fishing is stopped, either due to a successful catch or a failure.
+/// Called when fishing is stopped, either successfully or due to a failure.
 /// </summary>
 /// <param name="rod">The fishing rod that was used for fishing.</param>
 /// <param name="reason">The reason for stopping the fishing process.</param>
 /// <returns>No return behavior.</returns>
 void OnFishingStopped(BaseFishingRod rod, BaseFishingRod.FailReason reason)
 {
-    Puts($"Fishing stopped on rod {rod.net.ID} due to reason: {reason}.");
-    
-    if (reason == BaseFishingRod.FailReason.Success)
-    {
-        Puts("A fish was successfully caught!");
-    }
-    else
-    {
-        Puts("Fishing failed, no catch was made.");
-    }
+    Puts($"Fishing stopped on rod {rod} due to reason: {reason}.");
 }
 ```
 ```
@@ -22346,17 +20255,12 @@ void OnFishingStopped(BaseFishingRod rod, BaseFishingRod.FailReason reason)
 /// Called when the boombox station is updated with a new IP address.
 /// </summary>
 /// <param name="boombox">The boombox entity that is being updated.</param>
-/// <param name="ipAddress">The new IP address for the boombox station.</param>
+/// <param name="ip">The new IP address for the boombox station.</param>
 /// <param name="player">The player who initiated the update.</param>
 /// <returns>No return behavior.</returns>
-void OnBoomboxStationUpdated(BoomBox boombox, string ipAddress, BasePlayer player)
+void OnBoomboxStationUpdated(BoomBox boombox, string ip, BasePlayer player)
 {
-    Puts($"Boombox updated by {player.displayName} to new IP: {ipAddress}.");
-    
-    if (ipAddress == "192.168.0.1")
-    {
-        Puts("Warning: Attempt to set boombox to a restricted IP address.");
-    }
+    Puts($"Boombox {boombox} updated to new IP: {ip} by player {player}.");
 }
 ```
 ```
@@ -22399,13 +20303,7 @@ void OnBoomboxStationUpdated(BoomBox boombox, string ipAddress, BasePlayer playe
 /// <returns>No return behavior.</returns>
 void OnItemRemovedFromContainer(ItemContainer container, Item item)
 {
-    Puts($"Item {item.info.displayName.english} (ID: {item.info.itemid}) has been removed from container {container.name}.");
-    
-    if (item.info.itemid == 12345) // Example item ID for a specific action
-    {
-        Puts("Special item removed, triggering additional effects.");
-        // Additional logic for special item removal can be added here
-    }
+    Puts($"Item {item} has been removed from container {container}.");
 }
 ```
 ```
@@ -22437,13 +20335,13 @@ void OnItemRemovedFromContainer(ItemContainer container, Item item)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when the Multiple Launch Rocket System (MLRS) has finished firing.
+/// Called when the MLRS (Multiple Launch Rocket System) has finished firing.
 /// </summary>
-/// <param name="mlrs">The MLRS instance that has completed its firing sequence.</param>
+/// <param name="mlrs">The MLRS instance that has ended its firing sequence.</param>
 /// <returns>No return behavior.</returns>
 void OnMlrsFiringEnded(MLRS mlrs)
 {
-    Puts($"MLRS firing has ended for instance ID: {mlrs.net.ID}. All rockets have been fired.");
+    Puts($"MLRS firing has ended for instance: {mlrs}.");
 }
 ```
 ```
@@ -22477,21 +20375,14 @@ void OnMlrsFiringEnded(MLRS mlrs)
 /// Called when an item's condition is reduced.
 /// </summary>
 /// <param name="item">The item whose condition is being reduced.</param>
-/// <param name="amount">The amount by which the item's condition is being reduced.</param>
+/// <param name="amount">The amount of condition to lose.</param>
 /// <returns>
-/// Returns a non-null value to prevent the condition loss, or `null` to allow the condition to be reduced.
+/// Returns a non-null value to prevent the condition loss; otherwise, returns null to allow the condition to be reduced. (object)
 /// </returns>
 object IOnLoseCondition(Item item, float amount)
 {
-    Puts($"Condition loss event for item {item.info.displayName.english} (ID: {item.net.ID}) by {amount}.");
-
-    if (item.info.shortname == "special.item")
-    {
-        Puts($"Condition loss for {item.info.displayName.english} is blocked.");
-        return true; // Prevent condition loss for this specific item
-    }
-
-    return null; // Allow condition loss for all other items
+    Puts($"Condition loss requested for item {item} by amount: {amount}.");
+    return null;
 }
 ```
 ```
@@ -22526,16 +20417,11 @@ object IOnLoseCondition(Item item, float amount)
 /// <summary>
 /// Called when two dropped items are combined into one.
 /// </summary>
-/// <param name="droppedItem">The dropped item that is being combined with another item.</param>
+/// <param name="droppedItem">The dropped item that is being combined.</param>
 /// <returns>No return behavior.</returns>
 void OnDroppedItemCombined(DroppedItem droppedItem)
 {
-    Puts($"Dropped item {droppedItem.item.info.displayName.english} combined with {item.info.displayName.english}.");
-
-    if (item.amount > item.MaxStackable())
-    {
-        Puts($"Combination failed: {item.info.displayName.english} exceeds max stackable limit.");
-    }
+    Puts($"Dropped item {droppedItem} has been combined with {item}.");
 }
 ```
 ```
@@ -22602,20 +20488,14 @@ void OnDroppedItemCombined(DroppedItem droppedItem)
 /// Called when an item is dropped in the game world.
 /// </summary>
 /// <param name="item">The item that is being dropped.</param>
-/// <param name="entity">The entity that represents the dropped item in the world.</param>
-/// <returns>No return behavior.</returns>
-void OnItemDropped(Item item, BaseEntity entity)
+/// <param name="entity">The entity that is responsible for the drop action.</param>
+/// <returns>
+/// Returns a modified entity if the hook alters the default drop behavior; otherwise, returns the original entity. (BaseEntity)
+/// </returns>
+object OnItemDropped(Item item, BaseEntity entity)
 {
-    Puts($"Item {item.info.displayName.english} (ID: {item.info.itemid}) has been dropped by player {item.GetOwnerPlayer()?.displayName}.");
-    
-    if (entity != null)
-    {
-        Puts($"Dropped item is now represented by entity ID: {entity.net.ID}.");
-    }
-    else
-    {
-        Puts("The item could not be dropped as it is not valid.");
-    }
+    Puts($"Item {item} has been dropped by {entity}.");
+    return null;
 }
 ```
 ```
@@ -22664,14 +20544,16 @@ void OnItemDropped(Item item, BaseEntity entity)
 /// <summary>
 /// Called when a phone dialing attempt fails.
 /// </summary>
-/// <param name="phoneController">The phone controller that initiated the dialing attempt.</param>
+/// <param name="phone">The phone controller that initiated the dialing attempt.</param>
 /// <param name="reason">The reason for the dialing failure.</param>
 /// <param name="player">The player who attempted to dial.</param>
-/// <returns>No return behavior.</returns>
-void OnPhoneDialFailed(PhoneController phoneController, Telephone.DialFailReason reason, BasePlayer player)
+/// <returns>
+/// Returns `null` to allow the default failure handling, or a non-null value to override it. (object)
+/// </returns>
+object OnPhoneDialFailed(PhoneController phone, Telephone.DialFailReason reason, BasePlayer player)
 {
-    Puts($"Player {player.displayName} failed to dial due to reason: {reason}.");
-    // Additional logic can be added here based on the failure reason.
+    Puts($"Phone dialing failed for player {player} due to reason: {reason}.");
+    return null;
 }
 ```
 ```
@@ -22712,21 +20594,12 @@ void OnPhoneDialFailed(PhoneController phoneController, Telephone.DialFailReason
 /// <summary>
 /// Called when a player is banned based on their authentication response from Steam.
 /// </summary>
-/// <param name="connection">The network connection of the banned player.</param>
+/// <param name="connection">The network connection of the player being banned.</param>
 /// <param name="status">The authentication response indicating the reason for the ban.</param>
 /// <returns>No return behavior.</returns>
 void IOnPlayerBanned(Network.Connection connection, AuthResponse status)
 {
-    Puts($"Player {connection.username} (ID: {connection.userid}) has been banned. Reason: {status}.");
-    
-    if (status == AuthResponse.VACBanned)
-    {
-        Puts($"Player {connection.username} is VAC banned.");
-    }
-    else if (status == AuthResponse.PublisherBanned)
-    {
-        Puts($"Player {connection.username} is banned by the publisher.");
-    }
+    Puts($"Player {connection.username} (ID: {connection.userid}) has been banned due to: {status}.");
 }
 ```
 ```
@@ -22776,13 +20649,12 @@ void IOnPlayerBanned(Network.Connection connection, AuthResponse status)
 ```csharp
 ```csharp
 /// <summary>
-/// Called every tick to perform regular updates and checks.
+/// Called on each game tick to perform regular updates and checks.
 /// </summary>
 /// <returns>No return behavior.</returns>
 void OnTick()
 {
-    Puts("OnTick event triggered, performing updates.");
-    // Additional logic can be added here if needed.
+    Puts("OnTick called, performing updates.");
 }
 ```
 ```
@@ -22814,25 +20686,15 @@ void OnTick()
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player pays for the placement of a construction item.
+/// Called when a player attempts to pay for the placement of a construction.
 /// </summary>
 /// <param name="player">The player who is placing the construction.</param>
 /// <param name="planner">The planner used for the construction placement.</param>
-/// <param name="construction">The construction being placed.</param>
+/// <param name="component">The construction component being placed.</param>
 /// <returns>No return behavior.</returns>
-void OnPayForPlacement(BasePlayer player, Planner planner, Construction construction)
+void OnPayForPlacement(BasePlayer player, Planner planner, Construction component)
 {
-    Puts($"Player {player.displayName} is paying for placement of {construction.fullName}.");
-
-    if (player.IsInTutorial)
-    {
-        Puts($"Player {player.displayName} is in tutorial mode; placement will be handled differently.");
-    }
-    
-    if (construction.isTypeDeployable)
-    {
-        Puts($"Deployable item {construction.fullName} placed by {player.displayName}.");
-    }
+    Puts($"Player {player} is attempting to pay for placement of {component}.");
 }
 ```
 ```
@@ -22888,14 +20750,7 @@ void OnPayForPlacement(BasePlayer player, Planner planner, Construction construc
 /// </returns>
 object OnPlayerRecover(BasePlayer player)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to recover from being wounded.");
-    
-    if (player.health < 10)
-    {
-        Puts($"Player {player.displayName} cannot recover due to low health.");
-        return "Health too low to recover.";
-    }
-
+    Puts($"Player {player} is attempting to recover from a wounded state.");
     return null;
 }
 ```
@@ -22936,19 +20791,12 @@ object OnPlayerRecover(BasePlayer player)
 /// <param name="calendar">The advent calendar instance.</param>
 /// <param name="player">The player being checked for gift eligibility.</param>
 /// <returns>
-/// Returns `true` if the player can be awarded today's gift, or `false` if they cannot.
-/// If the method returns `null`, the default logic will be used to determine eligibility.
+/// Returns `true` if the player can be awarded today's gift; otherwise, returns `false`. 
+/// If the method returns `null`, the default logic will be used to determine eligibility. (bool)
 /// </returns>
-bool? CanBeAwardedAdventGift(AdventCalendar calendar, BasePlayer player)
+object CanBeAwardedAdventGift(AdventCalendar calendar, BasePlayer player)
 {
-    Puts($"Checking advent gift eligibility for player {player.displayName} (ID: {player.userID}).");
-
-    if (player.IsBannedFromGifts)
-    {
-        Puts($"Player {player.displayName} is banned from receiving advent gifts.");
-        return false;
-    }
-
+    Puts($"Checking if player {player} can be awarded today's advent gift.");
     return null;
 }
 ```
@@ -22997,20 +20845,10 @@ bool? CanBeAwardedAdventGift(AdventCalendar calendar, BasePlayer player)
 /// </summary>
 /// <param name="trap">The bear trap that is being armed.</param>
 /// <param name="player">The player who is arming the trap.</param>
-/// <returns>
-/// Returns `null` to allow the trap to be armed, or any non-null value to prevent it from being armed.
-/// </returns>
-object OnTrapArm(BearTrap trap, BasePlayer player)
+/// <returns>No return behavior.</returns>
+void OnTrapArm(BearTrap trap, BasePlayer player)
 {
-    Puts($"Player {player.displayName} is attempting to arm a bear trap.");
-    
-    if (player.IsInSafeZone())
-    {
-        Puts($"Player {player.displayName} cannot arm a trap in a safe zone.");
-        return "You cannot arm traps in a safe zone.";
-    }
-    
-    return null;
+    Puts($"Bear trap armed by player {player}.");
 }
 ```
 ```
@@ -23036,19 +20874,14 @@ object OnTrapArm(BearTrap trap, BasePlayer player)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when an entity enters the trigger area.
+/// Called when an entity enters a trigger zone.
 /// </summary>
+/// <param name="trigger">The trigger that the entity has entered.</param>
 /// <param name="entity">The entity that has entered the trigger.</param>
 /// <returns>No return behavior.</returns>
 void OnEntityEnter(TriggerComfort trigger, BaseEntity entity)
 {
-    Puts($"Entity {entity?.name} has entered the trigger area of {trigger?.name}.");
-
-    if (entity is BasePlayer player)
-    {
-        Puts($"Player {player.displayName} has entered the comfort zone.");
-        _players.Add(player);
-    }
+    Puts($"Entity {entity} has entered the trigger {trigger}.");
 }
 ```
 ```
@@ -23075,14 +20908,12 @@ void OnEntityEnter(TriggerComfort trigger, BaseEntity entity)
 /// <summary>
 /// Called when the horn of a vehicle is pressed by a player.
 /// </summary>
-/// <param name="seating">The seating module of the vehicle where the horn is being pressed.</param>
+/// <param name="seating">The vehicle seating module where the player is seated.</param>
 /// <param name="player">The player who pressed the horn.</param>
 /// <returns>No return behavior.</returns>
 void OnVehicleHornPressed(VehicleModuleSeating seating, BasePlayer player)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) pressed the vehicle horn.");
-    
-    // Additional logic can be added here, such as playing a sound or triggering an event.
+    Puts($"Player {player} pressed the vehicle horn in seating module: {seating}.");
 }
 ```
 ```
@@ -23120,19 +20951,11 @@ void OnVehicleHornPressed(VehicleModuleSeating seating, BasePlayer player)
 /// </summary>
 /// <param name="connection">The network connection that is being queued.</param>
 /// <returns>
-/// Returns a non-null value to prevent the connection from joining the queue. 
-/// If `null` is returned, the connection will be added to the queue as normal.
+/// Returns a non-null value to prevent the connection from being queued. If `null` is returned, the connection is added to the queue. (object)
 /// </returns>
 object OnConnectionQueue(Network.Connection connection)
 {
-    Puts($"Connection from {connection.ipaddress} is attempting to join the queue.");
-    
-    if (connection.ipaddress == "192.168.0.100")
-    {
-        Puts("Connection from this IP is blocked from joining the queue.");
-        return "You are not allowed to join the server.";
-    }
-    
+    Puts($"Connection from {connection} is attempting to join the queue.");
     return null;
 }
 ```
@@ -23166,19 +20989,14 @@ object OnConnectionQueue(Network.Connection connection)
 /// Called when a projectile ricochets off a surface.
 /// </summary>
 /// <param name="player">The player who fired the projectile.</param>
-/// <param name="ricochetData">Data related to the ricochet event, including position and velocity.</param>
-/// <returns>No return behavior.</returns>
-void OnProjectileRicochet(BasePlayer player, ProtoBuf.PlayerProjectileRicochet ricochetData)
+/// <param name="ricochetData">The data related to the ricochet event.</param>
+/// <returns>
+/// Returns `null` to allow the default ricochet behavior, or a non-null value to override it. (object)
+/// </returns>
+object OnProjectileRicochet(BasePlayer player, ProtoBuf.PlayerProjectileRicochet ricochetData)
 {
-    Puts($"Projectile ricochet detected for player {player.displayName} with ID: {ricochetData.projectileID}.");
-
-    if (ricochetData.hitPosition.IsNaNOrInfinity())
-    {
-        Puts("Ricochet data contains invalid hit position.");
-        return;
-    }
-
-    // Additional logic can be added here to handle the ricochet event.
+    Puts($"Projectile ricochet detected for player {player} with ID: {ricochetData.projectileID}.");
+    return null;
 }
 ```
 ```
@@ -23187,8 +21005,8 @@ void OnProjectileRicochet(BasePlayer player, ProtoBuf.PlayerProjectileRicochet r
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.FromOwner]
+	[RPC_Server]
 	public void OnProjectileRicochet(RPCMessage msg)
 	{
 		PlayerProjectileRicochet playerProjectileRicochet = PlayerProjectileRicochet.Deserialize(msg.read);
@@ -23233,12 +21051,12 @@ void OnProjectileRicochet(BasePlayer player, ProtoBuf.PlayerProjectileRicochet r
 /// Called when an entity is picked up by a player.
 /// </summary>
 /// <param name="entity">The entity that was picked up.</param>
-/// <param name="item">The item that was created as a result of the pickup.</param>
+/// <param name="item">The item that was created from the entity.</param>
 /// <param name="player">The player who picked up the entity.</param>
 /// <returns>No return behavior.</returns>
 void OnEntityPickedUp(BaseCombatEntity entity, Item item, BasePlayer player)
 {
-    Puts($"Entity {entity.net.ID} picked up by {player.displayName} (ID: {player.UserIDString}).");
+    Puts($"Entity {entity} picked up by player {player} with item {item}.");
 }
 ```
 ```
@@ -23265,15 +21083,13 @@ void OnEntityPickedUp(BaseCombatEntity entity, Item item, BasePlayer player)
 /// <param name="player">The player who responded to the conversation.</param>
 /// <param name="conversation">The conversation data associated with the interaction.</param>
 /// <param name="response">The specific response node chosen by the player.</param>
-/// <returns>No return behavior.</returns>
-void OnNpcConversationResponded(NPCTalking npc, BasePlayer player, ConversationData conversation, ConversationData.ResponseNode response)
+/// <returns>
+/// Returns a non-null value to override the default response behavior; otherwise, returns null to proceed with the default logic. (object)
+/// </returns>
+object OnNpcConversationResponded(NPCTalking npc, BasePlayer player, ConversationData conversation, ConversationData.ResponseNode response)
 {
-    Puts($"Player {player.displayName} responded to NPC {npc.name} with response: {response.text}");
-
-    if (response.text.Contains("goodbye"))
-    {
-        Puts($"Player {player.displayName} ended the conversation with NPC {npc.name}.");
-    }
+    Puts($"Player {player} responded to NPC {npc} with response: {response}.");
+    return null;
 }
 ```
 ```
@@ -23334,15 +21150,14 @@ void OnNpcConversationResponded(NPCTalking npc, BasePlayer player, ConversationD
 /// </summary>
 /// <param name="info">The hit information related to the projectile's creation.</param>
 /// <param name="item">The item associated with the projectile.</param>
-/// <returns>No return behavior.</returns>
-void OnWorldProjectileCreate(HitInfo info, Item item)
+/// <returns>
+/// Returns a non-null value to prevent the default projectile creation behavior. 
+/// If `null` is returned, the projectile will be created as normal. (object)
+/// </returns>
+object OnWorldProjectileCreate(HitInfo info, Item item)
 {
-    Puts($"World projectile created at position: {info.HitPositionWorld}, by item: {item.info.displayName.english}.");
-
-    if (item.info.shortname == "rocket.launcher")
-    {
-        Puts("A rocket launcher projectile has been created!");
-    }
+    Puts($"Creating world projectile with item {item} at position {info.HitPositionWorld}.");
+    return null;
 }
 ```
 ```
@@ -23422,7 +21237,6 @@ void OnWorldProjectileCreate(HitInfo info, Item item)
 void OnCrateLanded(HackableLockedCrate crate)
 {
     Puts($"Hackable locked crate has landed at position: {crate.transform.position}.");
-    // Additional logic can be added here, such as spawning loot or notifying players.
 }
 ```
 ```
@@ -23458,19 +21272,12 @@ void OnCrateLanded(HackableLockedCrate crate)
 /// <param name="explosive">The timed explosive whose fuse is being set.</param>
 /// <param name="fuseLength">The length of the fuse in seconds.</param>
 /// <returns>
-/// Returns the adjusted fuse length as a float. If the method returns `null`, the default fuse length will be used.
+/// Returns a modified fuse length if the hook alters the default behavior; otherwise, returns the original fuse length. (float)
 /// </returns>
-float? OnExplosiveFuseSet(TimedExplosive explosive, float fuseLength)
+object OnExplosiveFuseSet(TimedExplosive explosive, float fuseLength)
 {
-    Puts($"Setting fuse for explosive {explosive.net.ID} to {fuseLength} seconds.");
-    
-    if (fuseLength < 1.0f)
-    {
-        Puts("Fuse length is too short, setting to minimum of 1 second.");
-        return 1.0f;
-    }
-
-    return null; // Allow the default fuse length to be used if no adjustments are made.
+    Puts($"Setting fuse for explosive {explosive} to {fuseLength} seconds.");
+    return null;
 }
 ```
 ```
@@ -23500,24 +21307,17 @@ float? OnExplosiveFuseSet(TimedExplosive explosive, float fuseLength)
 ```csharp
 ```csharp
 /// <summary>
-/// Determines whether an item can be equipped in a specified slot of the player's inventory.
+/// Determines whether a specific item can be equipped in a given slot of the player's inventory.
 /// </summary>
 /// <param name="item">The item to be equipped.</param>
 /// <param name="targetSlot">The slot in which the item is to be equipped.</param>
 /// <returns>
 /// Returns `true` if the item can be equipped in the specified slot; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will determine if the item can be equipped.
+/// If the method returns `null`, the default game logic will determine if the item can be equipped. (bool)
 /// </returns>
-bool? CanEquipItem(Item item, int targetSlot)
+object CanEquipItem(Item item, int targetSlot)
 {
-    Puts($"Checking if item {item.info.displayName.english} can be equipped in slot {targetSlot}.");
-
-    if (item.info.shortname == "restricted.item")
-    {
-        Puts($"Item {item.info.displayName.english} is restricted and cannot be equipped.");
-        return false;
-    }
-
+    Puts($"Checking if item {item} can be equipped in slot {targetSlot}.");
     return null;
 }
 ```
@@ -23579,19 +21379,13 @@ bool? CanEquipItem(Item item, int targetSlot)
 /// <param name="player">The player who is mounting the weapon.</param>
 /// <param name="rack">The weapon rack where the weapon is being mounted.</param>
 /// <returns>
-/// Returns `true` if the weapon was successfully mounted; otherwise, returns `false`.
-/// If a non-null value is returned from the hook, it will override the default behavior.
+/// Returns `true` if the weapon was successfully mounted; otherwise, returns `false`. 
+/// If the method returns a non-null value, it overrides the default mounting behavior. (bool)
 /// </returns>
-bool OnRackedWeaponMounted(Item item, BasePlayer player, WeaponRack rack)
+object OnRackedWeaponMounted(Item item, BasePlayer player, WeaponRack rack)
 {
-    Puts($"Weapon {item.info.displayName.english} mounted by {player.displayName} on rack {rack.net.ID}.");
-    
-    if (item.info.shortname == "rifle.semiauto")
-    {
-        Puts("A semi-automatic rifle has been mounted!");
-    }
-    
-    return true;
+    Puts($"Weapon {item} mounted by player {player} on rack {rack}.");
+    return null;
 }
 ```
 ```
@@ -23660,24 +21454,17 @@ bool OnRackedWeaponMounted(Item item, BasePlayer player, WeaponRack rack)
 ```csharp
 ```csharp
 /// <summary>
-/// Called to determine if a player can loot a specific entity.
+/// Called to determine if a player can loot a specific resource container.
 /// </summary>
-/// <param name="player">The player attempting to loot the entity.</param>
-/// <param name="container">The resource container being looted.</param>
+/// <param name="player">The player attempting to loot the container.</param>
+/// <param name="container">The resource container that is being looted.</param>
 /// <returns>
-/// Returns `true` if the player can loot the entity, or `false` if they cannot.
-/// If the method returns `null`, the default game logic will determine if the player can loot the entity.
+/// Returns `true` if the player can loot the container, or `false` if they cannot.
+/// If the method returns `null`, the default game logic will determine if the player can loot the container. (bool)
 /// </returns>
-bool? CanLootEntity(BasePlayer player, ResourceContainer container)
+object CanLootEntity(BasePlayer player, ResourceContainer container)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to loot the container.");
-
-    if (container.IsLocked())
-    {
-        Puts($"Container is locked. Player {player.displayName} cannot loot.");
-        return false;
-    }
-
+    Puts($"Player {player} is attempting to loot container {container}.");
     return null;
 }
 ```
@@ -23687,8 +21474,8 @@ bool? CanLootEntity(BasePlayer player, ResourceContainer container)
 
 ```csharp
 
-	[BaseEntity.RPC_Server]
 	[BaseEntity.RPC_Server.IsVisible(3f)]
+	[BaseEntity.RPC_Server]
 	private void StartLootingContainer(BaseEntity.RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -23711,7 +21498,7 @@ bool? CanLootEntity(BasePlayer player, ResourceContainer container)
 /// <returns>No return behavior.</returns>
 void InitLogging()
 {
-    Puts("Logging system initialized successfully.");
+    Puts("Logging system initialized.");
 }
 ```
 ```
@@ -23733,24 +21520,14 @@ void InitLogging()
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player's collider is enabled.
+/// Called when enabling the player's collider.
 /// </summary>
 /// <param name="player">The player whose collider is being enabled.</param>
-/// <param name="collider">The collider being enabled for the player.</param>
-/// <returns>
-/// Returns a non-null value to prevent the collider from being enabled; otherwise, returns `null` to allow enabling.
-/// </returns>
-object OnPlayerColliderEnable(BasePlayer player, UnityEngine.CapsuleCollider collider)
+/// <param name="collider">The capsule collider associated with the player.</param>
+/// <returns>No return behavior.</returns>
+void OnPlayerColliderEnable(BasePlayer player, UnityEngine.CapsuleCollider collider)
 {
-    Puts($"Enabling collider for player {player.displayName} (ID: {player.UserIDString}).");
-
-    if (player.IsInSafeZone())
-    {
-        Puts($"Player {player.displayName} is in a safe zone; collider will not be enabled.");
-        return true; // Prevent enabling the collider
-    }
-
-    return null; // Allow enabling the collider
+    Puts($"Enabling collider for player {player}.");
 }
 ```
 ```
@@ -23775,24 +21552,17 @@ object OnPlayerColliderEnable(BasePlayer player, UnityEngine.CapsuleCollider col
 ```csharp
 ```csharp
 /// <summary>
-/// Called when an NPC initiates an attack on a target.
+/// Called when an NPC attacks a target entity.
 /// </summary>
-/// <param name="npc">The NPC that is attacking.</param>
+/// <param name="npc">The NPC that is performing the attack.</param>
 /// <param name="target">The entity that is being attacked.</param>
 /// <returns>
-/// Returns `null` to allow the attack to proceed, or any non-null value to prevent the attack.
+/// Returns `null` to allow the attack to proceed, or any non-null value to prevent the attack from happening. (object)
 /// </returns>
 object OnNpcAttack(BaseNpc npc, BaseEntity target)
 {
-    Puts($"NPC {npc.displayName} is attempting to attack {target.displayName} (ID: {target.net.ID}).");
-
-    if (target is PlayerEntity)
-    {
-        Puts($"NPC {npc.displayName} cannot attack players.");
-        return true; // Prevent the attack
-    }
-
-    return null; // Allow the attack
+    Puts($"NPC {npc} is attempting to attack target {target}.");
+    return null;
 }
 ```
 ```
@@ -23828,20 +21598,14 @@ object OnNpcAttack(BaseNpc npc, BaseEntity target)
 /// Called when a client attempts to authenticate with the server.
 /// </summary>
 /// <param name="connection">The network connection of the client attempting to authenticate.</param>
-/// <returns>No return behavior.</returns>
-void OnClientAuth(Network.Connection connection)
+/// <returns>
+/// Returns a non-null value to override the default authentication behavior. 
+/// If `null` is returned, the default authentication process continues. (object)
+/// </returns>
+object OnClientAuth(Network.Connection connection)
 {
-    Puts($"Client {connection.username} (ID: {connection.userid}) is attempting to authenticate.");
-
-    if (connection.state != Network.Connection.State.Connecting)
-    {
-        Puts($"Client {connection.username} has an invalid connection state.");
-        Network.Net.sv.Kick(connection, "Invalid connection state");
-        return;
-    }
-
-    // Additional checks and logic can be added here as needed
-    Puts($"Client {connection.username} authenticated successfully.");
+    Puts($"Client {connection.username} is attempting to authenticate with ID {connection.userid}.");
+    return null;
 }
 ```
 ```
@@ -23931,15 +21695,14 @@ void OnClientAuth(Network.Connection connection)
 /// Called to find items in the player's inventory by their item ID.
 /// </summary>
 /// <param name="inventory">The player's inventory being searched.</param>
-/// <param name="itemId">The ID of the item to find.</param>
+/// <param name="id">The item ID to search for.</param>
 /// <returns>
-/// Returns a list of items that match the specified item ID. 
-/// If the hook returns a non-null value, that value will be used instead of the default search logic.
+/// Returns a list of items found with the specified item ID. If the hook returns a non-null value, that value will be returned instead. (List<Item>)
 /// </returns>
-List<Item> OnInventoryItemsFind(PlayerInventory inventory, int itemId)
+object OnInventoryItemsFind(PlayerInventory inventory, int id)
 {
-    Puts($"Searching for items with ID: {itemId} in inventory of {inventory.Owner.displayName}.");
-    return new List<Item>(); // Placeholder for actual implementation
+    Puts($"Searching for items with ID {id} in inventory of {inventory}.");
+    return null;
 }
 ```
 ```
@@ -23980,18 +21743,11 @@ List<Item> OnInventoryItemsFind(PlayerInventory inventory, int itemId)
 /// <summary>
 /// Called when a conversation with an NPC has ended for a player.
 /// </summary>
-/// <param name="npc">The NPC that the player was conversing with.</param>
 /// <param name="player">The player who ended the conversation.</param>
 /// <returns>No return behavior.</returns>
-void OnNpcConversationEnded(NPCTalking npc, BasePlayer player)
+void OnNpcConversationEnded(BasePlayer player)
 {
-    Puts($"Conversation ended between NPC {npc.name} and player {player.displayName} (ID: {player.UserIDString}).");
-    
-    if (conversingPlayers.Contains(player))
-    {
-        Puts($"Removing player {player.displayName} from the conversation list.");
-        conversingPlayers.Remove(player);
-    }
+    Puts($"Conversation ended for player {player} with NPC {this}.");
 }
 ```
 ```
@@ -24022,12 +21778,7 @@ void OnNpcConversationEnded(NPCTalking npc, BasePlayer player)
 /// <returns>No return behavior.</returns>
 void OnResourceDepositCreated(ResourceDepositManager.ResourceDeposit deposit)
 {
-    Puts($"Resource deposit created at position: {deposit.origin}. Contains: {deposit.GetContents()}.");
-    
-    if (deposit.GetContents().Contains("crude.oil"))
-    {
-        Puts("A crude oil deposit has been created!");
-    }
+    Puts($"Resource deposit created at position: {deposit.origin} with contents: {deposit.GetContents()}");
 }
 ```
 ```
@@ -24115,24 +21866,15 @@ void OnResourceDepositCreated(ResourceDepositManager.ResourceDeposit deposit)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when the egg hunt event ends.
+/// Called when an egg hunt event ends, allowing for cleanup and awarding of prizes.
 /// </summary>
-/// <param name="event">The egg hunt event that has just concluded.</param>
+/// <param name="event">The egg hunt event that has ended.</param>
 /// <returns>
-/// Returns a non-null value to override the default end behavior of the event. 
-/// If `null` is returned, the event will end normally.
+/// Returns `null` to allow the default end behavior, or a non-null value to override it. (object)
 /// </returns>
 object OnHuntEventEnd(EggHuntEvent event)
 {
-    Puts($"Egg Hunt Event has ended. Event ID: {event.eventID}, Duration: {event.durationSeconds} seconds.");
-    
-    // Example condition to prevent the event from ending
-    if (event.participants.Count < 1)
-    {
-        Puts("Event cannot end as there are no participants.");
-        return "No participants to conclude the event.";
-    }
-    
+    Puts($"Egg hunt event {event} has ended.");
     return null;
 }
 ```
@@ -24168,29 +21910,16 @@ object OnHuntEventEnd(EggHuntEvent event)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player attempts to repair an item.
+/// Called when an item is being repaired by a player.
 /// </summary>
 /// <param name="player">The player attempting to repair the item.</param>
 /// <param name="item">The item that is being repaired.</param>
 /// <returns>
-/// Returns `null` to allow the repair process to continue, or any non-null value to prevent the repair.
+/// Returns a non-null value to prevent the repair from occurring, or `null` to allow the repair to proceed. (object)
 /// </returns>
 object OnItemRepair(BasePlayer player, Item item)
 {
-    Puts($"Player {player.displayName} is attempting to repair item: {item.info.displayName.english} (ID: {item.info.itemid}).");
-
-    if (item.condition == item.maxCondition)
-    {
-        Puts($"Item {item.info.displayName.english} is already in perfect condition.");
-        return "Item is already fully repaired.";
-    }
-
-    if (!player.HasPermission("repair.items"))
-    {
-        Puts($"Player {player.displayName} does not have permission to repair items.");
-        return "You do not have permission to repair items.";
-    }
-
+    Puts($"Player {player} is attempting to repair item: {item}.");
     return null;
 }
 ```
@@ -24285,18 +22014,13 @@ object OnItemRepair(BasePlayer player, Item item)
 /// <summary>
 /// Called when the content of a sign is copied to another sign or entity.
 /// </summary>
-/// <param name="sourceSign">The sign from which the content is copied.</param>
-/// <param name="targetSign">The sign that will receive the copied content.</param>
-/// <param name="browserEntity">The UGC browser entity associated with the sign content.</param>
+/// <param name="signContent">The original sign content being copied.</param>
+/// <param name="signage">The signage entity that will receive the copied content.</param>
+/// <param name="browserEntity">The UGC browser entity associated with the sign.</param>
 /// <returns>No return behavior.</returns>
-void OnSignContentCopied(SignContent sourceSign, ISignage targetSign, IUGCBrowserEntity browserEntity)
+void OnSignContentCopied(SignContent signContent, ISignage signage, IUGCBrowserEntity browserEntity)
 {
-    Puts($"Content copied from sign {sourceSign.NetworkID} to sign {targetSign.NetworkID}.");
-    
-    if (browserEntity.EditingHistory.Count > 0)
-    {
-        Puts($"Editing history for sign {targetSign.NetworkID} has been updated.");
-    }
+    Puts($"Sign content copied from {signContent} to signage {signage}.");
 }
 ```
 ```
@@ -24324,20 +22048,18 @@ void OnSignContentCopied(SignContent sourceSign, ISignage targetSign, IUGCBrowse
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player takes a weapon from a weapon rack.
+/// Called when a weapon is taken from a weapon rack by a player.
 /// </summary>
 /// <param name="item">The item being taken from the weapon rack.</param>
 /// <param name="player">The player taking the weapon.</param>
-/// <param name="weaponRack">The weapon rack from which the weapon is taken.</param>
-/// <returns>No return behavior.</returns>
-void OnRackedWeaponTake(Item item, BasePlayer player, WeaponRack weaponRack)
+/// <param name="rack">The weapon rack from which the weapon is taken.</param>
+/// <returns>
+/// Returns a non-null value to prevent the weapon from being taken, or `null` to allow the action. (object)
+/// </returns>
+object OnRackedWeaponTake(Item item, BasePlayer player, WeaponRack rack)
 {
-    Puts($"Player {player.displayName} has taken the weapon: {item.info.displayName.english} from the weapon rack.");
-    
-    if (item.info.shortname == "rifle.semiauto")
-    {
-        Puts($"Warning: Player {player.displayName} took a semi-auto rifle!");
-    }
+    Puts($"Player {player} is attempting to take weapon {item} from rack {rack}.");
+    return null;
 }
 ```
 ```
@@ -24390,21 +22112,16 @@ void OnRackedWeaponTake(Item item, BasePlayer player, WeaponRack weaponRack)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player starts controlling a remote bookmark entity.
+/// Called when a player starts controlling a remote entity via a bookmark.
 /// </summary>
 /// <param name="station">The computer station initiating the control.</param>
-/// <param name="player">The player who is starting to control the bookmark.</param>
-/// <param name="identifier">The identifier of the bookmark being controlled.</param>
+/// <param name="player">The player who is starting to control the entity.</param>
+/// <param name="bookmarkId">The identifier of the bookmark being used.</param>
 /// <param name="remoteEntity">The remote controllable entity being accessed.</param>
 /// <returns>No return behavior.</returns>
-void OnBookmarkControlStarted(ComputerStation station, BasePlayer player, string identifier, IRemoteControllable remoteEntity)
+void OnBookmarkControlStarted(ComputerStation station, BasePlayer player, string bookmarkId, IRemoteControllable remoteEntity)
 {
-    Puts($"Player {player.displayName} has started controlling bookmark: {identifier} from station: {station.name}.");
-
-    if (remoteEntity is CCTV_RC)
-    {
-        Puts($"Player {player.displayName} is controlling a CCTV remote control.");
-    }
+    Puts($"Player {player} started controlling entity with bookmark ID: {bookmarkId}.");
 }
 ```
 ```
@@ -24468,24 +22185,16 @@ void OnBookmarkControlStarted(ComputerStation station, BasePlayer player, string
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player is wounded.
+/// Called when a player is wounded, allowing for custom behavior or modifications.
 /// </summary>
 /// <param name="player">The player who has been wounded.</param>
 /// <param name="hitInfo">Information about the hit that caused the wound.</param>
 /// <returns>
-/// Returns a non-null value to prevent the default wounding behavior. 
-/// If `null` is returned, the player will proceed to the wounded state as normal.
+/// Returns a non-null value to prevent the default wounding behavior; otherwise, returns null to allow it. (object)
 /// </returns>
 object OnPlayerWound(BasePlayer player, HitInfo hitInfo)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) has been wounded. Damage Type: {hitInfo.damageTypes.GetMajorityDamageType()}");
-
-    if (hitInfo.damageTypes.GetMajorityDamageType() == DamageType.Bullet)
-    {
-        Puts($"Player {player.displayName} was wounded by a bullet.");
-        return "Wounding prevented due to bullet damage.";
-    }
-
+    Puts($"Player {player} has been wounded with damage type: {hitInfo.damageTypes.GetMajorityDamageType()}.");
     return null;
 }
 ```
@@ -24526,25 +22235,18 @@ object OnPlayerWound(BasePlayer player, HitInfo hitInfo)
 ```csharp
 ```csharp
 /// <summary>
-/// Determines whether a player can wear a specified item in a given slot.
+/// Determines whether a player can wear a specific item in a given slot.
 /// </summary>
 /// <param name="inventory">The player's inventory.</param>
 /// <param name="item">The item to be worn.</param>
 /// <param name="targetSlot">The slot where the item is intended to be worn.</param>
 /// <returns>
 /// Returns `true` if the item can be worn in the specified slot; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will be used to determine if the item can be worn.
+/// If the method returns `null`, the default game logic will determine if the item can be worn. (bool)
 /// </returns>
-bool? CanWearItem(PlayerInventory inventory, Item item, int targetSlot)
+object CanWearItem(PlayerInventory inventory, Item item, int targetSlot)
 {
-    Puts($"Checking if item {item.info.displayName.english} can be worn in slot {targetSlot}.");
-    
-    if (item.info.shortname == "hat")
-    {
-        Puts("Hats can always be worn.");
-        return true;
-    }
-
+    Puts($"Checking if item {item} can be worn in slot {targetSlot}.");
     return null;
 }
 ```
@@ -24576,18 +22278,11 @@ bool? CanWearItem(PlayerInventory inventory, Item item, int targetSlot)
 /// <param name="player">The player attempting to drop the active item.</param>
 /// <returns>
 /// Returns `true` if the active item can be dropped; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will be used to determine if the item can be dropped.
+/// If the method returns `null`, the default game logic will determine if the item can be dropped. (bool)
 /// </returns>
-bool? CanDropActiveItem(BasePlayer player)
+object CanDropActiveItem(BasePlayer player)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to drop their active item.");
-    
-    if (player.inventory.GetActiveItem() == null)
-    {
-        Puts($"Player {player.displayName} has no active item to drop.");
-        return false;
-    }
-
+    Puts($"Player {player} is attempting to drop their active item.");
     return null;
 }
 ```
@@ -24616,19 +22311,17 @@ bool? CanDropActiveItem(BasePlayer player)
 /// <summary>
 /// Called when debris is spawned from a decaying entity.
 /// </summary>
-/// <param name="decayEntity">The entity that is decaying and causing debris to spawn.</param>
+/// <param name="entity">The decaying entity that is spawning debris.</param>
 /// <param name="position">The local position where the debris will spawn.</param>
 /// <param name="rotation">The rotation of the debris when spawned.</param>
 /// <param name="dropToTerrain">Indicates whether the debris should drop to the terrain.</param>
-/// <returns>No return behavior.</returns>
-void OnDebrisSpawn(DecayEntity decayEntity, Vector3 position, Quaternion rotation, bool dropToTerrain)
+/// <returns>
+/// Returns a non-null value to prevent the default debris spawning behavior; otherwise, returns null to allow it. (object)
+/// </returns>
+object OnDebrisSpawn(DecayEntity entity, Vector3 position, Quaternion rotation, bool dropToTerrain)
 {
-    Puts($"Debris spawned from {decayEntity?.name} at position {position} with rotation {rotation}.");
-
-    if (dropToTerrain)
-    {
-        Puts("Debris will drop to terrain.");
-    }
+    Puts($"Debris spawn requested for entity {entity} at position {position} with rotation {rotation}.");
+    return null;
 }
 ```
 ```
@@ -24674,20 +22367,13 @@ void OnDebrisSpawn(DecayEntity decayEntity, Vector3 position, Quaternion rotatio
 /// </summary>
 /// <param name="station">The computer station where the bookmark is being added.</param>
 /// <param name="player">The player who is adding the bookmark.</param>
-/// <param name="bookmarkName">The name of the bookmark being added.</param>
+/// <param name="bookmark">The bookmark string being added.</param>
 /// <returns>
-/// Returns `null` to allow the bookmark to be added, or any non-null value to prevent the addition.
+/// Returns `null` to allow the bookmark to be added, or any non-null value to prevent the addition. (object)
 /// </returns>
-object OnBookmarkAdd(ComputerStation station, BasePlayer player, string bookmarkName)
+object OnBookmarkAdd(ComputerStation station, BasePlayer player, string bookmark)
 {
-    Puts($"Player {player.displayName} is adding a bookmark: {bookmarkName} to station {station.name}.");
-
-    if (bookmarkName.Contains("forbidden"))
-    {
-        Puts($"Bookmark '{bookmarkName}' is not allowed.");
-        return "This bookmark name is forbidden.";
-    }
-
+    Puts($"Player {player} is adding a bookmark: {bookmark} to station {station}.");
     return null;
 }
 ```
@@ -24737,18 +22423,11 @@ object OnBookmarkAdd(ComputerStation station, BasePlayer player, string bookmark
 /// <param name="newName">The new name for the vending shop.</param>
 /// <param name="player">The player who is renaming the shop.</param>
 /// <returns>
-/// Returns `null` to allow the name change, or any non-null value to prevent the renaming.
+/// Returns `null` to allow the name change, or a non-null value to prevent it. (object)
 /// </returns>
 object OnVendingShopRename(VendingMachine vendingMachine, string newName, BasePlayer player)
 {
-    Puts($"Vending shop renamed to '{newName}' by player {player.displayName} (ID: {player.UserIDString}).");
-
-    if (newName.Length < 3)
-    {
-        Puts("Shop name is too short. Renaming denied.");
-        return "Shop name must be at least 3 characters long.";
-    }
-
+    Puts($"Vending shop renamed to '{newName}' by player {player}.");
     return null;
 }
 ```
@@ -24758,8 +22437,8 @@ object OnVendingShopRename(VendingMachine vendingMachine, string newName, BasePl
 
 ```csharp
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	public void RPC_UpdateShopName(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -24780,17 +22459,12 @@ object OnVendingShopRename(VendingMachine vendingMachine, string newName, BasePl
 /// <summary>
 /// Called when a sign is updated with a new image by a player.
 /// </summary>
-/// <param name="photoFrame">The photo frame sign that is being updated.</param>
-/// <param name="player">The player who is updating the sign.</param>
+/// <param name="photoFrame">The photo frame (sign) that has been updated.</param>
+/// <param name="player">The player who updated the sign.</param>
 /// <returns>No return behavior.</returns>
 void OnSignUpdated(PhotoFrame photoFrame, BasePlayer player)
 {
-    Puts($"Sign updated by player {player.displayName} (ID: {player.UserIDString}) on PhotoFrame ID: {photoFrame.net.ID}.");
-    
-    if (player.IsAdmin)
-    {
-        Puts($"Admin {player.displayName} updated the sign.");
-    }
+    Puts($"Sign updated by player {player} on photo frame {photoFrame}.");
 }
 ```
 ```
@@ -24799,9 +22473,9 @@ void OnSignUpdated(PhotoFrame photoFrame, BasePlayer player)
 
 ```csharp
 
-	[RPC_Server.MaxDistance(5f)]
 	[RPC_Server]
 	[RPC_Server.CallsPerSecond(3uL)]
+	[RPC_Server.MaxDistance(5f)]
 	public void UpdateSign(RPCMessage msg)
 	{
 		if (!(msg.player == null) && CanUpdateSign(msg.player))
@@ -24831,19 +22505,11 @@ void OnSignUpdated(PhotoFrame photoFrame, BasePlayer player)
 /// <param name="receiver">The phone controller receiving the call.</param>
 /// <param name="player">The player involved in the call.</param>
 /// <returns>
-/// Returns a non-null value to prevent the call from starting. 
-/// If `null` is returned, the call proceeds as normal.
+/// Returns a non-null value to prevent the call from starting; otherwise, returns null to allow the call to proceed. (object)
 /// </returns>
 object OnPhoneCallStart(PhoneController caller, PhoneController receiver, BasePlayer player)
 {
-    Puts($"Phone call initiated from {caller} to {receiver} by player {player.displayName}.");
-    
-    if (receiver.IsBusy)
-    {
-        Puts($"Call from {caller} to {receiver} rejected: receiver is busy.");
-        return "The receiver is currently busy.";
-    }
-    
+    Puts($"Phone call initiated from {caller} to {receiver} by player {player}.");
     return null;
 }
 ```
@@ -24879,23 +22545,12 @@ object OnPhoneCallStart(PhoneController caller, PhoneController receiver, BasePl
 /// <param name="apc">The Bradley APC attempting to target the entity.</param>
 /// <param name="entity">The entity being checked for targeting.</param>
 /// <returns>
-/// Returns `true` if the APC can target the entity, or `false` if it cannot.
-/// If the method returns `null`, the default targeting logic will be applied.
+/// Returns `true` if the APC can target the entity; otherwise, returns `false`. 
+/// If the method returns `null`, the default visibility logic will be used. (bool)
 /// </returns>
-bool? CanBradleyApcTarget(BradleyAPC apc, BaseEntity entity)
+object CanBradleyApcTarget(BradleyAPC apc, BaseEntity entity)
 {
-    Puts($"Checking if Bradley APC can target entity: {entity?.name ?? "null"}");
-
-    if (entity is BasePlayer player)
-    {
-        Puts($"Entity is a player: {player.displayName}");
-        // Additional checks for player targeting can be added here
-    }
-    else
-    {
-        Puts($"Entity is of type: {entity.GetType().Name}");
-    }
-
+    Puts($"Checking if Bradley APC can target entity: {entity}.");
     return null;
 }
 ```
@@ -24950,30 +22605,17 @@ bool? CanBradleyApcTarget(BradleyAPC apc, BaseEntity entity)
 ```csharp
 ```csharp
 /// <summary>
-/// Determines whether a player can design a firework pattern.
+/// Called to determine if a player can design a firework pattern.
 /// </summary>
 /// <param name="player">The player attempting to design the firework.</param>
 /// <param name="fireworkPattern">The firework pattern being designed.</param>
 /// <returns>
-/// Returns `true` if the player can design the firework pattern; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will determine if the player can design the firework.
+/// Returns `true` if the player can design the firework pattern; otherwise, returns `false`. 
+/// If the method returns `null`, the default game logic will be used to determine if the player can design the firework. (bool)
 /// </returns>
-bool? CanDesignFirework(BasePlayer player, PatternFirework fireworkPattern)
+object CanDesignFirework(BasePlayer player, PatternFirework fireworkPattern)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to design a firework pattern.");
-
-    if (!player.CanInteract())
-    {
-        Puts($"Player {player.displayName} cannot interact with the firework design.");
-        return false;
-    }
-
-    if (fireworkPattern.IsRestricted)
-    {
-        Puts($"Player {player.displayName} is trying to design a restricted firework pattern.");
-        return false;
-    }
-
+    Puts($"Player {player} is attempting to design a firework pattern: {fireworkPattern}.");
     return null;
 }
 ```
@@ -25009,20 +22651,15 @@ bool? CanDesignFirework(BasePlayer player, PatternFirework fireworkPattern)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player gathers resources from a resource dispenser.
+/// Called when a player gathers resources from a dispenser.
 /// </summary>
-/// <param name="dispenser">The resource dispenser from which resources are being gathered.</param>
+/// <param name="dispenser">The resource dispenser being gathered from.</param>
 /// <param name="player">The player gathering the resources.</param>
 /// <param name="item">The item being gathered.</param>
 /// <returns>No return behavior.</returns>
 void OnDispenserGather(ResourceDispenser dispenser, BasePlayer player, Item item)
 {
-    Puts($"Player {player.displayName} gathered {item.amount} of {item.info.displayName.english} from dispenser {dispenser.gameObject.name}.");
-    
-    if (item.info.shortname == "wood")
-    {
-        Puts($"Player {player.displayName} has gathered wood, which is a common resource.");
-    }
+    Puts($"Player {player} gathered {item.amount} of {item.info.shortname} from dispenser {dispenser}.");
 }
 ```
 ```
@@ -25083,23 +22720,16 @@ void OnDispenserGather(ResourceDispenser dispenser, BasePlayer player, Item item
 /// <summary>
 /// Called when an elevator is requested to move to a specific floor.
 /// </summary>
-/// <param name="elevator">The elevator that is moving.</param>
+/// <param name="elevator">The elevator that is being moved.</param>
 /// <param name="targetFloor">The floor to which the elevator is requested to move.</param>
 /// <returns>
-/// Returns `true` if the elevator can move to the target floor; otherwise, returns `false`.
-/// If the method returns a non-null value, it indicates that the movement is blocked or not allowed.
+/// Returns `false` if the elevator cannot move due to various conditions; otherwise, returns `true` to indicate the move is valid.
+/// If the method returns a non-null value, it will prevent the elevator from moving. (bool)
 /// </returns>
-bool OnElevatorMove(Elevator elevator, int targetFloor)
+object OnElevatorMove(Elevator elevator, int targetFloor)
 {
-    Puts($"Elevator {elevator.ID} is requested to move to floor {targetFloor}.");
-    
-    if (targetFloor < 0)
-    {
-        Puts("Invalid floor request: Floor cannot be negative.");
-        return false;
-    }
-
-    return null; // Allow default behavior to determine if the elevator can move.
+    Puts($"Elevator {elevator} requested to move to floor {targetFloor}.");
+    return null;
 }
 ```
 ```
@@ -25178,19 +22808,14 @@ bool OnElevatorMove(Elevator elevator, int targetFloor)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when the performance stats of a vehicle engine are refreshed.
+/// Called when the performance statistics of a vehicle engine are refreshed.
 /// </summary>
 /// <param name="engine">The engine module whose stats are being refreshed.</param>
 /// <param name="engineStorage">The storage containing the engine's performance data.</param>
 /// <returns>No return behavior.</returns>
-void OnEngineStatsRefreshed(VehicleModuleEngine engine, Rust.Modular.EngineStorage engineStorage)
+void OnEngineStatsRefreshed(VehicleModuleEngine engine, EngineStorage engineStorage)
 {
-    Puts($"Engine stats refreshed for {engine.GetType().Name}. Usable: {engineStorage?.isUsable ?? false}");
-    
-    if (engineStorage != null)
-    {
-        Puts($"Acceleration Boost: {engineStorage.accelerationBoostPercent}, Top Speed Boost: {engineStorage.topSpeedBoostPercent}, Fuel Economy Boost: {engineStorage.fuelEconomyBoostPercent}");
-    }
+    Puts($"Refreshing engine stats for {engine} with storage: {engineStorage}.");
 }
 ```
 ```
@@ -25231,21 +22856,14 @@ void OnEngineStatsRefreshed(VehicleModuleEngine engine, Rust.Modular.EngineStora
 /// <summary>
 /// Called when a player sends voice data.
 /// </summary>
-/// <param name="player">The player who sent the voice data.</param>
-/// <param name="data">The voice data sent by the player.</param>
+/// <param name="player">The player who is sending the voice data.</param>
+/// <param name="data">The voice data being sent as a byte array.</param>
 /// <returns>
-/// Returns `null` to allow the default voice handling, or any non-null value to override the default behavior.
+/// Returns `null` to allow the default voice handling, or any non-null value to override the default behavior. (object)
 /// </returns>
 object OnPlayerVoice(BasePlayer player, byte[] data)
 {
-    Puts($"Voice data received from player {player.displayName} (ID: {player.UserIDString}). Data length: {data.Length} bytes.");
-
-    if (data.Length == 0)
-    {
-        Puts($"Player {player.displayName} sent empty voice data.");
-        return "Voice data cannot be empty.";
-    }
-
+    Puts($"Player {player} sent voice data of length {data.Length}.");
     return null;
 }
 ```
@@ -25291,18 +22909,11 @@ object OnPlayerVoice(BasePlayer player, byte[] data)
 /// <param name="structure">The building block structure being rotated.</param>
 /// <param name="player">The player who is rotating the structure.</param>
 /// <returns>
-/// Returns `null` to allow the rotation, or any non-null value to prevent the rotation.
+/// Returns `null` to allow the rotation, or any non-null value to prevent the rotation. (object)
 /// </returns>
 object OnStructureRotate(BuildingBlock structure, BasePlayer player)
 {
-    Puts($"Player {player.displayName} is attempting to rotate structure: {structure.name}.");
-
-    if (structure.IsLocked())
-    {
-        Puts($"Rotation denied: Structure {structure.name} is locked.");
-        return "Structure is locked and cannot be rotated.";
-    }
-
+    Puts($"Player {player} is attempting to rotate structure {structure}.");
     return null;
 }
 ```
@@ -25342,24 +22953,16 @@ object OnStructureRotate(BuildingBlock structure, BasePlayer player)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a cargo ship is about to spawn a crate.
+/// Called when a cargo ship is about to spawn loot crates.
 /// </summary>
-/// <param name="cargoShip">The cargo ship that is spawning the crate.</param>
+/// <param name="cargoShip">The cargo ship that is spawning the crates.</param>
 /// <returns>
-/// Returns `null` to allow the crate to spawn, or any non-null value to prevent the spawning of the crate.
+/// Returns `null` to allow the default crate spawning behavior, or any non-null value to prevent it. (object)
 /// </returns>
 object OnCargoShipSpawnCrate(CargoShip cargoShip)
 {
-    Puts($"Cargo ship {cargoShip.net.ID} is attempting to spawn a crate.");
-    
-    // Example condition to prevent crate spawning
-    if (cargoShip.IsUnderAttack)
-    {
-        Puts($"Cargo ship {cargoShip.net.ID} cannot spawn crates while under attack.");
-        return true; // Prevent crate spawning
-    }
-
-    return null; // Allow crate spawning
+    Puts($"Cargo ship {cargoShip} is attempting to spawn loot crates.");
+    return null;
 }
 ```
 ```
@@ -25398,19 +23001,14 @@ object OnCargoShipSpawnCrate(CargoShip cargoShip)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when an NPC equips a weapon.
+/// Called when an NPC equips a weapon from its inventory.
 /// </summary>
-/// <param name="npc">The NPC that is equipping the weapon.</param>
+/// <param name="npc">The NPC player that is equipping the weapon.</param>
 /// <param name="item">The item being equipped as a weapon.</param>
 /// <returns>No return behavior.</returns>
 void OnNpcEquipWeapon(NPCPlayer npc, Item item)
 {
-    Puts($"NPC {npc.displayName} is equipping weapon: {item.info.displayName.english} (Item ID: {item.info.itemid}).");
-
-    if (item.info.shortname == "rifle.semiauto")
-    {
-        Puts($"NPC {npc.displayName} has equipped a semi-automatic rifle.");
-    }
+    Puts($"NPC {npc} is equipping weapon: {item}.");
 }
 ```
 ```
@@ -25454,25 +23052,17 @@ void OnNpcEquipWeapon(NPCPlayer npc, Item item)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when the excavator gathers resources.
+/// Called when the excavator gathers resources and produces items.
 /// </summary>
 /// <param name="excavator">The excavator arm that is gathering resources.</param>
-/// <param name="item">The item being produced by the excavator.</param>
+/// <param name="item">The item being produced from the gathered resources.</param>
 /// <returns>
-/// Returns a non-null value to prevent the item from being produced. 
-/// If `null` is returned, the item will be produced and processed as normal.
+/// Returns a non-null value to prevent the item from being produced, or `null` to allow the default behavior. (object)
 /// </returns>
 object OnExcavatorGather(ExcavatorArm excavator, Item item)
 {
-    Puts($"Excavator {excavator.net.ID} is gathering item: {item.info.displayName.english} (ID: {item.info.itemid}).");
-
-    if (item.info.shortname == "metal.fragments")
-    {
-        Puts("Production of metal fragments is currently disabled.");
-        return true; // Prevents the item from being produced.
-    }
-
-    return null; // Allows the item to be produced.
+    Puts($"Excavator {excavator} is gathering item: {item}.");
+    return null;
 }
 ```
 ```
@@ -25520,21 +23110,14 @@ object OnExcavatorGather(ExcavatorArm excavator, Item item)
 /// <summary>
 /// Called to determine if a player can spectate a target based on the provided name.
 /// </summary>
-/// <param name="player">The player attempting to spectate a target.</param>
+/// <param name="player">The player attempting to spectate.</param>
 /// <param name="targetName">The name of the target the player wishes to spectate.</param>
 /// <returns>
-/// Returns `null` to allow the player to spectate the target, or any non-null value to prevent them from doing so.
+/// Returns `null` to allow the player to spectate the target, or any non-null value to prevent spectating. (object)
 /// </returns>
 object CanSpectateTarget(BasePlayer player, string targetName)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to spectate target: {targetName}.");
-
-    if (targetName == "admin")
-    {
-        Puts($"Player {player.displayName} is not allowed to spectate admins.");
-        return "You cannot spectate admin players.";
-    }
-
+    Puts($"Player {player} is attempting to spectate target: {targetName}.");
     return null;
 }
 ```
@@ -25593,23 +23176,16 @@ object CanSpectateTarget(BasePlayer player, string targetName)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player clicks the cancel button on the shop interface.
+/// Called when a player cancels a shop interaction.
 /// </summary>
-/// <param name="shopFront">The shop front where the cancel action occurred.</param>
-/// <param name="player">The player who clicked the cancel button.</param>
+/// <param name="shop">The shop front where the cancellation occurred.</param>
+/// <param name="player">The player who clicked to cancel the shop interaction.</param>
 /// <returns>
-/// Returns `null` to allow the cancel action to proceed, or any non-null value to prevent the cancellation.
+/// Returns `null` to allow the cancellation to proceed, or any non-null value to prevent the cancellation. (object)
 /// </returns>
-object OnShopCancelClick(ShopFront shopFront, BasePlayer player)
+object OnShopCancelClick(ShopFront shop, BasePlayer player)
 {
-    Puts($"Player {player.displayName} has clicked cancel on shop {shopFront.name}.");
-    
-    if (player.inventory.IsFull())
-    {
-        Puts($"Player {player.displayName} cannot cancel the shop action because their inventory is full.");
-        return "Inventory full, cannot cancel.";
-    }
-    
+    Puts($"Player {player} has canceled the shop interaction at {shop}.");
     return null;
 }
 ```
@@ -25640,22 +23216,13 @@ object OnShopCancelClick(ShopFront shopFront, BasePlayer player)
 /// <summary>
 /// Called when a trade is completed at the shop front.
 /// </summary>
-/// <param name="shopFront">The shop front where the trade is taking place.</param>
+/// <param name="shop">The shop front where the trade is completed.</param>
 /// <returns>
-/// Returns a non-null value to prevent the trade from completing. 
-/// If `null` is returned, the trade will proceed as normal.
+/// Returns a non-null value to prevent the trade from completing, or `null` to allow the trade to proceed. (object)
 /// </returns>
-object OnShopCompleteTrade(ShopFront shopFront)
+object OnShopCompleteTrade(ShopFront shop)
 {
-    Puts($"Trade completed at shop front: {shopFront.name}. Vendor: {shopFront.vendorPlayer.displayName}, Customer: {shopFront.customerPlayer.displayName}.");
-    
-    // Example condition to prevent trade
-    if (shopFront.customerPlayer.inventory.GetAmount("restricted.item") > 0)
-    {
-        Puts($"Trade blocked: {shopFront.customerPlayer.displayName} has restricted items.");
-        return "Trade cannot be completed due to restricted items.";
-    }
-    
+    Puts($"Trade completed at shop: {shop}.");
     return null;
 }
 ```
@@ -25714,7 +23281,7 @@ object OnShopCompleteTrade(ShopFront shopFront)
 /// <returns>No return behavior.</returns>
 void OnLootEntityEnd(BasePlayer player, ItemBasedFlowRestrictor restrictor)
 {
-    Puts($"Player {player.displayName} has stopped looting the entity.");
+    Puts($"Player {player} has stopped looting the entity.");
 }
 ```
 ```
@@ -25739,18 +23306,11 @@ void OnLootEntityEnd(BasePlayer player, ItemBasedFlowRestrictor restrictor)
 /// </summary>
 /// <param name="player">The player whose corpse is being spawned.</param>
 /// <returns>
-/// Returns `null` to allow the corpse to spawn, or any non-null value to prevent the spawning of the corpse.
+/// Returns `null` to prevent the corpse from spawning, or any other value to allow the default spawning behavior. (object)
 /// </returns>
 object OnPlayerCorpseSpawn(BasePlayer player)
 {
-    Puts($"Corpse spawn requested for player: {player.displayName} (ID: {player.UserIDString})");
-
-    if (player.IsInSafeZone())
-    {
-        Puts($"Player {player.displayName} is in a safe zone; preventing corpse spawn.");
-        return "Corpse spawn is not allowed in safe zones.";
-    }
-
+    Puts($"Attempting to spawn corpse for player {player}.");
     return null;
 }
 ```
@@ -25835,24 +23395,18 @@ object OnPlayerCorpseSpawn(BasePlayer player)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a technology tree node is unlocked by a player.
+/// Called when a player unlocks a node in the tech tree.
 /// </summary>
-/// <param name="workbench">The workbench associated with the unlocking action.</param>
-/// <param name="node">The technology tree node that has been unlocked.</param>
-/// <param name="player">The player who unlocked the technology tree node.</param>
-/// <returns>No return behavior.</returns>
-void OnTechTreeNodeUnlock(Workbench workbench, TechTreeData.NodeInstance node, BasePlayer player)
+/// <param name="workbench">The workbench associated with the tech tree.</param>
+/// <param name="node">The tech tree node that has been unlocked.</param>
+/// <param name="player">The player who unlocked the node.</param>
+/// <returns>
+/// Returns `null` to allow the default unlocking behavior, or a non-null value to prevent the unlock. (object)
+/// </returns>
+object OnTechTreeNodeUnlock(Workbench workbench, TechTreeData.NodeInstance node, BasePlayer player)
 {
-    Puts($"Player {player.displayName} unlocked tech tree node: {node.itemDef?.shortname ?? "Unknown"} at workbench: {workbench.name}.");
-    
-    if (node.itemDef != null)
-    {
-        Puts($"Node {node.itemDef.shortname} unlocked successfully.");
-    }
-    else
-    {
-        Puts($"Node unlock failed: Item definition is null.");
-    }
+    Puts($"Player {player} has unlocked tech tree node: {node.id} at workbench: {workbench}.");
+    return null;
 }
 ```
 ```
@@ -25922,17 +23476,12 @@ void OnTechTreeNodeUnlock(Workbench workbench, TechTreeData.NodeInstance node, B
 /// <summary>
 /// Called when a sleeping bag is made by a player.
 /// </summary>
-/// <param name="sleepingBag">The sleeping bag that was made.</param>
+/// <param name="bag">The sleeping bag that has been made.</param>
 /// <param name="player">The player who made the sleeping bag.</param>
 /// <returns>No return behavior.</returns>
-void OnBedMade(SleepingBag sleepingBag, BasePlayer player)
+void OnBedMade(SleepingBag bag, BasePlayer player)
 {
-    Puts($"Sleeping bag made by {player.displayName} (ID: {player.UserIDString}). Bag ID: {sleepingBag.net.ID}");
-    
-    if (player.IsSleeping())
-    {
-        Puts($"Player {player.displayName} is currently sleeping in the bag.");
-    }
+    Puts($"Sleeping bag made by player {player} with ID {player.userID}.");
 }
 ```
 ```
@@ -25989,18 +23538,11 @@ void OnBedMade(SleepingBag sleepingBag, BasePlayer player)
 /// <param name="rowboat">The motorized rowboat attempting to start its engine.</param>
 /// <param name="driver">The player attempting to start the engine.</param>
 /// <returns>
-/// Returns `null` to allow the engine to start, or any non-null value to prevent the engine from starting.
+/// Returns `null` to allow the engine to start, or any non-null value to prevent it from starting. (object)
 /// </returns>
 object OnEngineStart(MotorRowboat rowboat, BasePlayer driver)
 {
-    Puts($"Player {driver.displayName} (ID: {driver.UserIDString}) is attempting to start the engine of the rowboat.");
-    
-    if (driver.IsInSafeZone())
-    {
-        Puts($"Player {driver.displayName} is in a safe zone and cannot start the engine.");
-        return "Cannot start engine in safe zone.";
-    }
-
+    Puts($"Player {driver} is attempting to start the engine of the rowboat {rowboat}.");
     return null;
 }
 ```
@@ -26039,29 +23581,21 @@ object OnEngineStart(MotorRowboat rowboat, BasePlayer driver)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a vending transaction is completed.
+/// Called when a vending transaction occurs between a player and a vending machine.
 /// </summary>
 /// <param name="vendingMachine">The vending machine involved in the transaction.</param>
-/// <param name="buyer">The player who is buying items from the vending machine.</param>
+/// <param name="buyer">The player attempting to make a purchase.</param>
 /// <param name="sellOrderId">The ID of the sell order being processed.</param>
-/// <param name="numberOfTransactions">The number of items being purchased.</param>
-/// <param name="targetContainer">The container where purchased items will be placed, if any.</param>
+/// <param name="numberOfTransactions">The number of items the player wishes to purchase.</param>
+/// <param name="targetContainer">The container where the purchased items will be placed.</param>
 /// <returns>
-/// Returns `true` if the transaction was successful, or `false` if it failed.
-/// If the method returns a non-null value, it overrides the default transaction behavior.
+/// Returns `true` if the transaction is successful; otherwise, returns `false`. 
+/// If the method returns a non-null value, it overrides the default transaction behavior. (bool)
 /// </returns>
-bool OnVendingTransaction(VendingMachine vendingMachine, BasePlayer buyer, int sellOrderId, int numberOfTransactions, ItemContainer targetContainer)
+object OnVendingTransaction(VendingMachine vendingMachine, BasePlayer buyer, int sellOrderId, int numberOfTransactions, ItemContainer targetContainer)
 {
-    Puts($"Player {buyer.displayName} is attempting to purchase from vending machine with sell order ID: {sellOrderId}.");
-
-    if (sellOrderId < 0)
-    {
-        Puts("Invalid sell order ID.");
-        return false;
-    }
-
-    // Additional checks can be added here
-    return null; // Allow default transaction logic to proceed
+    Puts($"Player {buyer} is attempting to make a transaction with vending machine {vendingMachine} for order ID {sellOrderId}.");
+    return null;
 }
 ```
 ```
@@ -26192,15 +23726,14 @@ bool OnVendingTransaction(VendingMachine vendingMachine, BasePlayer buyer, int s
 /// Called when a client sends a command to the server.
 /// </summary>
 /// <param name="connection">The network connection of the client sending the command.</param>
-/// <param name="command">The command sent by the client.</param>
-/// <returns>No return behavior.</returns>
-void OnClientCommand(Network.Connection connection, string command)
+/// <param name="command">The command string sent by the client.</param>
+/// <returns>
+/// Returns `null` to allow the command to be processed normally, or a non-null value to prevent further processing. (object)
+/// </returns>
+object OnClientCommand(Network.Connection connection, string command)
 {
-    Puts($"Received command from client {connection.userid}: {command}");
-    if (command.StartsWith("admin"))
-    {
-        Puts($"Admin command detected from {connection.userid}. Processing with caution.");
-    }
+    Puts($"Received command from client {connection}: {command}");
+    return null;
 }
 ```
 ```
@@ -26247,31 +23780,12 @@ void OnClientCommand(Network.Connection connection, string command)
 /// </summary>
 /// <param name="itemDefinition">The item definition for which the research cost is being determined.</param>
 /// <returns>
-/// Returns the amount of scrap required to research the item. 
-/// If a non-null value is returned from the hook, that value will be used as the cost.
+/// Returns the scrap cost for researching the item. If the hook returns a non-null integer, that value will be used; otherwise, a default cost based on item rarity will be calculated. (int)
 /// </returns>
-int OnResearchCostDetermine(ItemDefinition itemDefinition)
+object OnResearchCostDetermine(ItemDefinition itemDefinition)
 {
-    Puts($"Determining research cost for item: {itemDefinition.displayName.english} (ID: {itemDefinition.itemid})");
-
-    if (itemDefinition.rarity == Rarity.Common)
-    {
-        return 20;
-    }
-    else if (itemDefinition.rarity == Rarity.Uncommon)
-    {
-        return 75;
-    }
-    else if (itemDefinition.rarity == Rarity.Rare)
-    {
-        return 125;
-    }
-    else if (itemDefinition.rarity == Rarity.VeryRare || itemDefinition.rarity == Rarity.None)
-    {
-        return 500;
-    }
-
-    return 0; // Default case if no rarity matches
+    Puts($"Determining research cost for item: {itemDefinition}.");
+    return null;
 }
 ```
 ```
@@ -26329,17 +23843,7 @@ int OnResearchCostDetermine(ItemDefinition itemDefinition)
 /// <returns>No return behavior.</returns>
 void OnPlayerSleep(BasePlayer player)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) has started sleeping.");
-    
-    if (player.IsRestrained)
-    {
-        Puts($"Player {player.displayName} is restrained and will be released from restraints upon sleeping.");
-    }
-    
-    if (player.InSafeZone())
-    {
-        Puts($"Player {player.displayName} is in a safe zone while sleeping.");
-    }
+    Puts($"Player {player} has started sleeping.");
 }
 ```
 ```
@@ -26396,15 +23900,15 @@ void OnPlayerSleep(BasePlayer player)
 /// <summary>
 /// Called when distributing Christmas loot to players.
 /// </summary>
-/// <param name="refill">The reference object containing information about the Christmas loot distribution.</param>
-/// <returns>No return behavior.</returns>
-void OnXmasLootDistribute(XMasRefill refill)
+/// <param name="refill">The XMasRefill object containing information about the loot distribution.</param>
+/// <returns>
+/// Returns `null` to proceed with the default loot distribution behavior. 
+/// If a non-null value is returned, it will override the default behavior. (object)
+/// </returns>
+object OnXmasLootDistribute(XMasRefill refill)
 {
-    Puts("Distributing Christmas loot to players.");
-    foreach (BasePlayer player in BasePlayer.activePlayerList)
-    {
-        Puts($"Distributing loot to player: {player.displayName} (ID: {player.UserIDString})");
-    }
+    Puts($"Distributing Christmas loot with refill details: {refill}.");
+    return null;
 }
 ```
 ```
@@ -26438,21 +23942,16 @@ void OnXmasLootDistribute(XMasRefill refill)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when two items are stacked together in a container.
+/// Called when items are stacked in a container.
 /// </summary>
-/// <param name="stackedItem">The item that is being stacked on top.</param>
-/// <param name="sourceItem">The item that is being stacked.</param>
-/// <param name="container">The container where the stacking occurs.</param>
-/// <param name="amount">The amount of the source item that is being stacked.</param>
+/// <param name="stackedItem">The item that is being stacked.</param>
+/// <param name="sourceItem">The item that is being added to the stack.</param>
+/// <param name="container">The container where the stacking is occurring.</param>
+/// <param name="amount">The amount of the source item being stacked.</param>
 /// <returns>No return behavior.</returns>
 void OnItemStacked(Item stackedItem, Item sourceItem, ItemContainer container, int amount)
 {
-    Puts($"Stacking {amount} of {sourceItem.info.displayName.english} onto {stackedItem.info.displayName.english} in container {container.name}.");
-    
-    if (amount > 10)
-    {
-        Puts("Warning: Stacking a large amount of items!");
-    }
+    Puts($"Stacking {amount} of {sourceItem} into {stackedItem} in container {container}.");
 }
 ```
 ```
@@ -26666,15 +24165,7 @@ void OnItemStacked(Item stackedItem, Item sourceItem, ItemContainer container, i
 /// <returns>No return behavior.</returns>
 void OnCargoShipHarborArrived(CargoShip cargoShip)
 {
-    Puts($"Cargo ship {cargoShip.net.ID} has arrived at the harbor.");
-    if (cargoShip.harborIndex == 0)
-    {
-        Puts("Cargo ship is docking at Harbor 1.");
-    }
-    else
-    {
-        Puts("Cargo ship is docking at Harbor 2.");
-    }
+    Puts($"Cargo ship {cargoShip} has arrived at the harbor.");
 }
 ```
 ```
@@ -26736,14 +24227,12 @@ void OnCargoShipHarborArrived(CargoShip cargoShip)
 /// <summary>
 /// Called when a phone call is answered by a player.
 /// </summary>
-/// <param name="caller">The phone controller of the player who answered the call.</param>
-/// <param name="receiver">The phone controller of the player who initiated the call.</param>
+/// <param name="caller">The phone controller that initiated the call.</param>
+/// <param name="receiver">The phone controller that answered the call.</param>
 /// <returns>No return behavior.</returns>
 void OnPhoneAnswered(PhoneController caller, PhoneController receiver)
 {
-    Puts($"Phone answered: Caller ID {caller.GetInstanceID()}, Receiver ID {receiver.GetInstanceID()}.");
-    
-    // Additional logic can be added here, such as notifying players or updating call status.
+    Puts($"Phone answered: Caller {caller}, Receiver {receiver}.");
 }
 ```
 ```
@@ -26784,14 +24273,6 @@ void OnPhoneAnswered(PhoneController caller, PhoneController receiver)
 void IOnRconInitialize()
 {
     Puts("Initializing RCON system...");
-    if (Port == 0)
-    {
-        Puts("Using default server port for RCON.");
-    }
-    else
-    {
-        Puts($"RCON will use port: {Port}");
-    }
 }
 ```
 ```
@@ -26854,22 +24335,15 @@ void IOnRconInitialize()
 /// <summary>
 /// Determines whether a player can use the HBHF sensor.
 /// </summary>
-/// <param name="player">The player attempting to use the HBHF sensor.</param>
-/// <param name="sensor">The HBHF sensor being accessed.</param>
+/// <param name="player">The player attempting to use the sensor.</param>
+/// <param name="sensor">The HBHF sensor being used.</param>
 /// <returns>
 /// Returns `true` if the player can use the sensor; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will determine if the player can use the sensor.
+/// If the method returns `null`, the default game logic will determine if the player can use the sensor. (bool)
 /// </returns>
-bool? CanUseHBHFSensor(BasePlayer player, HBHFSensor sensor)
+object CanUseHBHFSensor(BasePlayer player, HBHFSensor sensor)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to use the HBHF sensor.");
-    
-    if (!player.CanBuild())
-    {
-        Puts($"Player {player.displayName} cannot use the HBHF sensor due to building restrictions.");
-        return false;
-    }
-
+    Puts($"Player {player} is attempting to use the HBHF sensor: {sensor}.");
     return null;
 }
 ```
@@ -26896,15 +24370,16 @@ bool? CanUseHBHFSensor(BasePlayer player, HBHFSensor sensor)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player attempts to create a new team.
+/// Called when a player attempts to create a team.
 /// </summary>
 /// <param name="player">The player who is trying to create a team.</param>
-/// <returns>No return behavior.</returns>
-void OnTeamCreate(BasePlayer player)
+/// <returns>
+/// Returns `null` to allow the team creation, or any non-null value to prevent it. (object)
+/// </returns>
+object OnTeamCreate(BasePlayer player)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to create a team.");
-    
-    // Additional logic can be added here if needed
+    Puts($"Player {player} is attempting to create a team.");
+    return null;
 }
 ```
 ```
@@ -26943,20 +24418,14 @@ void OnTeamCreate(BasePlayer player)
 /// Called when a rocket is launched by a player.
 /// </summary>
 /// <param name="player">The player who launched the rocket.</param>
-/// <param name="rocket">The rocket entity that was launched.</param>
-/// <returns>No return behavior.</returns>
-void OnRocketLaunched(BasePlayer player, BaseEntity rocket)
+/// <param name="rocket">The entity representing the launched rocket.</param>
+/// <returns>
+/// Returns a non-null value to override the default launch behavior, or `null` to allow the launch to proceed as normal. (object)
+/// </returns>
+object OnRocketLaunched(BasePlayer player, BaseEntity rocket)
 {
-    Puts($"Player {player.displayName} has launched a rocket: {rocket.ShortPrefabName}.");
-    
-    if (rocket is ServerProjectile)
-    {
-        Puts($"Rocket launched successfully with ID: {rocket.net.ID}.");
-    }
-    else
-    {
-        Puts("Failed to launch rocket: Invalid entity.");
-    }
+    Puts($"Player {player} has launched a rocket: {rocket}.");
+    return null;
 }
 ```
 ```
@@ -26965,8 +24434,8 @@ void OnRocketLaunched(BasePlayer player, BaseEntity rocket)
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.IsActiveItem]
+	[RPC_Server]
 	private void SV_Launch(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -27076,14 +24545,13 @@ void OnRocketLaunched(BasePlayer player, BaseEntity rocket)
 /// <summary>
 /// Called when a player is kicked from the server.
 /// </summary>
-/// <param name="player">The player who was kicked.</param>
+/// <param name="player">The player who has been kicked.</param>
 /// <param name="reason">The reason for the kick.</param>
 /// <param name="reserveSlot">Indicates whether a slot should be reserved for the player.</param>
 /// <returns>No return behavior.</returns>
 void OnPlayerKicked(BasePlayer player, string reason, bool reserveSlot)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) has been kicked. Reason: {reason}. " +
-         $"Reserve slot: {reserveSlot}");
+    Puts($"Player {player} has been kicked. Reason: {reason}. Reserve slot: {reserveSlot}");
 }
 ```
 ```
@@ -27115,7 +24583,7 @@ void OnPlayerKicked(BasePlayer player, string reason, bool reserveSlot)
 /// <returns>No return behavior.</returns>
 void OnDigitalClockRing(DigitalClock clock)
 {
-    Puts($"Digital clock {clock.net.ID} is ringing!");
+    Puts($"Digital clock {clock} is ringing.");
 }
 ```
 ```
@@ -27142,25 +24610,18 @@ void OnDigitalClockRing(DigitalClock clock)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a horse is hitched to a hitching spot.
+/// Called when attempting to hitch a horse to a hitching spot.
 /// </summary>
 /// <param name="horse">The horse that is being hitched.</param>
-/// <param name="hitch">The hitching spot where the horse is being hitched.</param>
+/// <param name="hitch">The hitching spot to which the horse is being hitched.</param>
 /// <returns>
-/// Returns `true` if the horse was successfully hitched, or `false` if it could not be hitched.
-/// If the method returns a non-null value, it overrides the default hitching behavior.
+/// Returns `true` if the horse was successfully hitched, or `false` if the hitching failed.
+/// If the method returns `null`, the default hitching logic will be applied. (bool)
 /// </returns>
-bool OnHorseHitch(RidableHorse horse, HitchSpot hitch)
+object OnHorseHitch(RidableHorse horse, HitchSpot hitch)
 {
-    Puts($"Attempting to hitch horse {horse.name} to hitch spot {hitch.spot.name}.");
-    
-    if (hitch.IsOccupied())
-    {
-        Puts($"Hitch spot {hitch.spot.name} is already occupied.");
-        return false;
-    }
-
-    return null; // Allow default behavior if no conditions are met
+    Puts($"Attempting to hitch horse {horse} to hitch spot {hitch}.");
+    return null;
 }
 ```
 ```
@@ -27202,24 +24663,17 @@ bool OnHorseHitch(RidableHorse horse, HitchSpot hitch)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when items are gathered from a coaling tower.
+/// Called when gathering items from a coaling tower.
 /// </summary>
 /// <param name="tower">The coaling tower from which items are being gathered.</param>
-/// <param name="item">The item that is being gathered.</param>
+/// <param name="item">The item being gathered from the coaling tower.</param>
 /// <returns>
-/// Returns a non-null value to prevent the item from being gathered, or `null` to allow the gathering process to continue.
+/// Returns a non-null value to prevent the item from being gathered, or `null` to allow the gathering process to continue. (object)
 /// </returns>
 object OnCoalingTowerGather(CoalingTower tower, Item item)
 {
-    Puts($"Gathering item {item.info.displayName.english} from Coaling Tower ID: {tower.net.ID}.");
-
-    if (item.info.shortname == "coal")
-    {
-        Puts("Gathering coal is not allowed from this tower.");
-        return true; // Prevent gathering
-    }
-
-    return null; // Allow gathering
+    Puts($"Gathering item {item} from Coaling Tower {tower}.");
+    return null;
 }
 ```
 ```
@@ -27317,21 +24771,19 @@ object OnCoalingTowerGather(CoalingTower tower, Item item)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player begins controlling a remote entity via a bookmark.
+/// Called when a player attempts to control a remote entity via a bookmark.
 /// </summary>
-/// <param name="station">The computer station initiating the control.</param>
-/// <param name="player">The player who is attempting to control the remote entity.</param>
-/// <param name="bookmarkId">The identifier for the bookmark being used.</param>
-/// <param name="remoteEntity">The remote controllable entity being accessed.</param>
-/// <returns>No return behavior.</returns>
-void OnBookmarkControl(ComputerStation station, BasePlayer player, string bookmarkId, IRemoteControllable remoteEntity)
+/// <param name="station">The computer station being used to control the bookmark.</param>
+/// <param name="player">The player attempting to control the remote entity.</param>
+/// <param name="bookmarkId">The identifier of the bookmark being controlled.</param>
+/// <param name="remoteEntity">The remote controllable entity associated with the bookmark.</param>
+/// <returns>
+/// Returns `null` to allow the control action, or a non-null value to prevent it. (object)
+/// </returns>
+object OnBookmarkControl(ComputerStation station, BasePlayer player, string bookmarkId, IRemoteControllable remoteEntity)
 {
-    Puts($"Player {player.displayName} is controlling bookmark {bookmarkId} on station {station.name}.");
-
-    if (remoteEntity is CCTV_RC)
-    {
-        Puts($"Player {player.displayName} is controlling a CCTV remote.");
-    }
+    Puts($"Player {player} is attempting to control bookmark {bookmarkId} on station {station}.");
+    return null;
 }
 ```
 ```
@@ -27395,7 +24847,7 @@ void OnBookmarkControl(ComputerStation station, BasePlayer player, string bookma
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a collectible entity is picked up by a player.
+/// Called when a collectible item is picked up by a player.
 /// </summary>
 /// <param name="collectible">The collectible entity that was picked up.</param>
 /// <param name="player">The player who picked up the collectible.</param>
@@ -27403,12 +24855,7 @@ void OnBookmarkControl(ComputerStation station, BasePlayer player, string bookma
 /// <returns>No return behavior.</returns>
 void OnCollectiblePickedup(CollectibleEntity collectible, BasePlayer player, Item item)
 {
-    Puts($"Player {player.displayName} picked up {item.info.displayName.english} from {collectible.gameObject.name}.");
-
-    if (item.info.category == ItemCategory.Food)
-    {
-        Puts($"Player {player.displayName} has collected food: {item.info.shortname}.");
-    }
+    Puts($"Player {player} picked up collectible: {collectible} with item: {item}.");
 }
 ```
 ```
@@ -27475,34 +24922,18 @@ void OnCollectiblePickedup(CollectibleEntity collectible, BasePlayer player, Ite
 ```csharp
 ```csharp
 /// <summary>
-/// Determines if a player can assign a sleeping bag to another player.
+/// Called to determine if a player can assign a sleeping bag to another player.
 /// </summary>
 /// <param name="player">The player attempting to assign the sleeping bag.</param>
 /// <param name="sleepingBag">The sleeping bag being assigned.</param>
 /// <param name="targetUserId">The user ID of the player to whom the sleeping bag is being assigned.</param>
 /// <returns>
-/// Returns a result indicating whether the assignment is allowed. 
-/// If the result is `null`, the default game logic will determine if the assignment can proceed.
+/// Returns `true` if the player can assign the sleeping bag, or `false` if they cannot.
+/// If the method returns `null`, the default game logic will determine if the assignment is allowed. (bool)
 /// </returns>
-CanAssignBedResult? CanAssignBed(BasePlayer player, SleepingBag sleepingBag, ulong targetUserId)
+object CanAssignBed(BasePlayer player, SleepingBag sleepingBag, ulong targetUserId)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to assign sleeping bag to player ID: {targetUserId}.");
-
-    if (targetUserId == 0)
-    {
-        Puts("Cannot assign sleeping bag to an invalid player ID.");
-        return BagResultType.InvalidTarget;
-    }
-
-    int currentBagCount = GetSleepingBagCount(player.userID);
-    int maxBagsAllowed = ConVar.Server.max_sleeping_bags;
-
-    if (currentBagCount >= maxBagsAllowed)
-    {
-        Puts($"Player {player.displayName} has reached the maximum number of sleeping bags.");
-        return new CanAssignBedResult { Result = BagResultType.TooManyBags, Count = currentBagCount, Max = maxBagsAllowed };
-    }
-
+    Puts($"Player {player} is attempting to assign sleeping bag {sleepingBag} to user ID {targetUserId}.");
     return null;
 }
 ```
@@ -27581,21 +25012,14 @@ CanAssignBedResult? CanAssignBed(BasePlayer player, SleepingBag sleepingBag, ulo
 /// Determines whether a player can swap to a seat on the mountable entity.
 /// </summary>
 /// <param name="player">The player attempting to swap to the seat.</param>
-/// <param name="mountable">The mountable entity the player is trying to access.</param>
+/// <param name="mountable">The mountable entity that contains the seat.</param>
 /// <returns>
-/// Returns `true` if the player can swap to the seat, or `false` if they cannot.
-/// If the method returns `null`, the default game logic will determine if the player can swap seats.
+/// Returns `true` if the player can swap to the seat; otherwise, returns `false`.
+/// If the method returns `null`, the default game logic will be used to determine if the player can swap. (bool)
 /// </returns>
-bool? CanSwapToSeat(BasePlayer player, BaseMountable mountable)
+object CanSwapToSeat(BasePlayer player, BaseMountable mountable)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to swap to a seat on {mountable.gameObject.name}.");
-
-    if (player.IsDead())
-    {
-        Puts($"Player {player.displayName} cannot swap to seat while dead.");
-        return false;
-    }
-
+    Puts($"Player {player} is attempting to swap to seat on {mountable}.");
     return null;
 }
 ```
@@ -27622,18 +25046,16 @@ bool? CanSwapToSeat(BasePlayer player, BaseMountable mountable)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when the Bradley APC is destroyed.
+/// Called when the Bradley APC entity is destroyed.
 /// </summary>
-/// <param name="info">Information about the hit that caused the destruction.</param>
-/// <returns>No return behavior.</returns>
-void OnEntityDestroy(BradleyAPC bradley, HitInfo info)
+/// <param name="apc">The Bradley APC that is being destroyed.</param>
+/// <returns>
+/// Returns `null` to allow the default destruction behavior, or a non-null value to override it. (object)
+/// </returns>
+object OnEntityDestroy(BradleyAPC apc)
 {
-    Puts($"Bradley APC destroyed at position: {bradley.transform.position} by {info?.InitiatorPlayer?.displayName ?? "unknown"}.");
-
-    if (info != null && info.InitiatorPlayer != null)
-    {
-        Puts($"Destruction initiated by player: {info.InitiatorPlayer.displayName}");
-    }
+    Puts($"Bradley APC {apc} is being destroyed.");
+    return null;
 }
 ```
 ```
@@ -27724,26 +25146,20 @@ void OnEntityDestroy(BradleyAPC bradley, HitInfo info)
 ```csharp
 ```csharp
 /// <summary>
-/// Determines whether an item can be accepted into the specified item container at the given position.
+/// Determines whether an item can be accepted into the specified item container at a given position.
 /// </summary>
-/// <param name="item">The item to be checked for acceptance.</param>
-/// <param name="targetPos">The target position in the container where the item is to be placed.</param>
+/// <param name="container">The item container that is being checked.</param>
+/// <param name="item">The item to be accepted.</param>
+/// <param name="targetPos">The target position within the container where the item is to be placed.</param>
 /// <returns>
 /// Returns <c>CanAcceptResult.CanAccept</c> if the item can be accepted, 
 /// <c>CanAcceptResult.CannotAccept</c> if it cannot, 
-/// or <c>CanAcceptResult.CannotAcceptRightNow</c> if it cannot be accepted at this moment.
+/// or <c>CanAcceptResult.CannotAcceptRightNow</c> if it cannot be accepted at this moment. (CanAcceptResult)
 /// </returns>
-CanAcceptResult CanAcceptItem(Item item, int targetPos)
+CanAcceptResult CanAcceptItem(ItemContainer container, Item item, int targetPos)
 {
-    Puts($"Checking if item {item.info.displayName.english} can be accepted into the container at position {targetPos}.");
-
-    if (item.info.itemType == ItemType.Weapon)
-    {
-        Puts("Weapons cannot be accepted in this container.");
-        return CanAcceptResult.CannotAccept;
-    }
-
-    return CanAcceptResult.CanAccept;
+    Puts($"Checking if item {item} can be accepted in container at position {targetPos}.");
+    return CanAcceptResult.CanAccept; // Default return value for demonstration
 }
 ```
 ```
@@ -27821,30 +25237,18 @@ CanAcceptResult CanAcceptItem(Item item, int targetPos)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when an item is split into a smaller quantity.
+/// Called when an item is split into two parts.
 /// </summary>
 /// <param name="item">The item being split.</param>
 /// <param name="splitAmount">The amount to split from the original item.</param>
 /// <returns>
-/// Returns the new item created from the split, or <c>null</c> if the split was not successful.
+/// Returns the new item created from the split if successful; otherwise, returns `null`. 
+/// If the hook returns an item, that item will be returned instead. (Item)
 /// </returns>
-Item OnItemSplit(Item item, int splitAmount)
+object OnItemSplit(Item item, int splitAmount)
 {
-    Puts($"Item {item.info.displayName.english} is being split. Amount to split: {splitAmount}");
-    
-    if (splitAmount <= 0)
-    {
-        Puts("Split amount must be greater than zero.");
-        return null;
-    }
-
-    if (item.amount < splitAmount)
-    {
-        Puts("Not enough item amount to split.");
-        return null;
-    }
-
-    return null; // Allow the default split logic to proceed
+    Puts($"Item {item} is being split into {splitAmount}.");
+    return null;
 }
 ```
 ```
@@ -27903,18 +25307,13 @@ Item OnItemSplit(Item item, int splitAmount)
 /// <summary>
 /// Called when an item is upgraded successfully.
 /// </summary>
-/// <param name="originalItem">The original item before the upgrade.</param>
-/// <param name="upgradedItem">The new item after the upgrade.</param>
-/// <param name="player">The player who performed the upgrade.</param>
+/// <param name="originalItem">The original item that is being upgraded.</param>
+/// <param name="upgradedItem">The new item that has been created as a result of the upgrade.</param>
+/// <param name="player">The player who initiated the upgrade.</param>
 /// <returns>No return behavior.</returns>
 void OnItemUpgrade(Item originalItem, Item upgradedItem, BasePlayer player)
 {
-    Puts($"Player {player.displayName} upgraded {originalItem.info.displayName.english} to {upgradedItem.info.displayName.english}.");
-    
-    if (upgradedItem.info.shortname == "better.item")
-    {
-        Puts($"Congratulations {player.displayName}, you have crafted a better item!");
-    }
+    Puts($"Item upgraded from {originalItem} to {upgradedItem} by player {player}.");
 }
 ```
 ```
@@ -27960,13 +25359,16 @@ void OnItemUpgrade(Item originalItem, Item upgradedItem, BasePlayer player)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when the drop door of a helicopter is opened or closed.
+/// Called when the drop door of the helicopter is opened or closed.
 /// </summary>
 /// <param name="helicopter">The helicopter whose drop door state is being changed.</param>
-/// <returns>No return behavior.</returns>
-void OnHelicopterDropDoorOpen(CH47HelicopterAIController helicopter)
+/// <returns>
+/// Returns `null` to allow the door to open or close; any non-null value will prevent the action. (object)
+/// </returns>
+object OnHelicopterDropDoorOpen(CH47HelicopterAIController helicopter)
 {
-    Puts($"Helicopter drop door state changed for Helicopter ID: {helicopter.net.ID}. Door is now {(helicopter.HasFlag(Flags.Reserved8) ? "open" : "closed")}.");
+    Puts($"Helicopter {helicopter} drop door state changed.");
+    return null;
 }
 ```
 ```
@@ -27993,11 +25395,11 @@ void OnHelicopterDropDoorOpen(CH47HelicopterAIController helicopter)
 /// Called when a player stops looting a storage container.
 /// </summary>
 /// <param name="player">The player who has stopped looting.</param>
-/// <param name="container">The storage container that was looted.</param>
+/// <param name="container">The storage container that was being looted.</param>
 /// <returns>No return behavior.</returns>
 void OnLootEntityEnd(BasePlayer player, StorageContainer container)
 {
-    Puts($"Player {player.displayName} has stopped looting the container: {container.ShortPrefabName}.");
+    Puts($"Player {player} has stopped looting container {container}.");
 }
 ```
 ```
@@ -28020,23 +25422,14 @@ void OnLootEntityEnd(BasePlayer player, StorageContainer container)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when an experiment is started at the workbench by a player.
+/// Called when an experiment is started at a workbench by a player.
 /// </summary>
 /// <param name="workbench">The workbench where the experiment is initiated.</param>
 /// <param name="player">The player who started the experiment.</param>
 /// <returns>No return behavior.</returns>
 void OnExperimentStarted(Workbench workbench, BasePlayer player)
 {
-    Puts($"Experiment started at workbench by player: {player.displayName} (ID: {player.UserIDString})");
-
-    if (player.IsInCreativeMode)
-    {
-        Puts($"Player {player.displayName} is in creative mode and can start experiments freely.");
-    }
-    else
-    {
-        Puts($"Player {player.displayName} is starting a regular experiment.");
-    }
+    Puts($"Experiment started at workbench {workbench} by player {player}.");
 }
 ```
 ```
@@ -28109,24 +25502,16 @@ void OnExperimentStarted(Workbench workbench, BasePlayer player)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when an item crafting process begins in the industrial crafter.
+/// Called when an item crafting process is initiated in the industrial crafter.
 /// </summary>
 /// <param name="crafter">The industrial crafter that is performing the crafting.</param>
 /// <param name="blueprint">The blueprint of the item being crafted.</param>
 /// <returns>
-/// Returns a non-null value to prevent the crafting process from starting. 
-/// If `null` is returned, the crafting process will proceed as normal.
+/// Returns a non-null value to prevent the crafting process from starting. If null is returned, the crafting proceeds as normal. (object)
 /// </returns>
 object OnItemCraft(IndustrialCrafter crafter, ItemBlueprint blueprint)
 {
-    Puts($"Crafting initiated for {blueprint.targetItem.shortname} in Industrial Crafter ID: {crafter.net.ID}.");
-    
-    if (blueprint.targetItem.shortname == "explosive.timed")
-    {
-        Puts("Crafting of timed explosives is restricted!");
-        return "Crafting of this item is not allowed.";
-    }
-    
+    Puts($"Crafting initiated for blueprint: {blueprint} in crafter: {crafter}.");
     return null;
 }
 ```
@@ -28206,32 +25591,18 @@ object OnItemCraft(IndustrialCrafter crafter, ItemBlueprint blueprint)
 ```csharp
 ```csharp
 /// <summary>
-/// Called to determine if a player can change the code of a CodeLock.
+/// Called to determine if a player can change the code on a code lock.
 /// </summary>
 /// <param name="player">The player attempting to change the code.</param>
-/// <param name="codeLock">The CodeLock being modified.</param>
+/// <param name="codeLock">The code lock being modified.</param>
 /// <param name="newCode">The new code to set.</param>
 /// <param name="isGuestCode">Indicates if the new code is for guest access.</param>
 /// <returns>
-/// Returns `true` if the player is allowed to change the code, or `false` if they are not.
-/// If the method returns `null`, the default game logic will determine if the code can be changed.
+/// Returns `null` to allow the code change, or a non-null value to prevent it. (object)
 /// </returns>
-bool? CanChangeCode(BasePlayer player, CodeLock codeLock, string newCode, bool isGuestCode)
+object CanChangeCode(BasePlayer player, CodeLock codeLock, string newCode, bool isGuestCode)
 {
-    Puts($"Player {player.displayName} is attempting to change the code of a CodeLock to '{newCode}' (Guest Code: {isGuestCode}).");
-
-    if (newCode.Length != 4 || !newCode.IsNumeric())
-    {
-        Puts($"Player {player.displayName} provided an invalid code: '{newCode}'.");
-        return false;
-    }
-
-    if (isGuestCode && !player.HasPermission("codelock.change.guest"))
-    {
-        Puts($"Player {player.displayName} does not have permission to set a guest code.");
-        return false;
-    }
-
+    Puts($"Player {player} is attempting to change code on {codeLock} to {newCode}. Guest code: {isGuestCode}");
     return null;
 }
 ```
@@ -28290,18 +25661,11 @@ bool? CanChangeCode(BasePlayer player, CodeLock codeLock, string newCode, bool i
 /// <param name="turret">The auto turret that is initiating startup.</param>
 /// <returns>
 /// Returns `null` to allow the turret to start up normally. 
-/// Any non-null value will prevent the turret from starting up.
+/// If a non-null value is returned, the startup process will be prevented. (object)
 /// </returns>
 object OnTurretStartup(AutoTurret turret)
 {
-    Puts($"AutoTurret ID: {turret.net.ID} is attempting to start up.");
-    
-    if (turret.IsUnderMaintenance)
-    {
-        Puts($"AutoTurret ID: {turret.net.ID} cannot start up while under maintenance.");
-        return "Turret is under maintenance.";
-    }
-    
+    Puts($"Auto turret {turret} is starting up.");
     return null;
 }
 ```
@@ -28328,25 +25692,17 @@ object OnTurretStartup(AutoTurret turret)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when an entity is reskinned.
+/// Called when an entity is reskinned, allowing for custom behavior during the reskin process.
 /// </summary>
-/// <param name="entity">The entity that is being reskinned.</param>
+/// <param name="entity">The entity being reskinned.</param>
 /// <param name="skin">The new skin being applied to the entity.</param>
 /// <param name="player">The player who initiated the reskin action.</param>
 /// <returns>
-/// Returns a non-null value to prevent the reskin action from proceeding. 
-/// If `null` is returned, the reskin will be applied as normal.
+/// Returns a non-null value to prevent the default reskin behavior; otherwise, returns null to allow the reskin to proceed. (object)
 /// </returns>
 object OnEntityReskin(BaseEntity entity, ItemSkinDirectory.Skin skin, BasePlayer player)
 {
-    Puts($"Entity {entity.net.ID} is being reskinned to skin ID: {skin.id} by player {player.displayName}.");
-    
-    if (skin.id == 12345) // Example skin ID that is not allowed
-    {
-        Puts($"Player {player.displayName} attempted to apply a restricted skin.");
-        return "This skin cannot be applied.";
-    }
-    
+    Puts($"Entity {entity} is being reskinned with skin {skin} by player {player}.");
     return null;
 }
 ```
@@ -28356,8 +25712,8 @@ object OnEntityReskin(BaseEntity entity, ItemSkinDirectory.Skin skin, BasePlayer
 
 ```csharp
 
-	[RPC_Server.IsActiveItem]
 	[RPC_Server]
+	[RPC_Server.IsActiveItem]
 	[RPC_Server.CallsPerSecond(2uL)]
 	private void ChangeItemSkin(RPCMessage msg)
 	{
@@ -28590,18 +25946,11 @@ object OnEntityReskin(BaseEntity entity, ItemSkinDirectory.Skin skin, BasePlayer
 /// <param name="player">The player that is spawning.</param>
 /// <param name="connection">The network connection of the player.</param>
 /// <returns>
-/// Returns `null` to allow the player to spawn normally, or any non-null value to prevent spawning.
+/// Returns a non-null value to prevent the player from spawning, or `null` to allow the spawn process to continue. (object)
 /// </returns>
 object OnPlayerSpawn(BasePlayer player, Network.Connection connection)
 {
-    Puts($"Player {player.displayName} is attempting to spawn with connection ID: {connection?.userid ?? 0}.");
-
-    if (player.health <= 0)
-    {
-        Puts($"Player {player.displayName} cannot spawn because they are dead.");
-        return "You cannot spawn while dead.";
-    }
-
+    Puts($"Player {player.displayName} is spawning with connection ID: {connection.userid}.");
     return null;
 }
 ```
@@ -28659,29 +26008,16 @@ object OnPlayerSpawn(BasePlayer player, Network.Connection connection)
 /// <summary>
 /// Called to determine if a crafting task can be fast-tracked.
 /// </summary>
-/// <param name="craftingStation">The item crafter attempting to fast-track the task.</param>
+/// <param name="crafter">The item crafter attempting to fast-track the task.</param>
 /// <param name="task">The crafting task to be fast-tracked.</param>
 /// <param name="taskID">The unique identifier of the crafting task.</param>
 /// <returns>
-/// Returns `true` if the task can be fast-tracked, or `false` if it cannot.
-/// If the method returns `null`, the default game logic will determine if the task can be fast-tracked.
+/// Returns `true` if the task can be fast-tracked; otherwise, returns `false`. 
+/// If the method returns `null`, the default game logic will determine if the task can be fast-tracked. (bool)
 /// </returns>
-bool? CanFastTrackCraftTask(ItemCrafter craftingStation, ItemCraftTask task, int taskID)
+object CanFastTrackCraftTask(ItemCrafter crafter, ItemCraftTask task, int taskID)
 {
-    Puts($"Attempting to fast-track crafting task ID: {taskID} for crafting station: {craftingStation?.gameObject.name ?? "Unknown"}.");
-
-    if (task.cancelled)
-    {
-        Puts($"Task ID: {taskID} has been cancelled and cannot be fast-tracked.");
-        return false;
-    }
-
-    if (task.amount <= 0)
-    {
-        Puts($"Task ID: {taskID} has no remaining items to craft.");
-        return false;
-    }
-
+    Puts($"Checking if task {taskID} can be fast-tracked for crafter: {crafter}.");
     return null;
 }
 ```
@@ -28741,19 +26077,12 @@ bool? CanFastTrackCraftTask(ItemCrafter craftingStation, ItemCraftTask task, int
 /// <param name="sleepingBag">The sleeping bag being renamed.</param>
 /// <param name="newName">The new name for the sleeping bag.</param>
 /// <returns>
-/// Returns `null` to allow the renaming, or a non-null value to prevent it. 
-/// If a string is returned, it can be used as a rejection message.
+/// Returns `true` if the player is allowed to rename the sleeping bag; otherwise, returns `false`.
+/// If the method returns `null`, the default game logic will determine if the renaming is allowed. (bool)
 /// </returns>
 object CanRenameBed(BasePlayer player, SleepingBag sleepingBag, string newName)
 {
-    Puts($"Player {player.displayName} is attempting to rename a sleeping bag to '{newName}'.");
-
-    if (newName.Contains("restricted"))
-    {
-        Puts($"Player {player.displayName} is not allowed to use the name '{newName}'.");
-        return "This name is not allowed.";
-    }
-
+    Puts($"Player {player} is attempting to rename a sleeping bag to '{newName}'.");
     return null;
 }
 ```
@@ -28763,8 +26092,8 @@ object CanRenameBed(BasePlayer player, SleepingBag sleepingBag, string newName)
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.IsVisible(3f)]
+	[RPC_Server]
 	public void Rename(RPCMessage msg)
 	{
 		if (!msg.player.CanInteract())
@@ -28796,20 +26125,14 @@ object CanRenameBed(BasePlayer player, SleepingBag sleepingBag, string newName)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when an airdrop is initiated, providing the cargo plane and its drop position.
+/// Called when an airdrop is initiated, providing the drop position.
 /// </summary>
 /// <param name="cargoPlane">The cargo plane responsible for the airdrop.</param>
 /// <param name="dropPosition">The position where the airdrop will occur.</param>
 /// <returns>No return behavior.</returns>
 void OnAirdrop(CargoPlane cargoPlane, Vector3 dropPosition)
 {
-    Puts($"Airdrop initiated from CargoPlane ID: {cargoPlane.net.ID} at position: {dropPosition}");
-    
-    if (dropPosition.y < 0)
-    {
-        Puts("Airdrop position is below ground level, adjusting to a safe height.");
-        dropPosition.y = 10f; // Adjust to a safe height
-    }
+    Puts($"Airdrop initiated from {cargoPlane} at position {dropPosition}.");
 }
 ```
 ```
@@ -28851,25 +26174,12 @@ void OnAirdrop(CargoPlane cargoPlane, Vector3 dropPosition)
 /// <param name="player">The player attempting to fire the liquid weapon.</param>
 /// <param name="liquidWeapon">The liquid weapon being fired.</param>
 /// <returns>
-/// Returns `true` if the player can fire the liquid weapon; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will determine if the player can fire the weapon.
+/// Returns `true` if the player can fire the liquid weapon; otherwise, returns `false`. 
+/// If the method returns `null`, the default game logic will determine if the player can fire the weapon. (bool)
 /// </returns>
-bool? CanFireLiquidWeapon(BasePlayer player, LiquidWeapon liquidWeapon)
+object CanFireLiquidWeapon(BasePlayer player, LiquidWeapon liquidWeapon)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to fire a liquid weapon.");
-
-    if (player.IsIncapacitated())
-    {
-        Puts($"Player {player.displayName} cannot fire while incapacitated.");
-        return false;
-    }
-
-    if (liquidWeapon.RequiresPumping && liquidWeapon.pressure < liquidWeapon.PressureLossPerTick)
-    {
-        Puts($"Player {player.displayName} cannot fire due to insufficient pressure.");
-        return false;
-    }
-
+    Puts($"Checking if player {player} can fire the liquid weapon {liquidWeapon}.");
     return null;
 }
 ```
@@ -28932,7 +26242,7 @@ bool? CanFireLiquidWeapon(BasePlayer player, LiquidWeapon liquidWeapon)
 /// <returns>No return behavior.</returns>
 void OnNetworkGroupLeft(BaseNetworkable networkable, Network.Visibility.Group group)
 {
-    Puts($"Networkable entity {networkable.net.ID} has left the visibility group: {group.name}.");
+    Puts($"Networkable {networkable} has left the group: {group}.");
 }
 ```
 ```
@@ -28953,25 +26263,17 @@ void OnNetworkGroupLeft(BaseNetworkable networkable, Network.Visibility.Group gr
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player loses in the Big Wheel game.
+/// Called when a player loses a bet on the Big Wheel game.
 /// </summary>
 /// <param name="game">The Big Wheel game instance.</param>
-/// <param name="item">The item associated with the loss.</param>
-/// <param name="terminal">The betting terminal where the game took place.</param>
+/// <param name="item">The item that was lost in the bet.</param>
+/// <param name="terminal">The betting terminal where the bet was placed.</param>
 /// <returns>
-/// Returns a non-null value to override the default loss behavior. If `null` is returned, the default loss logic will be executed.
+/// Returns `null` to allow the default loss behavior, or a non-null value to override it. (object)
 /// </returns>
 object OnBigWheelLoss(BigWheelGame game, Item item, BigWheelBettingTerminal terminal)
 {
-    Puts($"Player lost at terminal {terminal.id} with item {item.info.displayName.english}.");
-    
-    // Example condition to prevent loss
-    if (item.info.shortname == "special.token")
-    {
-        Puts("Player cannot lose special tokens.");
-        return "You cannot lose special tokens!";
-    }
-
+    Puts($"Player lost item {item} at terminal {terminal} in Big Wheel game {game}.");
     return null;
 }
 ```
@@ -29033,25 +26335,18 @@ object OnBigWheelLoss(BigWheelGame game, Item item, BigWheelBettingTerminal term
 ```csharp
 ```csharp
 /// <summary>
-/// Determines if a mission can be assigned to a player.
+/// Determines if a mission can be assigned to a player by a mission provider.
 /// </summary>
 /// <param name="assignee">The player to whom the mission is being assigned.</param>
-/// <param name="mission">The mission that is being assigned.</param>
-/// <param name="provider">The provider of the mission.</param>
+/// <param name="mission">The mission that is being considered for assignment.</param>
+/// <param name="provider">The provider offering the mission.</param>
 /// <returns>
-/// Returns `true` if the mission can be assigned, `false` if it cannot, 
-/// or `null` if the assignment is subject to additional checks via hooks.
+/// Returns `true` if the mission can be assigned, or `false` if it cannot.
+/// If the method returns `null`, the default game logic will determine if the mission can be assigned. (bool)
 /// </returns>
-bool? CanAssignMission(BasePlayer assignee, BaseMission mission, IMissionProvider provider)
+object CanAssignMission(BasePlayer assignee, BaseMission mission, IMissionProvider provider)
 {
-    Puts($"Checking if mission {mission.id} can be assigned to player {assignee.displayName}.");
-
-    if (!assignee.IsAlive())
-    {
-        Puts($"Player {assignee.displayName} is not alive and cannot be assigned a mission.");
-        return false;
-    }
-
+    Puts($"Checking if mission {mission.id} can be assigned to player {assignee} by provider {provider.ProviderID()}.");
     return null;
 }
 ```
@@ -29119,19 +26414,12 @@ bool? CanAssignMission(BasePlayer assignee, BaseMission mission, IMissionProvide
 /// <param name="player">The player attempting to loot the entity.</param>
 /// <param name="entity">The entity that is being looted.</param>
 /// <returns>
-/// Returns `true` if the player can loot the entity, or `false` if they cannot.
-/// If the method returns `null`, the default game logic will determine if the player can loot the entity.
+/// Returns `true` if the player can loot the entity; otherwise, returns `false`. 
+/// If the method returns `null`, the default game logic will determine if the player can loot the entity. (bool)
 /// </returns>
-bool? CanLootEntity(BasePlayer player, WorldItem entity)
+object CanLootEntity(BasePlayer player, WorldItem entity)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to loot entity: {entity.name}.");
-
-    if (player.IsInSafeZone())
-    {
-        Puts($"Player {player.displayName} cannot loot in a safe zone.");
-        return false;
-    }
-
+    Puts($"Player {player} is attempting to loot entity {entity}.");
     return null;
 }
 ```
@@ -29171,20 +26459,18 @@ bool? CanLootEntity(BasePlayer player, WorldItem entity)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when the weapon modifications change for a projectile weapon.
+/// Called when the weapon modifications for a projectile weapon change.
 /// </summary>
-/// <param name="projectile">The projectile weapon whose modifications have changed.</param>
+/// <param name="projectile">The projectile weapon whose modifications are changing.</param>
 /// <param name="player">The player who owns the projectile weapon.</param>
-/// <returns>No return behavior.</returns>
-void OnWeaponModChange(BaseProjectile projectile, BasePlayer player)
+/// <returns>
+/// Returns a non-null value to prevent the default behavior of the weapon modification change. 
+/// If `null` is returned, the weapon modification change proceeds as normal. (object)
+/// </returns>
+object OnWeaponModChange(BaseProjectile projectile, BasePlayer player)
 {
-    Puts($"Weapon modifications changed for {projectile.name} owned by {player.displayName} (ID: {player.UserIDString}).");
-    
-    // Additional logic can be added here to handle specific mod changes
-    if (projectile.primaryMagazine.capacity < 10)
-    {
-        Puts($"Warning: {player.displayName}'s weapon magazine capacity is below the minimum threshold.");
-    }
+    Puts($"Weapon modifications changed for {projectile} owned by {player}.");
+    return null;
 }
 ```
 ```
@@ -29249,14 +26535,9 @@ void OnWeaponModChange(BaseProjectile projectile, BasePlayer player)
 /// <param name="car">The modular car to which the modules are being assigned.</param>
 /// <param name="modules">The array of vehicle modules being assigned.</param>
 /// <returns>No return behavior.</returns>
-void OnVehicleModulesAssigned(ModularCar car, Rust.Modular.ItemModVehicleModule[] modules)
+void OnVehicleModulesAssigned(ModularCar car, ItemModVehicleModule[] modules)
 {
-    Puts($"Modules assigned to vehicle {car.net.ID}: {modules.Length} modules assigned.");
-    
-    foreach (var module in modules)
-    {
-        Puts($"Module assigned: {module?.GetType().Name ?? "Unknown Module"}");
-    }
+    Puts($"Vehicle modules assigned to car {car} with modules: {string.Join(", ", modules)}.");
 }
 ```
 ```
@@ -29304,22 +26585,15 @@ void OnVehicleModulesAssigned(ModularCar car, Rust.Modular.ItemModVehicleModule[
 /// Called when a weapon is swapped on a weapon rack.
 /// </summary>
 /// <param name="item">The item being swapped (the weapon).</param>
-/// <param name="slot">The slot on the weapon rack where the weapon is being placed.</param>
+/// <param name="slot">The weapon rack slot where the weapon is being placed.</param>
 /// <param name="player">The player performing the swap.</param>
 /// <param name="rack">The weapon rack involved in the swap.</param>
 /// <returns>
-/// Returns `null` to allow the swap to proceed, or any non-null value to prevent the swap.
+/// Returns `null` to allow the swap to proceed, or a non-null value to prevent the swap. (object)
 /// </returns>
 object OnRackedWeaponSwap(Item item, WeaponRackSlot slot, BasePlayer player, WeaponRack rack)
 {
-    Puts($"Player {player.displayName} is swapping weapon: {item.info.displayName.english} into slot: {slot.index} on rack: {rack.net.ID}.");
-
-    if (item.info.shortname == "weapon.sword")
-    {
-        Puts("Swords cannot be swapped onto the weapon rack.");
-        return "Swords are not allowed on the rack.";
-    }
-
+    Puts($"Player {player} is swapping weapon {item} in slot {slot} on rack {rack}.");
     return null;
 }
 ```
@@ -29369,14 +26643,14 @@ object OnRackedWeaponSwap(Item item, WeaponRackSlot slot, BasePlayer player, Wea
 ```csharp
 ```csharp
 /// <summary>
-/// Called when an item is taken as currency by the vending machine.
+/// Called when a currency item is taken from the NPC vending machine.
 /// </summary>
 /// <param name="vendingMachine">The NPC vending machine that is taking the currency item.</param>
-/// <param name="currencyItem">The item being taken as currency.</param>
+/// <param name="currencyItem">The currency item being taken.</param>
 /// <returns>No return behavior.</returns>
 void OnTakeCurrencyItem(NPCVendingMachine vendingMachine, Item currencyItem)
 {
-    Puts($"Currency item {currencyItem.info.displayName.english} taken by vending machine {vendingMachine.net.ID}.");
+    Puts($"Currency item {currencyItem} taken from vending machine {vendingMachine}.");
 }
 ```
 ```
@@ -29405,21 +26679,14 @@ void OnTakeCurrencyItem(NPCVendingMachine vendingMachine, Item currencyItem)
 /// Called when an action is performed on an item by a player.
 /// </summary>
 /// <param name="item">The item on which the action is performed.</param>
-/// <param name="action">The action being performed (e.g., "drop").</param>
+/// <param name="action">The action being performed on the item (e.g., "drop").</param>
 /// <param name="player">The player performing the action.</param>
 /// <returns>
-/// Returns `null` to allow the action to proceed, or any non-null value to prevent the action.
+/// Returns a non-null value to prevent the default action from occurring. If null is returned, the action proceeds as normal. (object)
 /// </returns>
 object OnItemAction(Item item, string action, BasePlayer player)
 {
-    Puts($"Player {player.displayName} is attempting to perform action '{action}' on item {item.info.displayName.english}.");
-
-    if (action == "drop" && item.amount > 10)
-    {
-        Puts($"Player {player.displayName} cannot drop more than 10 items at once.");
-        return "Cannot drop more than 10 items.";
-    }
-
+    Puts($"Player {player} performed action '{action}' on item {item}.");
     return null;
 }
 ```
@@ -29514,19 +26781,11 @@ object OnItemAction(Item item, string action, BasePlayer player)
 /// <param name="player">The player who is unwrapping the item.</param>
 /// <param name="itemMod">The item modification associated with the unwrapping process.</param>
 /// <returns>
-/// Returns `null` to allow the unwrapping process to continue. 
-/// Any non-null value will prevent the item from being unwrapped.
+/// Returns `null` to allow the unwrapping to proceed, or a non-null value to prevent it. (object)
 /// </returns>
 object OnItemUnwrap(Item item, BasePlayer player, ItemModUnwrap itemMod)
 {
-    Puts($"Player {player.displayName} is unwrapping item: {item.info.displayName.english} (ID: {item.info.itemid}).");
-
-    if (item.info.itemid == 12345) // Example item ID for a restricted item
-    {
-        Puts($"Player {player.displayName} attempted to unwrap a restricted item.");
-        return "You cannot unwrap this item.";
-    }
-
+    Puts($"Player {player} is unwrapping item: {item}.");
     return null;
 }
 ```
@@ -29563,17 +26822,12 @@ object OnItemUnwrap(Item item, BasePlayer player, ItemModUnwrap itemMod)
 /// Called when an item is successfully deployed in the game world.
 /// </summary>
 /// <param name="deployer">The player who is deploying the item.</param>
-/// <param name="deployable">The deployable item being placed.</param>
-/// <param name="entity">The entity that is being created as a result of the deployment.</param>
+/// <param name="itemMod">The deployable item mod being deployed.</param>
+/// <param name="entity">The entity that has been created as a result of the deployment.</param>
 /// <returns>No return behavior.</returns>
-void OnItemDeployed(BasePlayer deployer, ItemModDeployable deployable, BaseEntity entity)
+void OnItemDeployed(BasePlayer deployer, ItemModDeployable itemMod, BaseEntity entity)
 {
-    Puts($"Item {deployable.itemName} deployed by {deployer.displayName} (ID: {deployer.UserIDString}) at position {entity.transform.position}.");
-    
-    if (entity is BuildingBlock)
-    {
-        Puts($"A building block has been deployed by {deployer.displayName}.");
-    }
+    Puts($"Item {itemMod} deployed by player {deployer} at position {entity.transform.position}.");
 }
 ```
 ```
@@ -29653,12 +26907,7 @@ void OnItemDeployed(BasePlayer deployer, ItemModDeployable deployable, BaseEntit
 /// <returns>No return behavior.</returns>
 void OnMissionStarted(BaseMission mission, BaseMission.MissionInstance instance, BasePlayer assignee)
 {
-    Puts($"Mission {mission.missionName} has started for player {assignee.displayName} (ID: {assignee.UserIDString}).");
-
-    if (assignee.IsInSafeZone())
-    {
-        Puts($"Player {assignee.displayName} is in a safe zone and cannot start missions.");
-    }
+    Puts($"Mission {mission} started for player {assignee}.");
 }
 ```
 ```
@@ -29703,23 +26952,16 @@ void OnMissionStarted(BaseMission mission, BaseMission.MissionInstance instance,
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player sends a chat message.
+/// Called when a message is sent to a player.
 /// </summary>
-/// <param name="message">The chat message sent by the player.</param>
-/// <param name="player">The player who sent the message.</param>
+/// <param name="message">The message being sent to the player.</param>
+/// <param name="player">The player receiving the message.</param>
 /// <returns>
-/// Returns `null` to allow the message to be sent, or any non-null value to prevent the message from being sent.
+/// Returns a non-null value to prevent the message from being sent. If `null` is returned, the message is sent as normal. (object)
 /// </returns>
 object OnMessagePlayer(string message, BasePlayer player)
 {
-    Puts($"Player {player.displayName} sent a message: {message}");
-    
-    if (message.Contains("forbidden"))
-    {
-        Puts($"Message from {player.displayName} contains forbidden content and will not be sent.");
-        return "Your message contains forbidden content.";
-    }
-    
+    Puts($"Message to player {player}: {message}");
     return null;
 }
 ```
@@ -29744,16 +26986,16 @@ object OnMessagePlayer(string message, BasePlayer player)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a stash container is occluded, indicating that it is no longer accessible.
+/// Called to check if a stash container is occluded and should be affected accordingly.
 /// </summary>
-/// <param name="stashContainer">The stash container that is occluded.</param>
+/// <param name="stash">The stash container that is being checked for occlusion.</param>
 /// <returns>
-/// Returns `null` to allow the default occlusion behavior, or any non-null value to prevent the occlusion action.
+/// Returns `null` to allow the default occlusion behavior. If a non-null value is returned, it overrides the default behavior. (object)
 /// </returns>
-object OnStashOcclude(StashContainer stashContainer)
+object OnStashOcclude(StashContainer stash)
 {
-    Puts($"Stash container at {stashContainer.transform.position} has been occluded.");
-    return null; // Allow default behavior
+    Puts($"Checking occlusion for stash container: {stash}.");
+    return null;
 }
 ```
 ```
@@ -29778,19 +27020,14 @@ object OnStashOcclude(StashContainer stashContainer)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a fireball spreads to create a new fireball entity.
+/// Called when a fireball attempts to spread to create a new fireball entity.
 /// </summary>
-/// <param name="fireBall">The original fireball that is spreading.</param>
-/// <param name="newEntity">The new fireball entity that is created as a result of the spread.</param>
+/// <param name="fireball">The fireball that is spreading.</param>
+/// <param name="entity">The new entity that is being created as a result of the spread.</param>
 /// <returns>No return behavior.</returns>
-void OnFireBallSpread(FireBall fireBall, BaseEntity newEntity)
+void OnFireBallSpread(FireBall fireball, BaseEntity entity)
 {
-    Puts($"Fireball spread from {fireBall.net.ID} to new entity {newEntity.net.ID} at position {newEntity.transform.position}.");
-    
-    if (newEntity is FireBall)
-    {
-        Puts("A new fireball has been created!");
-    }
+    Puts($"Fireball {fireball} is spreading to create a new entity: {entity}.");
 }
 ```
 ```
@@ -29825,21 +27062,19 @@ void OnFireBallSpread(FireBall fireBall, BaseEntity newEntity)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a weapon is loaded with ammo on a weapon rack.
+/// Called when a weapon is loaded onto a weapon rack.
 /// </summary>
-/// <param name="weaponItem">The item representing the weapon being loaded.</param>
-/// <param name="ammoDefinition">The definition of the ammo being loaded into the weapon.</param>
+/// <param name="item">The item representing the weapon being loaded.</param>
+/// <param name="itemDefinition">The definition of the ammo being loaded into the weapon.</param>
 /// <param name="player">The player who is loading the weapon.</param>
-/// <param name="weaponRack">The weapon rack where the weapon is stored.</param>
-/// <returns>No return behavior.</returns>
-void OnRackedWeaponLoaded(Item weaponItem, ItemDefinition ammoDefinition, BasePlayer player, WeaponRack weaponRack)
+/// <param name="weaponRack">The weapon rack where the weapon is being loaded.</param>
+/// <returns>
+/// Returns a non-null value to prevent the weapon from being loaded; otherwise, returns null to allow the action. (object)
+/// </returns>
+object OnRackedWeaponLoaded(Item item, ItemDefinition itemDefinition, BasePlayer player, WeaponRack weaponRack)
 {
-    Puts($"Player {player.displayName} loaded {ammoDefinition.displayName.english} into weapon {weaponItem.info.displayName.english} on rack {weaponRack.net.ID}.");
-    
-    if (ammoDefinition == null)
-    {
-        Puts("Attempted to load null ammo definition.");
-    }
+    Puts($"Player {player} is loading {item} with ammo {itemDefinition} onto {weaponRack}.");
+    return null;
 }
 ```
 ```
@@ -29920,23 +27155,16 @@ void OnRackedWeaponLoaded(Item weaponItem, ItemDefinition ammoDefinition, BasePl
 ```csharp
 ```csharp
 /// <summary>
-/// Validates whether a given URL is a valid boombox station.
+/// Called to validate a boombox station URL.
 /// </summary>
 /// <param name="url">The URL of the boombox station to validate.</param>
 /// <returns>
-/// Returns `true` if the station is valid, `false` if it is not valid. 
-/// If the method returns `null`, the default validation logic will be applied.
+/// Returns `true` if the station is valid, or `false` if it is not. 
+/// If the method returns `null`, the default validation logic will be used. (bool)
 /// </returns>
-bool? OnBoomboxStationValidate(string url)
+object OnBoomboxStationValidate(string url)
 {
     Puts($"Validating boombox station URL: {url}");
-
-    if (url.Contains("restricted"))
-    {
-        Puts($"The URL {url} is restricted and cannot be used.");
-        return false;
-    }
-
     return null;
 }
 ```
@@ -29976,18 +27204,13 @@ bool? OnBoomboxStationValidate(string url)
 /// </summary>
 /// <param name="player">The player using the portal.</param>
 /// <param name="portal">The portal being used.</param>
-/// <returns>No return behavior.</returns>
-void OnPortalUse(BasePlayer player, BasePortal portal)
+/// <returns>
+/// Returns a non-null value to prevent the default portal usage behavior. If null is returned, the portal will function as intended. (object)
+/// </returns>
+object OnPortalUse(BasePlayer player, BasePortal portal)
 {
-    Puts($"Player {player.displayName} is attempting to use portal {portal.name}.");
-
-    if (player.IsInCombat())
-    {
-        Puts($"Player {player.displayName} cannot use the portal while in combat.");
-        return; // Prevent portal use if the player is in combat
-    }
-
-    Puts($"Player {player.displayName} successfully used the portal {portal.name}.");
+    Puts($"Player {player} is attempting to use portal {portal}.");
+    return null;
 }
 ```
 ```
@@ -30059,11 +27282,11 @@ void OnPortalUse(BasePlayer player, BasePortal portal)
 /// Called when an object triggers the bear trap.
 /// </summary>
 /// <param name="trap">The bear trap that was triggered.</param>
-/// <param name="triggeredObject">The game object that triggered the trap.</param>
+/// <param name="triggeredObject">The object that entered the trap.</param>
 /// <returns>No return behavior.</returns>
 void OnTrapTrigger(BearTrap trap, UnityEngine.GameObject triggeredObject)
 {
-    Puts($"Trap triggered by object: {triggeredObject.name} at position: {triggeredObject.transform.position}");
+    Puts($"Trap triggered by object: {triggeredObject.name}.");
 }
 ```
 ```
@@ -30092,22 +27315,14 @@ void OnTrapTrigger(BearTrap trap, UnityEngine.GameObject triggeredObject)
 /// </summary>
 /// <param name="animal">The ridable animal being claimed.</param>
 /// <param name="player">The player claiming the animal.</param>
-/// <param name="item">The item used for the claim, typically a purchase token.</param>
+/// <param name="token">The item used as a purchase token for claiming the animal.</param>
 /// <returns>
-/// Returns `null` to allow the claim to proceed, or any non-null value to prevent the claim.
+/// Returns `null` to allow the claim to proceed, or a non-null value to prevent the claim. (object)
 /// </returns>
-object OnRidableAnimalClaim(BaseRidableAnimal animal, BasePlayer player, Item item)
+object OnRidableAnimalClaim(BaseRidableAnimal animal, BasePlayer player, Item token)
 {
-    Puts($"Player {player.displayName} is attempting to claim a {animal.ShortPrefabName} using item: {item.info.displayName.english}.");
-
-    if (item.info.itemid == 12345) // Example token ID
-    {
-        Puts($"Player {player.displayName} successfully claimed the {animal.ShortPrefabName}.");
-        return null; // Allow the claim
-    }
-
-    Puts($"Player {player.displayName} failed to claim the {animal.ShortPrefabName} due to invalid token.");
-    return "Invalid token used for claiming.";
+    Puts($"Player {player} is attempting to claim {animal} using token {token}.");
+    return null;
 }
 ```
 ```
@@ -30147,22 +27362,16 @@ object OnRidableAnimalClaim(BaseRidableAnimal animal, BasePlayer player, Item it
 /// <summary>
 /// Called when a wallpaper is set on a building block.
 /// </summary>
-/// <param name="buildingBlock">The building block on which the wallpaper is being set.</param>
-/// <param name="wallpaperId">The ID of the wallpaper being applied.</param>
-/// <param name="side">The side of the building block where the wallpaper is applied (0 for front, 1 for back).</param>
-/// <returns>No return behavior.</returns>
-void OnWallpaperSet(BuildingBlock buildingBlock, ulong wallpaperId, int side)
+/// <param name="block">The building block on which the wallpaper is being set.</param>
+/// <param name="id">The ID of the wallpaper being applied.</param>
+/// <param name="side">The side of the block where the wallpaper is being set (0 for one side, 1 for the other).</param>
+/// <returns>
+/// Returns a non-null value to prevent the wallpaper from being set; otherwise, returns null to allow the operation. (object)
+/// </returns>
+object OnWallpaperSet(BuildingBlock block, ulong id, int side)
 {
-    Puts($"Wallpaper with ID {wallpaperId} set on {buildingBlock.name} at side {side}.");
-    
-    if (side == 0)
-    {
-        Puts($"Front wallpaper set to ID {wallpaperId}.");
-    }
-    else
-    {
-        Puts($"Back wallpaper set to ID {wallpaperId}.");
-    }
+    Puts($"Setting wallpaper ID {id} on block {block} at side {side}.");
+    return null;
 }
 ```
 ```
@@ -30210,29 +27419,17 @@ void OnWallpaperSet(BuildingBlock buildingBlock, ulong wallpaperId, int side)
 ```csharp
 ```csharp
 /// <summary>
-/// Determines whether a player can lock the specified key lock.
+/// Called to determine if a player can lock the specified object.
 /// </summary>
-/// <param name="player">The player attempting to lock the key lock.</param>
-/// <param name="keyLock">The key lock that the player is trying to lock.</param>
+/// <param name="player">The player attempting to lock the object.</param>
+/// <param name="keyLock">The key lock associated with the object.</param>
 /// <returns>
-/// Returns `null` to allow the locking action, or any non-null value to prevent the player from locking the key lock.
+/// Returns `true` if the player can lock the object, or `false` if they cannot.
+/// If the method returns `null`, the default game logic will determine if the player can lock the object. (bool)
 /// </returns>
 object CanLock(BasePlayer player, KeyLock keyLock)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to lock the key lock.");
-
-    if (player.IsAdmin)
-    {
-        Puts($"Player {player.displayName} is an admin and can lock anything.");
-        return null;
-    }
-
-    if (keyLock.IsLocked())
-    {
-        Puts($"Key lock is already locked. Player {player.displayName} cannot lock it.");
-        return "The lock is already engaged.";
-    }
-
+    Puts($"Player {player} is attempting to lock {keyLock}.");
     return null;
 }
 ```
@@ -30258,13 +27455,16 @@ object CanLock(BasePlayer player, KeyLock keyLock)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when an NPC is instructed to duck or stand up.
+/// Called when an NPC is instructed to duck.
 /// </summary>
-/// <param name="npc">The NPC that is ducking or standing up.</param>
-/// <returns>No return behavior.</returns>
-void OnNpcDuck(HumanNPC npc)
+/// <param name="npc">The NPC that is ducking.</param>
+/// <returns>
+/// Returns `null` to allow the NPC to duck, or any non-null value to prevent the action. (object)
+/// </returns>
+object OnNpcDuck(HumanNPC npc)
 {
-    Puts($"NPC {npc.displayName} is now ducking.");
+    Puts($"NPC {npc} is attempting to duck.");
+    return null;
 }
 ```
 ```
@@ -30289,25 +27489,18 @@ void OnNpcDuck(HumanNPC npc)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player presses the button on the elevator to raise or lower the floor.
+/// Called when a player presses the button to raise or lower the elevator.
 /// </summary>
 /// <param name="elevator">The elevator that is being controlled.</param>
 /// <param name="player">The player who pressed the button.</param>
 /// <param name="direction">The direction in which the elevator is to move.</param>
 /// <param name="isEmergency">Indicates if the button press is for an emergency stop.</param>
 /// <returns>
-/// Returns `null` to allow the default behavior, or a non-null value to override it.
+/// Returns `null` to allow the default behavior, or a non-null value to override it. (object)
 /// </returns>
 object OnElevatorButtonPress(ElevatorLift elevator, BasePlayer player, Elevator.Direction direction, bool isEmergency)
 {
-    Puts($"Player {player.displayName} pressed the elevator button. Direction: {direction}, Emergency: {isEmergency}");
-
-    if (isEmergency)
-    {
-        Puts("Emergency stop activated!");
-        return "Elevator stopped for emergency.";
-    }
-
+    Puts($"Player {player} pressed the elevator button: {direction}, Emergency: {isEmergency}");
     return null;
 }
 ```
@@ -30342,24 +27535,17 @@ object OnElevatorButtonPress(ElevatorLift elevator, BasePlayer player, Elevator.
 ```csharp
 ```csharp
 /// <summary>
-/// Called when an object triggers the trap, such as a landmine.
+/// Called when an object triggers the trap.
 /// </summary>
-/// <param name="trap">The landmine that was triggered.</param>
+/// <param name="landmine">The landmine that was triggered.</param>
 /// <param name="triggeredObject">The game object that triggered the trap.</param>
-/// <returns>No return behavior.</returns>
-void OnTrapTrigger(Landmine trap, UnityEngine.GameObject triggeredObject)
+/// <returns>
+/// Returns `null` to allow the default trap behavior, or a non-null value to prevent the trap from triggering. (object)
+/// </returns>
+object OnTrapTrigger(Landmine landmine, UnityEngine.GameObject triggeredObject)
 {
-    Puts($"Trap triggered by object: {triggeredObject.name}. Trap ID: {trap.net.ID}");
-    
-    BasePlayer player = GameObjectEx.ToBaseEntity(triggeredObject) as BasePlayer;
-    if (player != null)
-    {
-        Puts($"Player {player.displayName} has triggered the trap!");
-    }
-    else
-    {
-        Puts($"Non-player object {triggeredObject.name} has triggered the trap.");
-    }
+    Puts($"Trap triggered by object: {triggeredObject.name} on landmine: {landmine}.");
+    return null;
 }
 ```
 ```
@@ -30395,16 +27581,11 @@ void OnTrapTrigger(Landmine trap, UnityEngine.GameObject triggeredObject)
 /// Called when a ridable animal is claimed by a player.
 /// </summary>
 /// <param name="animal">The ridable animal that is being claimed.</param>
-/// <param name="player">The player who is claiming the animal.</param>
+/// <param name="player">The player claiming the ridable animal.</param>
 /// <returns>No return behavior.</returns>
 void OnRidableAnimalClaimed(BaseRidableAnimal animal, BasePlayer player)
 {
-    Puts($"Player {player.displayName} has claimed the ridable animal: {animal.ShortPrefabName}.");
-    
-    if (player.IsAdmin)
-    {
-        Puts($"Admin {player.displayName} has claimed the animal, granting special privileges.");
-    }
+    Puts($"Player {player} has claimed the ridable animal: {animal}.");
 }
 ```
 ```
@@ -30445,17 +27626,15 @@ void OnRidableAnimalClaimed(BaseRidableAnimal animal, BasePlayer player)
 /// Called when a player is kicked from a team.
 /// </summary>
 /// <param name="team">The team from which the player is being kicked.</param>
-/// <param name="player">The player who is being kicked.</param>
-/// <param name="playerId">The user ID of the player being kicked.</param>
-/// <returns>No return behavior.</returns>
-void OnTeamKick(RelationshipManager.PlayerTeam team, BasePlayer player, ulong playerId)
+/// <param name="player">The player being kicked from the team.</param>
+/// <param name="userId">The user ID of the player to be removed.</param>
+/// <returns>
+/// Returns `null` to allow the kick to proceed, or any non-null value to prevent the kick. (object)
+/// </returns>
+object OnTeamKick(RelationshipManager.PlayerTeam team, BasePlayer player, ulong userId)
 {
-    Puts($"Player {player.displayName} (ID: {player.userID}) has been kicked from team {team.TeamName} (ID: {team.TeamID}).");
-    
-    if (playerId == 1234567890) // Example check for a specific player ID
-    {
-        Puts("Attempt to kick a special player was blocked.");
-    }
+    Puts($"Player {player} with UserID {userId} is being kicked from team {team}.");
+    return null;
 }
 ```
 ```
@@ -30495,25 +27674,12 @@ void OnTeamKick(RelationshipManager.PlayerTeam team, BasePlayer player, ulong pl
 /// <param name="player">The player being checked for targeting.</param>
 /// <param name="turret">The flame turret attempting to target the player.</param>
 /// <returns>
-/// Returns `true` if the player can be targeted by the turret; otherwise, returns `false`.
-/// If the method returns `null`, the default targeting logic will be applied.
+/// Returns `true` if the player can be targeted by the flame turret; otherwise, returns `false`.
+/// If the method returns `null`, the default targeting logic will be applied. (bool)
 /// </returns>
-bool? CanBeTargeted(BasePlayer player, FlameTurret turret)
+object CanBeTargeted(BasePlayer player, FlameTurret turret)
 {
-    Puts($"Checking if player {player.displayName} (ID: {player.UserIDString}) can be targeted by turret {turret.net.ID}.");
-
-    if (player.IsInSafeZone())
-    {
-        Puts($"Player {player.displayName} is in a safe zone and cannot be targeted.");
-        return false;
-    }
-
-    if (player.HasActiveBuff("invisibility"))
-    {
-        Puts($"Player {player.displayName} is invisible and cannot be targeted.");
-        return false;
-    }
-
+    Puts($"Checking if player {player} can be targeted by turret {turret}.");
     return null;
 }
 ```
@@ -30586,12 +27752,12 @@ bool? CanBeTargeted(BasePlayer player, FlameTurret turret)
 /// <summary>
 /// Called when a player stops spectating.
 /// </summary>
-/// <param name="player">The player who is ending their spectating session.</param>
-/// <param name="filter">The filter used for the spectating session, which could be a player name or other identifier.</param>
+/// <param name="player">The player who has stopped spectating.</param>
+/// <param name="filter">The filter that was used for spectating, which could be a player name or other identifier.</param>
 /// <returns>No return behavior.</returns>
 void OnPlayerSpectateEnd(BasePlayer player, string filter)
 {
-    Puts($"Player {player.displayName} has stopped spectating with filter: {filter}");
+    Puts($"Player {player} has ended spectating with filter: {filter}.");
 }
 ```
 ```
@@ -30617,24 +27783,17 @@ void OnPlayerSpectateEnd(BasePlayer player, string filter)
 ```csharp
 ```csharp
 /// <summary>
-/// Determines whether a player can use the vending machine.
+/// Called to determine if a player can use the vending machine.
 /// </summary>
 /// <param name="player">The player attempting to use the vending machine.</param>
 /// <param name="vendingMachine">The vending machine being accessed.</param>
 /// <returns>
 /// Returns `true` if the player can use the vending machine; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will be used to determine access.
+/// If the method returns `null`, the default game logic will be used to determine access. (bool)
 /// </returns>
-bool? CanUseVending(BasePlayer player, VendingMachine vendingMachine)
+object CanUseVending(BasePlayer player, VendingMachine vendingMachine)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to use the vending machine.");
-
-    if (player.IsBannedFromVending())
-    {
-        Puts($"Player {player.displayName} is banned from using vending machines.");
-        return false;
-    }
-
+    Puts($"Player {player} is attempting to use vending machine {vendingMachine}.");
     return null;
 }
 ```
@@ -30669,18 +27828,15 @@ bool? CanUseVending(BasePlayer player, VendingMachine vendingMachine)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when the server is initialized, setting up necessary components and loading the world state.
+/// Called when the server is initialized, setting up necessary components and loading state.
 /// </summary>
 /// <returns>
-/// Returns <c>true</c> if the server was loaded from a save file, and <c>false</c> otherwise.
+/// Returns `true` if the server was loaded from a save file; otherwise, returns `false`.
 /// </returns>
 bool OnServerInitialize()
 {
     Puts("Server is initializing...");
-
-    // Additional initialization logic can be added here
-
-    return true; // Indicating successful initialization
+    return Initialize();
 }
 ```
 ```
@@ -30744,19 +27900,14 @@ bool OnServerInitialize()
 ```csharp
 ```csharp
 /// <summary>
-/// Called when an entity is saved to the stream.
+/// Called after an entity has been saved to the stream.
 /// </summary>
-/// <param name="entity">The entity that is being saved.</param>
-/// <param name="saveInfo">Information related to the save operation.</param>
+/// <param name="entity">The entity that has been saved.</param>
+/// <param name="saveInfo">The information related to the save operation.</param>
 /// <returns>No return behavior.</returns>
 void IOnEntitySaved(BaseNetworkable entity, BaseNetworkable.SaveInfo saveInfo)
 {
-    Puts($"Entity {entity?.ToString()} is being saved with SaveInfo: {saveInfo?.ToString()}.");
-    
-    if (entity == null)
-    {
-        Puts("Warning: Attempted to save a null entity.");
-    }
+    Puts($"Entity {entity} has been saved with SaveInfo: {saveInfo}.");
 }
 ```
 ```
@@ -30797,12 +27948,7 @@ void IOnEntitySaved(BaseNetworkable entity, BaseNetworkable.SaveInfo saveInfo)
 /// <returns>No return behavior.</returns>
 void OnTeamDisbanded(RelationshipManager.PlayerTeam team)
 {
-    Puts($"Team with ID {team.teamID} has been disbanded. Members: {string.Join(", ", team.members)}");
-    
-    foreach (var member in team.members)
-    {
-        Puts($"Notifying member {member.displayName} of team disbandment.");
-    }
+    Puts($"Team with ID {team.teamID} has been disbanded.");
 }
 ```
 ```
@@ -30835,12 +27981,7 @@ void OnTeamDisbanded(RelationshipManager.PlayerTeam team)
 /// <returns>No return behavior.</returns>
 void OnHorseUnhitch(RidableHorse horse, HitchSpot hitchSpot)
 {
-    Puts($"Horse {horse.name} has been unhitched from {hitchSpot.name}.");
-    
-    if (horse.IsTired())
-    {
-        Puts($"Warning: Horse {horse.name} is tired after unhitching.");
-    }
+    Puts($"Horse {horse} has been unhitched from spot {hitchSpot}.");
 }
 ```
 ```
@@ -30875,18 +28016,16 @@ void OnHorseUnhitch(RidableHorse horse, HitchSpot hitchSpot)
 /// <summary>
 /// Called when a mission is assigned to a player.
 /// </summary>
-/// <param name="mission">The mission being assigned.</param>
+/// <param name="mission">The mission that is being assigned.</param>
 /// <param name="provider">The provider of the mission.</param>
 /// <param name="assignee">The player to whom the mission is assigned.</param>
-/// <returns>No return behavior.</returns>
-void OnMissionAssigned(BaseMission mission, IMissionProvider provider, BasePlayer assignee)
+/// <returns>
+/// Returns a non-null value to prevent the mission from being assigned, or `null` to allow the assignment. (object)
+/// </returns>
+object OnMissionAssigned(BaseMission mission, IMissionProvider provider, BasePlayer assignee)
 {
-    Puts($"Mission {mission.id} has been assigned to player {assignee.displayName} (ID: {assignee.UserIDString}) by provider {provider.ProviderID()}.");
-
-    if (mission.id == "special_mission")
-    {
-        Puts($"Player {assignee.displayName} has been assigned a special mission!");
-    }
+    Puts($"Mission {mission.id} assigned to player {assignee} by provider {provider.ProviderID()}.");
+    return null;
 }
 ```
 ```
@@ -30951,16 +28090,11 @@ void OnMissionAssigned(BaseMission mission, IMissionProvider provider, BasePlaye
 /// Called to refresh the stock level of items available for sale in a vending machine.
 /// </summary>
 /// <param name="vendingMachine">The vending machine whose stock is being refreshed.</param>
-/// <param name="itemDef">The item definition to refresh stock for. If null, refreshes all items.</param>
+/// <param name="itemDef">The item definition to refresh stock for; if null, refreshes all items.</param>
 /// <returns>No return behavior.</returns>
 void OnRefreshVendingStock(VendingMachine vendingMachine, ItemDefinition itemDef)
 {
-    Puts($"Refreshing stock for Vending Machine ID: {vendingMachine.net.ID}, Item: {itemDef?.shortname ?? "All Items"}");
-
-    if (itemDef != null && itemDef.itemid == 12345) // Example item ID check
-    {
-        Puts($"Item {itemDef.shortname} is not available for sale in this vending machine.");
-    }
+    Puts($"Refreshing stock for Vending Machine {vendingMachine} for item: {itemDef?.shortname ?? "all items"}.");
 }
 ```
 ```
@@ -31058,24 +28192,17 @@ void OnRefreshVendingStock(VendingMachine vendingMachine, ItemDefinition itemDef
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a tree marker is hit by a player or object.
+/// Called when a tree marker is hit by a player's action.
 /// </summary>
-/// <param name="tree">The tree entity that was hit.</param>
+/// <param name="tree">The tree entity that contains the marker.</param>
 /// <param name="hitInfo">Information about the hit event, including position and normal.</param>
 /// <returns>
-/// Returns `true` if the hit was registered on the tree marker; otherwise, returns `false`.
-/// If the method returns `null`, the default hit logic will be applied.
+/// Returns `true` if the hit is valid and the marker was successfully hit; otherwise, returns `false`.
+/// If the method returns `null`, the default hit logic will be used. (bool)
 /// </returns>
-bool? OnTreeMarkerHit(TreeEntity tree, HitInfo hitInfo)
+object OnTreeMarkerHit(TreeEntity tree, HitInfo hitInfo)
 {
-    Puts($"Tree marker hit detected on tree ID: {tree.net.ID} at position: {hitInfo.HitPositionWorld}.");
-
-    if (hitInfo.HitPositionWorld.y < 0)
-    {
-        Puts("Hit position is below ground level, ignoring hit.");
-        return false;
-    }
-
+    Puts($"Tree marker hit detected on tree {tree} at position {hitInfo.HitPositionWorld}.");
     return null;
 }
 ```
@@ -31124,23 +28251,17 @@ bool? OnTreeMarkerHit(TreeEntity tree, HitInfo hitInfo)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player clicks to accept a trade in the shop interface.
+/// Called when a player clicks the accept button in a shop interface.
 /// </summary>
-/// <param name="shop">The shop front where the trade is taking place.</param>
-/// <param name="player">The player who clicked to accept the trade.</param>
+/// <param name="shop">The shop front where the transaction is taking place.</param>
+/// <param name="player">The player who clicked the accept button.</param>
 /// <returns>
-/// Returns `null` to allow the trade to proceed, or any non-null value to prevent the trade from being accepted.
+/// Returns `null` to allow the default behavior of the shop acceptance; 
+/// any non-null value will prevent the acceptance action from proceeding. (object)
 /// </returns>
 object OnShopAcceptClick(ShopFront shop, BasePlayer player)
 {
-    Puts($"Player {player.displayName} has accepted the trade at shop {shop.name}.");
-
-    if (player.inventory.GetAmount("currency") < 100)
-    {
-        Puts($"Player {player.displayName} does not have enough currency to complete the trade.");
-        return "Not enough currency to complete the trade.";
-    }
-
+    Puts($"Player {player} clicked accept on shop {shop}.");
     return null;
 }
 ```
@@ -31150,8 +28271,8 @@ object OnShopAcceptClick(ShopFront shop, BasePlayer player)
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.IsVisible(3f)]
+	[RPC_Server]
 	public void AcceptClicked(RPCMessage msg)
 	{
 		if (IsTradingPlayer(msg.player) && !(vendorPlayer == null) && !(customerPlayer == null) && Interface.CallHook("OnShopAcceptClick", this, msg.player) == null)
@@ -31181,13 +28302,13 @@ object OnShopAcceptClick(ShopFront shop, BasePlayer player)
 ```csharp
 ```csharp
 /// <summary>
-/// Called to refresh the loadout data for the engine storage.
+/// Called to refresh the loadout data of the engine storage.
 /// </summary>
-/// <param name="engineStorage">The engine storage whose loadout data is being refreshed.</param>
+/// <param name="engineStorage">The engine storage whose loadout is being refreshed.</param>
 /// <returns>No return behavior.</returns>
 void OnEngineLoadoutRefresh(Rust.Modular.EngineStorage engineStorage)
 {
-    Puts($"Refreshing loadout data for engine storage ID: {engineStorage.net.ID}");
+    Puts($"Refreshing loadout data for engine storage: {engineStorage}.");
 }
 ```
 ```
@@ -31221,19 +28342,12 @@ void OnEngineLoadoutRefresh(Rust.Modular.EngineStorage engineStorage)
 /// <param name="item">The item being recycled.</param>
 /// <param name="recycler">The recycler that is processing the item.</param>
 /// <returns>
-/// Returns a non-null value to prevent the item from being recycled, or `null` to allow the recycling process to continue.
+/// Returns a non-null value to prevent the item from being recycled, or `null` to allow the recycling process to continue. (object)
 /// </returns>
 object OnItemRecycle(Item item, Recycler recycler)
 {
-    Puts($"Item {item.info.displayName.english} (Shortname: {item.info.shortname}) is being recycled in {recycler.gameObject.name}.");
-
-    if (item.info.shortname == "explosive.timed")
-    {
-        Puts("Recycling of timed explosives is not allowed.");
-        return true; // Prevent recycling
-    }
-
-    return null; // Allow recycling
+    Puts($"Recycling item: {item} in recycler: {recycler}.");
+    return null;
 }
 ```
 ```
@@ -31370,32 +28484,19 @@ object OnItemRecycle(Item item, Recycler recycler)
 ```csharp
 ```csharp
 /// <summary>
-/// Determines if the item crafter can craft a specified item blueprint.
+/// Determines whether the item crafter can craft a specified item blueprint.
 /// </summary>
 /// <param name="crafter">The item crafter attempting to craft the item.</param>
 /// <param name="blueprint">The item blueprint to craft.</param>
 /// <param name="amount">The amount of items to craft.</param>
-/// <param name="free">Indicates if crafting should be free of resource checks.</param>
+/// <param name="free">Indicates if crafting should be free of cost.</param>
 /// <returns>
-/// Returns `true` if the crafter can craft the item, or `false` if they cannot.
-/// If the method returns `null`, the default game logic will determine if crafting is allowed.
+/// Returns `true` if the crafter can craft the specified item; otherwise, returns `false`. 
+/// If the method returns `null`, the default crafting logic will be applied. (bool)
 /// </returns>
-bool? CanCraft(ItemCrafter crafter, ItemBlueprint blueprint, int amount = 1, bool free = false)
+object CanCraft(ItemCrafter crafter, ItemBlueprint blueprint, int amount, bool free)
 {
-    Puts($"Crafter {crafter?.gameObject.name} is attempting to craft {amount} of {blueprint.targetItem.shortname}.");
-
-    if (amount > 5)
-    {
-        Puts("Crafting amount exceeds the limit of 5.");
-        return false;
-    }
-
-    if (free)
-    {
-        Puts("Crafting is free, allowing crafting without checks.");
-        return true;
-    }
-
+    Puts($"Checking if {crafter} can craft {amount} of {blueprint}.");
     return null;
 }
 ```
@@ -31462,19 +28563,12 @@ bool? CanCraft(ItemCrafter crafter, ItemBlueprint blueprint, int amount = 1, boo
 /// <param name="player">The player attempting to use the locked entity.</param>
 /// <param name="keyLock">The key lock associated with the entity.</param>
 /// <returns>
-/// Returns `true` if the player can use the locked entity, or `false` if they cannot.
-/// If the method returns `null`, the default game logic will determine if the player can use the entity.
+/// Returns `true` if the player can use the locked entity; otherwise, returns `false`.
+/// If the method returns `null`, the default game logic will determine if the player can use the entity. (bool)
 /// </returns>
-bool? CanUseLockedEntity(BasePlayer player, KeyLock keyLock)
+object CanUseLockedEntity(BasePlayer player, KeyLock keyLock)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to use a locked entity with KeyLock ID: {keyLock.net.ID}.");
-
-    if (keyLock.IsLocked())
-    {
-        Puts($"Entity is currently locked. Player {player.displayName} cannot access it.");
-        return false;
-    }
-
+    Puts($"Player {player} is attempting to use a locked entity with KeyLock: {keyLock}.");
     return null;
 }
 ```
@@ -31512,12 +28606,7 @@ bool? CanUseLockedEntity(BasePlayer player, KeyLock keyLock)
 /// <returns>No return behavior.</returns>
 void OnElevatorCall(Elevator caller, Elevator elevator)
 {
-    Puts($"Elevator called by {caller?.gameObject.name} to move to floor {caller.Floor}.");
-    
-    if (elevator.IsTop)
-    {
-        Puts($"Elevator {elevator.gameObject.name} is at the top and ready to move.");
-    }
+    Puts($"Elevator called by {caller} to move to floor {elevator.Floor}.");
 }
 ```
 ```
@@ -31549,15 +28638,13 @@ void OnElevatorCall(Elevator caller, Elevator elevator)
 /// <param name="station">The computer station being controlled.</param>
 /// <param name="player">The player who is stopping control.</param>
 /// <param name="entity">The entity that was being controlled.</param>
-/// <returns>No return behavior.</returns>
-void OnBookmarkControlEnd(ComputerStation station, BasePlayer player, BaseEntity entity)
+/// <returns>
+/// Returns a non-null value to prevent the default control stop behavior; otherwise, returns null to allow it. (object)
+/// </returns>
+object OnBookmarkControlEnd(ComputerStation station, BasePlayer player, BaseEntity entity)
 {
-    Puts($"Player {player.displayName} has stopped controlling the entity: {entity?.name ?? "Unknown Entity"} on station: {station?.name ?? "Unknown Station"}.");
-    
-    if (entity != null)
-    {
-        Puts($"Entity {entity.name} control has ended.");
-    }
+    Puts($"Player {player} has stopped controlling the bookmark on {station} for entity {entity}.");
+    return null;
 }
 ```
 ```
@@ -31601,20 +28688,14 @@ void OnBookmarkControlEnd(ComputerStation station, BasePlayer player, BaseEntity
 /// Called to determine if a player can hide a stash container.
 /// </summary>
 /// <param name="player">The player attempting to hide the stash.</param>
-/// <param name="stash">The stash container being hidden.</param>
+/// <param name="stash">The stash container that is being hidden.</param>
 /// <returns>
-/// Returns `null` to allow the stash to be hidden, or any non-null value to prevent it from being hidden.
+/// Returns `true` if the player can hide the stash, or `false` if they cannot.
+/// If the method returns `null`, the default game logic will determine if the stash can be hidden. (bool)
 /// </returns>
 object CanHideStash(BasePlayer player, StashContainer stash)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to hide a stash.");
-
-    if (player.IsInSafeZone())
-    {
-        Puts($"Player {player.displayName} cannot hide a stash while in a safe zone.");
-        return "You cannot hide a stash in a safe zone.";
-    }
-
+    Puts($"Player {player} is attempting to hide stash: {stash}.");
     return null;
 }
 ```
@@ -31643,14 +28724,14 @@ object CanHideStash(BasePlayer player, StashContainer stash)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player fails to dismount from a mountable entity.
+/// Called when a player attempts to dismount but the position is invalid.
 /// </summary>
 /// <param name="player">The player attempting to dismount.</param>
-/// <param name="mountable">The mountable entity the player is trying to dismount from.</param>
+/// <param name="mountable">The mountable object the player is trying to dismount from.</param>
 /// <returns>No return behavior.</returns>
 void OnPlayerDismountFailed(BasePlayer player, BaseMountable mountable)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) failed to dismount from {mountable.gameObject.name}.");
+    Puts($"Player {player} failed to dismount from {mountable} due to an invalid position.");
 }
 ```
 ```
@@ -31684,15 +28765,13 @@ void OnPlayerDismountFailed(BasePlayer player, BaseMountable mountable)
 /// </summary>
 /// <param name="item">The item that is being picked up.</param>
 /// <param name="player">The player who is picking up the item.</param>
-/// <returns>No return behavior.</returns>
-void OnItemPickup(Item item, BasePlayer player)
+/// <returns>
+/// Returns `null` to allow the item pickup, or any non-null value to prevent the pickup action. (object)
+/// </returns>
+object OnItemPickup(Item item, BasePlayer player)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) picked up item: {item.info.displayName.english}.");
-    
-    if (item.info.shortname == "wood")
-    {
-        Puts($"Player {player.displayName} has picked up wood, which is a common resource.");
-    }
+    Puts($"Player {player} is attempting to pick up item: {item}.");
+    return null;
 }
 ```
 ```
@@ -31730,7 +28809,7 @@ void OnItemPickup(Item item, BasePlayer player)
 /// <returns>No return behavior.</returns>
 void OnTurretDeauthorize(AutoTurret turret, BasePlayer player)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) has been deauthorized from turret {turret.net.ID}.");
+    Puts($"Player {player} has been deauthorized from turret {turret}.");
 }
 ```
 ```
@@ -31767,12 +28846,7 @@ void OnTurretDeauthorize(AutoTurret turret, BasePlayer player)
 /// <returns>No return behavior.</returns>
 void OnItemDespawn(Item item)
 {
-    Puts($"Item {item.info.displayName.english} (ID: {item.net.ID}) is about to despawn.");
-    
-    if (item.info.shortname == "wood")
-    {
-        Puts("Warning: A wood item is being despawned!");
-    }
+    Puts($"Item {item} is about to despawn.");
 }
 ```
 ```
@@ -31796,24 +28870,17 @@ void OnItemDespawn(Item item)
 ```csharp
 ```csharp
 /// <summary>
-/// Called to determine if an NPC can target a specific player entity.
+/// Called to determine if an NPC should target a specific entity.
 /// </summary>
-/// <param name="npc">The NPC attempting to target the player.</param>
-/// <param name="target">The player entity being considered as a target.</param>
+/// <param name="npc">The NPC that is evaluating potential targets.</param>
+/// <param name="target">The entity being considered as a target.</param>
 /// <returns>
-/// Returns `null` to allow the NPC to target the player, or any non-null value to prevent targeting.
+/// Returns `null` to allow the default targeting behavior, or a non-null value to override it. (object)
 /// </returns>
 object OnNpcTarget(HumanNPC npc, BaseEntity target)
 {
-    Puts($"NPC {npc.displayName} is evaluating target: {target.displayName} (ID: {target.net.ID})");
-
-    if (target.IsSleeping())
-    {
-        Puts($"NPC {npc.displayName} cannot target a sleeping player: {target.displayName}.");
-        return true; // Prevent targeting
-    }
-
-    return null; // Allow targeting
+    Puts($"NPC {npc} is evaluating target: {target}.");
+    return null;
 }
 ```
 ```
@@ -31852,23 +28919,17 @@ object OnNpcTarget(HumanNPC npc, BaseEntity target)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a spray is created in the game world.
+/// Called when a spray is created using a spray can.
 /// </summary>
-/// <param name="sprayCan">The spray can used to create the spray.</param>
+/// <param name="sprayCan">The spray can being used to create the spray.</param>
 /// <param name="position">The position where the spray is created.</param>
 /// <param name="rotation">The rotation of the spray when created.</param>
-/// <returns>Returns `null` to allow the spray creation, or any non-null value to prevent it.</returns>
+/// <returns>
+/// Returns `null` to allow the spray creation, or any non-null value to prevent it. (object)
+/// </returns>
 object OnSprayCreate(SprayCan sprayCan, Vector3 position, Quaternion rotation)
 {
-    Puts($"Spray created at position: {position} with rotation: {rotation} using spray can: {sprayCan.itemID}.");
-    
-    // Example condition to prevent spray creation
-    if (position.y < 0)
-    {
-        Puts("Spray creation failed: Invalid position.");
-        return "Cannot spray below ground level.";
-    }
-    
+    Puts($"Creating spray at position {position} with rotation {rotation} using spray can {sprayCan}.");
     return null;
 }
 ```
@@ -31929,21 +28990,14 @@ object OnSprayCreate(SprayCan sprayCan, Vector3 position, Quaternion rotation)
 /// Determines whether a player can update a sign.
 /// </summary>
 /// <param name="player">The player attempting to update the sign.</param>
-/// <param name="sign">The sign being updated.</param>
+/// <param name="sign">The sign that is being updated.</param>
 /// <returns>
-/// Returns `true` if the player can update the sign; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will determine if the player can update the sign.
+/// Returns `true` if the player can update the sign; otherwise, returns `false`. 
+/// If the method returns `null`, the default game logic will determine if the player can update the sign. (bool)
 /// </returns>
-bool? CanUpdateSign(BasePlayer player, Signage sign)
+object CanUpdateSign(BasePlayer player, Signage sign)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to update a sign.");
-
-    if (sign.IsLocked())
-    {
-        Puts($"Sign is locked. Only the owner can update it.");
-        return (ulong)player.userID == sign.OwnerID;
-    }
-
+    Puts($"Player {player} is attempting to update the sign: {sign}.");
     return null;
 }
 ```
@@ -31989,22 +29043,14 @@ bool? CanUpdateSign(BasePlayer player, Signage sign)
 /// Called when a player respawns at a sleeping bag.
 /// </summary>
 /// <param name="player">The player who is respawning.</param>
-/// <param name="sleepingBag">The sleeping bag the player is respawning from.</param>
+/// <param name="sleepingBag">The sleeping bag the player is respawning at.</param>
 /// <returns>
-/// Returns a <c>SleepingBag</c> object if the respawn is successful, or <c>null</c> if the respawn fails.
+/// Returns a modified sleeping bag if the hook alters the default behavior; otherwise, returns the original sleeping bag. (SleepingBag)
 /// </returns>
 object OnPlayerRespawn(BasePlayer player, SleepingBag sleepingBag)
 {
-    Puts($"Player {player.displayName} is attempting to respawn at sleeping bag ID: {sleepingBag.net.ID}.");
-
-    if (!sleepingBag.IsValidForPlayer(player.userID))
-    {
-        Puts($"Player {player.displayName} cannot respawn at this sleeping bag.");
-        return null;
-    }
-
-    Puts($"Player {player.displayName} has successfully respawned at sleeping bag ID: {sleepingBag.net.ID}.");
-    return sleepingBag;
+    Puts($"Player {player} is respawning at sleeping bag {sleepingBag}.");
+    return null;
 }
 ```
 ```
@@ -32055,19 +29101,12 @@ object OnPlayerRespawn(BasePlayer player, SleepingBag sleepingBag)
 /// <param name="node">The tech tree node instance that the player wants to unlock.</param>
 /// <param name="techTree">The tech tree data containing the nodes and paths.</param>
 /// <returns>
-/// Returns `true` if the player can unlock the specified tech tree node path; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will determine if the player can unlock the path.
+/// Returns `true` if the player can unlock the specified path; otherwise, returns `false`. 
+/// If the method returns `null`, the default game logic will determine if the path can be unlocked. (bool)
 /// </returns>
-bool? CanUnlockTechTreeNodePath(BasePlayer player, TechTreeData.NodeInstance node, TechTreeData techTree)
+object CanUnlockTechTreeNodePath(BasePlayer player, TechTreeData.NodeInstance node, TechTreeData techTree)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to unlock node: {node.nodeName}.");
-
-    if (node.nodeName == "advancedCrafting")
-    {
-        Puts($"Player {player.displayName} does not have permission to unlock advanced crafting.");
-        return false;
-    }
-
+    Puts($"Checking if player {player} can unlock path for node {node} in tech tree.");
     return null;
 }
 ```
@@ -32102,18 +29141,13 @@ bool? CanUnlockTechTreeNodePath(BasePlayer player, TechTreeData.NodeInstance nod
 /// Called when a weapon is swapped on a weapon rack.
 /// </summary>
 /// <param name="item">The item being swapped (the weapon).</param>
-/// <param name="slot">The slot on the weapon rack where the weapon is being placed.</param>
+/// <param name="slot">The weapon rack slot where the weapon is being placed.</param>
 /// <param name="player">The player performing the swap.</param>
 /// <param name="rack">The weapon rack involved in the swap.</param>
 /// <returns>No return behavior.</returns>
 void OnRackedWeaponSwapped(Item item, WeaponRackSlot slot, BasePlayer player, WeaponRack rack)
 {
-    Puts($"Player {player.displayName} swapped weapon {item.info.displayName.english} into slot {slot.index} on rack {rack.net.ID}.");
-    
-    if (item.info.shortname == "rifle.semiauto")
-    {
-        Puts("A semi-auto rifle has been swapped! Ensure safety protocols are followed.");
-    }
+    Puts($"Player {player} swapped weapon {item} into slot {slot} on rack {rack}.");
 }
 ```
 ```
@@ -32162,20 +29196,18 @@ void OnRackedWeaponSwapped(Item item, WeaponRackSlot slot, BasePlayer player, We
 ```csharp
 ```csharp
 /// <summary>
-/// Called when an entity is reskinned.
+/// Called when an entity is reskinned, allowing for custom behavior or modifications.
 /// </summary>
-/// <param name="entity">The entity that has been reskinned.</param>
-/// <param name="skin">The new skin applied to the entity.</param>
+/// <param name="entity">The entity that is being reskinned.</param>
+/// <param name="skin">The new skin being applied to the entity.</param>
 /// <param name="player">The player who initiated the reskin action.</param>
-/// <returns>No return behavior.</returns>
-void OnEntityReskinned(BaseEntity entity, ItemSkinDirectory.Skin skin, BasePlayer player)
+/// <returns>
+/// Returns a non-null value to prevent the default reskin behavior; otherwise, returns null to allow it. (object)
+/// </returns>
+object OnEntityReskinned(BaseEntity entity, ItemSkinDirectory.Skin skin, BasePlayer player)
 {
-    Puts($"Entity {entity.net.ID} has been reskinned to skin ID: {skin.id} by player {player.displayName}.");
-    
-    if (skin.id == 12345) // Example skin ID check
-    {
-        Puts($"Player {player.displayName} applied a special skin!");
-    }
+    Puts($"Entity {entity} is being reskinned with skin {skin.id} by player {player}.");
+    return null;
 }
 ```
 ```
@@ -32184,8 +29216,8 @@ void OnEntityReskinned(BaseEntity entity, ItemSkinDirectory.Skin skin, BasePlaye
 
 ```csharp
 
-	[RPC_Server.IsActiveItem]
 	[RPC_Server]
+	[RPC_Server.IsActiveItem]
 	[RPC_Server.CallsPerSecond(2uL)]
 	private void ChangeItemSkin(RPCMessage msg)
 	{
@@ -32415,17 +29447,12 @@ void OnEntityReskinned(BaseEntity entity, ItemSkinDirectory.Skin skin, BasePlaye
 /// <summary>
 /// Called when a player digs at a diggable entity.
 /// </summary>
-/// <param name="player">The player performing the digging action.</param>
+/// <param name="player">The player who is performing the digging action.</param>
 /// <param name="diggableEntity">The diggable entity being interacted with.</param>
 /// <returns>No return behavior.</returns>
 void OnPlayerDig(BasePlayer player, BaseDiggableEntity diggableEntity)
 {
-    Puts($"Player {player.displayName} is digging at {diggableEntity.name}.");
-    
-    if (diggableEntity.health <= 0)
-    {
-        Puts($"The entity {diggableEntity.name} has already been fully dug.");
-    }
+    Puts($"Player {player} is digging at {diggableEntity}.");
 }
 ```
 ```
@@ -32466,24 +29493,17 @@ void OnPlayerDig(BasePlayer player, BaseDiggableEntity diggableEntity)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player consumes an item that adds modifiers to their stats.
+/// Called when a player consumes an item that modifies their attributes.
 /// </summary>
 /// <param name="player">The player who is consuming the item.</param>
 /// <param name="item">The item being consumed.</param>
 /// <param name="consumable">The consumable item modifier being applied.</param>
 /// <returns>
-/// Returns `null` to allow the default behavior of adding modifiers, or any non-null value to prevent it.
+/// Returns `null` to allow the default modifiers to be added; otherwise, returns a non-null value to prevent adding modifiers. (object)
 /// </returns>
 object OnPlayerAddModifiers(BasePlayer player, Item item, ItemModConsumable consumable)
 {
-    Puts($"Player {player.displayName} is adding modifiers from consumable: {item.info.displayName.english}.");
-
-    if (player.health < 20)
-    {
-        Puts($"Player {player.displayName} is too low on health to receive modifiers.");
-        return "Health too low to apply modifiers.";
-    }
-
+    Puts($"Player {player} is adding modifiers from consumable {item}.");
     return null;
 }
 ```
@@ -32582,21 +29602,16 @@ object OnPlayerAddModifiers(BasePlayer player, Item item, ItemModConsumable cons
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a structure is upgraded to a new building grade.
+/// Called when a structure is upgraded to a new grade.
 /// </summary>
 /// <param name="block">The building block that is being upgraded.</param>
 /// <param name="player">The player who is performing the upgrade.</param>
-/// <param name="newGrade">The new building grade being applied to the structure.</param>
+/// <param name="newGrade">The new grade to which the structure is being upgraded.</param>
 /// <param name="skinId">The skin ID associated with the new grade.</param>
 /// <returns>No return behavior.</returns>
 void OnStructureUpgraded(BuildingBlock block, BasePlayer player, BuildingGrade.Enum newGrade, ulong skinId)
 {
-    Puts($"Structure upgraded by {player.displayName} to grade {newGrade} with skin ID {skinId}.");
-    
-    if (newGrade == BuildingGrade.Enum.Stone)
-    {
-        Puts($"Player {player.displayName} upgraded a structure to Stone grade.");
-    }
+    Puts($"Structure upgraded by {player} to grade {newGrade} with skin ID {skinId}.");
 }
 ```
 ```
@@ -32686,18 +29701,11 @@ void OnStructureUpgraded(BuildingBlock block, BasePlayer player, BuildingGrade.E
 /// <param name="stash">The stash container being checked for visibility.</param>
 /// <returns>
 /// Returns `true` if the player can see the stash, or `false` if they cannot.
-/// If the method returns `null`, the default game logic will determine if the stash is visible to the player.
+/// If the method returns a non-null value, it overrides the default visibility logic. (bool)
 /// </returns>
-bool? CanSeeStash(BasePlayer player, StashContainer stash)
+object CanSeeStash(BasePlayer player, StashContainer stash)
 {
-    Puts($"Checking visibility for stash {stash.net.ID} for player {player.displayName} (ID: {player.UserIDString}).");
-
-    if (stash.IsHidden())
-    {
-        Puts($"Stash {stash.net.ID} is currently hidden from player {player.displayName}.");
-        return false;
-    }
-
+    Puts($"Checking visibility for stash {stash} by player {player}.");
     return null;
 }
 ```
@@ -32744,19 +29752,14 @@ bool? CanSeeStash(BasePlayer player, StashContainer stash)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a vending machine's sell order is deleted.
+/// Called when a vending offer is deleted from the vending machine.
 /// </summary>
 /// <param name="vendingMachine">The vending machine from which the offer is being deleted.</param>
-/// <param name="orderIndex">The index of the sell order being deleted.</param>
+/// <param name="offerIndex">The index of the vending offer being deleted.</param>
 /// <returns>No return behavior.</returns>
-void OnDeleteVendingOffer(VendingMachine vendingMachine, int orderIndex)
+void OnDeleteVendingOffer(VendingMachine vendingMachine, int offerIndex)
 {
-    Puts($"Vending machine {vendingMachine.net.ID} is deleting sell order at index {orderIndex}.");
-    
-    if (orderIndex < 0)
-    {
-        Puts("Attempted to delete a sell order with a negative index.");
-    }
+    Puts($"Vending offer at index {offerIndex} deleted from vending machine {vendingMachine}.");
 }
 ```
 ```
@@ -32796,11 +29799,11 @@ void OnDeleteVendingOffer(VendingMachine vendingMachine, int orderIndex)
 /// Called when an IO reference is cleared from an IO entity.
 /// </summary>
 /// <param name="ioRef">The IO reference that was cleared.</param>
-/// <param name="entity">The IO entity from which the reference was cleared.</param>
+/// <param name="entity">The entity from which the IO reference was cleared.</param>
 /// <returns>No return behavior.</returns>
 void OnIORefCleared(IOEntity.IORef ioRef, IOEntity entity)
 {
-    Puts($"IO reference cleared from entity: {entity?.name ?? "Unknown Entity"} with reference: {ioRef?.name ?? "Unknown Reference"}.");
+    Puts($"IO reference cleared from entity: {entity}.");
 }
 ```
 ```
@@ -32824,24 +29827,17 @@ void OnIORefCleared(IOEntity.IORef ioRef, IOEntity entity)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player respawns in the game.
+/// Called when a player is about to respawn.
 /// </summary>
-/// <param name="player">The player who is respawning.</param>
+/// <param name="player">The player that is respawning.</param>
 /// <param name="spawnPoint">The spawn point where the player will respawn.</param>
 /// <returns>
-/// Returns a modified spawn point if the hook alters the respawn location; otherwise, returns the original spawn point.
+/// Returns a modified spawn point if the hook alters the default behavior; otherwise, returns the original spawn point. (SpawnPoint)
 /// </returns>
-SpawnPoint OnPlayerRespawn(BasePlayer player, SpawnPoint spawnPoint)
+object OnPlayerRespawn(BasePlayer player, SpawnPoint spawnPoint)
 {
-    Puts($"Player {player.displayName} is respawning at position: {spawnPoint.pos}.");
-
-    if (player.IsInSafeZone())
-    {
-        Puts($"Player {player.displayName} is in a safe zone and will respawn at a safe location.");
-        spawnPoint.pos += new Vector3(0, 5, 0); // Adjust spawn position slightly above the original
-    }
-
-    return spawnPoint; // Return the potentially modified spawn point
+    Puts($"Player {player} is respawning at {spawnPoint.pos}.");
+    return null;
 }
 ```
 ```
@@ -32877,18 +29873,11 @@ SpawnPoint OnPlayerRespawn(BasePlayer player, SpawnPoint spawnPoint)
 /// <param name="weapon">The weapon being reloaded.</param>
 /// <param name="player">The player who is reloading the weapon.</param>
 /// <returns>
-/// Returns `null` to allow the reload to proceed, or any non-null value to prevent the reload action.
+/// Returns `null` to allow the default reload behavior, or a non-null value to prevent the reload action. (object)
 /// </returns>
 object OnWeaponReload(BaseProjectile weapon, BasePlayer player)
 {
-    Puts($"Player {player.displayName} is reloading weapon: {weapon.info.displayName.english} (ID: {weapon.net.ID})");
-
-    if (player.inventory.GetAmount(weapon.ammoType) <= 0)
-    {
-        Puts($"Player {player.displayName} cannot reload because they have no ammo.");
-        return "No ammo available for reload.";
-    }
-
+    Puts($"Player {player} is reloading weapon {weapon}.");
     return null;
 }
 ```
@@ -32936,12 +29925,7 @@ object OnWeaponReload(BaseProjectile weapon, BasePlayer player)
 /// <returns>No return behavior.</returns>
 void OnCrateHackEnd(HackableLockedCrate crate)
 {
-    Puts($"Hacking completed for crate ID: {crate.net.ID}. Original hacker ID: {crate.originalHackerPlayerId}");
-    
-    if (crate.originalHackerPlayer != null)
-    {
-        Puts($"Player {crate.originalHackerPlayer.displayName} successfully hacked the crate.");
-    }
+    Puts($"Hacking completed for crate: {crate}.");
 }
 ```
 ```
@@ -32983,12 +29967,7 @@ void OnCrateHackEnd(HackableLockedCrate crate)
 /// <returns>No return behavior.</returns>
 void OnMeleeThrown(BasePlayer player, Item item)
 {
-    Puts($"Player {player.displayName} has thrown a melee item: {item.info.displayName.english} (ID: {item.info.itemid}).");
-
-    if (item.info.shortname == "rock")
-    {
-        Puts("Warning: Player threw a rock, which may indicate a low resource situation.");
-    }
+    Puts($"Player {player} has thrown the melee item: {item.info.shortname}.");
 }
 ```
 ```
@@ -32997,9 +29976,9 @@ void OnMeleeThrown(BasePlayer player, Item item)
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.FromOwner]
 	[RPC_Server.IsActiveItem]
+	[RPC_Server]
 	private void CLProject(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -33111,26 +30090,19 @@ void OnMeleeThrown(BasePlayer player, Item item)
 /// <summary>
 /// Called to check if a player is within a specified distance of an entity.
 /// </summary>
-/// <param name="entityId">The unique identifier of the entity being checked.</param>
-/// <param name="debugName">A debug name for logging purposes.</param>
-/// <param name="entity">The entity to check the distance against.</param>
-/// <param name="player">The player whose distance from the entity is being checked.</param>
+/// <param name="entity">The entity being checked for distance.</param>
+/// <param name="player">The player whose distance from the entity is being evaluated.</param>
+/// <param name="id">An identifier for the distance check operation.</param>
+/// <param name="debugName">A name for debugging purposes.</param>
 /// <param name="maximumDistance">The maximum distance allowed for the check.</param>
 /// <param name="checkParent">Indicates whether to check the parent entity's distance if the initial check fails.</param>
 /// <returns>
-/// Returns `true` if the player is within the specified distance of the entity, or `false` otherwise.
-/// If the method returns `null`, the default distance check logic will be used.
+/// Returns `true` if the player is within the maximum distance of the entity, or `false` otherwise.
+/// If the method returns `null`, the default distance check logic will be used. (bool)
 /// </returns>
-bool? OnEntityDistanceCheck(uint entityId, string debugName, BaseEntity entity, BasePlayer player, float maximumDistance, bool checkParent = false)
+object OnEntityDistanceCheck(BaseEntity entity, BasePlayer player, uint id, string debugName, float maximumDistance, bool checkParent)
 {
-    Puts($"Checking distance for Player {player.displayName} (ID: {player.UserIDString}) to Entity {debugName} (ID: {entityId}).");
-
-    if (entity is null)
-    {
-        Puts("Entity is null, returning false.");
-        return false;
-    }
-
+    Puts($"Checking distance for Player {player} to Entity {entity} with ID {id} and DebugName {debugName}.");
     return null;
 }
 ```
@@ -33171,15 +30143,13 @@ bool? OnEntityDistanceCheck(uint entityId, string debugName, BaseEntity entity, 
 /// </summary>
 /// <param name="player">The player who added the map marker.</param>
 /// <param name="mapNote">The details of the map marker that was added.</param>
-/// <returns>No return behavior.</returns>
-void OnMapMarkerAdded(BasePlayer player, ProtoBuf.MapNote mapNote)
+/// <returns>
+/// Returns `null` to allow the addition of the marker, or a non-null value to prevent it. (object)
+/// </returns>
+object OnMapMarkerAdded(BasePlayer player, ProtoBuf.MapNote mapNote)
 {
-    Puts($"Player {player.displayName} added a map marker at position: {mapNote.position} with color index: {mapNote.colourIndex}.");
-    
-    if (mapNote.title == "Danger Zone")
-    {
-        Puts($"Warning: Player {player.displayName} marked a danger zone on the map!");
-    }
+    Puts($"Player {player} added a map marker: {mapNote}.");
+    return null;
 }
 ```
 ```
@@ -33188,8 +30158,8 @@ void OnMapMarkerAdded(BasePlayer player, ProtoBuf.MapNote mapNote)
 
 ```csharp
 
-	[RPC_Server.FromOwner]
 	[RPC_Server]
+	[RPC_Server.FromOwner]
 	[RPC_Server.CallsPerSecond(8uL)]
 	public void Server_AddMarker(RPCMessage msg)
 	{
@@ -33223,21 +30193,16 @@ void OnMapMarkerAdded(BasePlayer player, ProtoBuf.MapNote mapNote)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a demo recording is stopped.
+/// Called when a demo recording is stopped for a player.
 /// </summary>
-/// <param name="filename">The name of the recording file that was stopped.</param>
-/// <param name="player">The player who stopped the recording.</param>
+/// <param name="filename">The filename of the recorded demo.</param>
+/// <param name="player">The player for whom the demo recording is being stopped.</param>
 /// <returns>
-/// Returns `null` to allow the recording to stop normally, or any non-null value to prevent the stop action.
+/// Returns `null` to allow the recording to stop normally, or any non-null value to prevent it from stopping. (object)
 /// </returns>
 object OnDemoRecordingStop(string filename, BasePlayer player)
 {
-    Puts($"Demo recording stopped for player {player.displayName}. Filename: {filename}");
-    if (filename.Contains("restricted"))
-    {
-        Puts($"Recording {filename} is restricted and cannot be stopped.");
-        return "Recording cannot be stopped due to restrictions.";
-    }
+    Puts($"Demo recording stopped for player {player} with filename: {filename}");
     return null;
 }
 ```
@@ -33265,15 +30230,17 @@ object OnDemoRecordingStop(string filename, BasePlayer player)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when default items are given to a player.
+/// Called when default items are being given to a player's inventory.
 /// </summary>
 /// <param name="inventory">The player's inventory receiving the default items.</param>
-/// <returns>No return behavior.</returns>
-void OnDefaultItemsReceive(PlayerInventory inventory)
+/// <returns>
+/// Returns a non-null value to prevent the default items from being given. 
+/// If `null` is returned, the default items will be added to the inventory. (object)
+/// </returns>
+object OnDefaultItemsReceive(PlayerInventory inventory)
 {
-    Puts($"Default items are being given to player with inventory ID: {inventory.ID}.");
-    
-    // Additional logic can be added here if needed
+    Puts($"Default items are being received for inventory: {inventory}.");
+    return null;
 }
 ```
 ```
@@ -33356,19 +30323,14 @@ void OnDefaultItemsReceive(PlayerInventory inventory)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player is deauthorized from a building privilege cupboard.
+/// Called when a player is deauthorized from a cupboard's access.
 /// </summary>
-/// <param name="cupboard">The building privilege cupboard from which the player is being deauthorized.</param>
-/// <param name="player">The player being deauthorized.</param>
+/// <param name="cupboard">The cupboard from which the player is being deauthorized.</param>
+/// <param name="player">The player being removed from the cupboard's authorization list.</param>
 /// <returns>No return behavior.</returns>
 void OnCupboardDeauthorize(BuildingPrivlidge cupboard, BasePlayer player)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) has been deauthorized from cupboard {cupboard.net.ID}.");
-    
-    if (player.IsAdmin)
-    {
-        Puts($"Admin {player.displayName} has been removed from cupboard authorization.");
-    }
+    Puts($"Player {player} has been deauthorized from cupboard {cupboard}.");
 }
 ```
 ```
@@ -33398,30 +30360,17 @@ void OnCupboardDeauthorize(BuildingPrivlidge cupboard, BasePlayer player)
 ```csharp
 ```csharp
 /// <summary>
-/// Determines whether a player can be wounded based on various conditions.
+/// Determines whether the specified player can be wounded based on various conditions.
 /// </summary>
 /// <param name="player">The player being checked for wounding eligibility.</param>
 /// <param name="hitInfo">Information about the hit that may cause wounding.</param>
 /// <returns>
-/// Returns `true` if the player can be wounded, `false` if they cannot, 
-/// or `null` if the default game logic should be used to determine eligibility.
+/// Returns `true` if the player can be wounded; otherwise, returns `false`. 
+/// If the method returns `null`, the default game logic will determine if the player can be wounded. (bool)
 /// </returns>
-bool? CanBeWounded(BasePlayer player, HitInfo hitInfo)
+object CanBeWounded(BasePlayer player, HitInfo hitInfo)
 {
-    Puts($"Checking if player {player.displayName} (ID: {player.UserIDString}) can be wounded.");
-
-    if (player.IsSleeping())
-    {
-        Puts($"Player {player.displayName} is sleeping and cannot be wounded.");
-        return false;
-    }
-
-    if (hitInfo == null)
-    {
-        Puts("HitInfo is null, cannot determine wounding eligibility.");
-        return false;
-    }
-
+    Puts($"Checking if player {player} can be wounded with hit info: {hitInfo}.");
     return null;
 }
 ```
@@ -33505,26 +30454,18 @@ bool? CanBeWounded(BasePlayer player, HitInfo hitInfo)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when an item is recycled to determine the amount of resources produced.
+/// Called to determine the amount of an item that can be recycled.
 /// </summary>
 /// <param name="item">The item being recycled.</param>
-/// <param name="amount">The amount of the item being recycled.</param>
+/// <param name="amount">The amount of the item to recycle.</param>
 /// <param name="recycler">The recycler that is processing the item.</param>
 /// <returns>
-/// Returns the amount of resources produced from recycling the item. 
-/// If a non-null value is returned, it overrides the default recycling behavior.
+/// Returns the amount that can be recycled. If the method returns a non-null value, it overrides the default recycling amount. (int)
 /// </returns>
-int OnItemRecycleAmount(Item item, int amount, Recycler recycler)
+object OnItemRecycleAmount(Item item, int amount, Recycler recycler)
 {
-    Puts($"Recycling {amount} of {item.info.displayName.english} (Shortname: {item.info.shortname}) in {recycler.gameObject.name}.");
-
-    if (item.info.shortname == "wood")
-    {
-        Puts("Wood recycling is limited to 50% of the amount.");
-        return Mathf.FloorToInt(amount * 0.5f);
-    }
-
-    return amount; // Default behavior, return the original amount.
+    Puts($"Recycling {amount} of item {item.info.shortname} at recycler {recycler}.");
+    return null;
 }
 ```
 ```
@@ -33661,24 +30602,16 @@ int OnItemRecycleAmount(Item item, int amount, Recycler recycler)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a message about the player's queue position is sent.
+/// Called when sending a queue message to a network connection.
 /// </summary>
-/// <param name="connection">The network connection of the player receiving the message.</param>
-/// <param name="position">The player's position in the queue.</param>
+/// <param name="connection">The network connection to which the message is being sent.</param>
+/// <param name="position">The position of the player in the queue.</param>
 /// <returns>
-/// Returns `null` to allow the default message to be sent. 
-/// Any non-null value will prevent the message from being sent.
+/// Returns `null` to allow the default message to be sent, or any non-null value to prevent the message from being sent. (object)
 /// </returns>
 object OnQueueMessage(Network.Connection connection, int position)
 {
-    Puts($"Sending queue message to connection {connection.userid} at position {position}.");
-    
-    if (position < 0)
-    {
-        Puts($"Invalid queue position: {position}. Message will not be sent.");
-        return "Invalid position.";
-    }
-
+    Puts($"Sending queue message to connection {connection} with position {position}.");
     return null;
 }
 ```
@@ -33709,13 +30642,16 @@ object OnQueueMessage(Network.Connection connection, int position)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when an entity is missing ground support and needs to be handled accordingly.
+/// Called when an entity is missing from the ground, triggering its destruction.
 /// </summary>
-/// <param name="entity">The entity that is missing ground support.</param>
-/// <returns>No return behavior.</returns>
-void OnEntityGroundMissing(BaseEntity entity)
+/// <param name="entity">The entity that is missing from the ground.</param>
+/// <returns>
+/// Returns `null` to allow the default destruction behavior, or a non-null value to prevent it. (object)
+/// </returns>
+object OnEntityGroundMissing(BaseEntity entity)
 {
-    Puts($"Entity {entity.net.ID} is missing ground support and will be processed.");
+    Puts($"Entity {entity} is missing from the ground and will be processed.");
+    return null;
 }
 ```
 ```
@@ -33747,18 +30683,13 @@ void OnEntityGroundMissing(BaseEntity entity)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when the windmill's state is updated, typically to adjust power generation based on wind speed.
+/// Called when the state of the electric windmill is updated.
 /// </summary>
 /// <param name="windmill">The electric windmill that is being updated.</param>
 /// <returns>No return behavior.</returns>
 void OnWindmillUpdated(ElectricWindmill windmill)
 {
-    Puts($"Windmill {windmill.net.ID} updated. Current energy generation: {windmill.currentEnergy}.");
-    
-    if (windmill.serverWindSpeed <= 0)
-    {
-        Puts("Windmill is not generating power due to insufficient wind.");
-    }
+    Puts($"Windmill {windmill} has been updated. Current energy: {windmill.currentEnergy}");
 }
 ```
 ```
@@ -33795,19 +30726,14 @@ void OnWindmillUpdated(ElectricWindmill windmill)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when an entity is successfully built in the game world.
+/// Called when an entity is built in the game world.
 /// </summary>
-/// <param name="planner">The planner that initiated the build process.</param>
-/// <param name="gameObject">The GameObject that was created as a result of the build.</param>
+/// <param name="planner">The planner responsible for the building action.</param>
+/// <param name="gameObject">The game object that has been built.</param>
 /// <returns>No return behavior.</returns>
 void OnEntityBuilt(Planner planner, UnityEngine.GameObject gameObject)
 {
-    Puts($"Entity built by {planner.GetOwnerPlayer()?.displayName ?? "unknown player"}: {gameObject.name}");
-
-    if (gameObject.CompareTag("Deployable"))
-    {
-        Puts($"Deployable entity {gameObject.name} has been placed.");
-    }
+    Puts($"Entity built by {planner} at position {gameObject.transform.position}.");
 }
 ```
 ```
@@ -33889,7 +30815,10 @@ void OnEntityBuilt(Planner planner, UnityEngine.GameObject gameObject)
 		GameObject gameObject = DoPlacement(target, component);
 		if (gameObject == null)
 		{
-			ownerPlayer.ShowToast(GameTip.Styles.Error, Construction.lastPlacementError, false);
+			if (!string.IsNullOrEmpty(Construction.lastPlacementError.translated))
+			{
+				ownerPlayer.ShowToast(GameTip.Styles.Error, Construction.lastPlacementError, false);
+			}
 			ConstructionErrors.Log(ownerPlayer, Construction.lastPlacementErrorDebug);
 		}
 		if (gameObject != null)
@@ -33973,23 +30902,18 @@ void OnEntityBuilt(Planner planner, UnityEngine.GameObject gameObject)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player receives a bonus from a resource dispenser.
+/// Called when a bonus item is assigned to a player from a resource dispenser.
 /// </summary>
 /// <param name="dispenser">The resource dispenser providing the bonus.</param>
-/// <param name="player">The player receiving the bonus.</param>
+/// <param name="player">The player receiving the bonus item.</param>
 /// <param name="item">The item being given as a bonus.</param>
 /// <returns>
-/// Returns an <c>Item</c> if the item is modified or replaced; otherwise, returns <c>null</c> to use the original item.
+/// Returns a modified item if the hook alters the default behavior; otherwise, returns the original item. (Item)
 /// </returns>
 object OnDispenserBonus(ResourceDispenser dispenser, BasePlayer player, Item item)
 {
-    Puts($"Player {player.displayName} received a bonus item: {item.info.displayName.english} from dispenser {dispenser.net.ID}.");
-    
-    // Example modification: double the amount of the item given
-    item.amount *= 2;
-    Puts($"Bonus item amount modified to: {item.amount}");
-    
-    return item; // Return the modified item
+    Puts($"Player {player} received a bonus item: {item} from dispenser {dispenser}.");
+    return null;
 }
 ```
 ```
@@ -34035,26 +30959,15 @@ object OnDispenserBonus(ResourceDispenser dispenser, BasePlayer player, Item ite
 ```csharp
 ```csharp
 /// <summary>
-/// Called when control bookmarks are sent to a player from a computer station.
+/// Called when sending control bookmarks to a player from a computer station.
 /// </summary>
 /// <param name="station">The computer station sending the bookmarks.</param>
 /// <param name="player">The player receiving the bookmarks.</param>
-/// <param name="bookmarks">The string containing the control bookmarks.</param>
-/// <returns>
-/// Returns a non-null value to prevent the bookmarks from being sent. 
-/// If `null` is returned, the bookmarks will be sent to the player.
-/// </returns>
-object OnBookmarksSendControl(ComputerStation station, BasePlayer player, string bookmarks)
+/// <param name="bookmarks">The generated bookmarks string to be sent.</param>
+/// <returns>No return behavior.</returns>
+void OnBookmarksSendControl(ComputerStation station, BasePlayer player, string bookmarks)
 {
-    Puts($"Sending control bookmarks to player {player.displayName} from station {station.name}.");
-    
-    if (player.IsBanned)
-    {
-        Puts($"Player {player.displayName} is banned and cannot receive bookmarks.");
-        return "Player is banned from receiving bookmarks.";
-    }
-    
-    return null;
+    Puts($"Sending control bookmarks to player {player} from station {station}.");
 }
 ```
 ```
@@ -34088,7 +31001,7 @@ object OnBookmarksSendControl(ComputerStation station, BasePlayer player, string
 /// <returns>No return behavior.</returns>
 void OnEntityFlagsNetworkUpdate(BaseEntity entity)
 {
-    Puts($"Network flags updated for entity ID: {entity.net.ID}, Flags: {entity.flags}");
+    Puts($"Network flags updated for entity ID: {entity.net.ID}");
 }
 ```
 ```
@@ -34130,33 +31043,20 @@ void OnEntityFlagsNetworkUpdate(BaseEntity entity)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a wire connection is cleared from an IOEntity.
+/// Called when attempting to clear a wire connection from an IOEntity.
 /// </summary>
 /// <param name="player">The player attempting to clear the wire connection.</param>
 /// <param name="entity">The IOEntity from which the wire connection is being cleared.</param>
 /// <param name="index">The index of the input or output being cleared.</param>
-/// <param name="connectedEntity">The entity that was connected to the wire.</param>
-/// <param name="isInput">Indicates whether the connection is an input (true) or output (false).</param>
+/// <param name="connectedEntity">The entity that is currently connected to the specified slot.</param>
+/// <param name="isInput">Indicates whether the slot being cleared is an input (true) or an output (false).</param>
 /// <returns>
-/// Returns `true` if the wire connection was successfully cleared; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will determine the outcome.
+/// Returns `true` if the wire connection was successfully cleared; otherwise, returns `false`. 
+/// If the method returns `null`, the default game logic will determine the outcome. (bool)
 /// </returns>
-bool? OnWireClear(BasePlayer player, IOEntity entity, int index, IOEntity connectedEntity, bool isInput)
+object OnWireClear(BasePlayer player, IOEntity entity, int index, IOEntity connectedEntity, bool isInput)
 {
-    Puts($"Player {player.displayName} is attempting to clear wire connection on {entity.name} at index {index}.");
-
-    if (connectedEntity == null)
-    {
-        Puts("No connected entity found to clear.");
-        return false;
-    }
-
-    if (!CanModifyEntity(player, entity))
-    {
-        Puts($"Player {player.displayName} does not have permission to modify {entity.name}.");
-        return false;
-    }
-
+    Puts($"Player {player} is attempting to clear wire from {entity} at index {index}.");
     return null;
 }
 ```
@@ -34203,19 +31103,12 @@ bool? OnWireClear(BasePlayer player, IOEntity entity, int index, IOEntity connec
 /// <param name="entity">The powered remote control entity being controlled.</param>
 /// <param name="playerId">The ID of the player attempting to control the entity.</param>
 /// <returns>
-/// Returns `true` if the player can control the entity, or `false` if they cannot.
-/// If the method returns `null`, the default game logic will determine if the player can control the entity.
+/// Returns `true` if the player can control the entity; otherwise, returns `false`. 
+/// If the method returns `null`, the default game logic will determine control eligibility. (bool)
 /// </returns>
-bool? OnEntityControl(PoweredRemoteControlEntity entity, ulong playerId)
+object OnEntityControl(PoweredRemoteControlEntity entity, ulong playerId)
 {
-    Puts($"Player with ID {playerId} is attempting to control the entity: {entity.net.ID}.");
-
-    if (!entity.IsPowered())
-    {
-        Puts($"Entity {entity.net.ID} is not powered, control denied.");
-        return false;
-    }
-
+    Puts($"Player {playerId} is attempting to control entity {entity}.");
     return null;
 }
 ```
@@ -34246,25 +31139,17 @@ bool? OnEntityControl(PoweredRemoteControlEntity entity, ulong playerId)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a lock is removed from a modular car.
+/// Called when a lock is removed from a modular car by a player.
 /// </summary>
 /// <param name="car">The modular car from which the lock is being removed.</param>
-/// <param name="player">The player requesting the lock removal.</param>
+/// <param name="player">The player attempting to remove the lock.</param>
 /// <returns>
-/// Returns `null` to allow the lock removal, or any non-null value to prevent it.
+/// Returns `null` to allow the lock removal, or any non-null value to prevent it. (object)
 /// </returns>
 object OnLockRemove(ModularCar car, BasePlayer player)
 {
-    Puts($"Player {player.displayName} is attempting to remove the lock from car ID: {car.net.ID}.");
-
-    if (player.IsAdmin)
-    {
-        Puts($"Admin {player.displayName} is allowed to remove the lock.");
-        return null; // Allow lock removal for admins
-    }
-
-    Puts($"Player {player.displayName} is not authorized to remove the lock.");
-    return "You are not authorized to remove this lock."; // Prevent lock removal
+    Puts($"Player {player} is attempting to remove the lock from car {car}.");
+    return null;
 }
 ```
 ```
@@ -34273,9 +31158,9 @@ object OnLockRemove(ModularCar car, BasePlayer player)
 
 ```csharp
 
-	[RPC_Server.MaxDistance(3f)]
 	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.MaxDistance(3f)]
 	public void RPC_RequestRemoveLock(RPCMessage msg)
 	{
 		if (HasOccupant && carOccupant.CarLock.HasALock && Interface.CallHook("OnLockRemove", carOccupant, msg.player) == null)
@@ -34295,20 +31180,13 @@ object OnLockRemove(ModularCar car, BasePlayer player)
 /// Called when a broadcast command is issued to all clients.
 /// </summary>
 /// <param name="command">The command string to be broadcasted.</param>
-/// <param name="args">An array of arguments associated with the command.</param>
+/// <param name="args">The arguments associated with the command.</param>
 /// <returns>
-/// Returns `null` to allow the command to be broadcasted, or any non-null value to prevent the broadcast.
+/// Returns `null` to allow the command to be broadcasted, or any non-null value to prevent the broadcast. (object)
 /// </returns>
 object OnBroadcastCommand(string command, object[] args)
 {
-    Puts($"Broadcast command received: {command} with arguments: {string.Join(", ", args)}");
-    
-    if (command == "restricted.command")
-    {
-        Puts("Broadcast of restricted command is blocked.");
-        return "You are not allowed to use this command.";
-    }
-    
+    Puts($"Broadcasting command: {command} with arguments: {string.Join(", ", args)}");
     return null;
 }
 ```
@@ -34342,18 +31220,11 @@ object OnBroadcastCommand(string command, object[] args)
 /// <param name="codeLock">The code lock being unlocked.</param>
 /// <returns>
 /// Returns `true` if the player can unlock the code lock, or `false` if they cannot.
-/// If the method returns `null`, the default game logic will determine if the player can unlock the code lock.
+/// If the method returns `null`, the default game logic will determine if the player can unlock it. (bool)
 /// </returns>
-bool? CanUnlock(BasePlayer player, CodeLock codeLock)
+object CanUnlock(BasePlayer player, CodeLock codeLock)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to unlock a code lock.");
-
-    if (player.IsBannedFromUnlocking)
-    {
-        Puts($"Player {player.displayName} is banned from unlocking code locks.");
-        return false;
-    }
-
+    Puts($"Player {player} is attempting to unlock the code lock.");
     return null;
 }
 ```
@@ -34388,7 +31259,7 @@ bool? CanUnlock(BasePlayer player, CodeLock codeLock)
 /// <returns>No return behavior.</returns>
 void OnComposterUpdate(Composter composter)
 {
-    Puts($"Updating composting process for composter ID: {composter.net.ID}.");
+    Puts($"Updating composting process for composter: {composter}.");
 }
 ```
 ```
@@ -34423,16 +31294,11 @@ void OnComposterUpdate(Composter composter)
 /// Called when a currency item is taken from the vending machine.
 /// </summary>
 /// <param name="vendingMachine">The vending machine from which the currency item is taken.</param>
-/// <param name="takenCurrencyItem">The currency item that is being taken.</param>
+/// <param name="currencyItem">The currency item that is being taken.</param>
 /// <returns>No return behavior.</returns>
-void OnTakeCurrencyItem(VendingMachine vendingMachine, Item takenCurrencyItem)
+void OnTakeCurrencyItem(VendingMachine vendingMachine, Item currencyItem)
 {
-    Puts($"Currency item {takenCurrencyItem.info.displayName.english} taken from vending machine ID: {vendingMachine.net.ID}.");
-    
-    if (takenCurrencyItem.amount <= 0)
-    {
-        Puts("Attempted to take an empty currency item.");
-    }
+    Puts($"Currency item {currencyItem} taken from vending machine {vendingMachine}.");
 }
 ```
 ```
@@ -34456,16 +31322,16 @@ void OnTakeCurrencyItem(VendingMachine vendingMachine, Item takenCurrencyItem)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when distributing Christmas gifts to a player.
+/// Called to distribute Christmas gifts to a specified player.
 /// </summary>
-/// <param name="xmasRefill">The reference to the Christmas gift distribution system.</param>
+/// <param name="xmasRefill">The reference object for the Christmas gift distribution.</param>
 /// <param name="player">The player receiving the gifts.</param>
 /// <returns>
-/// Returns `true` if the gifts were successfully distributed, or `false` if the distribution was canceled by a hook.
+/// Returns `false` if the distribution is canceled by the hook; otherwise, returns `true` if gifts were successfully distributed.
 /// </returns>
 bool OnXmasGiftsDistribute(XMasRefill xmasRefill, BasePlayer player)
 {
-    Puts($"Distributing Christmas gifts to player: {player.displayName} (ID: {player.UserIDString})");
+    Puts($"Distributing Christmas gifts to player {player}.");
     return true;
 }
 ```
@@ -34513,26 +31379,17 @@ bool OnXmasGiftsDistribute(XMasRefill xmasRefill, BasePlayer player)
 ```csharp
 ```csharp
 /// <summary>
-/// Called to check which fuel item is available in the fuel system's container.
+/// Called to check which fuel item is available in the fuel container.
 /// </summary>
 /// <param name="fuelSystem">The entity fuel system that is checking for fuel.</param>
-/// <param name="container">The storage container where fuel items are stored.</param>
+/// <param name="container">The storage container being checked for fuel items.</param>
 /// <returns>
-/// Returns the fuel item if available; otherwise, returns `null` if no fuel item is found.
-/// If a non-null value is returned from the hook, that value will be used as the fuel item.
+/// Returns the fuel item if found; otherwise, returns `null`. If the hook returns a non-null item, that item will be used as the fuel. (Item)
 /// </returns>
-Item OnFuelItemCheck(EntityFuelSystem fuelSystem, StorageContainer container)
+object OnFuelItemCheck(EntityFuelSystem fuelSystem, StorageContainer container)
 {
-    Puts($"Checking fuel item for {fuelSystem.gameObject.name} in container {container?.gameObject.name ?? "none"}.");
-
-    // Example condition to block a specific fuel item
-    if (container != null && container.inventory.GetSlot(0)?.info.shortname == "low_quality.metal")
-    {
-        Puts("Low quality metal is not allowed as fuel.");
-        return null;
-    }
-
-    return null; // Default behavior will be to check the first slot in the container
+    Puts($"Checking fuel item for {fuelSystem} in container {container}.");
+    return null;
 }
 ```
 ```
@@ -34563,23 +31420,16 @@ Item OnFuelItemCheck(EntityFuelSystem fuelSystem, StorageContainer container)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when an item is refilled by a player.
+/// Called when an item is being refilled by a player.
 /// </summary>
 /// <param name="item">The item that is being refilled.</param>
 /// <param name="player">The player who is refilling the item.</param>
 /// <returns>
-/// Returns `null` to allow the refill to proceed, or any non-null value to prevent the refill action.
+/// Returns `null` to allow the refill to proceed, or any non-null value to prevent the refill action. (object)
 /// </returns>
 object OnItemRefill(Item item, BasePlayer player)
 {
-    Puts($"Player {player.displayName} is attempting to refill item: {item.info.displayName.english} (ID: {item.info.itemid}).");
-
-    if (item.info.itemid == 12345) // Example item ID for a restricted item
-    {
-        Puts($"Player {player.displayName} is not allowed to refill this item.");
-        return "You cannot refill this item.";
-    }
-
+    Puts($"Player {player} is attempting to refill item: {item}.");
     return null;
 }
 ```
@@ -34613,18 +31463,16 @@ object OnItemRefill(Item item, BasePlayer player)
 /// <summary>
 /// Called when a weapon is unloaded from a weapon rack.
 /// </summary>
-/// <param name="item">The item representing the weapon that was unloaded.</param>
-/// <param name="player">The player who unloaded the weapon.</param>
-/// <param name="weaponRack">The weapon rack from which the weapon was unloaded.</param>
-/// <returns>No return behavior.</returns>
-void OnRackedWeaponUnloaded(Item item, BasePlayer player, WeaponRack weaponRack)
+/// <param name="item">The item representing the weapon being unloaded.</param>
+/// <param name="player">The player who is unloading the weapon.</param>
+/// <param name="weaponRack">The weapon rack from which the weapon is being unloaded.</param>
+/// <returns>
+/// Returns a non-null value to prevent the weapon from being unloaded; otherwise, returns null to allow the action. (object)
+/// </returns>
+object OnRackedWeaponUnloaded(Item item, BasePlayer player, WeaponRack weaponRack)
 {
-    Puts($"Weapon {item.info.displayName.english} has been unloaded by {player.displayName} from the weapon rack.");
-    
-    if (item.info.shortname == "rifle.semiauto")
-    {
-        Puts($"Warning: {player.displayName} unloaded a semi-automatic rifle!");
-    }
+    Puts($"Weapon {item} is being unloaded by player {player} from rack {weaponRack}.");
+    return null;
 }
 ```
 ```
@@ -34672,25 +31520,18 @@ void OnRackedWeaponUnloaded(Item item, BasePlayer player, WeaponRack weaponRack)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a target position is set for the Multiple Launch Rocket System (MLRS).
+/// Called when setting the target position for the MLRS (Multiple Launch Rocket System).
 /// </summary>
-/// <param name="mlrs">The MLRS instance that is targeting.</param>
-/// <param name="targetPosition">The world position being targeted.</param>
-/// <param name="player">The player who set the target position.</param>
+/// <param name="mlrs">The MLRS instance that is being targeted.</param>
+/// <param name="targetPosition">The world position that is being set as the target.</param>
+/// <param name="player">The player who is setting the target.</param>
 /// <returns>
-/// Returns `null` to allow the target position to be set, or any non-null value to prevent it.
+/// Returns `null` to allow the target position to be set, or any non-null value to prevent it. (object)
 /// </returns>
 object OnMlrsTarget(MLRS mlrs, Vector3 targetPosition, BasePlayer player)
 {
-    Puts($"Player {player.displayName} set MLRS target position to {targetPosition}.");
-    
-    if (targetPosition.y < 0)
-    {
-        Puts("Target position is below ground level, adjusting to ground level.");
-        targetPosition.y = 0; // Adjust to ground level if below
-    }
-
-    return null; // Allow the target to be set
+    Puts($"MLRS targeting position set by {player} at {targetPosition}.");
+    return null;
 }
 ```
 ```
@@ -34748,21 +31589,14 @@ object OnMlrsTarget(MLRS mlrs, Vector3 targetPosition, BasePlayer player)
 /// <summary>
 /// Called to determine if the helicopter has run out of crates to drop.
 /// </summary>
-/// <param name="helicopter">The helicopter AI controller checking for crate availability.</param>
+/// <param name="helicopter">The helicopter AI controller checking for crates.</param>
 /// <returns>
-/// Returns `true` if the helicopter is out of crates, or `false` if it still has crates available.
-/// If the method returns `null`, the default logic will be used to determine crate availability.
+/// Returns `true` if the helicopter is out of crates; otherwise, returns `false`.
+/// If the method returns `null`, the default logic will be used to determine the crate status. (bool)
 /// </returns>
-bool? OnHelicopterOutOfCrates(CH47HelicopterAIController helicopter)
+object OnHelicopterOutOfCrates(CH47HelicopterAIController helicopter)
 {
-    Puts($"Checking crate availability for helicopter ID: {helicopter.net.ID}.");
-    
-    if (helicopter.numCrates <= 0)
-    {
-        Puts($"Helicopter ID: {helicopter.net.ID} is out of crates.");
-        return true;
-    }
-    
+    Puts($"Checking crate status for helicopter {helicopter}.");
     return null;
 }
 ```
@@ -34789,14 +31623,16 @@ bool? OnHelicopterOutOfCrates(CH47HelicopterAIController helicopter)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a Scientist NPC is alerted.
+/// Called when an NPC is alerted to a situation or event.
 /// </summary>
-/// <param name="npc">The Scientist NPC that is being alerted.</param>
-/// <returns>No return behavior.</returns>
-void OnNpcAlert(ScientistNPC npc)
+/// <param name="npc">The NPC that is being alerted.</param>
+/// <returns>
+/// Returns `null` to allow the default alert behavior, or any non-null value to prevent the alert from occurring.
+/// </returns>
+object OnNpcAlert(ScientistNPC npc)
 {
-    Puts($"NPC {npc.name} has been alerted at time {Time.time}.");
-    // Additional alert handling logic can be added here.
+    Puts($"NPC {npc} has been alerted.");
+    return null;
 }
 ```
 ```
@@ -34828,7 +31664,7 @@ void OnNpcAlert(ScientistNPC npc)
 /// <returns>No return behavior.</returns>
 void OnCupboardClearList(BuildingPrivlidge cupboard, BasePlayer player)
 {
-    Puts($"Cupboard belonging to {cupboard.OwnerID} has had its authorized player list cleared by {player.displayName} (ID: {player.UserIDString}).");
+    Puts($"Clearing authorized player list for cupboard owned by {player}.");
 }
 ```
 ```
@@ -34858,16 +31694,11 @@ void OnCupboardClearList(BuildingPrivlidge cupboard, BasePlayer player)
 /// <summary>
 /// Called to update the interference status of the auto turret.
 /// </summary>
-/// <param name="turret">The auto turret that is being updated for interference.</param>
+/// <param name="turret">The auto turret that is checking for interference.</param>
 /// <returns>No return behavior.</returns>
 void OnInterferenceUpdate(AutoTurret turret)
 {
-    Puts($"Updating interference for turret ID: {turret.net.ID}, Status: {(turret.IsOn() ? "Active" : "Inactive")}");
-    
-    if (turret.HasInterference())
-    {
-        Puts($"Turret ID: {turret.net.ID} is currently experiencing interference.");
-    }
+    Puts($"Updating interference for turret ID: {turret.net.ID}");
 }
 ```
 ```
@@ -34903,19 +31734,14 @@ void OnInterferenceUpdate(AutoTurret turret)
 /// Called when ingredients are collected for crafting an item.
 /// </summary>
 /// <param name="crafter">The item crafter collecting the ingredients.</param>
-/// <param name="blueprint">The blueprint of the item being crafted.</param>
-/// <param name="task">The crafting task associated with the item.</param>
+/// <param name="blueprint">The blueprint for the item being crafted.</param>
+/// <param name="task">The crafting task associated with the collection.</param>
 /// <param name="amount">The amount of items to craft.</param>
-/// <param name="player">The player who is crafting the item.</param>
+/// <param name="player">The player who is crafting the item, if applicable.</param>
 /// <returns>No return behavior.</returns>
 void OnIngredientsCollect(ItemCrafter crafter, ItemBlueprint blueprint, ItemCraftTask task, int amount, BasePlayer player)
 {
-    Puts($"Collecting ingredients for crafting {blueprint.targetItem.shortname} (Amount: {amount}) by player {player?.displayName ?? "N/A"}.");
-    
-    if (blueprint.targetItem.shortname == "special.item")
-    {
-        Puts("Special item crafting requires additional checks.");
-    }
+    Puts($"Ingredients collected for crafting {blueprint} by {player}.");
 }
 ```
 ```
@@ -34949,24 +31775,14 @@ void OnIngredientsCollect(ItemCrafter crafter, ItemBlueprint blueprint, ItemCraf
 ```csharp
 ```csharp
 /// <summary>
-/// Called to refresh the performance statistics of the vehicle engine.
+/// Called to refresh the performance statistics of a vehicle engine.
 /// </summary>
 /// <param name="engine">The vehicle engine module whose stats are being refreshed.</param>
 /// <param name="engineStorage">The storage containing the engine's performance data.</param>
 /// <returns>No return behavior.</returns>
 void OnEngineStatsRefresh(VehicleModuleEngine engine, Rust.Modular.EngineStorage engineStorage)
 {
-    Puts($"Refreshing engine stats for {engine.GetType().Name} with storage ID: {engineStorage?.GetHashCode()}");
-
-    if (engineStorage == null)
-    {
-        Puts("Engine storage is null, setting performance stats to zero.");
-    }
-    else
-    {
-        Puts($"Engine is usable: {engineStorage.isUsable}, Acceleration Boost: {engineStorage.accelerationBoostPercent}, " +
-             $"Top Speed Boost: {engineStorage.topSpeedBoostPercent}, Fuel Economy Boost: {engineStorage.fuelEconomyBoostPercent}");
-    }
+    Puts($"Refreshing engine stats for {engine} with storage: {engineStorage}.");
 }
 ```
 ```
@@ -35010,19 +31826,12 @@ void OnEngineStatsRefresh(VehicleModuleEngine engine, Rust.Modular.EngineStorage
 /// <param name="player">The player attempting to swap seats.</param>
 /// <param name="seat">The seat the player wants to swap to.</param>
 /// <returns>
-/// Returns `true` if the player can swap to the seat, or `false` if they cannot.
-/// If the method returns `null`, the default game logic will determine if the player can swap seats.
+/// Returns `true` if the player can swap to the seat; otherwise, returns `false`.
+/// If the method returns `null`, the default game logic will be used to determine if the player can swap seats. (bool)
 /// </returns>
-bool? CanSwapToSeat(BasePlayer player, ModularCarSeat seat)
+object CanSwapToSeat(BasePlayer player, ModularCarSeat seat)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to swap to a seat in the modular car.");
-
-    if (player.IsSleeping)
-    {
-        Puts($"Player {player.displayName} cannot swap seats while sleeping.");
-        return false;
-    }
-
+    Puts($"Player {player} is attempting to swap to seat {seat}.");
     return null;
 }
 ```
@@ -35060,10 +31869,13 @@ bool? CanSwapToSeat(BasePlayer player, ModularCarSeat seat)
 /// Called when the egg hunt event starts.
 /// </summary>
 /// <param name="event">The egg hunt event that is starting.</param>
-/// <returns>No return behavior.</returns>
-void OnHuntEventStart(EggHuntEvent event)
+/// <returns>
+/// Returns `null` to allow the event to start normally. Any non-null value will prevent the event from starting. (object)
+/// </returns>
+object OnHuntEventStart(EggHuntEvent event)
 {
-    Puts($"Egg Hunt Event has started! Event ID: {event.EventID}, Active Players: {BasePlayer.activePlayerList.Count}");
+    Puts($"Egg hunt event starting: {event}.");
+    return null;
 }
 ```
 ```
@@ -35091,24 +31903,17 @@ void OnHuntEventStart(EggHuntEvent event)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player selects a module for a vehicle.
+/// Called when a player selects a module from a vehicle's garage.
 /// </summary>
-/// <param name="item">The item representing the vehicle module selected.</param>
-/// <param name="garage">The modular car garage that contains the vehicle.</param>
-/// <param name="player">The player who selected the vehicle module.</param>
+/// <param name="item">The item representing the selected vehicle module.</param>
+/// <param name="garage">The modular car garage from which the module is selected.</param>
+/// <param name="player">The player who selected the module.</param>
 /// <returns>
-/// Returns a non-null value to prevent the selection action, or `null` to allow it.
+/// Returns a non-null value to prevent the default selection behavior; otherwise, returns null to allow it. (object)
 /// </returns>
 object OnVehicleModuleSelected(Item item, ModularCarGarage garage, BasePlayer player)
 {
-    Puts($"Player {player.displayName} selected module: {item.info.displayName.english} for vehicle in garage.");
-
-    if (item.info.shortname == "vehicle.module.restricted")
-    {
-        Puts($"Player {player.displayName} attempted to select a restricted module.");
-        return "You cannot select this module.";
-    }
-
+    Puts($"Player {player} selected module {item} from garage {garage}.");
     return null;
 }
 ```
@@ -35173,19 +31978,14 @@ object OnVehicleModuleSelected(Item item, ModularCarGarage garage, BasePlayer pl
 /// </summary>
 /// <param name="reporter">The player who is making the report.</param>
 /// <param name="reportMessage">The message detailing the report.</param>
+/// <param name="reportType">The type of report being made.</param>
 /// <param name="targetId">The ID of the player being reported.</param>
 /// <param name="targetName">The name of the player being reported.</param>
-/// <param name="reportType">The type of report being made.</param>
-/// <param name="additionalInfo">Any additional information regarding the report.</param>
+/// <param name="additionalInfo">Any additional information related to the report.</param>
 /// <returns>No return behavior.</returns>
-void OnPlayerReported(BasePlayer reporter, string reportMessage, string targetId, string targetName, string reportType, string additionalInfo)
+void OnPlayerReported(BasePlayer reporter, string reportMessage, string reportType, string targetId, string targetName, string additionalInfo)
 {
-    Puts($"Player {reporter.displayName} reported {targetName} (ID: {targetId}) with message: \"{reportMessage}\" of type: {reportType}.");
-
-    if (reportType == "cheating")
-    {
-        Puts($"Report from {reporter.displayName} indicates potential cheating by {targetName}.");
-    }
+    Puts($"Player {reporter} reported {targetName} (ID: {targetId}) with message: \"{reportMessage}\".");
 }
 ```
 ```
@@ -35226,23 +32026,17 @@ void OnPlayerReported(BasePlayer reporter, string reportMessage, string targetId
 /// <summary>
 /// Called when a photo is captured by a player.
 /// </summary>
-/// <param name="photoEntity">The photo entity that holds the captured image.</param>
+/// <param name="photoEntity">The photo entity that is being created.</param>
 /// <param name="item">The item used to capture the photo.</param>
 /// <param name="player">The player who captured the photo.</param>
-/// <param name="imageData">The byte array containing the image data.</param>
-/// <returns>No return behavior.</returns>
-void OnPhotoCapture(PhotoEntity photoEntity, Item item, BasePlayer player, byte[] imageData)
+/// <param name="imageData">The byte array containing the image data of the photo.</param>
+/// <returns>
+/// Returns a non-null value to override the default photo capture behavior. If `null` is returned, the photo capture proceeds as normal. (object)
+/// </returns>
+object OnPhotoCapture(PhotoEntity photoEntity, Item item, BasePlayer player, byte[] imageData)
 {
-    Puts($"Player {player.displayName} captured a photo using item {item.info.displayName.english}.");
-
-    if (imageData.Length > 102400)
-    {
-        Puts("Photo data exceeds the maximum allowed size.");
-    }
-    else
-    {
-        Puts("Photo captured successfully and is ready for processing.");
-    }
+    Puts($"Player {player} captured a photo with item {item}.");
+    return null;
 }
 ```
 ```
@@ -35252,8 +32046,8 @@ void OnPhotoCapture(PhotoEntity photoEntity, Item item, BasePlayer player, byte[
 ```csharp
 
 	[RPC_Server]
-	[RPC_Server.FromOwner]
 	[RPC_Server.CallsPerSecond(3uL)]
+	[RPC_Server.FromOwner]
 	private void TakePhoto(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -35330,24 +32124,17 @@ void OnPhotoCapture(PhotoEntity photoEntity, Item item, BasePlayer player, byte[
 ```csharp
 ```csharp
 /// <summary>
-/// Determines whether a timed explosive can stick to a specified entity.
+/// Determines whether the explosive can stick to the specified entity.
 /// </summary>
 /// <param name="explosive">The timed explosive attempting to stick.</param>
-/// <param name="entity">The entity to which the explosive is trying to attach.</param>
+/// <param name="entity">The entity to which the explosive is trying to stick.</param>
 /// <returns>
-/// Returns `true` if the explosive can stick to the entity; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will determine if the explosive can stick.
+/// Returns `true` if the explosive can stick to the entity; otherwise, returns `false`. 
+/// If the method returns `null`, the default game logic will determine if the explosive can stick. (bool)
 /// </returns>
-bool? CanExplosiveStick(TimedExplosive explosive, BaseEntity entity)
+object CanExplosiveStick(TimedExplosive explosive, BaseEntity entity)
 {
-    Puts($"Checking if {explosive.info.displayName.english} can stick to {entity?.name ?? "unknown entity"}.");
-
-    if (entity is BuildingBlock)
-    {
-        Puts("Explosive can stick to building blocks.");
-        return true;
-    }
-
+    Puts($"Checking if explosive can stick to entity: {entity}.");
     return null;
 }
 ```
@@ -35386,29 +32173,16 @@ bool? CanExplosiveStick(TimedExplosive explosive, BaseEntity entity)
 ```csharp
 ```csharp
 /// <summary>
-/// Called to check if a vehicle can have a lock attached to it.
+/// Called to check if a vehicle can have a lock applied to it.
 /// </summary>
 /// <param name="vehicle">The vehicle being checked for lockability.</param>
 /// <returns>
-/// Returns `true` if the vehicle can have a lock, `false` if it cannot, 
-/// or `null` to allow the default game logic to determine lockability.
+/// Returns `true` if the vehicle can have a lock, or `false` if it cannot.
+/// If the method returns `null`, the default game logic will determine if the vehicle can be locked. (bool)
 /// </returns>
-bool? OnVehicleLockableCheck(ModularCarCodeLock vehicle)
+object OnVehicleLockableCheck(ModularCarCodeLock vehicle)
 {
-    Puts($"Checking if vehicle {vehicle.net.ID} can have a lock.");
-
-    if (vehicle.owner.IsDead())
-    {
-        Puts($"Vehicle owner is dead; cannot attach a lock.");
-        return false;
-    }
-
-    if (!vehicle.owner.HasDriverMountPoints())
-    {
-        Puts($"Vehicle owner does not have driver mount points; cannot attach a lock.");
-        return false;
-    }
-
+    Puts($"Checking if vehicle {vehicle} can have a lock.");
     return null;
 }
 ```
@@ -35449,18 +32223,11 @@ bool? OnVehicleLockableCheck(ModularCarCodeLock vehicle)
 /// <param name="vendingMachine">The vending machine in question.</param>
 /// <returns>
 /// Returns `true` if the player can administer the vending machine; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will be used to determine the player's permissions.
+/// If the method returns `null`, the default game logic will determine the player's ability to administer. (bool)
 /// </returns>
-bool? CanAdministerVending(BasePlayer player, VendingMachine vendingMachine)
+object CanAdministerVending(BasePlayer player, VendingMachine vendingMachine)
 {
-    Puts($"Checking administration rights for player {player.displayName} on vending machine {vendingMachine.net.ID}.");
-
-    if (player.IsAdmin)
-    {
-        Puts($"Player {player.displayName} is an admin and can administer the vending machine.");
-        return true;
-    }
-
+    Puts($"Checking if player {player} can administer vending machine {vendingMachine}.");
     return null;
 }
 ```
@@ -35494,16 +32261,14 @@ bool? CanAdministerVending(BasePlayer player, VendingMachine vendingMachine)
 /// Called when an item has been successfully researched at a research table.
 /// </summary>
 /// <param name="researchTable">The research table where the item was researched.</param>
-/// <param name="scrapAmount">The amount of scrap used for the research.</param>
-/// <returns>No return behavior.</returns>
-void OnItemResearched(ResearchTable researchTable, int scrapAmount)
+/// <param name="scrapUsed">The amount of scrap used for the research.</param>
+/// <returns>
+/// Returns the amount of scrap used for the research, which can be modified by the hook. (int)
+/// </returns>
+object OnItemResearched(ResearchTable researchTable, int scrapUsed)
 {
-    Puts($"Item researched at {researchTable.name} using {scrapAmount} scrap.");
-    
-    if (scrapAmount > 100)
-    {
-        Puts("Researching this item is too expensive!");
-    }
+    Puts($"Item researched at {researchTable}: {scrapUsed} scrap used.");
+    return scrapUsed;
 }
 ```
 ```
@@ -35571,19 +32336,14 @@ void OnItemResearched(ResearchTable researchTable, int scrapAmount)
 /// <param name="item">The item used to capture the photo.</param>
 /// <param name="player">The player who captured the photo.</param>
 /// <param name="imageData">The byte array containing the image data of the captured photo.</param>
-/// <returns>No return behavior.</returns>
-void OnPhotoCaptured(PhotoEntity photoEntity, Item item, BasePlayer player, byte[] imageData)
+/// <returns>
+/// Returns a non-null value to override the default behavior after a photo is captured. 
+/// If `null` is returned, the default behavior will proceed. (object)
+/// </returns>
+object OnPhotoCaptured(PhotoEntity photoEntity, Item item, BasePlayer player, byte[] imageData)
 {
-    Puts($"Player {player.displayName} captured a photo using item {item.info.displayName.english}.");
-
-    if (imageData.Length > 102400)
-    {
-        Puts("Captured photo exceeds size limit.");
-    }
-    else
-    {
-        Puts("Photo captured successfully and is ready for processing.");
-    }
+    Puts($"Photo captured by {player} with item {item}. Image data size: {imageData.Length} bytes.");
+    return null;
 }
 ```
 ```
@@ -35593,8 +32353,8 @@ void OnPhotoCaptured(PhotoEntity photoEntity, Item item, BasePlayer player, byte
 ```csharp
 
 	[RPC_Server]
-	[RPC_Server.FromOwner]
 	[RPC_Server.CallsPerSecond(3uL)]
+	[RPC_Server.FromOwner]
 	private void TakePhoto(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -35673,20 +32433,12 @@ void OnPhotoCaptured(PhotoEntity photoEntity, Item item, BasePlayer player, byte
 /// <summary>
 /// Called when a dying growable entity is removed.
 /// </summary>
-/// <param name="receiver">The player who is receiving the item from the dying entity.</param>
+/// <param name="entity">The growable entity that is being removed.</param>
+/// <param name="receiver">The player receiving the item from the removed entity.</param>
 /// <returns>No return behavior.</returns>
 void OnRemoveDying(GrowableEntity entity, BasePlayer receiver)
 {
-    Puts($"Removing dying entity: {entity.name} for player: {receiver?.displayName ?? "world"}.");
-
-    if (receiver != null)
-    {
-        Puts($"Player {receiver.displayName} will receive the item from the dying entity.");
-    }
-    else
-    {
-        Puts("No player to receive the item; it will be dropped in the world.");
-    }
+    Puts($"Removing dying entity: {entity} for player: {receiver}.");
 }
 ```
 ```
@@ -35729,26 +32481,12 @@ void OnRemoveDying(GrowableEntity entity, BasePlayer receiver)
 /// <param name="player">The player who is attacking.</param>
 /// <param name="hitInfo">Information about the attack, including the target and damage details.</param>
 /// <returns>
-/// Returns a non-null value to prevent the default attack behavior. 
-/// If `null` is returned, the attack proceeds as normal.
+/// Returns a non-null value to prevent the default attack behavior; otherwise, returns null to allow the attack to proceed. (object)
 /// </returns>
 object OnPlayerAttack(BasePlayer player, HitInfo hitInfo)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attacking with weapon: {hitInfo.Weapon?.info.shortname ?? "unknown"}.");
-
-    if (hitInfo.HitEntity is BasePlayer targetPlayer)
-    {
-        Puts($"Player {player.displayName} is attacking {targetPlayer.displayName}.");
-    }
-
-    // Example condition to block the attack
-    if (player.IsInSafeZone())
-    {
-        Puts($"Player {player.displayName} cannot attack while in a safe zone.");
-        return true; // Prevent the attack
-    }
-
-    return null; // Allow the attack to proceed
+    Puts($"Player {player} is attacking with HitInfo: {hitInfo}.");
+    return null;
 }
 ```
 ```
@@ -35805,16 +32543,14 @@ object OnPlayerAttack(BasePlayer player, HitInfo hitInfo)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a Multiple Launch Rocket System (MLRS) has fired.
+/// Called when the Multiple Launch Rocket System (MLRS) has fired rockets.
 /// </summary>
-/// <param name="mlrs">The MLRS instance that fired.</param>
-/// <param name="owner">The player who owns and fired the MLRS.</param>
+/// <param name="mlrs">The MLRS that has been fired.</param>
+/// <param name="owner">The player who owns the MLRS.</param>
 /// <returns>No return behavior.</returns>
 void OnMlrsFired(MLRS mlrs, BasePlayer owner)
 {
-    Puts($"MLRS fired by player {owner.displayName} (ID: {owner.UserIDString}).");
-    
-    // Additional logic can be added here, such as logging or triggering events.
+    Puts($"MLRS fired by player {owner} with ID {owner.userID}.");
 }
 ```
 ```
@@ -35846,22 +32582,15 @@ void OnMlrsFired(MLRS mlrs, BasePlayer owner)
 /// <summary>
 /// Called to determine if a player can use a locked entity.
 /// </summary>
-/// <param name="player">The player attempting to access the locked entity.</param>
+/// <param name="player">The player attempting to use the locked entity.</param>
 /// <param name="codeLock">The code lock associated with the entity.</param>
 /// <returns>
 /// Returns `true` if the player can use the locked entity, or `false` if they cannot.
-/// If the method returns `null`, the default game logic will determine access permissions.
+/// If the method returns `null`, the default game logic will determine if the player can use the entity. (bool)
 /// </returns>
-bool? CanUseLockedEntity(BasePlayer player, CodeLock codeLock)
+object CanUseLockedEntity(BasePlayer player, CodeLock codeLock)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is trying to access a locked entity with CodeLock ID: {codeLock.net.ID}.");
-
-    if (player.IsAdmin)
-    {
-        Puts($"Player {player.displayName} is an admin and can access all locked entities.");
-        return true;
-    }
-
+    Puts($"Player {player} is attempting to use locked entity with CodeLock: {codeLock}.");
     return null;
 }
 ```
@@ -35898,14 +32627,13 @@ bool? CanUseLockedEntity(BasePlayer player, CodeLock codeLock)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player finishes looting.
+/// Called when a player finishes looting an entity or container.
 /// </summary>
 /// <param name="loot">The loot object associated with the player.</param>
 /// <returns>No return behavior.</returns>
 void OnPlayerLootEnd(PlayerLoot loot)
 {
-    Puts($"Player {loot.baseEntity.displayName} has finished looting.");
-    // Additional logic can be added here if needed.
+    Puts($"Player has finished looting: {loot}.");
 }
 ```
 ```
@@ -35946,17 +32674,17 @@ void OnPlayerLootEnd(PlayerLoot loot)
 ```csharp
 ```csharp
 /// <summary>
-/// Determines whether the specified attack helicopter pilot can be targeted by homing missiles.
+/// Determines whether the specified attack helicopter can be targeted by homing missiles.
 /// </summary>
-/// <param name="heliPilot">The attack helicopter pilot to check.</param>
+/// <param name="heli">The attack helicopter to check.</param>
 /// <returns>
-/// Returns `true` if the helicopter pilot can be targeted by homing missiles; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will be used to determine if the pilot can be targeted.
+/// Returns `true` if the helicopter can be targeted by homing missiles; otherwise, returns `false`.
+/// If the method returns `null`, the default game logic will be used to determine if the helicopter can be targeted. (bool)
 /// </returns>
-bool? CanBeHomingTargeted(AttackHeliPilotFlare heliPilot)
+object CanBeHomingTargeted(AttackHeliPilotFlare heli)
 {
-    Puts($"Checking if Attack Helicopter Pilot ID: {heliPilot.net.ID} can be targeted by homing missiles.");
-    return null; // Default behavior will be used
+    Puts($"Checking homing target for Attack Helicopter ID: {heli.net.ID}.");
+    return null;
 }
 ```
 ```
@@ -35982,23 +32710,16 @@ bool? CanBeHomingTargeted(AttackHeliPilotFlare heliPilot)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when the remote identifier of a powered remote control entity is updated.
+/// Called when the identifier of a powered remote control entity is updated.
 /// </summary>
 /// <param name="remoteControl">The powered remote control entity whose identifier is being updated.</param>
-/// <param name="newIdentifier">The new identifier being set for the remote control entity.</param>
+/// <param name="newIdentifier">The new identifier being set.</param>
 /// <returns>
-/// Returns a non-null value to prevent the identifier update, or `null` to allow the update to proceed.
+/// Returns a non-null value to prevent the identifier from being updated; otherwise, returns null to allow the update. (object)
 /// </returns>
 object OnRemoteIdentifierUpdate(PoweredRemoteControlEntity remoteControl, string newIdentifier)
 {
-    Puts($"Remote Control ID is being updated to: {newIdentifier} for entity ID: {remoteControl.net.ID}");
-    
-    if (newIdentifier == "forbiddenID")
-    {
-        Puts("Update rejected: forbidden identifier.");
-        return "This identifier is not allowed.";
-    }
-    
+    Puts($"Updating remote control identifier for {remoteControl} to {newIdentifier}.");
     return null;
 }
 ```
@@ -36035,25 +32756,17 @@ object OnRemoteIdentifierUpdate(PoweredRemoteControlEntity remoteControl, string
 ```csharp
 ```csharp
 /// <summary>
-/// Called when an entity snapshot is sent to a network connection.
+/// Called when sending a snapshot of an entity to a network connection.
 /// </summary>
 /// <param name="entity">The entity being sent in the snapshot.</param>
 /// <param name="connection">The network connection to which the snapshot is being sent.</param>
 /// <returns>
-/// Returns a non-null value to prevent the entity snapshot from being sent. 
-/// If `null` is returned, the snapshot will be sent as normal.
+/// Returns a non-null value to prevent the default snapshot behavior; otherwise, returns null to proceed with sending the snapshot. (object)
 /// </returns>
 object OnEntitySnapshot(BaseNetworkable entity, Network.Connection connection)
 {
-    Puts($"Sending snapshot for entity {entity.net.ID} to connection {connection.userid}.");
-    
-    if (entity is BasePlayer player && player.IsInvisible)
-    {
-        Puts($"Entity {entity.net.ID} is invisible and will not be sent.");
-        return true; // Prevent sending the snapshot
-    }
-    
-    return null; // Allow sending the snapshot
+    Puts($"Sending snapshot for entity {entity} to connection {connection}.");
+    return null;
 }
 ```
 ```
@@ -36093,24 +32806,17 @@ object OnEntitySnapshot(BaseNetworkable entity, Network.Connection connection)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a turret's identifier is set by a player.
+/// Called when the identifier for a turret is set by a player.
 /// </summary>
 /// <param name="turret">The turret whose identifier is being set.</param>
 /// <param name="player">The player setting the turret's identifier.</param>
 /// <param name="newIdentifier">The new identifier being set for the turret.</param>
 /// <returns>
-/// Returns `null` to allow the identifier change, or any non-null value to prevent the change.
+/// Returns `null` to allow the identifier change, or any non-null value to prevent it. (object)
 /// </returns>
 object OnTurretIdentifierSet(AutoTurret turret, BasePlayer player, string newIdentifier)
 {
-    Puts($"Player {player.displayName} is attempting to set turret ID to: {newIdentifier}.");
-    
-    if (newIdentifier == "restrictedID")
-    {
-        Puts($"Player {player.displayName} is not allowed to set the turret ID to a restricted value.");
-        return "This identifier is not allowed.";
-    }
-    
+    Puts($"Player {player} is setting turret identifier to: {newIdentifier}.");
     return null;
 }
 ```
@@ -36151,15 +32857,14 @@ object OnTurretIdentifierSet(AutoTurret turret, BasePlayer player, string newIde
 /// </summary>
 /// <param name="woundedPlayer">The player who is currently wounded.</param>
 /// <param name="interactingPlayer">The player sending the keep-alive message.</param>
-/// <returns>No return behavior.</returns>
-void OnPlayerKeepAlive(BasePlayer woundedPlayer, BasePlayer interactingPlayer)
+/// <returns>
+/// Returns `null` to allow the default behavior of prolonging the wounding; 
+/// any non-null value will prevent the prolonging action. (object)
+/// </returns>
+object OnPlayerKeepAlive(BasePlayer woundedPlayer, BasePlayer interactingPlayer)
 {
-    Puts($"Player {interactingPlayer.displayName} sent a keep-alive for wounded player {woundedPlayer.displayName}.");
-    
-    if (woundedPlayer.IsWounded())
-    {
-        Puts($"Wounded player {woundedPlayer.displayName} is being kept alive by {interactingPlayer.displayName}.");
-    }
+    Puts($"Player {interactingPlayer} sent a keep-alive for wounded player {woundedPlayer}.");
+    return null;
 }
 ```
 ```
@@ -36168,8 +32873,8 @@ void OnPlayerKeepAlive(BasePlayer woundedPlayer, BasePlayer interactingPlayer)
 
 ```csharp
 
-	[RPC_Server]
 	[RPC_Server.IsVisible(3f)]
+	[RPC_Server]
 	public void RPC_KeepAlive(RPCMessage msg)
 	{
 		if (msg.player.CanInteract() && !(msg.player == this) && IsWounded() && Interface.CallHook("OnPlayerKeepAlive", this, msg.player) == null)
@@ -36187,12 +32892,12 @@ void OnPlayerKeepAlive(BasePlayer woundedPlayer, BasePlayer interactingPlayer)
 /// <summary>
 /// Called when a cargo plane is signaled to drop supplies.
 /// </summary>
-/// <param name="entity">The entity representing the cargo plane.</param>
-/// <param name="supplySignal">The supply signal that triggered the drop.</param>
+/// <param name="entity">The entity that triggered the cargo plane signal.</param>
+/// <param name="supplySignal">The supply signal that was used to signal the cargo plane.</param>
 /// <returns>No return behavior.</returns>
 void OnCargoPlaneSignaled(BaseEntity entity, SupplySignal supplySignal)
 {
-    Puts($"Cargo plane signaled: {entity?.name} with signal type: {supplySignal?.signalType}");
+    Puts($"Cargo plane signaled by {entity} with signal: {supplySignal}.");
 }
 ```
 ```
@@ -36223,22 +32928,19 @@ void OnCargoPlaneSignaled(BaseEntity entity, SupplySignal supplySignal)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player wins at the Big Wheel game.
+/// Called when a player wins on the Big Wheel game.
 /// </summary>
 /// <param name="game">The Big Wheel game instance.</param>
-/// <param name="winningItem">The item that the player has won.</param>
-/// <param name="terminal">The betting terminal where the game was played.</param>
-/// <param name="multiplier">The multiplier applied to the winnings.</param>
-/// <returns>No return behavior.</returns>
-void OnBigWheelWin(BigWheelGame game, Item winningItem, BigWheelBettingTerminal terminal, int multiplier)
+/// <param name="item">The item associated with the win.</param>
+/// <param name="terminal">The betting terminal where the win occurred.</param>
+/// <param name="multiplier">The multiplier applied to the win.</param>
+/// <returns>
+/// Returns `null` to allow the default payout behavior, or a non-null value to override it. (object)
+/// </returns>
+object OnBigWheelWin(BigWheelGame game, Item item, BigWheelBettingTerminal terminal, int multiplier)
 {
-    Puts($"Player has won at the Big Wheel! Item: {winningItem.info.displayName.english}, " +
-         $"Terminal: {terminal.net.ID}, Multiplier: {multiplier}.");
-    
-    if (multiplier > 5)
-    {
-        Puts("Jackpot! High multiplier awarded!");
-    }
+    Puts($"Player won on Big Wheel! Item: {item}, Multiplier: {multiplier} at terminal: {terminal}.");
+    return null;
 }
 ```
 ```
@@ -36299,23 +33001,16 @@ void OnBigWheelWin(BigWheelGame game, Item winningItem, BigWheelBettingTerminal 
 ```csharp
 ```csharp
 /// <summary>
-/// Determines whether the specified player entity can be considered hostile.
+/// Determines whether the entity can be considered hostile.
 /// </summary>
-/// <param name="player">The player entity to check for hostility.</param>
+/// <param name="player">The player to check against the entity's hostility.</param>
 /// <returns>
-/// Returns `true` if the entity can be hostile; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will be used to determine hostility.
+/// Returns `true` if the entity is hostile; otherwise, returns `false`. 
+/// If the method returns `null`, the default game logic will determine the entity's hostility. (bool)
 /// </returns>
-bool? CanEntityBeHostile(BasePlayer player)
+object CanEntityBeHostile(BasePlayer player)
 {
-    Puts($"Checking hostility for player {player.displayName} (ID: {player.UserIDString}).");
-
-    if (player.IsInSafeZone())
-    {
-        Puts($"Player {player.displayName} is in a safe zone and cannot be hostile.");
-        return false;
-    }
-
+    Puts($"Checking hostility for entity {this} against player {player}.");
     return null;
 }
 ```
@@ -36342,24 +33037,18 @@ bool? CanEntityBeHostile(BasePlayer player)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when the SAM site mode is toggled between defender and normal mode.
+/// Called when the mode of a SAM site is toggled by a player.
 /// </summary>
-/// <param name="samSite">The SAM site that is being toggled.</param>
+/// <param name="samSite">The SAM site whose mode is being toggled.</param>
 /// <param name="player">The player who is toggling the mode.</param>
 /// <param name="isDefenderMode">Indicates whether the SAM site is being set to defender mode.</param>
-/// <returns>No return behavior.</returns>
-void OnSamSiteModeToggle(SamSite samSite, BasePlayer player, bool isDefenderMode)
+/// <returns>
+/// Returns `null` to allow the mode toggle, or a non-null value to prevent it. (object)
+/// </returns>
+object OnSamSiteModeToggle(SamSite samSite, BasePlayer player, bool isDefenderMode)
 {
-    Puts($"SAM Site {samSite.net.ID} mode toggled by {player.displayName} to {(isDefenderMode ? "Defender" : "Normal")} mode.");
-    
-    if (isDefenderMode)
-    {
-        Puts($"SAM Site {samSite.net.ID} is now in Defender Mode, ready to engage targets.");
-    }
-    else
-    {
-        Puts($"SAM Site {samSite.net.ID} is now in Normal Mode, disengaged from targets.");
-    }
+    Puts($"SAM Site mode toggled by {player} to {(isDefenderMode ? "Defender" : "Offensive")} mode.");
+    return null;
 }
 ```
 ```
@@ -36403,12 +33092,7 @@ void OnSamSiteModeToggle(SamSite samSite, BasePlayer player, bool isDefenderMode
 /// <returns>No return behavior.</returns>
 void OnHelicopterAttack(CH47HelicopterAIController helicopter, HitInfo hitInfo)
 {
-    Puts($"Helicopter {helicopter.net.ID} is under attack! Damage: {hitInfo.damage} from {hitInfo.Initiator?.displayName ?? "unknown source"}.");
-    
-    if (hitInfo.damage > 50)
-    {
-        Puts("Heavy damage detected! Initiating evasive maneuvers.");
-    }
+    Puts($"Helicopter {helicopter} is under attack with damage: {hitInfo.damage} from {hitInfo.Initiator}.");
 }
 ```
 ```
@@ -36438,20 +33122,11 @@ void OnHelicopterAttack(CH47HelicopterAIController helicopter, HitInfo hitInfo)
 /// Called when a sleeping bag is destroyed.
 /// </summary>
 /// <param name="sleepingBag">The sleeping bag that is being destroyed.</param>
-/// <param name="userId">The ID of the user who owns the sleeping bag.</param>
+/// <param name="userId">The user ID of the player who owns the sleeping bag.</param>
 /// <returns>No return behavior.</returns>
 void OnSleepingBagDestroyed(SleepingBag sleepingBag, ulong userId)
 {
-    Puts($"Sleeping bag with ID {sleepingBag.net.ID} owned by user {userId} has been destroyed.");
-    
-    if (sleepingBag.deployerUserID == userId)
-    {
-        Puts($"User {userId} has successfully destroyed their own sleeping bag.");
-    }
-    else
-    {
-        Puts($"Sleeping bag destroyed by user {userId}, but it was not their own.");
-    }
+    Puts($"Sleeping bag {sleepingBag} owned by user {userId} has been destroyed.");
 }
 ```
 ```
@@ -36491,24 +33166,17 @@ void OnSleepingBagDestroyed(SleepingBag sleepingBag, ulong userId)
 ```csharp
 ```csharp
 /// <summary>
-/// Determines whether a player can administer a vending machine.
+/// Determines whether a player can administer the specified vending machine.
 /// </summary>
 /// <param name="player">The player attempting to administer the vending machine.</param>
 /// <param name="vendingMachine">The vending machine in question.</param>
 /// <returns>
 /// Returns `true` if the player can administer the vending machine; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will be used to determine the player's permissions.
+/// If the method returns `null`, the default game logic will determine the administration rights. (bool)
 /// </returns>
-bool? CanAdministerVending(BasePlayer player, NPCVendingMachine vendingMachine)
+object CanAdministerVending(BasePlayer player, NPCVendingMachine vendingMachine)
 {
-    Puts($"Checking administration rights for player {player.displayName} on vending machine {vendingMachine.net.ID}.");
-    
-    if (player.IsAdmin)
-    {
-        Puts($"Player {player.displayName} is an admin and can administer the vending machine.");
-        return true;
-    }
-
+    Puts($"Checking administration rights for player {player} on vending machine {vendingMachine}.");
     return null;
 }
 ```
@@ -36535,24 +33203,17 @@ bool? CanAdministerVending(BasePlayer player, NPCVendingMachine vendingMachine)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a helicopter turret acquires a new target.
+/// Called when a helicopter turret is set to target a new entity.
 /// </summary>
-/// <param name="turret">The helicopter turret that is acquiring the target.</param>
-/// <param name="target">The new target that the turret is aiming at.</param>
+/// <param name="helicopter">The helicopter turret that is acquiring a new target.</param>
+/// <param name="target">The new target entity that the helicopter turret will focus on.</param>
 /// <returns>
-/// Returns `null` to allow the turret to set the new target, or any non-null value to prevent the target change.
+/// Returns a non-null value to prevent the helicopter from targeting the specified entity; otherwise, returns `null` to allow the targeting. (object)
 /// </returns>
-object OnHelicopterTarget(HelicopterTurret turret, BaseCombatEntity target)
+object OnHelicopterTarget(HelicopterTurret helicopter, BaseCombatEntity target)
 {
-    Puts($"Helicopter Turret {turret.net.ID} is attempting to target {target?.net.ID}.");
-    
-    if (target is Player player && player.IsInSafeZone())
-    {
-        Puts($"Targeting player {player.displayName} is not allowed as they are in a safe zone.");
-        return true; // Prevent targeting
-    }
-
-    return null; // Allow targeting
+    Puts($"Helicopter {helicopter} is attempting to target {target}.");
+    return null;
 }
 ```
 ```
@@ -36579,18 +33240,16 @@ object OnHelicopterTarget(HelicopterTurret turret, BaseCombatEntity target)
 /// <summary>
 /// Called when a fish is caught by a player using a fishing rod.
 /// </summary>
-/// <param name="fish">The definition of the fish that was caught.</param>
+/// <param name="fish">The item definition of the caught fish.</param>
 /// <param name="fishingRod">The fishing rod used to catch the fish.</param>
 /// <param name="player">The player who caught the fish.</param>
-/// <returns>No return behavior.</returns>
-void OnFishCaught(ItemDefinition fish, BaseFishingRod fishingRod, BasePlayer player)
+/// <returns>
+/// Returns a modified item if the hook alters the default behavior; otherwise, returns the original fish item. (Item)
+/// </returns>
+object OnFishCaught(ItemDefinition fish, BaseFishingRod fishingRod, BasePlayer player)
 {
-    Puts($"Player {player.displayName} caught a fish: {fish.displayName.english} using {fishingRod.GetType().Name}.");
-    
-    if (fish.shortname == "shark")
-    {
-        Puts($"Warning: Player {player.displayName} caught a shark!");
-    }
+    Puts($"Player {player} caught a fish: {fish.shortname} using {fishingRod}.");
+    return null;
 }
 ```
 ```
@@ -36806,19 +33465,13 @@ void OnFishCaught(ItemDefinition fish, BaseFishingRod fishingRod, BasePlayer pla
 /// <param name="info">The hit information related to the projectile creation.</param>
 /// <param name="itemDef">The item definition of the projectile being created.</param>
 /// <returns>
-/// Returns `null` to allow the projectile creation, or any non-null value to prevent it.
+/// Returns `true` if the projectile can be created; otherwise, returns `false`. 
+/// If the method returns `null`, the default game logic will be used to determine if the projectile can be created. (bool)
 /// </returns>
 object CanCreateWorldProjectile(HitInfo info, ItemDefinition itemDef)
 {
-    Puts($"Attempting to create a world projectile with item: {itemDef.displayName.english} at position: {info.HitPositionWorld}.");
-
-    if (itemDef.shortname == "rocket.launcher")
-    {
-        Puts("Rocket launchers cannot create world projectiles.");
-        return true; // Prevent creation
-    }
-
-    return null; // Allow creation
+    Puts($"Checking if world projectile can be created with item {itemDef} at hit position {info.HitPositionWorld}.");
+    return null;
 }
 ```
 ```
@@ -36896,20 +33549,13 @@ object CanCreateWorldProjectile(HitInfo info, ItemDefinition itemDef)
 /// <param name="inventory">The player's inventory being checked.</param>
 /// <param name="itemId">The ID of the item to count.</param>
 /// <returns>
-/// Returns the number of items in the inventory with the specified item ID. 
-/// If the method returns a non-integer value, the default inventory count logic will be used.
+/// Returns the number of items in the inventory with the specified ID. 
+/// If the hook returns a non-null value, that value will be used instead. (int)
 /// </returns>
-int OnInventoryItemsCount(PlayerInventory inventory, int itemId)
+object OnInventoryItemsCount(PlayerInventory inventory, int itemId)
 {
     Puts($"Counting items in inventory for item ID: {itemId}.");
-    
-    if (itemId == 12345) // Example item ID for a special case
-    {
-        Puts("Special item detected, returning a fixed count of 10.");
-        return 10; // Fixed count for a special item
-    }
-
-    return -1; // Indicate that the default logic should be used
+    return null;
 }
 ```
 ```
@@ -36959,8 +33605,7 @@ int OnInventoryItemsCount(PlayerInventory inventory, int itemId)
 /// <returns>No return behavior.</returns>
 void OnMlrsRocketFired(MLRS mlrs, ServerProjectile projectile)
 {
-    Puts($"Rocket fired from MLRS ID: {mlrs.net.ID}, Projectile ID: {projectile.net.ID}, " +
-         $"Position: {projectile.transform.position}, Owner: {projectile.owner?.displayName ?? "Unknown"}");
+    Puts($"Rocket fired from MLRS {mlrs} with projectile ID: {projectile.net.ID}.");
 }
 ```
 ```
@@ -37008,19 +33653,17 @@ void OnMlrsRocketFired(MLRS mlrs, ServerProjectile projectile)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player attempts to drop their backpack.
+/// Called when a backpack is dropped by a player.
 /// </summary>
-/// <param name="backpack">The backpack item being dropped.</param>
-/// <param name="inventory">The player's inventory from which the backpack is being dropped.</param>
-/// <returns>No return behavior.</returns>
-void OnBackpackDrop(Item backpack, PlayerInventory inventory)
+/// <param name="backpack">The backpack item that is being dropped.</param>
+/// <param name="inventory">The inventory of the player dropping the backpack.</param>
+/// <returns>
+/// Returns a non-null value to prevent the backpack from being dropped; otherwise, returns null to allow the drop. (object)
+/// </returns>
+object OnBackpackDrop(Item backpack, PlayerInventory inventory)
 {
-    Puts($"Player {inventory.Owner.displayName} is dropping their backpack: {backpack.info.displayName.english}.");
-    
-    if (backpack.amount > 1)
-    {
-        Puts($"Player {inventory.Owner.displayName} has multiple backpacks. Dropping one.");
-    }
+    Puts($"Backpack {backpack} is being dropped from inventory of {inventory}.");
+    return null;
 }
 ```
 ```
@@ -37048,27 +33691,14 @@ void OnBackpackDrop(Item backpack, PlayerInventory inventory)
 /// Determines whether a player can demolish a specified stability entity.
 /// </summary>
 /// <param name="player">The player attempting to demolish the entity.</param>
-/// <param name="entity">The stability entity that is being targeted for demolition.</param>
+/// <param name="entity">The stability entity that is being checked for demolishment.</param>
 /// <returns>
-/// Returns `true` if the player can demolish the entity; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will determine if the player can demolish the entity.
+/// Returns `true` if the player can demolish the entity; otherwise, returns `false`. 
+/// If the method returns `null`, the default game logic will determine if the player can demolish the entity. (bool)
 /// </returns>
-bool? CanDemolish(BasePlayer player, StabilityEntity entity)
+object CanDemolish(BasePlayer player, StabilityEntity entity)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to demolish {entity.name}.");
-
-    if (!entity.CanBeDemolished)
-    {
-        Puts($"Entity {entity.name} cannot be demolished.");
-        return false;
-    }
-
-    if (!player.HasDemolishPrivilege(entity))
-    {
-        Puts($"Player {player.displayName} does not have the privilege to demolish {entity.name}.");
-        return false;
-    }
-
+    Puts($"Player {player} is attempting to demolish entity {entity}.");
     return null;
 }
 ```
@@ -37099,7 +33729,7 @@ bool? CanDemolish(BasePlayer player, StabilityEntity entity)
 ```csharp
 ```csharp
 /// <summary>
-/// Called to check if a player can see a specific entity within a given distance.
+/// Called to check if a specific entity is visible to a player within a certain distance.
 /// </summary>
 /// <param name="entityId">The unique identifier of the entity being checked.</param>
 /// <param name="debugName">A debug name for logging purposes.</param>
@@ -37107,19 +33737,12 @@ bool? CanDemolish(BasePlayer player, StabilityEntity entity)
 /// <param name="player">The player attempting to see the entity.</param>
 /// <param name="maximumDistance">The maximum distance within which visibility is checked.</param>
 /// <returns>
-/// Returns `true` if the player can see the entity, `false` if they cannot, 
-/// or `null` to allow the default visibility logic to determine the result.
+/// Returns `true` if the entity is visible to the player; otherwise, returns `false`. 
+/// If the method returns `null`, the default visibility logic will be applied. (bool)
 /// </returns>
-bool? OnEntityVisibilityCheck(uint entityId, string debugName, BaseEntity entity, BasePlayer player, float maximumDistance)
+object OnEntityVisibilityCheck(uint entityId, string debugName, BaseEntity entity, BasePlayer player, float maximumDistance)
 {
-    Puts($"Checking visibility for Entity ID: {entityId}, Debug Name: {debugName}, Player: {player.displayName}");
-
-    if (entity.IsInvisible())
-    {
-        Puts($"Entity {entityId} is invisible to player {player.displayName}.");
-        return false;
-    }
-
+    Puts($"Checking visibility for entity {entityId} ({debugName}) to player {player}.");
     return null;
 }
 ```
@@ -37165,11 +33788,7 @@ bool? OnEntityVisibilityCheck(uint entityId, string debugName, BaseEntity entity
 /// <returns>No return behavior.</returns>
 void OnScientistRecalled(BradleyAPC apc, ScientistNPC scientist)
 {
-    Puts($"Scientist {scientist.displayName} has been recalled from APC ID: {apc.net.ID}.");
-    if (scientist.IsActive)
-    {
-        Puts($"Recalled scientist {scientist.displayName} was active.");
-    }
+    Puts($"Scientist {scientist} has been recalled from APC {apc}.");
 }
 ```
 ```
@@ -37199,30 +33818,17 @@ void OnScientistRecalled(BradleyAPC apc, ScientistNPC scientist)
 ```csharp
 ```csharp
 /// <summary>
-/// Determines whether a player can update the sign on a Carvable Pumpkin.
+/// Determines whether a player can update the sign associated with the CarvablePumpkin.
 /// </summary>
 /// <param name="player">The player attempting to update the sign.</param>
-/// <param name="pumpkin">The Carvable Pumpkin being updated.</param>
+/// <param name="pumpkin">The CarvablePumpkin instance associated with the sign.</param>
 /// <returns>
-/// Returns `true` if the player can update the sign, or `false` if they cannot.
-/// If the method returns `null`, the default game logic will determine if the player can update the sign.
+/// Returns `true` if the player can update the sign; otherwise, returns `false`.
+/// If the method returns `null`, the default game logic will determine if the player can update the sign. (bool)
 /// </returns>
-bool? CanUpdateSign(BasePlayer player, CarvablePumpkin pumpkin)
+object CanUpdateSign(BasePlayer player, CarvablePumpkin pumpkin)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to update the sign on a Carvable Pumpkin.");
-
-    if (player.IsAdmin)
-    {
-        Puts($"Player {player.displayName} is an admin and can update the sign.");
-        return true;
-    }
-
-    if (pumpkin.IsLocked() && (ulong)player.userID != pumpkin.OwnerID)
-    {
-        Puts($"Player {player.displayName} is not the owner and cannot update the locked sign.");
-        return false;
-    }
-
+    Puts($"Player {player} is attempting to update the sign on pumpkin {pumpkin}.");
     return null;
 }
 ```
@@ -37266,19 +33872,11 @@ bool? CanUpdateSign(BasePlayer player, CarvablePumpkin pumpkin)
 /// <param name="workbench">The workbench where the experiment is being conducted.</param>
 /// <param name="player">The player initiating the experiment.</param>
 /// <returns>
-/// Returns a non-null value to prevent the experiment from starting. 
-/// If `null` is returned, the experiment proceeds as normal.
+/// Returns a non-null value to prevent the experiment from starting, or `null` to allow it to proceed. (object)
 /// </returns>
 object OnExperimentStart(Workbench workbench, BasePlayer player)
 {
-    Puts($"Experiment started at workbench by player {player.displayName} (ID: {player.UserIDString}).");
-
-    if (player.inventory.GetAmount("experiment_item") < 1)
-    {
-        Puts($"Player {player.displayName} does not have the required experiment item.");
-        return "You need an experiment item to start this experiment.";
-    }
-
+    Puts($"Experiment started at workbench by player {player}.");
     return null;
 }
 ```
@@ -37352,26 +33950,18 @@ object OnExperimentStart(Workbench workbench, BasePlayer player)
 ```csharp
 ```csharp
 /// <summary>
-/// Called to determine if a player can set a relationship with another player.
+/// Called to determine if a relationship can be set between two players.
 /// </summary>
-/// <param name="player">The player attempting to set the relationship.</param>
+/// <param name="player">The player initiating the relationship change.</param>
 /// <param name="otherPlayer">The player with whom the relationship is being set.</param>
-/// <param name="type">The type of relationship being set.</param>
+/// <param name="type">The type of relationship to set.</param>
 /// <param name="weight">The weight of the relationship, default is 1.</param>
 /// <returns>
-/// Returns `true` if the relationship can be set, or `false` if it cannot.
-/// If the method returns `null`, the default game logic will determine if the relationship can be set.
+/// Returns `null` to allow the relationship to be set, or any non-null value to prevent the change. (object)
 /// </returns>
-bool? CanSetRelationship(BasePlayer player, BasePlayer otherPlayer, RelationshipManager.RelationshipType type, int weight = 1)
+object CanSetRelationship(BasePlayer player, BasePlayer otherPlayer, RelationshipManager.RelationshipType type, int weight = 1)
 {
-    Puts($"Player {player.displayName} is attempting to set relationship with {otherPlayer.displayName} as {type} with weight {weight}.");
-
-    if (type == RelationshipManager.RelationshipType.Enemy && player.IsInSafeZone())
-    {
-        Puts($"Player {player.displayName} cannot set an enemy relationship while in a safe zone.");
-        return false;
-    }
-
+    Puts($"Checking if {player} can set relationship with {otherPlayer} of type {type} with weight {weight}.");
     return null;
 }
 ```
@@ -37448,14 +34038,7 @@ bool? CanSetRelationship(BasePlayer player, BasePlayer otherPlayer, Relationship
 /// <returns>No return behavior.</returns>
 void OnPlayerSleepEnd(BasePlayer player)
 {
-    Puts($"Player {player.displayName} has woken up from sleep.");
-    
-    if (player.IsRestrained)
-    {
-        Puts($"Player {player.displayName} is restrained and cannot move immediately.");
-    }
-    
-    // Additional logic can be added here if needed
+    Puts($"Player {player} has ended their sleep.");
 }
 ```
 ```
@@ -37518,20 +34101,18 @@ void OnPlayerSleepEnd(BasePlayer player)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a mission starts for a player.
+/// Called when a mission starts, allowing for custom behavior before the mission begins.
 /// </summary>
 /// <param name="mission">The mission that is starting.</param>
 /// <param name="instance">The instance of the mission being started.</param>
 /// <param name="assignee">The player assigned to the mission.</param>
-/// <returns>No return behavior.</returns>
-void OnMissionStart(BaseMission mission, BaseMission.MissionInstance instance, BasePlayer assignee)
+/// <returns>
+/// Returns a non-null value to prevent the default mission start behavior; otherwise, returns null to allow it. (object)
+/// </returns>
+object OnMissionStart(BaseMission mission, BaseMission.MissionInstance instance, BasePlayer assignee)
 {
-    Puts($"Mission {mission.missionName} has started for player {assignee.displayName} (ID: {assignee.UserIDString}).");
-
-    if (assignee.IsInCreativeMode)
-    {
-        Puts($"Player {assignee.displayName} is in creative mode and will not receive mission penalties.");
-    }
+    Puts($"Mission {mission} is starting for player {assignee}.");
+    return null;
 }
 ```
 ```
@@ -37579,27 +34160,14 @@ void OnMissionStart(BaseMission mission, BaseMission.MissionInstance instance, B
 /// Called to determine if a player can build a specific construction at a target location.
 /// </summary>
 /// <param name="planner">The planner used for the building process.</param>
-/// <param name="construction">The construction that the player is attempting to build.</param>
+/// <param name="construction">The construction type that is being placed.</param>
 /// <param name="target">The target location and context for the construction.</param>
 /// <returns>
-/// Returns `true` if the player can build the construction at the target location; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will be used to determine if the player can build.
+/// Returns `null` to allow the building process to continue, or any non-null value to prevent building. (object)
 /// </returns>
-bool? CanBuild(Planner planner, Construction construction, Construction.Target target)
+object CanBuild(Planner planner, Construction construction, Construction.Target target)
 {
-    Puts($"Player {target.player.displayName} is attempting to build {construction.fullName} at position {target.position}.");
-
-    if (construction.fullName == "foundation.stone")
-    {
-        Puts($"Player {target.player.displayName} is not allowed to build a stone foundation.");
-        return false;
-    }
-
-    if (target.onTerrain)
-    {
-        Puts($"Building on terrain is allowed for {construction.fullName}.");
-    }
-
+    Puts($"Player {target.player} is attempting to build {construction} at {target.position}.");
     return null;
 }
 ```
@@ -37728,22 +34296,15 @@ bool? CanBuild(Planner planner, Construction construction, Construction.Target t
 /// Called when the inventory of a player is updated over the network.
 /// </summary>
 /// <param name="playerInventory">The player's inventory that is being updated.</param>
-/// <param name="container">The item container associated with the inventory update.</param>
-/// <param name="updateData">The data representing the updated item container.</param>
+/// <param name="container">The item container that is being updated.</param>
+/// <param name="updateData">The data related to the item container update.</param>
 /// <param name="type">The type of inventory being updated.</param>
 /// <param name="mode">The network mode for the inventory update.</param>
-/// <returns>No return behavior.</returns>
-void OnInventoryNetworkUpdate(PlayerInventory playerInventory, ItemContainer container, ProtoBuf.UpdateItemContainer updateData, PlayerInventory.Type type, PlayerInventory.NetworkInventoryMode mode)
+/// <returns>Returns a non-null value to override the default inventory update behavior; otherwise, returns null.</returns>
+object OnInventoryNetworkUpdate(PlayerInventory playerInventory, ItemContainer container, ProtoBuf.UpdateItemContainer updateData, PlayerInventory.Type type, PlayerInventory.NetworkInventoryMode mode)
 {
-    Puts($"Inventory update for player {playerInventory.Owner.displayName} of type {type} in mode {mode}.");
-
-    if (container == null)
-    {
-        Puts("No item container found for the inventory update.");
-        return;
-    }
-
-    Puts($"Updated container ID: {container.uid}, Item Count: {container.itemList.Count}");
+    Puts($"Updating inventory for player {playerInventory} with container {container}.");
+    return null;
 }
 ```
 ```
@@ -37804,18 +34365,11 @@ void OnInventoryNetworkUpdate(PlayerInventory playerInventory, ItemContainer con
 /// </summary>
 /// <param name="team">The team that is being disbanded.</param>
 /// <returns>
-/// Returns `null` to allow the team to be disbanded, or any non-null value to prevent the disbanding.
+/// Returns `null` to allow the team to be disbanded, or any non-null value to prevent the disbanding. (object)
 /// </returns>
 object OnTeamDisband(RelationshipManager.PlayerTeam team)
 {
-    Puts($"Team with ID {team.teamID} is being disbanded. Members: {string.Join(", ", team.members)}");
-
-    if (team.members.Count < 2)
-    {
-        Puts("Team disbanding prevented: Not enough members.");
-        return "Cannot disband a team with less than 2 members.";
-    }
-
+    Puts($"Disbanding team with ID: {team.teamID}.");
     return null;
 }
 ```
@@ -37842,31 +34396,18 @@ object OnTeamDisband(RelationshipManager.PlayerTeam team)
 ```csharp
 ```csharp
 /// <summary>
-/// Determines if a player can check the fuel of a storage container within interaction range.
+/// Called to determine if a player can check the fuel of a storage container.
 /// </summary>
 /// <param name="fuelSystem">The fuel system associated with the entity.</param>
-/// <param name="fuelContainer">The storage container holding the fuel.</param>
+/// <param name="container">The storage container holding the fuel.</param>
 /// <param name="player">The player attempting to check the fuel.</param>
 /// <returns>
-/// Returns `true` if the player can check the fuel, `false` if they cannot, 
-/// or `null` if the default game logic should be used to determine the outcome.
+/// Returns `true` if the player can check the fuel, or `false` if they cannot.
+/// If the method returns `null`, the default game logic will determine if the player can check the fuel. (bool)
 /// </returns>
-bool? CanCheckFuel(EntityFuelSystem fuelSystem, StorageContainer fuelContainer, BasePlayer player)
+object CanCheckFuel(EntityFuelSystem fuelSystem, StorageContainer container, BasePlayer player)
 {
-    Puts($"Player {player.displayName} is attempting to check fuel in container: {fuelContainer?.name ?? "Unknown"}.");
-
-    if (fuelContainer == null)
-    {
-        Puts("No fuel container found.");
-        return false;
-    }
-
-    if (player.IsInCreativeMode)
-    {
-        Puts($"Player {player.displayName} is in creative mode and can check fuel without restrictions.");
-        return true;
-    }
-
+    Puts($"Player {player} is attempting to check fuel in container {container}.");
     return null;
 }
 ```
@@ -37908,12 +34449,12 @@ bool? CanCheckFuel(EntityFuelSystem fuelSystem, StorageContainer fuelContainer, 
 /// <param name="helicopter">The CH47 helicopter to check.</param>
 /// <returns>
 /// Returns `true` if the helicopter can be targeted by homing missiles; otherwise, returns `false`.
-/// If the method returns `null`, the default game logic will be used to determine if the helicopter can be targeted.
+/// If the method returns `null`, the default behavior is to deny targeting. (bool)
 /// </returns>
-bool? CanBeHomingTargeted(CH47Helicopter helicopter)
+object CanBeHomingTargeted(CH47Helicopter helicopter)
 {
     Puts($"Checking if CH47 Helicopter ID: {helicopter.net.ID} can be targeted by homing missiles.");
-    return false; // Default behavior, can be overridden by hooks.
+    return null;
 }
 ```
 ```
@@ -37941,14 +34482,12 @@ bool? CanBeHomingTargeted(CH47Helicopter helicopter)
 /// <summary>
 /// Called when a player dismounts from an entity.
 /// </summary>
-/// <param name="entity">The entity from which the player is dismounting.</param>
+/// <param name="mountable">The mountable entity from which the player is dismounting.</param>
 /// <param name="player">The player who is dismounting.</param>
 /// <returns>No return behavior.</returns>
-void OnEntityDismounted(BaseMountable entity, BasePlayer player)
+void OnEntityDismounted(BaseMountable mountable, BasePlayer player)
 {
-    Puts($"Player {player.displayName} has dismounted from {entity.gameObject.name}.");
-    
-    // Additional logic can be added here if needed
+    Puts($"Player {player} has dismounted from {mountable}.");
 }
 ```
 ```
@@ -38048,13 +34587,7 @@ void OnEntityDismounted(BaseMountable entity, BasePlayer player)
 /// <returns>No return behavior.</returns>
 void OnActiveItemChanged(BasePlayer player, Item previousItem, Item newItem)
 {
-    Puts($"Player {player.displayName} changed active item from {previousItem?.info.displayName.english ?? "None"} " +
-         $"to {newItem?.info.displayName.english ?? "None"}.");
-    
-    if (newItem != null && newItem.info.shortname == "rifle.ak")
-    {
-        Puts($"Player {player.displayName} has equipped an AK-47!");
-    }
+    Puts($"Player {player} changed active item from {previousItem} to {newItem}.");
 }
 ```
 ```
@@ -38116,19 +34649,18 @@ void OnActiveItemChanged(BasePlayer player, Item previousItem, Item newItem)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a command is sent to a list of connections.
+/// Called when a command is sent to a list of network connections.
 /// </summary>
 /// <param name="connections">The list of connections to which the command is being sent.</param>
-/// <param name="command">The command string to be sent.</param>
+/// <param name="command">The command string to be executed on the client.</param>
 /// <param name="args">The arguments associated with the command.</param>
-/// <returns>No return behavior.</returns>
-void OnSendCommand(List<Network.Connection> connections, string command, object[] args)
+/// <returns>
+/// Returns `null` to allow the command to be sent; any non-null value will prevent the command from being sent. (object)
+/// </returns>
+object OnSendCommand(List<Network.Connection> connections, string command, object[] args)
 {
     Puts($"Sending command '{command}' to {connections.Count} connections.");
-    foreach (var connection in connections)
-    {
-        Puts($"Command sent to connection ID: {connection.userid}");
-    }
+    return null;
 }
 ```
 ```
@@ -38160,7 +34692,7 @@ void OnSendCommand(List<Network.Connection> connections, string command, object[
 /// <returns>No return behavior.</returns>
 void IOnServerShutdown()
 {
-    Puts("Server is shutting down. Cleaning up resources and notifying players.");
+    Puts("Server is shutting down. Performing cleanup tasks.");
 }
 ```
 ```
@@ -38188,24 +34720,16 @@ void IOnServerShutdown()
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a decay event occurs to potentially heal the entity.
+/// Called when an entity is healed during the decay process.
 /// </summary>
-/// <param name="decayEntity">The entity that is undergoing decay.</param>
+/// <param name="decayEntity">The entity that is undergoing decay and may be healed.</param>
 /// <returns>
-/// Returns `null` to allow the default healing behavior, or any non-null value to prevent healing.
+/// Returns `null` to allow the default healing behavior, or a non-null value to prevent healing. (object)
 /// </returns>
 object OnDecayHeal(DecayEntity decayEntity)
 {
-    Puts($"Decay healing check for entity ID: {decayEntity.net.ID}, Current Health: {decayEntity.healthFraction * decayEntity.MaxHealth()}");
-
-    if (decayEntity.healthFraction < 0.5f)
-    {
-        Puts($"Entity ID: {decayEntity.net.ID} is critically decayed and will be healed.");
-        return null; // Allow healing
-    }
-
-    Puts($"Entity ID: {decayEntity.net.ID} is stable and does not require healing.");
-    return true; // Prevent healing
+    Puts($"Healing during decay for entity: {decayEntity}.");
+    return null;
 }
 ```
 ```
@@ -38288,22 +34812,11 @@ object OnDecayHeal(DecayEntity decayEntity)
 /// Called when an item crafting task is cancelled.
 /// </summary>
 /// <param name="task">The item crafting task that was cancelled.</param>
-/// <param name="craftingStation">The entity or station that was performing the crafting.</param>
+/// <param name="craftingStation">The entity or station that was crafting the item.</param>
 /// <returns>No return behavior.</returns>
 void OnItemCraftCancelled(ItemCraftTask task, ItemCrafter craftingStation)
 {
-    Puts($"Crafting task {task.taskUID} has been cancelled for item: {task.blueprint.targetItem.shortname}.");
-
-    if (task.takenItems != null && task.takenItems.Count > 0)
-    {
-        foreach (Item takenItem in task.takenItems)
-        {
-            if (takenItem != null && takenItem.amount > 0)
-            {
-                Puts($"Returning {takenItem.amount} of {takenItem.info.displayName.english} to the player's inventory.");
-            }
-        }
-    }
+    Puts($"Crafting task {task.taskUID} has been cancelled for crafting station: {craftingStation}.");
 }
 ```
 ```
@@ -38367,15 +34880,11 @@ void OnItemCraftCancelled(ItemCraftTask task, ItemCrafter craftingStation)
 /// </summary>
 /// <param name="caller">The phone controller that initiated the call.</param>
 /// <param name="receiver">The phone controller that was being called.</param>
-/// <param name="player">The player associated with the receiver's phone controller.</param>
+/// <param name="player">The player associated with the call.</param>
 /// <returns>No return behavior.</returns>
 void OnPhoneDialTimedOut(PhoneController caller, PhoneController receiver, BasePlayer player)
 {
-    Puts($"Phone call from {player.displayName} to {receiver?.currentPlayer?.displayName} has timed out.");
-    if (receiver != null)
-    {
-        Puts($"Notifying {receiver.currentPlayer.displayName} of the timeout.");
-    }
+    Puts($"Phone call from {caller} to {receiver} timed out for player {player}.");
 }
 ```
 ```
@@ -38407,17 +34916,12 @@ void OnPhoneDialTimedOut(PhoneController caller, PhoneController receiver, BaseP
 /// Called when a player's control over a bookmark ends.
 /// </summary>
 /// <param name="station">The computer station that was being controlled.</param>
-/// <param name="player">The player who was controlling the bookmark.</param>
+/// <param name="player">The player who was controlling the station.</param>
 /// <param name="entity">The entity that was being controlled.</param>
 /// <returns>No return behavior.</returns>
 void OnBookmarkControlEnded(ComputerStation station, BasePlayer player, BaseEntity entity)
 {
-    Puts($"Control ended for player {player.displayName} on entity {entity?.name ?? "unknown"} at station {station?.name ?? "unknown"}.");
-    
-    if (entity != null)
-    {
-        Puts($"Entity {entity.name} has been released from control.");
-    }
+    Puts($"Control ended for player {player} on station {station} controlling entity {entity}.");
 }
 ```
 ```
@@ -38458,24 +34962,17 @@ void OnBookmarkControlEnded(ComputerStation station, BasePlayer player, BaseEnti
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player is authorized to use a cupboard.
+/// Called when a player is authorized to a cupboard.
 /// </summary>
-/// <param name="userId">The unique identifier of the user being authorized.</param>
-/// <param name="player">The player who is authorizing the user.</param>
-/// <param name="cupboard">The building privilege associated with the cupboard.</param>
+/// <param name="playerId">The unique identifier of the player being authorized.</param>
+/// <param name="player">The player who is authorizing.</param>
+/// <param name="cupboard">The cupboard to which the player is being authorized.</param>
 /// <returns>
-/// Returns `null` to allow the authorization, or any non-null value to prevent it.
+/// Returns `null` to allow the authorization, or any non-null value to prevent it. (object)
 /// </returns>
-object IOnCupboardAuthorize(ulong userId, BasePlayer player, BuildingPrivlidge cupboard)
+object IOnCupboardAuthorize(ulong playerId, BasePlayer player, BuildingPrivlidge cupboard)
 {
-    Puts($"Player {player.displayName} is attempting to authorize user with ID: {userId} to cupboard.");
-
-    if (userId == player.userID)
-    {
-        Puts($"Player {player.displayName} cannot authorize themselves.");
-        return "You cannot authorize yourself.";
-    }
-
+    Puts($"Player {player} (ID: {playerId}) is attempting to authorize to cupboard {cupboard}.");
     return null;
 }
 ```
@@ -38509,18 +35006,13 @@ object IOnCupboardAuthorize(ulong userId, BasePlayer player, BuildingPrivlidge c
 /// <summary>
 /// Called when a fishing rod is cast by a player.
 /// </summary>
-/// <param name="fishingRod">The fishing rod being used to cast.</param>
+/// <param name="rod">The fishing rod being used to cast.</param>
 /// <param name="player">The player who is casting the fishing rod.</param>
 /// <param name="lure">The lure item being used for the cast.</param>
 /// <returns>No return behavior.</returns>
-void OnFishingRodCast(BaseFishingRod fishingRod, BasePlayer player, Item lure)
+void OnFishingRodCast(BaseFishingRod rod, BasePlayer player, Item lure)
 {
-    Puts($"Player {player.displayName} has cast the fishing rod with lure: {lure.info.displayName.english}.");
-    
-    if (lure.info.shortname == "lure.basic")
-    {
-        Puts("A basic lure has been used. Good luck!");
-    }
+    Puts($"Player {player} has cast the fishing rod {rod} using lure {lure}.");
 }
 ```
 ```
@@ -38585,21 +35077,15 @@ void OnFishingRodCast(BaseFishingRod fishingRod, BasePlayer player, Item lure)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when the command line is executed to update values based on provided switches.
+/// Called when processing command line arguments for the application.
 /// </summary>
 /// <returns>
-/// Returns a non-null value to prevent further processing of command line switches. 
-/// If `null` is returned, the command line switches will be processed as normal.
+/// Returns a non-null value to override the default command line processing behavior. 
+/// If `null` is returned, the default processing will continue. (object)
 /// </returns>
 object IOnRunCommandLine()
 {
-    Puts("Command line execution initiated. Processing switches...");
-    // Example: Prevent processing if a specific condition is met
-    if (SomeConditionToPreventProcessing())
-    {
-        Puts("Command line processing has been halted.");
-        return "Processing halted due to conditions.";
-    }
+    Puts("Running command line processing.");
     return null;
 }
 ```
@@ -38634,23 +35120,16 @@ object IOnRunCommandLine()
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a server command is executed from the console.
+/// Called when a server command is executed.
 /// </summary>
 /// <param name="arg">The arguments associated with the console command.</param>
 /// <returns>
-/// Returns `true` if the command was successfully executed; otherwise, returns `false`.
-/// If the method returns a non-null value, it overrides the default command execution behavior.
+/// Returns `true` if the command was successfully processed, or `false` if it was invalid or failed to execute.
+/// If the method returns a non-null value, it overrides the default command handling behavior. (bool)
 /// </returns>
-bool IOnServerCommand(ConsoleSystem.Arg arg)
+object IOnServerCommand(ConsoleSystem.Arg arg)
 {
-    Puts($"Executing server command: {arg.cmd.FullName} with arguments: {string.Join(", ", arg.Args)}");
-    
-    if (arg.cmd.FullName == "admin.ban")
-    {
-        Puts("Admin ban command is restricted.");
-        return false;
-    }
-
+    Puts($"Processing server command: {arg.cmd.FullName} with arguments: {string.Join(", ", arg.Args)}");
     return null;
 }
 ```
@@ -38719,11 +35198,7 @@ bool IOnServerCommand(ConsoleSystem.Arg arg)
 /// <returns>No return behavior.</returns>
 void OnClientDisconnected(Network.Connection connection, string reason)
 {
-    Puts($"Client {connection.userid} has disconnected: {reason}");
-    if (reason == "timeout")
-    {
-        Puts($"Client {connection.userid} disconnected due to timeout.");
-    }
+    Puts($"Client disconnected: {connection} - Reason: {reason}");
 }
 ```
 ```
@@ -38755,24 +35230,17 @@ void OnClientDisconnected(Network.Connection connection, string reason)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when the network subscriptions for a networkable entity are updated.
+/// Called to update the network subscriptions for a networkable entity.
 /// </summary>
 /// <param name="networkable">The networkable entity whose subscriptions are being updated.</param>
 /// <param name="visibleGroups">The list of visibility groups that are currently visible to the entity.</param>
 /// <param name="unknown">An unknown parameter that may be used for additional context.</param>
 /// <returns>
-/// Returns `null` to allow the default subscription behavior, or any non-null value to override it.
+/// Returns `null` to allow the default subscription behavior, or a non-null value to override it. (object)
 /// </returns>
 object OnNetworkSubscriptionsUpdate(Network.Networkable networkable, List<Network.Visibility.Group> visibleGroups, object unknown)
 {
-    Puts($"Network subscriptions updated for {networkable.GetType().Name} with ID: {networkable.net.ID}.");
-    
-    if (visibleGroups.Count == 0)
-    {
-        Puts("No visible groups found for subscription.");
-        return "No groups to subscribe.";
-    }
-
+    Puts($"Updating network subscriptions for {networkable} with {visibleGroups.Count} visible groups.");
     return null;
 }
 ```
@@ -38820,26 +35288,19 @@ object OnNetworkSubscriptionsUpdate(Network.Networkable networkable, List<Networ
 ```csharp
 ```csharp
 /// <summary>
-/// Called when the network subscriptions for a networkable entity are updated.
+/// Called to update the network subscriptions for a networkable entity.
 /// </summary>
 /// <param name="networkable">The networkable entity whose subscriptions are being updated.</param>
-/// <param name="removedGroups">The list of visibility groups that have been removed from subscriptions.</param>
-/// <param name="addedGroups">The list of visibility groups that have been added to subscriptions.</param>
-/// <returns>No return behavior.</returns>
-void OnNetworkSubscriptionsUpdate(Network.Networkable networkable, List<Network.Visibility.Group> removedGroups, List<Network.Visibility.Group> addedGroups)
+/// <param name="removedGroups">The list of groups that were removed from subscriptions.</param>
+/// <param name="addedGroups">The list of groups that were added to subscriptions.</param>
+/// <returns>
+/// Returns a non-null value to override the default subscription update behavior. 
+/// If `null` is returned, the default logic will proceed with the update. (object)
+/// </returns>
+object OnNetworkSubscriptionsUpdate(Network.Networkable networkable, List<Network.Visibility.Group> removedGroups, List<Network.Visibility.Group> addedGroups)
 {
-    Puts($"Network subscriptions updated for {networkable.GetInstanceID()}. " +
-         $"Removed Groups: {removedGroups.Count}, Added Groups: {addedGroups.Count}");
-
-    foreach (var group in removedGroups)
-    {
-        Puts($"Group {group.id} has been removed from subscriptions.");
-    }
-
-    foreach (var group in addedGroups)
-    {
-        Puts($"Group {group.id} has been added to subscriptions.");
-    }
+    Puts($"Updating network subscriptions for {networkable}. Removed: {removedGroups.Count}, Added: {addedGroups.Count}");
+    return null;
 }
 ```
 ```
@@ -38927,11 +35388,6 @@ void OnNetworkSubscriptionsUpdate(Network.Networkable networkable, List<Network.
 void OnGroupCreated(string groupName, string groupTitle, int groupRank)
 {
     Puts($"Group created: Name = {groupName}, Title = {groupTitle}, Rank = {groupRank}");
-    
-    if (groupRank < 0)
-    {
-        Puts($"Warning: Group {groupName} has a negative rank, which may cause issues.");
-    }
 }
 ```
 ```
@@ -38966,13 +35422,13 @@ void OnGroupCreated(string groupName, string groupTitle, int groupRank)
 /// <summary>
 /// Called when a player's nickname is updated.
 /// </summary>
-/// <param name="playerId">The ID of the player whose nickname is being updated.</param>
+/// <param name="id">The ID of the player whose nickname is being updated.</param>
 /// <param name="oldName">The player's previous nickname.</param>
 /// <param name="newName">The player's new nickname.</param>
 /// <returns>No return behavior.</returns>
-void OnUserNameUpdated(string playerId, string oldName, string newName)
+void OnUserNameUpdated(string id, string oldName, string newName)
 {
-    Puts($"Player {playerId} changed their nickname from {oldName} to {newName}.");
+    Puts($"Player {id} changed their nickname from {oldName} to {newName}.");
 }
 ```
 ```
@@ -39001,19 +35457,14 @@ void OnUserNameUpdated(string playerId, string oldName, string newName)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a group's rank is set or updated.
+/// Called when the rank of a group is set.
 /// </summary>
 /// <param name="groupName">The name of the group whose rank is being set.</param>
 /// <param name="groupRank">The new rank to assign to the group.</param>
 /// <returns>No return behavior.</returns>
 void OnGroupRankSet(string groupName, int groupRank)
 {
-    Puts($"Group rank updated: {groupName} is now ranked {groupRank}.");
-    
-    if (groupRank < 0)
-    {
-        Puts($"Warning: Group {groupName} has been assigned a negative rank.");
-    }
+    Puts($"Group rank for '{groupName}' has been set to {groupRank}.");
 }
 ```
 ```
@@ -39049,19 +35500,14 @@ void OnGroupRankSet(string groupName, int groupRank)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a group's title is set or updated.
+/// Called when the title of a group is set or updated.
 /// </summary>
 /// <param name="groupName">The name of the group whose title is being set.</param>
 /// <param name="groupTitle">The new title for the group.</param>
 /// <returns>No return behavior.</returns>
 void OnGroupTitleSet(string groupName, string groupTitle)
 {
-    Puts($"The title for group '{groupName}' has been set to '{groupTitle}'.");
-    
-    if (groupTitle == "Admin")
-    {
-        Puts($"Group '{groupName}' is now an Admin group.");
-    }
+    Puts($"Group title for '{groupName}' has been set to '{groupTitle}'.");
 }
 ```
 ```
@@ -39104,12 +35550,7 @@ void OnGroupTitleSet(string groupName, string groupTitle)
 /// <returns>No return behavior.</returns>
 void OnPermissionRegistered(string permission, Oxide.Core.Plugins.Plugin owner)
 {
-    Puts($"Permission '{permission}' has been registered by plugin '{owner.Title}'.");
-
-    if (permission.Contains("admin"))
-    {
-        Puts($"Warning: The permission '{permission}' is an admin permission and should be handled with care.");
-    }
+    Puts($"Permission '{permission}' registered by plugin '{owner.Title}'.");
 }
 ```
 ```
@@ -39159,15 +35600,6 @@ void OnPermissionRegistered(string permission, Oxide.Core.Plugins.Plugin owner)
 void OnGroupParentSet(string groupName, string parentGroupName)
 {
     Puts($"Group '{groupName}' parent set to '{parentGroupName}'.");
-
-    if (string.IsNullOrEmpty(parentGroupName))
-    {
-        Puts($"Group '{groupName}' is now a top-level group with no parent.");
-    }
-    else
-    {
-        Puts($"Group '{groupName}' is now a child of '{parentGroupName}'.");
-    }
 }
 ```
 ```
@@ -39222,9 +35654,7 @@ void OnGroupParentSet(string groupName, string parentGroupName)
 /// <returns>No return behavior.</returns>
 void OnGroupDeleted(string groupName)
 {
-    Puts($"Group '{groupName}' has been successfully deleted.");
-    
-    // Additional logic can be added here if needed, such as notifying users or logging.
+    Puts($"Group '{groupName}' has been deleted.");
 }
 ```
 ```
@@ -39269,13 +35699,13 @@ void OnGroupDeleted(string groupName)
 /// Called when a UI element is destroyed for a player.
 /// </summary>
 /// <param name="player">The player for whom the UI element is being destroyed.</param>
-/// <param name="element">The identifier of the UI element being destroyed.</param>
+/// <param name="element">The identifier of the UI element to be destroyed.</param>
 /// <returns>
-/// Returns `true` if the UI element was successfully destroyed; otherwise, returns `false`.
+/// Returns `true` if the UI element was successfully destroyed; otherwise, returns `false` if the player is invalid or the operation failed.
 /// </returns>
 bool OnDestroyUI(BasePlayer player, string element)
 {
-    Puts($"Destroying UI element '{element}' for player {player.displayName} (ID: {player.UserIDString}).");
+    Puts($"Destroying UI element '{element}' for player {player}.");
     return true;
 }
 ```
@@ -39309,18 +35739,11 @@ bool OnDestroyUI(BasePlayer player, string element)
 /// <param name="command">The command that was executed.</param>
 /// <param name="args">The arguments passed with the command.</param>
 /// <returns>
-/// Returns a non-null value to indicate that the command was handled, or `null` to allow further processing.
+/// Returns a non-null value to indicate that the command was handled, or `null` to allow further processing. (object)
 /// </returns>
 object OnUserCommand(Oxide.Core.Libraries.Covalence.IPlayer player, string command, string[] args)
 {
-    Puts($"User command received from {player.Name}: /{command} with arguments: {string.Join(", ", args)}");
-
-    if (command.Equals("ban", StringComparison.OrdinalIgnoreCase) && args.Length > 0)
-    {
-        Puts($"User {player.Name} attempted to ban player: {args[0]}");
-        return "You do not have permission to ban players.";
-    }
-
+    Puts($"User {player.Name} executed command: {command} with arguments: {string.Join(", ", args)}");
     return null;
 }
 ```
@@ -39402,20 +35825,19 @@ object OnUserCommand(Oxide.Core.Libraries.Covalence.IPlayer player, string comma
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player executes an application command.
+/// Called when a player executes a command in the application.
 /// </summary>
 /// <param name="player">The player who executed the command.</param>
 /// <param name="command">The command that was executed.</param>
 /// <param name="args">The arguments passed with the command.</param>
-/// <returns>No return behavior.</returns>
-void OnApplicationCommand(BasePlayer player, string command, string[] args)
+/// <returns>
+/// Returns a non-null value to override the default command handling behavior. 
+/// If `null` is returned, the command will be processed normally. (object)
+/// </returns>
+object OnApplicationCommand(BasePlayer player, string command, string[] args)
 {
-    Puts($"Player {player.displayName} executed command: {command} with arguments: {string.Join(", ", args)}");
-    
-    if (command == "admin")
-    {
-        Puts($"Admin command executed by {player.displayName}.");
-    }
+    Puts($"Player {player} executed command: {command} with arguments: {string.Join(", ", args)}");
+    return null;
 }
 ```
 ```
@@ -39503,9 +35925,7 @@ void OnApplicationCommand(BasePlayer player, string command, string[] args)
 /// <returns>No return behavior.</returns>
 void OnPlayerLanguageChanged(Oxide.Core.Libraries.Covalence.IPlayer player, string newLanguage)
 {
-    Puts($"Player {player.Name} has changed their language to {newLanguage}.");
-    
-    // Additional logic can be added here to handle language-specific settings or notifications.
+    Puts($"Player {player} has changed their language to {newLanguage}.");
 }
 ```
 ```
@@ -39547,9 +35967,7 @@ void OnPlayerLanguageChanged(Oxide.Core.Libraries.Covalence.IPlayer player, stri
 /// <returns>No return behavior.</returns>
 void OnPlayerLanguageChanged(BasePlayer player, string newLanguage)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) has changed their language to: {newLanguage}.");
-    
-    // Additional logic can be added here to handle language-specific settings or notifications.
+    Puts($"Player {player} has changed their language to {newLanguage}.");
 }
 ```
 ```
@@ -39584,24 +36002,15 @@ void OnPlayerLanguageChanged(BasePlayer player, string newLanguage)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player respawns in the game.
+/// Called when a user respawns in the game.
 /// </summary>
 /// <param name="player">The player who has respawned.</param>
 /// <returns>
-/// Returns a non-null value to override the default respawn behavior. 
-/// If a string is returned, it will be used as a message or reason for the respawn action. 
-/// If `null` is returned, the default respawn logic will proceed.
+/// Returns a non-null value to override the default respawn behavior. If `null` is returned, the player respawns normally. (object)
 /// </returns>
 object OnUserRespawn(Oxide.Core.Libraries.Covalence.IPlayer player)
 {
-    Puts($"Player {player.Name} has respawned.");
-    
-    if (player.IsBanned)
-    {
-        Puts($"Player {player.Name} is banned and cannot respawn.");
-        return "You are banned from this server.";
-    }
-
+    Puts($"User {player.Name} has respawned.");
     return null;
 }
 ```
@@ -39635,19 +36044,12 @@ object OnUserRespawn(Oxide.Core.Libraries.Covalence.IPlayer player)
 /// <param name="command">The command that was issued.</param>
 /// <param name="args">The arguments associated with the command.</param>
 /// <returns>
-/// Returns a non-null value to prevent further processing of the command. 
-/// If `null` is returned, the command will be processed normally.
+/// Returns a non-null value to override the default command handling behavior. 
+/// If `null` is returned, the command will be processed normally. (object)
 /// </returns>
 object OnApplicationCommand(Oxide.Core.Libraries.Covalence.IPlayer player, string command, string[] args)
 {
     Puts($"Player {player.Name} issued command: {command} with arguments: {string.Join(", ", args)}");
-
-    if (command.Equals("ban", StringComparison.OrdinalIgnoreCase) && args.Length > 0)
-    {
-        Puts($"Player {player.Name} attempted to ban: {args[0]}");
-        return "You do not have permission to ban players.";
-    }
-
     return null;
 }
 ```
@@ -39729,24 +36131,17 @@ object OnApplicationCommand(Oxide.Core.Libraries.Covalence.IPlayer player, strin
 ```csharp
 ```csharp
 /// <summary>
-/// Called when an RCON command is received.
+/// Called when an RCON command is received from a remote client.
 /// </summary>
 /// <param name="ipAddress">The IP address of the client sending the command.</param>
-/// <param name="command">The command string sent via RCON.</param>
-/// <param name="args">An array of arguments parsed from the command string.</param>
+/// <param name="command">The command string sent by the client.</param>
+/// <param name="args">An array of arguments associated with the command.</param>
 /// <returns>
-/// Returns a non-null value to indicate that the command was handled, or `null` to allow default processing.
+/// Returns `true` if the command was handled and should not be processed further; otherwise, returns `null` to allow default processing. (object)
 /// </returns>
 object OnRconCommand(System.Net.IPAddress ipAddress, string command, string[] args)
 {
-    Puts($"RCON command received from {ipAddress}: {command}");
-
-    if (command.Equals("shutdown", StringComparison.OrdinalIgnoreCase))
-    {
-        Puts("Shutdown command received. Initiating server shutdown.");
-        return "Server is shutting down.";
-    }
-
+    Puts($"Received RCON command from {ipAddress}: {command} with arguments: {string.Join(", ", args)}");
     return null;
 }
 ```
@@ -39796,20 +36191,11 @@ object OnRconCommand(System.Net.IPAddress ipAddress, string command, string[] ar
 /// <param name="entity">The entity that is taking damage.</param>
 /// <param name="hitInfo">Information about the hit, including damage amount and source.</param>
 /// <returns>
-/// Returns a non-null value to override the default damage behavior. 
-/// If a string is returned, it can be used as a message or reason for the damage being modified or blocked.
-/// If `null` is returned, the default damage processing will occur.
+/// Returns a non-null value to override the default damage behavior. If `null` is returned, the default damage logic will proceed. (object)
 /// </returns>
 object OnEntityTakeDamage(BaseCombatEntity entity, HitInfo hitInfo)
 {
-    Puts($"Entity {entity.net.ID} is taking damage: {hitInfo.damageTypes.Total()} from {hitInfo.Initiator?.net.ID ?? 0}.");
-
-    if (entity is BasePlayer player && player.IsInvulnerable)
-    {
-        Puts($"Player {player.displayName} is invulnerable and will not take damage.");
-        return "Player is invulnerable.";
-    }
-
+    Puts($"Entity {entity} took damage: {hitInfo.damage} from {hitInfo.Initiator}.");
     return null;
 }
 ```
@@ -39836,14 +36222,13 @@ object OnEntityTakeDamage(BaseCombatEntity entity, HitInfo hitInfo)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player respawns in the game.
+/// Called when a user respawns in the game.
 /// </summary>
 /// <param name="player">The player who has respawned.</param>
 /// <returns>No return behavior.</returns>
 void OnUserRespawned(Oxide.Core.Libraries.Covalence.IPlayer player)
 {
-    Puts($"Player {player.Name} has respawned.");
-    // Additional logic can be added here if needed.
+    Puts($"User {player.Name} has respawned.");
 }
 ```
 ```
@@ -39876,12 +36261,7 @@ void OnUserRespawned(Oxide.Core.Libraries.Covalence.IPlayer player)
 /// <returns>No return behavior.</returns>
 void OnUserDisconnected(Oxide.Core.Libraries.Covalence.IPlayer player, string reason)
 {
-    Puts($"User {player.Name} has disconnected from the server. Reason: {reason}");
-    
-    if (reason == "timeout")
-    {
-        Puts($"User {player.Name} disconnected due to timeout.");
-    }
+    Puts($"User {player} has disconnected. Reason: {reason}");
 }
 ```
 ```
@@ -39908,21 +36288,13 @@ void OnUserDisconnected(Oxide.Core.Libraries.Covalence.IPlayer player, string re
 ```csharp
 ```csharp
 /// <summary>
-/// Called when the server has been fully initialized.
+/// Called when the server has completed its initialization process.
 /// </summary>
-/// <param name="isInitialized">Indicates whether the server is initialized.</param>
+/// <param name="isInitialized">Indicates whether the server has been initialized.</param>
 /// <returns>No return behavior.</returns>
 void OnServerInitialized(bool isInitialized)
 {
     Puts($"Server initialization status: {isInitialized}");
-    if (isInitialized)
-    {
-        Puts("Server has been successfully initialized.");
-    }
-    else
-    {
-        Puts("Server initialization failed.");
-    }
 }
 ```
 ```
@@ -39953,24 +36325,17 @@ void OnServerInitialized(bool isInitialized)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player is assigned to a cupboard's authorization list.
+/// Called when a player is assigned to a cupboard's privileges.
 /// </summary>
 /// <param name="privilege">The building privilege associated with the cupboard.</param>
 /// <param name="userId">The user ID of the player being assigned.</param>
 /// <param name="player">The player being assigned to the cupboard.</param>
 /// <returns>
-/// Returns a non-null value to prevent the assignment, or `null` to allow it.
+/// Returns a non-null value to prevent the assignment, or `null` to allow it. (object)
 /// </returns>
 object OnCupboardAssign(BuildingPrivlidge privilege, ulong userId, BasePlayer player)
 {
-    Puts($"Player {player.displayName} (ID: {userId}) is being assigned to cupboard privileges.");
-
-    if (userId == 123456789) // Example user ID check
-    {
-        Puts($"Player {player.displayName} is not allowed to be assigned to this cupboard.");
-        return "You cannot be assigned to this cupboard.";
-    }
-
+    Puts($"Assigning user {userId} to cupboard privileges for player {player}.");
     return null;
 }
 ```
@@ -40010,19 +36375,13 @@ object OnCupboardAssign(BuildingPrivlidge privilege, ulong userId, BasePlayer pl
 /// <param name="steamId">The Steam ID of the user attempting to log in.</param>
 /// <param name="ipAddress">The IP address of the user attempting to log in.</param>
 /// <returns>
-/// Returns a non-null value to reject the login attempt, or `null` to allow the user to log in.
-/// If a string is returned, it will be used as the rejection message.
+/// Returns a non-null value to override the default login behavior. 
+/// If a string is returned, the user will be kicked with the provided message as the reason. 
+/// If `null` is returned, the user is allowed to log in. (string | bool)
 /// </returns>
 object CanUserLogin(string username, string steamId, string ipAddress)
 {
-    Puts($"Checking login for user: {username}, SteamID: {steamId}, IP: {ipAddress}");
-
-    if (username == "bannedUser")
-    {
-        Puts($"User {username} is banned from logging in.");
-        return "You are banned from this server.";
-    }
-
+    Puts($"Checking login for user {username} with SteamID {steamId} from IP {ipAddress}.");
     return null;
 }
 ```
@@ -40081,21 +36440,14 @@ object CanUserLogin(string username, string steamId, string ipAddress)
 /// </summary>
 /// <param name="player">The player who sent the message.</param>
 /// <param name="message">The chat message sent by the player.</param>
-/// <param name="channel">The chat channel used for sending the message.</param>
+/// <param name="channel">The chat channel in which the message was sent.</param>
 /// <returns>
 /// Returns a non-null value to prevent the message from being processed further. 
-/// If `null` is returned, the message will be processed normally.
+/// If `null` is returned, the message will be processed normally. (object)
 /// </returns>
 object OnPlayerChat(BasePlayer player, string message, ConVar.Chat.ChatChannel channel)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) sent a message: {message} in channel: {channel}");
-
-    if (message.StartsWith("/admin"))
-    {
-        Puts($"Admin command detected from {player.displayName}. Processing command...");
-        return "Admin commands are not allowed in public chat.";
-    }
-
+    Puts($"Player {player} sent a message in channel {channel}: {message}");
     return null;
 }
 ```
@@ -40147,12 +36499,7 @@ object OnPlayerChat(BasePlayer player, string message, ConVar.Chat.ChatChannel c
 /// <returns>No return behavior.</returns>
 void OnUserUnbanned(string username, string steamId, string ipAddress)
 {
-    Puts($"User {username} (SteamID: {steamId}) has been unbanned. IP: {ipAddress}");
-    
-    if (ipAddress == "192.168.1.100")
-    {
-        Puts($"Warning: User {username} has been unbanned from a restricted IP address.");
-    }
+    Puts($"User {username} (SteamID: {steamId}, IP: {ipAddress}) has been unbanned from the server.");
 }
 ```
 ```
@@ -40184,19 +36531,12 @@ void OnUserUnbanned(string username, string steamId, string ipAddress)
 /// </summary>
 /// <param name="connection">The network connection of the client attempting to log in.</param>
 /// <returns>
-/// Returns a non-null value to reject the login attempt, or `null` to allow the login to proceed.
-/// If a string is returned, it will be used as the rejection message.
+/// Returns a non-null value to prevent the client from logging in. If a string is returned, the client will be kicked with the provided message. 
+/// If `null` is returned, the client is allowed to log in. (string | bool)
 /// </returns>
 object CanClientLogin(Network.Connection connection)
 {
-    Puts($"Client with username {connection.username} and ID {connection.userid} is attempting to log in.");
-
-    if (connection.ipaddress == "192.168.1.1")
-    {
-        Puts($"Client {connection.username} is blocked from logging in due to IP restrictions.");
-        return "Access denied: Your IP is not allowed.";
-    }
-
+    Puts($"Client with ID {connection.userid} is attempting to log in.");
     return null;
 }
 ```
@@ -40254,20 +36594,14 @@ object CanClientLogin(Network.Connection connection)
 /// Called when a message is received via RCON (Remote Console).
 /// </summary>
 /// <param name="ipAddress">The IP address of the client sending the RCON message.</param>
-/// <param name="message">The remote message containing the command.</param>
+/// <param name="message">The remote message containing the command and its parameters.</param>
 /// <returns>
-/// Returns a non-null value to indicate that the message was handled, or `null` to allow default processing.
+/// Returns `true` if the message was handled by the hook, or `null` if it was not handled. 
+/// If a non-null value is returned, it indicates that the message should not be processed further. (object)
 /// </returns>
-object OnRconMessage(IPAddress ipAddress, Oxide.Core.RemoteConsole.RemoteMessage message)
+object OnRconMessage(System.Net.IPAddress ipAddress, Oxide.Core.RemoteConsole.RemoteMessage message)
 {
     Puts($"Received RCON message from {ipAddress}: {message?.Message}");
-
-    if (message?.Message == "shutdown")
-    {
-        Puts("Shutdown command received via RCON.");
-        return "Server is shutting down.";
-    }
-
     return null;
 }
 ```
@@ -40322,12 +36656,7 @@ object OnRconMessage(IPAddress ipAddress, Oxide.Core.RemoteConsole.RemoteMessage
 /// <returns>No return behavior.</returns>
 void OnPlayerBanned(string playerName, ulong steamId, string ipAddress, string reason, long expiry)
 {
-    Puts($"Player {playerName} (SteamID: {steamId}) has been banned. Reason: {reason}. Expiry: {expiry}");
-    
-    if (expiry > 0)
-    {
-        Puts($"This ban will expire on {DateTimeOffset.FromUnixTimeSeconds(expiry).DateTime}.");
-    }
+    Puts($"Player {playerName} (SteamID: {steamId}, IP: {ipAddress}) has been banned. Reason: {reason}, Expiry: {expiry}");
 }
 ```
 ```
@@ -40362,19 +36691,11 @@ void OnPlayerBanned(string playerName, ulong steamId, string ipAddress, string r
 /// <param name="message">The chat message sent by the player.</param>
 /// <param name="channel">The chat channel in which the message was sent.</param>
 /// <returns>
-/// Returns a non-null value to override the default chat behavior. 
-/// If `null` is returned, the message will be processed normally.
+/// Returns a non-null value to override the default chat behavior. If `null` is returned, the message is processed normally. (object)
 /// </returns>
 object OnPlayerOfflineChat(ulong playerId, string playerName, string message, ConVar.Chat.ChatChannel channel)
 {
     Puts($"Offline chat from {playerName} (ID: {playerId}): {message}");
-
-    if (message.Contains("spam"))
-    {
-        Puts($"Message from {playerName} flagged as spam.");
-        return "Your message was flagged as spam.";
-    }
-
     return null;
 }
 ```
@@ -40418,25 +36739,17 @@ object OnPlayerOfflineChat(ulong playerId, string playerName, string message, Co
 ```csharp
 ```csharp
 /// <summary>
-/// Called when an NPC targets a player or another entity.
+/// Called when an NPC targets a specific entity.
 /// </summary>
-/// <param name="npc">The NPC that is targeting.</param>
-/// <param name="target">The entity that is being targeted.</param>
+/// <param name="npc">The NPC that is targeting an entity.</param>
+/// <param name="target">The entity being targeted by the NPC.</param>
 /// <returns>
-/// Returns a non-null value to override the default targeting behavior. 
-/// If `null` is returned, the NPC will proceed with its normal targeting logic.
+/// Returns a non-null value to override the default targeting behavior. If `null` is returned, the NPC will proceed with its default targeting logic. (object)
 /// </returns>
 object OnNpcTarget(BaseNpc npc, BaseEntity target)
 {
-    Puts($"NPC {npc.displayName} is targeting {target?.ShortPrefabName ?? "unknown entity"}.");
-
-    if (target is BasePlayer player && player.IsInvisible())
-    {
-        Puts($"NPC {npc.displayName} cannot target invisible player {player.displayName}.");
-        return true; // Prevent targeting
-    }
-
-    return null; // Allow normal targeting behavior
+    Puts($"NPC {npc} is targeting {target}.");
+    return null;
 }
 ```
 ```
@@ -40469,7 +36782,7 @@ object OnNpcTarget(BaseNpc npc, BaseEntity target)
 /// Called when a player is banned from the server.
 /// </summary>
 /// <param name="connection">The network connection of the banned player.</param>
-/// <param name="reason">The reason for the ban.</param>
+/// <param name="reason">The reason for the ban, typically a message or status code.</param>
 /// <returns>No return behavior.</returns>
 void OnPlayerBanned(Network.Connection connection, string reason)
 {
@@ -40497,12 +36810,12 @@ void OnPlayerBanned(Network.Connection connection, string reason)
 /// <summary>
 /// Called when a user is kicked from the server.
 /// </summary>
-/// <param name="player">The player who has been kicked.</param>
+/// <param name="player">The player who was kicked.</param>
 /// <param name="reason">The reason for the kick.</param>
 /// <returns>No return behavior.</returns>
 void OnUserKicked(Oxide.Core.Libraries.Covalence.IPlayer player, string reason)
 {
-    Puts($"User {player.Name} has been kicked from the server. Reason: {reason}");
+    Puts($"User {player.Name} has been kicked. Reason: {reason}");
 }
 ```
 ```
@@ -40529,13 +36842,11 @@ void OnUserKicked(Oxide.Core.Libraries.Covalence.IPlayer player, string reason)
 /// <summary>
 /// Called when a user connects to the server.
 /// </summary>
-/// <param name="player">The player who has connected.</param>
+/// <param name="player">The player that has connected.</param>
 /// <returns>No return behavior.</returns>
 void OnUserConnected(Oxide.Core.Libraries.Covalence.IPlayer player)
 {
-    Puts($"Player {player.Name} (ID: {player.Id}) has connected to the server.");
-    
-    // Additional logic can be added here, such as welcome messages or player initialization.
+    Puts($"User {player.Name} with ID {player.Id} has connected to the server.");
 }
 ```
 ```
@@ -40571,19 +36882,12 @@ void OnUserConnected(Oxide.Core.Libraries.Covalence.IPlayer player)
 /// <param name="command">The name of the command being executed.</param>
 /// <param name="args">The arguments passed to the command.</param>
 /// <returns>
-/// Returns a non-null value to prevent the command from executing further. 
-/// If `null` is returned, the command will proceed with its default behavior.
+/// Returns `true` to indicate that the command was handled, or `null` to allow default processing. 
+/// If a non-null value is returned, it overrides the default behavior. (object)
 /// </returns>
 object OnServerCommand(string command, string[] args)
 {
     Puts($"Server command executed: {command} with arguments: {string.Join(", ", args)}");
-
-    if (command == "kick")
-    {
-        Puts("Kick command detected. Additional checks can be implemented here.");
-        return "Kick command is not allowed.";
-    }
-
     return null;
 }
 ```
@@ -40620,27 +36924,17 @@ object OnServerCommand(string command, string[] args)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when an item loses condition.
+/// Called when an item loses condition due to damage or wear.
 /// </summary>
 /// <param name="parameters">An array containing the item and the amount of condition lost.</param>
 /// <returns>
-/// Returns `true` if the condition loss is processed successfully; otherwise, returns `false`.
-/// If the method returns a non-null value, it overrides the default behavior for condition loss.
+/// Returns `true` if the condition loss is processed successfully; otherwise, returns `false`. 
+/// If the hook modifies the amount, it will be reflected in the parameters array. (bool)
 /// </returns>
 object OnLoseCondition(object[] parameters)
 {
-    Item item = (Item)parameters[0];
-    float amount = (float)parameters[1];
-
-    Puts($"Item {item.info.displayName.english} is losing condition: {amount}.");
-
-    if (item.info.shortname == "wooden.spear")
-    {
-        Puts("Wooden spear condition loss is being overridden.");
-        return false; // Prevent condition loss for wooden spear
-    }
-
-    return null; // Allow default behavior to proceed
+    Puts($"Item {parameters[0]} is losing condition: {parameters[1]}.");
+    return true;
 }
 ```
 ```
@@ -40675,19 +36969,12 @@ object OnLoseCondition(object[] parameters)
 /// </summary>
 /// <param name="arg">The arguments associated with the server command.</param>
 /// <returns>
-/// Returns a non-null value to prevent the command from executing further. 
-/// If `null` is returned, the command will proceed with its default behavior.
+/// Returns `true` to prevent the command from executing further, or `null` to allow the command to proceed. 
+/// If a non-null value is returned from the hook, it will override the default behavior. (object)
 /// </returns>
 object OnServerCommand(ConsoleSystem.Arg arg)
 {
-    Puts($"Server command received: {arg.cmd.FullName} from player: {arg.Player()?.displayName ?? "Console"}");
-
-    if (arg.cmd.FullName == "server.shutdown")
-    {
-        Puts("Shutdown command received. Preparing to shut down the server.");
-        return "Server is shutting down.";
-    }
-
+    Puts($"Server command received: {arg.cmd.FullName} with arguments: {string.Join(", ", arg.Args)}");
     return null;
 }
 ```
@@ -40729,8 +37016,7 @@ object OnServerCommand(ConsoleSystem.Arg arg)
 /// <returns>No return behavior.</returns>
 void OnServerShutdown()
 {
-    Puts("Server is shutting down. Saving all player data and cleaning up resources.");
-    // Additional cleanup logic can be added here if necessary
+    Puts("Server is shutting down. Performing cleanup tasks.");
 }
 ```
 ```
@@ -40756,20 +37042,15 @@ void OnServerShutdown()
 /// <summary>
 /// Called when a user is banned from the server.
 /// </summary>
-/// <param name="username">The name of the user being banned.</param>
-/// <param name="steamId">The Steam ID of the user being banned.</param>
-/// <param name="ipAddress">The IP address of the user being banned.</param>
+/// <param name="playerName">The name of the player being banned.</param>
+/// <param name="steamId">The Steam ID of the player being banned.</param>
+/// <param name="ipAddress">The IP address of the player being banned.</param>
 /// <param name="reason">The reason for the ban.</param>
 /// <param name="expiry">The expiry time of the ban in Unix timestamp format.</param>
 /// <returns>No return behavior.</returns>
-void OnUserBanned(string username, string steamId, string ipAddress, string reason, long expiry)
+void OnUserBanned(string playerName, string steamId, string ipAddress, string reason, long expiry)
 {
-    Puts($"User {username} (SteamID: {steamId}, IP: {ipAddress}) has been banned. Reason: {reason}. Expiry: {expiry}");
-    
-    if (expiry > 0)
-    {
-        Puts($"This ban will expire on {DateTimeOffset.FromUnixTimeSeconds(expiry).DateTime}.");
-    }
+    Puts($"User {playerName} (SteamID: {steamId}, IP: {ipAddress}) has been banned. Reason: {reason}, Expiry: {expiry}");
 }
 ```
 ```
@@ -40797,24 +37078,17 @@ void OnUserBanned(string username, string steamId, string ipAddress, string reas
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player entity takes damage.
+/// Called when an entity takes damage.
 /// </summary>
 /// <param name="player">The player entity that is taking damage.</param>
 /// <param name="hitInfo">Information about the hit that caused the damage.</param>
 /// <returns>
-/// Returns a non-null value to prevent the default damage handling, or `null` to allow it.
+/// Returns `true` to indicate that the damage event was handled, or `null` to allow the default damage handling to proceed. (object)
 /// </returns>
 object OnEntityTakeDamage(BasePlayer player, HitInfo hitInfo)
 {
-    Puts($"Player {player.displayName} is taking damage from {hitInfo.Initiator?.ToString() ?? "unknown source"}.");
-
-    if (hitInfo.damageTypes.GetTotal() > 50)
-    {
-        Puts($"Damage from {hitInfo.Initiator?.ToString()} is too high, preventing further damage.");
-        return true; // Prevent further damage handling
-    }
-
-    return null; // Allow default damage handling
+    Puts($"Entity {player} is taking damage from {hitInfo.damageTypes}.");
+    return null;
 }
 ```
 ```
@@ -40861,19 +37135,11 @@ object OnEntityTakeDamage(BasePlayer player, HitInfo hitInfo)
 /// <returns>
 /// Returns a non-null value to override the default approval behavior. 
 /// If a string is returned, the user will be kicked with the provided message as the reason. 
-/// If `null` is returned, the user is approved as normal.
+/// If `null` is returned, the user is approved as normal. (string | bool)
 /// </returns>
 object OnUserApproved(string username, ulong steamId, string ipAddress)
 {
     Puts($"User {username} with SteamID {steamId} and IP {ipAddress} has been approved to join the server.");
-    
-    if (ipAddress == "192.168.1.1")
-    {
-        Puts($"User {username} with IP {ipAddress} has been blocked from joining.");
-        return "Blocked: Unauthorized IP address.";
-    }
-    
-    // Additional checks can be added here
     return null;
 }
 ```
@@ -40934,18 +37200,11 @@ object OnUserApproved(string username, ulong steamId, string ipAddress)
 /// <param name="message">The chat message sent by the player.</param>
 /// <returns>
 /// Returns a non-null value to prevent the message from being processed further. 
-/// If `null` is returned, the message will be processed normally.
+/// If `null` is returned, the message will be processed normally. (object)
 /// </returns>
 object OnUserChat(Oxide.Core.Libraries.Covalence.IPlayer player, string message)
 {
-    Puts($"Player {player.Name} (ID: {player.Id}) sent a message: {message}");
-
-    if (message.Contains("badword"))
-    {
-        Puts($"Player {player.Name} used a prohibited word.");
-        return "Your message contains prohibited content.";
-    }
-
+    Puts($"Player {player.Name} sent a chat message: {message}");
     return null;
 }
 ```
@@ -40995,8 +37254,7 @@ object OnUserChat(Oxide.Core.Libraries.Covalence.IPlayer player, string message)
 /// <returns>No return behavior.</returns>
 void OnPlayerConnected(BasePlayer player)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) has connected to the server.");
-    // Additional logic can be added here if needed
+    Puts($"Player {player} has connected to the server.");
 }
 ```
 ```
@@ -41030,11 +37288,11 @@ void OnPlayerConnected(BasePlayer player)
 /// Called when an entity is saved to the server.
 /// </summary>
 /// <param name="entity">The entity that is being saved.</param>
-/// <param name="saveInfo">Information about the save operation.</param>
+/// <param name="saveInfo">The information related to the save operation.</param>
 /// <returns>No return behavior.</returns>
 void OnEntitySaved(BaseNetworkable entity, BaseNetworkable.SaveInfo saveInfo)
 {
-    Puts($"Entity {entity.net.ID} has been saved with save info for connection: {saveInfo.forConnection?.userid ?? 0}.");
+    Puts($"Entity {entity} has been saved with save info: {saveInfo}.");
 }
 ```
 ```
@@ -41065,19 +37323,11 @@ void OnEntitySaved(BaseNetworkable entity, BaseNetworkable.SaveInfo saveInfo)
 /// <param name="command">The command that was issued.</param>
 /// <param name="args">The arguments associated with the command.</param>
 /// <returns>
-/// Returns a non-null value to override the default command handling. 
-/// If `null` is returned, the command will be processed normally.
+/// Returns a non-null value to override the default command handling. If `null` is returned, the command will be processed normally. (object)
 /// </returns>
 object OnPlayerCommand(BasePlayer player, string command, string[] args)
 {
-    Puts($"Player {player.displayName} issued command: {command} with arguments: {string.Join(", ", args)}");
-
-    if (command.Equals("ban", StringComparison.OrdinalIgnoreCase) && args.Length > 0)
-    {
-        Puts($"Player {player.displayName} attempted to ban: {args[0]}");
-        return "You cannot ban players using this command.";
-    }
-
+    Puts($"Player {player} issued command: {command} with arguments: {string.Join(", ", args)}");
     return null;
 }
 ```
@@ -41159,24 +37409,17 @@ object OnPlayerCommand(BasePlayer player, string command, string[] args)
 ```csharp
 ```csharp
 /// <summary>
-/// Determines whether a player can use the UI with the specified JSON data.
+/// Called to determine if a player can use a specific UI element.
 /// </summary>
 /// <param name="player">The player attempting to use the UI.</param>
-/// <param name="json">The JSON data for the UI to be displayed.</param>
+/// <param name="uiJson">The JSON representation of the UI to be used.</param>
 /// <returns>
-/// Returns `true` if the player can use the UI; otherwise, returns `false`. 
-/// If the method returns `null`, the default game logic will determine if the UI can be used.
+/// Returns `true` if the player can use the UI, or `false` if they cannot.
+/// If the method returns `null`, the default game logic will determine if the player can use the UI. (bool)
 /// </returns>
-bool? CanUseUI(BasePlayer player, string json)
+object CanUseUI(BasePlayer player, string uiJson)
 {
-    Puts($"Checking UI usage for player {player.displayName} with JSON: {json}");
-    
-    if (player.IsBannedFromUI)
-    {
-        Puts($"Player {player.displayName} is banned from using the UI.");
-        return false;
-    }
-
+    Puts($"Checking UI usage for player {player} with UI JSON: {uiJson}");
     return null;
 }
 ```
@@ -41205,18 +37448,13 @@ bool? CanUseUI(BasePlayer player, string json)
 /// <summary>
 /// Called when a player is unbanned from the server.
 /// </summary>
-/// <param name="username">The username of the unbanned player.</param>
-/// <param name="steamId">The Steam ID of the unbanned player.</param>
-/// <param name="ipAddress">The IP address of the unbanned player.</param>
+/// <param name="username">The name of the player who has been unbanned.</param>
+/// <param name="steamId">The Steam ID of the player who has been unbanned.</param>
+/// <param name="ipAddress">The IP address of the player who has been unbanned.</param>
 /// <returns>No return behavior.</returns>
 void OnPlayerUnbanned(string username, ulong steamId, string ipAddress)
 {
-    Puts($"Player {username} (SteamID: {steamId}) has been unbanned. IP Address: {ipAddress}");
-    
-    if (ipAddress == "192.168.1.100")
-    {
-        Puts($"Warning: Player {username} has a potentially restricted IP address.");
-    }
+    Puts($"Player {username} (SteamID: {steamId}) has been unbanned. IP: {ipAddress}");
 }
 ```
 ```
@@ -41244,24 +37482,17 @@ void OnPlayerUnbanned(string username, ulong steamId, string ipAddress)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a user is approved to connect to the server.
+/// Called when a user is being approved to connect to the server.
 /// </summary>
 /// <param name="connection">The network connection of the user being approved.</param>
 /// <returns>
 /// Returns a non-null value to override the default approval behavior. 
 /// If a string is returned, the user will be kicked with the provided message as the reason. 
-/// If `null` is returned, the user is approved as normal.
+/// If `null` is returned, the user is approved as normal. (object)
 /// </returns>
 object OnUserApprove(Network.Connection connection)
 {
-    Puts($"User {connection.username} (ID: {connection.userid}) is being approved for connection.");
-    
-    if (connection.ipaddress == "192.168.1.1")
-    {
-        Puts($"User {connection.username} is blocked from connecting due to IP restrictions.");
-        return "Connection rejected: Unauthorized IP address.";
-    }
-
+    Puts($"Approving user with ID: {connection.userid}, Username: {connection.username}.");
     return null;
 }
 ```
@@ -41316,25 +37547,18 @@ object OnUserApprove(Network.Connection connection)
 ```csharp
 ```csharp
 /// <summary>
-/// Called to determine if a player can pick up a specified entity.
+/// Called to determine if a player can pick up a specific entity.
 /// </summary>
 /// <param name="player">The player attempting to pick up the entity.</param>
 /// <param name="entity">The entity that is being picked up.</param>
 /// <returns>
-/// Returns `null` to allow the pickup, or `true` to prevent the pickup.
-/// If a non-null value is returned, the default pickup logic will be overridden.
+/// Returns `true` if the player can pick up the entity, or `false` if they cannot.
+/// If the method returns `null`, the default game logic will determine if the entity can be picked up. (bool)
 /// </returns>
 object CanPickupEntity(BasePlayer player, DoorCloser entity)
 {
-    Puts($"Player {player.displayName} (ID: {player.UserIDString}) is attempting to pick up entity: {entity.name}.");
-
-    if (entity.IsLocked())
-    {
-        Puts($"Entity {entity.name} is locked and cannot be picked up.");
-        return true; // Prevent pickup
-    }
-
-    return null; // Allow pickup
+    Puts($"Player {player} is attempting to pick up entity {entity}.");
+    return null;
 }
 ```
 ```
@@ -41361,7 +37585,7 @@ object CanPickupEntity(BasePlayer player, DoorCloser entity)
 ```csharp
 ```csharp
 /// <summary>
-/// Called when a player is added to a clan as a member.
+/// Called when a new member is added to a clan.
 /// </summary>
 /// <param name="clanId">The ID of the clan to which the member is being added.</param>
 /// <param name="steamId">The Steam ID of the player being added to the clan.</param>
