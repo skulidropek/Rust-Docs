@@ -1,5 +1,7 @@
 public class Mono.Cecil.Rocks.DocCommentId : object {
+    private IMemberDefinition commentMember;
     private StringBuilder id;
+    private DocCommentId(IMemberDefinition member);
     private void WriteField(FieldDefinition field);
     private void WriteEvent(EventDefinition event);
     private void WriteType(TypeDefinition type);
@@ -9,28 +11,32 @@ public class Mono.Cecil.Rocks.DocCommentId : object {
     private void WriteProperty(PropertyDefinition property);
     private void WriteParameters(IList`1<ParameterDefinition> parameters);
     private void WriteTypeSignature(TypeReference type);
+    private bool IsGenericMethodTypeParameter(TypeReference type);
     private void WriteGenericInstanceTypeSignature(GenericInstanceType type);
     private void WriteList(IList`1<T> list, Action`1<T> action);
     private void WriteModiferTypeSignature(IModifierType type, char id);
     private void WriteFunctionPointerTypeSignature(FunctionPointerType type);
     private void WriteArrayTypeSignature(ArrayType type);
     private void WriteDefinition(char id, IMemberDefinition member);
-    private void WriteTypeFullName(TypeReference type, bool stripGenericArity);
+    private void WriteTypeFullName(TypeReference type);
+    private void WriteTypeFullName(TypeReference type, GenericTypeOptions options);
+    private void WriteGenericTypeParameters(TypeReference type, GenericTypeOptions options);
+    private static bool IsGenericType(TypeReference type);
+    private IList`1<TypeReference> GetGenericTypeArguments(TypeReference type, GenericTypeOptions options);
     private void WriteItemName(string name);
     public virtual string ToString();
     public static string GetDocCommentId(IMemberDefinition member);
     [CompilerGeneratedAttribute]
-private void <WriteParameters>b__9_0(ParameterDefinition p);
+private void <WriteParameters>b__10_0(ParameterDefinition p);
     [CompilerGeneratedAttribute]
-private void <WriteArrayTypeSignature>b__15_0(ArrayDimension dimension);
+private void <WriteArrayTypeSignature>b__17_0(ArrayDimension dimension);
 }
 [ExtensionAttribute]
 internal static class Mono.Cecil.Rocks.Functional : object {
     public static Func`2<A, R> Y(Func`2<Func`2<A, R>, Func`2<A, R>> f);
     [ExtensionAttribute]
 public static IEnumerable`1<TSource> Prepend(IEnumerable`1<TSource> source, TSource element);
-    [IteratorStateMachineAttribute("Mono.Cecil.Rocks.Functional/<PrependIterator>d__2`1")]
-private static IEnumerable`1<TSource> PrependIterator(IEnumerable`1<TSource> source, TSource element);
+    private static IEnumerable`1<TSource> PrependIterator(IEnumerable`1<TSource> source, TSource element);
 }
 public interface Mono.Cecil.Rocks.IILVisitor {
     public abstract virtual void OnInlineNone(OpCode opcode);
@@ -92,6 +98,20 @@ public static IEnumerable`1<TypeDefinition> GetAllTypes(ModuleDefinition self);
 public static class Mono.Cecil.Rocks.ParameterReferenceRocks : object {
     [ExtensionAttribute]
 public static int GetSequence(ParameterReference self);
+}
+[ExtensionAttribute]
+public static class Mono.Cecil.Rocks.SecurityDeclarationRocks : object {
+    [ExtensionAttribute]
+public static PermissionSet ToPermissionSet(SecurityDeclaration self);
+    private static bool TryProcessPermissionSetAttribute(SecurityDeclaration declaration, PermissionSet& set);
+    private static PermissionSet CreatePermissionSet(SecurityDeclaration declaration);
+    private static IPermission CreatePermission(SecurityDeclaration declaration, SecurityAttribute attribute);
+    private static void CompleteSecurityAttribute(SecurityAttribute security_attribute, SecurityAttribute attribute);
+    private static void CompleteSecurityAttributeFields(SecurityAttribute security_attribute, SecurityAttribute attribute);
+    private static void CompleteSecurityAttributeProperties(SecurityAttribute security_attribute, SecurityAttribute attribute);
+    private static SecurityAttribute CreateSecurityAttribute(Type attribute_type, SecurityDeclaration declaration);
+    [ExtensionAttribute]
+public static SecurityDeclaration ToSecurityDeclaration(PermissionSet self, SecurityAction action, ModuleDefinition module);
 }
 [ExtensionAttribute]
 public static class Mono.Cecil.Rocks.TypeDefinitionRocks : object {

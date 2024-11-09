@@ -33992,6 +33992,9 @@ public class LensDirtiness : MonoBehaviour {
     public sealed virtual bool IsActive();
     public sealed virtual void OnRenderImage(RenderTexture source, RenderTexture destination);
 }
+public class NeedsBeltBarSlotInput : ListComponent`1<NeedsBeltBarSlotInput> {
+    public static bool AnyActive();
+}
 public class NeedsKeyboard : ListComponent`1<NeedsKeyboard> {
     public UnityEvent onNoKeysDown;
     public bool ShowEscapeUI;
@@ -34591,6 +34594,7 @@ public int Month;
     [TooltipAttribute("Current year.")]
 [TOD_RangeAttribute("1", "9999")]
 public int Year;
+    public float RedMoonLerp;
     public DateTime DateTime { get; public set; }
     public long Ticks { get; public set; }
     public DateTime get_DateTime();
@@ -34734,6 +34738,10 @@ public class TOD_MoonParameters : object {
 The diameter as seen from earth is 0.5 degrees.")]
 [TOD_MinAttribute("0")]
 public float MeshSize;
+    [TooltipAttribute("Diameter of the moon in degrees when in red mode.
+The diameter as seen from earth is 0.5 degrees.")]
+[TOD_MinAttribute("0")]
+public float MeshSizeRed;
     [TooltipAttribute("Brightness of the moon.")]
 [TOD_MinAttribute("0")]
 public float MeshBrightness;
@@ -34759,6 +34767,10 @@ public class TOD_NightParameters : object {
 Left value: Sun at horizon.
 Right value: Sun opposite to zenith.")]
 public Gradient MoonColor;
+    [TooltipAttribute("Color of the moon mesh when red night mode is active.
+Left value: Sun at horizon.
+Right value: Sun opposite to zenith.")]
+public Gradient MoonColorRed;
     [TooltipAttribute("Color of the light that hits the ground.
 Left value: Sun at horizon.
 Right value: Sun opposite to zenith.")]

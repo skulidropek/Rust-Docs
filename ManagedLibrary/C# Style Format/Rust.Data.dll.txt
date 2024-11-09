@@ -162,6 +162,7 @@ public class ModelState : object {
     public UInt32 guidePrefab;
     public bool guideValid;
     public int guideVersion;
+    public float ducking;
     public bool ShouldPool;
     private bool _disposed;
     public bool ducked { get; public set; }
@@ -3417,6 +3418,37 @@ public class ProtoBuf.ConnectedSpeaker : object {
     public void ToProto(Stream stream);
     public static Byte[] SerializeToBytes(ConnectedSpeaker instance);
     public static void SerializeLengthDelimited(Stream stream, ConnectedSpeaker instance);
+    public void InspectUids(UidInspector`1<ulong> action);
+}
+public class ProtoBuf.CopyPasteEntityInfo : object {
+    public List`1<Entity> entities;
+    public bool ShouldPool;
+    private bool _disposed;
+    public static void ResetToPool(CopyPasteEntityInfo instance);
+    public void ResetToPool();
+    public virtual void Dispose();
+    public virtual void EnterPool();
+    public virtual void LeavePool();
+    public void CopyTo(CopyPasteEntityInfo instance);
+    public CopyPasteEntityInfo Copy();
+    public static CopyPasteEntityInfo Deserialize(Stream stream);
+    public static CopyPasteEntityInfo DeserializeLengthDelimited(Stream stream);
+    public static CopyPasteEntityInfo DeserializeLength(Stream stream, int length);
+    public static CopyPasteEntityInfo Deserialize(Byte[] buffer);
+    public void FromProto(Stream stream, bool isDelta);
+    public virtual void WriteToStream(Stream stream);
+    public virtual void WriteToStreamDelta(Stream stream, CopyPasteEntityInfo previous);
+    public virtual void ReadFromStream(Stream stream, int size, bool isDelta);
+    public static CopyPasteEntityInfo Deserialize(Byte[] buffer, CopyPasteEntityInfo instance, bool isDelta);
+    public static CopyPasteEntityInfo Deserialize(Stream stream, CopyPasteEntityInfo instance, bool isDelta);
+    public static CopyPasteEntityInfo DeserializeLengthDelimited(Stream stream, CopyPasteEntityInfo instance, bool isDelta);
+    public static CopyPasteEntityInfo DeserializeLength(Stream stream, int length, CopyPasteEntityInfo instance, bool isDelta);
+    public static void SerializeDelta(Stream stream, CopyPasteEntityInfo instance, CopyPasteEntityInfo previous);
+    public static void Serialize(Stream stream, CopyPasteEntityInfo instance);
+    public Byte[] ToProtoBytes();
+    public void ToProto(Stream stream);
+    public static Byte[] SerializeToBytes(CopyPasteEntityInfo instance);
+    public static void SerializeLengthDelimited(Stream stream, CopyPasteEntityInfo instance);
     public void InspectUids(UidInspector`1<ulong> action);
 }
 public class ProtoBuf.Corpse : object {
@@ -10258,6 +10290,47 @@ public class ProtoBuf.UpdateItemContainer : object {
     public static void SerializeLengthDelimited(Stream stream, UpdateItemContainer instance);
     public void InspectUids(UidInspector`1<ulong> action);
 }
+public class ProtoBuf.VDDrawEntry : object {
+    public string entityName;
+    public int frame;
+    public string label;
+    public Category category;
+    public Color color;
+    public Vector3 start;
+    public Vector3 end;
+    public float sizeX;
+    public float sizeY;
+    public float sizeZ;
+    public string message;
+    public bool ShouldPool;
+    private bool _disposed;
+    public static void ResetToPool(VDDrawEntry instance);
+    public void ResetToPool();
+    public virtual void Dispose();
+    public virtual void EnterPool();
+    public virtual void LeavePool();
+    public void CopyTo(VDDrawEntry instance);
+    public VDDrawEntry Copy();
+    public static VDDrawEntry Deserialize(Stream stream);
+    public static VDDrawEntry DeserializeLengthDelimited(Stream stream);
+    public static VDDrawEntry DeserializeLength(Stream stream, int length);
+    public static VDDrawEntry Deserialize(Byte[] buffer);
+    public void FromProto(Stream stream, bool isDelta);
+    public virtual void WriteToStream(Stream stream);
+    public virtual void WriteToStreamDelta(Stream stream, VDDrawEntry previous);
+    public virtual void ReadFromStream(Stream stream, int size, bool isDelta);
+    public static VDDrawEntry Deserialize(Byte[] buffer, VDDrawEntry instance, bool isDelta);
+    public static VDDrawEntry Deserialize(Stream stream, VDDrawEntry instance, bool isDelta);
+    public static VDDrawEntry DeserializeLengthDelimited(Stream stream, VDDrawEntry instance, bool isDelta);
+    public static VDDrawEntry DeserializeLength(Stream stream, int length, VDDrawEntry instance, bool isDelta);
+    public static void SerializeDelta(Stream stream, VDDrawEntry instance, VDDrawEntry previous);
+    public static void Serialize(Stream stream, VDDrawEntry instance);
+    public Byte[] ToProtoBytes();
+    public void ToProto(Stream stream);
+    public static Byte[] SerializeToBytes(VDDrawEntry instance);
+    public static void SerializeLengthDelimited(Stream stream, VDDrawEntry instance);
+    public void InspectUids(UidInspector`1<ulong> action);
+}
 public class ProtoBuf.VectorData : ValueType {
     public float x;
     public float y;
@@ -10456,6 +10529,7 @@ public class ProtoBuf.VendingMachine : object {
     public int vmoIndex;
     public NetworkableId networkID;
     public string translationToken;
+    public ulong nameLastEditedBy;
     public bool ShouldPool;
     private bool _disposed;
     public static void ResetToPool(VendingMachine instance);

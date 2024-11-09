@@ -206,6 +206,7 @@ public class Mono.Cecil.AssemblyResolutionException : FileNotFoundException {
     public AssemblyNameReference AssemblyReference { get; }
     public AssemblyResolutionException(AssemblyNameReference reference);
     public AssemblyResolutionException(AssemblyNameReference reference, Exception innerException);
+    private AssemblyResolutionException(SerializationInfo info, StreamingContext context);
     public AssemblyNameReference get_AssemblyReference();
 }
 public class Mono.Cecil.AssemblyResolveEventArgs : EventArgs {
@@ -226,8 +227,9 @@ internal class Mono.Cecil.AssemblyTable : OneRowTable`1<Row`9<AssemblyHashAlgori
 public abstract class Mono.Cecil.BaseAssemblyResolver : object {
     private static bool on_mono;
     private Collection`1<string> directories;
-    internal static Lazy`1<Dictionary`2<string, string>> TrustedPlatformAssemblies;
+    private Collection`1<string> gac_paths;
     [CompilerGeneratedAttribute]
+[DebuggerBrowsableAttribute("0")]
 private AssemblyResolveEventHandler ResolveFailure;
     private static BaseAssemblyResolver();
     public void AddSearchDirectory(string directory);
@@ -240,10 +242,16 @@ public void remove_ResolveFailure(AssemblyResolveEventHandler value);
     private AssemblyDefinition GetAssembly(string file, ReaderParameters parameters);
     public virtual AssemblyDefinition Resolve(AssemblyNameReference name);
     public virtual AssemblyDefinition Resolve(AssemblyNameReference name, ReaderParameters parameters);
-    private AssemblyDefinition SearchTrustedPlatformAssemblies(AssemblyNameReference name, ReaderParameters parameters);
-    private static Dictionary`2<string, string> CreateTrustedPlatformAssemblyMap();
     protected virtual AssemblyDefinition SearchDirectory(AssemblyNameReference name, IEnumerable`1<string> directories, ReaderParameters parameters);
     private static bool IsZero(Version version);
+    private AssemblyDefinition GetCorlib(AssemblyNameReference reference, ReaderParameters parameters);
+    private static Collection`1<string> GetGacPaths();
+    private static Collection`1<string> GetDefaultMonoGacPaths();
+    private static string GetCurrentMonoGac();
+    private AssemblyDefinition GetAssemblyInGac(AssemblyNameReference reference, ReaderParameters parameters);
+    private AssemblyDefinition GetAssemblyInMonoGac(AssemblyNameReference reference, ReaderParameters parameters);
+    private AssemblyDefinition GetAssemblyInNetGac(AssemblyNameReference reference, ReaderParameters parameters);
+    private static string GetAssemblyFile(AssemblyNameReference reference, string prefix, string gac);
     public sealed virtual void Dispose();
     protected virtual void Dispose(bool disposing);
 }
@@ -798,8 +806,9 @@ public class Mono.Cecil.Cil.EmbeddedPortablePdbWriter : object {
     private PortablePdbWriter writer;
     internal EmbeddedPortablePdbWriter(Stream stream, PortablePdbWriter writer);
     public sealed virtual ISymbolReaderProvider GetReaderProvider();
-    public sealed virtual ImageDebugHeader GetDebugHeader();
     public sealed virtual void Write(MethodDebugInformation info);
+    public sealed virtual ImageDebugHeader GetDebugHeader();
+    public sealed virtual void Write();
     public sealed virtual void Dispose();
 }
 public class Mono.Cecil.Cil.EmbeddedPortablePdbWriterProvider : object {
@@ -966,6 +975,7 @@ public enum Mono.Cecil.Cil.ImageDebugType : Enum {
     public static ImageDebugType CodeView;
     public static ImageDebugType Deterministic;
     public static ImageDebugType EmbeddedPortablePdb;
+    public static ImageDebugType PdbChecksum;
 }
 public class Mono.Cecil.Cil.ImportDebugInformation : DebugInformation {
     internal ImportDebugInformation parent;
@@ -1036,6 +1046,7 @@ public class Mono.Cecil.Cil.Instruction : object {
     public void set_Previous(Instruction value);
     public Instruction get_Next();
     public void set_Next(Instruction value);
+    public Instruction GetPrototype();
     public int GetSize();
     public virtual string ToString();
     private static void AppendLabel(StringBuilder builder, Instruction instruction);
@@ -1065,9 +1076,10 @@ internal class Mono.Cecil.Cil.InstructionCollection : Collection`1<Instruction> 
     protected virtual void OnSet(Instruction item, int index);
     protected virtual void OnRemove(Instruction item, int index);
     private void RemoveSequencePoint(Instruction instruction);
-    private void UpdateLocalScopes(Instruction removedInstruction, Instruction existingInstruction);
-    private void UpdateLocalScope(ScopeDebugInformation scope, Instruction removedInstruction, Instruction existingInstruction, InstructionOffsetCache& cache);
-    private InstructionOffset ResolveInstructionOffset(InstructionOffset inputOffset, InstructionOffsetCache& cache);
+    private void UpdateDebugInformation(Instruction removedInstruction, Instruction existingInstruction);
+    private void UpdateLocalScope(ScopeDebugInformation scope, InstructionOffsetResolver& resolver);
+    private void UpdateStateMachineScope(StateMachineScopeDebugInformation debugInfo, InstructionOffsetResolver& resolver);
+    private void UpdateAsyncMethodBody(AsyncMethodBodyDebugInformation debugInfo, InstructionOffsetResolver& resolver);
 }
 public class Mono.Cecil.Cil.InstructionOffset : ValueType {
     private Instruction instruction;
@@ -1096,6 +1108,7 @@ public interface Mono.Cecil.Cil.ISymbolWriter {
     public abstract virtual ISymbolReaderProvider GetReaderProvider();
     public abstract virtual ImageDebugHeader GetDebugHeader();
     public abstract virtual void Write(MethodDebugInformation info);
+    public abstract virtual void Write();
 }
 public interface Mono.Cecil.Cil.ISymbolWriterProvider {
     public abstract virtual ISymbolWriter GetSymbolWriter(ModuleDefinition module, string fileName);
@@ -1163,8 +1176,7 @@ public class Mono.Cecil.Cil.MethodDebugInformation : DebugInformation {
     public SequencePoint GetSequencePoint(Instruction instruction);
     public IDictionary`2<Instruction, SequencePoint> GetSequencePointMapping();
     public IEnumerable`1<ScopeDebugInformation> GetScopes();
-    [IteratorStateMachineAttribute("Mono.Cecil.Cil.MethodDebugInformation/<GetScopes>d__22")]
-private static IEnumerable`1<ScopeDebugInformation> GetScopes(IList`1<ScopeDebugInformation> scopes);
+    private static IEnumerable`1<ScopeDebugInformation> GetScopes(IList`1<ScopeDebugInformation> scopes);
     public bool TryGetName(VariableDefinition variable, String& name);
 }
 public class Mono.Cecil.Cil.OpCode : ValueType {
@@ -1523,24 +1535,31 @@ public class Mono.Cecil.Cil.PortablePdbWriter : object {
     private MetadataBuilder pdb_metadata;
     private ModuleDefinition module;
     private ImageWriter writer;
+    private Disposable`1<Stream> final_stream;
     private MetadataBuilder module_metadata;
+    internal Byte[] pdb_checksum;
+    internal Guid pdb_id_guid;
+    internal UInt32 pdb_id_stamp;
     private bool IsEmbedded { get; }
     internal PortablePdbWriter(MetadataBuilder pdb_metadata, ModuleDefinition module);
-    internal PortablePdbWriter(MetadataBuilder pdb_metadata, ModuleDefinition module, ImageWriter writer);
+    internal PortablePdbWriter(MetadataBuilder pdb_metadata, ModuleDefinition module, ImageWriter writer, Disposable`1<Stream> final_stream);
     private bool get_IsEmbedded();
     public sealed virtual ISymbolReaderProvider GetReaderProvider();
-    public sealed virtual ImageDebugHeader GetDebugHeader();
     public sealed virtual void Write(MethodDebugInformation info);
+    public sealed virtual void Write();
+    public sealed virtual ImageDebugHeader GetDebugHeader();
     private void CheckMethodDebugInformationTable();
     public sealed virtual void Dispose();
     private void WritePdbFile();
     private void WritePdbHeap();
     private void WriteTableHeap();
+    private void ComputeChecksumAndPdbId();
+    private void WritePdbId();
 }
 public class Mono.Cecil.Cil.PortablePdbWriterProvider : object {
     public sealed virtual ISymbolWriter GetSymbolWriter(ModuleDefinition module, string fileName);
     public sealed virtual ISymbolWriter GetSymbolWriter(ModuleDefinition module, Stream symbolStream);
-    private ISymbolWriter GetSymbolWriter(ModuleDefinition module, Disposable`1<Stream> stream);
+    private ISymbolWriter GetSymbolWriter(ModuleDefinition module, Disposable`1<Stream> stream, Disposable`1<Stream> final_stream);
 }
 public class Mono.Cecil.Cil.ScopeDebugInformation : DebugInformation {
     internal InstructionOffset start;
@@ -1682,9 +1701,11 @@ internal static class Mono.Cecil.Cil.SymbolProvider : object {
 }
 public class Mono.Cecil.Cil.SymbolsNotFoundException : FileNotFoundException {
     public SymbolsNotFoundException(string message);
+    private SymbolsNotFoundException(SerializationInfo info, StreamingContext context);
 }
 public class Mono.Cecil.Cil.SymbolsNotMatchingException : InvalidOperationException {
     public SymbolsNotMatchingException(string message);
+    private SymbolsNotMatchingException(SerializationInfo info, StreamingContext context);
 }
 [FlagsAttribute]
 public enum Mono.Cecil.Cil.VariableAttributes : Enum {
@@ -1759,12 +1780,13 @@ internal class Mono.Cecil.ConstantTable : SortedTable`1<Row`3<ElementType, UInt3
     public virtual int Compare(Row`3<ElementType, UInt32, UInt32> x, Row`3<ElementType, UInt32, UInt32> y);
 }
 internal static class Mono.Cecil.CryptoService : object {
+    private static SHA1 CreateSHA1();
     public static Byte[] GetPublicKey(WriterParameters parameters);
     public static void StrongName(Stream stream, ImageWriter writer, WriterParameters parameters);
     private static void PatchStrongName(Stream stream, int strong_name_pointer, Byte[] strong_name);
     private static Byte[] CreateStrongName(WriterParameters parameters, Byte[] hash);
     private static Byte[] HashStream(Stream stream, ImageWriter writer, Int32& strong_name_pointer);
-    private static void CopyStreamChunk(Stream stream, Stream dest_stream, Byte[] buffer, int length);
+    public static void CopyStreamChunk(Stream stream, Stream dest_stream, Byte[] buffer, int length);
     public static Byte[] ComputeHash(string file);
     public static Byte[] ComputeHash(Stream stream);
     public static Byte[] ComputeHash(ByteBuffer[] buffers);
@@ -1899,6 +1921,7 @@ public class Mono.Cecil.DefaultReflectionImporter : object {
     private static Dictionary`2<Type, ElementType> type_etype_mapping;
     public DefaultReflectionImporter(ModuleDefinition module);
     private static DefaultReflectionImporter();
+    private TypeReference ImportType(Type type, ImportGenericContext context, Type[] required_modifiers, Type[] optional_modifiers);
     private TypeReference ImportType(Type type, ImportGenericContext context);
     private TypeReference ImportType(Type type, ImportGenericContext context, ImportGenericKind import_kind);
     protected virtual IMetadataScope ImportScope(Type type);
@@ -2429,6 +2452,7 @@ public class Mono.Cecil.GenericParameter : TypeReference {
     public bool HasReferenceTypeConstraint { get; public set; }
     public bool HasNotNullableValueTypeConstraint { get; public set; }
     public bool HasDefaultConstructorConstraint { get; public set; }
+    public bool AllowByRefLikeConstraint { get; public set; }
     public GenericParameter(IGenericParameterProvider owner);
     public GenericParameter(string name, IGenericParameterProvider owner);
     internal GenericParameter(int position, GenericParameterType type, ModuleDefinition module);
@@ -2466,6 +2490,8 @@ public class Mono.Cecil.GenericParameter : TypeReference {
     public void set_HasNotNullableValueTypeConstraint(bool value);
     public bool get_HasDefaultConstructorConstraint();
     public void set_HasDefaultConstructorConstraint(bool value);
+    public bool get_AllowByRefLikeConstraint();
+    public void set_AllowByRefLikeConstraint(bool value);
     private static ElementType ConvertGenericParameterType(GenericParameterType type);
     public virtual TypeDefinition Resolve();
 }
@@ -2480,6 +2506,7 @@ public enum Mono.Cecil.GenericParameterAttributes : Enum {
     public static GenericParameterAttributes ReferenceTypeConstraint;
     public static GenericParameterAttributes NotNullableValueTypeConstraint;
     public static GenericParameterAttributes DefaultConstructorConstraint;
+    public static GenericParameterAttributes AllowByRefLikeConstraint;
 }
 internal class Mono.Cecil.GenericParameterCollection : Collection`1<GenericParameter> {
     private IGenericParameterProvider owner;
@@ -2877,7 +2904,11 @@ internal enum Mono.Cecil.Metadata.CodedIndex : Enum {
     public static CodedIndex HasCustomDebugInformation;
 }
 internal class Mono.Cecil.Metadata.DataBuffer : ByteBuffer {
-    public UInt32 AddData(Byte[] data);
+    private int buffer_align;
+    public int BufferAlign { get; }
+    private void Align(int align);
+    public UInt32 AddData(Byte[] data, int align);
+    public int get_BufferAlign();
 }
 internal enum Mono.Cecil.Metadata.ElementType : Enum {
     public byte value__;
@@ -3215,6 +3246,7 @@ internal class Mono.Cecil.MetadataBuilder : object {
     private void BuildModule();
     private void BuildAssembly();
     private void BuildModules();
+    private string GetModuleFileName(string name);
     private void AddAssemblyReferences();
     private void AddModuleReferences();
     private void AddResources();
@@ -3313,7 +3345,6 @@ internal class Mono.Cecil.MetadataBuilder : object {
     private SignatureWriter GetDocumentNameSignature(Document document);
     private static bool TryGetDocumentNameSeparator(string path, Char& separator);
     private void AddSequencePoints(MethodDebugInformation info);
-    public void ComputeDeterministicMvid();
 }
 public enum Mono.Cecil.MetadataKind : Enum {
     public int value__;
@@ -3528,6 +3559,7 @@ public class Mono.Cecil.MetadataResolver : object {
     private static bool AreSame(Collection`1<ParameterDefinition> a, Collection`1<ParameterDefinition> b);
     private static bool IsVarArgCallTo(MethodDefinition method, MethodReference reference);
     private static bool AreSame(TypeSpecification a, TypeSpecification b);
+    private static bool AreSame(FunctionPointerType a, FunctionPointerType b);
     private static bool AreSame(ArrayType a, ArrayType b);
     private static bool AreSame(IModifierType a, IModifierType b);
     private static bool AreSame(GenericInstanceType a, GenericInstanceType b);
@@ -3589,31 +3621,21 @@ internal class Mono.Cecil.MetadataSystem : object {
     public void AddMemberReference(MemberReference member);
     public bool TryGetNestedTypeMapping(TypeDefinition type, Collection`1& mapping);
     public void SetNestedTypeMapping(UInt32 type_rid, Collection`1<UInt32> mapping);
-    public void RemoveNestedTypeMapping(TypeDefinition type);
     public bool TryGetReverseNestedTypeMapping(TypeDefinition type, UInt32& declaring);
     public void SetReverseNestedTypeMapping(UInt32 nested, UInt32 declaring);
-    public void RemoveReverseNestedTypeMapping(TypeDefinition type);
     public bool TryGetInterfaceMapping(TypeDefinition type, Collection`1& mapping);
     public void SetInterfaceMapping(UInt32 type_rid, Collection`1<Row`2<UInt32, MetadataToken>> mapping);
-    public void RemoveInterfaceMapping(TypeDefinition type);
     public void AddPropertiesRange(UInt32 type_rid, Range range);
     public bool TryGetPropertiesRange(TypeDefinition type, Range& range);
-    public void RemovePropertiesRange(TypeDefinition type);
     public void AddEventsRange(UInt32 type_rid, Range range);
     public bool TryGetEventsRange(TypeDefinition type, Range& range);
-    public void RemoveEventsRange(TypeDefinition type);
     public bool TryGetGenericParameterRanges(IGenericParameterProvider owner, Range[]& ranges);
-    public void RemoveGenericParameterRange(IGenericParameterProvider owner);
     public bool TryGetCustomAttributeRanges(ICustomAttributeProvider owner, Range[]& ranges);
-    public void RemoveCustomAttributeRange(ICustomAttributeProvider owner);
     public bool TryGetSecurityDeclarationRanges(ISecurityDeclarationProvider owner, Range[]& ranges);
-    public void RemoveSecurityDeclarationRange(ISecurityDeclarationProvider owner);
     public bool TryGetGenericConstraintMapping(GenericParameter generic_parameter, Collection`1& mapping);
     public void SetGenericConstraintMapping(UInt32 gp_rid, Collection`1<Row`2<UInt32, MetadataToken>> mapping);
-    public void RemoveGenericConstraintMapping(GenericParameter generic_parameter);
     public bool TryGetOverrideMapping(MethodDefinition method, Collection`1& mapping);
     public void SetOverrideMapping(UInt32 rid, Collection`1<MetadataToken> mapping);
-    public void RemoveOverrideMapping(MethodDefinition method);
     public Document GetDocument(UInt32 rid);
     public bool TryGetLocalScopes(MethodDefinition method, Collection`1& scopes);
     public void SetLocalScopes(UInt32 method_rid, Collection`1<Row`6<UInt32, Range, Range, UInt32, UInt32, UInt32>> records);
@@ -3730,6 +3752,7 @@ public enum Mono.Cecil.MethodCallingConvention : Enum {
     public static MethodCallingConvention ThisCall;
     public static MethodCallingConvention FastCall;
     public static MethodCallingConvention VarArg;
+    public static MethodCallingConvention Unmanaged;
     public static MethodCallingConvention Generic;
 }
 internal class Mono.Cecil.MethodDebugInformationTable : MetadataTable`1<Row`2<UInt32, UInt32>> {
@@ -3801,6 +3824,7 @@ public class Mono.Cecil.MethodDefinition : MethodReference {
     public bool NoInlining { get; public set; }
     public bool NoOptimization { get; public set; }
     public bool AggressiveInlining { get; public set; }
+    public bool AggressiveOptimization { get; public set; }
     public bool IsSetter { get; public set; }
     public bool IsGetter { get; public set; }
     public bool IsOther { get; public set; }
@@ -3905,6 +3929,8 @@ public class Mono.Cecil.MethodDefinition : MethodReference {
     public void set_NoOptimization(bool value);
     public bool get_AggressiveInlining();
     public void set_AggressiveInlining(bool value);
+    public bool get_AggressiveOptimization();
+    public void set_AggressiveOptimization(bool value);
     public bool get_IsSetter();
     public void set_IsSetter(bool value);
     public bool get_IsGetter();
@@ -3958,6 +3984,7 @@ public enum Mono.Cecil.MethodImplAttributes : Enum {
     public static MethodImplAttributes NoOptimization;
     public static MethodImplAttributes NoInlining;
     public static MethodImplAttributes AggressiveInlining;
+    public static MethodImplAttributes AggressiveOptimization;
 }
 internal class Mono.Cecil.MethodImplTable : MetadataTable`1<Row`3<UInt32, UInt32, UInt32>> {
     public virtual void Write(TableHeapBuffer buffer);
@@ -4259,6 +4286,8 @@ public static ImageDebugHeader AddDeterministicEntry(ImageDebugHeader header);
     [ExtensionAttribute]
 public static ImageDebugHeaderEntry GetEmbeddedPortablePdbEntry(ImageDebugHeader header);
     [ExtensionAttribute]
+public static ImageDebugHeaderEntry GetPdbChecksumEntry(ImageDebugHeader header);
+    [ExtensionAttribute]
 private static ImageDebugHeaderEntry GetEntry(ImageDebugHeader header, ImageDebugType type);
     public static string GetPdbFileName(string assemblyFileName);
     public static string GetMdbFileName(string assemblyFileName);
@@ -4432,9 +4461,9 @@ public string FullyQualifiedName { get; }
     public TypeReference GetType(string fullName, bool runtimeName);
     public TypeDefinition GetType(string fullName);
     public TypeDefinition GetType(string namespace, string name);
+    public void RebuildNameCache();
     public IEnumerable`1<TypeDefinition> GetTypes();
-    [IteratorStateMachineAttribute("Mono.Cecil.ModuleDefinition/<GetTypes>d__134")]
-private static IEnumerable`1<TypeDefinition> GetTypes(Collection`1<TypeDefinition> types);
+    private static IEnumerable`1<TypeDefinition> GetTypes(Collection`1<TypeDefinition> types);
     private TypeDefinition GetNestedType(string fullname);
     internal FieldDefinition Resolve(FieldReference field);
     internal MethodDefinition Resolve(MethodReference method);
@@ -4583,6 +4612,7 @@ internal static class Mono.Cecil.ModuleWriter : object {
     private static void Write(ModuleDefinition module, Disposable`1<Stream> stream, WriterParameters parameters);
     private static void BuildMetadata(ModuleDefinition module, MetadataBuilder metadata);
     private static ISymbolWriter GetSymbolWriter(ModuleDefinition module, string fq_name, ISymbolWriterProvider symbol_writer_provider, WriterParameters parameters);
+    private static void ComputeDeterministicMvid(ImageWriter writer, ModuleDefinition module);
 }
 public enum Mono.Cecil.NativeType : Enum {
     public int value__;
@@ -4812,6 +4842,10 @@ internal class Mono.Cecil.PE.ByteBuffer : object {
     public void WriteInt64(long value);
     public void WriteCompressedUInt32(UInt32 value);
     public void WriteCompressedInt32(int value);
+    private static UInt32 ReverseEndianness(UInt32 value);
+    private static UInt32 RotateRight(UInt32 value, int offset);
+    private static UInt32 RotateLeft(UInt32 value, int offset);
+    private static ushort ReverseEndianness(ushort value);
     public void WriteBytes(Byte[] bytes);
     public void WriteBytes(int length);
     public void WriteBytes(ByteBuffer buffer);
@@ -4877,6 +4911,7 @@ internal class Mono.Cecil.PE.ImageReader : BinaryStreamReader {
     private DataDirectory cli;
     private DataDirectory metadata;
     private UInt32 table_heap_offset;
+    private UInt32 pdb_heap_offset;
     public ImageReader(Disposable`1<Stream> stream, string file_name);
     private void MoveTo(DataDirectory directory);
     private void ReadImage();
@@ -4898,7 +4933,7 @@ internal class Mono.Cecil.PE.ImageReader : BinaryStreamReader {
     private void ComputeTableInformations();
     private void ReadPdbHeap();
     public static Image ReadImage(Disposable`1<Stream> stream, string file_name);
-    public static Image ReadPortablePdb(Disposable`1<Stream> stream, string file_name);
+    public static Image ReadPortablePdb(Disposable`1<Stream> stream, string file_name, UInt32& pdb_heap_offset);
 }
 internal class Mono.Cecil.PE.ImageWriter : BinaryStreamWriter {
     private ModuleDefinition module;
@@ -4920,6 +4955,7 @@ internal class Mono.Cecil.PE.ImageWriter : BinaryStreamWriter {
     internal Section rsrc;
     internal Section reloc;
     private ushort sections;
+    internal long debug_header_entries_position;
     private ImageWriter(ModuleDefinition module, string runtime_version, MetadataBuilder metadata, Disposable`1<Stream> stream, bool metadataOnly);
     private void GetDebugHeader();
     private void GetWin32Resources();
@@ -4940,7 +4976,7 @@ internal class Mono.Cecil.PE.ImageWriter : BinaryStreamWriter {
     private UInt32 GetRVAFileOffset(Section section, UInt32 rva);
     private void MoveTo(UInt32 pointer);
     private void MoveToRVA(Section section, UInt32 rva);
-    private void MoveToRVA(TextSegment segment);
+    internal void MoveToRVA(TextSegment segment);
     private void WriteRVA(UInt32 rva);
     private void PrepareSection(Section section);
     private void WriteText();
@@ -4983,6 +5019,7 @@ internal class Mono.Cecil.PE.Section : object {
 internal class Mono.Cecil.PE.TextMap : object {
     private Range[] map;
     public void AddMap(TextSegment segment, int length);
+    private UInt32 AlignUp(UInt32 value, UInt32 align);
     public void AddMap(TextSegment segment, int length, int align);
     public void AddMap(TextSegment segment, Range range);
     public Range GetRange(TextSegment segment);
@@ -5289,6 +5326,7 @@ public class Mono.Cecil.ResolutionException : Exception {
     public IMetadataScope Scope { get; }
     public ResolutionException(MemberReference member);
     public ResolutionException(MemberReference member, Exception innerException);
+    private ResolutionException(SerializationInfo info, StreamingContext context);
     public MemberReference get_Member();
     public IMetadataScope get_Scope();
 }
@@ -5755,6 +5793,7 @@ internal class Mono.Cecil.TypeDefinitionCollection : Collection`1<TypeDefinition
     private void Detach(TypeDefinition type);
     public TypeDefinition GetType(string fullname);
     public TypeDefinition GetType(string namespace, string name);
+    public void RebuildNameCache();
 }
 internal class Mono.Cecil.TypeDefinitionProjection : object {
     public TypeAttributes Attributes;
@@ -6100,9 +6139,9 @@ internal class Mono.Cecil.WindowsRuntimeProjections : object {
     private static AssemblyNameReference[] GetAssemblyReferences(AssemblyNameReference corlib);
     private static AssemblyNameReference GetCoreLibrary(Collection`1<AssemblyNameReference> references);
     private AssemblyNameReference GetAssemblyReference(string name);
-    public static void Project(ICustomAttributeProvider owner, CustomAttribute attribute);
+    public static void Project(ICustomAttributeProvider owner, Collection`1<CustomAttribute> owner_attributes, CustomAttribute attribute);
     private static bool IsWindowsAttributeUsageAttribute(ICustomAttributeProvider owner, CustomAttribute attribute);
-    private static bool HasAttribute(TypeDefinition type, string namespace, string name);
+    private static bool HasAttribute(Collection`1<CustomAttribute> attributes, string namespace, string name);
     public static void ApplyProjection(CustomAttribute attribute, CustomAttributeValueProjection projection);
     public static CustomAttributeValueProjection RemoveProjection(CustomAttribute attribute);
 }
@@ -6115,6 +6154,7 @@ public class Mono.Cecil.WriterParameters : object {
     private string key_container;
     private StrongNameKeyPair key_pair;
     [CompilerGeneratedAttribute]
+[DebuggerBrowsableAttribute("0")]
 private bool <DeterministicMvid>k__BackingField;
     public Nullable`1<UInt32> Timestamp { get; public set; }
     public Stream SymbolStream { get; public set; }

@@ -298,16 +298,23 @@ public abstract class ObjectWorkQueue`1 : ObjectWorkQueue {
     protected abstract virtual void RunJob(T entity);
     public string Info();
 }
-public abstract class PersistentObjectWorkQueue`1 : object {
+public abstract class PersistentObjectWorkQueue : object {
+    public static List`1<PersistentObjectWorkQueue> All;
+    public string Name;
+    public TimeSpan WarningThreshold;
+    public TimeSpan TotalExecutionTime;
+    public TimeSpan LastExecutionTime;
+    public int LastProcessedCount;
+    public int ListLength { get; }
+    private static PersistentObjectWorkQueue();
+    public abstract virtual int get_ListLength();
+}
+public abstract class PersistentObjectWorkQueue`1 : PersistentObjectWorkQueue {
     protected ListHashSet`1<T> workList;
-    public string listName;
-    public long warnTime;
-    public double totalTime;
-    public double lastMS;
     private int currentIndex;
     private Stopwatch stopwatch;
-    public int listLength { get; }
-    public int get_listLength();
+    public int ListLength { get; }
+    public virtual int get_ListLength();
     public void Clear();
     public void RunList(double maximumMilliseconds);
     public void Add(T entity);
@@ -781,7 +788,11 @@ public static Vector3 WithZ(Vector3 v, float z);
     [ExtensionAttribute]
 public static Vector3 WithXY(Vector3 v, float x, float y);
     [ExtensionAttribute]
+public static Vector3 WithXY(Vector3 v, Vector2 other);
+    [ExtensionAttribute]
 public static Vector3 WithXZ(Vector3 v, float x, float z);
+    [ExtensionAttribute]
+public static Vector3 WithXZ(Vector3 v, Vector2 other);
     public static Vector3 XZ(Vector3 v);
     public static float Distance2D(Vector3 a, Vector3 b);
     public static float HeightDelta(Vector3 a, Vector3 b);
@@ -858,6 +869,8 @@ public static Vector2 Abs(Vector2 v);
     public static Vector3 Parse(string p);
     [ExtensionAttribute]
 public static Vector3 GetWithInaccuracy(Vector3 o, float maxAngle);
+    [ExtensionAttribute]
+public static Vector3 NormalizeXZ(Vector3 v);
 }
 [CompilerGeneratedAttribute]
 [EditorBrowsableAttribute("1")]

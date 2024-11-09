@@ -354,6 +354,7 @@ public static void FreeMemoryStream(MemoryStream& obj);
     public static void FreeUnsafe(T& obj);
     public static void FreeUnmanaged(MemoryStream& obj);
     public static void FreeUnmanaged(StringBuilder& obj);
+    public static void FreeUnmanaged(Stopwatch& obj);
     public static void FreeUnmanaged(List`1& obj);
     public static void FreeUnmanaged(HashSet`1& obj);
     public static void FreeUnmanaged(Dictionary`2& dict);
@@ -592,6 +593,16 @@ private void set_EvictionCount(long value);
     private sealed virtual override IEnumerator`1<KeyValuePair`2<Key, Value>> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<Key,Value>>.GetEnumerator();
     private sealed virtual override IEnumerator System.Collections.IEnumerable.GetEnumerator();
 }
+public class PooledHashSet`1 : HashSet`1<T> {
+    private sealed virtual override void System.IDisposable.Dispose();
+    private sealed virtual override void Facepunch.Pool.IPooled.EnterPool();
+    private sealed virtual override void Facepunch.Pool.IPooled.LeavePool();
+}
+public class PooledList`1 : List`1<T> {
+    private sealed virtual override void System.IDisposable.Dispose();
+    private sealed virtual override void Facepunch.Pool.IPooled.EnterPool();
+    private sealed virtual override void Facepunch.Pool.IPooled.LeavePool();
+}
 public class SpanningTree`1 : object {
     private List`1<Node<T>> nodes;
     private List`1<Edge<T>> edges;
@@ -623,6 +634,7 @@ public int get_CellSize();
     [CompilerGeneratedAttribute]
 private void set_CellSize(int value);
     public int Query(float x, float y, float radius, T[] result, Func`2<T, bool> filter);
+    public void Query(float x, float y, float radius, List`1<U> result);
     private int Clamp(float input);
     private Node<T> GetNode(float x, float y, bool create);
     public void Add(T obj, float x, float y);

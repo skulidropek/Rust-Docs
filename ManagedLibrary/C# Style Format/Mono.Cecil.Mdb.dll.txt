@@ -33,6 +33,7 @@ public class Mono.Cecil.Mdb.MdbWriter : object {
     private void WriteScopes(Collection`1<ScopeDebugInformation> scopes, MethodDebugInformation info);
     private void WriteScopeVariables(ScopeDebugInformation scope);
     public sealed virtual ImageDebugHeader GetDebugHeader();
+    public sealed virtual void Write();
     public sealed virtual void Dispose();
 }
 public class Mono.Cecil.Mdb.MdbWriterProvider : object {
@@ -271,6 +272,7 @@ public class Mono.CompilerServices.SymbolWriter.MonoSymbolFile : object {
     internal int GetNextNamespaceIndex();
     private void Write(MyBinaryWriter bw, Guid guid);
     public void CreateSymbolFile(Guid guid, FileStream fs);
+    public static MonoSymbolFile ReadSymbolFile(Assembly assembly);
     public static MonoSymbolFile ReadSymbolFile(string mdbFilename);
     public static MonoSymbolFile ReadSymbolFile(string mdbFilename, Guid assemblyGuid);
     public static MonoSymbolFile ReadSymbolFile(Stream stream);
@@ -354,6 +356,11 @@ public class Mono.CompilerServices.SymbolWriter.NamespaceEntry : ValueType {
     internal NamespaceEntry(MonoSymbolFile file, MyBinaryReader reader);
     internal void Write(MonoSymbolFile file, MyBinaryWriter bw);
     public virtual string ToString();
+}
+internal class Mono.CompilerServices.SymbolWriter.NamespaceInfo : object {
+    public string Name;
+    public int NamespaceID;
+    public ArrayList UsingClauses;
 }
 public class Mono.CompilerServices.SymbolWriter.OffsetTable : object {
     public static int MajorVersion;
@@ -450,4 +457,58 @@ public class Mono.CompilerServices.SymbolWriter.SourceMethodBuilder : object {
     public void AddScopeVariable(int scope, int index);
     public void DefineMethod(MonoSymbolFile file);
     public void DefineMethod(MonoSymbolFile file, int token);
+}
+internal class Mono.CompilerServices.SymbolWriter.SourceMethodImpl : object {
+    private string name;
+    private int token;
+    private int namespaceID;
+    public string Name { get; }
+    public int NamespaceID { get; }
+    public int Token { get; }
+    public SourceMethodImpl(string name, int token, int namespaceID);
+    public sealed virtual string get_Name();
+    public int get_NamespaceID();
+    public sealed virtual int get_Token();
+}
+internal class Mono.CompilerServices.SymbolWriter.SymbolDocumentWriterImpl : object {
+    private CompileUnitEntry comp_unit;
+    private SourceFileEntry Mono.CompilerServices.SymbolWriter.ISourceFile.Entry { get; }
+    public CompileUnitEntry Entry { get; }
+    public SymbolDocumentWriterImpl(CompileUnitEntry comp_unit);
+    public sealed virtual void SetCheckSum(Guid algorithmId, Byte[] checkSum);
+    public sealed virtual void SetSource(Byte[] source);
+    private sealed virtual override SourceFileEntry Mono.CompilerServices.SymbolWriter.ISourceFile.get_Entry();
+    public sealed virtual CompileUnitEntry get_Entry();
+}
+public class Mono.CompilerServices.SymbolWriter.SymbolWriterImpl : object {
+    private MonoSymbolWriter msw;
+    private int nextLocalIndex;
+    private int currentToken;
+    private string methodName;
+    private Stack namespaceStack;
+    private bool methodOpened;
+    private Hashtable documents;
+    private Guid guid;
+    public SymbolWriterImpl(Guid guid);
+    public sealed virtual void Close();
+    public sealed virtual void CloseMethod();
+    public sealed virtual void CloseNamespace();
+    public sealed virtual void CloseScope(int endOffset);
+    public sealed virtual ISymbolDocumentWriter DefineDocument(string url, Guid language, Guid languageVendor, Guid documentType);
+    public sealed virtual void DefineField(SymbolToken parent, string name, FieldAttributes attributes, Byte[] signature, SymAddressKind addrKind, int addr1, int addr2, int addr3);
+    public sealed virtual void DefineGlobalVariable(string name, FieldAttributes attributes, Byte[] signature, SymAddressKind addrKind, int addr1, int addr2, int addr3);
+    public sealed virtual void DefineLocalVariable(string name, FieldAttributes attributes, Byte[] signature, SymAddressKind addrKind, int addr1, int addr2, int addr3, int startOffset, int endOffset);
+    public sealed virtual void DefineParameter(string name, ParameterAttributes attributes, int sequence, SymAddressKind addrKind, int addr1, int addr2, int addr3);
+    public sealed virtual void DefineSequencePoints(ISymbolDocumentWriter document, Int32[] offsets, Int32[] lines, Int32[] columns, Int32[] endLines, Int32[] endColumns);
+    public sealed virtual void Initialize(IntPtr emitter, string filename, bool fFullBuild);
+    public sealed virtual void OpenMethod(SymbolToken method);
+    public sealed virtual void OpenNamespace(string name);
+    public sealed virtual int OpenScope(int startOffset);
+    public sealed virtual void SetMethodSourceRange(ISymbolDocumentWriter startDoc, int startLine, int startColumn, ISymbolDocumentWriter endDoc, int endLine, int endColumn);
+    public sealed virtual void SetScopeRange(int scopeID, int startOffset, int endOffset);
+    public sealed virtual void SetSymAttribute(SymbolToken parent, string name, Byte[] data);
+    public sealed virtual void SetUnderlyingWriter(IntPtr underlyingWriter);
+    public sealed virtual void SetUserEntryPoint(SymbolToken entryMethod);
+    public sealed virtual void UsingNamespace(string fullName);
+    private int GetCurrentNamespace(ISymbolDocumentWriter doc);
 }

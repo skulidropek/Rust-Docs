@@ -2171,6 +2171,8 @@ public class Mono.Cecil.Pdb.NativePdbWriter : object {
     private SymWriter writer;
     private Dictionary`2<string, SymDocumentWriter> documents;
     private Dictionary`2<ImportDebugInformation, MetadataToken> import_info_to_parent;
+    private ImageDebugDirectory debug_directory;
+    private Byte[] debug_info;
     internal NativePdbWriter(ModuleDefinition module, SymWriter writer);
     public sealed virtual ISymbolReaderProvider GetReaderProvider();
     public sealed virtual ImageDebugHeader GetDebugHeader();
@@ -2182,6 +2184,7 @@ public class Mono.Cecil.Pdb.NativePdbWriter : object {
     private void DefineLocalVariable(VariableDebugInformation variable, int local_var_token, int start_offset, int end_offset);
     private void DefineConstant(ConstantDebugInformation constant);
     private SymDocumentWriter GetDocument(Document document);
+    public sealed virtual void Write();
     public sealed virtual void Dispose();
 }
 public class Mono.Cecil.Pdb.NativePdbWriterProvider : object {

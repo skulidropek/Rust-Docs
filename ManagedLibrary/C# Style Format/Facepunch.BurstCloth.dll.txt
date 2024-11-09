@@ -24,6 +24,7 @@ public bool ResetBonesOnDisable;
 public bool EnableCollisions;
     public float CollisionRadius;
     public float CollisionDirectionAdjustment;
+    public float CollisionFilteringScale;
     [BurstClothCurveRectAttribute("0", "0", "1", "1")]
 public AnimationCurve CollisionRadiusCurve;
     [HeaderAttribute("Performance")]
@@ -45,6 +46,8 @@ internal List`1<BoneData> _boneDataOriginal;
 internal List`1<RotationConstraint> _rotationConstraintsDataOriginal;
     private Vector3 _origin;
     private Quaternion _rotation;
+    private Quaternion _prevRotation;
+    private Quaternion _rotationDelta;
     private Vector3 _up;
     private Vector3 _simulationSpaceDelta;
     private Transform _prevSimulationSpace;
@@ -218,8 +221,6 @@ public NativeArray`1<BoneData> Data;
     [WriteOnlyAttribute]
 [NativeMatchesParallelForLengthAttribute]
 public NativeArray`1<BoneState> State;
-    public float DeltaTime;
-    public int IterationCount;
     public sealed virtual void Execute(int index, TransformAccess transform);
 }
 [BurstCompileAttribute]
@@ -255,6 +256,7 @@ public NativeArray`1<BoneData> BoneData;
     public float DeltaTime;
     public int IterationCount;
     public int ConstraintIterationCount;
+    public quaternion OriginRotationDelta;
     public float3 SimulationSpaceDelta;
     public float3 OriginDelta;
     public float3 Gravity;
@@ -266,9 +268,9 @@ public NativeArray`1<BoneData> BoneData;
     public float3 Up;
     public float Radius;
     public float CollisionProjectionYOffset;
+    public float CollisionFilteringScale;
     public sealed virtual void Execute();
     private void AdjustSimulationSpace();
-    private void MovePositions(BoneData& data, BoneState& newState);
     private void ApplyLinearConstraints(BoneData& data, BoneState& state, NativeArray`1& workBoneState, Collision& collision);
     private static void VerletIntegrate(BoneState& state, float3 acceleration, float dt, float damping);
     private void PopulateCollisions(NativeArray`1<Collision> collisions);
