@@ -687,8 +687,110 @@ private void set_connection(Connection value);
     public void OnSubscriptionChange();
     public bool SwitchSecondaryGroup(Group newGroup);
     public void AddVisibleFromNear(Group additionalGroup, List`1<Group> groupsVisible);
-    public bool UpdateSubscriptions(int removeLimit, int addLimit);
-    public bool UpdateHighPrioritySubscriptions();
+    
+/// <summary>
+/// Hooks - OnNetworkSubscriptionsUpdate(Network.Networkable,System.Collections.Generic.List<Network.Visibility.Group>,System.Collections.Generic.List<Network.Visibility.Group>)
+/// </summary>
+
+	public bool UpdateSubscriptions(int removeLimit, int addLimit)
+	{
+		if (!updateSubscriptions)
+		{
+			return false;
+		}
+		if (subscriber == null)
+		{
+			return false;
+		}
+		using (TimeWarning.New("UpdateSubscriptions"))
+		{
+			updateSubscriptions = false;
+			List<Group> obj = Pool.Get<List<Group>>();
+			List<Group> obj2 = Pool.Get<List<Group>>();
+			List<Group> obj3 = Pool.Get<List<Group>>();
+			sv.visibility.GetVisibleFromFar(this.group, obj3);
+			AddVisibleFromNear(secondaryGroup, obj3);
+			subscriber.subscribed.Compare(obj3, obj, obj2, null);
+			if (Interface.CallHook("OnNetworkSubscriptionsUpdate", this, obj, obj2) == null)
+			{
+				for (int i = 0; i < obj2.Count; i++)
+				{
+					Group group = obj2[i];
+					if (removeLimit > 0)
+					{
+						subscriber.Unsubscribe(group);
+						if (handler != null)
+						{
+							handler.OnNetworkGroupLeave(group);
+						}
+						removeLimit -= group.networkables.Count;
+					}
+					else
+					{
+						updateSubscriptions = true;
+					}
+				}
+				for (int j = 0; j < obj.Count; j++)
+				{
+					Group group2 = obj[j];
+					if (addLimit > 0)
+					{
+						subscriber.Subscribe(group2);
+						if (handler != null)
+						{
+							handler.OnNetworkGroupEnter(group2);
+						}
+						addLimit -= group2.networkables.Count;
+					}
+					else
+					{
+						updateSubscriptions = true;
+					}
+				}
+			}
+			Pool.FreeUnmanaged(ref obj);
+			Pool.FreeUnmanaged(ref obj2);
+			Pool.FreeUnmanaged(ref obj3);
+		}
+		return true;
+	}
+
+    
+/// <summary>
+/// Hooks - OnNetworkSubscriptionsUpdate(Network.Networkable,System.Collections.Generic.List<Network.Visibility.Group>,unknown)
+/// </summary>
+
+	public bool UpdateHighPrioritySubscriptions()
+	{
+		if (subscriber == null)
+		{
+			return false;
+		}
+		using (TimeWarning.New("UpdateHighPrioritySubscriptions"))
+		{
+			List<Group> obj = Pool.Get<List<Group>>();
+			List<Group> obj2 = Pool.Get<List<Group>>();
+			sv.visibility.GetVisibleFromNear(this.group, obj2);
+			AddVisibleFromNear(secondaryGroup, obj2);
+			subscriber.subscribed.Compare(obj2, obj, null, null);
+			if (Interface.CallHook("OnNetworkSubscriptionsUpdate", this, obj, null) == null)
+			{
+				for (int i = 0; i < obj.Count; i++)
+				{
+					Group group = obj[i];
+					subscriber.Subscribe(group);
+					if (handler != null)
+					{
+						handler.OnNetworkGroupEnter(group);
+					}
+				}
+			}
+			Pool.FreeUnmanaged(ref obj);
+			Pool.FreeUnmanaged(ref obj2);
+		}
+		return true;
+	}
+
 }
 public interface Network.NetworkHandler {
     public abstract virtual void OnNetworkSubscribersEnter(List`1<Connection> connections);
@@ -865,7 +967,27 @@ public abstract class Network.Server : BaseNetwork {
     public Networkable CreateNetworkable();
     public Networkable CreateNetworkable(NetworkableId uid);
     public void DestroyNetworkable(Networkable& networkable);
-    protected void OnDisconnected(string strReason, Connection cn);
+    
+/// <summary>
+/// Hooks - OnClientDisconnected(Network.Connection,string)
+/// </summary>
+
+	protected void OnDisconnected(string strReason, Connection cn)
+	{
+		if (cn != null)
+		{
+			RecordDisconnection(cn);
+			cn.connected = false;
+			cn.active = false;
+			if (callbackHandler != null)
+			{
+				callbackHandler.OnDisconnected(strReason, cn);
+			}
+			Interface.CallHook("OnClientDisconnected", cn, strReason);
+			RemoveConnection(cn);
+		}
+	}
+
     protected Connection FindConnection(ulong guid);
     protected void OnNewConnection(ulong guid, string ipaddress);
     protected void OnNewConnection(Connection connection);

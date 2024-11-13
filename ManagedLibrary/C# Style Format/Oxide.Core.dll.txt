@@ -942,8 +942,37 @@ public void Export(string prefix);
     public void RegisterValidate(Func`2<string, bool> val);
     public void CleanUp();
     public void MigrateGroup(string oldGroupName, string newGroupName);
-    [LibraryFunction("RegisterPermission")]
-public void RegisterPermission(string permission, Plugin owner);
+    
+/// <summary>
+/// Hooks - OnPermissionRegistered(string,Oxide.Core.Plugins.Plugin)
+/// </summary>
+
+	[LibraryFunction("RegisterPermission")]
+	public void RegisterPermission(string permission, Plugin owner)
+	{
+		if (string.IsNullOrEmpty(permission))
+		{
+			return;
+		}
+		if (PermissionExists(permission))
+		{
+			Interface.Oxide.LogWarning("Duplicate permission registered '{0}' (by plugin '{1}')", permission, owner.Title);
+			return;
+		}
+		if (!registeredPermissions.TryGetValue(owner, out var value))
+		{
+			value = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			registeredPermissions.Add(owner, value);
+			owner.OnRemovedFromManager.Add(owner_OnRemovedFromManager);
+		}
+		value.Add(permission);
+		Interface.CallHook("OnPermissionRegistered", permission, owner);
+		if (!permission.StartsWith(owner.Name + ".", StringComparison.OrdinalIgnoreCase) && !owner.IsCorePlugin)
+		{
+			Interface.Oxide.LogWarning("Missing plugin name prefix '{0}' for permission '{1}' (by plugin '{2}')", owner.Name.ToLower(), permission, owner.Title);
+		}
+	}
+
     [LibraryFunction("PermissionExists")]
 public bool PermissionExists(string permission, Plugin owner);
     private void owner_OnRemovedFromManager(Plugin sender, PluginManager manager);
@@ -952,8 +981,24 @@ public bool UserIdValid(string playerId);
     [LibraryFunction("UserExists")]
 public bool UserExists(string playerId);
     public UserData GetUserData(string playerId);
-    [LibraryFunction("UpdateNickname")]
-public void UpdateNickname(string playerId, string playerName);
+    
+/// <summary>
+/// Hooks - OnUserNameUpdated(string,string,string)
+/// </summary>
+
+	[LibraryFunction("UpdateNickname")]
+	public void UpdateNickname(string playerId, string playerName)
+	{
+		if (UserExists(playerId))
+		{
+			UserData userData = GetUserData(playerId);
+			string lastSeenNickname = userData.LastSeenNickname;
+			string obj = playerName.Sanitize();
+			userData.LastSeenNickname = playerName.Sanitize();
+			Interface.CallHook("OnUserNameUpdated", playerId, lastSeenNickname, obj);
+		}
+	}
+
     [LibraryFunction("UserHasAnyGroup")]
 public bool UserHasAnyGroup(string playerId);
     [LibraryFunction("GroupsHavePermission")]
@@ -999,18 +1044,149 @@ public void RevokeUserPermission(string playerId, string permission);
 public void GrantGroupPermission(string groupName, string permission, Plugin owner);
     [LibraryFunction("RevokeGroupPermission")]
 public void RevokeGroupPermission(string groupName, string permission);
-    [LibraryFunction("CreateGroup")]
-public bool CreateGroup(string groupName, string groupTitle, int groupRank);
-    [LibraryFunction("RemoveGroup")]
-public bool RemoveGroup(string groupName);
-    [LibraryFunction("SetGroupTitle")]
-public bool SetGroupTitle(string groupName, string groupTitle);
-    [LibraryFunction("SetGroupRank")]
-public bool SetGroupRank(string groupName, int groupRank);
+    
+/// <summary>
+/// Hooks - OnGroupCreated(string,string,int)
+/// </summary>
+
+	[LibraryFunction("CreateGroup")]
+	public bool CreateGroup(string groupName, string groupTitle, int groupRank)
+	{
+		if (GroupExists(groupName) || string.IsNullOrEmpty(groupName))
+		{
+			return false;
+		}
+		GroupData value = new GroupData
+		{
+			Title = groupTitle,
+			Rank = groupRank
+		};
+		groupsData.Add(groupName, value);
+		Interface.CallHook("OnGroupCreated", groupName, groupTitle, groupRank);
+		return true;
+	}
+
+    
+/// <summary>
+/// Hooks - OnGroupDeleted(string)
+/// </summary>
+
+	[LibraryFunction("RemoveGroup")]
+	public bool RemoveGroup(string groupName)
+	{
+		if (!GroupExists(groupName))
+		{
+			return false;
+		}
+		bool flag = groupsData.Remove(groupName);
+		if (flag)
+		{
+			foreach (GroupData item in groupsData.Values.Where((GroupData g) => g.ParentGroup == groupName))
+			{
+				item.ParentGroup = string.Empty;
+			}
+		}
+		if (usersData.Values.Aggregate(seed: false, (bool current, UserData userData) => current | userData.Groups.Remove(groupName)))
+		{
+			SaveUsers();
+		}
+		if (flag)
+		{
+			Interface.CallHook("OnGroupDeleted", groupName);
+		}
+		return true;
+	}
+
+    
+/// <summary>
+/// Hooks - OnGroupTitleSet(string,string)
+/// </summary>
+
+	[LibraryFunction("SetGroupTitle")]
+	public bool SetGroupTitle(string groupName, string groupTitle)
+	{
+		if (!GroupExists(groupName))
+		{
+			return false;
+		}
+		if (!groupsData.TryGetValue(groupName, out var value))
+		{
+			return false;
+		}
+		if (value.Title == groupTitle)
+		{
+			return true;
+		}
+		value.Title = groupTitle;
+		Interface.CallHook("OnGroupTitleSet", groupName, groupTitle);
+		return true;
+	}
+
+    
+/// <summary>
+/// Hooks - OnGroupRankSet(string,int)
+/// </summary>
+
+	[LibraryFunction("SetGroupRank")]
+	public bool SetGroupRank(string groupName, int groupRank)
+	{
+		if (!GroupExists(groupName))
+		{
+			return false;
+		}
+		if (!groupsData.TryGetValue(groupName, out var value))
+		{
+			return false;
+		}
+		if (value.Rank == groupRank)
+		{
+			return true;
+		}
+		value.Rank = groupRank;
+		Interface.CallHook("OnGroupRankSet", groupName, groupRank);
+		return true;
+	}
+
     [LibraryFunction("GetGroupParent")]
 public string GetGroupParent(string groupName);
-    [LibraryFunction("SetGroupParent")]
-public bool SetGroupParent(string groupName, string parentGroupName);
+    
+/// <summary>
+/// Hooks - OnGroupParentSet(string,string)
+/// </summary>
+
+	[LibraryFunction("SetGroupParent")]
+	public bool SetGroupParent(string groupName, string parentGroupName)
+	{
+		if (!GroupExists(groupName))
+		{
+			return false;
+		}
+		if (!groupsData.TryGetValue(groupName, out var value))
+		{
+			return false;
+		}
+		if (string.IsNullOrEmpty(parentGroupName))
+		{
+			value.ParentGroup = null;
+			return true;
+		}
+		if (!GroupExists(parentGroupName) || groupName.Equals(parentGroupName))
+		{
+			return false;
+		}
+		if (!string.IsNullOrEmpty(value.ParentGroup) && value.ParentGroup.Equals(parentGroupName))
+		{
+			return true;
+		}
+		if (HasCircularParent(groupName, parentGroupName))
+		{
+			return false;
+		}
+		value.ParentGroup = parentGroupName;
+		Interface.CallHook("OnGroupParentSet", groupName, parentGroupName);
+		return true;
+	}
+
     private bool HasCircularParent(string groupName, string parentGroupName);
     [CompilerGeneratedAttribute]
 private bool <CleanUp>b__20_0(string i);

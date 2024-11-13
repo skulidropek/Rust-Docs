@@ -227,8 +227,37 @@ public static class Oxide.Game.Rust.Cui.CuiHelper : object {
     public static List`1<CuiElement> FromJson(string json);
     public static string GetGuid();
     public static bool AddUi(BasePlayer player, List`1<CuiElement> elements);
-    public static bool AddUi(BasePlayer player, string json);
-    public static bool DestroyUi(BasePlayer player, string elem);
+    
+/// <summary>
+/// Hooks - CanUseUI(BasePlayer,string)
+/// </summary>
+
+	public static bool AddUi(BasePlayer player, string json)
+	{
+		if (player?.net != null && Interface.CallHook("CanUseUI", player, json) == null)
+		{
+			CommunityEntity.ServerInstance.ClientRPC(RpcTarget.Player("AddUI", player.net.connection), json);
+			return true;
+		}
+		return false;
+	}
+
+    
+/// <summary>
+/// Hooks - OnDestroyUI(BasePlayer,string)
+/// </summary>
+
+	public static bool DestroyUi(BasePlayer player, string elem)
+	{
+		if (player?.net != null)
+		{
+			Interface.CallHook("OnDestroyUI", player, elem);
+			CommunityEntity.ServerInstance.ClientRPC(RpcTarget.Player("DestroyUI", player.net.connection), elem);
+			return true;
+		}
+		return false;
+	}
+
     [ExtensionAttribute]
 public static void SetColor(ICuiColor elem, Color color);
     [ExtensionAttribute]
@@ -1266,58 +1295,433 @@ private void SaveCommand(IPlayer player);
 private void Init();
     [HookMethodAttribute("OnPluginLoaded")]
 private void OnPluginLoaded(Plugin plugin);
-    [HookMethodAttribute("IOnServerInitialized")]
-private void IOnServerInitialized();
+    
+/// <summary>
+/// Hooks - OnServerInitialized(bool)
+/// </summary>
+
+	[HookMethod("IOnServerInitialized")]
+	private void IOnServerInitialized()
+	{
+		if (!serverInitialized)
+		{
+			Analytics.Collect();
+			if (!Interface.Oxide.Config.Options.Modded)
+			{
+				Interface.Oxide.LogWarning("The server is currently listed under Community. Please be aware that Facepunch only allows admin tools (that do not affect gameplay) under the Community section");
+			}
+			serverInitialized = true;
+			Interface.CallHook("OnServerInitialized", serverInitialized);
+		}
+	}
+
     [HookMethodAttribute("OnServerSave")]
 private void OnServerSave();
-    [HookMethodAttribute("IOnServerShutdown")]
-private void IOnServerShutdown();
+    
+/// <summary>
+/// Hooks - OnServerShutdown()
+/// </summary>
+
+	[HookMethod("IOnServerShutdown")]
+	private void IOnServerShutdown()
+	{
+		Interface.Oxide.CallHook("OnServerShutdown");
+		Interface.Oxide.OnShutdown();
+		Covalence.PlayerManager.SavePlayerData();
+	}
+
     private void ParseCommand(string argstr, String& command, String[]& args);
     public static BasePlayer FindPlayer(string nameOrIdOrIp);
     public static BasePlayer FindPlayerByName(string name);
     public static BasePlayer FindPlayerById(ulong id);
     public static BasePlayer FindPlayerByIdString(string id);
-    [HookMethodAttribute("IOnBaseCombatEntityHurt")]
-private object IOnBaseCombatEntityHurt(BaseCombatEntity entity, HitInfo hitInfo);
-    [HookMethodAttribute("IOnNpcTarget")]
-private object IOnNpcTarget(BaseNpc npc, BaseEntity target);
+    
+/// <summary>
+/// Hooks - OnEntityTakeDamage(BaseCombatEntity,HitInfo)
+/// </summary>
+
+	[HookMethod("IOnBaseCombatEntityHurt")]
+	private object IOnBaseCombatEntityHurt(BaseCombatEntity entity, HitInfo hitInfo)
+	{
+		if (!(entity is BasePlayer))
+		{
+			return Interface.CallHook("OnEntityTakeDamage", entity, hitInfo);
+		}
+		return null;
+	}
+
+    
+/// <summary>
+/// Hooks - OnNpcTarget(BaseNpc,BaseEntity)
+/// </summary>
+
+	[HookMethod("IOnNpcTarget")]
+	private object IOnNpcTarget(BaseNpc npc, BaseEntity target)
+	{
+		if (Interface.CallHook("OnNpcTarget", npc, target) != null)
+		{
+			npc.SetFact(BaseNpc.Facts.HasEnemy, 0);
+			npc.SetFact(BaseNpc.Facts.EnemyRange, 3);
+			npc.SetFact(BaseNpc.Facts.AfraidRange, 1);
+			npc.playerTargetDecisionStartTime = 0f;
+			return 0f;
+		}
+		return null;
+	}
+
     [HookMethodAttribute("IOnEntitySaved")]
 private void IOnEntitySaved(BaseNetworkable baseNetworkable, SaveInfo saveInfo);
-    [HookMethodAttribute("IOnLoseCondition")]
-private object IOnLoseCondition(Item item, float amount);
-    [HookMethodAttribute("ICanPickupEntity")]
-private object ICanPickupEntity(BasePlayer basePlayer, DoorCloser entity);
-    [HookMethodAttribute("IOnBasePlayerAttacked")]
-private object IOnBasePlayerAttacked(BasePlayer basePlayer, HitInfo hitInfo);
+    
+/// <summary>
+/// Hooks - OnLoseCondition(object[])
+/// </summary>
+
+	[HookMethod("IOnLoseCondition")]
+	private object IOnLoseCondition(Item item, float amount)
+	{
+		object[] array = new object[2] { item, amount };
+		Interface.CallHook("OnLoseCondition", array);
+		amount = (float)array[1];
+		float condition = item.condition;
+		item.condition -= amount;
+		if (item.condition <= 0f && item.condition < condition)
+		{
+			item.OnBroken();
+		}
+		return true;
+	}
+
+    
+/// <summary>
+/// Hooks - CanPickupEntity(BasePlayer,DoorCloser)
+/// </summary>
+
+	[HookMethod("ICanPickupEntity")]
+	private object ICanPickupEntity(BasePlayer basePlayer, DoorCloser entity)
+	{
+		object obj = Interface.CallHook("CanPickupEntity", basePlayer, entity);
+		if (!(obj is bool) || (bool)obj)
+		{
+			return null;
+		}
+		return true;
+	}
+
+    
+/// <summary>
+/// Hooks - OnEntityTakeDamage(BasePlayer,HitInfo)
+/// </summary>
+
+	[HookMethod("IOnBasePlayerAttacked")]
+	private object IOnBasePlayerAttacked(BasePlayer basePlayer, HitInfo hitInfo)
+	{
+		if (!serverInitialized || basePlayer == null || hitInfo == null || basePlayer.IsDead() || isPlayerTakingDamage || basePlayer is NPCPlayer)
+		{
+			return null;
+		}
+		if (Interface.CallHook("OnEntityTakeDamage", basePlayer, hitInfo) != null)
+		{
+			return true;
+		}
+		isPlayerTakingDamage = true;
+		try
+		{
+			basePlayer.OnAttacked(hitInfo);
+		}
+		finally
+		{
+			isPlayerTakingDamage = false;
+		}
+		return true;
+	}
+
     [HookMethodAttribute("IOnBasePlayerHurt")]
 private object IOnBasePlayerHurt(BasePlayer basePlayer, HitInfo hitInfo);
     [HookMethodAttribute("OnServerUserSet")]
 private void OnServerUserSet(ulong steamId, UserGroup group, string playerName, string reason, long expiry);
-    [HookMethodAttribute("OnServerUserRemove")]
-private void OnServerUserRemove(ulong steamId);
-    [HookMethodAttribute("IOnUserApprove")]
-private object IOnUserApprove(Connection connection);
-    [HookMethodAttribute("IOnPlayerBanned")]
-private void IOnPlayerBanned(Connection connection, AuthResponse status);
+    
+/// <summary>
+/// Hooks - OnUserUnbanned(string,string,string),OnPlayerUnbanned(string,ulong,string)
+/// </summary>
+
+	[HookMethod("OnServerUserRemove")]
+	private void OnServerUserRemove(ulong steamId)
+	{
+		if (serverInitialized && ServerUsers.users.ContainsKey(steamId) && ServerUsers.users[steamId].group == ServerUsers.UserGroup.Banned)
+		{
+			string text = steamId.ToString();
+			IPlayer player = Covalence.PlayerManager.FindPlayerById(text);
+			Interface.CallHook("OnPlayerUnbanned", player?.Name ?? "Unnamed", steamId, player?.Address ?? "0");
+			Interface.CallHook("OnUserUnbanned", player?.Name ?? "Unnamed", text, player?.Address ?? "0");
+		}
+	}
+
+    
+/// <summary>
+/// Hooks - CanUserLogin(string,string,string),CanClientLogin(Network.Connection),OnUserApproved(string,string,string),OnUserApprove(Network.Connection)
+/// </summary>
+
+	[HookMethod("IOnUserApprove")]
+	private object IOnUserApprove(Connection connection)
+	{
+		string username = connection.username;
+		string text = connection.userid.ToString();
+		string obj = Regex.Replace(connection.ipaddress, ipPattern, "");
+		uint authLevel = connection.authLevel;
+		if (permission.IsLoaded)
+		{
+			permission.UpdateNickname(text, username);
+			OxideConfig.DefaultGroups defaultGroups = Interface.Oxide.Config.Options.DefaultGroups;
+			if (!permission.UserHasGroup(text, defaultGroups.Players))
+			{
+				permission.AddUserGroup(text, defaultGroups.Players);
+			}
+			if (authLevel >= 2 && !permission.UserHasGroup(text, defaultGroups.Administrators))
+			{
+				permission.AddUserGroup(text, defaultGroups.Administrators);
+			}
+		}
+		Covalence.PlayerManager.PlayerJoin(connection.userid, username);
+		object obj2 = Interface.CallHook("CanClientLogin", connection);
+		object obj3 = Interface.CallHook("CanUserLogin", username, text, obj);
+		object obj4 = ((obj2 == null) ? obj3 : obj2);
+		if (obj4 is string || (obj4 is bool && !(bool)obj4))
+		{
+			ConnectionAuth.Reject(connection, (obj4 is string) ? obj4.ToString() : lang.GetMessage("ConnectionRejected", this, text));
+			return true;
+		}
+		object obj5 = Interface.CallHook("OnUserApprove", connection);
+		object result = Interface.CallHook("OnUserApproved", username, text, obj);
+		if (obj5 != null)
+		{
+			return obj5;
+		}
+		return result;
+	}
+
+    
+/// <summary>
+/// Hooks - OnPlayerBanned(Network.Connection,string)
+/// </summary>
+
+	[HookMethod("IOnPlayerBanned")]
+	private void IOnPlayerBanned(Connection connection, AuthResponse status)
+	{
+		Interface.CallHook("OnPlayerBanned", connection, status.ToString());
+	}
+
     [HookMethodAttribute("IOnPlayerChat")]
 private object IOnPlayerChat(ulong playerId, string playerName, string message, ChatChannel channel, BasePlayer basePlayer);
-    private void TryRunPlayerCommand(BasePlayer basePlayer, string message, string commandPrefix);
+    
+/// <summary>
+/// Hooks - OnUserCommand(Oxide.Core.Libraries.Covalence.IPlayer,string,string[]),OnApplicationCommand(BasePlayer,string,string[]),OnApplicationCommand(Oxide.Core.Libraries.Covalence.IPlayer,string,string[]),OnPlayerCommand(BasePlayer,string,string[])
+/// </summary>
+
+	private void TryRunPlayerCommand(BasePlayer basePlayer, string message, string commandPrefix)
+	{
+		if (basePlayer == null)
+		{
+			return;
+		}
+		string text = message.Replace("\n", "").Replace("\r", "").Trim();
+		if (string.IsNullOrEmpty(text))
+		{
+			return;
+		}
+		ParseCommand(text.Substring(commandPrefix.Length), out var command, out var args);
+		if (command == null)
+		{
+			return;
+		}
+		if (!basePlayer.IsConnected)
+		{
+			Interface.CallHook("OnApplicationCommand", basePlayer, command, args);
+			Interface.CallHook("OnApplicationCommand", basePlayer.IPlayer, command, args);
+			return;
+		}
+		object obj = Interface.CallHook("OnPlayerCommand", basePlayer, command, args);
+		object obj2 = Interface.CallHook("OnUserCommand", basePlayer.IPlayer, command, args);
+		if (((obj == null) ? obj2 : obj) != null)
+		{
+			return;
+		}
+		try
+		{
+			if (!Covalence.CommandSystem.HandleChatMessage(basePlayer.IPlayer, text) && !cmdlib.HandleChatCommand(basePlayer, command, args) && Interface.Oxide.Config.Options.Modded)
+			{
+				basePlayer.IPlayer.Reply(string.Format(lang.GetMessage("UnknownCommand", this, basePlayer.IPlayer.Id), command));
+			}
+		}
+		catch (Exception ex)
+		{
+			Exception ex2 = ex;
+			string text2 = string.Empty;
+			string empty = string.Empty;
+			StringBuilder stringBuilder = new StringBuilder();
+			while (ex2 != null)
+			{
+				string text3 = ex2.GetType().Name;
+				text2 = (text3 + ": " + ex2.Message).TrimEnd(' ', ':');
+				stringBuilder.AppendLine(ex2.StackTrace);
+				if (ex2.InnerException != null)
+				{
+					stringBuilder.AppendLine("Rethrow as " + text3);
+				}
+				ex2 = ex2.InnerException;
+			}
+			StackTrace stackTrace = new StackTrace(ex, 0, fNeedFileInfo: true);
+			for (int i = 0; i < stackTrace.FrameCount; i++)
+			{
+				MethodBase method = stackTrace.GetFrame(i).GetMethod();
+				if ((object)method != null && (object)method.DeclaringType != null && method.DeclaringType.Namespace == "Oxide.Plugins")
+				{
+					empty = method.DeclaringType.Name;
+				}
+			}
+			Interface.Oxide.LogError(string.Format("Failed to run command '/{0}' on plugin '{1}'. ({2}){3}{4}", command, empty, text2.Replace(Environment.NewLine, " "), Environment.NewLine, stackTrace));
+		}
+	}
+
     [HookMethodAttribute("OnClientAuth")]
 private void OnClientAuth(Connection connection);
-    [HookMethodAttribute("IOnPlayerConnected")]
-private void IOnPlayerConnected(BasePlayer basePlayer);
-    [HookMethodAttribute("OnPlayerDisconnected")]
-private void OnPlayerDisconnected(BasePlayer basePlayer, string reason);
-    [HookMethodAttribute("OnPlayerSetInfo")]
-private void OnPlayerSetInfo(Connection connection, string key, string val);
-    [HookMethodAttribute("OnPlayerKicked")]
-private void OnPlayerKicked(BasePlayer basePlayer, string reason);
-    [HookMethodAttribute("OnPlayerRespawn")]
-private object OnPlayerRespawn(BasePlayer basePlayer);
-    [HookMethodAttribute("OnPlayerRespawned")]
-private void OnPlayerRespawned(BasePlayer basePlayer);
-    [HookMethodAttribute("IOnRconMessage")]
-private object IOnRconMessage(IPAddress ipAddress, string command);
+    
+/// <summary>
+/// Hooks - OnUserConnected(Oxide.Core.Libraries.Covalence.IPlayer),OnPlayerConnected(BasePlayer)
+/// </summary>
+
+	[HookMethod("IOnPlayerConnected")]
+	private void IOnPlayerConnected(BasePlayer basePlayer)
+	{
+		lang.SetLanguage(basePlayer.net.connection.info.GetString("global.language", "en"), basePlayer.UserIDString);
+		basePlayer.SendEntitySnapshot(CommunityEntity.ServerInstance);
+		Covalence.PlayerManager.PlayerConnected(basePlayer);
+		IPlayer player = Covalence.PlayerManager.FindPlayerById(basePlayer.UserIDString);
+		if (player != null)
+		{
+			basePlayer.IPlayer = player;
+			Interface.CallHook("OnUserConnected", player);
+		}
+		Interface.Oxide.CallHook("OnPlayerConnected", basePlayer);
+	}
+
+    
+/// <summary>
+/// Hooks - OnUserDisconnected(Oxide.Core.Libraries.Covalence.IPlayer,string)
+/// </summary>
+
+	[HookMethod("OnPlayerDisconnected")]
+	private void OnPlayerDisconnected(BasePlayer basePlayer, string reason)
+	{
+		IPlayer iPlayer = basePlayer.IPlayer;
+		if (iPlayer != null)
+		{
+			Interface.CallHook("OnUserDisconnected", iPlayer, reason);
+		}
+		Covalence.PlayerManager.PlayerDisconnected(basePlayer);
+	}
+
+    
+/// <summary>
+/// Hooks - OnPlayerLanguageChanged(Oxide.Core.Libraries.Covalence.IPlayer,string),OnPlayerLanguageChanged(BasePlayer,string)
+/// </summary>
+
+	[HookMethod("OnPlayerSetInfo")]
+	private void OnPlayerSetInfo(Connection connection, string key, string val)
+	{
+		if (!(key == "global.language"))
+		{
+			return;
+		}
+		lang.SetLanguage(val, connection.userid.ToString());
+		BasePlayer basePlayer = connection.player as BasePlayer;
+		if (basePlayer != null)
+		{
+			Interface.CallHook("OnPlayerLanguageChanged", basePlayer, val);
+			if (basePlayer.IPlayer != null)
+			{
+				Interface.CallHook("OnPlayerLanguageChanged", basePlayer.IPlayer, val);
+			}
+		}
+	}
+
+    
+/// <summary>
+/// Hooks - OnUserKicked(Oxide.Core.Libraries.Covalence.IPlayer,string)
+/// </summary>
+
+	[HookMethod("OnPlayerKicked")]
+	private void OnPlayerKicked(BasePlayer basePlayer, string reason)
+	{
+		if (basePlayer.IPlayer != null)
+		{
+			Interface.CallHook("OnUserKicked", basePlayer.IPlayer, reason);
+		}
+	}
+
+    
+/// <summary>
+/// Hooks - OnUserRespawn(Oxide.Core.Libraries.Covalence.IPlayer)
+/// </summary>
+
+	[HookMethod("OnPlayerRespawn")]
+	private object OnPlayerRespawn(BasePlayer basePlayer)
+	{
+		IPlayer iPlayer = basePlayer.IPlayer;
+		if (iPlayer == null)
+		{
+			return null;
+		}
+		return Interface.CallHook("OnUserRespawn", iPlayer);
+	}
+
+    
+/// <summary>
+/// Hooks - OnUserRespawned(Oxide.Core.Libraries.Covalence.IPlayer)
+/// </summary>
+
+	[HookMethod("OnPlayerRespawned")]
+	private void OnPlayerRespawned(BasePlayer basePlayer)
+	{
+		IPlayer iPlayer = basePlayer.IPlayer;
+		if (iPlayer != null)
+		{
+			Interface.CallHook("OnUserRespawned", iPlayer);
+		}
+	}
+
+    
+/// <summary>
+/// Hooks - OnRconCommand(System.Net.IPAddress,string,string[]),OnRconMessage(System.Net.IPAddress,Oxide.Core.RemoteConsole.RemoteMessage)
+/// </summary>
+
+	[HookMethod("IOnRconMessage")]
+	private object IOnRconMessage(IPAddress ipAddress, string command)
+	{
+		if (ipAddress != null && !string.IsNullOrEmpty(command))
+		{
+			RemoteMessage message = RemoteMessage.GetMessage(command);
+			if (string.IsNullOrEmpty(message?.Message))
+			{
+				return null;
+			}
+			if (Interface.CallHook("OnRconMessage", ipAddress, message) != null)
+			{
+				return true;
+			}
+			string[] array = Oxide.Core.CommandLine.Split(message.Message);
+			if (array.Length >= 1)
+			{
+				string obj = array[0].ToLower();
+				string[] obj2 = array.Skip(1).ToArray();
+				if (Interface.CallHook("OnRconCommand", ipAddress, obj, obj2) != null)
+				{
+					return true;
+				}
+			}
+		}
+		return null;
+	}
+
     [HookMethodAttribute("IOnRconInitialize")]
 private object IOnRconInitialize();
     [HookMethodAttribute("IOnRunCommandLine")]
@@ -1326,8 +1730,28 @@ private object IOnRunCommandLine();
 private object IOnServerCommand(Arg arg);
     [HookMethodAttribute("OnServerInformationUpdated")]
 private void OnServerInformationUpdated();
-    [HookMethodAttribute("IOnCupboardAuthorize")]
-private object IOnCupboardAuthorize(ulong userID, BasePlayer player, BuildingPrivlidge privlidge);
+    
+/// <summary>
+/// Hooks - OnCupboardAssign(BuildingPrivlidge,ulong,BasePlayer),OnCupboardAuthorize(BuildingPrivlidge,BasePlayer)
+/// </summary>
+
+	[HookMethod("IOnCupboardAuthorize")]
+	private object IOnCupboardAuthorize(ulong userID, BasePlayer player, BuildingPrivlidge privlidge)
+	{
+		if (userID == (ulong)player.userID)
+		{
+			if (Interface.CallHook("OnCupboardAuthorize", privlidge, player) != null)
+			{
+				return true;
+			}
+		}
+		else if (Interface.CallHook("OnCupboardAssign", privlidge, userID, player) != null)
+		{
+			return true;
+		}
+		return null;
+	}
+
 }
 public class Oxide.Game.Rust.RustExtension : Extension {
     private static string OxideRustReleaseListUrl;

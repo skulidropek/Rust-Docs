@@ -190,7 +190,32 @@ public class LocalClanDatabase : Database {
     public void Open(string rootFolder);
     private void CreateInvitesTable();
     public bool CreateInvite(long clanId, ulong steamId, ulong recruiterSteamId);
-    public bool AcceptInvite(long clanId, ulong steamId);
+    
+/// <summary>
+/// Hooks - OnClanMemberAdded(long,ulong)
+/// </summary>
+
+	public bool AcceptInvite(long clanId, ulong steamId)
+	{
+		BeginTransaction();
+		try
+		{
+			if (DeleteInvite(clanId, steamId) && CreateMember(clanId, steamId))
+			{
+				Commit();
+				Interface.CallHook("OnClanMemberAdded", clanId, steamId);
+				return true;
+			}
+			Rollback();
+			return false;
+		}
+		catch
+		{
+			Rollback();
+			throw;
+		}
+	}
+
     public List`1<ClanInvite> ListInvites(long clanId);
     public List`1<ClanInvitation> ListInvitationsForPlayer(ulong steamId);
     public bool DeleteInvite(long clanId, ulong steamId);

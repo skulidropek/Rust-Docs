@@ -18,7 +18,29 @@ private static Action`2<string, string> OnReplicatedVarChanged;
     public static Arg CurrentArgs;
     private static List`1<string> ignoredCommands;
     private static ConsoleSystem();
-    public static void UpdateValuesFromCommandLine();
+    
+/// <summary>
+/// Hooks - IOnRunCommandLine()
+/// </summary>
+
+	public static void UpdateValuesFromCommandLine()
+	{
+		if (Interface.CallHook("IOnRunCommandLine") != null)
+		{
+			return;
+		}
+		foreach (KeyValuePair<string, string> @switch in Facepunch.CommandLine.GetSwitches())
+		{
+			string text = @switch.Value;
+			if (text == "")
+			{
+				text = "1";
+			}
+			string strCommand = @switch.Key.Substring(1);
+			Run(Option.Unrestricted, strCommand, text);
+		}
+	}
+
     internal static bool SendToServer(string command);
     [CompilerGeneratedAttribute]
 public static void add_OnReplicatedVarChanged(Action`2<string, string> value);
@@ -26,7 +48,56 @@ public static void add_OnReplicatedVarChanged(Action`2<string, string> value);
 public static void remove_OnReplicatedVarChanged(Action`2<string, string> value);
     public static void RunFile(Option options, string strFile);
     public static string Run(Option options, string strCommand, Object[] args);
-    private static bool Internal(Arg arg);
+    
+/// <summary>
+/// Hooks - IOnServerCommand(ConsoleSystem.Arg)
+/// </summary>
+
+	private static bool Internal(Arg arg)
+	{
+		if (arg.Invalid)
+		{
+			return false;
+		}
+		object obj = Interface.CallHook("IOnServerCommand", arg);
+		if (obj is bool)
+		{
+			return (bool)obj;
+		}
+		if (!arg.HasPermission())
+		{
+			arg.ReplyWith("You cannot run this command");
+			return false;
+		}
+		try
+		{
+			using (TimeWarning.New("ConsoleSystem: " + arg.cmd.FullName))
+			{
+				arg.cmd.Call(arg);
+			}
+		}
+		catch (Exception ex)
+		{
+			arg.ReplyWith("Error: " + arg.cmd.FullName + " - " + ex.Message + " (" + ex.Source + ")");
+			Debug.LogException(ex);
+			return false;
+		}
+		if (arg.cmd.Variable && arg.cmd.GetOveride != null && string.IsNullOrWhiteSpace(arg.Reply))
+		{
+			string @string = arg.cmd.String;
+			string text = (arg.cmd.Variable ? arg.cmd.String : "");
+			if (text != @string)
+			{
+				arg.ReplyWith($"{arg.cmd.FullName}: changed from {Facepunch.Extend.StringExtensions.QuoteSafe(text)} to {Facepunch.Extend.StringExtensions.QuoteSafe(@string)}");
+			}
+			else
+			{
+				arg.ReplyWith($"{arg.cmd.FullName}: {Facepunch.Extend.StringExtensions.QuoteSafe(@string)}");
+			}
+		}
+		return true;
+	}
+
     public static string BuildCommand(string strCommand, Object[] args);
     public static string SaveToConfigString(bool bServer);
 }
