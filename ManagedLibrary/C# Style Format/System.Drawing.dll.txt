@@ -722,8 +722,8 @@ internal class System.Drawing.CocoaContext : ValueType {
     public sealed virtual void Synchronize();
     public sealed virtual void Release();
 }
-[TypeConverterAttribute("System.Drawing.ColorConverter")]
 [EditorAttribute("System.Drawing.Design.ColorEditor, System.Drawing.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor")]
+[TypeConverterAttribute("System.Drawing.ColorConverter")]
 public class System.Drawing.Color : ValueType {
     private long value;
     internal short state;
@@ -2063,8 +2063,8 @@ internal class System.Drawing.ExternDll : object {
     public static string Shell32;
     public static string Oleaut32;
 }
-[EditorAttribute("System.Drawing.Design.FontEditor, System.Drawing.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor")]
 [ComVisibleAttribute("True")]
+[EditorAttribute("System.Drawing.Design.FontEditor, System.Drawing.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor")]
 [TypeConverterAttribute("System.Drawing.FontConverter")]
 public class System.Drawing.Font : MarshalByRefObject {
     private IntPtr fontObject;
@@ -2101,9 +2101,9 @@ public int Height { get; }
 public bool IsSystemFont { get; }
     [DesignerSerializationVisibilityAttribute("0")]
 public bool Italic { get; }
-    [TypeConverterAttribute("System.Drawing.FontConverter/FontNameConverter")]
+    [DesignerSerializationVisibilityAttribute("0")]
 [EditorAttribute("System.Drawing.Design.FontNameEditor, System.Drawing.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor")]
-[DesignerSerializationVisibilityAttribute("0")]
+[TypeConverterAttribute("System.Drawing.FontConverter/FontNameConverter")]
 public string Name { get; }
     public float Size { get; }
     [BrowsableAttribute("False")]
@@ -3214,8 +3214,8 @@ public static IntPtr GetHalftonePalette();
     [EditorBrowsableAttribute("2")]
 public void ReleaseHdc(IntPtr hdc);
     public sealed virtual void ReleaseHdc();
-    [MonoLimitationAttribute("Can only be used when hdc was provided by Graphics.GetHdc() method")]
-[EditorBrowsableAttribute("1")]
+    [EditorBrowsableAttribute("1")]
+[MonoLimitationAttribute("Can only be used when hdc was provided by Graphics.GetHdc() method")]
 public void ReleaseHdcInternal(IntPtr hdc);
     public void ResetClip();
     public void ResetTransform();
@@ -3284,8 +3284,8 @@ public enum System.Drawing.GraphicsUnit : Enum {
     public static GraphicsUnit Document;
     public static GraphicsUnit Millimeter;
 }
-[TypeConverterAttribute("System.Drawing.IconConverter")]
 [EditorAttribute("System.Drawing.Design.IconEditor, System.Drawing.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor")]
+[TypeConverterAttribute("System.Drawing.IconConverter")]
 public class System.Drawing.Icon : MarshalByRefObject {
     private Size iconSize;
     private IntPtr handle;
@@ -3363,10 +3363,10 @@ internal interface System.Drawing.IMacContext {
     public abstract virtual void Synchronize();
     public abstract virtual void Release();
 }
-[ImmutableObjectAttribute("True")]
-[TypeConverterAttribute("System.Drawing.ImageConverter")]
 [ComVisibleAttribute("True")]
 [EditorAttribute("System.Drawing.Design.ImageEditor, System.Drawing.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor")]
+[ImmutableObjectAttribute("True")]
+[TypeConverterAttribute("System.Drawing.ImageConverter")]
 public abstract class System.Drawing.Image : MarshalByRefObject {
     private object tag;
     internal IntPtr nativeObject;
@@ -3376,8 +3376,8 @@ public int Flags { get; }
     [BrowsableAttribute("False")]
 public Guid[] FrameDimensionsList { get; }
     [BrowsableAttribute("False")]
-[DesignerSerializationVisibilityAttribute("0")]
 [DefaultValueAttribute("False")]
+[DesignerSerializationVisibilityAttribute("0")]
 public int Height { get; }
     public float HorizontalResolution { get; }
     [BrowsableAttribute("False")]
@@ -3390,15 +3390,15 @@ public Int32[] PropertyIdList { get; }
 public PropertyItem[] PropertyItems { get; }
     public ImageFormat RawFormat { get; }
     public Size Size { get; }
-    [DefaultValueAttribute("")]
+    [BindableAttribute("True")]
+[DefaultValueAttribute("")]
 [LocalizableAttribute("False")]
-[BindableAttribute("True")]
 [TypeConverterAttribute("System.ComponentModel.StringConverter")]
 public object Tag { get; public set; }
     public float VerticalResolution { get; }
     [BrowsableAttribute("False")]
-[DesignerSerializationVisibilityAttribute("0")]
 [DefaultValueAttribute("False")]
+[DesignerSerializationVisibilityAttribute("0")]
 public int Width { get; }
     internal IntPtr NativeObject { get; internal set; }
     internal IntPtr nativeImage { get; }
@@ -4314,8 +4314,8 @@ public enum System.Drawing.Imaging.ImageLockMode : Enum {
     public static ImageLockMode ReadWrite;
     public static ImageLockMode UserInputBuffer;
 }
-[MonoTODOAttribute("Metafiles, both WMF and EMF formats, are only partially supported.")]
 [EditorAttribute("System.Drawing.Design.MetafileEditor, System.Drawing.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor")]
+[MonoTODOAttribute("Metafiles, both WMF and EMF formats, are only partially supported.")]
 public class System.Drawing.Imaging.Metafile : Image {
     internal Metafile(IntPtr ptr);
     internal Metafile(IntPtr ptr, Stream stream);
@@ -5898,20 +5898,20 @@ private PrintEventHandler EndPrint;
 private PrintPageEventHandler PrintPage;
     [CompilerGeneratedAttribute]
 private QueryPageSettingsEventHandler QueryPageSettings;
-    [SRDescriptionAttribute("The settings for the current page.")]
-[BrowsableAttribute("False")]
+    [BrowsableAttribute("False")]
 [DesignerSerializationVisibilityAttribute("0")]
+[SRDescriptionAttribute("The settings for the current page.")]
 public PageSettings DefaultPageSettings { get; public set; }
-    [SRDescriptionAttribute("The name of the document.")]
-[DefaultValueAttribute("document")]
+    [DefaultValueAttribute("document")]
+[SRDescriptionAttribute("The name of the document.")]
 public string DocumentName { get; public set; }
-    [SRDescriptionAttribute("The print controller object.")]
-[BrowsableAttribute("False")]
+    [BrowsableAttribute("False")]
 [DesignerSerializationVisibilityAttribute("0")]
+[SRDescriptionAttribute("The print controller object.")]
 public PrintController PrintController { get; public set; }
     [BrowsableAttribute("False")]
-[SRDescriptionAttribute("The current settings for the active printer.")]
 [DesignerSerializationVisibilityAttribute("0")]
+[SRDescriptionAttribute("The current settings for the active printer.")]
 public PrinterSettings PrinterSettings { get; public set; }
     [DefaultValueAttribute("False")]
 [SRDescriptionAttribute("Determines if the origin is set at the specified margins.")]
@@ -6319,8 +6319,8 @@ internal class System.Drawing.Rect : ValueType {
     public CGSize size;
     public Rect(float x, float y, float width, float height);
 }
-[TypeConverterAttribute("System.Drawing.RectangleConverter")]
 [ComVisibleAttribute("True")]
+[TypeConverterAttribute("System.Drawing.RectangleConverter")]
 public class System.Drawing.Rectangle : ValueType {
     private int x;
     private int y;

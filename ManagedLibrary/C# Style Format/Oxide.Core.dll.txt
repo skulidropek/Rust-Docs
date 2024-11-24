@@ -1980,7 +1980,40 @@ public class Oxide.Core.RemoteConsole.RemoteConsole : object {
     public void SendMessage(RemoteMessage message);
     public void SendMessage(string message, int identifier);
     public void SendMessage(WebSocketContext connection, string message, int identifier);
-    private void OnMessage(MessageEventArgs e, WebSocketContext connection);
+    
+/// <summary>
+/// Hooks - OnRconCommand(System.Net.IPEndPoint,string,string[])
+/// </summary>
+
+	private void OnMessage(MessageEventArgs e, WebSocketContext connection)
+	{
+		if (covalence == null)
+		{
+			Interface.Oxide.LogError("[Rcon] Failed to process command, Covalence is null");
+			return;
+		}
+		RemoteMessage message = RemoteMessage.GetMessage(e.Data);
+		if (message == null)
+		{
+			Interface.Oxide.LogError("[Rcon] Failed to process command, RemoteMessage is null");
+			return;
+		}
+		if (string.IsNullOrEmpty(message.Message))
+		{
+			Interface.Oxide.LogError("[Rcon] Failed to process command, RemoteMessage.Text is not set");
+			return;
+		}
+		string[] array = CommandLine.Split(message.Message);
+		string text = array[0].ToLower();
+		string[] array2 = array.Skip(1).ToArray();
+		if (Interface.CallHook("OnRconCommand", connection.UserEndPoint, text, array2) == null)
+		{
+			IServer obj = covalence.Server;
+			object[] args = array2;
+			obj.Command(text, args);
+		}
+	}
+
     [CompilerGeneratedAttribute]
 private RconListener <Initalize>b__4_0();
 }

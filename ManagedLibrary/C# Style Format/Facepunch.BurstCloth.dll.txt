@@ -35,14 +35,14 @@ public int TickRate;
 public int MaxTicksPerFrame;
     [RangeAttribute("1", "16")]
 public int ConstraintIterationCount;
-    [SerializeField]
-[HideInInspector]
+    [HideInInspector]
+[SerializeField]
 internal List`1<Chain> _chains;
-    [SerializeField]
-[HideInInspector]
+    [HideInInspector]
+[SerializeField]
 internal List`1<BoneData> _boneDataOriginal;
-    [SerializeField]
-[HideInInspector]
+    [HideInInspector]
+[SerializeField]
 internal List`1<RotationConstraint> _rotationConstraintsDataOriginal;
     private Vector3 _origin;
     private Quaternion _rotation;
@@ -63,12 +63,12 @@ internal List`1<RotationConstraint> _rotationConstraintsDataOriginal;
     private NativeArray`1<BoneData> _boneData;
     private NativeArray`1<BoneState> _boneState;
     private NativeArray`1<RotationConstraint> _rotationConstraints;
-    [SerializeField]
-[HideInInspector]
+    [HideInInspector]
+[SerializeField]
 private List`1<string> _skinConstraintTargetsIds;
     private Transform[] _skinConstraintTargetCache;
-    [SerializeField]
-[HideInInspector]
+    [HideInInspector]
+[SerializeField]
 internal List`1<SkinConstraint> _skinConstraintsOriginal;
     private NativeArray`1<SkinConstraint> _skinConstraints;
     private bool _skinAccessArrayDirty;
@@ -135,44 +135,44 @@ public class Facepunch.BurstCloth.BurstClothMaterial : ScriptableObject {
     [HeaderAttribute("Relaxation
  [0,1]	Under-tuned - generally gives best results
 [1, 1.5]	Over-tuned - can work well with low iteration counts")]
-[SerializeField]
 [RangeAttribute("0,25", "1,5")]
+[SerializeField]
 [TooltipAttribute("Relaxation factor on alignment with parent")]
 private float lengthRelaxation;
-    [SerializeField]
-[RangeAttribute("0", "15")]
+    [RangeAttribute("0", "15")]
+[SerializeField]
 [TooltipAttribute("Speed at which a bone returns to its original orientation")]
 private float shapeRelaxation;
-    [SerializeField]
-[RangeAttribute("0", "1,5")]
+    [RangeAttribute("0", "1,5")]
+[SerializeField]
 [TooltipAttribute("Relaxation factor on alignment with siblings (very low values work best)")]
 private float siblingRelaxation;
-    [SerializeField]
-[RangeAttribute("0", "0,99")]
+    [RangeAttribute("0", "0,99")]
+[SerializeField]
 [TooltipAttribute("Controls how quickly movements come to rest.")]
 private float _damping;
-    [SpaceAttribute]
+    [BurstClothCurveRectAttribute("0", "0", "1", "1")]
 [HeaderAttribute("Depth Weighting Curves")]
 [SerializeField]
-[BurstClothCurveRectAttribute("0", "0", "1", "1")]
+[SpaceAttribute]
 [TooltipAttribute("Multiplier for tweaking damping according to depth in the chain.")]
 private AnimationCurve _dampingCurve;
-    [FormerlySerializedAsAttribute("_lengthWeightCurve")]
+    [BurstClothCurveRectAttribute("0", "0", "1", "1")]
+[FormerlySerializedAsAttribute("_lengthWeightCurve")]
 [SerializeField]
-[BurstClothCurveRectAttribute("0", "0", "1", "1")]
 [TooltipAttribute("Multiplier for tweaking length weight according to depth in the chain.")]
 private AnimationCurve _lengthRelaxationCurve;
-    [SerializeField]
-[BurstClothCurveRectAttribute("0", "0", "1", "1")]
+    [BurstClothCurveRectAttribute("0", "0", "1", "1")]
+[SerializeField]
 [TooltipAttribute("Multiplier for tweaking shape weight according to depth in the chain.")]
 private AnimationCurve _shapeRelaxationCurve;
-    [SerializeField]
-[BurstClothCurveRectAttribute("0", "0", "1", "1")]
+    [BurstClothCurveRectAttribute("0", "0", "1", "1")]
+[SerializeField]
 [TooltipAttribute("Multiplier for tweaking sibling constraint weight according to depth in the chain.")]
 private AnimationCurve _siblingConstraintWeightCurve;
-    [SpaceAttribute]
-[HeaderAttribute("Debug - can hurt editor performance")]
+    [HeaderAttribute("Debug - can hurt editor performance")]
 [SerializeField]
+[SpaceAttribute]
 private bool _forceSyncInEditor;
     private static BurstClothMaterial _defaultMaterial;
     public bool ForceSyncInEditor { get; }
@@ -215,21 +215,21 @@ internal class Facepunch.BurstCloth.Jobs.BoneState : ValueType {
     public float3 Delta;
 }
 internal class Facepunch.BurstCloth.Jobs.InitializeBoneStateJob : ValueType {
-    [ReadOnlyAttribute]
-[NativeMatchesParallelForLengthAttribute]
+    [NativeMatchesParallelForLengthAttribute]
+[ReadOnlyAttribute]
 public NativeArray`1<BoneData> Data;
-    [WriteOnlyAttribute]
-[NativeMatchesParallelForLengthAttribute]
+    [NativeMatchesParallelForLengthAttribute]
+[WriteOnlyAttribute]
 public NativeArray`1<BoneState> State;
     public sealed virtual void Execute(int index, TransformAccess transform);
 }
 [BurstCompileAttribute]
 internal class Facepunch.BurstCloth.Jobs.InitializeSphereColliderStateJob : ValueType {
-    [ReadOnlyAttribute]
-[NativeMatchesParallelForLengthAttribute]
+    [NativeMatchesParallelForLengthAttribute]
+[ReadOnlyAttribute]
 public NativeArray`1<SphereColliderData> Data;
-    [WriteOnlyAttribute]
-[NativeMatchesParallelForLengthAttribute]
+    [NativeMatchesParallelForLengthAttribute]
+[WriteOnlyAttribute]
 public NativeArray`1<SphereColliderState> State;
     public sealed virtual void Execute(int index, TransformAccess transform);
 }
@@ -306,11 +306,11 @@ public NativeArray`1<SkinConstraint> SkinConstraints;
     public sealed virtual void Execute(int index, TransformAccess transform);
 }
 internal class Facepunch.BurstCloth.Jobs.UpdateTransformsJob : ValueType {
-    [ReadOnlyAttribute]
-[NativeMatchesParallelForLengthAttribute]
+    [NativeMatchesParallelForLengthAttribute]
+[ReadOnlyAttribute]
 public NativeArray`1<BoneData> Data;
-    [ReadOnlyAttribute]
-[NativeMatchesParallelForLengthAttribute]
+    [NativeMatchesParallelForLengthAttribute]
+[ReadOnlyAttribute]
 public NativeArray`1<BoneState> State;
     public sealed virtual void Execute(int index, TransformAccess transform);
 }
