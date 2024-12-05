@@ -5,11 +5,11 @@ internal static class Internal.Cryptography.OidLookup : object {
     private static Dictionary`2<string, string> s_oidToFriendlyName;
     private static Dictionary`2<string, string> s_compatOids;
     private static OidLookup();
+    public static string ToFriendlyName(string oid, OidGroup oidGroup, bool fallBackToAllGroups);
+    public static string ToOid(string friendlyName, OidGroup oidGroup, bool fallBackToAllGroups);
     private static bool ShouldUseCache(OidGroup oidGroup);
     private static string NativeOidToFriendlyName(string oid, OidGroup oidGroup, bool fallBackToAllGroups);
     private static string NativeFriendlyNameToOid(string friendlyName, OidGroup oidGroup, bool fallBackToAllGroups);
-    public static string ToFriendlyName(string oid, OidGroup oidGroup, bool fallBackToAllGroups);
-    public static string ToOid(string friendlyName, OidGroup oidGroup, bool fallBackToAllGroups);
 }
 internal static class Internal.Cryptography.Oids : object {
     public static string CommonName;
@@ -92,6 +92,20 @@ internal enum Internal.Cryptography.Pal.GeneralNameType : Enum {
     public static GeneralNameType RegisteredId;
 }
 internal static class Interop : object {
+    private static void ThrowExceptionForIoErrno(ErrorInfo errorInfo, string path, bool isDirectory, Func`2<ErrorInfo, ErrorInfo> errorRewriter);
+    internal static void CheckIo(Error error, string path, bool isDirectory, Func`2<ErrorInfo, ErrorInfo> errorRewriter);
+    internal static long CheckIo(long result, string path, bool isDirectory, Func`2<ErrorInfo, ErrorInfo> errorRewriter);
+    internal static int CheckIo(int result, string path, bool isDirectory, Func`2<ErrorInfo, ErrorInfo> errorRewriter);
+    internal static IntPtr CheckIo(IntPtr result, string path, bool isDirectory, Func`2<ErrorInfo, ErrorInfo> errorRewriter);
+    internal static TSafeHandle CheckIo(TSafeHandle handle, string path, bool isDirectory, Func`2<ErrorInfo, ErrorInfo> errorRewriter);
+    internal static Exception GetExceptionForIoErrno(ErrorInfo errorInfo, string path, bool isDirectory);
+    internal static Exception GetIOException(ErrorInfo errorInfo);
+    internal static void mono_pal_init();
+}
+[ExtensionAttribute]
+internal static class InteropErrorExtensions : object {
+    [ExtensionAttribute]
+public static ErrorInfo Info(Error error);
 }
 internal class Microsoft.CSharp.CSharpCodeGenerator : object {
     private static Char[] s_periodArray;
@@ -622,6 +636,40 @@ public enum Microsoft.Win32.PowerModes : Enum {
     public static PowerModes Resume;
     public static PowerModes StatusChange;
     public static PowerModes Suspend;
+}
+internal class Microsoft.Win32.SafeHandles.SafeDirectoryHandle : SafeHandle {
+    public bool IsInvalid { get; }
+    protected virtual bool ReleaseHandle();
+    public virtual bool get_IsInvalid();
+}
+internal class Microsoft.Win32.SafeHandles.SafeFileHandle : SafeHandle {
+    private static IntPtr s_invalidHandle;
+    public bool IsInvalid { get; }
+    private SafeFileHandle(bool ownsHandle);
+    public SafeFileHandle(IntPtr preexistingHandle, bool ownsHandle);
+    private static SafeFileHandle();
+    internal static SafeFileHandle Open(string path, OpenFlags flags, int mode);
+    internal static SafeFileHandle Open(Func`1<SafeFileHandle> fdFunc);
+    protected virtual bool ReleaseHandle();
+    public virtual bool get_IsInvalid();
+}
+internal class Microsoft.Win32.SafeHandles.SafeGssContextHandle : SafeHandle {
+    public bool IsInvalid { get; }
+    public virtual bool get_IsInvalid();
+    protected virtual bool ReleaseHandle();
+}
+internal class Microsoft.Win32.SafeHandles.SafeGssCredHandle : SafeHandle {
+    public bool IsInvalid { get; }
+    public static SafeGssCredHandle Create(string username, string password, bool isNtlmOnly);
+    public virtual bool get_IsInvalid();
+    protected virtual bool ReleaseHandle();
+}
+internal class Microsoft.Win32.SafeHandles.SafeGssNameHandle : SafeHandle {
+    public bool IsInvalid { get; }
+    public static SafeGssNameHandle CreateUser(string name);
+    public static SafeGssNameHandle CreatePrincipal(string name);
+    public virtual bool get_IsInvalid();
+    protected virtual bool ReleaseHandle();
 }
 [SuppressUnmanagedCodeSecurityAttribute]
 public class Microsoft.Win32.SafeHandles.SafeProcessHandle : SafeHandleZeroOrMinusOneIsInvalid {
@@ -3508,8 +3556,8 @@ internal class Mono.Unity.X509ChainImplUnityTls : X509ChainImpl {
     protected virtual void Dispose(bool disposing);
 }
 [AttributeUsageAttribute("64")]
-[ConditionalAttribute("FULL_AOT_RUNTIME")]
 [ConditionalAttribute("UNITY")]
+[ConditionalAttribute("FULL_AOT_RUNTIME")]
 [ConditionalAttribute("MONOTOUCH")]
 internal class Mono.Util.MonoPInvokeCallbackAttribute : Attribute {
     public MonoPInvokeCallbackAttribute(Type t);
@@ -5961,19 +6009,6 @@ public class System.Collections.Concurrent.ConcurrentBag`1 : object {
     private object get_GlobalQueuesLock();
     private void FreezeBag(Boolean& lockTaken);
     private void UnfreezeBag(bool lockTaken);
-}
-internal class System.Collections.Generic.BidirectionalDictionary`2 : object {
-    private Dictionary`2<T1, T2> _forward;
-    private Dictionary`2<T2, T1> _backward;
-    public int Count { get; }
-    public BidirectionalDictionary`2(int capacity);
-    public int get_Count();
-    public void Add(T1 item1, T2 item2);
-    public bool TryGetForward(T1 item1, T2& item2);
-    public bool TryGetBackward(T2 item2, T1& item1);
-    public Enumerator<T1, T2> GetEnumerator();
-    private sealed virtual override IEnumerator`1<KeyValuePair`2<T1, T2>> System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<T1,T2>>.GetEnumerator();
-    private sealed virtual override IEnumerator System.Collections.IEnumerable.GetEnumerator();
 }
 internal class System.Collections.Generic.BitHelper : object {
     private static byte MarkedBitFlag;
@@ -9203,8 +9238,8 @@ public interface System.ComponentModel.IComNativeDescriptorHandler {
     public abstract virtual object GetPropertyValue(object component, int dispid, Boolean& success);
 }
 [ComVisibleAttribute("True")]
-[DesignerAttribute("System.Windows.Forms.Design.ComponentDocumentDesigner, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.ComponentModel.Design.IRootDesigner")]
 [DesignerAttribute("System.ComponentModel.Design.ComponentDesigner, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.ComponentModel.Design.IDesigner")]
+[DesignerAttribute("System.Windows.Forms.Design.ComponentDocumentDesigner, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.ComponentModel.Design.IRootDesigner")]
 [RootDesignerSerializerAttribute("System.ComponentModel.Design.Serialization.RootCodeDomSerializer, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.ComponentModel.Design.Serialization.CodeDomSerializer, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "True")]
 [TypeConverterAttribute("System.ComponentModel.ComponentConverter")]
 public interface System.ComponentModel.IComponent {
@@ -10449,31 +10484,31 @@ internal class System.ComponentModel.ReflectTypeDescriptionProvider : TypeDescri
     private static Hashtable IntrinsicTypeConverters { get; }
     private static ReflectTypeDescriptionProvider();
     internal static Guid get_ExtenderProviderKey();
-    [PreserveDependencyAttribute(".ctor()", "System.ComponentModel.BooleanConverter")]
+    [PreserveDependencyAttribute(".ctor()", "System.ComponentModel.UInt16Converter")]
+[PreserveDependencyAttribute(".ctor()", "System.ComponentModel.CultureInfoConverter")]
+[PreserveDependencyAttribute(".ctor()", "System.ComponentModel.BooleanConverter")]
 [PreserveDependencyAttribute(".ctor()", "System.ComponentModel.ByteConverter")]
+[PreserveDependencyAttribute(".ctor()", "System.ComponentModel.SByteConverter")]
+[PreserveDependencyAttribute(".ctor()", "System.ComponentModel.CharConverter")]
+[PreserveDependencyAttribute(".ctor()", "System.ComponentModel.StringConverter")]
+[PreserveDependencyAttribute(".ctor()", "System.ComponentModel.Int32Converter")]
+[PreserveDependencyAttribute(".ctor()", "System.ComponentModel.Int16Converter")]
+[PreserveDependencyAttribute(".ctor()", "System.ComponentModel.Int64Converter")]
+[PreserveDependencyAttribute(".ctor()", "System.ComponentModel.TypeConverter")]
+[PreserveDependencyAttribute(".ctor()", "System.ComponentModel.SingleConverter")]
 [PreserveDependencyAttribute(".ctor()", "System.ComponentModel.UInt16Converter")]
 [PreserveDependencyAttribute(".ctor()", "System.ComponentModel.UInt32Converter")]
-[PreserveDependencyAttribute(".ctor()", "System.ComponentModel.TypeConverter")]
-[PreserveDependencyAttribute(".ctor()", "System.ComponentModel.CultureInfoConverter")]
-[PreserveDependencyAttribute(".ctor()", "System.ComponentModel.DateTimeConverter")]
+[PreserveDependencyAttribute(".ctor()", "System.ComponentModel.DoubleConverter")]
 [PreserveDependencyAttribute(".ctor()", "System.ComponentModel.DateTimeOffsetConverter")]
 [PreserveDependencyAttribute(".ctor()", "System.ComponentModel.DecimalConverter")]
-[PreserveDependencyAttribute(".ctor()", "System.ComponentModel.TimeSpanConverter")]
-[PreserveDependencyAttribute(".ctor()", "System.ComponentModel.GuidConverter")]
-[PreserveDependencyAttribute(".ctor()", "System.ComponentModel.ArrayConverter")]
-[PreserveDependencyAttribute(".ctor()", "System.ComponentModel.CollectionConverter")]
-[PreserveDependencyAttribute(".ctor(System.Type)", "System.ComponentModel.EnumConverter")]
-[PreserveDependencyAttribute(".ctor(System.Type)", "System.ComponentModel.ReferenceConverter")]
 [PreserveDependencyAttribute(".ctor(System.Type)", "System.ComponentModel.NullableConverter")]
-[PreserveDependencyAttribute(".ctor()", "System.ComponentModel.UInt16Converter")]
-[PreserveDependencyAttribute(".ctor()", "System.ComponentModel.Int64Converter")]
-[PreserveDependencyAttribute(".ctor()", "System.ComponentModel.Int16Converter")]
-[PreserveDependencyAttribute(".ctor()", "System.ComponentModel.Int32Converter")]
-[PreserveDependencyAttribute(".ctor()", "System.ComponentModel.StringConverter")]
-[PreserveDependencyAttribute(".ctor()", "System.ComponentModel.DoubleConverter")]
-[PreserveDependencyAttribute(".ctor()", "System.ComponentModel.CharConverter")]
-[PreserveDependencyAttribute(".ctor()", "System.ComponentModel.SByteConverter")]
-[PreserveDependencyAttribute(".ctor()", "System.ComponentModel.SingleConverter")]
+[PreserveDependencyAttribute(".ctor(System.Type)", "System.ComponentModel.ReferenceConverter")]
+[PreserveDependencyAttribute(".ctor(System.Type)", "System.ComponentModel.EnumConverter")]
+[PreserveDependencyAttribute(".ctor()", "System.ComponentModel.DateTimeConverter")]
+[PreserveDependencyAttribute(".ctor()", "System.ComponentModel.ArrayConverter")]
+[PreserveDependencyAttribute(".ctor()", "System.ComponentModel.GuidConverter")]
+[PreserveDependencyAttribute(".ctor()", "System.ComponentModel.TimeSpanConverter")]
+[PreserveDependencyAttribute(".ctor()", "System.ComponentModel.CollectionConverter")]
 private static Hashtable get_IntrinsicTypeConverters();
     internal static void AddEditorTable(Type editorBaseType, Hashtable table);
     public virtual object CreateInstance(IServiceProvider provider, Type objectType, Type[] argTypes, Object[] args);
@@ -15109,8 +15144,9 @@ internal class System.IO.Compression.ZLibNative : object {
     public static int GZip_DefaultWindowBits;
 }
 public class System.IO.CoreFX.FileSystemWatcher : Component {
-    private int _currentSession;
-    private SafeFileHandle _directoryHandle;
+    private static string MaxUserInstancesPath;
+    private static string MaxUserWatchesPath;
+    private CancellationTokenSource _cancellation;
     private NormalizedFilterCollection _filters;
     private string _directory;
     private static NotifyFilters c_defaultNotifyFilters;
@@ -15144,10 +15180,8 @@ private ISynchronizeInvoke <SynchronizingObject>k__BackingField;
     private void StartRaisingEvents();
     private void StopRaisingEvents();
     private void FinalizeDispose();
-    private static bool IsHandleInvalid(SafeFileHandle handle);
-    private void Monitor(AsyncReadState state);
-    private void ReadDirectoryChangesCallback(UInt32 errorCode, UInt32 numBytes, NativeOverlapped* overlappedPointer);
-    private void ParseEventBufferAndNotifyForEach(Byte[] buffer);
+    private static string ReadMaxUserLimit(string path);
+    private static NotifyEvents TranslateFilters(NotifyFilters filters);
     public NotifyFilters get_NotifyFilter();
     public void set_NotifyFilter(NotifyFilters value);
     public Collection`1<string> get_Filters();
@@ -15677,28 +15711,12 @@ internal class System.IO.PathData : object {
 }
 internal static class System.IO.PathInternal : object {
     private static bool s_isCaseSensitive;
-    internal static string ExtendedDevicePathPrefix;
-    internal static string UncPathPrefix;
-    internal static string UncDevicePrefixToInsert;
-    internal static string UncExtendedPathPrefix;
-    internal static string DevicePathPrefix;
-    internal static int MaxShortPath;
-    internal static int DevicePrefixLength;
     internal static StringComparison StringComparison { get; }
     internal static bool IsCaseSensitive { get; }
     private static PathInternal();
     internal static StringComparison get_StringComparison();
     internal static bool get_IsCaseSensitive();
     private static bool GetIsCaseSensitive();
-    internal static bool IsValidDriveChar(char value);
-    private static bool EndsWithPeriodOrSpace(string path);
-    internal static string EnsureExtendedPrefixIfNeeded(string path);
-    internal static string EnsureExtendedPrefix(string path);
-    internal static bool IsDevice(string path);
-    internal static bool IsExtended(string path);
-    internal static int GetRootLength(ReadOnlySpan`1<char> path);
-    internal static bool IsPartiallyQualified(string path);
-    internal static bool IsDirectorySeparator(char c);
 }
 internal class System.IO.Ports.CommStat : ValueType {
     public UInt32 flags;
@@ -17808,18 +17826,15 @@ internal enum System.Net.ContextAttribute : Enum {
     public static ContextAttribute UiInfo;
 }
 internal class System.Net.ContextAwareResult : LazyAsyncResult {
-    private WindowsIdentity _windowsIdentity;
     private ExecutionContext modreq(System.Runtime.CompilerServices.IsVolatile) _context;
     private object _lock;
     private StateFlags _flags;
-    internal WindowsIdentity Identity { get; }
     internal ExecutionContext ContextCopy { get; }
     internal EndPoint RemoteEndPoint { get; }
     internal ContextAwareResult(object myObject, object myState, AsyncCallback myCallBack);
     internal ContextAwareResult(bool captureIdentity, bool forceCaptureContext, object myObject, object myState, AsyncCallback myCallBack);
     internal ContextAwareResult(bool captureIdentity, bool forceCaptureContext, bool threadSafeContextCopy, object myObject, object myState, AsyncCallback myCallBack);
     private void SafeCaptureIdentity();
-    internal WindowsIdentity get_Identity();
     private void CleanupInternal();
     internal ExecutionContext get_ContextCopy();
     internal object StartPostingAsyncOp();
@@ -17835,8 +17850,8 @@ internal class System.Net.ContextAwareResult : LazyAsyncResult {
 internal static class System.Net.ContextFlagsAdapterPal : object {
     private static ContextFlagMapping[] s_contextFlagMapping;
     private static ContextFlagsAdapterPal();
-    internal static ContextFlagsPal GetContextFlagsPalFromInterop(ContextFlags win32Flags);
-    internal static ContextFlags GetInteropFromContextFlagsPal(ContextFlagsPal flags);
+    internal static ContextFlagsPal GetContextFlagsPalFromInterop(GssFlags gssFlags, bool isServer);
+    internal static GssFlags GetInteropFromContextFlagsPal(ContextFlagsPal flags, bool isServer);
 }
 [FlagsAttribute]
 internal enum System.Net.ContextFlagsPal : Enum {
@@ -19136,16 +19151,16 @@ public static void PrintHex(string msg, object value);
 public static void Enter(string func);
     [ConditionalAttribute("TRAVE")]
 public static void Enter(string func, string parms);
-    [ConditionalAttribute("DEBUG")]
-[ConditionalAttribute("_FORCE_ASSERTS")]
+    [ConditionalAttribute("_FORCE_ASSERTS")]
+[ConditionalAttribute("DEBUG")]
 [ReliabilityContractAttribute("1", "0")]
 public static void Assert(bool condition, string messageFormat, Object[] data);
-    [ConditionalAttribute("DEBUG")]
-[ConditionalAttribute("_FORCE_ASSERTS")]
+    [ConditionalAttribute("_FORCE_ASSERTS")]
+[ConditionalAttribute("DEBUG")]
 [ReliabilityContractAttribute("1", "0")]
 public static void Assert(string message);
-    [ConditionalAttribute("DEBUG")]
-[ConditionalAttribute("_FORCE_ASSERTS")]
+    [ConditionalAttribute("_FORCE_ASSERTS")]
+[ConditionalAttribute("DEBUG")]
 [ReliabilityContractAttribute("1", "0")]
 public static void Assert(string message, string detailMessage);
     [ConditionalAttribute("TRAVE")]
@@ -19175,11 +19190,6 @@ public class System.Net.GlobalProxySelection : object {
     public static IWebProxy get_Select();
     public static void set_Select(IWebProxy value);
     public static IWebProxy GetEmptyWebProxy();
-}
-internal static class System.Net.GlobalSSPI : object {
-    internal static SSPIInterface SSPIAuth;
-    internal static SSPIInterface SSPISecureChannel;
-    private static GlobalSSPI();
 }
 internal class System.Net.HeaderInfo : object {
     internal bool IsRequestRestricted;
@@ -21981,12 +21991,10 @@ internal static class System.Net.NclUtilities : object {
     private static object get_LocalAddressesLock();
 }
 internal class System.Net.NegotiationInfoClass : object {
-    internal string AuthenticationPackage;
     internal static string NTLM;
     internal static string Kerberos;
     internal static string Negotiate;
     internal static string Basic;
-    internal NegotiationInfoClass(SafeHandle safeHandle, int negotiationState);
 }
 internal class System.Net.NetConfig : object {
     internal bool ipv6Enabled;
@@ -22094,30 +22102,6 @@ private void WriteEvent(int eventId, string arg1, int arg2, string arg3);
 private void WriteEvent(int eventId, string arg1, string arg2, int arg3);
     [NonEventAttribute]
 private void WriteEvent(int eventId, string arg1, string arg2, string arg3, int arg4);
-    [EventAttribute("10")]
-public void AcquireDefaultCredential(string packageName, CredentialUse intent);
-    [NonEventAttribute]
-public void AcquireCredentialsHandle(string packageName, CredentialUse intent, object authdata);
-    [EventAttribute("11")]
-public void AcquireCredentialsHandle(string packageName, CredentialUse intent, string authdata);
-    [NonEventAttribute]
-public void InitializeSecurityContext(SafeFreeCredentials credential, SafeDeleteContext context, string targetName, ContextFlags inFlags);
-    [EventAttribute("12")]
-private void InitializeSecurityContext(string credential, string context, string targetName, ContextFlags inFlags);
-    [NonEventAttribute]
-public void AcceptSecurityContext(SafeFreeCredentials credential, SafeDeleteContext context, ContextFlags inFlags);
-    [EventAttribute("15")]
-private void AcceptSecurityContext(string credential, string context, ContextFlags inFlags);
-    [EventAttribute("16")]
-public void OperationReturnedSomething(string operation, SECURITY_STATUS errorCode);
-    [EventAttribute("13")]
-public void SecurityContextInputBuffer(string context, int inputBufferSize, int outputBufferSize, SECURITY_STATUS errorCode);
-    [EventAttribute("14")]
-public void SecurityContextInputBuffers(string context, int inputBuffersSize, int outputBufferSize, SECURITY_STATUS errorCode);
-    [EventAttribute("8")]
-public void EnumerateSecurityPackages(string securityPackage);
-    [EventAttribute("9")]
-public void SspiPackageNotFound(string packageName);
 }
 internal class System.Net.NetRes : object {
     public static string GetWebStatusString(string Res, WebExceptionStatus Status);
@@ -22159,10 +22143,192 @@ public class System.Net.NetworkCredential : object {
     public sealed virtual NetworkCredential GetCredential(Uri uri, string authType);
     public sealed virtual NetworkCredential GetCredential(string host, int port, string authenticationType);
 }
+internal enum System.Net.NetworkInformation.AixAddressFamily : Enum {
+    public int value__;
+    public static AixAddressFamily AF_INET;
+    public static AixAddressFamily AF_INET6;
+    public static AixAddressFamily AF_LINK;
+}
+internal enum System.Net.NetworkInformation.AixArpHardware : Enum {
+    public int value__;
+    public static AixArpHardware ETHER;
+    public static AixArpHardware ATM;
+    public static AixArpHardware SLIP;
+    public static AixArpHardware PPP;
+    public static AixArpHardware LOOPBACK;
+    public static AixArpHardware FDDI;
+}
+internal enum System.Net.NetworkInformation.AixInterfaceFlags : Enum {
+    public int value__;
+    public static AixInterfaceFlags IFF_UP;
+    public static AixInterfaceFlags IFF_BROADCAST;
+    public static AixInterfaceFlags IFF_DEBUG;
+    public static AixInterfaceFlags IFF_LOOPBACK;
+    public static AixInterfaceFlags IFF_POINTOPOINT;
+    public static AixInterfaceFlags IFF_NOTRAILERS;
+    public static AixInterfaceFlags IFF_RUNNING;
+    public static AixInterfaceFlags IFF_NOARP;
+    public static AixInterfaceFlags IFF_PROMISC;
+    public static AixInterfaceFlags IFF_ALLMULTI;
+    public static AixInterfaceFlags IFF_OACTIVE;
+    public static AixInterfaceFlags IFF_SIMPLEX;
+    public static AixInterfaceFlags IFF_LINK0;
+    public static AixInterfaceFlags IFF_LINK1;
+    public static AixInterfaceFlags IFF_LINK2;
+    public static AixInterfaceFlags IFF_MULTICAST;
+}
+internal enum System.Net.NetworkInformation.AixIoctlRequest : Enum {
+    public UInt32 value__;
+    public static AixIoctlRequest SIOCGSIZIFCONF;
+    public static AixIoctlRequest SIOCGIFCONF;
+    public static AixIoctlRequest SIOCGIFFLAGS;
+    public static AixIoctlRequest SIOCGIFNETMASK;
+    public static AixIoctlRequest SIOCGIFMTU;
+}
+internal class System.Net.NetworkInformation.AixIPInterfaceProperties : UnixIPInterfaceProperties {
+    private int _mtu;
+    public GatewayIPAddressInformationCollection GatewayAddresses { get; }
+    public AixIPInterfaceProperties(AixNetworkInterface iface, List`1<IPAddress> addresses);
+    public AixIPInterfaceProperties(AixNetworkInterface iface, List`1<IPAddress> addresses, int mtu);
+    public virtual IPv4InterfaceProperties GetIPv4Properties();
+    private static bool ParseRouteInfo_icall(string iface, String[]& gw_addr_list);
+    public virtual GatewayIPAddressInformationCollection get_GatewayAddresses();
+}
+internal class System.Net.NetworkInformation.AixIPv4InterfaceProperties : UnixIPv4InterfaceProperties {
+    private int _mtu;
+    public bool IsForwardingEnabled { get; }
+    public int Mtu { get; }
+    public AixIPv4InterfaceProperties(AixNetworkInterface iface, int mtu);
+    public virtual bool get_IsForwardingEnabled();
+    public virtual int get_Mtu();
+}
+internal class System.Net.NetworkInformation.AixIPv4InterfaceStatistics : IPv4InterfaceStatistics {
+    public long BytesReceived { get; }
+    public long BytesSent { get; }
+    public long IncomingPacketsDiscarded { get; }
+    public long IncomingPacketsWithErrors { get; }
+    public long IncomingUnknownProtocolPackets { get; }
+    public long NonUnicastPacketsReceived { get; }
+    public long NonUnicastPacketsSent { get; }
+    public long OutgoingPacketsDiscarded { get; }
+    public long OutgoingPacketsWithErrors { get; }
+    public long OutputQueueLength { get; }
+    public long UnicastPacketsReceived { get; }
+    public long UnicastPacketsSent { get; }
+    public AixIPv4InterfaceStatistics(AixNetworkInterface parent);
+    public virtual long get_BytesReceived();
+    public virtual long get_BytesSent();
+    public virtual long get_IncomingPacketsDiscarded();
+    public virtual long get_IncomingPacketsWithErrors();
+    public virtual long get_IncomingUnknownProtocolPackets();
+    public virtual long get_NonUnicastPacketsReceived();
+    public virtual long get_NonUnicastPacketsSent();
+    public virtual long get_OutgoingPacketsDiscarded();
+    public virtual long get_OutgoingPacketsWithErrors();
+    public virtual long get_OutputQueueLength();
+    public virtual long get_UnicastPacketsReceived();
+    public virtual long get_UnicastPacketsSent();
+}
+internal class System.Net.NetworkInformation.AixNetworkInterface : UnixNetworkInterface {
+    private UInt32 _ifa_flags;
+    private int _ifru_mtu;
+    public OperationalStatus OperationalStatus { get; }
+    public bool SupportsMulticast { get; }
+    internal AixNetworkInterface(string name, UInt32 ifa_flags, int ifru_mtu);
+    public virtual IPInterfaceProperties GetIPProperties();
+    public virtual IPv4InterfaceStatistics GetIPv4Statistics();
+    public virtual OperationalStatus get_OperationalStatus();
+    public virtual bool get_SupportsMulticast();
+}
+internal class System.Net.NetworkInformation.AixNetworkInterfaceAPI : UnixNetworkInterfaceAPI {
+    private static int SOCK_DGRAM;
+    public static int socket(AixAddressFamily family, int type, int protocol);
+    public static int close(int fd);
+    public static int ioctl(int fd, AixIoctlRequest request, IntPtr arg);
+    public static int ioctl(int fd, AixIoctlRequest request, Int32& arg);
+    public static int ioctl(int fd, AixIoctlRequest request, ifconf& arg);
+    public static int ioctl(int fd, AixIoctlRequest request, ifreq_flags& arg);
+    public static int ioctl(int fd, AixIoctlRequest request, ifreq_mtu& arg);
+    public static int ioctl(int fd, AixIoctlRequest request, ifreq_addrin& arg);
+    private static void ByteArrayCopy(Byte* dst, Byte* src, int elements);
+    public virtual NetworkInterface[] GetAllNetworkInterfaces();
+    public virtual int GetLoopbackInterfaceIndex();
+    public virtual IPAddress GetNetMask(IPAddress address);
+}
+internal class System.Net.NetworkInformation.AixStructs.ifconf : ValueType {
+    public int ifc_len;
+    public IntPtr ifc_buf;
+}
+internal class System.Net.NetworkInformation.AixStructs.ifreq : ValueType {
+    [FixedBufferAttribute("System.Byte", "16")]
+public <ifr_name>e__FixedBuffer ifr_name;
+    public sockaddr ifru_addr;
+}
+internal class System.Net.NetworkInformation.AixStructs.ifreq_addrin : ValueType {
+    [FixedBufferAttribute("System.Byte", "16")]
+public <ifr_name>e__FixedBuffer ifr_name;
+    public sockaddr_in ifru_addr;
+}
+internal class System.Net.NetworkInformation.AixStructs.ifreq_flags : ValueType {
+    [FixedBufferAttribute("System.Byte", "16")]
+public <ifr_name>e__FixedBuffer ifr_name;
+    public UInt32 ifru_flags;
+}
+internal class System.Net.NetworkInformation.AixStructs.ifreq_mtu : ValueType {
+    [FixedBufferAttribute("System.Byte", "16")]
+public <ifr_name>e__FixedBuffer ifr_name;
+    public int ifru_mtu;
+}
+internal class System.Net.NetworkInformation.AixStructs.in6_addr : ValueType {
+    public Byte[] u6_addr8;
+}
+internal class System.Net.NetworkInformation.AixStructs.sockaddr : ValueType {
+    public byte sa_len;
+    public byte sa_family;
+}
+internal class System.Net.NetworkInformation.AixStructs.sockaddr_dl : ValueType {
+    public byte sdl_len;
+    public byte sdl_family;
+    public ushort sdl_index;
+    public byte sdl_type;
+    public byte sdl_nlen;
+    public byte sdl_alen;
+    public byte sdl_slen;
+    public Byte[] sdl_data;
+    internal void Read(IntPtr ptr);
+}
+internal class System.Net.NetworkInformation.AixStructs.sockaddr_in : ValueType {
+    public byte sin_len;
+    public byte sin_family;
+    public ushort sin_port;
+    public UInt32 sin_addr;
+}
+internal class System.Net.NetworkInformation.AixStructs.sockaddr_in6 : ValueType {
+    public byte sin6_len;
+    public byte sin6_family;
+    public ushort sin6_port;
+    public UInt32 sin6_flowinfo;
+    public in6_addr sin6_addr;
+    public UInt32 sin6_scope_id;
+}
 internal class System.Net.NetworkInformation.AlignmentUnion : ValueType {
     public ulong Alignment;
     public int Length;
     public int IfIndex;
+}
+internal abstract class System.Net.NetworkInformation.CommonUnixIPGlobalProperties : IPGlobalProperties {
+    public string DhcpScopeName { get; }
+    public string DomainName { get; }
+    public string HostName { get; }
+    public bool IsWinsProxy { get; }
+    public NetBiosNodeType NodeType { get; }
+    private static int gethostname(Byte[] name, int len);
+    private static int getdomainname(Byte[] name, int len);
+    public virtual string get_DhcpScopeName();
+    public virtual string get_DomainName();
+    public virtual string get_HostName();
+    public virtual bool get_IsWinsProxy();
+    public virtual NetBiosNodeType get_NodeType();
 }
 public enum System.Net.NetworkInformation.DuplicateAddressDetectionState : Enum {
     public int value__;
@@ -22171,6 +22337,8 @@ public enum System.Net.NetworkInformation.DuplicateAddressDetectionState : Enum 
     public static DuplicateAddressDetectionState Duplicate;
     public static DuplicateAddressDetectionState Deprecated;
     public static DuplicateAddressDetectionState Preferred;
+}
+internal class System.Net.NetworkInformation.FreeBSDNetworkInterfaceAPI : MacOsNetworkInterfaceAPI {
 }
 public abstract class System.Net.NetworkInformation.GatewayIPAddressInformation : object {
     public IPAddress Address { get; }
@@ -22363,6 +22531,22 @@ public abstract class System.Net.NetworkInformation.IcmpV6Statistics : object {
     public abstract virtual long get_RouterSolicitsSent();
     public abstract virtual long get_TimeExceededMessagesReceived();
     public abstract virtual long get_TimeExceededMessagesSent();
+}
+internal class System.Net.NetworkInformation.ifa_ifu : ValueType {
+    public IntPtr ifu_broadaddr;
+    public IntPtr ifu_dstaddr;
+}
+internal class System.Net.NetworkInformation.ifaddrs : ValueType {
+    public IntPtr ifa_next;
+    public string ifa_name;
+    public UInt32 ifa_flags;
+    public IntPtr ifa_addr;
+    public IntPtr ifa_netmask;
+    public ifa_ifu ifa_ifu;
+    public IntPtr ifa_data;
+}
+internal class System.Net.NetworkInformation.in6_addr : ValueType {
+    public Byte[] u6_addr8;
 }
 internal interface System.Net.NetworkInformation.INetworkChange {
     public bool HasRegisteredEvents { get; }
@@ -22624,6 +22808,69 @@ public abstract class System.Net.NetworkInformation.IPv6InterfaceProperties : ob
     public abstract virtual int get_Mtu();
     public virtual long GetScopeId(ScopeLevel scopeLevel);
 }
+internal enum System.Net.NetworkInformation.LinuxArpHardware : Enum {
+    public int value__;
+    public static LinuxArpHardware ETHER;
+    public static LinuxArpHardware EETHER;
+    public static LinuxArpHardware PRONET;
+    public static LinuxArpHardware ATM;
+    public static LinuxArpHardware SLIP;
+    public static LinuxArpHardware CSLIP;
+    public static LinuxArpHardware SLIP6;
+    public static LinuxArpHardware CSLIP6;
+    public static LinuxArpHardware PPP;
+    public static LinuxArpHardware LOOPBACK;
+    public static LinuxArpHardware FDDI;
+    public static LinuxArpHardware TUNNEL;
+    public static LinuxArpHardware TUNNEL6;
+    public static LinuxArpHardware SIT;
+    public static LinuxArpHardware IPDDP;
+    public static LinuxArpHardware IPGRE;
+    public static LinuxArpHardware IP6GRE;
+}
+internal class System.Net.NetworkInformation.LinuxIPInterfaceProperties : UnixIPInterfaceProperties {
+    public GatewayIPAddressInformationCollection GatewayAddresses { get; }
+    public LinuxIPInterfaceProperties(LinuxNetworkInterface iface, List`1<IPAddress> addresses);
+    public virtual IPv4InterfaceProperties GetIPv4Properties();
+    private IPAddressCollection ParseRouteInfo(string iface);
+    public virtual GatewayIPAddressInformationCollection get_GatewayAddresses();
+}
+internal class System.Net.NetworkInformation.LinuxIPv4InterfaceProperties : UnixIPv4InterfaceProperties {
+    public bool IsForwardingEnabled { get; }
+    public int Mtu { get; }
+    public LinuxIPv4InterfaceProperties(LinuxNetworkInterface iface);
+    public virtual bool get_IsForwardingEnabled();
+    public virtual int get_Mtu();
+}
+internal class System.Net.NetworkInformation.LinuxIPv4InterfaceStatistics : IPv4InterfaceStatistics {
+    private LinuxNetworkInterface linux;
+    public long BytesReceived { get; }
+    public long BytesSent { get; }
+    public long IncomingPacketsDiscarded { get; }
+    public long IncomingPacketsWithErrors { get; }
+    public long IncomingUnknownProtocolPackets { get; }
+    public long NonUnicastPacketsReceived { get; }
+    public long NonUnicastPacketsSent { get; }
+    public long OutgoingPacketsDiscarded { get; }
+    public long OutgoingPacketsWithErrors { get; }
+    public long OutputQueueLength { get; }
+    public long UnicastPacketsReceived { get; }
+    public long UnicastPacketsSent { get; }
+    public LinuxIPv4InterfaceStatistics(LinuxNetworkInterface parent);
+    private long Read(string file);
+    public virtual long get_BytesReceived();
+    public virtual long get_BytesSent();
+    public virtual long get_IncomingPacketsDiscarded();
+    public virtual long get_IncomingPacketsWithErrors();
+    public virtual long get_IncomingUnknownProtocolPackets();
+    public virtual long get_NonUnicastPacketsReceived();
+    public virtual long get_NonUnicastPacketsSent();
+    public virtual long get_OutgoingPacketsDiscarded();
+    public virtual long get_OutgoingPacketsWithErrors();
+    public virtual long get_OutputQueueLength();
+    public virtual long get_UnicastPacketsReceived();
+    public virtual long get_UnicastPacketsSent();
+}
 internal class System.Net.NetworkInformation.LinuxNetworkChange : object {
     private object _lock;
     private Socket nl_sock;
@@ -22654,6 +22901,60 @@ internal class System.Net.NetworkInformation.LinuxNetworkChange : object {
     private static IntPtr CreateNLSocket();
     private static EventType ReadEvents(IntPtr sock, IntPtr buffer, int count, int size);
     private static IntPtr CloseNLSocket(IntPtr sock);
+}
+internal class System.Net.NetworkInformation.LinuxNetworkInterface : UnixNetworkInterface {
+    private string iface_path;
+    private string iface_operstate_path;
+    private string iface_flags_path;
+    internal string IfacePath { get; }
+    public OperationalStatus OperationalStatus { get; }
+    public bool SupportsMulticast { get; }
+    internal LinuxNetworkInterface(string name);
+    private static bool unitydroid_get_network_interface_up_state(string ifname, Boolean& is_up);
+    internal string get_IfacePath();
+    public virtual IPInterfaceProperties GetIPProperties();
+    public virtual IPv4InterfaceStatistics GetIPv4Statistics();
+    public virtual OperationalStatus get_OperationalStatus();
+    public virtual bool get_SupportsMulticast();
+    internal static string ReadLine(string path);
+}
+internal class System.Net.NetworkInformation.LinuxNetworkInterfaceAPI : UnixNetworkInterfaceAPI {
+    private static int AF_INET;
+    private static int AF_INET6;
+    private static int AF_PACKET;
+    private static void FreeInterfaceAddresses(IntPtr ifap);
+    private static int GetInterfaceAddresses(IntPtr& ifap);
+    public virtual NetworkInterface[] GetAllNetworkInterfaces();
+    public virtual int GetLoopbackInterfaceIndex();
+    public virtual IPAddress GetNetMask(IPAddress address);
+    [IteratorStateMachineAttribute("System.Net.NetworkInformation.LinuxNetworkInterfaceAPI/<GetNetworkInterfaces>d__8")]
+private static IEnumerable`1<ifaddrs> GetNetworkInterfaces();
+}
+internal class System.Net.NetworkInformation.LinuxUnicastIPAddressInformation : UnicastIPAddressInformation {
+    private IPAddress address;
+    private IPAddress ipv4Mask;
+    public IPAddress Address { get; }
+    public bool IsDnsEligible { get; }
+    [MonoTODOAttribute("Always returns false")]
+public bool IsTransient { get; }
+    public long AddressPreferredLifetime { get; }
+    public long AddressValidLifetime { get; }
+    public long DhcpLeaseLifetime { get; }
+    public DuplicateAddressDetectionState DuplicateAddressDetectionState { get; }
+    public IPAddress IPv4Mask { get; }
+    public PrefixOrigin PrefixOrigin { get; }
+    public SuffixOrigin SuffixOrigin { get; }
+    public LinuxUnicastIPAddressInformation(IPAddress address);
+    public virtual IPAddress get_Address();
+    public virtual bool get_IsDnsEligible();
+    public virtual bool get_IsTransient();
+    public virtual long get_AddressPreferredLifetime();
+    public virtual long get_AddressValidLifetime();
+    public virtual long get_DhcpLeaseLifetime();
+    public virtual DuplicateAddressDetectionState get_DuplicateAddressDetectionState();
+    public virtual IPAddress get_IPv4Mask();
+    public virtual PrefixOrigin get_PrefixOrigin();
+    public virtual SuffixOrigin get_SuffixOrigin();
 }
 internal class System.Net.NetworkInformation.MacNetworkChange : object {
     private static string DL_LIB;
@@ -22698,6 +22999,389 @@ private void remove_networkAvailabilityChanged(NetworkAvailabilityChangedEventHa
     public sealed virtual void Dispose();
     [MonoPInvokeCallbackAttribute("System.Net.NetworkInformation.MacNetworkChange/SCNetworkReachabilityCallback")]
 private static void HandleCallback(IntPtr reachability, NetworkReachabilityFlags flags, IntPtr info);
+}
+internal enum System.Net.NetworkInformation.MacOsArpHardware : Enum {
+    public int value__;
+    public static MacOsArpHardware ETHER;
+    public static MacOsArpHardware ATM;
+    public static MacOsArpHardware SLIP;
+    public static MacOsArpHardware PPP;
+    public static MacOsArpHardware LOOPBACK;
+    public static MacOsArpHardware FDDI;
+}
+internal enum System.Net.NetworkInformation.MacOsInterfaceFlags : Enum {
+    public int value__;
+    public static MacOsInterfaceFlags IFF_UP;
+    public static MacOsInterfaceFlags IFF_BROADCAST;
+    public static MacOsInterfaceFlags IFF_DEBUG;
+    public static MacOsInterfaceFlags IFF_LOOPBACK;
+    public static MacOsInterfaceFlags IFF_POINTOPOINT;
+    public static MacOsInterfaceFlags IFF_NOTRAILERS;
+    public static MacOsInterfaceFlags IFF_RUNNING;
+    public static MacOsInterfaceFlags IFF_NOARP;
+    public static MacOsInterfaceFlags IFF_PROMISC;
+    public static MacOsInterfaceFlags IFF_ALLMULTI;
+    public static MacOsInterfaceFlags IFF_OACTIVE;
+    public static MacOsInterfaceFlags IFF_SIMPLEX;
+    public static MacOsInterfaceFlags IFF_LINK0;
+    public static MacOsInterfaceFlags IFF_LINK1;
+    public static MacOsInterfaceFlags IFF_LINK2;
+    public static MacOsInterfaceFlags IFF_MULTICAST;
+}
+internal class System.Net.NetworkInformation.MacOsIPInterfaceProperties : UnixIPInterfaceProperties {
+    public GatewayIPAddressInformationCollection GatewayAddresses { get; }
+    public MacOsIPInterfaceProperties(MacOsNetworkInterface iface, List`1<IPAddress> addresses);
+    public virtual IPv4InterfaceProperties GetIPv4Properties();
+    private static bool ParseRouteInfo_icall(string iface, String[]& gw_addr_list);
+    public virtual GatewayIPAddressInformationCollection get_GatewayAddresses();
+}
+internal class System.Net.NetworkInformation.MacOsIPv4InterfaceProperties : UnixIPv4InterfaceProperties {
+    public bool IsForwardingEnabled { get; }
+    public int Mtu { get; }
+    public MacOsIPv4InterfaceProperties(MacOsNetworkInterface iface);
+    public virtual bool get_IsForwardingEnabled();
+    public virtual int get_Mtu();
+}
+internal class System.Net.NetworkInformation.MacOsIPv4InterfaceStatistics : IPv4InterfaceStatistics {
+    public long BytesReceived { get; }
+    public long BytesSent { get; }
+    public long IncomingPacketsDiscarded { get; }
+    public long IncomingPacketsWithErrors { get; }
+    public long IncomingUnknownProtocolPackets { get; }
+    public long NonUnicastPacketsReceived { get; }
+    public long NonUnicastPacketsSent { get; }
+    public long OutgoingPacketsDiscarded { get; }
+    public long OutgoingPacketsWithErrors { get; }
+    public long OutputQueueLength { get; }
+    public long UnicastPacketsReceived { get; }
+    public long UnicastPacketsSent { get; }
+    public MacOsIPv4InterfaceStatistics(MacOsNetworkInterface parent);
+    public virtual long get_BytesReceived();
+    public virtual long get_BytesSent();
+    public virtual long get_IncomingPacketsDiscarded();
+    public virtual long get_IncomingPacketsWithErrors();
+    public virtual long get_IncomingUnknownProtocolPackets();
+    public virtual long get_NonUnicastPacketsReceived();
+    public virtual long get_NonUnicastPacketsSent();
+    public virtual long get_OutgoingPacketsDiscarded();
+    public virtual long get_OutgoingPacketsWithErrors();
+    public virtual long get_OutputQueueLength();
+    public virtual long get_UnicastPacketsReceived();
+    public virtual long get_UnicastPacketsSent();
+}
+internal class System.Net.NetworkInformation.MacOsNetworkInterface : UnixNetworkInterface {
+    private UInt32 _ifa_flags;
+    public OperationalStatus OperationalStatus { get; }
+    public bool SupportsMulticast { get; }
+    internal MacOsNetworkInterface(string name, UInt32 ifa_flags);
+    public virtual IPInterfaceProperties GetIPProperties();
+    public virtual IPv4InterfaceStatistics GetIPv4Statistics();
+    public virtual OperationalStatus get_OperationalStatus();
+    public virtual bool get_SupportsMulticast();
+}
+internal class System.Net.NetworkInformation.MacOsNetworkInterfaceAPI : UnixNetworkInterfaceAPI {
+    private static int AF_INET;
+    private static int AF_LINK;
+    protected int AF_INET6;
+    protected MacOsNetworkInterfaceAPI(int AF_INET6);
+    public virtual NetworkInterface[] GetAllNetworkInterfaces();
+    public virtual int GetLoopbackInterfaceIndex();
+    public virtual IPAddress GetNetMask(IPAddress address);
+}
+internal class System.Net.NetworkInformation.MacOsStructs.ifaddrs : ValueType {
+    public IntPtr ifa_next;
+    public string ifa_name;
+    public UInt32 ifa_flags;
+    public IntPtr ifa_addr;
+    public IntPtr ifa_netmask;
+    public IntPtr ifa_dstaddr;
+    public IntPtr ifa_data;
+}
+internal class System.Net.NetworkInformation.MacOsStructs.in6_addr : ValueType {
+    public Byte[] u6_addr8;
+}
+internal class System.Net.NetworkInformation.MacOsStructs.sockaddr : ValueType {
+    public byte sa_len;
+    public byte sa_family;
+}
+internal class System.Net.NetworkInformation.MacOsStructs.sockaddr_dl : ValueType {
+    public byte sdl_len;
+    public byte sdl_family;
+    public ushort sdl_index;
+    public byte sdl_type;
+    public byte sdl_nlen;
+    public byte sdl_alen;
+    public byte sdl_slen;
+    public Byte[] sdl_data;
+    internal void Read(IntPtr ptr);
+}
+internal class System.Net.NetworkInformation.MacOsStructs.sockaddr_in : ValueType {
+    public byte sin_len;
+    public byte sin_family;
+    public ushort sin_port;
+    public UInt32 sin_addr;
+}
+internal class System.Net.NetworkInformation.MacOsStructs.sockaddr_in6 : ValueType {
+    public byte sin6_len;
+    public byte sin6_family;
+    public ushort sin6_port;
+    public UInt32 sin6_flowinfo;
+    public in6_addr sin6_addr;
+    public UInt32 sin6_scope_id;
+}
+internal class System.Net.NetworkInformation.MibIcmpV4Statistics : IcmpV4Statistics {
+    private StringDictionary dic;
+    public long AddressMaskRepliesReceived { get; }
+    public long AddressMaskRepliesSent { get; }
+    public long AddressMaskRequestsReceived { get; }
+    public long AddressMaskRequestsSent { get; }
+    public long DestinationUnreachableMessagesReceived { get; }
+    public long DestinationUnreachableMessagesSent { get; }
+    public long EchoRepliesReceived { get; }
+    public long EchoRepliesSent { get; }
+    public long EchoRequestsReceived { get; }
+    public long EchoRequestsSent { get; }
+    public long ErrorsReceived { get; }
+    public long ErrorsSent { get; }
+    public long MessagesReceived { get; }
+    public long MessagesSent { get; }
+    public long ParameterProblemsReceived { get; }
+    public long ParameterProblemsSent { get; }
+    public long RedirectsReceived { get; }
+    public long RedirectsSent { get; }
+    public long SourceQuenchesReceived { get; }
+    public long SourceQuenchesSent { get; }
+    public long TimeExceededMessagesReceived { get; }
+    public long TimeExceededMessagesSent { get; }
+    public long TimestampRepliesReceived { get; }
+    public long TimestampRepliesSent { get; }
+    public long TimestampRequestsReceived { get; }
+    public long TimestampRequestsSent { get; }
+    public MibIcmpV4Statistics(StringDictionary dic);
+    private long Get(string name);
+    public virtual long get_AddressMaskRepliesReceived();
+    public virtual long get_AddressMaskRepliesSent();
+    public virtual long get_AddressMaskRequestsReceived();
+    public virtual long get_AddressMaskRequestsSent();
+    public virtual long get_DestinationUnreachableMessagesReceived();
+    public virtual long get_DestinationUnreachableMessagesSent();
+    public virtual long get_EchoRepliesReceived();
+    public virtual long get_EchoRepliesSent();
+    public virtual long get_EchoRequestsReceived();
+    public virtual long get_EchoRequestsSent();
+    public virtual long get_ErrorsReceived();
+    public virtual long get_ErrorsSent();
+    public virtual long get_MessagesReceived();
+    public virtual long get_MessagesSent();
+    public virtual long get_ParameterProblemsReceived();
+    public virtual long get_ParameterProblemsSent();
+    public virtual long get_RedirectsReceived();
+    public virtual long get_RedirectsSent();
+    public virtual long get_SourceQuenchesReceived();
+    public virtual long get_SourceQuenchesSent();
+    public virtual long get_TimeExceededMessagesReceived();
+    public virtual long get_TimeExceededMessagesSent();
+    public virtual long get_TimestampRepliesReceived();
+    public virtual long get_TimestampRepliesSent();
+    public virtual long get_TimestampRequestsReceived();
+    public virtual long get_TimestampRequestsSent();
+}
+internal class System.Net.NetworkInformation.MibIcmpV6Statistics : IcmpV6Statistics {
+    private StringDictionary dic;
+    public long DestinationUnreachableMessagesReceived { get; }
+    public long DestinationUnreachableMessagesSent { get; }
+    public long EchoRepliesReceived { get; }
+    public long EchoRepliesSent { get; }
+    public long EchoRequestsReceived { get; }
+    public long EchoRequestsSent { get; }
+    public long ErrorsReceived { get; }
+    public long ErrorsSent { get; }
+    public long MembershipQueriesReceived { get; }
+    public long MembershipQueriesSent { get; }
+    public long MembershipReductionsReceived { get; }
+    public long MembershipReductionsSent { get; }
+    public long MembershipReportsReceived { get; }
+    public long MembershipReportsSent { get; }
+    public long MessagesReceived { get; }
+    public long MessagesSent { get; }
+    public long NeighborAdvertisementsReceived { get; }
+    public long NeighborAdvertisementsSent { get; }
+    public long NeighborSolicitsReceived { get; }
+    public long NeighborSolicitsSent { get; }
+    public long PacketTooBigMessagesReceived { get; }
+    public long PacketTooBigMessagesSent { get; }
+    public long ParameterProblemsReceived { get; }
+    public long ParameterProblemsSent { get; }
+    public long RedirectsReceived { get; }
+    public long RedirectsSent { get; }
+    public long RouterAdvertisementsReceived { get; }
+    public long RouterAdvertisementsSent { get; }
+    public long RouterSolicitsReceived { get; }
+    public long RouterSolicitsSent { get; }
+    public long TimeExceededMessagesReceived { get; }
+    public long TimeExceededMessagesSent { get; }
+    public MibIcmpV6Statistics(StringDictionary dic);
+    private long Get(string name);
+    public virtual long get_DestinationUnreachableMessagesReceived();
+    public virtual long get_DestinationUnreachableMessagesSent();
+    public virtual long get_EchoRepliesReceived();
+    public virtual long get_EchoRepliesSent();
+    public virtual long get_EchoRequestsReceived();
+    public virtual long get_EchoRequestsSent();
+    public virtual long get_ErrorsReceived();
+    public virtual long get_ErrorsSent();
+    public virtual long get_MembershipQueriesReceived();
+    public virtual long get_MembershipQueriesSent();
+    public virtual long get_MembershipReductionsReceived();
+    public virtual long get_MembershipReductionsSent();
+    public virtual long get_MembershipReportsReceived();
+    public virtual long get_MembershipReportsSent();
+    public virtual long get_MessagesReceived();
+    public virtual long get_MessagesSent();
+    public virtual long get_NeighborAdvertisementsReceived();
+    public virtual long get_NeighborAdvertisementsSent();
+    public virtual long get_NeighborSolicitsReceived();
+    public virtual long get_NeighborSolicitsSent();
+    public virtual long get_PacketTooBigMessagesReceived();
+    public virtual long get_PacketTooBigMessagesSent();
+    public virtual long get_ParameterProblemsReceived();
+    public virtual long get_ParameterProblemsSent();
+    public virtual long get_RedirectsReceived();
+    public virtual long get_RedirectsSent();
+    public virtual long get_RouterAdvertisementsReceived();
+    public virtual long get_RouterAdvertisementsSent();
+    public virtual long get_RouterSolicitsReceived();
+    public virtual long get_RouterSolicitsSent();
+    public virtual long get_TimeExceededMessagesReceived();
+    public virtual long get_TimeExceededMessagesSent();
+}
+internal class System.Net.NetworkInformation.MibIPGlobalProperties : UnixIPGlobalProperties {
+    public static string ProcDir;
+    public static string CompatProcDir;
+    public string StatisticsFile;
+    public string StatisticsFileIPv6;
+    public string TcpFile;
+    public string Tcp6File;
+    public string UdpFile;
+    public string Udp6File;
+    private static Char[] wsChars;
+    public MibIPGlobalProperties(string procDir);
+    private static MibIPGlobalProperties();
+    private StringDictionary GetProperties4(string item);
+    private StringDictionary GetProperties6(string item);
+    private Exception CreateException(string file, string msg);
+    private IPEndPoint[] GetLocalAddresses(List`1<String[]> list);
+    private IPEndPoint ToEndpoint(string s);
+    private void GetRows(string file, List`1<String[]> list);
+    private static TcpState UnixTcpStateToTcpState(int unixState);
+    public virtual TcpConnectionInformation[] GetActiveTcpConnections();
+    public virtual IPEndPoint[] GetActiveTcpListeners();
+    public virtual IPEndPoint[] GetActiveUdpListeners();
+    public virtual IcmpV4Statistics GetIcmpV4Statistics();
+    public virtual IcmpV6Statistics GetIcmpV6Statistics();
+    public virtual IPGlobalStatistics GetIPv4GlobalStatistics();
+    public virtual IPGlobalStatistics GetIPv6GlobalStatistics();
+    public virtual TcpStatistics GetTcpIPv4Statistics();
+    public virtual TcpStatistics GetTcpIPv6Statistics();
+    public virtual UdpStatistics GetUdpIPv4Statistics();
+    public virtual UdpStatistics GetUdpIPv6Statistics();
+}
+internal class System.Net.NetworkInformation.MibIPGlobalStatistics : IPGlobalStatistics {
+    private StringDictionary dic;
+    public int DefaultTtl { get; }
+    public bool ForwardingEnabled { get; }
+    public int NumberOfInterfaces { get; }
+    public int NumberOfIPAddresses { get; }
+    public int NumberOfRoutes { get; }
+    public long OutputPacketRequests { get; }
+    public long OutputPacketRoutingDiscards { get; }
+    public long OutputPacketsDiscarded { get; }
+    public long OutputPacketsWithNoRoute { get; }
+    public long PacketFragmentFailures { get; }
+    public long PacketReassembliesRequired { get; }
+    public long PacketReassemblyFailures { get; }
+    public long PacketReassemblyTimeout { get; }
+    public long PacketsFragmented { get; }
+    public long PacketsReassembled { get; }
+    public long ReceivedPackets { get; }
+    public long ReceivedPacketsDelivered { get; }
+    public long ReceivedPacketsDiscarded { get; }
+    public long ReceivedPacketsForwarded { get; }
+    public long ReceivedPacketsWithAddressErrors { get; }
+    public long ReceivedPacketsWithHeadersErrors { get; }
+    public long ReceivedPacketsWithUnknownProtocol { get; }
+    public MibIPGlobalStatistics(StringDictionary dic);
+    private long Get(string name);
+    public virtual int get_DefaultTtl();
+    public virtual bool get_ForwardingEnabled();
+    public virtual int get_NumberOfInterfaces();
+    public virtual int get_NumberOfIPAddresses();
+    public virtual int get_NumberOfRoutes();
+    public virtual long get_OutputPacketRequests();
+    public virtual long get_OutputPacketRoutingDiscards();
+    public virtual long get_OutputPacketsDiscarded();
+    public virtual long get_OutputPacketsWithNoRoute();
+    public virtual long get_PacketFragmentFailures();
+    public virtual long get_PacketReassembliesRequired();
+    public virtual long get_PacketReassemblyFailures();
+    public virtual long get_PacketReassemblyTimeout();
+    public virtual long get_PacketsFragmented();
+    public virtual long get_PacketsReassembled();
+    public virtual long get_ReceivedPackets();
+    public virtual long get_ReceivedPacketsDelivered();
+    public virtual long get_ReceivedPacketsDiscarded();
+    public virtual long get_ReceivedPacketsForwarded();
+    public virtual long get_ReceivedPacketsWithAddressErrors();
+    public virtual long get_ReceivedPacketsWithHeadersErrors();
+    public virtual long get_ReceivedPacketsWithUnknownProtocol();
+}
+internal class System.Net.NetworkInformation.MibTcpStatistics : TcpStatistics {
+    private StringDictionary dic;
+    public long ConnectionsAccepted { get; }
+    public long ConnectionsInitiated { get; }
+    public long CumulativeConnections { get; }
+    public long CurrentConnections { get; }
+    public long ErrorsReceived { get; }
+    public long FailedConnectionAttempts { get; }
+    public long MaximumConnections { get; }
+    public long MaximumTransmissionTimeout { get; }
+    public long MinimumTransmissionTimeout { get; }
+    public long ResetConnections { get; }
+    public long ResetsSent { get; }
+    public long SegmentsReceived { get; }
+    public long SegmentsResent { get; }
+    public long SegmentsSent { get; }
+    public MibTcpStatistics(StringDictionary dic);
+    private long Get(string name);
+    public virtual long get_ConnectionsAccepted();
+    public virtual long get_ConnectionsInitiated();
+    public virtual long get_CumulativeConnections();
+    public virtual long get_CurrentConnections();
+    public virtual long get_ErrorsReceived();
+    public virtual long get_FailedConnectionAttempts();
+    public virtual long get_MaximumConnections();
+    public virtual long get_MaximumTransmissionTimeout();
+    public virtual long get_MinimumTransmissionTimeout();
+    public virtual long get_ResetConnections();
+    public virtual long get_ResetsSent();
+    public virtual long get_SegmentsReceived();
+    public virtual long get_SegmentsResent();
+    public virtual long get_SegmentsSent();
+}
+internal class System.Net.NetworkInformation.MibUdpStatistics : UdpStatistics {
+    private StringDictionary dic;
+    public long DatagramsReceived { get; }
+    public long DatagramsSent { get; }
+    public long IncomingDatagramsDiscarded { get; }
+    public long IncomingDatagramsWithErrors { get; }
+    public int UdpListeners { get; }
+    public MibUdpStatistics(StringDictionary dic);
+    private long Get(string name);
+    public virtual long get_DatagramsReceived();
+    public virtual long get_DatagramsSent();
+    public virtual long get_IncomingDatagramsDiscarded();
+    public virtual long get_IncomingDatagramsWithErrors();
+    public virtual int get_UdpListeners();
 }
 public abstract class System.Net.NetworkInformation.MulticastIPAddressInformation : IPAddressInformation {
     public long AddressPreferredLifetime { get; }
@@ -23031,6 +23715,27 @@ public enum System.Net.NetworkInformation.ScopeLevel : Enum {
     public static ScopeLevel Organization;
     public static ScopeLevel Global;
 }
+internal class System.Net.NetworkInformation.sockaddr_in : ValueType {
+    public ushort sin_family;
+    public ushort sin_port;
+    public UInt32 sin_addr;
+}
+internal class System.Net.NetworkInformation.sockaddr_in6 : ValueType {
+    public ushort sin6_family;
+    public ushort sin6_port;
+    public UInt32 sin6_flowinfo;
+    public in6_addr sin6_addr;
+    public UInt32 sin6_scope_id;
+}
+internal class System.Net.NetworkInformation.sockaddr_ll : ValueType {
+    public ushort sll_family;
+    public ushort sll_protocol;
+    public int sll_ifindex;
+    public ushort sll_hatype;
+    public byte sll_pkttype;
+    public byte sll_halen;
+    public Byte[] sll_addr;
+}
 [FlagsAttribute]
 internal enum System.Net.NetworkInformation.StartIPOptions : Enum {
     public int value__;
@@ -23215,11 +23920,116 @@ public class System.Net.NetworkInformation.UnicastIPAddressInformationCollection
     public virtual bool Remove(UnicastIPAddressInformation address);
     public virtual void Clear();
 }
+internal class System.Net.NetworkInformation.UnixIPGlobalProperties : CommonUnixIPGlobalProperties {
+    public virtual TcpConnectionInformation[] GetActiveTcpConnections();
+    public virtual IPEndPoint[] GetActiveTcpListeners();
+    public virtual IPEndPoint[] GetActiveUdpListeners();
+    public virtual IcmpV4Statistics GetIcmpV4Statistics();
+    public virtual IcmpV6Statistics GetIcmpV6Statistics();
+    public virtual IPGlobalStatistics GetIPv4GlobalStatistics();
+    public virtual IPGlobalStatistics GetIPv6GlobalStatistics();
+    public virtual TcpStatistics GetTcpIPv4Statistics();
+    public virtual TcpStatistics GetTcpIPv6Statistics();
+    public virtual UdpStatistics GetUdpIPv4Statistics();
+    public virtual UdpStatistics GetUdpIPv6Statistics();
+}
 internal static class System.Net.NetworkInformation.UnixIPGlobalPropertiesFactoryPal : object {
+    [CompilerGeneratedAttribute]
+private static bool <PlatformNeedsLibCWorkaround>k__BackingField;
+    private static bool PlatformNeedsLibCWorkaround { get; }
+    [CompilerGeneratedAttribute]
+private static bool get_PlatformNeedsLibCWorkaround();
     public static IPGlobalProperties Create();
+}
+internal abstract class System.Net.NetworkInformation.UnixIPInterfaceProperties : IPInterfaceProperties {
+    protected IPv4InterfaceProperties ipv4iface_properties;
+    protected UnixNetworkInterface iface;
+    private List`1<IPAddress> addresses;
+    private IPAddressCollection dns_servers;
+    private static Regex ns;
+    private static Regex search;
+    private string dns_suffix;
+    private DateTime last_parse;
+    public IPAddressInformationCollection AnycastAddresses { get; }
+    [MonoTODOAttribute("Always returns an empty collection.")]
+public IPAddressCollection DhcpServerAddresses { get; }
+    public IPAddressCollection DnsAddresses { get; }
+    public string DnsSuffix { get; }
+    [MonoTODOAttribute("Always returns true")]
+public bool IsDnsEnabled { get; }
+    [MonoTODOAttribute("Always returns false")]
+public bool IsDynamicDnsEnabled { get; }
+    public MulticastIPAddressInformationCollection MulticastAddresses { get; }
+    public UnicastIPAddressInformationCollection UnicastAddresses { get; }
+    [MonoTODOAttribute("Always returns an empty collection.")]
+public IPAddressCollection WinsServersAddresses { get; }
+    public UnixIPInterfaceProperties(UnixNetworkInterface iface, List`1<IPAddress> addresses);
+    private static UnixIPInterfaceProperties();
+    public virtual IPv6InterfaceProperties GetIPv6Properties();
+    private void ParseResolvConf();
+    public virtual IPAddressInformationCollection get_AnycastAddresses();
+    public virtual IPAddressCollection get_DhcpServerAddresses();
+    public virtual IPAddressCollection get_DnsAddresses();
+    public virtual string get_DnsSuffix();
+    public virtual bool get_IsDnsEnabled();
+    public virtual bool get_IsDynamicDnsEnabled();
+    public virtual MulticastIPAddressInformationCollection get_MulticastAddresses();
+    public virtual UnicastIPAddressInformationCollection get_UnicastAddresses();
+    public virtual IPAddressCollection get_WinsServersAddresses();
+}
+internal abstract class System.Net.NetworkInformation.UnixIPv4InterfaceProperties : IPv4InterfaceProperties {
+    protected UnixNetworkInterface iface;
+    public int Index { get; }
+    public bool IsAutomaticPrivateAddressingActive { get; }
+    public bool IsAutomaticPrivateAddressingEnabled { get; }
+    public bool IsDhcpEnabled { get; }
+    public bool UsesWins { get; }
+    public UnixIPv4InterfaceProperties(UnixNetworkInterface iface);
+    public virtual int get_Index();
+    public virtual bool get_IsAutomaticPrivateAddressingActive();
+    public virtual bool get_IsAutomaticPrivateAddressingEnabled();
+    public virtual bool get_IsDhcpEnabled();
+    public virtual bool get_UsesWins();
+}
+internal abstract class System.Net.NetworkInformation.UnixNetworkInterface : NetworkInterface {
+    protected IPv4InterfaceStatistics ipv4stats;
+    protected IPInterfaceProperties ipproperties;
+    private string name;
+    protected List`1<IPAddress> addresses;
+    private Byte[] macAddress;
+    private NetworkInterfaceType type;
+    public string Description { get; }
+    public string Id { get; }
+    public bool IsReceiveOnly { get; }
+    public string Name { get; }
+    public NetworkInterfaceType NetworkInterfaceType { get; }
+    [MonoTODOAttribute("Parse dmesg?")]
+public long Speed { get; }
+    internal int NameIndex { get; }
+    internal UnixNetworkInterface(string name);
+    internal void AddAddress(IPAddress address);
+    internal void SetLinkLayerInfo(int index, Byte[] macAddress, NetworkInterfaceType type);
+    public virtual PhysicalAddress GetPhysicalAddress();
+    public virtual bool Supports(NetworkInterfaceComponent networkInterfaceComponent);
+    public virtual string get_Description();
+    public virtual string get_Id();
+    public virtual bool get_IsReceiveOnly();
+    public virtual string get_Name();
+    public virtual NetworkInterfaceType get_NetworkInterfaceType();
+    public virtual long get_Speed();
+    internal int get_NameIndex();
+}
+internal abstract class System.Net.NetworkInformation.UnixNetworkInterfaceAPI : NetworkInterfaceFactory {
+    public static int if_nametoindex(string ifname);
+    protected static int getifaddrs(IntPtr& ifap);
+    protected static void freeifaddrs(IntPtr ifap);
 }
 internal static class System.Net.NetworkInformation.UnixNetworkInterfaceFactoryPal : object {
     public static NetworkInterfaceFactory Create();
+}
+internal class System.Net.NetworkInformation.UnixNoLibCIPGlobalProperties : UnixIPGlobalProperties {
+    public string DomainName { get; }
+    public virtual string get_DomainName();
 }
 internal class System.Net.NetworkInformation.Win32_FIXED_INFO : ValueType {
     public string HostName;
@@ -24240,43 +25050,6 @@ internal class System.Net.SecChannelBindings : object {
     internal int cbApplicationDataLength;
     internal int dwApplicationDataOffset;
 }
-internal class System.Net.SecPkgContext_Bindings : ValueType {
-    internal int BindingsLength;
-    internal IntPtr Bindings;
-}
-internal class System.Net.SecPkgContext_ConnectionInfo : object {
-    public int Protocol;
-    public int DataCipherAlg;
-    public int DataKeySize;
-    public int DataHashAlg;
-    public int DataHashKeySize;
-    public int KeyExchangeAlg;
-    public int KeyExchKeySize;
-    internal SecPkgContext_ConnectionInfo(Byte[] nativeBuffer);
-}
-internal class System.Net.SecPkgContext_NegotiationInfoW : ValueType {
-    internal IntPtr PackageInfo;
-    internal UInt32 NegotiationState;
-}
-internal class System.Net.SecPkgContext_Sizes : object {
-    public int cbMaxToken;
-    public int cbMaxSignature;
-    public int cbBlockSize;
-    public int cbSecurityTrailer;
-    public static int SizeOf;
-    internal SecPkgContext_Sizes(Byte[] memory);
-    private static SecPkgContext_Sizes();
-}
-internal class System.Net.SecPkgContext_StreamSizes : object {
-    public int cbHeader;
-    public int cbTrailer;
-    public int cbMaximumMessage;
-    public int cBuffers;
-    public int cbBlockSize;
-    public static int SizeOf;
-    internal SecPkgContext_StreamSizes(Byte[] memory);
-    private static SecPkgContext_StreamSizes();
-}
 public abstract class System.Net.Security.AuthenticatedStream : Stream {
     private Stream _InnerStream;
     private bool _LeaveStreamOpen;
@@ -24449,15 +25222,22 @@ public virtual void Write(Byte[] buffer, int offset, int count);
     public virtual Task AuthenticateAsServerAsync(NetworkCredential credential, ExtendedProtectionPolicy policy, ProtectionLevel requiredProtectionLevel, TokenImpersonationLevel requiredImpersonationLevel);
 }
 internal static class System.Net.Security.NegotiateStreamPal : object {
+    private static int NTE_FAIL;
+    internal static string QueryContextClientSpecifiedSpn(SafeDeleteContext securityContext);
+    internal static string QueryContextAuthenticationPackage(SafeDeleteContext securityContext);
+    private static Byte[] GssWrap(SafeGssContextHandle context, bool encrypt, Byte[] buffer, int offset, int count);
+    private static int GssUnwrap(SafeGssContextHandle context, Byte[] buffer, int offset, int count);
+    private static bool GssInitSecurityContext(SafeGssContextHandle& context, SafeGssCredHandle credential, bool isNtlm, SafeGssNameHandle targetName, GssFlags inFlags, Byte[] buffer, Byte[]& outputBuffer, UInt32& outFlags, Int32& isNtlmUsed);
+    private static SecurityStatusPal EstablishSecurityContext(SafeFreeNegoCredentials credential, SafeDeleteContext& context, string targetName, ContextFlagsPal inFlags, SecurityBuffer inputBuffer, SecurityBuffer outputBuffer, ContextFlagsPal& outFlags);
+    internal static SecurityStatusPal InitializeSecurityContext(SafeFreeCredentials credentialsHandle, SafeDeleteContext& securityContext, string spn, ContextFlagsPal requestedContextFlags, SecurityBuffer[] inSecurityBufferArray, SecurityBuffer outSecurityBuffer, ContextFlagsPal& contextFlags);
+    internal static SecurityStatusPal AcceptSecurityContext(SafeFreeCredentials credentialsHandle, SafeDeleteContext& securityContext, ContextFlagsPal requestedContextFlags, SecurityBuffer[] inSecurityBufferArray, SecurityBuffer outSecurityBuffer, ContextFlagsPal& contextFlags);
+    internal static Win32Exception CreateExceptionFromError(SecurityStatusPal statusCode);
     internal static int QueryMaxTokenSize(string package);
     internal static SafeFreeCredentials AcquireDefaultCredential(string package, bool isServer);
     internal static SafeFreeCredentials AcquireCredentialsHandle(string package, bool isServer, NetworkCredential credential);
-    internal static string QueryContextClientSpecifiedSpn(SafeDeleteContext securityContext);
-    internal static string QueryContextAuthenticationPackage(SafeDeleteContext securityContext);
-    internal static SecurityStatusPal InitializeSecurityContext(SafeFreeCredentials credentialsHandle, SafeDeleteContext& securityContext, string spn, ContextFlagsPal requestedContextFlags, SecurityBuffer[] inSecurityBufferArray, SecurityBuffer outSecurityBuffer, ContextFlagsPal& contextFlags);
     internal static SecurityStatusPal CompleteAuthToken(SafeDeleteContext& securityContext, SecurityBuffer[] inSecurityBufferArray);
-    internal static SecurityStatusPal AcceptSecurityContext(SafeFreeCredentials credentialsHandle, SafeDeleteContext& securityContext, ContextFlagsPal requestedContextFlags, SecurityBuffer[] inSecurityBufferArray, SecurityBuffer outSecurityBuffer, ContextFlagsPal& contextFlags);
-    internal static Win32Exception CreateExceptionFromError(SecurityStatusPal statusCode);
+    internal static int Encrypt(SafeDeleteContext securityContext, Byte[] buffer, int offset, int count, bool isConfidential, bool isNtlm, Byte[]& output, UInt32 sequenceNumber);
+    internal static int Decrypt(SafeDeleteContext securityContext, Byte[] buffer, int offset, int count, bool isConfidential, bool isNtlm, Int32& newOffset, UInt32 sequenceNumber);
     internal static int VerifySignature(SafeDeleteContext securityContext, Byte[] buffer, int offset, int count);
     internal static int MakeSignature(SafeDeleteContext securityContext, Byte[] buffer, int offset, int count, Byte[]& output);
 }
@@ -24486,67 +25266,46 @@ internal class System.Net.Security.SafeCredentialReference : CriticalHandleMinus
     protected virtual bool ReleaseHandle();
 }
 internal abstract class System.Net.Security.SafeDeleteContext : SafeHandle {
-    internal CredHandle _handle;
-    private static string dummyStr;
-    private static Byte[] s_dummyBytes;
-    private static IdnMapping s_idnMapping;
-    protected SafeFreeCredentials _EffectiveCredential;
+    private SafeFreeCredentials _credential;
     public bool IsInvalid { get; }
-    private static SafeDeleteContext();
+    protected SafeDeleteContext(SafeFreeCredentials credential);
     public virtual bool get_IsInvalid();
-    public virtual string ToString();
-    internal static int InitializeSecurityContext(SafeFreeCredentials& inCredentials, SafeDeleteContext& refContext, string targetName, ContextFlags inFlags, Endianness endianness, SecurityBuffer inSecBuffer, SecurityBuffer[] inSecBuffers, SecurityBuffer outSecBuffer, ContextFlags& outFlags);
-    private static int MustRunInitializeSecurityContext(SafeFreeCredentials& inCredentials, Void* inContextPtr, Byte* targetName, ContextFlags inFlags, Endianness endianness, SecBufferDesc* inputBuffer, SafeDeleteContext outContext, SecBufferDesc& outputBuffer, ContextFlags& attributes, SafeFreeContextBuffer handleTemplate);
-    internal static int AcceptSecurityContext(SafeFreeCredentials& inCredentials, SafeDeleteContext& refContext, ContextFlags inFlags, Endianness endianness, SecurityBuffer inSecBuffer, SecurityBuffer[] inSecBuffers, SecurityBuffer outSecBuffer, ContextFlags& outFlags);
-    private static int MustRunAcceptSecurityContext_SECURITY(SafeFreeCredentials& inCredentials, Void* inContextPtr, SecBufferDesc* inputBuffer, ContextFlags inFlags, Endianness endianness, SafeDeleteContext outContext, SecBufferDesc& outputBuffer, ContextFlags& outFlags, SafeFreeContextBuffer handleTemplate);
-    internal static int CompleteAuthToken(SafeDeleteContext& refContext, SecurityBuffer[] inSecBuffers);
-    internal static int ApplyControlToken(SafeDeleteContext& refContext, SecurityBuffer[] inSecBuffers);
-}
-internal class System.Net.Security.SafeDeleteContext_SECURITY : SafeDeleteContext {
     protected virtual bool ReleaseHandle();
 }
-internal class System.Net.Security.SafeFreeCertContext : SafeHandleZeroOrMinusOneIsInvalid {
-    private static UInt32 CRYPT_ACQUIRE_SILENT_FLAG;
-    internal void Set(IntPtr value);
-    protected virtual bool ReleaseHandle();
-}
-internal abstract class System.Net.Security.SafeFreeContextBuffer : SafeHandleZeroOrMinusOneIsInvalid {
-    internal void Set(IntPtr value);
-    internal static int EnumeratePackages(Int32& pkgnum, SafeFreeContextBuffer& pkgArray);
-    internal static SafeFreeContextBuffer CreateEmptyHandle();
-    public static int QueryContextAttributes(SafeDeleteContext phContext, ContextAttribute contextAttribute, Byte* buffer, SafeHandle refHandle);
-    public static int SetContextAttributes(SafeDeleteContext phContext, ContextAttribute contextAttribute, Byte[] buffer);
-}
-internal class System.Net.Security.SafeFreeContextBuffer_SECURITY : SafeFreeContextBuffer {
-    protected virtual bool ReleaseHandle();
-}
-internal abstract class System.Net.Security.SafeFreeContextBufferChannelBinding : ChannelBinding {
-    private int _size;
-    public int Size { get; }
-    public bool IsInvalid { get; }
-    public virtual int get_Size();
-    public virtual bool get_IsInvalid();
-    internal void Set(IntPtr value);
-    internal static SafeFreeContextBufferChannelBinding CreateEmptyHandle();
-    public static int QueryContextChannelBinding(SafeDeleteContext phContext, ContextAttribute contextAttribute, SecPkgContext_Bindings* buffer, SafeFreeContextBufferChannelBinding refHandle);
-    public virtual string ToString();
-}
-internal class System.Net.Security.SafeFreeContextBufferChannelBinding_SECURITY : SafeFreeContextBufferChannelBinding {
-    protected virtual bool ReleaseHandle();
-}
-internal class System.Net.Security.SafeFreeCredential_SECURITY : SafeFreeCredentials {
-    protected virtual bool ReleaseHandle();
+internal class System.Net.Security.SafeDeleteNegoContext : SafeDeleteContext {
+    private SafeGssNameHandle _targetName;
+    private SafeGssContextHandle _context;
+    private bool _isNtlmUsed;
+    public SafeGssNameHandle TargetName { get; }
+    public bool IsNtlmUsed { get; }
+    public SafeGssContextHandle GssContext { get; }
+    public SafeDeleteNegoContext(SafeFreeNegoCredentials credential, string targetName);
+    public SafeGssNameHandle get_TargetName();
+    public bool get_IsNtlmUsed();
+    public SafeGssContextHandle get_GssContext();
+    public void SetGssContext(SafeGssContextHandle context);
+    public void SetAuthenticationPackage(bool isNtlmUsed);
+    protected virtual void Dispose(bool disposing);
 }
 internal abstract class System.Net.Security.SafeFreeCredentials : SafeHandle {
-    internal CredHandle _handle;
-    public bool IsInvalid { get; }
-    public virtual bool get_IsInvalid();
-    public static int AcquireCredentialsHandle(string package, CredentialUse intent, SEC_WINNT_AUTH_IDENTITY_W& authdata, SafeFreeCredentials& outCredential);
-    public static int AcquireDefaultCredential(string package, CredentialUse intent, SafeFreeCredentials& outCredential);
-    public static int AcquireCredentialsHandle(string package, CredentialUse intent, SafeSspiAuthDataHandle& authdata, SafeFreeCredentials& outCredential);
-    public static int AcquireCredentialsHandle(string package, CredentialUse intent, SCHANNEL_CRED& authdata, SafeFreeCredentials& outCredential);
+    protected SafeFreeCredentials(IntPtr handle, bool ownsHandle);
 }
-internal class System.Net.Security.SafeSspiAuthDataHandle : SafeHandleZeroOrMinusOneIsInvalid {
+internal class System.Net.Security.SafeFreeNegoCredentials : SafeFreeCredentials {
+    private SafeGssCredHandle _credential;
+    private bool _isNtlmOnly;
+    private string _userName;
+    private bool _isDefault;
+    public SafeGssCredHandle GssCredential { get; }
+    public bool IsNtlmOnly { get; }
+    public string UserName { get; }
+    public bool IsDefault { get; }
+    public bool IsInvalid { get; }
+    public SafeFreeNegoCredentials(bool isNtlmOnly, string username, string password, string domain);
+    public SafeGssCredHandle get_GssCredential();
+    public bool get_IsNtlmOnly();
+    public string get_UserName();
+    public bool get_IsDefault();
+    public virtual bool get_IsInvalid();
     protected virtual bool ReleaseHandle();
 }
 internal class System.Net.Security.SecurityBuffer : object {
@@ -24578,11 +25337,6 @@ internal enum System.Net.Security.SecurityBufferType : Enum {
     public static SecurityBufferType SECBUFFER_APPLICATION_PROTOCOLS;
     public static SecurityBufferType SECBUFFER_READONLY;
     public static SecurityBufferType SECBUFFER_READONLY_WITH_CHECKSUM;
-}
-internal class System.Net.Security.SecurityContextTokenHandle : CriticalHandleZeroOrMinusOneIsInvalid {
-    private int _disposed;
-    internal IntPtr DangerousGetHandle();
-    protected virtual bool ReleaseHandle();
 }
 public class System.Net.Security.ServerCertificateSelectionCallback : MulticastDelegate {
     public ServerCertificateSelectionCallback(object object, IntPtr method);
@@ -24973,24 +25727,6 @@ internal static class System.Net.Security.SSPIHandleCache : object {
     private static SSPIHandleCache();
     internal static void CacheCredential(SafeFreeCredentials newHandle);
 }
-internal class System.Net.SecurityPackageInfo : ValueType {
-    internal int Capabilities;
-    internal short Version;
-    internal short RPCID;
-    internal int MaxToken;
-    internal IntPtr Name;
-    internal IntPtr Comment;
-}
-internal class System.Net.SecurityPackageInfoClass : object {
-    internal int Capabilities;
-    internal short Version;
-    internal short RPCID;
-    internal int MaxToken;
-    internal string Name;
-    internal string Comment;
-    internal SecurityPackageInfoClass(SafeHandle safeHandle, int index);
-    public virtual string ToString();
-}
 internal static class System.Net.SecurityProtocol : object {
     public static SslProtocols DefaultSecurityProtocols;
     public static SslProtocols SystemDefaultSecurityProtocols;
@@ -25046,14 +25782,6 @@ internal enum System.Net.SecurityStatus : Enum {
     public static SecurityStatus SmartcardLogonRequired;
     public static SecurityStatus UnsupportedPreauth;
     public static SecurityStatus BadBinding;
-}
-internal static class System.Net.SecurityStatusAdapterPal : object {
-    private static int StatusDictionarySize;
-    private static BidirectionalDictionary`2<SECURITY_STATUS, SecurityStatusPalErrorCode> s_statusDictionary;
-    private static SecurityStatusAdapterPal();
-    internal static SecurityStatusPal GetSecurityStatusPalFromNativeInt(int win32SecurityStatus);
-    internal static SecurityStatusPal GetSecurityStatusPalFromInterop(SECURITY_STATUS win32SecurityStatus, bool attachException);
-    internal static SECURITY_STATUS GetInteropFromSecurityStatusPal(SecurityStatusPal status);
 }
 [IsReadOnlyAttribute]
 internal class System.Net.SecurityStatusPal : ValueType {
@@ -26810,106 +27538,6 @@ internal class System.Net.SplitWritesState : object {
     internal SplitWritesState(BufferOffsetSize[] buffers);
     internal bool get_IsDone();
     internal BufferOffsetSize[] GetNextBuffers();
-}
-internal class System.Net.SSPIAuthType : object {
-    private static SecurityPackageInfoClass[] modreq(System.Runtime.CompilerServices.IsVolatile) s_securityPackages;
-    public SecurityPackageInfoClass[] SecurityPackages { get; public set; }
-    public sealed virtual SecurityPackageInfoClass[] get_SecurityPackages();
-    public sealed virtual void set_SecurityPackages(SecurityPackageInfoClass[] value);
-    public sealed virtual int EnumerateSecurityPackages(Int32& pkgnum, SafeFreeContextBuffer& pkgArray);
-    public sealed virtual int AcquireCredentialsHandle(string moduleName, CredentialUse usage, SEC_WINNT_AUTH_IDENTITY_W& authdata, SafeFreeCredentials& outCredential);
-    public sealed virtual int AcquireCredentialsHandle(string moduleName, CredentialUse usage, SafeSspiAuthDataHandle& authdata, SafeFreeCredentials& outCredential);
-    public sealed virtual int AcquireDefaultCredential(string moduleName, CredentialUse usage, SafeFreeCredentials& outCredential);
-    public sealed virtual int AcquireCredentialsHandle(string moduleName, CredentialUse usage, SCHANNEL_CRED& authdata, SafeFreeCredentials& outCredential);
-    public sealed virtual int AcceptSecurityContext(SafeFreeCredentials& credential, SafeDeleteContext& context, SecurityBuffer inputBuffer, ContextFlags inFlags, Endianness endianness, SecurityBuffer outputBuffer, ContextFlags& outFlags);
-    public sealed virtual int AcceptSecurityContext(SafeFreeCredentials credential, SafeDeleteContext& context, SecurityBuffer[] inputBuffers, ContextFlags inFlags, Endianness endianness, SecurityBuffer outputBuffer, ContextFlags& outFlags);
-    public sealed virtual int InitializeSecurityContext(SafeFreeCredentials& credential, SafeDeleteContext& context, string targetName, ContextFlags inFlags, Endianness endianness, SecurityBuffer inputBuffer, SecurityBuffer outputBuffer, ContextFlags& outFlags);
-    public sealed virtual int InitializeSecurityContext(SafeFreeCredentials credential, SafeDeleteContext& context, string targetName, ContextFlags inFlags, Endianness endianness, SecurityBuffer[] inputBuffers, SecurityBuffer outputBuffer, ContextFlags& outFlags);
-    public sealed virtual int EncryptMessage(SafeDeleteContext context, SecBufferDesc& inputOutput, UInt32 sequenceNumber);
-    public sealed virtual int DecryptMessage(SafeDeleteContext context, SecBufferDesc& inputOutput, UInt32 sequenceNumber);
-    public sealed virtual int MakeSignature(SafeDeleteContext context, SecBufferDesc& inputOutput, UInt32 sequenceNumber);
-    public sealed virtual int VerifySignature(SafeDeleteContext context, SecBufferDesc& inputOutput, UInt32 sequenceNumber);
-    public sealed virtual int QueryContextChannelBinding(SafeDeleteContext context, ContextAttribute attribute, SafeFreeContextBufferChannelBinding& binding);
-    public sealed virtual int QueryContextAttributes(SafeDeleteContext context, ContextAttribute attribute, Byte[] buffer, Type handleType, SafeHandle& refHandle);
-    public sealed virtual int SetContextAttributes(SafeDeleteContext context, ContextAttribute attribute, Byte[] buffer);
-    public sealed virtual int QuerySecurityContextToken(SafeDeleteContext phContext, SecurityContextTokenHandle& phToken);
-    public sealed virtual int CompleteAuthToken(SafeDeleteContext& refContext, SecurityBuffer[] inputBuffers);
-    private static int GetSecurityContextToken(SafeDeleteContext phContext, SecurityContextTokenHandle& safeHandle);
-    public sealed virtual int ApplyControlToken(SafeDeleteContext& refContext, SecurityBuffer[] inputBuffers);
-}
-internal interface System.Net.SSPIInterface {
-    public SecurityPackageInfoClass[] SecurityPackages { get; public set; }
-    public abstract virtual SecurityPackageInfoClass[] get_SecurityPackages();
-    public abstract virtual void set_SecurityPackages(SecurityPackageInfoClass[] value);
-    public abstract virtual int EnumerateSecurityPackages(Int32& pkgnum, SafeFreeContextBuffer& pkgArray);
-    public abstract virtual int AcquireCredentialsHandle(string moduleName, CredentialUse usage, SEC_WINNT_AUTH_IDENTITY_W& authdata, SafeFreeCredentials& outCredential);
-    public abstract virtual int AcquireCredentialsHandle(string moduleName, CredentialUse usage, SafeSspiAuthDataHandle& authdata, SafeFreeCredentials& outCredential);
-    public abstract virtual int AcquireDefaultCredential(string moduleName, CredentialUse usage, SafeFreeCredentials& outCredential);
-    public abstract virtual int AcquireCredentialsHandle(string moduleName, CredentialUse usage, SCHANNEL_CRED& authdata, SafeFreeCredentials& outCredential);
-    public abstract virtual int AcceptSecurityContext(SafeFreeCredentials& credential, SafeDeleteContext& context, SecurityBuffer inputBuffer, ContextFlags inFlags, Endianness endianness, SecurityBuffer outputBuffer, ContextFlags& outFlags);
-    public abstract virtual int AcceptSecurityContext(SafeFreeCredentials credential, SafeDeleteContext& context, SecurityBuffer[] inputBuffers, ContextFlags inFlags, Endianness endianness, SecurityBuffer outputBuffer, ContextFlags& outFlags);
-    public abstract virtual int InitializeSecurityContext(SafeFreeCredentials& credential, SafeDeleteContext& context, string targetName, ContextFlags inFlags, Endianness endianness, SecurityBuffer inputBuffer, SecurityBuffer outputBuffer, ContextFlags& outFlags);
-    public abstract virtual int InitializeSecurityContext(SafeFreeCredentials credential, SafeDeleteContext& context, string targetName, ContextFlags inFlags, Endianness endianness, SecurityBuffer[] inputBuffers, SecurityBuffer outputBuffer, ContextFlags& outFlags);
-    public abstract virtual int EncryptMessage(SafeDeleteContext context, SecBufferDesc& inputOutput, UInt32 sequenceNumber);
-    public abstract virtual int DecryptMessage(SafeDeleteContext context, SecBufferDesc& inputOutput, UInt32 sequenceNumber);
-    public abstract virtual int MakeSignature(SafeDeleteContext context, SecBufferDesc& inputOutput, UInt32 sequenceNumber);
-    public abstract virtual int VerifySignature(SafeDeleteContext context, SecBufferDesc& inputOutput, UInt32 sequenceNumber);
-    public abstract virtual int QueryContextChannelBinding(SafeDeleteContext phContext, ContextAttribute attribute, SafeFreeContextBufferChannelBinding& refHandle);
-    public abstract virtual int QueryContextAttributes(SafeDeleteContext phContext, ContextAttribute attribute, Byte[] buffer, Type handleType, SafeHandle& refHandle);
-    public abstract virtual int SetContextAttributes(SafeDeleteContext phContext, ContextAttribute attribute, Byte[] buffer);
-    public abstract virtual int QuerySecurityContextToken(SafeDeleteContext phContext, SecurityContextTokenHandle& phToken);
-    public abstract virtual int CompleteAuthToken(SafeDeleteContext& refContext, SecurityBuffer[] inputBuffers);
-    public abstract virtual int ApplyControlToken(SafeDeleteContext& refContext, SecurityBuffer[] inputBuffers);
-}
-internal class System.Net.SSPISecureChannelType : object {
-    private static SecurityPackageInfoClass[] modreq(System.Runtime.CompilerServices.IsVolatile) s_securityPackages;
-    public SecurityPackageInfoClass[] SecurityPackages { get; public set; }
-    public sealed virtual SecurityPackageInfoClass[] get_SecurityPackages();
-    public sealed virtual void set_SecurityPackages(SecurityPackageInfoClass[] value);
-    public sealed virtual int EnumerateSecurityPackages(Int32& pkgnum, SafeFreeContextBuffer& pkgArray);
-    public sealed virtual int AcquireCredentialsHandle(string moduleName, CredentialUse usage, SEC_WINNT_AUTH_IDENTITY_W& authdata, SafeFreeCredentials& outCredential);
-    public sealed virtual int AcquireCredentialsHandle(string moduleName, CredentialUse usage, SafeSspiAuthDataHandle& authdata, SafeFreeCredentials& outCredential);
-    public sealed virtual int AcquireDefaultCredential(string moduleName, CredentialUse usage, SafeFreeCredentials& outCredential);
-    public sealed virtual int AcquireCredentialsHandle(string moduleName, CredentialUse usage, SCHANNEL_CRED& authdata, SafeFreeCredentials& outCredential);
-    public sealed virtual int AcceptSecurityContext(SafeFreeCredentials& credential, SafeDeleteContext& context, SecurityBuffer inputBuffer, ContextFlags inFlags, Endianness endianness, SecurityBuffer outputBuffer, ContextFlags& outFlags);
-    public sealed virtual int AcceptSecurityContext(SafeFreeCredentials credential, SafeDeleteContext& context, SecurityBuffer[] inputBuffers, ContextFlags inFlags, Endianness endianness, SecurityBuffer outputBuffer, ContextFlags& outFlags);
-    public sealed virtual int InitializeSecurityContext(SafeFreeCredentials& credential, SafeDeleteContext& context, string targetName, ContextFlags inFlags, Endianness endianness, SecurityBuffer inputBuffer, SecurityBuffer outputBuffer, ContextFlags& outFlags);
-    public sealed virtual int InitializeSecurityContext(SafeFreeCredentials credential, SafeDeleteContext& context, string targetName, ContextFlags inFlags, Endianness endianness, SecurityBuffer[] inputBuffers, SecurityBuffer outputBuffer, ContextFlags& outFlags);
-    public sealed virtual int EncryptMessage(SafeDeleteContext context, SecBufferDesc& inputOutput, UInt32 sequenceNumber);
-    public sealed virtual int DecryptMessage(SafeDeleteContext context, SecBufferDesc& inputOutput, UInt32 sequenceNumber);
-    public sealed virtual int MakeSignature(SafeDeleteContext context, SecBufferDesc& inputOutput, UInt32 sequenceNumber);
-    public sealed virtual int VerifySignature(SafeDeleteContext context, SecBufferDesc& inputOutput, UInt32 sequenceNumber);
-    public sealed virtual int QueryContextChannelBinding(SafeDeleteContext phContext, ContextAttribute attribute, SafeFreeContextBufferChannelBinding& refHandle);
-    public sealed virtual int QueryContextAttributes(SafeDeleteContext phContext, ContextAttribute attribute, Byte[] buffer, Type handleType, SafeHandle& refHandle);
-    public sealed virtual int SetContextAttributes(SafeDeleteContext phContext, ContextAttribute attribute, Byte[] buffer);
-    public sealed virtual int QuerySecurityContextToken(SafeDeleteContext phContext, SecurityContextTokenHandle& phToken);
-    public sealed virtual int CompleteAuthToken(SafeDeleteContext& refContext, SecurityBuffer[] inputBuffers);
-    public sealed virtual int ApplyControlToken(SafeDeleteContext& refContext, SecurityBuffer[] inputBuffers);
-}
-internal static class System.Net.SSPIWrapper : object {
-    internal static SecurityPackageInfoClass[] EnumerateSecurityPackages(SSPIInterface secModule);
-    internal static SecurityPackageInfoClass GetVerifyPackageInfo(SSPIInterface secModule, string packageName);
-    internal static SecurityPackageInfoClass GetVerifyPackageInfo(SSPIInterface secModule, string packageName, bool throwIfMissing);
-    public static SafeFreeCredentials AcquireDefaultCredential(SSPIInterface secModule, string package, CredentialUse intent);
-    public static SafeFreeCredentials AcquireCredentialsHandle(SSPIInterface secModule, string package, CredentialUse intent, SEC_WINNT_AUTH_IDENTITY_W& authdata);
-    public static SafeFreeCredentials AcquireCredentialsHandle(SSPIInterface secModule, string package, CredentialUse intent, SafeSspiAuthDataHandle& authdata);
-    public static SafeFreeCredentials AcquireCredentialsHandle(SSPIInterface secModule, string package, CredentialUse intent, SCHANNEL_CRED scc);
-    internal static int InitializeSecurityContext(SSPIInterface secModule, SafeFreeCredentials& credential, SafeDeleteContext& context, string targetName, ContextFlags inFlags, Endianness datarep, SecurityBuffer inputBuffer, SecurityBuffer outputBuffer, ContextFlags& outFlags);
-    internal static int InitializeSecurityContext(SSPIInterface secModule, SafeFreeCredentials credential, SafeDeleteContext& context, string targetName, ContextFlags inFlags, Endianness datarep, SecurityBuffer[] inputBuffers, SecurityBuffer outputBuffer, ContextFlags& outFlags);
-    internal static int AcceptSecurityContext(SSPIInterface secModule, SafeFreeCredentials& credential, SafeDeleteContext& context, ContextFlags inFlags, Endianness datarep, SecurityBuffer inputBuffer, SecurityBuffer outputBuffer, ContextFlags& outFlags);
-    internal static int AcceptSecurityContext(SSPIInterface secModule, SafeFreeCredentials credential, SafeDeleteContext& context, ContextFlags inFlags, Endianness datarep, SecurityBuffer[] inputBuffers, SecurityBuffer outputBuffer, ContextFlags& outFlags);
-    internal static int CompleteAuthToken(SSPIInterface secModule, SafeDeleteContext& context, SecurityBuffer[] inputBuffers);
-    internal static int ApplyControlToken(SSPIInterface secModule, SafeDeleteContext& context, SecurityBuffer[] inputBuffers);
-    public static int QuerySecurityContextToken(SSPIInterface secModule, SafeDeleteContext context, SecurityContextTokenHandle& token);
-    public static int EncryptMessage(SSPIInterface secModule, SafeDeleteContext context, SecurityBuffer[] input, UInt32 sequenceNumber);
-    public static int DecryptMessage(SSPIInterface secModule, SafeDeleteContext context, SecurityBuffer[] input, UInt32 sequenceNumber);
-    internal static int MakeSignature(SSPIInterface secModule, SafeDeleteContext context, SecurityBuffer[] input, UInt32 sequenceNumber);
-    public static int VerifySignature(SSPIInterface secModule, SafeDeleteContext context, SecurityBuffer[] input, UInt32 sequenceNumber);
-    private static int EncryptDecryptHelper(OP op, SSPIInterface secModule, SafeDeleteContext context, SecurityBuffer[] input, UInt32 sequenceNumber);
-    public static SafeFreeContextBufferChannelBinding QueryContextChannelBinding(SSPIInterface secModule, SafeDeleteContext securityContext, ContextAttribute contextAttribute);
-    public static object QueryContextAttributes(SSPIInterface secModule, SafeDeleteContext securityContext, ContextAttribute contextAttribute);
-    public static object QueryContextAttributes(SSPIInterface secModule, SafeDeleteContext securityContext, ContextAttribute contextAttribute, Int32& errorCode);
-    public static string ErrorDescription(int errorCode);
 }
 internal class System.Net.StaticProxy : ProxyChain {
     private Uri m_Proxy;

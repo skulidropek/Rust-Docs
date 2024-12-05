@@ -42,6 +42,25 @@ internal static class Consts : object {
     public static string AssemblySystemServiceModel_3_0;
 }
 internal static class Interop : object {
+    private static void ThrowExceptionForIoErrno(ErrorInfo errorInfo, string path, bool isDirectory, Func`2<ErrorInfo, ErrorInfo> errorRewriter);
+    internal static void CheckIo(Error error, string path, bool isDirectory, Func`2<ErrorInfo, ErrorInfo> errorRewriter);
+    internal static long CheckIo(long result, string path, bool isDirectory, Func`2<ErrorInfo, ErrorInfo> errorRewriter);
+    internal static int CheckIo(int result, string path, bool isDirectory, Func`2<ErrorInfo, ErrorInfo> errorRewriter);
+    internal static IntPtr CheckIo(IntPtr result, string path, bool isDirectory, Func`2<ErrorInfo, ErrorInfo> errorRewriter);
+    internal static TSafeHandle CheckIo(TSafeHandle handle, string path, bool isDirectory, Func`2<ErrorInfo, ErrorInfo> errorRewriter);
+    internal static Exception GetExceptionForIoErrno(ErrorInfo errorInfo, string path, bool isDirectory);
+    internal static Exception GetIOException(ErrorInfo errorInfo);
+}
+[ExtensionAttribute]
+internal static class InteropErrorExtensions : object {
+    [ExtensionAttribute]
+public static ErrorInfo Info(Error error);
+}
+internal static class Microsoft.Win32.SafeHandles.SafeFileHandleHelper : object {
+    private static IntPtr s_invalidHandle;
+    private static SafeFileHandleHelper();
+    internal static SafeFileHandle Open(string path, OpenFlags flags, int mode);
+    internal static SafeFileHandle Open(Func`1<SafeFileHandle> fdFunc);
 }
 public class Microsoft.Win32.SafeHandles.SafeMemoryMappedFileHandle : SafeHandleZeroOrMinusOneIsInvalid {
     public SafeMemoryMappedFileHandle(IntPtr preexistingHandle, bool ownsHandle);
@@ -72,8 +91,19 @@ public class Microsoft.Win32.SafeHandles.SafeNCryptSecretHandle : SafeNCryptHand
 }
 public class Microsoft.Win32.SafeHandles.SafePipeHandle : SafeHandleZeroOrMinusOneIsInvalid {
     private static int DefaultInvalidHandle;
+    private Socket _namedPipeSocket;
+    private SafeHandle _namedPipeSocketHandle;
+    private static PropertyInfo s_safeHandleProperty;
+    internal Socket NamedPipeSocket { get; }
+    internal SafeHandle NamedPipeSocketHandle { get; }
+    public bool IsInvalid { get; }
+    internal SafePipeHandle(Socket namedPipeSocket);
     public SafePipeHandle(IntPtr preexistingHandle, bool ownsHandle);
+    internal Socket get_NamedPipeSocket();
+    internal SafeHandle get_NamedPipeSocketHandle();
+    protected virtual void Dispose(bool disposing);
     protected virtual bool ReleaseHandle();
+    public virtual bool get_IsInvalid();
     internal void SetHandle(int descriptor);
 }
 internal static class SR : object {
@@ -2454,7 +2484,6 @@ public class System.IO.Pipes.AnonymousPipeServerStream : PipeStream {
     public AnonymousPipeServerStream(PipeDirection direction, HandleInheritability inheritability, int bufferSize);
     public AnonymousPipeServerStream(PipeDirection direction, HandleInheritability inheritability, int bufferSize, PipeSecurity pipeSecurity);
     private void Create(PipeDirection direction, HandleInheritability inheritability, int bufferSize);
-    private void Create(PipeDirection direction, HandleInheritability inheritability, int bufferSize, PipeSecurity pipeSecurity);
     protected virtual override void Finalize();
     public string GetClientHandleAsString();
     public SafePipeHandle get_ClientSafePipeHandle();
@@ -2463,14 +2492,6 @@ public class System.IO.Pipes.AnonymousPipeServerStream : PipeStream {
     public virtual PipeTransmissionMode get_TransmissionMode();
     public virtual void set_ReadMode(PipeTransmissionMode value);
 }
-internal class System.IO.Pipes.ConnectionCompletionSource : PipeCompletionSource`1<VoidResult> {
-    private NamedPipeServerStream _serverStream;
-    internal ConnectionCompletionSource(NamedPipeServerStream server);
-    internal virtual void SetCompletedSynchronously();
-    protected virtual void AsyncCallback(UInt32 errorCode, UInt32 numBytes);
-    protected virtual void HandleError(int errorCode);
-    protected virtual void HandleUnexpectedCancellation();
-}
 public class System.IO.Pipes.NamedPipeClientStream : PipeStream {
     private static int CancellationCheckInterval;
     private string _normalizedPipePath;
@@ -2478,8 +2499,9 @@ public class System.IO.Pipes.NamedPipeClientStream : PipeStream {
     private PipeOptions _pipeOptions;
     private HandleInheritability _inheritability;
     private PipeDirection _direction;
-    private int _access;
     public int NumberOfServerInstances { get; }
+    public int InBufferSize { get; }
+    public int OutBufferSize { get; }
     public NamedPipeClientStream(string pipeName);
     public NamedPipeClientStream(string serverName, string pipeName);
     public NamedPipeClientStream(string serverName, string pipeName, PipeDirection direction);
@@ -2490,7 +2512,9 @@ public class System.IO.Pipes.NamedPipeClientStream : PipeStream {
     public NamedPipeClientStream(string serverName, string pipeName, PipeAccessRights desiredAccessRights, PipeOptions options, TokenImpersonationLevel impersonationLevel, HandleInheritability inheritability);
     private bool TryConnect(int timeout, CancellationToken cancellationToken);
     public int get_NumberOfServerInstances();
-    private void ValidateRemotePipeUser();
+    public virtual int get_InBufferSize();
+    public virtual int get_OutBufferSize();
+    private void ValidateRemotePipeUser(SafePipeHandle handle);
     protected virtual override void Finalize();
     public void Connect();
     public void Connect(int timeout);
@@ -2503,9 +2527,15 @@ public class System.IO.Pipes.NamedPipeClientStream : PipeStream {
     private void CheckConnectOperationsClient();
 }
 public class System.IO.Pipes.NamedPipeServerStream : PipeStream {
-    private static TryCode tryCode;
-    private static CleanupCode cleanupCode;
+    private SharedServer _instance;
+    private PipeDirection _direction;
+    private PipeOptions _options;
+    private int _inBufferSize;
+    private int _outBufferSize;
+    private HandleInheritability _inheritability;
     public static int MaxAllowedServerInstances;
+    public int InBufferSize { get; }
+    public int OutBufferSize { get; }
     public NamedPipeServerStream(string pipeName);
     public NamedPipeServerStream(string pipeName, PipeDirection direction);
     public NamedPipeServerStream(string pipeName, PipeDirection direction, int maxNumberOfServerInstances);
@@ -2517,24 +2547,25 @@ public class System.IO.Pipes.NamedPipeServerStream : PipeStream {
     public NamedPipeServerStream(string pipeName, PipeDirection direction, int maxNumberOfServerInstances, PipeTransmissionMode transmissionMode, PipeOptions options, int inBufferSize, int outBufferSize, PipeSecurity pipeSecurity);
     public NamedPipeServerStream(string pipeName, PipeDirection direction, int maxNumberOfServerInstances, PipeTransmissionMode transmissionMode, PipeOptions options, int inBufferSize, int outBufferSize, PipeSecurity pipeSecurity, HandleInheritability inheritability);
     public NamedPipeServerStream(string pipeName, PipeDirection direction, int maxNumberOfServerInstances, PipeTransmissionMode transmissionMode, PipeOptions options, int inBufferSize, int outBufferSize, PipeSecurity pipeSecurity, HandleInheritability inheritability, PipeAccessRights additionalAccessRights);
-    private static NamedPipeServerStream();
     private void Create(string pipeName, PipeDirection direction, int maxNumberOfServerInstances, PipeTransmissionMode transmissionMode, PipeOptions options, int inBufferSize, int outBufferSize, HandleInheritability inheritability);
-    private void Create(string pipeName, PipeDirection direction, int maxNumberOfServerInstances, PipeTransmissionMode transmissionMode, PipeOptions options, int inBufferSize, int outBufferSize, PipeSecurity pipeSecurity, HandleInheritability inheritability, PipeAccessRights additionalAccessRights);
     public void WaitForConnection();
     public Task WaitForConnectionAsync(CancellationToken cancellationToken);
+    private void HandleAcceptedSocket(Socket acceptedSocket);
+    internal virtual void DisposeCore(bool disposing);
     public void Disconnect();
     public string GetImpersonationUserName();
+    public virtual int get_InBufferSize();
+    public virtual int get_OutBufferSize();
     public void RunAsClient(PipeStreamImpersonationWorker impersonationWorker);
-    private static void ImpersonateAndTryCode(object helper);
-    private static void RevertImpersonationOnBackout(object helper, bool exceptionThrown);
-    private Task WaitForConnectionCoreAsync(CancellationToken cancellationToken);
-    private void CheckConnectOperationsServerWithHandle();
     protected virtual override void Finalize();
     public Task WaitForConnectionAsync();
     public IAsyncResult BeginWaitForConnection(AsyncCallback callback, object state);
     public void EndWaitForConnection(IAsyncResult asyncResult);
     private void CheckConnectOperationsServer();
     private void CheckDisconnectOperations();
+    [AsyncStateMachineAttribute("System.IO.Pipes.NamedPipeServerStream/<<WaitForConnectionAsync>g__WaitForConnectionAsyncCore|8_0>d")]
+[CompilerGeneratedAttribute]
+private Task <WaitForConnectionAsync>g__WaitForConnectionAsyncCore|8_0();
 }
 [FlagsAttribute]
 public enum System.IO.Pipes.PipeAccessRights : Enum {
@@ -2573,30 +2604,6 @@ public class System.IO.Pipes.PipeAuditRule : AuditRule {
     internal PipeAuditRule(IdentityReference identity, int accessMask, bool isInherited, AuditFlags flags);
     private static int AccessMaskFromRights(PipeAccessRights rights);
     public PipeAccessRights get_PipeAccessRights();
-}
-internal abstract class System.IO.Pipes.PipeCompletionSource`1 : TaskCompletionSource`1<TResult> {
-    private static int NoResult;
-    private static int ResultSuccess;
-    private static int ResultError;
-    private static int RegisteringCancellation;
-    private static int CompletedCallback;
-    private ThreadPoolBoundHandle _threadPoolBinding;
-    private CancellationTokenRegistration _cancellationRegistration;
-    private int _errorCode;
-    private NativeOverlapped* _overlapped;
-    private MemoryHandle _pinnedMemory;
-    private int _state;
-    internal NativeOverlapped* Overlapped { get; }
-    protected PipeCompletionSource`1(ThreadPoolBoundHandle handle, ReadOnlyMemory`1<byte> bufferToPin);
-    internal NativeOverlapped* get_Overlapped();
-    internal void RegisterForCancellation(CancellationToken cancellationToken);
-    internal void ReleaseResources();
-    internal abstract virtual void SetCompletedSynchronously();
-    protected virtual void AsyncCallback(UInt32 errorCode, UInt32 numBytes);
-    protected abstract virtual void HandleError(int errorCode);
-    private void Cancel();
-    protected virtual void HandleUnexpectedCancellation();
-    private void CompleteCallback(int resultState);
 }
 public enum System.IO.Pipes.PipeDirection : Enum {
     public int value__;
@@ -2646,7 +2653,9 @@ internal enum System.IO.Pipes.PipeState : Enum {
 }
 public abstract class System.IO.Pipes.PipeStream : Stream {
     internal static bool CheckOperationsRequiresSetHandle;
-    internal ThreadPoolBoundHandle _threadPoolBinding;
+    private static Char[] s_invalidFileNameChars;
+    private static Char[] s_invalidPathNameChars;
+    private static string s_pipePrefix;
     internal static string AnonymousPipeName;
     private static Task`1<int> s_zeroTask;
     private SafePipeHandle _handle;
@@ -2685,23 +2694,27 @@ public abstract class System.IO.Pipes.PipeStream : Stream {
     internal static string GetPipePath(string serverName, string pipeName);
     internal void ValidateHandleIsPipe(SafePipeHandle safePipeHandle);
     private void InitializeAsyncHandle(SafePipeHandle handle);
-    private void DisposeCore(bool disposing);
+    internal virtual void DisposeCore(bool disposing);
     private int ReadCore(Span`1<byte> buffer);
-    private Task`1<int> ReadAsyncCore(Memory`1<byte> buffer, CancellationToken cancellationToken);
     private void WriteCore(ReadOnlySpan`1<byte> buffer);
-    private Task WriteAsyncCore(ReadOnlyMemory`1<byte> buffer, CancellationToken cancellationToken);
+    [AsyncStateMachineAttribute("System.IO.Pipes.PipeStream/<ReadAsyncCore>d__10")]
+private Task`1<int> ReadAsyncCore(Memory`1<byte> destination, CancellationToken cancellationToken);
+    [AsyncStateMachineAttribute("System.IO.Pipes.PipeStream/<WriteAsyncCore>d__11")]
+private Task WriteAsyncCore(ReadOnlyMemory`1<byte> source, CancellationToken cancellationToken);
+    private IOException GetIOExceptionForSocketException(SocketException e);
     public void WaitForPipeDrain();
     public virtual PipeTransmissionMode get_TransmissionMode();
     public virtual int get_InBufferSize();
     public virtual int get_OutBufferSize();
     public virtual PipeTransmissionMode get_ReadMode();
     public virtual void set_ReadMode(PipeTransmissionMode value);
-    private int ReadFileNative(SafePipeHandle handle, Span`1<byte> buffer, NativeOverlapped* overlapped, Int32& errorCode);
-    private int WriteFileNative(SafePipeHandle handle, ReadOnlySpan`1<byte> buffer, NativeOverlapped* overlapped, Int32& errorCode);
-    internal static SECURITY_ATTRIBUTES GetSecAttrs(HandleInheritability inheritability);
-    internal static SECURITY_ATTRIBUTES GetSecAttrs(HandleInheritability inheritability, PipeSecurity pipeSecurity, GCHandle& pinningHandle);
-    private void UpdateReadMode();
-    internal Exception WinIOError(int errorCode);
+    private static void CreateDirectory(string directoryPath);
+    internal static void CreateAnonymousPipe(HandleInheritability inheritability, SafePipeHandle& reader, SafePipeHandle& writer);
+    internal int CheckPipeCall(int result);
+    private int GetPipeBufferSize();
+    internal static void CreateAnonymousPipe(HandleInheritability inheritability, Int32* fdsptr);
+    internal static void ConfigureSocket(Socket s, SafePipeHandle pipeHandle, PipeDirection direction, int inBufferSize, int outBufferSize, HandleInheritability inheritability);
+    internal static Exception CreateExceptionForLastError(string pipeName);
     private void Init(PipeDirection direction, PipeTransmissionMode transmissionMode, int outBufferSize);
     protected void InitializeHandle(SafePipeHandle handle, bool isExposed, bool isAsync);
     public virtual int Read(Byte[] buffer, int offset, int count);
@@ -2761,18 +2774,6 @@ public enum System.IO.Pipes.PipeTransmissionMode : Enum {
     public int value__;
     public static PipeTransmissionMode Byte;
     public static PipeTransmissionMode Message;
-}
-internal class System.IO.Pipes.ReadWriteCompletionSource : PipeCompletionSource`1<int> {
-    private bool _isWrite;
-    private PipeStream _pipeStream;
-    private bool _isMessageComplete;
-    private int _numBytes;
-    internal ReadWriteCompletionSource(PipeStream stream, ReadOnlyMemory`1<byte> bufferToPin, bool isWrite);
-    internal virtual void SetCompletedSynchronously();
-    protected virtual void AsyncCallback(UInt32 errorCode, UInt32 numBytes);
-    protected virtual void HandleError(int errorCode);
-}
-internal class System.IO.Pipes.VoidResult : ValueType {
 }
 internal static class System.Linq.AggregationMinMaxHelpers`1 : object {
     private static T Reduce(IEnumerable`1<T> source, int sign);
@@ -3565,62 +3566,62 @@ internal class System.Linq.EnumerableRewriter : ExpressionVisitor {
     private static Type GetPublicType(Type t);
     private Type GetEquivalentType(Type type);
     protected internal virtual Expression VisitConstant(ConstantExpression c);
-    [PreserveDependencyAttribute("DefaultIfEmpty`1", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("Count`1", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("Contains`1", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("Concat`1", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("Cast`1", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("Average`1", "System.Linq.Enumerable")]
+    [PreserveDependencyAttribute("Min`2", "System.Linq.Enumerable")]
 [PreserveDependencyAttribute("Aggregate`1", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("Append`1", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("Any`1", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("All`1", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("Aggregate`3", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("Aggregate`2", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("GroupJoin`4", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("Average", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("Distinct`1", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("SelectMany`3", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("SequenceEqual`1", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("Single`1", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("Skip`1", "System.Linq.Enumerable")]
 [PreserveDependencyAttribute("Intersect`1", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("Sum", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("Join`4", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("SkipLast`1", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("Last`1", "System.Linq.Enumerable")]
 [PreserveDependencyAttribute("SkipWhile`1", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("Except`1", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("Sum", "System.Linq.Enumerable")]
 [PreserveDependencyAttribute("Sum`1", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("SelectMany`2", "System.Linq.Enumerable")]
 [PreserveDependencyAttribute("Take`1", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("TakeLast`1", "System.Linq.Enumerable")]
 [PreserveDependencyAttribute("TakeWhile`1", "System.Linq.Enumerable")]
 [PreserveDependencyAttribute("ThenBy`2", "System.Linq.Enumerable")]
 [PreserveDependencyAttribute("ThenByDescending`2", "System.Linq.Enumerable")]
 [PreserveDependencyAttribute("Union`1", "System.Linq.Enumerable")]
 [PreserveDependencyAttribute("Where`1", "System.Linq.Enumerable")]
 [PreserveDependencyAttribute("Zip`3", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("GroupBy`4", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("GroupBy`3", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("GroupBy`2", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("FirstOrDefault`1", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("ElementAt`1", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("First`1", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("SkipLast`1", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("Skip`1", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("ElementAtOrDefault`1", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("Single`1", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("Join`4", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("Last`1", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("LastOrDefault`1", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("LongCount`1", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("SingleOrDefault`1", "System.Linq.Enumerable")]
 [PreserveDependencyAttribute("Max`2", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("Min`1", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("Min`2", "System.Linq.Enumerable")]
 [PreserveDependencyAttribute("Max`1", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("OrderBy`2", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("OrderByDescending`2", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("Prepend`1", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("Reverse`1", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("LongCount`1", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("Min`1", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("LastOrDefault`1", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("TakeLast`1", "System.Linq.Enumerable")]
 [PreserveDependencyAttribute("Select`2", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("SequenceEqual`1", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("SelectMany`3", "System.Linq.Enumerable")]
-[PreserveDependencyAttribute("SelectMany`2", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("SingleOrDefault`1", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("Prepend`1", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("Aggregate`2", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("Aggregate`3", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("All`1", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("Any`1", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("Append`1", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("Average", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("Average`1", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("Reverse`1", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("Concat`1", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("Contains`1", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("Count`1", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("DefaultIfEmpty`1", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("Distinct`1", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("Cast`1", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("ElementAtOrDefault`1", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("Except`1", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("First`1", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("FirstOrDefault`1", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("GroupBy`2", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("GroupBy`3", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("GroupBy`4", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("OrderByDescending`2", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("GroupJoin`4", "System.Linq.Enumerable")]
 [PreserveDependencyAttribute("OfType`1", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("OrderBy`2", "System.Linq.Enumerable")]
+[PreserveDependencyAttribute("ElementAt`1", "System.Linq.Enumerable")]
 private static MethodInfo FindEnumerableMethod(string name, ReadOnlyCollection`1<Expression> args, Type[] typeArgs);
     private static MethodInfo FindMethod(Type type, string name, ReadOnlyCollection`1<Expression> args, Type[] typeArgs);
     private static bool ArgsMatch(MethodInfo m, ReadOnlyCollection`1<Expression> args, Type[] typeArgs);
@@ -9874,9 +9875,9 @@ public class System.Net.Sockets.UnixDomainSocketEndPoint : EndPoint {
     private string _path;
     private Byte[] _encodedPath;
     public AddressFamily AddressFamily { get; }
+    private static UnixDomainSocketEndPoint();
     public UnixDomainSocketEndPoint(string path);
     internal UnixDomainSocketEndPoint(SocketAddress socketAddress);
-    private static UnixDomainSocketEndPoint();
     private SocketAddress CreateSocketAddressForSerialize();
     public virtual SocketAddress Serialize();
     public virtual EndPoint Create(SocketAddress socketAddress);

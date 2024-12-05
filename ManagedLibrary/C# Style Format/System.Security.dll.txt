@@ -1,8 +1,3 @@
-[ExtensionAttribute]
-internal static class Internal.Cryptography.CryptoThrowHelper : object {
-    [ExtensionAttribute]
-public static CryptographicException ToCryptographicException(int hr);
-}
 internal abstract class Internal.Cryptography.DecryptorPal : object {
     [CompilerGeneratedAttribute]
 private RecipientInfoCollection <RecipientInfos>k__BackingField;
@@ -201,7 +196,15 @@ internal abstract class Internal.Cryptography.RecipientInfoPal : object {
     public abstract virtual SubjectIdentifier get_RecipientIdentifier();
     public abstract virtual int get_Version();
 }
-internal static class Interop : object {
+internal static class Mono.Security.Cryptography.ManagedProtection : object {
+    private static RSA user;
+    private static RSA machine;
+    private static object user_lock;
+    private static object machine_lock;
+    private static ManagedProtection();
+    public static Byte[] Protect(Byte[] userData, Byte[] optionalEntropy, DataProtectionScope scope);
+    public static Byte[] Unprotect(Byte[] encryptedData, Byte[] optionalEntropy, DataProtectionScope scope);
+    private static RSA GetKey(DataProtectionScope scope);
 }
 [AttributeUsageAttribute("256")]
 internal class System.Security.Cryptography.Asn1.AnyValueAttribute : AsnTypeAttribute {
@@ -2009,13 +2012,12 @@ public enum System.Security.Cryptography.Pkcs.SubjectIdentifierType : Enum {
     public static SubjectIdentifierType SubjectKeyIdentifier;
     public static SubjectIdentifierType NoSignature;
 }
-public static class System.Security.Cryptography.ProtectedData : object {
-    private static Byte[] s_nonEmpty;
-    private static ProtectedData();
+public class System.Security.Cryptography.ProtectedData : object {
+    private static DataProtectionImplementation impl;
     public static Byte[] Protect(Byte[] userData, Byte[] optionalEntropy, DataProtectionScope scope);
     public static Byte[] Unprotect(Byte[] encryptedData, Byte[] optionalEntropy, DataProtectionScope scope);
-    private static Byte[] ProtectOrUnprotect(Byte[] inputData, Byte[] optionalEntropy, DataProtectionScope scope, bool protect);
-    private static bool ErrorMayBeCausedByUnloadedProfile(int errorCode);
+    private static void Detect();
+    private static void Check(DataProtectionScope scope);
 }
 public class System.Security.Cryptography.ProtectedMemory : object {
     private static int BlockSize;

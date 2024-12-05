@@ -7,8 +7,8 @@ public class UnityEngine.DetailInstanceTransform : ValueType {
     public float scaleY;
     public float rotationY;
 }
-[NativeHeaderAttribute("TerrainScriptingClasses.h")]
 [NativeHeaderAttribute("Modules/Terrain/Public/TerrainDataScriptingInterface.h")]
+[NativeHeaderAttribute("TerrainScriptingClasses.h")]
 [UsedByNativeCodeAttribute]
 public class UnityEngine.DetailPrototype : object {
     internal static Color DefaultHealthColor;
@@ -400,8 +400,8 @@ public enum UnityEngine.TerrainChangedFlags : Enum {
     public static TerrainChangedFlags DelayedHolesUpdate;
     public static TerrainChangedFlags WillBeDestroyed;
 }
-[NativeHeaderAttribute("TerrainScriptingClasses.h")]
 [NativeHeaderAttribute("Modules/Terrain/Public/TerrainDataScriptingInterface.h")]
+[NativeHeaderAttribute("TerrainScriptingClasses.h")]
 [UsedByNativeCodeAttribute]
 public class UnityEngine.TerrainData : Object {
     private static string k_ScriptingInterfaceName;
@@ -418,6 +418,9 @@ public class UnityEngine.TerrainData : Object {
     internal static int k_MaximumAlphamapResolution;
     internal static int k_MinimumBaseMapResolution;
     internal static int k_MaximumBaseMapResolution;
+    private static bool SupportsCopyTextureBetweenRTAndTexture { get; }
+    public static string AlphamapTextureName { get; }
+    public static string HolesTextureName { get; }
     [ObsoleteAttribute("Please use heightmapResolution instead. (UnityUpgradable) -> heightmapResolution", "False")]
 public int heightmapWidth { get; }
     [ObsoleteAttribute("Please use heightmapResolution instead. (UnityUpgradable) -> heightmapResolution", "False")]
@@ -463,10 +466,15 @@ public SplatPrototype[] splatPrototypes { get; public set; }
     public TerrainLayer[] terrainLayers { get; public set; }
     internal TextureFormat atlasFormat { get; }
     internal Terrain[] users { get; }
-    private static bool SupportsCopyTextureBetweenRTAndTexture { get; }
-    public static string AlphamapTextureName { get; }
-    public static string HolesTextureName { get; }
     private static TerrainData();
+    private static bool get_SupportsCopyTextureBetweenRTAndTexture();
+    public void CopyActiveRenderTextureToHeightmap(RectInt sourceRect, Vector2Int dest, TerrainHeightmapSyncControl syncControl);
+    public void DirtyHeightmapRegion(RectInt region, TerrainHeightmapSyncControl syncControl);
+    public static string get_AlphamapTextureName();
+    public static string get_HolesTextureName();
+    public void CopyActiveRenderTextureToTexture(string textureName, int textureIndex, RectInt sourceRect, Vector2Int dest, bool allowDelayedCPUSync);
+    public void DirtyTextureRegion(string textureName, RectInt region, bool allowDelayedCPUSync);
+    public void SyncTexture(string textureName);
     [StaticAccessorAttribute("TerrainDataScriptingInterface", "2")]
 [ThreadSafeAttribute]
 private static int GetBoundaryValue(BoundaryValueType type);
@@ -699,14 +707,6 @@ private void Internal_SyncAlphamaps();
     [NativeNameAttribute("GetDetailDatabase().GetAtlasTexture()->GetTextureFormat")]
 internal TextureFormat get_atlasFormat();
     internal Terrain[] get_users();
-    private static bool get_SupportsCopyTextureBetweenRTAndTexture();
-    public void CopyActiveRenderTextureToHeightmap(RectInt sourceRect, Vector2Int dest, TerrainHeightmapSyncControl syncControl);
-    public void DirtyHeightmapRegion(RectInt region, TerrainHeightmapSyncControl syncControl);
-    public static string get_AlphamapTextureName();
-    public static string get_HolesTextureName();
-    public void CopyActiveRenderTextureToTexture(string textureName, int textureIndex, RectInt sourceRect, Vector2Int dest, bool allowDelayedCPUSync);
-    public void DirtyTextureRegion(string textureName, RectInt region, bool allowDelayedCPUSync);
-    public void SyncTexture(string textureName);
     private void get_heightmapScale_Injected(Vector3& ret);
     private void get_size_Injected(Vector3& ret);
     private void set_size_Injected(Vector3& value);
@@ -737,8 +737,8 @@ public enum UnityEngine.TerrainHeightmapSyncControl : Enum {
     public static TerrainHeightmapSyncControl HeightOnly;
     public static TerrainHeightmapSyncControl HeightAndLod;
 }
-[NativeHeaderAttribute("Modules/Terrain/Public/TerrainLayerScriptingInterface.h")]
 [NativeHeaderAttribute("TerrainScriptingClasses.h")]
+[NativeHeaderAttribute("Modules/Terrain/Public/TerrainLayerScriptingInterface.h")]
 [UsedByNativeCodeAttribute]
 public class UnityEngine.TerrainLayer : Object {
     public Texture2D diffuseTexture { get; public set; }

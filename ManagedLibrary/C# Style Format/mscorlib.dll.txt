@@ -126,7 +126,6 @@ internal class Internal.Cryptography.PinAndClear : ValueType {
 }
 internal static class Internal.IO.File : object {
     internal static bool InternalExists(string fullPath);
-    internal static int FillAttributeInfo(string path, WIN32_FILE_ATTRIBUTE_DATA& data, bool returnErrorOnNotFound);
 }
 internal enum Internal.Runtime.Augments.AsyncStatus : Enum {
     public int value__;
@@ -221,9 +220,21 @@ internal static class Internal.Threading.Tasks.Tracing.TaskTrace : object {
     public static void TaskCompleted(int OriginatingTaskSchedulerID, int OriginatingTaskID, int TaskID, bool IsExceptional);
 }
 internal static class Interop : object {
+    private static void ThrowExceptionForIoErrno(ErrorInfo errorInfo, string path, bool isDirectory, Func`2<ErrorInfo, ErrorInfo> errorRewriter);
+    internal static void CheckIo(Error error, string path, bool isDirectory, Func`2<ErrorInfo, ErrorInfo> errorRewriter);
+    internal static long CheckIo(long result, string path, bool isDirectory, Func`2<ErrorInfo, ErrorInfo> errorRewriter);
+    internal static int CheckIo(int result, string path, bool isDirectory, Func`2<ErrorInfo, ErrorInfo> errorRewriter);
+    internal static IntPtr CheckIo(IntPtr result, string path, bool isDirectory, Func`2<ErrorInfo, ErrorInfo> errorRewriter);
+    internal static TSafeHandle CheckIo(TSafeHandle handle, string path, bool isDirectory, Func`2<ErrorInfo, ErrorInfo> errorRewriter);
+    internal static Exception GetExceptionForIoErrno(ErrorInfo errorInfo, string path, bool isDirectory);
+    internal static Exception GetIOException(ErrorInfo errorInfo);
+    internal static bool CallStringMethod(Func`5<TArg1, TArg2, TArg3, StringBuilder, ResultCode> interopCall, TArg1 arg1, TArg2 arg2, TArg3 arg3, String& result);
     internal static void GetRandomBytes(Byte* buffer, int length);
-    internal static IntPtr MemAlloc(UIntPtr sizeInBytes);
-    internal static void MemFree(IntPtr allocatedMemory);
+}
+[ExtensionAttribute]
+internal static class InteropErrorExtensions : object {
+    [ExtensionAttribute]
+public static ErrorInfo Info(Error error);
 }
 internal class Locale : object {
     public static string GetText(string msg);
@@ -233,23 +244,107 @@ internal class Locale : object {
 [EmbeddedAttribute]
 internal class Microsoft.CodeAnalysis.EmbeddedAttribute : Attribute {
 }
+internal class Microsoft.Win32.ExpandString : object {
+    private string value;
+    public ExpandString(string s);
+    public virtual string ToString();
+    public string Expand();
+}
+internal interface Microsoft.Win32.IRegistryApi {
+    public abstract virtual RegistryKey CreateSubKey(RegistryKey rkey, string keyname);
+    public abstract virtual RegistryKey OpenRemoteBaseKey(RegistryHive hKey, string machineName);
+    public abstract virtual RegistryKey OpenSubKey(RegistryKey rkey, string keyname, bool writtable);
+    public abstract virtual void Flush(RegistryKey rkey);
+    public abstract virtual void Close(RegistryKey rkey);
+    public abstract virtual object GetValue(RegistryKey rkey, string name, object default_value, RegistryValueOptions options);
+    public abstract virtual RegistryValueKind GetValueKind(RegistryKey rkey, string name);
+    public abstract virtual void SetValue(RegistryKey rkey, string name, object value);
+    public abstract virtual int SubKeyCount(RegistryKey rkey);
+    public abstract virtual int ValueCount(RegistryKey rkey);
+    public abstract virtual void DeleteValue(RegistryKey rkey, string value, bool throw_if_missing);
+    public abstract virtual void DeleteKey(RegistryKey rkey, string keyName, bool throw_if_missing);
+    public abstract virtual String[] GetSubKeyNames(RegistryKey rkey);
+    public abstract virtual String[] GetValueNames(RegistryKey rkey);
+    public abstract virtual string ToString(RegistryKey rkey);
+    public abstract virtual void SetValue(RegistryKey rkey, string name, object value, RegistryValueKind valueKind);
+    public abstract virtual RegistryKey CreateSubKey(RegistryKey rkey, string keyname, RegistryOptions options);
+    public abstract virtual RegistryKey FromHandle(SafeRegistryHandle handle);
+    public abstract virtual IntPtr GetHandle(RegistryKey key);
+}
+internal class Microsoft.Win32.KeyHandler : object {
+    private static Hashtable key_to_handler;
+    private static Hashtable dir_to_handler;
+    private static string VolatileDirectoryName;
+    public string Dir;
+    private string ActualDir;
+    public bool IsVolatile;
+    private Hashtable values;
+    private string file;
+    private bool dirty;
+    private static string user_store;
+    private static string machine_store;
+    public int ValueCount { get; }
+    public bool IsMarkedForDeletion { get; }
+    private static string UserStore { get; }
+    private static string MachineStore { get; }
+    private static KeyHandler();
+    private KeyHandler(RegistryKey rkey, string basedir);
+    private KeyHandler(RegistryKey rkey, string basedir, bool is_volatile);
+    public void Load();
+    private void LoadKey(SecurityElement se);
+    public RegistryKey Ensure(RegistryKey rkey, string extra, bool writable);
+    public RegistryKey Ensure(RegistryKey rkey, string extra, bool writable, bool is_volatile);
+    public RegistryKey Probe(RegistryKey rkey, string extra, bool writable);
+    private static string CombineName(RegistryKey rkey, string extra);
+    private static long GetSystemBootTime();
+    private static long GetRegisteredBootTime(string path);
+    private static void SaveRegisteredBootTime(string path, long btime);
+    private static void CleanVolatileKeys();
+    public static bool VolatileKeyExists(string dir);
+    public static string GetVolatileDir(string dir);
+    public static KeyHandler Lookup(RegistryKey rkey, bool createNonExisting);
+    private static string GetRootFromDir(string dir);
+    public static void Drop(RegistryKey rkey);
+    public static void Drop(string dir);
+    public static bool Delete(string dir);
+    public RegistryValueKind GetValueKind(string name);
+    public object GetValue(string name, RegistryValueOptions options);
+    public void SetValue(string name, object value);
+    public String[] GetValueNames();
+    public int GetSubKeyCount();
+    public String[] GetSubKeyNames();
+    public void SetValue(string name, object value, RegistryValueKind valueKind);
+    private void SetDirty();
+    public void DirtyTimeout(object state);
+    public void Flush();
+    public bool ValueExists(string name);
+    public int get_ValueCount();
+    public bool get_IsMarkedForDeletion();
+    public void RemoveValue(string name);
+    protected virtual override void Finalize();
+    private void Save();
+    private void AssertNotMarkedForDeletion();
+    private static string get_UserStore();
+    private static string get_MachineStore();
+}
 internal static class Microsoft.Win32.NativeMethods : object {
     public static int GetCurrentProcessId();
 }
+[ComVisibleAttribute("True")]
 public static class Microsoft.Win32.Registry : object {
-    public static RegistryKey CurrentUser;
-    public static RegistryKey LocalMachine;
     public static RegistryKey ClassesRoot;
-    public static RegistryKey Users;
-    public static RegistryKey PerformanceData;
     public static RegistryKey CurrentConfig;
+    public static RegistryKey CurrentUser;
     [ObsoleteAttribute("Use PerformanceData instead")]
 public static RegistryKey DynData;
+    public static RegistryKey LocalMachine;
+    public static RegistryKey PerformanceData;
+    public static RegistryKey Users;
     private static Registry();
-    public static object GetValue(string keyName, string valueName, object defaultValue);
+    private static RegistryKey ToKey(string keyName, bool setting);
     public static void SetValue(string keyName, string valueName, object value);
     public static void SetValue(string keyName, string valueName, object value, RegistryValueKind valueKind);
-    private static RegistryKey GetBaseKeyFromKeyName(string keyName, String& subKeyName);
+    public static object GetValue(string keyName, string valueName, object defaultValue);
 }
 public enum Microsoft.Win32.RegistryHive : Enum {
     public int value__;
@@ -261,122 +356,118 @@ public enum Microsoft.Win32.RegistryHive : Enum {
     public static RegistryHive CurrentConfig;
     public static RegistryHive DynData;
 }
+[ComVisibleAttribute("True")]
 public class Microsoft.Win32.RegistryKey : MarshalByRefObject {
-    internal static IntPtr HKEY_CLASSES_ROOT;
-    internal static IntPtr HKEY_CURRENT_USER;
-    internal static IntPtr HKEY_LOCAL_MACHINE;
-    internal static IntPtr HKEY_USERS;
-    internal static IntPtr HKEY_PERFORMANCE_DATA;
-    internal static IntPtr HKEY_CURRENT_CONFIG;
-    internal static IntPtr HKEY_DYN_DATA;
-    private static String[] s_hkeyNames;
-    private static int MaxKeyLength;
-    private static int MaxValueLength;
-    private SafeRegistryHandle modreq(System.Runtime.CompilerServices.IsVolatile) _hkey;
-    private String modreq(System.Runtime.CompilerServices.IsVolatile) _keyName;
-    private Boolean modreq(System.Runtime.CompilerServices.IsVolatile) _remoteKey;
-    private StateFlags modreq(System.Runtime.CompilerServices.IsVolatile) _state;
-    private RegistryKeyPermissionCheck modreq(System.Runtime.CompilerServices.IsVolatile) _checkMode;
-    private RegistryView modreq(System.Runtime.CompilerServices.IsVolatile) _regView;
-    private SafeRegistryHandle SystemKeyHandle { get; }
-    public int SubKeyCount { get; }
-    public RegistryView View { get; }
-    public SafeRegistryHandle Handle { get; }
-    public int ValueCount { get; }
+    private object handle;
+    private SafeRegistryHandle safe_handle;
+    private object hive;
+    private string qname;
+    private bool isRemoteRoot;
+    private bool isWritable;
+    private static IRegistryApi RegistryApi;
     public string Name { get; }
-    private RegistryKey(SafeRegistryHandle hkey, bool writable, RegistryView view);
-    private RegistryKey(SafeRegistryHandle hkey, bool writable, bool systemkey, bool remoteKey, bool isPerfData, RegistryView view);
+    public int SubKeyCount { get; }
+    public int ValueCount { get; }
+    [ComVisibleAttribute("False")]
+[MonoTODOAttribute("Not implemented in Unix")]
+public SafeRegistryHandle Handle { get; }
+    [ComVisibleAttribute("False")]
+[MonoLimitationAttribute("View is ignored in Mono.")]
+public RegistryView View { get; }
+    internal bool IsRoot { get; }
+    private bool IsWritable { get; }
+    internal RegistryHive Hive { get; }
+    internal object InternalHandle { get; }
     private static RegistryKey();
-    private void ClosePerfDataKey();
-    private void FlushCore();
-    private RegistryKey CreateSubKeyInternalCore(string subkey, RegistryKeyPermissionCheck permissionCheck, object registrySecurityObj, RegistryOptions registryOptions);
-    private void DeleteSubKeyCore(string subkey, bool throwOnMissingSubKey);
-    private void DeleteSubKeyTreeCore(string subkey);
-    private void DeleteValueCore(string name, bool throwOnMissingValue);
-    private static RegistryKey OpenBaseKeyCore(RegistryHive hKeyHive, RegistryView view);
-    private static RegistryKey OpenRemoteBaseKeyCore(RegistryHive hKey, string machineName, RegistryView view);
-    private RegistryKey InternalOpenSubKeyCore(string name, RegistryKeyPermissionCheck permissionCheck, int rights, bool throwOnPermissionFailure);
-    private RegistryKey InternalOpenSubKeyCore(string name, bool writable, bool throwOnPermissionFailure);
-    internal RegistryKey InternalOpenSubKeyWithoutSecurityChecksCore(string name, bool writable);
-    private SafeRegistryHandle get_SystemKeyHandle();
-    private int InternalSubKeyCountCore();
-    private String[] InternalGetSubKeyNamesCore(int subkeys);
-    private int InternalValueCountCore();
-    private String[] GetValueNamesCore(int values);
-    private object InternalGetValueCore(string name, object defaultValue, bool doNotExpand);
-    private RegistryValueKind GetValueKindCore(string name);
-    private void SetValueCore(string name, object value, RegistryValueKind valueKind);
-    private void Win32Error(int errorCode, string str);
-    private static void Win32ErrorStatic(int errorCode, string str);
-    private static int GetRegistryKeyAccess(bool isWritable);
-    private static int GetRegistryKeyAccess(RegistryKeyPermissionCheck mode);
+    internal RegistryKey(RegistryHive hiveId);
+    internal RegistryKey(RegistryHive hiveId, IntPtr keyHandle, bool remoteRoot);
+    internal RegistryKey(object data, string keyName, bool writable);
+    internal static bool IsEquals(RegistryKey a, RegistryKey b);
+    public sealed virtual void Dispose();
+    public string get_Name();
     public void Flush();
     public void Close();
-    public sealed virtual void Dispose();
+    public int get_SubKeyCount();
+    public int get_ValueCount();
+    public SafeRegistryHandle get_Handle();
+    public RegistryView get_View();
+    public void SetValue(string name, object value);
+    [ComVisibleAttribute("False")]
+public void SetValue(string name, object value, RegistryValueKind valueKind);
+    public RegistryKey OpenSubKey(string name);
+    public RegistryKey OpenSubKey(string name, bool writable);
+    public object GetValue(string name);
+    public object GetValue(string name, object defaultValue);
+    [ComVisibleAttribute("False")]
+public object GetValue(string name, object defaultValue, RegistryValueOptions options);
+    [ComVisibleAttribute("False")]
+public RegistryValueKind GetValueKind(string name);
     public RegistryKey CreateSubKey(string subkey);
-    public RegistryKey CreateSubKey(string subkey, bool writable);
-    public RegistryKey CreateSubKey(string subkey, bool writable, RegistryOptions options);
-    public RegistryKey CreateSubKey(string subkey, RegistryKeyPermissionCheck permissionCheck);
-    public RegistryKey CreateSubKey(string subkey, RegistryKeyPermissionCheck permissionCheck, RegistryOptions registryOptions);
-    public RegistryKey CreateSubKey(string subkey, RegistryKeyPermissionCheck permissionCheck, RegistryOptions registryOptions, RegistrySecurity registrySecurity);
-    public RegistryKey CreateSubKey(string subkey, RegistryKeyPermissionCheck permissionCheck, RegistrySecurity registrySecurity);
-    private RegistryKey CreateSubKeyInternal(string subkey, RegistryKeyPermissionCheck permissionCheck, object registrySecurityObj, RegistryOptions registryOptions);
+    [ComVisibleAttribute("False")]
+[MonoLimitationAttribute("permissionCheck is ignored in Mono")]
+public RegistryKey CreateSubKey(string subkey, RegistryKeyPermissionCheck permissionCheck);
+    [ComVisibleAttribute("False")]
+[MonoLimitationAttribute("permissionCheck and registrySecurity are ignored in Mono")]
+public RegistryKey CreateSubKey(string subkey, RegistryKeyPermissionCheck permissionCheck, RegistrySecurity registrySecurity);
+    [ComVisibleAttribute("False")]
+[MonoLimitationAttribute("permissionCheck is ignored in Mono")]
+public RegistryKey CreateSubKey(string subkey, RegistryKeyPermissionCheck permissionCheck, RegistryOptions options);
+    [ComVisibleAttribute("False")]
+[MonoLimitationAttribute("permissionCheck and registrySecurity are ignored in Mono")]
+public RegistryKey CreateSubKey(string subkey, RegistryKeyPermissionCheck permissionCheck, RegistryOptions registryOptions, RegistrySecurity registrySecurity);
+    [ComVisibleAttribute("False")]
+public RegistryKey CreateSubKey(string subkey, bool writable);
+    [ComVisibleAttribute("False")]
+public RegistryKey CreateSubKey(string subkey, bool writable, RegistryOptions options);
     public void DeleteSubKey(string subkey);
     public void DeleteSubKey(string subkey, bool throwOnMissingSubKey);
     public void DeleteSubKeyTree(string subkey);
     public void DeleteSubKeyTree(string subkey, bool throwOnMissingSubKey);
-    private void DeleteSubKeyTreeInternal(string subkey);
     public void DeleteValue(string name);
     public void DeleteValue(string name, bool throwOnMissingValue);
-    public static RegistryKey OpenBaseKey(RegistryHive hKey, RegistryView view);
-    public static RegistryKey OpenRemoteBaseKey(RegistryHive hKey, string machineName);
-    public static RegistryKey OpenRemoteBaseKey(RegistryHive hKey, string machineName, RegistryView view);
-    public RegistryKey OpenSubKey(string name);
-    public RegistryKey OpenSubKey(string name, bool writable);
-    public RegistryKey OpenSubKey(string name, RegistryKeyPermissionCheck permissionCheck);
-    public RegistryKey OpenSubKey(string name, RegistryRights rights);
-    public RegistryKey OpenSubKey(string name, RegistryKeyPermissionCheck permissionCheck, RegistryRights rights);
-    private RegistryKey InternalOpenSubKey(string name, RegistryKeyPermissionCheck permissionCheck, int rights);
-    internal RegistryKey InternalOpenSubKeyWithoutSecurityChecks(string name, bool writable);
     public RegistrySecurity GetAccessControl();
     public RegistrySecurity GetAccessControl(AccessControlSections includeSections);
-    public void SetAccessControl(RegistrySecurity registrySecurity);
-    public int get_SubKeyCount();
-    public RegistryView get_View();
-    public SafeRegistryHandle get_Handle();
-    public static RegistryKey FromHandle(SafeRegistryHandle handle);
-    public static RegistryKey FromHandle(SafeRegistryHandle handle, RegistryView view);
-    private int InternalSubKeyCount();
     public String[] GetSubKeyNames();
-    private String[] InternalGetSubKeyNames();
-    public int get_ValueCount();
-    private int InternalValueCount();
     public String[] GetValueNames();
-    public object GetValue(string name);
-    public object GetValue(string name, object defaultValue);
-    public object GetValue(string name, object defaultValue, RegistryValueOptions options);
-    private object InternalGetValue(string name, object defaultValue, bool doNotExpand, bool checkSecurity);
-    public RegistryValueKind GetValueKind(string name);
-    public string get_Name();
-    public void SetValue(string name, object value);
-    public void SetValue(string name, object value, RegistryValueKind valueKind);
-    private RegistryValueKind CalculateValueKind(object value);
+    [ComVisibleAttribute("False")]
+[MonoTODOAttribute("Not implemented on unix")]
+public static RegistryKey FromHandle(SafeRegistryHandle handle);
+    [ComVisibleAttribute("False")]
+[MonoTODOAttribute("Not implemented on unix")]
+public static RegistryKey FromHandle(SafeRegistryHandle handle, RegistryView view);
+    [MonoTODOAttribute("Not implemented on unix")]
+public static RegistryKey OpenRemoteBaseKey(RegistryHive hKey, string machineName);
+    [ComVisibleAttribute("False")]
+[MonoTODOAttribute("Not implemented on unix")]
+public static RegistryKey OpenRemoteBaseKey(RegistryHive hKey, string machineName, RegistryView view);
+    [ComVisibleAttribute("False")]
+[MonoLimitationAttribute("View is ignored in Mono")]
+public static RegistryKey OpenBaseKey(RegistryHive hKey, RegistryView view);
+    [ComVisibleAttribute("False")]
+public RegistryKey OpenSubKey(string name, RegistryKeyPermissionCheck permissionCheck);
+    [ComVisibleAttribute("False")]
+[MonoLimitationAttribute("rights are ignored in Mono")]
+public RegistryKey OpenSubKey(string name, RegistryRights rights);
+    [ComVisibleAttribute("False")]
+[MonoLimitationAttribute("rights are ignored in Mono")]
+public RegistryKey OpenSubKey(string name, RegistryKeyPermissionCheck permissionCheck, RegistryRights rights);
+    public void SetAccessControl(RegistrySecurity registrySecurity);
     public virtual string ToString();
-    private static string FixupName(string name);
-    private static void FixupPath(StringBuilder path);
-    private void EnsureNotDisposed();
-    private void EnsureWriteable();
-    private RegistryKeyPermissionCheck GetSubKeyPermissionCheck(bool subkeyWritable);
-    private static void ValidateKeyName(string name);
-    private static void ValidateKeyMode(RegistryKeyPermissionCheck mode);
-    private static void ValidateKeyOptions(RegistryOptions options);
-    private static void ValidateKeyView(RegistryView view);
-    private static void ValidateKeyRights(int rights);
-    private bool IsDirty();
-    private bool IsSystemKey();
-    private bool IsWritable();
-    private bool IsPerfDataKey();
-    private void SetDirty();
+    internal bool get_IsRoot();
+    private bool get_IsWritable();
+    internal RegistryHive get_Hive();
+    internal object get_InternalHandle();
+    private void AssertKeyStillValid();
+    private void AssertKeyNameNotNull(string subKeyName);
+    private void AssertKeyNameLength(string name);
+    private void DeleteChildKeysAndValues();
+    internal static string DecodeString(Byte[] data);
+    internal static IOException CreateMarkedForDeletionException();
+    private static string GetHiveName(RegistryHive hive);
+}
+internal class Microsoft.Win32.RegistryKeyComparer : object {
+    public sealed virtual bool Equals(object x, object y);
+    public sealed virtual int GetHashCode(object obj);
 }
 public enum Microsoft.Win32.RegistryKeyPermissionCheck : Enum {
     public int value__;
@@ -437,6 +528,11 @@ public virtual bool get_IsInvalid();
     [SecurityCriticalAttribute]
 protected virtual bool ReleaseHandle();
 }
+internal class Microsoft.Win32.SafeHandles.SafeDirectoryHandle : SafeHandle {
+    public bool IsInvalid { get; }
+    protected virtual bool ReleaseHandle();
+    public virtual bool get_IsInvalid();
+}
 [SecurityCriticalAttribute]
 public class Microsoft.Win32.SafeHandles.SafeFileHandle : SafeHandleZeroOrMinusOneIsInvalid {
     public SafeFileHandle(IntPtr preexistingHandle, bool ownsHandle);
@@ -470,10 +566,6 @@ protected SafeHandleZeroOrMinusOneIsInvalid(bool ownsHandle);
     [SecurityCriticalAttribute]
 public virtual bool get_IsInvalid();
 }
-internal class Microsoft.Win32.SafeHandles.SafeLibraryHandle : SafeHandleZeroOrMinusOneIsInvalid {
-    internal SafeLibraryHandle(bool ownsHandle);
-    protected virtual bool ReleaseHandle();
-}
 internal class Microsoft.Win32.SafeHandles.SafePasswordHandle : SafeHandle {
     public bool IsInvalid { get; }
     public static SafePasswordHandle InvalidHandle { get; }
@@ -488,15 +580,15 @@ internal class Microsoft.Win32.SafeHandles.SafePasswordHandle : SafeHandle {
     public static SafePasswordHandle get_InvalidHandle();
     internal string Mono_DangerousGetString();
 }
+[SecurityCriticalAttribute]
 public class Microsoft.Win32.SafeHandles.SafeRegistryHandle : SafeHandleZeroOrMinusOneIsInvalid {
-    public SafeRegistryHandle(IntPtr preexistingHandle, bool ownsHandle);
-    protected virtual bool ReleaseHandle();
-}
-internal class Microsoft.Win32.SafeHandles.SafeThreadPoolIOHandle : SafeHandle {
-    public bool IsInvalid { get; }
-    private static SafeThreadPoolIOHandle();
-    public virtual bool get_IsInvalid();
-    protected virtual bool ReleaseHandle();
+    [SecurityCriticalAttribute]
+public SafeRegistryHandle(IntPtr preexistingHandle, bool ownsHandle);
+    [SecurityCriticalAttribute]
+protected virtual bool ReleaseHandle();
+    [ReliabilityContractAttribute("3", "2")]
+[SuppressUnmanagedCodeSecurityAttribute]
+internal static int RegCloseKey(IntPtr hKey);
 }
 [SecurityCriticalAttribute]
 public class Microsoft.Win32.SafeHandles.SafeWaitHandle : SafeHandleZeroOrMinusOneIsInvalid {
@@ -513,6 +605,31 @@ internal static class Microsoft.Win32.ThrowHelper : object {
     internal static void ThrowSecurityException(string msg);
     internal static void ThrowUnauthorizedAccessException(string msg);
     internal static void ThrowObjectDisposedException(string objectName, string msg);
+}
+internal class Microsoft.Win32.UnixRegistryApi : object {
+    private static string ToUnix(string keyname);
+    private static bool IsWellKnownKey(string parentKeyName, string keyname);
+    public sealed virtual RegistryKey CreateSubKey(RegistryKey rkey, string keyname);
+    public sealed virtual RegistryKey CreateSubKey(RegistryKey rkey, string keyname, RegistryOptions options);
+    public sealed virtual RegistryKey OpenRemoteBaseKey(RegistryHive hKey, string machineName);
+    public sealed virtual RegistryKey OpenSubKey(RegistryKey rkey, string keyname, bool writable);
+    public sealed virtual RegistryKey FromHandle(SafeRegistryHandle handle);
+    public sealed virtual void Flush(RegistryKey rkey);
+    public sealed virtual void Close(RegistryKey rkey);
+    public sealed virtual object GetValue(RegistryKey rkey, string name, object default_value, RegistryValueOptions options);
+    public sealed virtual void SetValue(RegistryKey rkey, string name, object value);
+    public sealed virtual void SetValue(RegistryKey rkey, string name, object value, RegistryValueKind valueKind);
+    public sealed virtual int SubKeyCount(RegistryKey rkey);
+    public sealed virtual int ValueCount(RegistryKey rkey);
+    public sealed virtual void DeleteValue(RegistryKey rkey, string name, bool throw_if_missing);
+    public sealed virtual void DeleteKey(RegistryKey rkey, string keyname, bool throw_if_missing);
+    public sealed virtual String[] GetSubKeyNames(RegistryKey rkey);
+    public sealed virtual String[] GetValueNames(RegistryKey rkey);
+    public sealed virtual string ToString(RegistryKey rkey);
+    private RegistryKey CreateSubKey(RegistryKey rkey, string keyname, bool writable);
+    private RegistryKey CreateSubKey(RegistryKey rkey, string keyname, bool writable, bool is_volatile);
+    public sealed virtual RegistryValueKind GetValueKind(RegistryKey rkey, string name);
+    public sealed virtual IntPtr GetHandle(RegistryKey key);
 }
 internal static class Microsoft.Win32.Win32Native : object {
     internal static string ADVAPI32;
@@ -566,6 +683,71 @@ internal static class Microsoft.Win32.Win32Native : object {
     internal static FileAttributes FILE_ATTRIBUTE_DIRECTORY;
     public static string GetMessage(int hr);
     public static int MakeHRFromErrorCode(int errorCode);
+}
+internal class Microsoft.Win32.Win32RegistryApi : object {
+    private static int OpenRegKeyRead;
+    private static int OpenRegKeyWrite;
+    private static int Int32ByteSize;
+    private static int Int64ByteSize;
+    private int NativeBytesPerCharacter;
+    private static int RegOptionsNonVolatile;
+    private static int RegOptionsVolatile;
+    private static int MaxKeyLength;
+    private static int MaxValueLength;
+    private static int RegCreateKeyEx(IntPtr keyBase, string keyName, int reserved, IntPtr lpClass, int options, int access, IntPtr securityAttrs, IntPtr& keyHandle, Int32& disposition);
+    private static int RegCloseKey(IntPtr keyHandle);
+    private static int RegConnectRegistry(string machineName, IntPtr hKey, IntPtr& keyHandle);
+    private static int RegFlushKey(IntPtr keyHandle);
+    private static int RegOpenKeyEx(IntPtr keyBase, string keyName, IntPtr reserved, int access, IntPtr& keyHandle);
+    private static int RegDeleteKey(IntPtr keyHandle, string valueName);
+    private static int RegDeleteValue(IntPtr keyHandle, string valueName);
+    internal static int RegEnumKeyEx(IntPtr keyHandle, int dwIndex, Char* lpName, Int32& lpcbName, Int32[] lpReserved, StringBuilder lpClass, Int32[] lpcbClass, Int64[] lpftLastWriteTime);
+    internal static int RegEnumValue(IntPtr hKey, int dwIndex, Char* lpValueName, Int32& lpcbValueName, IntPtr lpReserved_MustBeZero, Int32[] lpType, Byte[] lpData, Int32[] lpcbData);
+    private static int RegSetValueEx(IntPtr keyBase, string valueName, IntPtr reserved, RegistryValueKind type, string data, int rawDataLength);
+    private static int RegSetValueEx(IntPtr keyBase, string valueName, IntPtr reserved, RegistryValueKind type, Byte[] rawData, int rawDataLength);
+    private static int RegSetValueEx(IntPtr keyBase, string valueName, IntPtr reserved, RegistryValueKind type, Int32& data, int rawDataLength);
+    private static int RegSetValueEx(IntPtr keyBase, string valueName, IntPtr reserved, RegistryValueKind type, Int64& data, int rawDataLength);
+    private static int RegQueryValueEx(IntPtr keyBase, string valueName, IntPtr reserved, RegistryValueKind& type, IntPtr zero, Int32& dataSize);
+    private static int RegQueryValueEx(IntPtr keyBase, string valueName, IntPtr reserved, RegistryValueKind& type, Byte[] data, Int32& dataSize);
+    private static int RegQueryValueEx(IntPtr keyBase, string valueName, IntPtr reserved, RegistryValueKind& type, Int32& data, Int32& dataSize);
+    private static int RegQueryValueEx(IntPtr keyBase, string valueName, IntPtr reserved, RegistryValueKind& type, Int64& data, Int32& dataSize);
+    internal static int RegQueryInfoKey(IntPtr hKey, StringBuilder lpClass, Int32[] lpcbClass, IntPtr lpReserved_MustBeZero, Int32& lpcSubKeys, Int32[] lpcbMaxSubKeyLen, Int32[] lpcbMaxClassLen, Int32& lpcValues, Int32[] lpcbMaxValueNameLen, Int32[] lpcbMaxValueLen, Int32[] lpcbSecurityDescriptor, Int32[] lpftLastWriteTime);
+    public sealed virtual IntPtr GetHandle(RegistryKey key);
+    private static bool IsHandleValid(RegistryKey key);
+    public sealed virtual RegistryValueKind GetValueKind(RegistryKey rkey, string name);
+    public sealed virtual object GetValue(RegistryKey rkey, string name, object defaultValue, RegistryValueOptions options);
+    public sealed virtual void SetValue(RegistryKey rkey, string name, object value, RegistryValueKind valueKind);
+    public sealed virtual void SetValue(RegistryKey rkey, string name, object value);
+    private int GetBinaryValue(RegistryKey rkey, string name, RegistryValueKind type, Byte[]& data, int size);
+    public sealed virtual int SubKeyCount(RegistryKey rkey);
+    public sealed virtual int ValueCount(RegistryKey rkey);
+    public sealed virtual RegistryKey OpenRemoteBaseKey(RegistryHive hKey, string machineName);
+    public sealed virtual RegistryKey OpenSubKey(RegistryKey rkey, string keyName, bool writable);
+    public sealed virtual void Flush(RegistryKey rkey);
+    public sealed virtual void Close(RegistryKey rkey);
+    public sealed virtual RegistryKey FromHandle(SafeRegistryHandle handle);
+    public sealed virtual RegistryKey CreateSubKey(RegistryKey rkey, string keyName);
+    public sealed virtual RegistryKey CreateSubKey(RegistryKey rkey, string keyName, RegistryOptions options);
+    public sealed virtual void DeleteKey(RegistryKey rkey, string keyName, bool shouldThrowWhenKeyMissing);
+    public sealed virtual void DeleteValue(RegistryKey rkey, string value, bool shouldThrowWhenKeyMissing);
+    public sealed virtual String[] GetSubKeyNames(RegistryKey rkey);
+    public sealed virtual String[] GetValueNames(RegistryKey rkey);
+    private void CheckResult(int result);
+    private void GenerateException(int errorCode);
+    public sealed virtual string ToString(RegistryKey rkey);
+    internal static string CombineName(RegistryKey rkey, string localName);
+}
+internal class Microsoft.Win32.Win32ResultCode : object {
+    public static int Success;
+    public static int FileNotFound;
+    public static int AccessDenied;
+    public static int InvalidHandle;
+    public static int InvalidParameter;
+    public static int MoreData;
+    public static int NetworkPathNotFound;
+    public static int NoMoreEntries;
+    public static int MarkedForDeletion;
+    public static int ChildMustBeVolatile;
 }
 [FlagsAttribute]
 internal enum Mono.CertificateImportFlags : Enum {
@@ -10645,6 +10827,7 @@ internal class System.CurrentSystemTimeZone : TimeZone {
     public virtual DaylightTime GetDaylightChanges(int year);
     private static DaylightTime CreateDaylightChanges(int year);
     public virtual TimeSpan GetUtcOffset(DateTime time);
+    public static bool GetTimeZoneData(int year, Int64[]& data, String[]& names, Boolean& daylight_inverted);
     private DaylightTime GetCachedDaylightChanges(int year);
 }
 public class System.DataMisalignedException : SystemException {
@@ -11664,16 +11847,16 @@ private static bool _assertingMustUseRewriter;
 [ConditionalAttribute("CONTRACTS_FULL")]
 [ReliabilityContractAttribute("3", "1")]
 public static void Assume(bool condition);
-    [ConditionalAttribute("CONTRACTS_FULL")]
-[ConditionalAttribute("DEBUG")]
+    [ConditionalAttribute("DEBUG")]
+[ConditionalAttribute("CONTRACTS_FULL")]
 [ReliabilityContractAttribute("3", "1")]
 public static void Assume(bool condition, string userMessage);
     [ConditionalAttribute("CONTRACTS_FULL")]
 [ConditionalAttribute("DEBUG")]
 [ReliabilityContractAttribute("3", "1")]
 public static void Assert(bool condition);
-    [ConditionalAttribute("CONTRACTS_FULL")]
-[ConditionalAttribute("DEBUG")]
+    [ConditionalAttribute("DEBUG")]
+[ConditionalAttribute("CONTRACTS_FULL")]
 [ReliabilityContractAttribute("3", "1")]
 public static void Assert(bool condition, string userMessage);
     [ConditionalAttribute("CONTRACTS_FULL")]
@@ -13356,15 +13539,6 @@ public class System.FieldAccessException : MemberAccessException {
     public FieldAccessException(string message);
     public FieldAccessException(string message, Exception inner);
     protected FieldAccessException(SerializationInfo info, StreamingContext context);
-}
-[ExtensionAttribute]
-internal static class System.FixedBufferExtensions : object {
-    [ExtensionAttribute]
-internal static string GetStringFromFixedBuffer(ReadOnlySpan`1<char> span);
-    [ExtensionAttribute]
-internal static int GetFixedBufferStringLength(ReadOnlySpan`1<char> span);
-    [ExtensionAttribute]
-internal static bool FixedBufferEqualsString(ReadOnlySpan`1<char> span, string value);
 }
 [AttributeUsageAttribute("16")]
 public class System.FlagsAttribute : Attribute {
@@ -17323,12 +17497,6 @@ public class System.IO.DirectoryNotFoundException : IOException {
     public DirectoryNotFoundException(string message, Exception innerException);
     protected DirectoryNotFoundException(SerializationInfo info, StreamingContext context);
 }
-internal class System.IO.DisableMediaInsertionPrompt : ValueType {
-    private bool _disableSuccess;
-    private UInt32 _oldMode;
-    public static DisableMediaInsertionPrompt Create();
-    public sealed virtual void Dispose();
-}
 [ComVisibleAttribute("True")]
 public class System.IO.DriveInfo : object {
     private string drive_format;
@@ -17368,7 +17536,7 @@ public static DriveInfo[] GetDrives();
     private static string GetDriveFormat(string rootPathName);
 }
 internal static class System.IO.DriveInfoInternal : object {
-    public static String[] GetLogicalDrives();
+    internal static String[] GetLogicalDrives();
 }
 public class System.IO.DriveNotFoundException : IOException {
     public DriveNotFoundException(string message);
@@ -17393,17 +17561,25 @@ public class System.IO.EndOfStreamException : IOException {
 [IsByRefLikeAttribute]
 [ObsoleteAttribute("Types with embedded references are not supported in this version of your compiler.", "True")]
 public class System.IO.Enumeration.FileSystemEntry : ValueType {
-    internal FILE_FULL_DIR_INFORMATION* _info;
+    internal DirectoryEntry _directoryEntry;
+    private FileStatus _status;
+    private Span`1<char> _pathBuffer;
+    private ReadOnlySpan`1<char> _fullPath;
+    private ReadOnlySpan`1<char> _fileName;
+    [FixedBufferAttribute("System.Char", "256")]
+private <_fileNameBuffer>e__FixedBuffer _fileNameBuffer;
+    private FileAttributes _initialAttributes;
     [CompilerGeneratedAttribute]
 private ReadOnlySpan`1<char> <Directory>k__BackingField;
     [CompilerGeneratedAttribute]
 private ReadOnlySpan`1<char> <RootDirectory>k__BackingField;
     [CompilerGeneratedAttribute]
 private ReadOnlySpan`1<char> <OriginalRootDirectory>k__BackingField;
+    private ReadOnlySpan`1<char> FullPath { get; }
+    public ReadOnlySpan`1<char> FileName { get; }
     public ReadOnlySpan`1<char> Directory { get; private set; }
     public ReadOnlySpan`1<char> RootDirectory { get; private set; }
     public ReadOnlySpan`1<char> OriginalRootDirectory { get; private set; }
-    public ReadOnlySpan`1<char> FileName { get; }
     public FileAttributes Attributes { get; }
     public long Length { get; }
     public DateTimeOffset CreationTimeUtc { get; }
@@ -17411,7 +17587,9 @@ private ReadOnlySpan`1<char> <OriginalRootDirectory>k__BackingField;
     public DateTimeOffset LastWriteTimeUtc { get; }
     public bool IsDirectory { get; }
     public bool IsHidden { get; }
-    internal static void Initialize(FileSystemEntry& entry, FILE_FULL_DIR_INFORMATION* info, ReadOnlySpan`1<char> directory, ReadOnlySpan`1<char> rootDirectory, ReadOnlySpan`1<char> originalRootDirectory);
+    internal static FileAttributes Initialize(FileSystemEntry& entry, DirectoryEntry directoryEntry, ReadOnlySpan`1<char> directory, ReadOnlySpan`1<char> rootDirectory, ReadOnlySpan`1<char> originalRootDirectory, Span`1<char> pathBuffer);
+    private ReadOnlySpan`1<char> get_FullPath();
+    public ReadOnlySpan`1<char> get_FileName();
     [CompilerGeneratedAttribute]
 [IsReadOnlyAttribute]
 public ReadOnlySpan`1<char> get_Directory();
@@ -17427,7 +17605,6 @@ private void set_RootDirectory(ReadOnlySpan`1<char> value);
 public ReadOnlySpan`1<char> get_OriginalRootDirectory();
     [CompilerGeneratedAttribute]
 private void set_OriginalRootDirectory(ReadOnlySpan`1<char> value);
-    public ReadOnlySpan`1<char> get_FileName();
     public FileAttributes get_Attributes();
     public long get_Length();
     public DateTimeOffset get_CreationTimeUtc();
@@ -17476,30 +17653,29 @@ internal static class System.IO.Enumeration.FileSystemEnumerableFactory : object
 }
 public abstract class System.IO.Enumeration.FileSystemEnumerator`1 : CriticalFinalizerObject {
     private static int StandardBufferSize;
-    private static int MinimumBufferSize;
     private string _originalRootDirectory;
     private string _rootDirectory;
     private EnumerationOptions _options;
     private object _lock;
-    private FILE_FULL_DIR_INFORMATION* _entry;
-    private TResult _current;
-    private IntPtr _buffer;
-    private int _bufferLength;
-    private IntPtr _directoryHandle;
     private string _currentPath;
+    private IntPtr _directoryHandle;
     private bool _lastEntryFound;
-    [TupleElementNamesAttribute("Mono.Cecil.CustomAttributeArgument[]")]
-private Queue`1<ValueTuple`2<IntPtr, string>> _pending;
+    private Queue`1<string> _pending;
+    private DirectoryEntry _entry;
+    private TResult _current;
+    private Char[] _pathBuffer;
+    private Byte[] _entryBuffer;
     public TResult Current { get; }
     private object System.Collections.IEnumerator.Current { get; }
     public FileSystemEnumerator`1(string directory, EnumerationOptions options);
-    private bool GetData();
-    private IntPtr CreateRelativeDirectoryHandle(ReadOnlySpan`1<char> relativePath, string fullPath);
-    private void CloseDirectoryHandle();
+    private bool InternalContinueOnError(ErrorInfo info, bool ignoreNotFound);
+    private static bool IsDirectoryNotFound(ErrorInfo info);
+    private static bool IsAccessError(ErrorInfo info);
     private IntPtr CreateDirectoryHandle(string path, bool ignoreNotFound);
-    private bool ContinueOnDirectoryError(int error, bool ignoreNotFound);
+    private void CloseDirectoryHandle();
     public sealed virtual bool MoveNext();
     private void FindNextEntry();
+    private void FindNextEntry(Byte* entryBufferPtr, int bufferLength);
     private bool DequeueNextDirectory();
     private void InternalDispose(bool disposing);
     protected virtual bool ShouldIncludeEntry(FileSystemEntry& entry);
@@ -17839,6 +18015,40 @@ public enum System.IO.FileShare : Enum {
     public static FileShare Delete;
     public static FileShare Inheritable;
 }
+internal class System.IO.FileStatus : ValueType {
+    private static int NanosecondsPerTick;
+    private static int TicksPerMicrosecond;
+    private static long TicksPerSecond;
+    private FileStatus _fileStatus;
+    private int _fileStatusInitialized;
+    [CompilerGeneratedAttribute]
+private bool <InitiallyDirectory>k__BackingField;
+    internal bool _isDirectory;
+    private bool _exists;
+    internal bool InitiallyDirectory { get; private set; }
+    [CompilerGeneratedAttribute]
+[IsReadOnlyAttribute]
+internal bool get_InitiallyDirectory();
+    [CompilerGeneratedAttribute]
+private void set_InitiallyDirectory(bool value);
+    internal static void Initialize(FileStatus& status, bool isDirectory);
+    internal void Invalidate();
+    internal bool IsReadOnly(ReadOnlySpan`1<char> path, bool continueOnError);
+    public FileAttributes GetAttributes(ReadOnlySpan`1<char> path, ReadOnlySpan`1<char> fileName);
+    public void SetAttributes(string path, FileAttributes attributes);
+    internal bool GetExists(ReadOnlySpan`1<char> path);
+    internal DateTimeOffset GetCreationTime(ReadOnlySpan`1<char> path, bool continueOnError);
+    internal void SetCreationTime(string path, DateTimeOffset time);
+    internal DateTimeOffset GetLastAccessTime(ReadOnlySpan`1<char> path, bool continueOnError);
+    internal void SetLastAccessTime(string path, DateTimeOffset time);
+    internal DateTimeOffset GetLastWriteTime(ReadOnlySpan`1<char> path, bool continueOnError);
+    internal void SetLastWriteTime(string path, DateTimeOffset time);
+    private DateTimeOffset UnixTimeToDateTimeOffset(long seconds, long nanoseconds);
+    private void SetAccessWriteTimes(string path, Nullable`1<long> accessSec, Nullable`1<long> accessUSec, Nullable`1<long> writeSec, Nullable`1<long> writeUSec);
+    internal long GetLength(ReadOnlySpan`1<char> path, bool continueOnError);
+    public void Refresh(ReadOnlySpan`1<char> path);
+    internal void EnsureStatInitialized(ReadOnlySpan`1<char> path, bool continueOnError);
+}
 [ComVisibleAttribute("True")]
 public class System.IO.FileStream : Stream {
     internal static int DefaultBufferSize;
@@ -17974,47 +18184,34 @@ internal class System.IO.FileStreamAsyncResult : object {
     public void set_Done(bool value);
 }
 internal static class System.IO.FileSystem : object {
-    internal static int GENERIC_READ;
+    internal static int DefaultBufferSize;
+    private static bool CopyDanglingSymlink(string sourceFullPath, string destFullPath);
     public static void CopyFile(string sourceFullPath, string destFullPath, bool overwrite);
+    private static void LinkOrCopyFile(string sourceFullPath, string destFullPath);
     public static void ReplaceFile(string sourceFullPath, string destFullPath, string destBackupFullPath, bool ignoreMetadataErrors);
-    public static void CreateDirectory(string fullPath);
-    public static void DeleteFile(string fullPath);
-    public static bool DirectoryExists(string fullPath);
-    private static bool DirectoryExists(string path, Int32& lastError);
-    internal static int FillAttributeInfo(string path, WIN32_FILE_ATTRIBUTE_DATA& data, bool returnErrorOnNotFound);
-    public static bool FileExists(string fullPath);
-    public static FileAttributes GetAttributes(string fullPath);
-    public static DateTimeOffset GetCreationTime(string fullPath);
-    public static FileSystemInfo GetFileSystemInfo(string fullPath, bool asDirectory);
-    public static DateTimeOffset GetLastAccessTime(string fullPath);
-    public static DateTimeOffset GetLastWriteTime(string fullPath);
-    public static void MoveDirectory(string sourceFullPath, string destFullPath);
     public static void MoveFile(string sourceFullPath, string destFullPath);
-    private static SafeFileHandle OpenHandle(string fullPath, bool asDirectory);
+    public static void DeleteFile(string fullPath);
+    public static void CreateDirectory(string fullPath);
+    public static void MoveDirectory(string sourceFullPath, string destFullPath);
     public static void RemoveDirectory(string fullPath, bool recursive);
-    private static void GetFindData(string fullPath, WIN32_FIND_DATA& findData);
-    private static bool IsNameSurrogateReparsePoint(WIN32_FIND_DATA& data);
-    private static void RemoveDirectoryRecursive(string fullPath, WIN32_FIND_DATA& findData, bool topLevel);
-    private static void RemoveDirectoryInternal(string fullPath, bool topLevel, bool allowDirectoryNotEmpty);
+    private static void RemoveDirectoryInternal(DirectoryInfo directory, bool recursive, bool throwOnTopLevelDirectoryNotFound);
+    public static bool DirectoryExists(ReadOnlySpan`1<char> fullPath);
+    private static bool DirectoryExists(ReadOnlySpan`1<char> fullPath, ErrorInfo& errorInfo);
+    public static bool FileExists(ReadOnlySpan`1<char> fullPath);
+    private static bool FileExists(ReadOnlySpan`1<char> fullPath, int fileType, ErrorInfo& errorInfo);
+    private static bool ShouldIgnoreDirectory(string name);
+    public static FileAttributes GetAttributes(string fullPath);
     public static void SetAttributes(string fullPath, FileAttributes attributes);
+    public static DateTimeOffset GetCreationTime(string fullPath);
     public static void SetCreationTime(string fullPath, DateTimeOffset time, bool asDirectory);
+    public static DateTimeOffset GetLastAccessTime(string fullPath);
     public static void SetLastAccessTime(string fullPath, DateTimeOffset time, bool asDirectory);
+    public static DateTimeOffset GetLastWriteTime(string fullPath);
     public static void SetLastWriteTime(string fullPath, DateTimeOffset time, bool asDirectory);
     public static String[] GetLogicalDrives();
-    private static bool UnityCreateDirectory(string name);
-    private static bool UnityRemoveDirectory(string fullPath);
-    private static bool UnityGetFileAttributesEx(string path, WIN32_FILE_ATTRIBUTE_DATA& data);
-    private static bool UnitySetFileAttributes(string fullPath, FileAttributes attributes);
-    internal static IntPtr UnityCreateFile_IntPtr(string lpFileName, int dwDesiredAccess, FileShare dwShareMode, FileMode dwCreationDisposition, int dwFlagsAndAttributes);
-    private static int UnityCopyFile(string sourceFullPath, string destFullPath, bool failIfExists);
-    private static bool UnityDeleteFile(string path);
-    private static bool UnityMoveFile(string sourceFullPath, string destFullPath);
-    private static SafeFindHandle UnityFindFirstFile(string path, WIN32_FIND_DATA& findData);
-    private static bool UnityFindNextFile(SafeFindHandle handle, WIN32_FIND_DATA& findData);
 }
 public abstract class System.IO.FileSystemInfo : MarshalByRefObject {
-    private WIN32_FILE_ATTRIBUTE_DATA _data;
-    private int _dataInitialized;
+    private FileStatus _fileStatus;
     protected string FullPath;
     protected string OriginalPath;
     internal string _name;
@@ -18036,9 +18233,9 @@ public abstract class System.IO.FileSystemInfo : MarshalByRefObject {
     public DateTime LastWriteTime { get; public set; }
     public DateTime LastWriteTimeUtc { get; public set; }
     protected FileSystemInfo(SerializationInfo info, StreamingContext context);
-    internal static FileSystemInfo Create(string fullPath, FileSystemEntry& findData);
+    internal static FileSystemInfo Create(string fullPath, string fileName, FileStatus& fileStatus);
     internal void Invalidate();
-    internal void Init(FILE_FULL_DIR_INFORMATION* info);
+    internal void Init(FileStatus& fileStatus);
     public FileAttributes get_Attributes();
     public void set_Attributes(FileAttributes value);
     internal bool get_ExistsCore();
@@ -18049,8 +18246,8 @@ public abstract class System.IO.FileSystemInfo : MarshalByRefObject {
     internal DateTimeOffset get_LastWriteTimeCore();
     internal void set_LastWriteTimeCore(DateTimeOffset value);
     internal long get_LengthCore();
-    private void EnsureDataInitialized();
     public void Refresh();
+    internal static void ThrowNotFound(string path);
     internal string get_NormalizedPath();
     [ComVisibleAttribute("False")]
 [SecurityCriticalAttribute]
@@ -18640,34 +18837,17 @@ internal static class System.IO.PathInternal : object {
     internal static char VolumeSeparatorChar;
     internal static char PathSeparator;
     internal static string DirectorySeparatorCharAsString;
-    internal static string ExtendedPathPrefix;
-    internal static string UncPathPrefix;
-    internal static string UncExtendedPrefixToInsert;
-    internal static string UncExtendedPathPrefix;
-    internal static string DevicePathPrefix;
+    private static char InvalidPathChar;
     internal static string ParentDirectoryPrefix;
-    internal static int MaxShortPath;
-    internal static int MaxShortDirectoryPath;
-    internal static int DevicePrefixLength;
-    internal static int UncPrefixLength;
-    internal static int UncExtendedPrefixLength;
     private static bool s_isCaseSensitive;
     internal static StringComparison StringComparison { get; }
     internal static bool IsCaseSensitive { get; }
     private static PathInternal();
-    internal static bool IsValidDriveChar(char value);
-    internal static bool EndsWithPeriodOrSpace(string path);
-    internal static string EnsureExtendedPrefixIfNeeded(string path);
-    internal static string EnsureExtendedPrefixOverMaxPath(string path);
-    internal static string EnsureExtendedPrefix(string path);
-    internal static bool IsDevice(ReadOnlySpan`1<char> path);
-    internal static bool IsDeviceUNC(ReadOnlySpan`1<char> path);
-    internal static bool IsExtended(ReadOnlySpan`1<char> path);
-    internal static bool HasWildCardCharacters(ReadOnlySpan`1<char> path);
     internal static int GetRootLength(ReadOnlySpan`1<char> path);
-    internal static bool IsPartiallyQualified(ReadOnlySpan`1<char> path);
     internal static bool IsDirectorySeparator(char c);
     internal static string NormalizeDirectorySeparators(string path);
+    internal static bool IsPartiallyQualified(ReadOnlySpan`1<char> path);
+    internal static bool IsEffectivelyEmpty(string path);
     internal static bool IsEffectivelyEmpty(ReadOnlySpan`1<char> path);
     internal static bool EndsInDirectorySeparator(ReadOnlySpan`1<char> path);
     internal static bool StartsWithDirectorySeparator(ReadOnlySpan`1<char> path);
@@ -19308,13 +19488,6 @@ internal class System.IO.UnmanagedMemoryStreamWrapper : MemoryStream {
     public virtual ValueTask`1<int> ReadAsync(Memory`1<byte> buffer, CancellationToken cancellationToken);
     public virtual Task WriteAsync(Byte[] buffer, int offset, int count, CancellationToken cancellationToken);
     public virtual ValueTask WriteAsync(ReadOnlyMemory`1<byte> buffer, CancellationToken cancellationToken);
-}
-internal static class System.IO.Win32Marshal : object {
-    internal static Exception GetExceptionForLastWin32Error(string path);
-    internal static Exception GetExceptionForWin32Error(int errorCode, string path);
-    internal static int MakeHRFromErrorCode(int errorCode);
-    internal static int TryMakeWin32ErrorCodeFromHR(int hr);
-    internal static string GetMessage(int errorCode);
 }
 public interface System.IObservable`1 {
     public abstract virtual IDisposable Subscribe(IObserver`1<T> observer);
@@ -20061,9 +20234,9 @@ private static Dictionary`2<Type, AttributeUsageAttribute> usage_cache;
     internal static Object[] GetCustomAttributesBase(ICustomAttributeProvider obj, Type attributeType, bool inheritedOnly);
     internal static Object[] GetCustomAttributes(ICustomAttributeProvider obj, Type attributeType, bool inherit);
     internal static Object[] GetCustomAttributes(ICustomAttributeProvider obj, bool inherit);
-    [PreserveDependencyAttribute(".ctor(System.Reflection.ConstructorInfo,System.Reflection.Assembly,System.IntPtr,System.UInt32)", "System.Reflection.CustomAttributeData")]
-[PreserveDependencyAttribute(".ctor(System.Type,System.Object)", "System.Reflection.CustomAttributeTypedArgument")]
+    [PreserveDependencyAttribute(".ctor(System.Type,System.Object)", "System.Reflection.CustomAttributeTypedArgument")]
 [PreserveDependencyAttribute(".ctor(System.Reflection.MemberInfo,System.Object)", "System.Reflection.CustomAttributeNamedArgument")]
+[PreserveDependencyAttribute(".ctor(System.Reflection.ConstructorInfo,System.Reflection.Assembly,System.IntPtr,System.UInt32)", "System.Reflection.CustomAttributeData")]
 private static CustomAttributeData[] GetCustomAttributesDataInternal(ICustomAttributeProvider obj);
     internal static IList`1<CustomAttributeData> GetCustomAttributesData(ICustomAttributeProvider obj, bool inherit);
     internal static IList`1<CustomAttributeData> GetCustomAttributesData(ICustomAttributeProvider obj, Type attributeType, bool inherit);
@@ -20320,6 +20493,7 @@ internal static class System.Number : object {
     private static SByte[] s_rgexp64Power10;
     private static UInt64[] s_rgval64Power10By16;
     private static Int16[] s_rgexp64Power10By16;
+    private static int MAX_BUFFER_SIZE;
     private static Number();
     public static string FormatDecimal(decimal value, ReadOnlySpan`1<char> format, NumberFormatInfo info);
     public static bool TryFormatDecimal(decimal value, ReadOnlySpan`1<char> format, NumberFormatInfo info, Span`1<char> destination, Int32& charsWritten);
@@ -30825,11 +30999,6 @@ public static IEnumerable`1<T> ToEnumerable(ReadOnlyMemory`1<T> memory);
     public static bool TryWrite(Span`1<byte> destination, T& value);
     public static Memory`1<T> CreateFromPinnedArray(T[] array, int start, int length);
 }
-[AttributeUsageAttribute("64")]
-internal class System.Runtime.InteropServices.NativeCallableAttribute : Attribute {
-    public string EntryPoint;
-    public CallingConvention CallingConvention;
-}
 [ComVisibleAttribute("True")]
 public class System.Runtime.InteropServices.ObjectCreationDelegate : MulticastDelegate {
     public ObjectCreationDelegate(object object, IntPtr method);
@@ -35108,13 +35277,12 @@ public class System.Runtime.Remoting.WellKnownServiceTypeEntry : TypeEntry {
     public string get_ObjectUri();
     public virtual string ToString();
 }
-public static class System.Runtime.RuntimeImports : object {
+internal static class System.Runtime.RuntimeImports : object {
     internal static void RhZeroMemory(Byte& b, ulong byteLength);
     internal static void RhZeroMemory(IntPtr p, UIntPtr byteLength);
     private static void ZeroMemory(Void* p, UInt32 byteLength);
     internal static void Memmove(Byte* dest, Byte* src, UInt32 len);
     internal static void Memmove_wbarrier(Byte* dest, Byte* src, UInt32 len, IntPtr type_handle);
-    internal static void _ecvt_s(Byte* buffer, int sizeInBytes, double value, int count, Int32* dec, Int32* sign);
 }
 internal class System.Runtime.Serialization.DeserializationEventHandler : MulticastDelegate {
     public DeserializationEventHandler(object object, IntPtr method);
@@ -38907,15 +39075,15 @@ public class System.Security.AccessControl.RegistryAccessRule : AccessRule {
     public RegistryAccessRule(IdentityReference identity, RegistryRights registryRights, AccessControlType type);
     public RegistryAccessRule(string identity, RegistryRights registryRights, AccessControlType type);
     public RegistryAccessRule(IdentityReference identity, RegistryRights registryRights, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AccessControlType type);
+    internal RegistryAccessRule(IdentityReference identity, RegistryRights registryRights, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AccessControlType type);
     public RegistryAccessRule(string identity, RegistryRights registryRights, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AccessControlType type);
-    internal RegistryAccessRule(IdentityReference identity, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AccessControlType type);
     public RegistryRights get_RegistryRights();
 }
 public class System.Security.AccessControl.RegistryAuditRule : AuditRule {
     public RegistryRights RegistryRights { get; }
     public RegistryAuditRule(IdentityReference identity, RegistryRights registryRights, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AuditFlags flags);
+    internal RegistryAuditRule(IdentityReference identity, RegistryRights registryRights, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AuditFlags flags);
     public RegistryAuditRule(string identity, RegistryRights registryRights, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AuditFlags flags);
-    internal RegistryAuditRule(IdentityReference identity, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AuditFlags flags);
     public RegistryRights get_RegistryRights();
 }
 [FlagsAttribute]
@@ -38940,27 +39108,23 @@ public class System.Security.AccessControl.RegistrySecurity : NativeObjectSecuri
     public Type AccessRightType { get; }
     public Type AccessRuleType { get; }
     public Type AuditRuleType { get; }
-    internal RegistrySecurity(SafeRegistryHandle hKey, string name, AccessControlSections includeSections);
-    private static Exception _HandleErrorCodeCore(int errorCode, string name, SafeHandle handle, object context);
-    private static Exception _HandleErrorCode(int errorCode, string name, SafeHandle handle, object context);
-    public virtual AccessRule AccessRuleFactory(IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AccessControlType type);
-    public virtual AuditRule AuditRuleFactory(IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AuditFlags flags);
-    internal AccessControlSections GetAccessControlSectionsFromChanges();
-    internal void Persist(SafeRegistryHandle hKey, string keyName);
-    public void AddAccessRule(RegistryAccessRule rule);
-    public void SetAccessRule(RegistryAccessRule rule);
-    public void ResetAccessRule(RegistryAccessRule rule);
-    public bool RemoveAccessRule(RegistryAccessRule rule);
-    public void RemoveAccessRuleAll(RegistryAccessRule rule);
-    public void RemoveAccessRuleSpecific(RegistryAccessRule rule);
-    public void AddAuditRule(RegistryAuditRule rule);
-    public void SetAuditRule(RegistryAuditRule rule);
-    public bool RemoveAuditRule(RegistryAuditRule rule);
-    public void RemoveAuditRuleAll(RegistryAuditRule rule);
-    public void RemoveAuditRuleSpecific(RegistryAuditRule rule);
+    internal RegistrySecurity(string name, AccessControlSections includeSections);
     public virtual Type get_AccessRightType();
     public virtual Type get_AccessRuleType();
     public virtual Type get_AuditRuleType();
+    public virtual AccessRule AccessRuleFactory(IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AccessControlType type);
+    public void AddAccessRule(RegistryAccessRule rule);
+    public bool RemoveAccessRule(RegistryAccessRule rule);
+    public void RemoveAccessRuleAll(RegistryAccessRule rule);
+    public void RemoveAccessRuleSpecific(RegistryAccessRule rule);
+    public void ResetAccessRule(RegistryAccessRule rule);
+    public void SetAccessRule(RegistryAccessRule rule);
+    public virtual AuditRule AuditRuleFactory(IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AuditFlags flags);
+    public void AddAuditRule(RegistryAuditRule rule);
+    public bool RemoveAuditRule(RegistryAuditRule rule);
+    public void RemoveAuditRuleAll(RegistryAuditRule rule);
+    public void RemoveAuditRuleSpecific(RegistryAuditRule rule);
+    public void SetAuditRule(RegistryAuditRule rule);
 }
 public enum System.Security.AccessControl.ResourceType : Enum {
     public int value__;
@@ -39634,12 +39798,12 @@ public static bool AllowOnlyFipsAlgorithms { get; }
     private static CryptoConfig();
     public static void AddOID(string oid, String[] names);
     public static object CreateFromName(string name);
-    [PreserveDependencyAttribute(".ctor()", "System.Security.Cryptography.X509Certificates.X509SubjectKeyIdentifierExtension", "System")]
-[PreserveDependencyAttribute(".ctor()", "System.Security.Cryptography.X509Certificates.X509EnhancedKeyUsageExtension", "System")]
-[PreserveDependencyAttribute(".ctor()", "System.Security.Cryptography.X509Certificates.X509BasicConstraintsExtension", "System")]
-[PreserveDependencyAttribute(".ctor()", "System.Security.Cryptography.X509Certificates.X509KeyUsageExtension", "System")]
-[PreserveDependencyAttribute(".ctor()", "System.Security.Cryptography.X509Certificates.X509Chain", "System")]
+    [PreserveDependencyAttribute(".ctor()", "System.Security.Cryptography.X509Certificates.X509KeyUsageExtension", "System")]
 [PreserveDependencyAttribute(".ctor()", "System.Security.Cryptography.AesCryptoServiceProvider", "System.Core")]
+[PreserveDependencyAttribute(".ctor()", "System.Security.Cryptography.X509Certificates.X509Chain", "System")]
+[PreserveDependencyAttribute(".ctor()", "System.Security.Cryptography.X509Certificates.X509BasicConstraintsExtension", "System")]
+[PreserveDependencyAttribute(".ctor()", "System.Security.Cryptography.X509Certificates.X509SubjectKeyIdentifierExtension", "System")]
+[PreserveDependencyAttribute(".ctor()", "System.Security.Cryptography.X509Certificates.X509EnhancedKeyUsageExtension", "System")]
 public static object CreateFromName(string name, Object[] args);
     internal static string MapNameToOID(string name, object arg);
     public static string MapNameToOID(string name);
@@ -47059,13 +47223,6 @@ public class System.Threading.CountdownEvent : object {
     public bool Wait(int millisecondsTimeout, CancellationToken cancellationToken);
     private void ThrowIfDisposed();
 }
-internal class System.Threading.DeferredDisposableLifetime`1 : ValueType {
-    private int _count;
-    private static DeferredDisposableLifetime`1();
-    public bool AddRef(T obj);
-    public void Release(T obj);
-    public void Dispose(T obj);
-}
 public enum System.Threading.EventResetMode : Enum {
     public int value__;
     public static EventResetMode AutoReset;
@@ -47235,9 +47392,6 @@ internal interface System.Threading.IAsyncLocal {
 internal interface System.Threading.IAsyncLocalValueMap {
     public abstract virtual bool TryGetValue(IAsyncLocal key, Object& value);
     public abstract virtual IAsyncLocalValueMap Set(IAsyncLocal key, object value);
-}
-internal interface System.Threading.IDeferredDisposable {
-    public abstract virtual void OnFinalRelease(bool disposed);
 }
 public static class System.Threading.Interlocked : object {
     [ReliabilityContractAttribute("3", "2")]
@@ -47611,16 +47765,9 @@ internal static class System.Threading.PlatformHelper : object {
     internal static int get_ProcessorCount();
 }
 public class System.Threading.PreAllocatedOverlapped : object {
-    internal Win32ThreadPoolNativeOverlapped* _overlapped;
-    private DeferredDisposableLifetime`1<PreAllocatedOverlapped> _lifetime;
-    private static PreAllocatedOverlapped();
     [CLSCompliantAttribute("False")]
 public PreAllocatedOverlapped(IOCompletionCallback callback, object state, object pinData);
-    internal bool AddRef();
-    internal void Release();
     public sealed virtual void Dispose();
-    protected virtual override void Finalize();
-    private sealed virtual override void System.Threading.IDeferredDisposable.OnFinalRelease(bool disposed);
 }
 internal class System.Threading.QueueUserWorkItemCallback : object {
     private WaitCallback callback;
@@ -49741,35 +49888,18 @@ private static bool BindIOCompletionCallbackNative(IntPtr fileHandle);
     internal static bool get_IsThreadPoolThread();
 }
 public class System.Threading.ThreadPoolBoundHandle : object {
-    private SafeHandle _handle;
-    private SafeThreadPoolIOHandle _threadPoolHandle;
-    private DeferredDisposableLifetime`1<ThreadPoolBoundHandle> _lifetime;
     public SafeHandle Handle { get; }
-    private static ThreadPoolBoundHandle();
-    private ThreadPoolBoundHandle(SafeHandle handle, SafeThreadPoolIOHandle threadPoolHandle);
     public SafeHandle get_Handle();
-    public static ThreadPoolBoundHandle BindHandle(SafeHandle handle);
     [CLSCompliantAttribute("False")]
 public NativeOverlapped* AllocateNativeOverlapped(IOCompletionCallback callback, object state, object pinData);
     [CLSCompliantAttribute("False")]
 public NativeOverlapped* AllocateNativeOverlapped(PreAllocatedOverlapped preAllocated);
+    public static ThreadPoolBoundHandle BindHandle(SafeHandle handle);
+    public sealed virtual void Dispose();
     [CLSCompliantAttribute("False")]
 public void FreeNativeOverlapped(NativeOverlapped* overlapped);
     [CLSCompliantAttribute("False")]
 public static object GetNativeOverlappedState(NativeOverlapped* overlapped);
-    private static OverlappedData GetOverlappedData(Win32ThreadPoolNativeOverlapped* overlapped, ThreadPoolBoundHandle expectedBoundHandle);
-    [NativeCallableAttribute]
-private static void OnNativeIOCompleted(IntPtr instance, IntPtr context, IntPtr overlappedPtr, UInt32 ioResult, UIntPtr numberOfBytesTransferred, IntPtr ioPtr);
-    private bool AddRef();
-    private void Release();
-    public sealed virtual void Dispose();
-    protected virtual override void Finalize();
-    private sealed virtual override void System.Threading.IDeferredDisposable.OnFinalRelease(bool disposed);
-}
-internal class System.Threading.ThreadPoolCallbackWrapper : ValueType {
-    private RuntimeThread _currentThread;
-    public static ThreadPoolCallbackWrapper Enter();
-    public void Exit(bool resetThread);
 }
 internal static class System.Threading.ThreadPoolGlobals : object {
     public static UInt32 tpQuantum;
@@ -50076,28 +50206,6 @@ public class System.Threading.WaitOrTimerCallback : MulticastDelegate {
     public virtual IAsyncResult BeginInvoke(object state, bool timedOut, AsyncCallback callback, object object);
     public virtual void EndInvoke(IAsyncResult result);
 }
-internal class System.Threading.Win32ThreadPoolNativeOverlapped : ValueType {
-    [ThreadStaticAttribute]
-private static ExecutionContextCallbackArgs t_executionContextCallbackArgs;
-    private static ContextCallback s_executionContextCallback;
-    private static OverlappedData[] s_dataArray;
-    private static int s_dataCount;
-    private static IntPtr s_freeList;
-    private NativeOverlapped _overlapped;
-    private IntPtr _nextFree;
-    private int _dataIndex;
-    internal OverlappedData Data { get; }
-    private static Win32ThreadPoolNativeOverlapped();
-    internal OverlappedData get_Data();
-    internal static Win32ThreadPoolNativeOverlapped* Allocate(IOCompletionCallback callback, object state, object pinData, PreAllocatedOverlapped preAllocated);
-    private static Win32ThreadPoolNativeOverlapped* AllocateNew();
-    private void SetData(IOCompletionCallback callback, object state, object pinData, PreAllocatedOverlapped preAllocated);
-    internal static void Free(Win32ThreadPoolNativeOverlapped* overlapped);
-    internal static NativeOverlapped* ToNativeOverlapped(Win32ThreadPoolNativeOverlapped* overlapped);
-    internal static Win32ThreadPoolNativeOverlapped* FromNativeOverlapped(NativeOverlapped* overlapped);
-    internal static void CompleteWithCallback(UInt32 errorCode, UInt32 bytesWritten, Win32ThreadPoolNativeOverlapped* overlapped);
-    private static void OnExecutionContextCallback(object state);
-}
 [AttributeUsageAttribute("256")]
 public class System.ThreadStaticAttribute : Attribute {
 }
@@ -50333,20 +50441,10 @@ public abstract class System.TimeZone : object {
 }
 [TypeForwardedFromAttribute("System.Core, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
 public class System.TimeZoneInfo : object {
-    private static string TimeZonesRegistryHive;
-    private static string DisplayValue;
-    private static string DaylightValue;
-    private static string StandardValue;
-    private static string MuiDisplayValue;
-    private static string MuiDaylightValue;
-    private static string MuiStandardValue;
-    private static string TimeZoneInfoValue;
-    private static string FirstEntryValue;
-    private static string LastEntryValue;
-    private static int MaxKeyLength;
-    private static Lazy`1<bool> lazyHaveRegistry;
-    internal static UInt32 TIME_ZONE_ID_INVALID;
-    internal static UInt32 ERROR_NO_MORE_ITEMS;
+    private static string DefaultTimeZoneDirectory;
+    private static string ZoneTabFileName;
+    private static string TimeZoneEnvironmentVariable;
+    private static string TimeZoneDirectoryEnvironmentVariable;
     private string _id;
     private string _displayName;
     private string _standardDisplayName;
@@ -50362,7 +50460,6 @@ public class System.TimeZoneInfo : object {
     private static DateTime s_minDateOnly;
     private static TimeSpan MaxOffset;
     private static TimeSpan MinOffset;
-    private static bool HaveRegistry { get; }
     public string Id { get; }
     public string DisplayName { get; }
     public string StandardName { get; }
@@ -50371,41 +50468,51 @@ public class System.TimeZoneInfo : object {
     public bool SupportsDaylightSavingTime { get; }
     public static TimeZoneInfo Local { get; }
     public static TimeZoneInfo Utc { get; }
-    private TimeZoneInfo(TIME_ZONE_INFORMATION& zone, bool dstDisabled);
+    private TimeZoneInfo(Byte[] data, string id, bool dstDisabled);
     private TimeZoneInfo(string id, TimeSpan baseUtcOffset, string displayName, string standardDisplayName, string daylightDisplayName, AdjustmentRule[] adjustmentRules, bool disableDaylightSavingTime);
     private TimeZoneInfo(SerializationInfo info, StreamingContext context);
     private static TimeZoneInfo();
     public AdjustmentRule[] GetAdjustmentRules();
     private static void PopulateAllSystemTimeZones(CachedData cachedData);
-    private static void PopulateAllSystemTimeZonesFromRegistry(CachedData cachedData);
-    private static bool CheckDaylightSavingTimeNotSupported(TIME_ZONE_INFORMATION& timeZone);
-    private static AdjustmentRule CreateAdjustmentRuleFromTimeZoneInformation(REG_TZI_FORMAT& timeZoneInformation, DateTime startDate, DateTime endDate, int defaultBaseUtcOffset);
-    private static string FindIdFromTimeZoneInformation(TIME_ZONE_INFORMATION& timeZone, Boolean& dstDisabled);
     private static TimeZoneInfo GetLocalTimeZone(CachedData cachedData);
-    private static TimeZoneInfo GetLocalTimeZoneFromWin32Data(TIME_ZONE_INFORMATION& timeZoneInformation, bool dstDisabled);
+    private static TimeZoneInfoResult TryGetTimeZoneFromLocalMachine(string id, TimeZoneInfo& value, Exception& e);
+    private static List`1<string> GetTimeZoneIds(string timeZoneDirectory);
+    private static bool TryGetLocalTzFile(Byte[]& rawData, String& id);
+    private static string GetTzEnvironmentVariable();
+    private static bool TryLoadTzFile(string tzFilePath, Byte[]& rawData, String& id);
+    private static string FindTimeZoneIdUsingReadLink(string tzFilePath);
+    private static string GetDirectoryEntryFullPath(DirectoryEntry& dirent, string currentPath);
+    private static void EnumerateFilesRecursively(string path, Predicate`1<string> condition);
+    private static string FindTimeZoneId(Byte[] rawData);
+    private static bool CompareTimeZoneFile(string filePath, Byte[] buffer, Byte[] rawData);
+    private static TimeZoneInfo GetLocalTimeZoneFromTzFile();
+    private static TimeZoneInfo GetTimeZoneFromTzData(Byte[] rawData, string id);
+    private static string GetTimeZoneDirectory();
     public static TimeZoneInfo FindSystemTimeZoneById(string id);
     internal static TimeSpan GetDateTimeNowUtcOffsetFromUtc(DateTime time, Boolean& isAmbiguousLocalDst);
-    private static bool TransitionTimeFromTimeZoneInformation(REG_TZI_FORMAT& timeZoneInformation, TransitionTime& transitionTime, bool readStartDate);
-    private static bool TryCreateAdjustmentRules(string id, REG_TZI_FORMAT& defaultTimeZoneInformation, AdjustmentRule[]& rules, Exception& e, int defaultBaseUtcOffset);
-    private static bool TryGetTimeZoneEntryFromRegistry(RegistryKey key, string name, REG_TZI_FORMAT& dtzi);
-    private static bool TryCompareStandardDate(TIME_ZONE_INFORMATION& timeZone, REG_TZI_FORMAT& registryTimeZoneInfo);
-    private static bool TryCompareTimeZoneInformationToRegistry(TIME_ZONE_INFORMATION& timeZone, string id, Boolean& dstDisabled);
-    private static string TryGetLocalizedNameByMuiNativeResource(string resource);
-    private static string TryGetLocalizedNameByNativeResource(string filePath, int resource);
-    private static void GetLocalizedNamesByRegistryKey(RegistryKey key, String& displayName, String& standardName, String& daylightName);
-    private static TimeZoneInfoResult TryGetTimeZoneFromLocalMachine(string id, TimeZoneInfo& value, Exception& e);
-    private static TimeZoneInfoResult TryGetTimeZoneFromLocalRegistry(string id, TimeZoneInfo& value, Exception& e);
-    private static bool get_HaveRegistry();
-    internal static UInt32 EnumDynamicTimeZoneInformation(UInt32 dwIndex, DYNAMIC_TIME_ZONE_INFORMATION& lpTimeZoneInformation);
-    internal static UInt32 GetDynamicTimeZoneInformation(DYNAMIC_TIME_ZONE_INFORMATION& pTimeZoneInformation);
-    internal static UInt32 GetDynamicTimeZoneInformationEffectiveYears(DYNAMIC_TIME_ZONE_INFORMATION& lpTimeZoneInformation, UInt32& FirstYear, UInt32& LastYear);
-    internal static bool GetTimeZoneInformationForYear(ushort wYear, DYNAMIC_TIME_ZONE_INFORMATION& pdtzi, TIME_ZONE_INFORMATION& ptzi);
-    internal static AdjustmentRule CreateAdjustmentRuleFromTimeZoneInformation(DYNAMIC_TIME_ZONE_INFORMATION& timeZoneInformation, DateTime startDate, DateTime endDate, int defaultBaseUtcOffset);
-    private static bool TransitionTimeFromTimeZoneInformation(DYNAMIC_TIME_ZONE_INFORMATION timeZoneInformation, TransitionTime& transitionTime, bool readStartDate);
-    internal static TimeZoneInfo TryCreateTimeZone(DYNAMIC_TIME_ZONE_INFORMATION timeZoneInformation);
-    internal static TimeZoneInfo GetLocalTimeZoneInfoWinRTFallback();
-    internal static TimeZoneInfo FindSystemTimeZoneByIdWinRTFallback(string id);
-    private static void GetSystemTimeZonesWinRTFallback(CachedData cachedData);
+    private static void TZif_GenerateAdjustmentRules(AdjustmentRule[]& rules, TimeSpan baseUtcOffset, DateTime[] dts, Byte[] typeOfLocalTime, TZifType[] transitionType, Boolean[] StandardTime, Boolean[] GmtTime, string futureTransitionsPosixFormat);
+    private static void TZif_GenerateAdjustmentRule(Int32& index, TimeSpan timeZoneBaseUtcOffset, List`1<AdjustmentRule> rulesList, DateTime[] dts, Byte[] typeOfLocalTime, TZifType[] transitionTypes, Boolean[] StandardTime, Boolean[] GmtTime, string futureTransitionsPosixFormat);
+    private static TimeSpan TZif_CalculateTransitionOffsetFromBase(TimeSpan transitionOffset, TimeSpan timeZoneBaseUtcOffset);
+    private static TZifType TZif_GetEarlyDateTransitionType(TZifType[] transitionTypes);
+    private static AdjustmentRule TZif_CreateAdjustmentRuleForPosixFormat(string posixFormat, DateTime startTransitionDate, TimeSpan timeZoneBaseUtcOffset);
+    private static Nullable`1<TimeSpan> TZif_ParseOffsetString(string offset);
+    private static DateTime ParseTimeOfDay(string time);
+    private static TransitionTime TZif_CreateTransitionTimeFromPosixRule(string date, string time);
+    private static void TZif_ParseJulianDay(string date, Int32& month, Int32& day);
+    private static bool TZif_ParseMDateRule(string dateRule, Int32& month, Int32& week, DayOfWeek& dayOfWeek);
+    private static bool TZif_ParsePosixFormat(string posixFormat, String& standardName, String& standardOffset, String& daylightSavingsName, String& daylightSavingsOffset, String& start, String& startTime, String& end, String& endTime);
+    private static string TZif_ParsePosixName(string posixFormat, Int32& index);
+    private static string TZif_ParsePosixOffset(string posixFormat, Int32& index);
+    private static void TZif_ParsePosixDateTime(string posixFormat, Int32& index, String& date, String& time);
+    private static string TZif_ParsePosixDate(string posixFormat, Int32& index);
+    private static string TZif_ParsePosixTime(string posixFormat, Int32& index);
+    private static string TZif_ParsePosixString(string posixFormat, Int32& index, Func`2<char, bool> breakCondition);
+    private static string TZif_GetZoneAbbreviation(string zoneAbbreviations, int index);
+    private static int TZif_ToInt32(Byte[] value, int startIndex);
+    private static long TZif_ToInt64(Byte[] value, int startIndex);
+    private static long TZif_ToUnixTime(Byte[] value, int startIndex, TZVersion version);
+    private static DateTime TZif_UnixTimeToDateTime(long unixTime);
+    private static void TZif_ParseRaw(Byte[] data, TZifHead& t, DateTime[]& dts, Byte[]& typeOfLocalTime, TZifType[]& transitionType, String& zoneAbbreviations, Boolean[]& StandardTime, Boolean[]& GmtTime, String& futureTransitionsPosixFormat);
     public string get_Id();
     public string get_DisplayName();
     public string get_StandardName();
@@ -50484,6 +50591,9 @@ public class System.TimeZoneInfo : object {
     private static TimeSpan GetUtcOffset(TimeSpan baseUtcOffset, AdjustmentRule adjustmentRule);
     private static bool IsValidAdjustmentRuleOffest(TimeSpan baseUtcOffset, AdjustmentRule adjustmentRule);
     private static void NormalizeAdjustmentRuleOffset(TimeSpan baseUtcOffset, AdjustmentRule& adjustmentRule);
+    private static string GetTimeZoneDirectoryUnity();
+    private static List`1<AdjustmentRule> CreateAdjustmentRule(int year, Int64[]& data, String[]& names);
+    private static TimeZoneInfo CreateLocalUnity();
 }
 [FlagsAttribute]
 internal enum System.TimeZoneInfoOptions : Enum {

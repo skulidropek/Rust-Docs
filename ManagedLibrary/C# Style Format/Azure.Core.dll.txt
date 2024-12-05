@@ -81,15 +81,22 @@ public class Azure.Core.AccessToken : ValueType {
 private string <Token>k__BackingField;
     [CompilerGeneratedAttribute]
 private DateTimeOffset <ExpiresOn>k__BackingField;
+    [CompilerGeneratedAttribute]
+private Nullable`1<DateTimeOffset> <RefreshOn>k__BackingField;
     public string Token { get; }
     public DateTimeOffset ExpiresOn { get; }
+    public Nullable`1<DateTimeOffset> RefreshOn { get; }
     public AccessToken(string accessToken, DateTimeOffset expiresOn);
+    public AccessToken(string accessToken, DateTimeOffset expiresOn, Nullable`1<DateTimeOffset> refreshOn);
     [CompilerGeneratedAttribute]
 [IsReadOnlyAttribute]
 public string get_Token();
     [CompilerGeneratedAttribute]
 [IsReadOnlyAttribute]
 public DateTimeOffset get_ExpiresOn();
+    [CompilerGeneratedAttribute]
+[IsReadOnlyAttribute]
+public Nullable`1<DateTimeOffset> get_RefreshOn();
     [NullableContextAttribute("2")]
 public virtual bool Equals(object obj);
     public virtual int GetHashCode();
@@ -116,11 +123,18 @@ public static void AssertNotDefault(T& value, string name);
     public static void AssertNull(T value, string name, string message);
 }
 internal class Azure.Core.ArrayBackedPropertyBag`2 : ValueType {
-    private Kvp<TKey, TValue> _first;
-    private Kvp<TKey, TValue> _second;
     [NullableAttribute("Mono.Cecil.CustomAttributeArgument[]")]
-private Kvp[] _rest;
+[TupleElementNamesAttribute("Mono.Cecil.CustomAttributeArgument[]")]
+private ValueTuple`2<TKey, TValue> _first;
+    [NullableAttribute("Mono.Cecil.CustomAttributeArgument[]")]
+[TupleElementNamesAttribute("Mono.Cecil.CustomAttributeArgument[]")]
+private ValueTuple`2<TKey, TValue> _second;
+    [NullableAttribute("Mono.Cecil.CustomAttributeArgument[]")]
+[TupleElementNamesAttribute("Mono.Cecil.CustomAttributeArgument[]")]
+private ValueTuple`2[] _rest;
     private int _count;
+    [NullableAttribute("1")]
+private object _lock;
     public int Count { get; }
     public bool IsEmpty { get; }
     public int get_Count();
@@ -133,12 +147,12 @@ private Kvp[] _rest;
     private bool IsFirst(TKey key);
     private bool IsSecond(TKey key);
     private void AddInternal(TKey key, TValue value);
-    private void SetAt(int index, Kvp<TKey, TValue> value);
+    private void SetAt(int index, ValueTuple`2<TKey, TValue> value);
     [NullableContextAttribute("1")]
 private TValue GetAt(int index);
     private int GetIndex(TKey key);
-    internal void Dispose();
-    private Kvp[] GetRest();
+    public void Dispose();
+    private ValueTuple`2[] GetRest();
     [ConditionalAttribute("DEBUG")]
 private void CheckDisposed();
 }
@@ -261,6 +275,8 @@ private static AzureLocation <SouthAfricaWest>k__BackingField;
     [CompilerGeneratedAttribute]
 private static AzureLocation <SwedenCentral>k__BackingField;
     [CompilerGeneratedAttribute]
+private static AzureLocation <SwedenSouth>k__BackingField;
+    [CompilerGeneratedAttribute]
 private static AzureLocation <SwitzerlandNorth>k__BackingField;
     [CompilerGeneratedAttribute]
 private static AzureLocation <SwitzerlandWest>k__BackingField;
@@ -285,7 +301,11 @@ private static AzureLocation <ChinaEast>k__BackingField;
     [CompilerGeneratedAttribute]
 private static AzureLocation <ChinaNorth2>k__BackingField;
     [CompilerGeneratedAttribute]
+private static AzureLocation <ChinaNorth3>k__BackingField;
+    [CompilerGeneratedAttribute]
 private static AzureLocation <ChinaEast2>k__BackingField;
+    [CompilerGeneratedAttribute]
+private static AzureLocation <ChinaEast3>k__BackingField;
     [CompilerGeneratedAttribute]
 private static AzureLocation <QatarCentral>k__BackingField;
     [CompilerGeneratedAttribute]
@@ -300,6 +320,12 @@ private static AzureLocation <USGovTexas>k__BackingField;
 private static AzureLocation <USGovVirginia>k__BackingField;
     [CompilerGeneratedAttribute]
 private static AzureLocation <USGovIowa>k__BackingField;
+    [CompilerGeneratedAttribute]
+private static AzureLocation <IsraelCentral>k__BackingField;
+    [CompilerGeneratedAttribute]
+private static AzureLocation <ItalyNorth>k__BackingField;
+    [CompilerGeneratedAttribute]
+private static AzureLocation <PolandCentral>k__BackingField;
     [CompilerGeneratedAttribute]
 private string <Name>k__BackingField;
     [CompilerGeneratedAttribute]
@@ -342,6 +368,7 @@ private string <DisplayName>k__BackingField;
     public static AzureLocation SouthAfricaNorth { get; }
     public static AzureLocation SouthAfricaWest { get; }
     public static AzureLocation SwedenCentral { get; }
+    public static AzureLocation SwedenSouth { get; }
     public static AzureLocation SwitzerlandNorth { get; }
     public static AzureLocation SwitzerlandWest { get; }
     public static AzureLocation GermanyNorth { get; }
@@ -354,7 +381,9 @@ private string <DisplayName>k__BackingField;
     public static AzureLocation ChinaNorth { get; }
     public static AzureLocation ChinaEast { get; }
     public static AzureLocation ChinaNorth2 { get; }
+    public static AzureLocation ChinaNorth3 { get; }
     public static AzureLocation ChinaEast2 { get; }
+    public static AzureLocation ChinaEast3 { get; }
     public static AzureLocation QatarCentral { get; }
     public static AzureLocation USDoDCentral { get; }
     public static AzureLocation USDoDEast { get; }
@@ -362,6 +391,9 @@ private string <DisplayName>k__BackingField;
     public static AzureLocation USGovTexas { get; }
     public static AzureLocation USGovVirginia { get; }
     public static AzureLocation USGovIowa { get; }
+    public static AzureLocation IsraelCentral { get; }
+    public static AzureLocation ItalyNorth { get; }
+    public static AzureLocation PolandCentral { get; }
     public string Name { get; }
     [NullableAttribute("2")]
 public string DisplayName { get; }
@@ -443,6 +475,8 @@ public static AzureLocation get_SouthAfricaWest();
     [CompilerGeneratedAttribute]
 public static AzureLocation get_SwedenCentral();
     [CompilerGeneratedAttribute]
+public static AzureLocation get_SwedenSouth();
+    [CompilerGeneratedAttribute]
 public static AzureLocation get_SwitzerlandNorth();
     [CompilerGeneratedAttribute]
 public static AzureLocation get_SwitzerlandWest();
@@ -467,7 +501,11 @@ public static AzureLocation get_ChinaEast();
     [CompilerGeneratedAttribute]
 public static AzureLocation get_ChinaNorth2();
     [CompilerGeneratedAttribute]
+public static AzureLocation get_ChinaNorth3();
+    [CompilerGeneratedAttribute]
 public static AzureLocation get_ChinaEast2();
+    [CompilerGeneratedAttribute]
+public static AzureLocation get_ChinaEast3();
     [CompilerGeneratedAttribute]
 public static AzureLocation get_QatarCentral();
     [CompilerGeneratedAttribute]
@@ -482,6 +520,12 @@ public static AzureLocation get_USGovTexas();
 public static AzureLocation get_USGovVirginia();
     [CompilerGeneratedAttribute]
 public static AzureLocation get_USGovIowa();
+    [CompilerGeneratedAttribute]
+public static AzureLocation get_IsraelCentral();
+    [CompilerGeneratedAttribute]
+public static AzureLocation get_ItalyNorth();
+    [CompilerGeneratedAttribute]
+public static AzureLocation get_PolandCentral();
     private static string GetNameFromDisplayName(string name, Boolean& foundSpace);
     [CompilerGeneratedAttribute]
 public string get_Name();
@@ -574,12 +618,31 @@ public Task`1<string> ReadLineAsync(int lengthLimit, CancellationToken cancellat
 [NullableAttribute("0")]
 [NullableContextAttribute("1")]
 internal static class Azure.Core.Buffers.AzureBaseBuffersExtensions : object {
-    [AsyncStateMachineAttribute("Azure.Core.Buffers.AzureBaseBuffersExtensions/<WriteAsync>d__0")]
-[ExtensionAttribute]
-public static Task WriteAsync(Stream stream, ReadOnlyMemory`1<byte> buffer, CancellationToken cancellation);
+    private static int DefaultCopyBufferSize;
     [AsyncStateMachineAttribute("Azure.Core.Buffers.AzureBaseBuffersExtensions/<WriteAsync>d__1")]
 [ExtensionAttribute]
+public static Task WriteAsync(Stream stream, ReadOnlyMemory`1<byte> buffer, CancellationToken cancellation);
+    [AsyncStateMachineAttribute("Azure.Core.Buffers.AzureBaseBuffersExtensions/<WriteAsync>d__2")]
+[ExtensionAttribute]
 public static Task WriteAsync(Stream stream, ReadOnlySequence`1<byte> buffer, CancellationToken cancellation);
+    [AsyncStateMachineAttribute("Azure.Core.Buffers.AzureBaseBuffersExtensions/<CopyToAsync>d__3")]
+[ExtensionAttribute]
+public static Task CopyToAsync(Stream source, Stream destination, CancellationToken cancellationToken);
+    [ExtensionAttribute]
+public static void CopyTo(Stream source, Stream destination, CancellationToken cancellationToken);
+}
+[AttributeUsageAttribute("68")]
+[NullableAttribute("0")]
+[NullableContextAttribute("1")]
+internal class Azure.Core.CallerShouldAuditAttribute : Attribute {
+    [CompilerGeneratedAttribute]
+private string <Reason>k__BackingField;
+    public string Reason { get; public set; }
+    public CallerShouldAuditAttribute(string reason);
+    [CompilerGeneratedAttribute]
+public string get_Reason();
+    [CompilerGeneratedAttribute]
+public void set_Reason(string value);
 }
 [NullableAttribute("0")]
 [NullableContextAttribute("1")]
@@ -726,6 +789,7 @@ private static Nullable`1<bool> EnvironmentVariableToBool(string value);
 [NullableAttribute("0")]
 [NullableContextAttribute("1")]
 public abstract class Azure.Core.DelayStrategy : object {
+    internal static double DefaultJitterFactor;
     private Random _random;
     private double _minJitterFactor;
     private double _maxJitterFactor;
@@ -978,6 +1042,8 @@ public interface Azure.Core.Extensions.IAzureClientFactoryBuilder {
 }
 public interface Azure.Core.Extensions.IAzureClientFactoryBuilderWithConfiguration`1 {
     [NullableContextAttribute("1")]
+[RequiresDynamicCodeAttribute("Binding strongly typed objects to configuration values requires generating dynamic code at runtime, for example instantiating generic types. Use the Configuration Binder Source Generator (EnableConfigurationBindingGenerator=true) instead.")]
+[RequiresUnreferencedCodeAttribute("Binding strongly typed objects to configuration values is not supported with trimming. Use the Configuration Binder Source Generator (EnableConfigurationBindingGenerator=true) instead.")]
 public abstract virtual IAzureClientBuilder`2<TClient, TOptions> RegisterClientFactory(TConfiguration configuration);
 }
 [NullableContextAttribute("1")]
@@ -997,6 +1063,13 @@ internal class Azure.Core.FixedDelayWithNoJitterStrategy : DelayStrategy {
     private static FixedDelayWithNoJitterStrategy();
     [NullableContextAttribute("2")]
 protected virtual TimeSpan GetNextDelayCore(Response response, int retryNumber);
+}
+[NullableAttribute("0")]
+[NullableContextAttribute("1")]
+internal class Azure.Core.GenericOperationSource`1 : object {
+    private sealed virtual override T Azure.Core.IOperationSource<T>.CreateResult(Response response, CancellationToken cancellationToken);
+    private sealed virtual override ValueTask`1<T> Azure.Core.IOperationSource<T>.CreateResultAsync(Response response, CancellationToken cancellationToken);
+    private T CreateResult(Response response);
 }
 [DefaultMemberAttribute("Item")]
 [IsReadOnlyAttribute]
@@ -1504,11 +1577,19 @@ internal class Azure.Core.HttpMessageSanitizer : object {
     private String[] _allowedQueryParameters;
     private string _redactedPlaceholder;
     private HashSet`1<string> _allowedHeaders;
+    [NullableAttribute("2")]
+[ThreadStaticAttribute]
+private static StringBuilder s_cachedStringBuilder;
+    private static int MaxCachedStringBuilderCapacity;
     internal static HttpMessageSanitizer Default;
     public HttpMessageSanitizer(String[] allowedQueryParameters, String[] allowedHeaders, string redactedPlaceholder);
     private static HttpMessageSanitizer();
     public string SanitizeHeader(string name, string value);
     public string SanitizeUrl(string url);
+    private static StringBuilder RentStringBuilder(int capacity);
+    private static string ToStringAndReturnStringBuilder(StringBuilder builder);
+    [CompilerGeneratedAttribute]
+internal static StringBuilder <SanitizeUrl>g__AppendReadOnlySpan|11_0(StringBuilder builder, ReadOnlySpan`1<char> span);
 }
 public enum Azure.Core.HttpPipelinePosition : Enum {
     public int value__;
@@ -1525,6 +1606,11 @@ internal interface Azure.Core.IOperation {
 [NullableContextAttribute("2")]
 internal interface Azure.Core.IOperation`1 {
     public abstract virtual ValueTask`1<OperationState`1<T>> UpdateStateAsync(bool async, CancellationToken cancellationToken);
+}
+[NullableContextAttribute("1")]
+internal interface Azure.Core.IOperationSource`1 {
+    public abstract virtual T CreateResult(Response response, CancellationToken cancellationToken);
+    public abstract virtual ValueTask`1<T> CreateResultAsync(Response response, CancellationToken cancellationToken);
 }
 [NullableAttribute("0")]
 [NullableContextAttribute("1")]
@@ -2090,12 +2176,81 @@ public void set_BaseStreamOffset(Nullable`1<long> value);
 }
 [NullableAttribute("0")]
 [NullableContextAttribute("1")]
+internal class Azure.Core.NextLinkOperationImplementation : object {
+    internal static string NotSet;
+    internal static string RehydrationTokenVersion;
+    private static string ApiVersionParam;
+    private static String[] FailureStates;
+    private static String[] SuccessStates;
+    private HeaderSource _headerSource;
+    private Uri _startRequestUri;
+    private OperationFinalStateVia _finalStateVia;
+    private HttpPipeline _pipeline;
+    [NullableAttribute("2")]
+private string _apiVersion;
+    [NullableAttribute("2")]
+private string _lastKnownLocation;
+    private string _nextRequestUri;
+    [CompilerGeneratedAttribute]
+private string <OperationId>k__BackingField;
+    [CompilerGeneratedAttribute]
+private RequestMethod <RequestMethod>k__BackingField;
+    public string OperationId { get; private set; }
+    public RequestMethod RequestMethod { get; }
+    private NextLinkOperationImplementation(HttpPipeline pipeline, RequestMethod requestMethod, Uri startRequestUri, string nextRequestUri, HeaderSource headerSource, string lastKnownLocation, OperationFinalStateVia finalStateVia, string apiVersion, string operationId, bool isNextRequestPolling);
+    private static NextLinkOperationImplementation();
+    [CompilerGeneratedAttribute]
+public string get_OperationId();
+    [CompilerGeneratedAttribute]
+private void set_OperationId(string value);
+    [CompilerGeneratedAttribute]
+public RequestMethod get_RequestMethod();
+    public static IOperation Create(HttpPipeline pipeline, RequestMethod requestMethod, Uri startRequestUri, Response response, OperationFinalStateVia finalStateVia, bool skipApiVersionOverride, string apiVersionOverrideValue);
+    public static IOperation`1<T> Create(IOperationSource`1<T> operationSource, HttpPipeline pipeline, RequestMethod requestMethod, Uri startRequestUri, Response response, OperationFinalStateVia finalStateVia, bool skipApiVersionOverride, string apiVersionOverrideValue);
+    public static IOperation`1<T> Create(IOperationSource`1<T> operationSource, IOperation operation);
+    public static IOperation Create(HttpPipeline pipeline, RehydrationToken rehydrationToken);
+    private static string ParseOperationId(Uri startRequestUri, string nextRequestUri);
+    public RehydrationToken GetRehydrationToken();
+    public static RehydrationToken GetRehydrationToken(RequestMethod requestMethod, Uri startRequestUri, Response response, OperationFinalStateVia finalStateVia);
+    public static RehydrationToken GetRehydrationToken(RequestMethod requestMethod, Uri startRequestUri, string nextRequestUri, string headerSource, string lastKnownLocation, string finalStateVia, string operationId);
+    [NullableContextAttribute("2")]
+private static string ConstructStringValue(string value);
+    [AsyncStateMachineAttribute("Azure.Core.NextLinkOperationImplementation/<UpdateStateAsync>d__29")]
+[NullableContextAttribute("0")]
+public sealed virtual ValueTask`1<OperationState> UpdateStateAsync(bool async, CancellationToken cancellationToken);
+    private static OperationState GetOperationStateFromFinalResponse(RequestMethod requestMethod, Response response);
+    private void UpdateNextRequestUri(ResponseHeaders headers);
+    internal static string AppendOrReplaceApiVersion(string uri, string apiVersion);
+    [NullableContextAttribute("0")]
+internal static bool TryGetApiVersion(Uri startRequestUri, ReadOnlySpan`1& apiVersion);
+    [NullableContextAttribute("2")]
+private string GetFinalUri(string resourceLocation);
+    private Response GetResponse(string uri, CancellationToken cancellationToken);
+    [AsyncStateMachineAttribute("Azure.Core.NextLinkOperationImplementation/<GetResponseAsync>d__36")]
+private ValueTask`1<Response> GetResponseAsync(string uri, CancellationToken cancellationToken);
+    private HttpMessage CreateRequest(string uri);
+    private static bool IsFinalState(Response response, HeaderSource headerSource, Nullable`1& failureState, String& resourceLocation);
+    private static string GetRequiredString(JsonElement& element);
+    private static bool ShouldIgnoreHeader(RequestMethod method, Response response);
+    private static HeaderSource GetHeaderSource(RequestMethod requestMethod, Uri requestUri, Response response, string apiVersion, String& nextRequestUri, Boolean& isNextRequestPolling);
+    private static void AssertNotNull(T value, string name);
+}
+internal enum Azure.Core.OperationFinalStateVia : Enum {
+    public int value__;
+    public static OperationFinalStateVia AzureAsyncOperation;
+    public static OperationFinalStateVia Location;
+    public static OperationFinalStateVia OriginalUri;
+    public static OperationFinalStateVia OperationLocation;
+    public static OperationFinalStateVia LocationOverride;
+}
+[NullableAttribute("0")]
+[NullableContextAttribute("1")]
 internal class Azure.Core.OperationInternal : OperationInternalBase {
     private OperationInternal`1<VoidValue> _internalOperation;
     public Response RawResponse { get; }
     public bool HasCompleted { get; }
     public OperationInternal(IOperation operation, ClientDiagnostics clientDiagnostics, Response rawResponse, string operationTypeName, IEnumerable`1<KeyValuePair`2<string, string>> scopeAttributes, DelayStrategy fallbackStrategy);
-    private OperationInternal(OperationState finalState);
+    internal OperationInternal(OperationState finalState);
     public static OperationInternal Succeeded(Response rawResponse);
     public static OperationInternal Failed(Response rawResponse, RequestFailedException operationFailedException);
     public virtual Response get_RawResponse();
@@ -2115,7 +2270,7 @@ private AsyncLockWithValue`1<OperationState`1<T>> _stateLock;
     public bool HasValue { get; }
     public T Value { get; }
     public OperationInternal`1(IOperation`1<T> operation, ClientDiagnostics clientDiagnostics, Response rawResponse, string operationTypeName, IEnumerable`1<KeyValuePair`2<string, string>> scopeAttributes, DelayStrategy fallbackStrategy);
-    private OperationInternal`1(OperationState`1<T> finalState);
+    internal OperationInternal`1(OperationState`1<T> finalState);
     public static OperationInternal`1<T> Succeeded(Response rawResponse, T value);
     public static OperationInternal`1<T> Failed(Response rawResponse, RequestFailedException operationFailedException);
     public virtual Response get_RawResponse();
@@ -2317,9 +2472,11 @@ public static ClientRequestIdPolicy get_Shared();
 internal static class Azure.Core.Pipeline.ContentTypeUtilities : object {
     public static bool TryGetTextEncoding(string contentType, Encoding& encoding);
 }
+[NullableAttribute("0")]
+[NullableContextAttribute("1")]
 internal class Azure.Core.Pipeline.DefaultRequestFailedDetailsParser : RequestFailedDetailsParser {
-    [NullableContextAttribute("1")]
-public virtual bool TryParse(Response response, ResponseError& error, IDictionary`2& data);
+    public virtual bool TryParse(Response response, ResponseError& error, IDictionary`2& data);
+    public static bool TryParseDetails(Response response, ResponseError& error, IDictionary`2& data);
 }
 [IsReadOnlyAttribute]
 [NullableAttribute("0")]
@@ -2342,8 +2499,9 @@ internal DiagnosticScope(string scopeName, DiagnosticListener source, object dia
 public bool get_IsEnabled();
     public void AddAttribute(string name, string value);
     public void AddIntegerAttribute(string name, int value);
+    public void AddLongAttribute(string name, long value);
     public void AddAttribute(string name, T value, Func`2<T, string> format);
-    public void AddLink(string traceparent, string tracestate, IDictionary`2<string, string> attributes);
+    public void AddLink(string traceparent, string tracestate, IDictionary`2<string, object> attributes);
     public void Start();
     public void SetDisplayName(string displayName);
     public void SetStartTime(DateTime dateTime);
@@ -2351,7 +2509,8 @@ public bool get_IsEnabled();
     public sealed virtual void Dispose();
     [UnconditionalSuppressMessageAttribute("ReflectionAnalysis", "IL2026")]
 public void Failed(Exception exception);
-    public void Failed(string errorCode);
+    [UnconditionalSuppressMessageAttribute("ReflectionAnalysis", "IL2026")]
+public void Failed(string errorCode);
 }
 [NullableAttribute("0")]
 [NullableContextAttribute("1")]
@@ -2400,9 +2559,9 @@ internal class Azure.Core.Pipeline.GeoRedundantFallbackPolicy : HttpPipelineSync
 [NullableContextAttribute("1")]
 public class Azure.Core.Pipeline.HttpClientTransport : HttpPipelineTransport {
     internal static string MessageForServerCertificateCallback;
+    public static HttpClientTransport Shared;
     [CompilerGeneratedAttribute]
 private HttpClient <Client>k__BackingField;
-    public static HttpClientTransport Shared;
     internal HttpClient Client { get; }
     [NullableContextAttribute("2")]
 internal HttpClientTransport(HttpPipelineTransportOptions options);
@@ -2414,23 +2573,23 @@ internal HttpClient get_Client();
     public sealed virtual Request CreateRequest();
     public virtual void Process(HttpMessage message);
     public virtual ValueTask ProcessAsync(HttpMessage message);
-    [AsyncStateMachineAttribute("Azure.Core.Pipeline.HttpClientTransport/<ProcessAsync>d__12")]
-private ValueTask ProcessAsync(HttpMessage message, bool async);
+    [AsyncStateMachineAttribute("Azure.Core.Pipeline.HttpClientTransport/<ProcessSyncOrAsync>d__12")]
+private ValueTask ProcessSyncOrAsync(HttpMessage message, bool async);
     private static HttpClient CreateDefaultClient(HttpPipelineTransportOptions options);
     private static HttpMessageHandler CreateDefaultHandler(HttpPipelineTransportOptions options);
     private static void SetProxySettings(HttpMessageHandler messageHandler);
-    private static HttpRequestMessage BuildRequestMessage(HttpMessage message);
-    internal static bool TryGetHeader(HttpHeaders headers, HttpContent content, string name, String& value);
-    internal static bool TryGetHeader(HttpHeaders headers, HttpContent content, string name, IEnumerable`1& values);
-    [IteratorStateMachineAttribute("Azure.Core.Pipeline.HttpClientTransport/<GetHeaders>d__19")]
-internal static IEnumerable`1<HttpHeader> GetHeaders(HttpHeaders headers, HttpContent content);
-    internal static bool RemoveHeader(HttpHeaders headers, HttpContent content, string name);
-    internal static bool ContainsHeader(HttpHeaders headers, HttpContent content, string name);
-    private static string JoinHeaderValues(IEnumerable`1<string> values);
     private static HttpClientHandler ApplyOptionsToHandler(HttpClientHandler httpHandler, HttpPipelineTransportOptions options);
     public sealed virtual void Dispose();
     private static void SetPropertiesOrOptions(HttpRequestMessage httpRequest, string name, T value);
     private static bool UseCookies();
+    private static HttpRequestMessage BuildRequestMessage(HttpMessage message);
+    internal static bool TryGetHeader(HttpHeaders headers, HttpContent content, string name, String& value);
+    internal static bool TryGetHeader(HttpHeaders headers, HttpContent content, string name, IEnumerable`1& values);
+    [IteratorStateMachineAttribute("Azure.Core.Pipeline.HttpClientTransport/<GetHeaders>d__24")]
+internal static IEnumerable`1<HttpHeader> GetHeaders(HttpHeaders headers, HttpContent content);
+    internal static bool RemoveHeader(HttpHeaders headers, HttpContent content, string name);
+    internal static bool ContainsHeader(HttpHeaders headers, HttpContent content, string name);
+    private static string JoinHeaderValues(IEnumerable`1<string> values);
 }
 internal class Azure.Core.Pipeline.HttpEnvironmentProxy : object {
     private static string EnvAllProxyUC;
@@ -2506,6 +2665,8 @@ public ValueTask`1<Response> SendRequestAsync(Request request, CancellationToken
 [NullableAttribute("0")]
 [NullableContextAttribute("1")]
 public static class Azure.Core.Pipeline.HttpPipelineBuilder : object {
+    private static int DefaultPolicyCount;
+    private static HttpPipelineBuilder();
     public static HttpPipeline Build(ClientOptions options, HttpPipelinePolicy[] perRetryPolicies);
     public static HttpPipeline Build(ClientOptions options, HttpPipelinePolicy[] perCallPolicies, HttpPipelinePolicy[] perRetryPolicies, ResponseClassifier responseClassifier);
     public static DisposableHttpPipeline Build(ClientOptions options, HttpPipelinePolicy[] perCallPolicies, HttpPipelinePolicy[] perRetryPolicies, HttpPipelineTransportOptions transportOptions, ResponseClassifier responseClassifier);
@@ -2514,9 +2675,9 @@ public static class Azure.Core.Pipeline.HttpPipelineBuilder : object {
     internal static ValueTuple`6<ResponseClassifier, HttpPipelineTransport, int, int, HttpPipelinePolicy[], bool> BuildInternal(HttpPipelineOptions buildOptions, HttpPipelineTransportOptions defaultTransportOptions);
     internal static TelemetryPolicy CreateTelemetryPolicy(ClientOptions options);
     [CompilerGeneratedAttribute]
-internal static void <BuildInternal>g__AddCustomerPolicies|5_0(HttpPipelinePosition position, <>c__DisplayClass5_0& );
+internal static void <BuildInternal>g__AddUserPolicies|6_0(HttpPipelinePosition position, <>c__DisplayClass6_0& );
     [CompilerGeneratedAttribute]
-internal static void <BuildInternal>g__AddNonNullPolicies|5_1(HttpPipelinePolicy[] policiesToAdd, <>c__DisplayClass5_0& );
+internal static void <BuildInternal>g__AddNonNullPolicies|6_1(HttpPipelinePolicy[] policiesToAdd, <>c__DisplayClass6_0& );
 }
 [NullableAttribute("0")]
 [NullableContextAttribute("1")]
@@ -2862,6 +3023,100 @@ internal class Azure.Core.Pipeline.ThreadSafeRandom : Random {
     public virtual void NextBytes(Byte[] buffer);
 }
 internal class Azure.Core.Pipeline.UserAgentValueKey : object {
+}
+[NullableAttribute("0")]
+[NullableContextAttribute("1")]
+internal class Azure.Core.RehydrationOperation : Operation {
+    private NextLinkOperationImplementation _nextLinkOperation;
+    private OperationInternal _operation;
+    public string Id { get; }
+    public bool HasCompleted { get; }
+    public RehydrationOperation(NextLinkOperationImplementation nextLinkOperation, OperationState operationState, ClientOptions options);
+    public virtual string get_Id();
+    public virtual Nullable`1<RehydrationToken> GetRehydrationToken();
+    public virtual bool get_HasCompleted();
+    public virtual Response GetRawResponse();
+    public virtual Response UpdateStatus(CancellationToken cancellationToken);
+    public virtual ValueTask`1<Response> UpdateStatusAsync(CancellationToken cancellationToken);
+}
+[NullableAttribute("Mono.Cecil.CustomAttributeArgument[]")]
+[NullableContextAttribute("1")]
+internal class Azure.Core.RehydrationOperation`1 : Operation`1<T> {
+    private OperationInternal`1<T> _operation;
+    private NextLinkOperationImplementation _nextLinkOperation;
+    public T Value { get; }
+    public bool HasValue { get; }
+    public string Id { get; }
+    public bool HasCompleted { get; }
+    public RehydrationOperation`1(NextLinkOperationImplementation nextLinkOperation, OperationState`1<T> operationState, IOperation`1<T> operation, ClientOptions options);
+    public virtual T get_Value();
+    public virtual bool get_HasValue();
+    public virtual string get_Id();
+    public virtual Nullable`1<RehydrationToken> GetRehydrationToken();
+    public virtual bool get_HasCompleted();
+    public virtual Response GetRawResponse();
+    public virtual Response UpdateStatus(CancellationToken cancellationToken);
+    public virtual ValueTask`1<Response> UpdateStatusAsync(CancellationToken cancellationToken);
+}
+[IsReadOnlyAttribute]
+[NullableAttribute("0")]
+[NullableContextAttribute("1")]
+public class Azure.Core.RehydrationToken : ValueType {
+    [CompilerGeneratedAttribute]
+private string <Id>k__BackingField;
+    [CompilerGeneratedAttribute]
+private string <Version>k__BackingField;
+    [CompilerGeneratedAttribute]
+private string <HeaderSource>k__BackingField;
+    [CompilerGeneratedAttribute]
+private string <NextRequestUri>k__BackingField;
+    [CompilerGeneratedAttribute]
+private string <InitialUri>k__BackingField;
+    [CompilerGeneratedAttribute]
+private RequestMethod <RequestMethod>k__BackingField;
+    [CompilerGeneratedAttribute]
+[NullableAttribute("2")]
+private string <LastKnownLocation>k__BackingField;
+    [CompilerGeneratedAttribute]
+private string <FinalStateVia>k__BackingField;
+    public string Id { get; }
+    internal string Version { get; }
+    internal string HeaderSource { get; }
+    internal string NextRequestUri { get; }
+    internal string InitialUri { get; }
+    internal RequestMethod RequestMethod { get; }
+    [NullableAttribute("2")]
+internal string LastKnownLocation { get; }
+    internal string FinalStateVia { get; }
+    internal RehydrationToken(string id, string version, string headerSource, string nextRequestUri, string initialUri, RequestMethod requestMethod, string lastKnownLocation, string finalStateVia);
+    [CompilerGeneratedAttribute]
+public string get_Id();
+    [CompilerGeneratedAttribute]
+internal string get_Version();
+    [CompilerGeneratedAttribute]
+internal string get_HeaderSource();
+    [CompilerGeneratedAttribute]
+internal string get_NextRequestUri();
+    [CompilerGeneratedAttribute]
+internal string get_InitialUri();
+    [CompilerGeneratedAttribute]
+internal RequestMethod get_RequestMethod();
+    [CompilerGeneratedAttribute]
+[NullableContextAttribute("2")]
+internal string get_LastKnownLocation();
+    [CompilerGeneratedAttribute]
+internal string get_FinalStateVia();
+    internal RehydrationToken DeserializeRehydrationToken(JsonElement element, ModelReaderWriterOptions options);
+    private sealed virtual override void System.ClientModel.Primitives.IJsonModel<Azure.Core.RehydrationToken>.Write(Utf8JsonWriter writer, ModelReaderWriterOptions options);
+    private sealed virtual override RehydrationToken System.ClientModel.Primitives.IJsonModel<Azure.Core.RehydrationToken>.Create(Utf8JsonReader& reader, ModelReaderWriterOptions options);
+    private sealed virtual override BinaryData System.ClientModel.Primitives.IPersistableModel<Azure.Core.RehydrationToken>.Write(ModelReaderWriterOptions options);
+    private sealed virtual override RehydrationToken System.ClientModel.Primitives.IPersistableModel<Azure.Core.RehydrationToken>.Create(BinaryData data, ModelReaderWriterOptions options);
+    private sealed virtual override string System.ClientModel.Primitives.IPersistableModel<Azure.Core.RehydrationToken>.GetFormatFromOptions(ModelReaderWriterOptions options);
+    private sealed virtual override BinaryData System.ClientModel.Primitives.IPersistableModel<System.Object>.Write(ModelReaderWriterOptions options);
+    private sealed virtual override object System.ClientModel.Primitives.IPersistableModel<System.Object>.Create(BinaryData data, ModelReaderWriterOptions options);
+    private sealed virtual override string System.ClientModel.Primitives.IPersistableModel<System.Object>.GetFormatFromOptions(ModelReaderWriterOptions options);
+    private sealed virtual override void System.ClientModel.Primitives.IJsonModel<System.Object>.Write(Utf8JsonWriter writer, ModelReaderWriterOptions options);
+    private sealed virtual override object System.ClientModel.Primitives.IJsonModel<System.Object>.Create(Utf8JsonReader& reader, ModelReaderWriterOptions options);
 }
 [NullableAttribute("0")]
 [NullableContextAttribute("1")]
@@ -3269,6 +3524,9 @@ public enum Azure.Core.RetryMode : Enum {
     public static RetryMode Exponential;
 }
 public class Azure.Core.RetryOptions : object {
+    internal static int DefaultMaxRetries;
+    internal static TimeSpan DefaultMaxDelay;
+    internal static TimeSpan DefaultInitialDelay;
     [CompilerGeneratedAttribute]
 private int <MaxRetries>k__BackingField;
     [CompilerGeneratedAttribute]
@@ -3286,6 +3544,7 @@ private TimeSpan <NetworkTimeout>k__BackingField;
     public TimeSpan NetworkTimeout { get; public set; }
     [NullableContextAttribute("2")]
 internal RetryOptions(RetryOptions retryOptions);
+    private static RetryOptions();
     [CompilerGeneratedAttribute]
 public int get_MaxRetries();
     [CompilerGeneratedAttribute]
@@ -3583,10 +3842,13 @@ public string get_ApplicationId();
     internal static string GenerateUserAgentString(Assembly clientAssembly, string applicationId, RuntimeInformationWrapper runtimeInformation);
     public virtual string ToString();
     private static string EscapeProductInformation(string productInfo);
+    private static bool ContainsNonAscii(string value);
 }
 public abstract class Azure.Core.TokenCredential : object {
-    public abstract virtual ValueTask`1<AccessToken> GetTokenAsync(TokenRequestContext requestContext, CancellationToken cancellationToken);
-    public abstract virtual AccessToken GetToken(TokenRequestContext requestContext, CancellationToken cancellationToken);
+    [CallerShouldAuditAttribute("https://aka.ms/azsdk/callershouldaudit/identity")]
+public abstract virtual ValueTask`1<AccessToken> GetTokenAsync(TokenRequestContext requestContext, CancellationToken cancellationToken);
+    [CallerShouldAuditAttribute("https://aka.ms/azsdk/callershouldaudit/identity")]
+public abstract virtual AccessToken GetToken(TokenRequestContext requestContext, CancellationToken cancellationToken);
 }
 [IsReadOnlyAttribute]
 [NullableAttribute("0")]
@@ -3980,16 +4242,23 @@ public virtual string ToString();
 public abstract class Azure.Operation : object {
     public string Id { get; }
     public bool HasCompleted { get; }
+    public static Operation`1<T> Rehydrate(HttpPipeline pipeline, RehydrationToken rehydrationToken, ClientOptions options);
+    public static Operation Rehydrate(HttpPipeline pipeline, RehydrationToken rehydrationToken, ClientOptions options);
+    [AsyncStateMachineAttribute("Azure.Operation/<RehydrateAsync>d__2`1")]
+public static Task`1<Operation`1<T>> RehydrateAsync(HttpPipeline pipeline, RehydrationToken rehydrationToken, ClientOptions options);
+    [AsyncStateMachineAttribute("Azure.Operation/<RehydrateAsync>d__3")]
+public static Task`1<Operation> RehydrateAsync(HttpPipeline pipeline, RehydrationToken rehydrationToken, ClientOptions options);
+    public virtual Nullable`1<RehydrationToken> GetRehydrationToken();
     public abstract virtual string get_Id();
     public abstract virtual Response GetRawResponse();
     public abstract virtual bool get_HasCompleted();
     public abstract virtual ValueTask`1<Response> UpdateStatusAsync(CancellationToken cancellationToken);
     public abstract virtual Response UpdateStatus(CancellationToken cancellationToken);
-    [AsyncStateMachineAttribute("Azure.Operation/<WaitForCompletionResponseAsync>d__7")]
+    [AsyncStateMachineAttribute("Azure.Operation/<WaitForCompletionResponseAsync>d__12")]
 public virtual ValueTask`1<Response> WaitForCompletionResponseAsync(CancellationToken cancellationToken);
-    [AsyncStateMachineAttribute("Azure.Operation/<WaitForCompletionResponseAsync>d__8")]
+    [AsyncStateMachineAttribute("Azure.Operation/<WaitForCompletionResponseAsync>d__13")]
 public virtual ValueTask`1<Response> WaitForCompletionResponseAsync(TimeSpan pollingInterval, CancellationToken cancellationToken);
-    [AsyncStateMachineAttribute("Azure.Operation/<WaitForCompletionResponseAsync>d__9")]
+    [AsyncStateMachineAttribute("Azure.Operation/<WaitForCompletionResponseAsync>d__14")]
 public virtual ValueTask`1<Response> WaitForCompletionResponseAsync(DelayStrategy delayStrategy, CancellationToken cancellationToken);
     public virtual Response WaitForCompletionResponse(CancellationToken cancellationToken);
     public virtual Response WaitForCompletionResponse(TimeSpan pollingInterval, CancellationToken cancellationToken);
@@ -4149,6 +4418,7 @@ public void set_CancellationToken(CancellationToken value);
 [NullableContextAttribute("1")]
 public class Azure.RequestFailedException : Exception {
     private static string DefaultMessage;
+    internal static string NoContentOnSuccessMessage;
     [CompilerGeneratedAttribute]
 private int <Status>k__BackingField;
     [CompilerGeneratedAttribute]
@@ -4168,9 +4438,9 @@ public RequestFailedException(int status, string message, Exception innerExcepti
     [EditorBrowsableAttribute("1")]
 [NullableContextAttribute("2")]
 public RequestFailedException(int status, string message, string errorCode, Exception innerException);
-    internal RequestFailedException(int status, ValueTuple`2<string, ResponseError> details);
+    private RequestFailedException(int status, ValueTuple`2<string, ResponseError> details);
     [NullableContextAttribute("2")]
-internal RequestFailedException(int status, ValueTuple`3<string, string, IDictionary`2<string, string>> details, Exception innerException);
+private RequestFailedException(int status, ErrorDetails details, Exception innerException);
     public RequestFailedException(Response response);
     public RequestFailedException(Response response, Exception innerException);
     [NullableContextAttribute("2")]
@@ -4184,9 +4454,11 @@ public string get_ErrorCode();
     public virtual void GetObjectData(SerializationInfo info, StreamingContext context);
     [NullableContextAttribute("2")]
 public Response GetRawResponse();
-    internal static ValueTuple`3<string, string, IDictionary`2<string, string>> GetRequestFailedExceptionContent(Response response, RequestFailedDetailsParser parser);
+    private static ErrorDetails CreateExceptionDetails(Response response, RequestFailedDetailsParser parser);
+    private static void AppendContentAndHeaders(Response response, StringBuilder messageBuilder);
+    private static void AppendErrorCodeAndAdditionalInfo(ResponseError error, IDictionary`2<string, string> additionalInfo, StringBuilder messageBuilder);
+    private static void AppendStatusAndReason(Response response, ResponseError error, StringBuilder messageBuilder);
     private static void BufferResponseIfNeeded(Response response);
-    internal static bool TryExtractErrorContent(Response response, ResponseError& error, IDictionary`2& data);
 }
 [NullableAttribute("0")]
 [NullableContextAttribute("1")]
@@ -4462,6 +4734,28 @@ public string get_AssemblyName();
 public string get_Condition();
     [CompilerGeneratedAttribute]
 public void set_Condition(string value);
+}
+[AttributeUsageAttribute("6143")]
+[NullableAttribute("0")]
+[NullableContextAttribute("1")]
+internal class System.Diagnostics.CodeAnalysis.ExperimentalAttribute : Attribute {
+    [CompilerGeneratedAttribute]
+private string <DiagnosticId>k__BackingField;
+    [CompilerGeneratedAttribute]
+[NullableAttribute("2")]
+private string <UrlFormat>k__BackingField;
+    public string DiagnosticId { get; }
+    [NullableAttribute("2")]
+public string UrlFormat { get; public set; }
+    public ExperimentalAttribute(string diagnosticId);
+    [CompilerGeneratedAttribute]
+public string get_DiagnosticId();
+    [CompilerGeneratedAttribute]
+[NullableContextAttribute("2")]
+public string get_UrlFormat();
+    [CompilerGeneratedAttribute]
+[NullableContextAttribute("2")]
+public void set_UrlFormat(string value);
 }
 [AttributeUsageAttribute("10624")]
 internal class System.Diagnostics.CodeAnalysis.MaybeNullAttribute : Attribute {

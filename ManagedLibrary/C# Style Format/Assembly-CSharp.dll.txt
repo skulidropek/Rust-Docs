@@ -1,3 +1,9 @@
+[DOTSCompilerGeneratedAttribute]
+internal class __JobReflectionRegistrationOutput__1221673671587648887 : object {
+    public static void CreateJobReflectionData();
+    [RuntimeInitializeOnLoadMethodAttribute("2")]
+public static void EarlyInit();
+}
 public class AboutYou : BaseMonoBehaviour {
     public Text username;
     public RawImage avatar;
@@ -1107,6 +1113,7 @@ public float lastAnimationStateChange;
     private static AnimatedBuildingBlock();
     public virtual void ServerInit();
     public virtual void PostServerLoad();
+    public virtual bool ShouldUseCastNoClipChecks();
     public virtual void OnFlagsChanged(Flags old, Flags next);
     protected virtual void ApplySubAnimationParameters(bool init, Animator toAnimator);
     protected void UpdateAnimationParameters(bool init);
@@ -1173,7 +1180,6 @@ public static class AntiHack : object {
     private static RaycastHit[] isInsideMeshRaycastHits;
     private static AntiHack();
     public static bool TestNoClipping(BasePlayer ply, Vector3 oldPos, Vector3 newPos, float radius, float backtracking, Collider& col, bool vehicleLayer, BaseEntity ignoreEntity);
-    private static bool ShouldUseCastNoClipChecks(BaseEntity entity);
     public static void Cycle();
     public static void ResetTimer(BasePlayer ply);
     public static bool ShouldIgnore(BasePlayer ply);
@@ -1446,6 +1452,12 @@ public static class AssetStorage : object {
     public static void Load(T& asset, string path);
     public static void Delete(T& asset);
 }
+public class AssociatedSculptureStorage : BaseEntity {
+    public UInt32 Crc;
+    public void InitFromSculpture(UInt32 crc, NetworkableId id);
+    public virtual void Save(SaveInfo info);
+    public virtual void Load(LoadInfo info);
+}
 public class AsyncTerrainNavMeshBake : CustomYieldInstruction {
     private List`1<int> indices;
     private List`1<Vector3> vertices;
@@ -1540,7 +1552,7 @@ public float recoilCompDelayOverride;
     public bool HasAttackCooldown();
     protected float GetAttackCooldown();
     protected float GetAttackIdle();
-    protected float CalculateCooldownTime(float nextTime, float cooldown, bool catchup);
+    protected float CalculateCooldownTime(float nextTime, float cooldown, bool catchup, bool unscaledTime);
     protected bool VerifyClientRPC(BasePlayer player);
     protected virtual bool VerifyClientAttack(BasePlayer player);
     protected bool ValidateEyePos(BasePlayer player, Vector3 eyePos, bool checkLineOfSight);
@@ -2124,8 +2136,8 @@ public void set_ControllingViewerId(Nullable`1<CameraViewerId> value);
 /// Hooks - OnTurretIdentifierSet(AutoTurret,BasePlayer,string)
 /// </summary>
 
-	[RPC_Server]
 	[RPC_Server.MaxDistance(3f)]
+	[RPC_Server]
 	public void Server_SetID(RPCMessage msg)
 	{
 		if (msg.player == null || !CanChangeID(msg.player))
@@ -2228,8 +2240,8 @@ public void set_ControllingViewerId(Nullable`1<CameraViewerId> value);
 /// Hooks - OnTurretRotate(AutoTurret,BasePlayer)
 /// </summary>
 
-	[RPC_Server]
 	[RPC_Server.IsVisible(3f)]
+	[RPC_Server]
 	private void FlipAim(RPCMessage rpc)
 	{
 		if (!IsOnline() && IsAuthed(rpc.player) && !booting && Interface.CallHook("OnTurretRotate", this, rpc.player) == null)
@@ -2335,8 +2347,8 @@ private void AddSelfAuthorize(RPCMessage rpc);
 /// Hooks - OnTurretModeToggle(AutoTurret,BasePlayer)
 /// </summary>
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	private void SERVER_Peacekeeper(RPCMessage rpc)
 	{
 		if (IsAuthed(rpc.player) && Interface.CallHook("OnTurretModeToggle", this, rpc.player) == null)
@@ -3885,6 +3897,7 @@ public void set_OwnerID(ulong value);
     public virtual bool ShouldInheritNetworkGroup();
     public virtual bool SupportsChildDeployables();
     public virtual bool ForceDeployableSetParent();
+    public virtual bool ShouldUseCastNoClipChecks();
     public bool IsOnMovingObject();
     public void BroadcastEntityMessage(string msg, float radius, int layerMask);
     public virtual void OnEntityMessage(BaseEntity from, string msg);
@@ -4909,8 +4922,8 @@ public class BaseLauncher : BaseProjectile {
 /// Hooks - OnRocketLaunched(BasePlayer,BaseEntity)
 /// </summary>
 
-	[RPC_Server]
 	[RPC_Server.IsActiveItem]
+	[RPC_Server]
 	private void SV_Launch(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -5264,8 +5277,8 @@ public bool canThrowAsProjectile;
 /// Hooks - OnMeleeAttack(BasePlayer,HitInfo)
 /// </summary>
 
-	[RPC_Server.IsActiveItem]
 	[RPC_Server]
+	[RPC_Server.IsActiveItem]
 	public void PlayerAttack(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -5675,9 +5688,9 @@ public static float DetectMinMovementDistance;
 /// Hooks - OnMetalDetectorFlagRequest(BaseMetalDetector,UnityEngine.Vector3,BasePlayer)
 /// </summary>
 
-	[RPC_Server]
-	[RPC_Server.CallsPerSecond(2uL)]
 	[RPC_Server.FromOwner]
+	[RPC_Server.CallsPerSecond(2uL)]
+	[RPC_Server]
 	private void RPC_RequestFlag(RPCMessage rpc)
 	{
 		BasePlayer player = rpc.player;
@@ -6224,7 +6237,6 @@ public void RPC_WantsMount(RPCMessage msg);
 			return;
 		}
 		BaseVehicle baseVehicle = VehicleParent();
-		Vector3 res;
 		if (lite)
 		{
 			if (baseVehicle != null)
@@ -6239,8 +6251,9 @@ public void RPC_WantsMount(RPCMessage msg);
 			}
 			OnPlayerDismounted(player);
 			Interface.CallHook("OnEntityDismounted", this, player);
+			return;
 		}
-		else if (!GetDismountPosition(player, out res) || Distance(res) > 10f)
+		if (!GetDismountPosition(player, out var res) || Distance(res) > 10f)
 		{
 			if (baseVehicle != null)
 			{
@@ -6260,37 +6273,39 @@ public void RPC_WantsMount(RPCMessage msg);
 				baseVehicle.PlayerDismounted(player, this);
 			}
 			OnPlayerDismounted(player);
+			return;
+		}
+		if (baseVehicle != null)
+		{
+			baseVehicle.PrePlayerDismount(player, this);
+		}
+		if (AntiHack.TestNoClipping(_mounted, res, res, _mounted.NoClipRadius(ConVar.AntiHack.noclip_margin), ConVar.AntiHack.noclip_backtracking, out var _, vehicleLayer: true))
+		{
+			_mounted.PauseVehicleNoClipDetection(5f);
+		}
+		_mounted.DismountObject();
+		_mounted.transform.rotation = Quaternion.LookRotation(Vector3.forward, Vector3.up);
+		_mounted.MovePosition(res);
+		_mounted.SendNetworkUpdateImmediate();
+		_mounted.SendModelState(force: true);
+		_mounted = null;
+		if (baseVehicle != null)
+		{
+			baseVehicle.PlayerDismounted(player, this);
+		}
+		player.ForceUpdateTriggers();
+		if ((bool)player.GetParentEntity())
+		{
+			BaseEntity baseEntity = player.GetParentEntity();
+			player.ClientRPC(RpcTarget.Player("ForcePositionToParentOffset", player), baseEntity.transform.InverseTransformPoint(res), baseEntity.net.ID);
 		}
 		else
 		{
-			if (baseVehicle != null)
-			{
-				baseVehicle.PrePlayerDismount(player, this);
-			}
-			_mounted.DismountObject();
-			_mounted.transform.rotation = Quaternion.LookRotation(Vector3.forward, Vector3.up);
-			_mounted.MovePosition(res);
-			_mounted.SendNetworkUpdateImmediate();
-			_mounted.SendModelState(force: true);
-			_mounted = null;
-			if (baseVehicle != null)
-			{
-				baseVehicle.PlayerDismounted(player, this);
-			}
-			player.ForceUpdateTriggers();
-			if ((bool)player.GetParentEntity())
-			{
-				BaseEntity baseEntity = player.GetParentEntity();
-				player.ClientRPC(RpcTarget.Player("ForcePositionToParentOffset", player), baseEntity.transform.InverseTransformPoint(res), baseEntity.net.ID);
-			}
-			else
-			{
-				player.ClientRPC(RpcTarget.Player("ForcePositionTo", player), res);
-			}
-			Facepunch.Rust.Analytics.Azure.OnDismountEntity(player, this, baseVehicle);
-			OnPlayerDismounted(player);
-			Interface.CallHook("OnEntityDismounted", this, player);
+			player.ClientRPC(RpcTarget.Player("ForcePositionTo", player), res);
 		}
+		Facepunch.Rust.Analytics.Azure.OnDismountEntity(player, this, baseVehicle);
+		OnPlayerDismounted(player);
+		Interface.CallHook("OnEntityDismounted", this, player);
 	}
 
     public virtual bool GetDismountPosition(BasePlayer player, Vector3& res);
@@ -7521,6 +7536,7 @@ public class BasePlayer : BaseCombatEntity {
     public float waterDelay;
     public Vector3 initialVelocity;
     public float tickDistancePausetime;
+    public float lastInAirTime;
     public TimeAverageValueLookup`1<UInt32> rpcHistory;
     public static Phrase ClanInviteSuccess;
     public static Phrase ClanInviteFailure;
@@ -7706,10 +7722,15 @@ private InputState <serverInput>k__BackingField;
     private bool tickNeedsFinalizing;
     [CompilerGeneratedAttribute]
 private Vector3 <tickViewAngles>k__BackingField;
+    [CompilerGeneratedAttribute]
+private Vector3 <tickMouseDelta>k__BackingField;
     private TimeAverageValue ticksPerSecond;
+    private TimeAverageValue rawTicksPerSecond;
     private TickInterpolator tickInterpolator;
     public Deque`1<Vector3> eyeHistory;
     public TickHistory tickHistory;
+    [CompilerGeneratedAttribute]
+private ulong <rawTickCount>k__BackingField;
     [CompilerGeneratedAttribute]
 private TutorialItemAllowance <CurrentTutorialAllowance>k__BackingField;
     private float startTutorialCooldown;
@@ -7795,7 +7816,6 @@ public PlayerFlags playerFlags;
     public bool PlayHeavyLandingAnimation { get; public set; }
     public Grid Chunk { get; }
     public SubGrid SubGrid { get; }
-    public SubGrid EstimatedSubGrid { get; }
     public Nullable`1<Vector3> RcEntityPosition { get; private set; }
     public Vector3 estimatedVelocity { get; private set; }
     public Vector3 estimatedVelocityClamped { get; }
@@ -7819,8 +7839,10 @@ public PlayerFlags playerFlags;
     public bool isStalled { get; }
     public bool wasStalled { get; }
     public Vector3 tickViewAngles { get; private set; }
+    public Vector3 tickMouseDelta { get; private set; }
     public int tickHistoryCapacity { get; }
     public Matrix4x4 tickHistoryMatrix { get; }
+    public ulong rawTickCount { get; public set; }
     public TutorialItemAllowance CurrentTutorialAllowance { get; private set; }
     public float TimeSinceWoundedStarted { get; }
     public Connection Connection { get; }
@@ -7842,6 +7864,7 @@ public PlayerFlags playerFlags;
     public void PauseFlyHackDetection(float seconds);
     public void PauseSpeedHackDetection(float seconds);
     public void PauseTickDistanceDetection(float seconds);
+    public bool RecentlyInAir(float seconds);
     public int GetAntiHackKicks();
     public void ResetAntiHack();
     public bool CanModifyClan();
@@ -7878,8 +7901,8 @@ public PlayerFlags playerFlags;
 /// Hooks - OnLootPlayer(BasePlayer,BasePlayer)
 /// </summary>
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	public void RPC_LootPlayer(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -7900,8 +7923,8 @@ public PlayerFlags playerFlags;
 /// Hooks - OnPlayerAssist(BasePlayer,BasePlayer)
 /// </summary>
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	public void RPC_Assist(RPCMessage msg)
 	{
 		if (msg.player.CanInteract() && !(msg.player == this) && IsWounded() && Interface.CallHook("OnPlayerAssist", this, msg.player) == null)
@@ -7917,8 +7940,8 @@ public PlayerFlags playerFlags;
 /// Hooks - OnPlayerKeepAlive(BasePlayer,BasePlayer)
 /// </summary>
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	public void RPC_KeepAlive(RPCMessage msg)
 	{
 		if (msg.player.CanInteract() && !(msg.player == this) && IsWounded() && Interface.CallHook("OnPlayerKeepAlive", this, msg.player) == null)
@@ -8241,9 +8264,9 @@ public void Server_RequestMarkers(RPCMessage msg);
 /// Hooks - OnMapMarkersClear(BasePlayer,System.Collections.Generic.List<ProtoBuf.MapNote>),OnMapMarkersCleared(BasePlayer)
 /// </summary>
 
+	[RPC_Server]
 	[RPC_Server.FromOwner]
 	[RPC_Server.CallsPerSecond(1uL)]
-	[RPC_Server]
 	public void Server_ClearMapMarkers(RPCMessage msg)
 	{
 		if (Interface.CallHook("OnMapMarkersClear", this, State.pointsOfInterest) != null)
@@ -8583,7 +8606,6 @@ public bool get_PlayHeavyLandingAnimation();
 public void set_PlayHeavyLandingAnimation(bool value);
     public Grid get_Chunk();
     public SubGrid get_SubGrid();
-    public SubGrid get_EstimatedSubGrid();
     [CompilerGeneratedAttribute]
 public Nullable`1<Vector3> get_RcEntityPosition();
     [CompilerGeneratedAttribute]
@@ -8700,7 +8722,7 @@ private void ClientLoadingComplete(RPCMessage msg);
 			using RespawnInformation respawnInformation = Facepunch.Pool.Get<RespawnInformation>();
 			respawnInformation.spawnOptions = spawnOptions;
 			respawnInformation.loading = loading;
-			if (ConVar.Server.max_shelters == LegacyShelter.FpShelterDefault && LegacyShelter.SheltersPerPlayer.ContainsKey(userID) && LegacyShelter.SheltersPerPlayer[userID].Count > 0)
+			if (LegacyShelter.max_shelters == LegacyShelter.FpShelterDefault && LegacyShelter.SheltersPerPlayer.ContainsKey(userID) && LegacyShelter.SheltersPerPlayer[userID].Count > 0)
 			{
 				respawnInformation.shelterPositions = Facepunch.Pool.Get<List<Vector3>>();
 				foreach (LegacyShelter item2 in LegacyShelter.SheltersPerPlayer[userID])
@@ -9246,7 +9268,7 @@ public void PerformanceReport_Frametime(RPCMessage msg);
 		bool flag = base.ShouldNetworkTo(player);
 		if (ServerOcclusion.OcclusionEnabled && flag)
 		{
-			flag = OcclusionLineOfSight(player);
+			flag = player.IsBot || player.IsNpc || OcclusionLineOfSight(player);
 		}
 		return flag;
 	}
@@ -9262,8 +9284,8 @@ public void PerformanceReport_Frametime(RPCMessage msg);
 /// Hooks - OnPlayerReported(BasePlayer,string,string,string,string,string)
 /// </summary>
 
-	[RPC_Server.FromOwner]
 	[RPC_Server.CallsPerSecond(1uL)]
+	[RPC_Server.FromOwner]
 	[RPC_Server]
 	public void OnPlayerReported(RPCMessage msg)
 	{
@@ -9291,9 +9313,9 @@ public void PerformanceReport_Frametime(RPCMessage msg);
 /// Hooks - OnFeedbackReported(BasePlayer,string,string,Facepunch.Models.ReportType)
 /// </summary>
 
-	[RPC_Server.CallsPerSecond(1uL)]
-	[RPC_Server.FromOwner]
 	[RPC_Server]
+	[RPC_Server.FromOwner]
+	[RPC_Server.CallsPerSecond(1uL)]
 	public void OnFeedbackReport(RPCMessage msg)
 	{
 		string text = msg.read.String();
@@ -9395,7 +9417,7 @@ public void PerformanceReport_Frametime(RPCMessage msg);
 [IsVisible("3")]
 [MaxDistance("3")]
 [RPC_Server]
-private void RPC_ReqDoPush(RPCMessage rpc);
+private void RPC_ReqDoRestrainedPush(RPCMessage rpc);
     [CallsPerSecond("5")]
 [IsVisible("3")]
 [MaxDistance("3")]
@@ -9711,6 +9733,10 @@ private void set_serverInput(InputState value);
 		{
 			UpdateActiveItem(restraintItemId.Value);
 		}
+		else if (!Belt.CanHoldItem())
+		{
+			UpdateActiveItem(default(ItemId));
+		}
 		else
 		{
 			UpdateActiveItem(msg.activeItem);
@@ -9863,8 +9889,16 @@ private void set_serverInput(InputState value);
 public Vector3 get_tickViewAngles();
     [CompilerGeneratedAttribute]
 private void set_tickViewAngles(Vector3 value);
+    [CompilerGeneratedAttribute]
+public Vector3 get_tickMouseDelta();
+    [CompilerGeneratedAttribute]
+private void set_tickMouseDelta(Vector3 value);
     public int get_tickHistoryCapacity();
     public Matrix4x4 get_tickHistoryMatrix();
+    [CompilerGeneratedAttribute]
+public ulong get_rawTickCount();
+    [CompilerGeneratedAttribute]
+public void set_rawTickCount(ulong value);
     public void FinalizeTick(float deltaTime);
     [CompilerGeneratedAttribute]
 public TutorialItemAllowance get_CurrentTutorialAllowance();
@@ -10268,11 +10302,11 @@ public void ServerRPC_UnderwearChange(RPCMessage msg);
     public bool get_IsDesigningAI();
     public void ClearDesigningAIEntity();
     [CompilerGeneratedAttribute]
-private bool <CountWaveTargets>g__CheckPlayer|128_0(BasePlayer player, <>c__DisplayClass128_0& );
+private bool <CountWaveTargets>g__CheckPlayer|130_0(BasePlayer player, <>c__DisplayClass130_0& );
     [CompilerGeneratedAttribute]
-private bool <FindUnusedPointOfInterestColour>g__HasColour|166_0(int index);
+private bool <FindUnusedPointOfInterestColour>g__HasColour|168_0(int index);
     [CompilerGeneratedAttribute]
-private ArraySegment`1<byte> <SaveSecondaryData>g__GetPoolableMugshotData|229_0(PlayerRelationshipInfo relationshipInfo);
+private ArraySegment`1<byte> <SaveSecondaryData>g__GetPoolableMugshotData|231_0(PlayerRelationshipInfo relationshipInfo);
     [AsyncStateMachineAttribute("BasePlayer/<<SendRespawnOptions>g__CollectExternalAndSend|448_0>d")]
 [CompilerGeneratedAttribute]
 private void <SendRespawnOptions>g__CollectExternalAndSend|448_0();
@@ -10647,8 +10681,8 @@ private void ToggleFireMode(RPCMessage msg);
 /// Hooks - OnAmmoSwitch(BaseProjectile,BasePlayer,ItemDefinition)
 /// </summary>
 
-	[RPC_Server]
 	[RPC_Server.IsActiveItem]
+	[RPC_Server]
 	private void SwitchAmmoTo(RPCMessage msg)
 	{
 		BasePlayer ownerPlayer = GetOwnerPlayer();
@@ -10687,8 +10721,8 @@ private void ToggleFireMode(RPCMessage msg);
 /// Hooks - OnWeaponReload(BaseProjectile,BasePlayer)
 /// </summary>
 
-	[RPC_Server]
 	[RPC_Server.IsActiveItem]
+	[RPC_Server]
 	private void StartReload(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -10979,8 +11013,8 @@ public static float dungTimeScale;
 /// Hooks - CanLootEntity(BasePlayer,BaseRidableAnimal)
 /// </summary>
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	private void RPC_OpenLoot(RPCMessage rpc)
 	{
 		if (storageInventory == null)
@@ -11164,6 +11198,115 @@ public UInt32 FilenameStringId;
     public static bool op_Inequality(BaseScriptableObject a, BaseScriptableObject b);
     public virtual int GetHashCode();
     public virtual bool Equals(object o);
+}
+public class BaseSculpture : IOEntity {
+    [HeaderAttribute("BaseSculpture")]
+[SerializeField]
+private MeshFilter targetMesh;
+    [SerializeField]
+private MeshCollider clientMeshCollider;
+    [SerializeField]
+private DamageType carvingDamageType;
+    [SerializeField]
+private Vector3Int gridResolution;
+    [SerializeField]
+private Vector3 gridOffset;
+    [SerializeField]
+private float gridScale;
+    [SerializeField]
+private GameObjectRef blockImpactEffect;
+    [HeaderAttribute("HitGuide")]
+[SerializeField]
+private GameObject hitGuide;
+    [SerializeField]
+private GameObject carvingGuide;
+    [SerializeField]
+private GameObject smoothingGuide;
+    [SerializeField]
+private float guideLerpSpeed;
+    [CompilerGeneratedAttribute]
+private bool <ToolIsSmoothing>k__BackingField;
+    private static int _carveRadius;
+    public static int MinCarveRadius;
+    public static int MaxCarveRadius;
+    private Point3DGrid _grid;
+    private UInt32 _crc;
+    private static Byte[] _decompressArr;
+    [ClientVar]
+public static bool LogMeshStats;
+    private static ListHashSet`1<BaseSculpture> ServerUpdateProcessQueue;
+    private bool _gridDirty;
+    [HeaderAttribute("IO")]
+public ColorSetting[] colorSettings;
+    public Renderer[] lightRenderers;
+    public Material noLightMaterial;
+    public Material lightMaterial;
+    public Light lightSource;
+    private bool _hasLightRenderer;
+    private MaterialPropertyBlock _mpb;
+    private static int EmissionPropertyId;
+    private int _currentColorIndex;
+    [ClientVar]
+public bool ToolIsSmoothing { get; public set; }
+    [ClientVar]
+public static int CarveRadius { get; public set; }
+    public UInt32[] GetContentCRCs { get; }
+    public UGCType ContentType { get; }
+    public List`1<ulong> EditingHistory { get; }
+    public BaseNetworkable UgcEntity { get; }
+    public string ContentString { get; }
+    private static BaseSculpture();
+    public virtual bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg);
+    [CompilerGeneratedAttribute]
+public bool get_ToolIsSmoothing();
+    [CompilerGeneratedAttribute]
+public void set_ToolIsSmoothing(bool value);
+    public static int get_CarveRadius();
+    public static void set_CarveRadius(int value);
+    public virtual void InitShared();
+    public virtual void ServerInit();
+    public bool CanUpdateSculpture(BasePlayer player);
+    public virtual void OnAttacked(HitInfo info);
+    private void PopulateGridFromEncodedData(Byte[] encoded);
+    private static void FillGrid(Point3DGrid grid);
+    private int3 GetInBlockSpace(Vector3 worldSpace);
+    public virtual void Save(SaveInfo info);
+    public virtual void Load(LoadInfo info);
+    public virtual void DestroyShared();
+    public sealed virtual void Dispose();
+    [CallsPerSecond("1")]
+[RPC_Server]
+public void SV_LoadFromData(RPCMessage msg);
+    [MaxDistance("3")]
+[RPC_Server]
+public void SV_CarveSphere(RPCMessage msg);
+    [MaxDistance("3")]
+[RPC_Server]
+public void SV_SmoothSphere(RPCMessage msg);
+    private void CarveSphere(int r, Vector3 worldSpacePosition);
+    private void BlurSphere(int r, Vector3 worldSpacePosition);
+    private void CarveRect(int3 halfExtents, Vector3 worldSpacePositionCentre);
+    [MaxDistance("3")]
+[RPC_Server]
+public void SV_LockSculpture(RPCMessage msg);
+    [MaxDistance("3")]
+[RPC_Server]
+public void SV_UnlockSculpture(RPCMessage msg);
+    private void MarkServerGridUpdate();
+    private JobHandle ScheduleRemoveIslandsFromGrid();
+    public static void ProcessGridUpdates();
+    private void ServerGridUpdate();
+    public virtual void OnPickedUpPreItemMove(Item createdItem, BasePlayer player);
+    public virtual void OnDeployed(BaseEntity parent, BasePlayer deployedBy, Item fromItem);
+    public sealed virtual UInt32[] get_GetContentCRCs();
+    public sealed virtual void ClearContent();
+    public sealed virtual UGCType get_ContentType();
+    public sealed virtual List`1<ulong> get_EditingHistory();
+    public sealed virtual BaseNetworkable get_UgcEntity();
+    public sealed virtual string get_ContentString();
+    internal virtual void DoServerDestroy();
+    public virtual void ResetIOState();
+    public virtual void UpdateFromInput(int inputAmount, int inputSlot);
 }
 public abstract class BaseSpawnPoint : MonoBehaviour {
     public SpawnPointType spawnPointType;
@@ -11394,7 +11537,7 @@ private void set_Velocity(Vector3 value);
     public float GetFuelAmount();
     public virtual float GetSpeed();
     public virtual bool CanBeLooted(BasePlayer player);
-    public sealed virtual float GetAirTimeRemaining();
+    public sealed virtual float GetAirTimeRemaining(Item forItem);
     protected virtual bool CanPushNow(BasePlayer pusher);
     private void UpdatePhysicalRudder(float turnInput, float deltaTime);
     private bool CanMount(BasePlayer player);
@@ -11598,8 +11741,8 @@ public float explosionForceMultiplier;
 /// Hooks - OnVehiclePush(BaseVehicle,BasePlayer)
 /// </summary>
 
-	[RPC_Server.MaxDistance(5f)]
 	[RPC_Server]
+	[RPC_Server.MaxDistance(5f)]
 	public void RPC_WantsPush(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -11648,7 +11791,7 @@ private TriggerParent[] triggerParents;
 [SerializeField]
 private VehicleModuleSlidingComponent[] slidingComponents;
     [SerializeField]
-private VehicleModuleButtonComponent[] buttonComponents;
+protected VehicleModuleButtonComponent[] buttonComponents;
     private TimeSince TimeSinceAddedToVehicle;
     private float prevRefreshHealth;
     private bool prevRefreshVehicleIsDead;
@@ -11685,6 +11828,7 @@ private void set_FirstSocketIndex(int value);
     public virtual bool get_HasSeating();
     public virtual bool get_HasAnEngine();
     public virtual void PreProcess(IPrefabProcessor process, GameObject rootObj, string name, bool serverside, bool clientside, bool bundling);
+    public virtual bool SupportsChildDeployables();
     public void RefreshParameters();
     public virtual BaseVehicle VehicleParent();
     public virtual void ModuleAdded(BaseModularVehicle vehicle, int firstSocketIndex);
@@ -11704,7 +11848,7 @@ private void set_FirstSocketIndex(int value);
     private bool TryGetAdjacentModuleInFront(BaseVehicleModule& result);
     private bool TryGetAdjacentModuleBehind(BaseVehicleModule& result);
     private bool InSameVisualGroupAs(BaseVehicleModule moduleEntity, AdjacentMatchType matchType);
-    private bool CanBeUsedNowBy(BasePlayer player);
+    protected bool CanBeUsedNowBy(BasePlayer player);
     public bool PlayerIsLookingAtUsable(string lookingAtColldierName, string usableColliderName);
     public virtual void Load(LoadInfo info);
     public virtual bool IsVehicleRoot();
@@ -12750,7 +12894,7 @@ private string <CurrentRadioIp>k__BackingField;
     [ServerVar]
 public static void ClearRadioByUser(Arg arg);
     public BaseEntity get_BaseEntity();
-    public void ServerTogglePlay(RPCMessage msg);
+    public void ServerTogglePlay(RPCMessage msg, bool bypassPower);
     public void DeductCondition();
     public void ServerTogglePlay(bool play);
     public void OnCassetteInserted(Cassette c);
@@ -12775,13 +12919,18 @@ public static void ClearRadioByUser(Arg arg);
 		{
 			return (bool)obj;
 		}
+		ShoutcastStreamer.CheckBuiltInRadios();
 		if (ValidStations == null || !ValidStations.ContainsValue(url))
 		{
-			if (ServerValidStations != null)
+			if (ServerValidStations == null || !ServerValidStations.ContainsValue(url))
 			{
-				return ServerValidStations.ContainsValue(url);
+				if (ShoutcastStreamer.ParsedLocalRadioList != null)
+				{
+					return ShoutcastStreamer.ParsedLocalRadioList.ContainsValue(url);
+				}
+				return false;
 			}
-			return false;
+			return true;
 		}
 		return true;
 	}
@@ -12892,6 +13041,22 @@ public class BowWeapon : BaseProjectile {
 [RPC_Server]
 private void BowReload(RPCMessage msg);
     public virtual bool ForceSendMagazine(SaveInfo saveInfo);
+}
+[BurstCompileAttribute]
+internal class BoxBlur3DJob : ValueType {
+    [ReadOnlyAttribute]
+public Point3DGrid InputGrid;
+    public NativeBitArray OutputGrid;
+    public int Width;
+    public int WidthHeight;
+    public sealed virtual void Execute(int index);
+}
+[BurstCompileAttribute]
+internal class BoxBlurSphereJob : ValueType {
+    public Point3DGrid Grid;
+    public int3 Origin;
+    public int R;
+    public sealed virtual void Execute();
 }
 public class BoxStorage : StorageContainer {
     public virtual Vector3 GetDropPosition();
@@ -13744,8 +13909,8 @@ private void set_customColour(UInt32 value);
 /// Hooks - OnStructureUpgrade(BuildingBlock,BasePlayer,BuildingGrade.Enum,ulong),OnStructureUpgraded(BuildingBlock,BasePlayer,BuildingGrade.Enum,ulong)
 /// </summary>
 
-	[RPC_Server]
 	[RPC_Server.MaxDistance(3f)]
+	[RPC_Server]
 	public void DoUpgradeToGrade(RPCMessage msg)
 	{
 		if (!msg.player.CanInteract())
@@ -13809,6 +13974,7 @@ private void set_customColour(UInt32 value);
 				}, 1f);
 			}
 			Interface.CallHook("OnStructureUpgraded", this, msg.player, constructionGrade.gradeBase.type, constructionGrade.gradeBase.skin);
+			timePlaced = GetNetworkTime();
 		}
 	}
 
@@ -13865,8 +14031,8 @@ public void CheckForPipes();
 /// Hooks - OnStructureRotate(BuildingBlock,BasePlayer)
 /// </summary>
 
-	[RPC_Server]
 	[RPC_Server.MaxDistance(3f)]
+	[RPC_Server]
 	public void DoRotation(RPCMessage msg)
 	{
 		if (msg.player.CanInteract() && CanRotate(msg.player) && blockDefinition.canRotateAfterPlacement && Interface.CallHook("OnStructureRotate", this, msg.player) == null)
@@ -14157,8 +14323,8 @@ public class BuildingPrivlidge : StorageContainer {
 /// Hooks - IOnCupboardAuthorize(ulong,BasePlayer,BuildingPrivlidge)
 /// </summary>
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	private void AddAuthorize(RPCMessage rpc)
 	{
 		if (rpc.player.CanInteract() && CanAdministrate(rpc.player))
@@ -14197,8 +14363,8 @@ public class BuildingPrivlidge : StorageContainer {
 /// Hooks - OnCupboardClearList(BuildingPrivlidge,BasePlayer)
 /// </summary>
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	public void ClearList(RPCMessage rpc)
 	{
 		if (rpc.player.CanInteract() && CanAdministrate(rpc.player) && Interface.CallHook("OnCupboardClearList", this, rpc.player) == null)
@@ -15464,9 +15630,9 @@ public void UnLockSign(RPCMessage msg);
 /// Hooks - OnSignUpdated(CarvablePumpkin,BasePlayer)
 /// </summary>
 
-	[RPC_Server.CallsPerSecond(5uL)]
-	[RPC_Server.MaxDistance(5f)]
 	[RPC_Server]
+	[RPC_Server.MaxDistance(5f)]
+	[RPC_Server.CallsPerSecond(5uL)]
 	public void UpdateSign(RPCMessage msg)
 	{
 		if (msg.player == null || !CanUpdateSign(msg.player))
@@ -15513,6 +15679,13 @@ public void UnLockSign(RPCMessage msg);
     public void EnsureInitialized();
     [ConditionalAttribute("SIGN_DEBUG")]
 private static void SignDebugLog(string str);
+}
+[BurstCompileAttribute]
+internal class CarveAndBlurSphereJob : ValueType {
+    public Point3DGrid Grid;
+    public int3 Origin;
+    public int R;
+    public sealed virtual void Execute();
 }
 public class CarWheel : object {
     public WheelCollider wheelCollider;
@@ -16544,6 +16717,15 @@ public static void SendClanAnnouncement(IClan clan, long previousTimestamp, ulon
 }
 public class ClanTable : BaseCombatEntity {
 }
+[BurstCompileAttribute]
+internal class CleanFloatingIslandsJob : ValueType {
+    public Point3DGrid Sampler;
+    public static ProfilerMarker k_Init;
+    public static ProfilerMarker k_Flood;
+    public static ProfilerMarker k_Copy;
+    private static CleanFloatingIslandsJob();
+    public sealed virtual void Execute();
+}
 public class Client : SingletonComponent`1<Client> {
     public static Phrase loading_loading;
     public static Phrase loading_connecting;
@@ -16555,6 +16737,9 @@ public class Client : SingletonComponent`1<Client> {
     public static Phrase loading_openingscene;
     public static Phrase loading_clientready;
     public static Phrase loading_prefabwarmup;
+    public static Phrase loading_queue;
+    public static Phrase loading_queue_status;
+    public static Phrase loading_queue_next;
     private static Client();
 }
 [JsonModelAttribute]
@@ -17085,8 +17270,8 @@ public static float lockoutCooldown;
 /// Hooks - OnCodeChanged(BasePlayer,CodeLock,string,bool),CanChangeCode(BasePlayer,CodeLock,string,bool)
 /// </summary>
 
-	[RPC_Server.MaxDistance(3f, CheckParent = true)]
 	[RPC_Server]
+	[RPC_Server.MaxDistance(3f, CheckParent = true)]
 	private void RPC_ChangeCode(RPCMessage rpc)
 	{
 		if (!rpc.player.CanInteract())
@@ -17127,8 +17312,8 @@ public static float lockoutCooldown;
 /// Hooks - CanUnlock(BasePlayer,CodeLock)
 /// </summary>
 
-	[RPC_Server]
 	[RPC_Server.MaxDistance(3f, CheckParent = true)]
+	[RPC_Server]
 	private void TryUnlock(RPCMessage rpc)
 	{
 		if (rpc.player.CanInteract() && IsLocked() && Interface.CallHook("CanUnlock", rpc.player, this) == null && !IsCodeEntryBlocked() && whitelistPlayers.Contains(rpc.player.userID))
@@ -17162,8 +17347,8 @@ public static float lockoutCooldown;
 /// Hooks - OnCodeEntered(CodeLock,BasePlayer,string)
 /// </summary>
 
-	[RPC_Server]
 	[RPC_Server.MaxDistance(3f, CheckParent = true)]
+	[RPC_Server]
 	private void UnlockWithCode(RPCMessage rpc)
 	{
 		if (!rpc.player.CanInteract() || !IsLocked() || IsCodeEntryBlocked())
@@ -17461,6 +17646,7 @@ public string comment;
 public class CommunityEntity : PointEntity {
     public static CommunityEntity ServerInstance;
     public static CommunityEntity ClientInstance;
+    public GameObject[] OverallPanels;
     public virtual bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg);
     public virtual void InitShared();
     public virtual void DestroyShared();
@@ -18697,7 +18883,7 @@ public class ConnectionAuth : MonoBehaviour {
 			Reject(connection, "Invalid SteamID");
 			return;
 		}
-		if (connection.protocol != 2567)
+		if (connection.protocol != 2570)
 		{
 			if (!DeveloperList.Contains(connection.userid))
 			{
@@ -18750,9 +18936,11 @@ public class ConnectionQueue : object {
     public int ReservedCount { get; }
     public int Queued { get; }
     public int Joining { get; }
+    public bool IsServerFull { get; }
     public int get_ReservedCount();
     public int get_Queued();
     public int get_Joining();
+    public bool get_IsServerFull();
     public void SkipQueue(ulong userid);
     
 /// <summary>
@@ -18763,13 +18951,14 @@ public class ConnectionQueue : object {
 	{
 		if (Interface.CallHook("OnConnectionQueue", connection) == null)
 		{
-			connection.state = Connection.State.InQueue;
-			queue.Add(connection);
 			nextMessageTime = 0f;
-			if (CanJumpQueue(connection))
+			if ((Queued == 0 && !IsServerFull) || CanJumpQueue(connection))
 			{
 				JoinGame(connection);
+				return;
 			}
+			connection.state = Connection.State.InQueue;
+			queue.Add(connection);
 		}
 	}
 
@@ -18791,30 +18980,28 @@ public class ConnectionQueue : object {
 		}
 		if (queue.Count != 0)
 		{
-			if (availableSlots - Joining > 0)
+			SendQueueUpdates();
+			if (!IsServerFull)
 			{
 				JoinGame(queue[0]);
 			}
-			SendMessages();
 		}
 	}
 
-    public void SendMessages();
+    public void SendQueueUpdates();
     
 /// <summary>
-/// Hooks - OnQueueMessage(Network.Connection,int)
+/// Hooks - OnQueueUpdate(Network.Connection,int)
 /// </summary>
 
-	public void SendMessage(Connection c, int position)
+	public void SendQueueUpdate(Connection c, int position)
 	{
-		if (Interface.CallHook("OnQueueMessage", c, position) == null)
+		if (Interface.CallHook("OnQueueUpdate", c, position) == null)
 		{
-			string empty = string.Empty;
-			empty = ((position <= 0) ? string.Format("YOU'RE NEXT - {1:N0} PLAYERS BEHIND YOU", position, queue.Count - position - 1) : $"{position:N0} PLAYERS AHEAD OF YOU, {queue.Count - position - 1:N0} PLAYERS BEHIND");
 			NetWrite netWrite = Network.Net.sv.StartWrite();
-			netWrite.PacketID(Message.Type.Message);
-			netWrite.String("QUEUE");
-			netWrite.String(empty);
+			netWrite.PacketID(Message.Type.QueueUpdate);
+			netWrite.UInt16((ushort)Queued);
+			netWrite.UInt16((ushort)position);
 			netWrite.Send(new SendInfo(c));
 		}
 	}
@@ -19042,6 +19229,7 @@ public static class ConstructionErrors : object {
     public static Phrase CouldntFindEntity;
     public static Phrase CouldntFindSocket;
     public static Phrase Antihack;
+    public static Phrase AntihackWithReason;
     public static Phrase CantDeployOnDoor;
     public static Phrase DeployableMismatch;
     public static Phrase LineOfSightBlocked;
@@ -19918,6 +20106,21 @@ public static float tick_max_distance_falling;
     [HelpAttribute("How far a player is allowed to move in a single tick when parented")]
 [ServerVar]
 public static float tick_max_distance_parented;
+    [HelpAttribute("Whether or not to enable additional tick validation measures")]
+[ServerVar]
+public static bool tick_buffer_preventions;
+    [HelpAttribute("How many seconds worth of ticks can be sent before server tick finalizing before we revert to noclip_protection 2")]
+[ServerVar]
+public static float tick_buffer_noclip_threshold;
+    [HelpAttribute("How many seconds worth of ticks can be sent before server tick finalizing before we reject movement")]
+[ServerVar]
+public static float tick_buffer_reject_threshold;
+    [HelpAttribute("How long it should take for a server to process a frame before we decide to skip additional tick validation measures")]
+[ServerVar]
+public static float tick_buffer_server_lag_threshold;
+    [HelpAttribute("How far a player is allowed to move in forgiveness scenarios")]
+[ServerVar]
+public static float tick_distance_forgiveness;
     [HelpAttribute("0 == silent, 1 == print max violation, 2 == print nonzero violation, 3 == print any violation except noclip, 4 == print any violation")]
 [ServerVar]
 public static int debuglevel;
@@ -20462,6 +20665,7 @@ public static bool disablecondition;
 public static int tutorial_start_cooldown;
     [ServerVar]
 public static bool printMissionSpeakInfo;
+    private static HashSet`1<BasePlayer> invisiblePlayers;
     [ClientVar]
 [ServerVar]
 public static bool callbacks;
@@ -20549,6 +20753,9 @@ public static void completeTutorial(Arg arg);
 public static void quitTutorial(Arg arg);
     [ServerVar]
 public static void tutorialStatus(Arg arg);
+    [ServerVar]
+public static void invis(Arg arg);
+    private static void TickInvis();
     [CompilerGeneratedAttribute]
 internal static void <bench_io>g__Connect|42_0(IOEntity InputIOEnt, IOEntity OutputIOEnt);
 }
@@ -20995,6 +21202,7 @@ public static void teleport2autheditem(Arg arg);
     [ServerVar]
 public static void teleport2marker(Arg arg);
     private static void TeleportToMarker(MapNote marker, BasePlayer player);
+    private static void TeleportToTopOfBase(BasePlayer player, Vector3 position);
     [ServerVar]
 public static void teleport2grid(Arg arg);
     [ServerVar]
@@ -21639,6 +21847,10 @@ public static void fill_prefabs(Arg arg);
 }
 [Factory("profile")]
 public class ConVar.Profile : ConsoleSystem {
+    private static Action delayedTakeSnapshot;
+    private static bool exportDone;
+    private static string PerfSnapshotHelp;
+    private static Profile();
     private static void NeedProfileFolder();
     [ClientVar]
 [ServerVar]
@@ -21649,6 +21861,8 @@ public static void stop(Arg arg);
     [ClientVar]
 [ServerVar]
 public static void flush_analytics(Arg arg);
+    [ServerVar]
+public static void PerfSnapshot(Arg arg);
 }
 [Factory("reflection")]
 public class ConVar.Reflection : ConsoleSystem {
@@ -21763,6 +21977,8 @@ public static int maxplayers;
 public static string hostname;
     [ServerVar]
 public static string identity;
+    [ServerVar]
+public static string filefolderoverride;
     [ServerVar]
 public static string level;
     [ServerVar]
@@ -21934,8 +22150,6 @@ public static float respawnresetrange;
     [ReplicatedVar]
 public static int max_sleeping_bags;
     [ReplicatedVar]
-public static int max_shelters;
-    [ReplicatedVar]
 public static bool bag_quota_item_amount;
     [ServerVar]
 public static int maxunack;
@@ -22034,6 +22248,8 @@ public static bool useLegacyWorkbenchInteraction;
     [ServerVar]
 public static float lowPriorityBuoyancyRange;
     [ServerVar]
+public static bool homingMissileTargetsHab;
+    [ServerVar]
 public static bool showHolsteredItems;
     [ServerVar]
 public static int maxpacketspersecond_world;
@@ -22098,6 +22314,7 @@ public static int player_state_cache_size { get; public set; }
     [ServerVar]
 public static int maxpacketspersecond { get; public set; }
     public static string rootFolder { get; }
+    public static string filesStorageFolder { get; }
     public static string backupFolder { get; }
     public static string backupFolder1 { get; }
     public static string backupFolder2 { get; }
@@ -22171,6 +22388,7 @@ public static void start(Arg arg);
     [ServerVar]
 public static void stop(Arg arg);
     public static string get_rootFolder();
+    public static string get_filesStorageFolder();
     public static string get_backupFolder();
     public static string get_backupFolder1();
     public static string get_backupFolder2();
@@ -22203,6 +22421,8 @@ public static string combatlog_outgoing(Arg arg);
     [ServerVar]
 public static string printpos(Arg arg);
     [ServerVar]
+public static string printposcenter(Arg arg);
+    [ServerVar]
 public static string printrot(Arg arg);
     [ServerVar]
 public static string printeyes(Arg arg);
@@ -22222,7 +22442,7 @@ public static void BroadcastPlayVideo(Arg arg);
 public static void ResetServerEmoji();
     private static string AutoCorrectTags(string value);
     [CompilerGeneratedAttribute]
-internal static void <AutoCorrectTags>g__Add|265_1(String[] options, <>c__DisplayClass265_0& );
+internal static void <AutoCorrectTags>g__Add|269_1(String[] options, <>c__DisplayClass269_0& );
 }
 [Factory("spawn")]
 public class ConVar.Spawn : ConsoleSystem {
@@ -22307,6 +22527,8 @@ public static bool get_server_allow_steam_nicknames();
     [CompilerGeneratedAttribute]
 public static void set_server_allow_steam_nicknames(bool value);
 }
+public class ConVar.Store : object {
+}
 [Factory("supply")]
 public class ConVar.Supply : ConsoleSystem {
     private static string path;
@@ -22317,9 +22539,11 @@ public static void call(Arg arg);
 }
 [Factory("system")]
 public static class ConVar.SystemCommands : object {
+    public static bool appliedManualCpuAffinity;
     [ClientVar]
 [ServerVar]
 public static void cpu_affinity(Arg arg);
+    public static bool SetCpuAffinity(ulong affinityMask);
     [ClientVar]
 [ServerVar]
 public static void cpu_priority(Arg arg);
@@ -22744,6 +22968,12 @@ public class CoverageQueryFlare : BaseMonoBehaviour {
     public float coverageRadius;
     public LODDistanceMode DistanceMode;
 }
+public class CpuAffinity : object {
+    private static bool _appliedAutoCpuAffinity;
+    public static void Apply();
+    private static void ApplyImpl(Manifest manifest);
+    private static List`1<ValueTuple`3<string, int, int>> ReadManifestCoreRanges(Manifest manifest);
+}
 public class CraftingNotice : MonoBehaviour {
     public CanvasGroup canvasGroup;
     public TextMeshProUGUI itemName;
@@ -22943,7 +23173,7 @@ public class DamageToggle : MonoBehaviour {
     private void Reset();
 }
 public static class DamageUtil : object {
-    public static void RadiusDamage(BaseEntity attackingPlayer, BaseEntity weaponPrefab, Vector3 pos, float minradius, float radius, List`1<DamageTypeEntry> damage, int layers, bool useLineOfSight, bool ignoreAI, bool ignoreAttackingPlayer);
+    public static void RadiusDamage(BaseEntity attackingPlayer, BaseEntity weaponPrefab, Vector3 pos, float minradius, float radius, List`1<DamageTypeEntry> damage, int layers, bool useLineOfSight, bool ignoreAI, bool ignoreAttackingPlayer, bool extendedLineOfSight);
     private static bool IsIgnoredAI(BaseEntity ent);
 }
 public class DebrisEntity : BaseCombatEntity {
@@ -23024,6 +23254,7 @@ public class DecayEntity : BaseCombatEntity {
     public void CalculateUpkeepCostAmounts(List`1<ItemAmount> itemAmounts, float multiplier);
     public virtual void ServerInit();
     internal virtual void DoServerDestroy();
+    public virtual bool ShouldUseCastNoClipChecks();
     public virtual void AttachToBuilding(DecayEntity other);
     public BuildingBlock GetNearbyBuildingBlock();
     public void ResetUpkeepTime();
@@ -23264,8 +23495,8 @@ public enum DeferredDecalQueue : Enum {
 public class DeferredDecalRenderer : BaseCommandBuffer {
 }
 [ExecuteInEditMode]
-[RequireComponent("UnityEngine.Camera")]
 [RequireComponent("CommandBufferManager")]
+[RequireComponent("UnityEngine.Camera")]
 public class DeferredExtension : MonoBehaviour {
     public ExtendGBufferParams extendGBuffer;
     public SubsurfaceScatteringParams subsurfaceScattering;
@@ -23624,8 +23855,8 @@ public class Deployer : HeldEntity {
 /// Hooks - CanDeployItem(BasePlayer,Deployer,NetworkableId)
 /// </summary>
 
-	[RPC_Server.IsActiveItem]
 	[RPC_Server]
+	[RPC_Server.IsActiveItem]
 	private void DoDeploy(RPCMessage msg)
 	{
 		if (!msg.player.CanInteract())
@@ -23760,7 +23991,7 @@ public class Deployer : HeldEntity {
 		}
 		else if (ConVar.AntiHack.objectplacement && ownerPlayer.TriggeredAntiHack())
 		{
-			ownerPlayer.ShowToast(GameTip.Styles.Error, ConstructionErrors.Antihack, false);
+			ownerPlayer.ShowToast(GameTip.Styles.Error, ConstructionErrors.AntihackWithReason, false, ownerPlayer.lastViolationType.ToString());
 		}
 		else
 		{
@@ -24252,8 +24483,8 @@ public bool muted;
 /// </summary>
 
 	[RPC_Server.CallsPerSecond(5uL)]
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	public void RPC_SetAlarms(RPCMessage msg)
 	{
 		if (!CanPlayerAdmin(msg.player))
@@ -24576,6 +24807,8 @@ private SoundDefinition waterSubmergeSoundDef;
 }
 public class DiveSite : JunkPile {
     public Transform bobber;
+    public bool DespawnIfAnyLootTaken { get; }
+    public virtual bool get_DespawnIfAnyLootTaken();
     public virtual float TimeoutPlayerCheckRadius();
 }
 public class DiveSiteBuoy : BaseEntity {
@@ -24613,6 +24846,7 @@ public class DofExposer : ListComponent`1<DofExposer> {
 public class DontBecomeSolidWithPlayerInside : MonoBehaviour {
 }
 public class Door : AnimatedBuildingBlock {
+    public static Phrase UpgradeBlockedLock;
     public GameObjectRef knockEffect;
     public bool canTakeLock;
     public bool hasHatch;
@@ -24627,6 +24861,8 @@ public class Door : AnimatedBuildingBlock {
     public SoundDefinition vehicleCollisionSfx;
     public GameObject[] ClosedColliderRoots;
     public bool allowOnCargoShip;
+    public ItemDefinition UpgradeItem;
+    public Option UpgradeMenu;
     [ReadOnlyAttribute]
 [SerializeField]
 private float openAnimLength;
@@ -24740,8 +24976,8 @@ private float closeAnimLength;
 /// Hooks - OnDoorClosed(Door,BasePlayer)
 /// </summary>
 
-	[RPC_Server]
 	[RPC_Server.MaxDistance(3f)]
+	[RPC_Server]
 	private void RPC_CloseDoor(RPCMessage rpc)
 	{
 		if (!rpc.player.CanInteract(usableWhileCrawling: true) || !canHandOpen || !IsOpen() || IsBusy() || IsLocked())
@@ -24821,10 +25057,20 @@ private void Server_NotifyWoundedClose(RPCMessage msg);
     public sealed virtual void OnEmpty();
     protected virtual void ApplySubAnimationParameters(bool init, Animator toAnimator);
     public virtual void OnFlagsChanged(Flags old, Flags next);
+    public sealed virtual ItemDefinition GetUpgradeItem();
+    public sealed virtual bool CanUpgrade(BasePlayer player);
+    public bool HasLock();
+    public sealed virtual void DoUpgrade(BasePlayer player);
+    [CallsPerSecond("5")]
+[IsVisible("3")]
+[RPC_Server]
+public void DoSimpleUpgrade(RPCMessage msg);
+    public sealed virtual bool UpgradingEnabled();
+    public sealed virtual bool CostIsItem();
     [CompilerGeneratedAttribute]
-private void <Server_NotifyWoundedOpen>b__54_0();
+private void <Server_NotifyWoundedOpen>b__57_0();
     [CompilerGeneratedAttribute]
-private void <Server_NotifyWoundedClose>b__56_0();
+private void <Server_NotifyWoundedClose>b__59_0();
 }
 public class DoorAnimEvents : MonoBehaviour {
     public GameObjectRef openStart;
@@ -25109,6 +25355,7 @@ public static float underwater_drag_budget_ms;
     private bool StuckInSomething { get; }
     public SoundDefinition OpenSound { get; }
     public SoundDefinition CloseSound { get; }
+    public Rigidbody Rigidbody { get; }
     public bool IsSleeping { get; }
     private static DroppedItem();
     [CompilerGeneratedAttribute]
@@ -25118,6 +25365,7 @@ private void set_childCollider(Collider value);
     private bool get_StuckInSomething();
     public SoundDefinition get_OpenSound();
     public SoundDefinition get_CloseSound();
+    public Rigidbody get_Rigidbody();
     public bool get_IsSleeping();
     public virtual float GetNetworkTime();
     public virtual void ServerInit();
@@ -25250,8 +25498,8 @@ public sealed virtual void set_LastLootedBy(ulong value);
 /// Hooks - CanLootEntity(BasePlayer,DroppedItemContainer)
 /// </summary>
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	private void RPC_OpenLoot(RPCMessage rpc)
 	{
 		if (inventory != null)
@@ -25943,17 +26191,21 @@ public class ElectricBattery : IOEntity {
     public int maxOutput;
     public float maxCapactiySeconds;
     public float rustWattSeconds;
-    private int activeDrain;
-    public bool rechargable;
-    [TooltipAttribute("How much energy we can request from power sources for charging is this value * our maxOutput")]
+    [TooltipAttribute("How much energy we can request from power sources for charging is this value multiplied by our maxOutput")]
 public float maximumInboundEnergyRatio;
+    public bool rechargable;
     public float chargeRatio;
+    private int activeDrain;
+    private float lastChargeIn;
     private static float tickRateSeconds;
     public static Flags Flag_HalfFull;
     public static Flags Flag_VeryFull;
+    public static Flags Flag_Full;
     private bool wasLoaded;
     [TupleElementNamesAttribute("Mono.Cecil.CustomAttributeArgument[]")]
 private HashSet`1<ValueTuple`2<IOEntity, int>> connectedList;
+    [TupleElementNamesAttribute("Mono.Cecil.CustomAttributeArgument[]")]
+private HashSet`1<ValueTuple`2<IOEntity, int>> auxConnectedList;
     private Queue`1<int> inputHistory;
     private static int inputHistorySize;
     public virtual bool IsRootEntity();
@@ -25961,27 +26213,27 @@ private HashSet`1<ValueTuple`2<IOEntity, int>> connectedList;
     public virtual int MaximalPowerOutput();
     public int GetActiveDrain();
     public sealed virtual void ReceiveInstanceData(InstanceData data);
+    public virtual void ServerInit();
     public virtual void PostServerLoad();
     public virtual void OnPickedUp(Item createdItem, BasePlayer player);
     public virtual int GetCurrentEnergy();
-    public virtual int DesiredPower(int inputIndex);
-    public virtual void SendAdditionalData(BasePlayer player, int slot, bool input);
-    public virtual void ServerInit();
-    public int GetDrainFor(IOEntity ent);
-    public void AddConnectedRecursive(IOEntity root, int inputIndex, HashSet`1& listToUse);
     public int GetDrain();
+    public void AddConnectedRecursive(IOEntity root, int inputIndex, HashSet`1& listToUse);
+    public virtual int DesiredPower(int inputIndex);
+    public virtual void IOStateChanged(int inputAmount, int inputSlot);
+    public virtual int GetPassthroughAmount(int outputSlot);
+    public virtual bool WantsPower(int inputIndex);
+    public virtual void SendAdditionalData(BasePlayer player, int slot, bool input);
     public virtual void OnCircuitChanged(bool forceUpdate);
     public void CheckDischarge();
     public void SetDischarging(bool wantsOn);
-    public virtual int GetPassthroughAmount(int outputSlot);
-    public virtual bool WantsPower(int inputIndex);
     private int GetHighestInputFromHistory();
-    public virtual void IOStateChanged(int inputAmount, int inputSlot);
     public void TickUsage();
     public virtual void ChargeChanged(float oldCharge);
+    private void RefreshFullChargeFlag();
     public void AddCharge();
     public void SetPassthroughOn(bool wantsOn);
-    public void Unbusy();
+    public void UnBusy();
     public virtual void Save(SaveInfo info);
     public virtual void Load(LoadInfo info);
     [ServerVar]
@@ -26185,6 +26437,10 @@ public void set_Floor(int value);
     [CompilerGeneratedAttribute]
 private void <CallElevator>b__26_0(Elevator elevatorEnt);
 }
+public class ElevatorButton : MonoBehaviour {
+    public ElevatorOption AvailableActions;
+    public Collider AttachedCollider;
+}
 public class ElevatorIOEntity : IOEntity {
     public int Consumption;
     public virtual int ConsumptionAmount();
@@ -26192,8 +26448,11 @@ public class ElevatorIOEntity : IOEntity {
 public class ElevatorLift : BaseCombatEntity {
     public GameObject DescendingHurtTrigger;
     public GameObject MovementCollider;
+    public ElevatorButton[] Buttons;
     public Transform UpButtonPoint;
     public Transform DownButtonPoint;
+    public Transform GoTopButtonPoint;
+    public Transform GoBottomButtonPoint;
     public TriggerNotify VehicleTrigger;
     public GameObjectRef LiftArrivalScreenBounce;
     public SoundDefinition liftMovementLoopDef;
@@ -26208,8 +26467,9 @@ public class ElevatorLift : BaseCombatEntity {
     public Vector3 lastPosition;
     public List`1<BaseEntity> vehicleWhitelist;
     private EntityRef`1<Elevator> ownerElevator;
-    private static Flags PressedUp;
-    private static Flags PressedDown;
+    public static Flags PressedUp;
+    public static Flags PressedDown;
+    public static Flags Express;
     public static Flags FlagCanMove;
     private HashSet`1<UInt32> vehiclePrefabWhitelist;
     private Elevator owner { get; }
@@ -26225,8 +26485,8 @@ public class ElevatorLift : BaseCombatEntity {
 /// Hooks - OnElevatorButtonPress(ElevatorLift,BasePlayer,Elevator.Direction,bool)
 /// </summary>
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	public void Server_RaiseLowerFloor(RPCMessage msg)
 	{
 		Elevator.Direction direction = (Elevator.Direction)msg.read.Int32();
@@ -26234,6 +26494,7 @@ public class ElevatorLift : BaseCombatEntity {
 		if (Interface.CallHook("OnElevatorButtonPress", this, msg.player, direction, flag) == null)
 		{
 			SetFlag((direction == Elevator.Direction.Up) ? Flags.Reserved1 : Flags.Reserved2, b: true);
+			SetFlag(Flags.Reserved6, flag);
 			owner.Server_RaiseLowerElevator(direction, flag);
 			Invoke(ClearDirection, 0.7f);
 			if (liftButtonPressedEffect.isValid)
@@ -26476,6 +26737,7 @@ public class EntityComponent`1 : EntityComponentBase {
     public T get_baseEntity();
     protected void UpdateBaseEntity();
     public virtual BaseEntity GetBaseEntity();
+    public T GetCastedEntity();
 }
 public class EntityComponentBase : BaseMonoBehaviour {
     public virtual BaseEntity GetBaseEntity();
@@ -27037,8 +27299,8 @@ public ItemAmount[] resourcesToMine;
 /// Hooks - OnExcavatorResourceSet(ExcavatorArm,string,BasePlayer)
 /// </summary>
 
-	[RPC_Server.MaxDistance(3f)]
 	[RPC_Server]
+	[RPC_Server.MaxDistance(3f)]
 	public void RPC_SetResourceTarget(RPCMessage msg)
 	{
 		string text = msg.read.String();
@@ -27124,8 +27386,8 @@ public static float chargeNeededForSupplies;
 /// </summary>
 
 	[RPC_Server.CallsPerSecond(5uL)]
-	[RPC_Server]
 	[RPC_Server.IsVisible(3f)]
+	[RPC_Server]
 	public void RequestSupplies(RPCMessage rpc)
 	{
 		if (HasFlag(Flags.Reserved7) && IsPowered() && chargePower >= chargeNeededForSupplies && Interface.CallHook("OnExcavatorSuppliesRequest", this, rpc.player) == null)
@@ -27930,6 +28192,191 @@ internal class Facepunch.GUI.TabbedPanel : object {
     internal void DrawVertical(float width);
     internal void DrawContents();
 }
+[BurstCompileAttribute]
+internal class Facepunch.MarchingCubes.BakePhysicsMeshesJob : ValueType {
+    [ReadOnlyAttribute]
+public NativeArray`1<int> MeshIds;
+    public sealed virtual void Execute(int index);
+}
+[BurstCompileAttribute]
+internal class Facepunch.MarchingCubes.CleanupDuplicateVerticesJob : ValueType {
+    [ReadOnlyAttribute]
+public NativeList`1<float3> inputVertices;
+    [ReadOnlyAttribute]
+public NativeList`1<int> inputIndices;
+    [WriteOnlyAttribute]
+public NativeList`1<float3> outputVertices;
+    [WriteOnlyAttribute]
+public NativeList`1<int> outputIndices;
+    public NativeHashMap`2<int, int> indexToIndices;
+    public float3 vertexOffset;
+    public float invScale;
+    public int width;
+    public int widthHeight;
+    public sealed virtual void Execute();
+}
+[Il2CppEagerStaticClassConstructionAttribute]
+public static class Facepunch.MarchingCubes.MarchingCubeLookup : object {
+    public static Int32[] edgeTable;
+    public static Int32[] triTableFlat;
+    public static Int32[] cornerIndexAFromEdge;
+    public static Int32[] cornerIndexBFromEdge;
+    private static MarchingCubeLookup();
+}
+public class Facepunch.MarchingCubes.MarchingCubeManager : FacepunchBehaviour {
+    private static MarchingCubeManager _instance;
+    public List`1<MarchingCubesGenerator> AllCubesList;
+    private ListHashSet`1<MarchingCubesGenerator> _cubesWaitingForGeneration;
+    public static MarchingCubeManager Instance { get; }
+    public static MarchingCubeManager get_Instance();
+    public void Awake();
+    public void LateUpdate();
+    public void Add(MarchingCubesGenerator cubes);
+    public void Remove(MarchingCubesGenerator cubes);
+    public void EnqueueUpdate(MarchingCubesGenerator cubes);
+    public void ProcessQueue();
+}
+public class Facepunch.MarchingCubes.MarchingCubesGenerator : object {
+    private Point3DGrid _sampler;
+    private Mesh _meshToUpdate;
+    private MeshCollider _meshCollider;
+    private NativeMeshSimplifier _simplifier;
+    private float3 _offset;
+    private float _scale;
+    private NativeList`1<float3> vertices0;
+    private NativeList`1<float3> vertices1;
+    private NativeList`1<float3> vertices2;
+    private NativeList`1<int> indices0;
+    private NativeList`1<int> indices1;
+    private NativeList`1<int> indices2;
+    private NativeHashMap`2<int, int> indexToIndices;
+    private float4x4 _transform;
+    private static ProfilerMarker p_ApplyUpdate;
+    public Mesh Mesh { get; }
+    public MeshCollider MeshCollider { get; }
+    public int MeshInstanceId { get; }
+    public MarchingCubesGenerator(Point3DGrid sampler, Mesh meshToUpdate, MeshCollider meshCollider, float3 offset, float scale);
+    private static MarchingCubesGenerator();
+    public Mesh get_Mesh();
+    public MeshCollider get_MeshCollider();
+    public int get_MeshInstanceId();
+    public JobHandle ScheduleMarch();
+    public JobHandle ScheduleSimplification(JobHandle inputDeps);
+    public void ApplyUpdate(bool fromSimplify);
+    public void EnqueueUpdate();
+    public sealed virtual void Dispose();
+}
+[BurstCompileAttribute]
+internal class Facepunch.MarchingCubes.MarchJob : ValueType {
+    [ReadOnlyAttribute]
+public Point3DGrid sampler;
+    public NativeList`1<float3> vertices;
+    [WriteOnlyAttribute]
+public NativeList`1<int> indices;
+    public float3 vertexOffset;
+    public float scale;
+    public sealed virtual void Execute();
+    private static void ProcessCube(int3 cubeStart, NativeArray`1<int3> corners, NativeArray`1<float> cornerSamples, NativeList`1<float3> vertices, NativeList`1<int> indices, Point3DGrid sampler, float3 vertexOffset, float scale);
+    [CompilerGeneratedAttribute]
+internal static float3 <ProcessCube>g__GetVertex|6_0(float3 v0, float s0, float3 v1, float s1);
+}
+[DefaultMemberAttribute("Item")]
+[GenerateTestsForBurstCompatibilityAttribute]
+public class Facepunch.MarchingCubes.Point3DGrid : ValueType {
+    private NativeBitArray _array;
+    private int _width;
+    private int _height;
+    private int _depth;
+    private int3 _bounds;
+    private int _widthHeight;
+    private bool _hasDisposed;
+    public int Width { get; }
+    public int Height { get; }
+    public int Depth { get; }
+    public int Length { get; }
+    public int3 Bounds { get; }
+    public bool Item { get; public set; }
+    public bool Item { get; public set; }
+    public bool Item { get; public set; }
+    public Point3DGrid(int width, int height, int depth);
+    public int get_Width();
+    public int get_Height();
+    public int get_Depth();
+    public int get_Length();
+    public int3 get_Bounds();
+    public void Clear();
+    public void CopyToByteArray(Byte[]& arr);
+    public void CopyFromByteArray(Byte[] arr, int count);
+    public void CopyFromNativeBitArray(NativeBitArray& other);
+    public bool InBounds(int3 p);
+    public bool InBoundsNotTouching(int3 p);
+    public int ToIndex(int3 p);
+    public int ToIndex(int x, int y, int z);
+    public bool get_Item(int directIndex);
+    public void set_Item(int directIndex, bool value);
+    public bool get_Item(int x, int y, int z);
+    public void set_Item(int x, int y, int z, bool value);
+    public bool get_Item(int3 p);
+    public void set_Item(int3 p, bool value);
+    public float Sample(int3 localPosition);
+    public sealed virtual void Dispose();
+}
+[BurstCompileAttribute]
+internal class Facepunch.NativeMeshSimplification.CopyBackJob : ValueType {
+    public NativeList`1<float3> VerticesIn;
+    public NativeList`1<int> IndicesIn;
+    public NativeList`1<Triangle> TrianglesOut;
+    public NativeList`1<Vertex> VerticesOut;
+    public sealed virtual void Execute();
+}
+[ExtensionAttribute]
+public static class Facepunch.NativeMeshSimplification.NativeListAccessExtensions : object {
+    [ConditionalAttribute("ENABLE_UNITY_COLLECTIONS_CHECKS")]
+private static void ArrayBoundsCheck(NativeList`1& list, int i);
+    [ExtensionAttribute]
+public static T& Get(NativeList`1& list, int index);
+    [ExtensionAttribute]
+public static T& modreq(System.Runtime.InteropServices.InAttribute) GetReadonly(NativeList`1& list, int index);
+}
+public class Facepunch.NativeMeshSimplification.NativeMeshSimplifier : object {
+    private NativeList`1<Vertex> _vertices;
+    private NativeList`1<Triangle> _triangles;
+    private NativeList`1<Ref> _refs;
+    public sealed virtual void Dispose();
+    public JobHandle ScheduleMeshSimplify(float reductionModifier, NativeList`1<float3> verticesIn, NativeList`1<int> indicesIn, NativeList`1<float3> verticesOut, NativeList`1<int> indicesOut, JobHandle inputDeps);
+}
+[BurstCompileAttribute]
+internal class Facepunch.NativeMeshSimplification.PopulateArraysJob : ValueType {
+    public NativeList`1<float3> VerticesIn;
+    public NativeList`1<int> IndicesIn;
+    public NativeList`1<Triangle> TrianglesOut;
+    public NativeList`1<Vertex> VerticesOut;
+    public sealed virtual void Execute();
+}
+[BurstCompileAttribute]
+internal class Facepunch.NativeMeshSimplification.SimplifyMeshJob : ValueType {
+    public int MaxIterations;
+    public float ReductionTarget;
+    public int Aggressiveness;
+    public NativeList`1<Triangle> Triangles;
+    public NativeList`1<Vertex> Vertices;
+    public NativeList`1<Ref> Refs;
+    private static ProfilerMarkerStub k_Iteration;
+    private static ProfilerMarkerStub k_UpdateMesh;
+    private static ProfilerMarkerStub k_FirstUpdate;
+    private static ProfilerMarkerStub k_CompactMesh;
+    private static ProfilerMarkerStub k_Flipped;
+    private static ProfilerMarkerStub k_UpdateTriangles;
+    private static ProfilerMarkerStub k_MemCpy;
+    public sealed virtual void Execute();
+    private static float VertexError(SymmetricMatrix& q, float3& v);
+    private float CalculateError(int idV1, int idV2);
+    private float CalculateError(Vertex& v1, Vertex& v2, float3& pResult);
+    private bool Flipped(float3 p, int i1, Vertex& v0, NativeList`1& deleted);
+    private void UpdateTriangles(int i0, Vertex& v, NativeList`1& deleted, Int32& deletedTriangles);
+    private void UpdateMesh(int iteration);
+    private void CompactMesh();
+}
 public static class Facepunch.Output : object {
     [CompilerGeneratedAttribute]
 private static Action`3<string, string, LogType> OnMessage;
@@ -27976,6 +28423,16 @@ public static bool Print;
     internal static int SERVERDATA_SWITCH_UTF8;
     private static RCon();
     [ServerVar]
+public static void ban_ip(Arg arg);
+    [ServerVar]
+public static void unban_ip(Arg arg);
+    [ServerVar]
+public static void clear_rcon_failed_logins(Arg arg);
+    [ServerVar]
+public static void print_rcon_bans(Arg arg);
+    [ServerVar]
+public static void print_rcon_failed_logins(Arg arg);
+    [ServerVar]
 public static void print_rcon_clients(Arg arg);
     
 /// <summary>
@@ -27993,22 +28450,38 @@ public static void print_rcon_clients(Arg arg);
 			Port = Server.port;
 		}
 		Password = CommandLine.GetSwitch("-rcon.password", CommandLine.GetSwitch("+rcon.password", ""));
-		if (Password == "password" || Password == "")
+		if (Password.Length < 8)
 		{
+			UnityEngine.Debug.Log("\r\n*******************************************************\r\n**                                                   **\r\n** RCON password length is very insecure.            **\r\n** Support for passwords less than 8 characters may  **\r\n** be removed in the future.                         **\r\n**                                                   **\r\n*******************************************************\r\n");
+		}
+		switch (Password.ToLower())
+		{
+		case "changeme":
+		case "abc123":
+		case "qwerty":
+		case "qwerty123":
+		case "123456":
+		case "000000":
+		case "password123":
+		case "password":
+		case "":
+			UnityEngine.Debug.Log("\r\n*******************************************************\r\n**                                                   **\r\n** RCON password is very insecure, RCON is disabled. **\r\n**                                                   **\r\n*******************************************************\r\n");
 			return;
 		}
 		Output.OnMessage += OnMessage;
 		if (Web)
 		{
 			listenerNew = new Listener();
+			string serverFolder = Server.GetServerFolder("cfg");
+			listenerNew.BansFile = serverFolder + "/rcon-bans.cfg";
 			if (!string.IsNullOrEmpty(Ip))
 			{
 				listenerNew.Address = Ip;
 			}
 			listenerNew.Password = Password;
 			listenerNew.Port = Port;
-			listenerNew.SslCertificate = CommandLine.GetSwitch("-rcon.ssl", null);
-			listenerNew.SslCertificatePassword = CommandLine.GetSwitch("-rcon.sslpwd", null);
+			listenerNew.SslCertificate = CommandLine.GetSwitch("-rcon.ssl", CommandLine.GetSwitch("+rcon.ssl", null));
+			listenerNew.SslCertificatePassword = CommandLine.GetSwitch("-rcon.sslpwd", CommandLine.GetSwitch("+rcon.sslpwd", null));
 			listenerNew.OnMessage = delegate(IPAddress ip, int id, string msg)
 			{
 				Command item = JsonConvert.DeserializeObject<Command>(msg);
@@ -28017,13 +28490,13 @@ public static void print_rcon_clients(Arg arg);
 				Commands.Enqueue(item);
 			};
 			listenerNew.Start();
-			UnityEngine.Debug.Log("WebSocket RCon Started on " + Port);
+			UnityEngine.Debug.Log($"WebSocket RCON Started on {Ip}:{Port}");
 		}
 		else
 		{
 			listener = new RConListener();
-			UnityEngine.Debug.Log("RCon Started on " + Port);
-			UnityEngine.Debug.Log("Source style TCP Rcon is deprecated. Please switch to Websocket Rcon before it goes away.");
+			UnityEngine.Debug.Log("RCON Started on " + Port);
+			UnityEngine.Debug.Log("\r\n*********************************************************************\r\n**                                                                 **\r\n** Source engine style TCP RCON is deprecated and will be removed. **\r\n** Please switch to Websocket RCON by setting rcon.web to true     **\r\n**                                                                 **\r\n*********************************************************************");
 		}
 	}
 
@@ -28051,6 +28524,14 @@ private static string <AnalyticsPublicKey>k__BackingField;
     [CompilerGeneratedAttribute]
 private static string <BulkUploadConnectionString>k__BackingField;
     [CompilerGeneratedAttribute]
+private static string <BulkContainerUrl>k__BackingField;
+    [CompilerGeneratedAttribute]
+private static string <AzureTenantId>k__BackingField;
+    [CompilerGeneratedAttribute]
+private static string <AzureClientId>k__BackingField;
+    [CompilerGeneratedAttribute]
+private static string <AzureClientSecret>k__BackingField;
+    [CompilerGeneratedAttribute]
 private static bool <ServerPerformanceConVar>k__BackingField;
     [CompilerGeneratedAttribute]
 private static bool <GameplayAnalyticsConVar>k__BackingField;
@@ -28066,6 +28547,14 @@ public static string AnalyticsSecret { get; public set; }
     public static string AnalyticsPublicKey { get; public set; }
     [ServerVar]
 public static string BulkUploadConnectionString { get; public set; }
+    [ServerVar]
+public static string BulkContainerUrl { get; public set; }
+    [ServerVar]
+public static string AzureTenantId { get; public set; }
+    [ServerVar]
+public static string AzureClientId { get; public set; }
+    [ServerVar]
+public static string AzureClientSecret { get; public set; }
     [ServerVar]
 public static bool ServerPerformanceConVar { get; public set; }
     [ServerVar]
@@ -28098,6 +28587,22 @@ public static string get_BulkUploadConnectionString();
     [CompilerGeneratedAttribute]
 public static void set_BulkUploadConnectionString(string value);
     [CompilerGeneratedAttribute]
+public static string get_BulkContainerUrl();
+    [CompilerGeneratedAttribute]
+public static void set_BulkContainerUrl(string value);
+    [CompilerGeneratedAttribute]
+public static string get_AzureTenantId();
+    [CompilerGeneratedAttribute]
+public static void set_AzureTenantId(string value);
+    [CompilerGeneratedAttribute]
+public static string get_AzureClientId();
+    [CompilerGeneratedAttribute]
+public static void set_AzureClientId(string value);
+    [CompilerGeneratedAttribute]
+public static string get_AzureClientSecret();
+    [CompilerGeneratedAttribute]
+public static void set_AzureClientSecret(string value);
+    [CompilerGeneratedAttribute]
 public static bool get_ServerPerformanceConVar();
     [CompilerGeneratedAttribute]
 public static void set_ServerPerformanceConVar(bool value);
@@ -28112,6 +28617,7 @@ public static void set_GameplayTickAnalyticsConVar(bool value);
     [ClientVar]
 [ServerVar]
 public static void GetPendingAnalytics(Arg arg);
+    public static string GetContainerUrl();
 }
 public enum Facepunch.Rust.AnalyticsDocumentMode : Enum {
     public int value__;
@@ -28120,6 +28626,7 @@ public enum Facepunch.Rust.AnalyticsDocumentMode : Enum {
 }
 public class Facepunch.Rust.AzureAnalyticsUploader : object {
     public static bool UsePooling;
+    public static ClientSecretCredential Credential;
     [CompilerGeneratedAttribute]
 private TimeSpan <LoopDelay>k__BackingField;
     [CompilerGeneratedAttribute]
@@ -28136,6 +28643,7 @@ private bool <UseJsonDataObject>k__BackingField;
     private GZipStream ZipStream;
     private Utf8ValueStringBuilder Writer;
     private bool disposed;
+    private BlobOpenWriteOptions blobWriteOptions;
     public TimeSpan LoopDelay { get; public set; }
     public DateTime Expiry { get; private set; }
     public bool StrictMode { get; public set; }
@@ -28162,17 +28670,17 @@ public bool get_UseJsonDataObject();
     [CompilerGeneratedAttribute]
 public void set_UseJsonDataObject(bool value);
     public sealed virtual void EnterPool();
-    public sealed virtual void LeavePool();
     private void Initialize();
+    public sealed virtual void LeavePool();
     public bool TryFlush();
     public static AzureAnalyticsUploader Create(string table, TimeSpan timeout, AnalyticsDocumentMode mode);
     public void Append(EventRecord record);
-    [AsyncStateMachineAttribute("Facepunch.Rust.AzureAnalyticsUploader/<CreateBlobAsync>d__34")]
+    [AsyncStateMachineAttribute("Facepunch.Rust.AzureAnalyticsUploader/<CreateBlobAsync>d__36")]
 private Task CreateBlobAsync();
-    [AsyncStateMachineAttribute("Facepunch.Rust.AzureAnalyticsUploader/<UploadThread>d__35")]
+    [AsyncStateMachineAttribute("Facepunch.Rust.AzureAnalyticsUploader/<UploadThread>d__37")]
 private Task UploadThread();
     private void EmptyUploadQueue();
-    [AsyncStateMachineAttribute("Facepunch.Rust.AzureAnalyticsUploader/<DisposeStreamsAsync>d__37")]
+    [AsyncStateMachineAttribute("Facepunch.Rust.AzureAnalyticsUploader/<DisposeStreamsAsync>d__39")]
 private Task DisposeStreamsAsync();
 }
 [ExtensionAttribute]
@@ -28526,6 +29034,10 @@ public static class Facepunch.Rust.Profiling.WorkQueueProfiler : object {
 }
 public class Facepunch.Rust.TickLogging : object {
     public static AzureAnalyticsUploader tickUploader;
+    [HelpAttribute("time (in seconds) before the tick uploader is disposed and recreated")]
+[ServerVar]
+public static int tick_uploader_lifetime;
+    private static TickLogging();
 }
 public class Facepunch.UI.ESPCanvas : SingletonComponent`1<ESPCanvas> {
     [TooltipAttribute("Amount of times per second we should update the visible panels")]
@@ -28610,6 +29122,55 @@ public GameObject DataSourceObject;
     private void BuildItem(int i);
     private GameObject GetItem();
 }
+public class FakeSteamItemStub : object {
+    private SteamInventoryItem _source;
+    [CompilerGeneratedAttribute]
+private DateTime <Created>k__BackingField;
+    [CompilerGeneratedAttribute]
+private DateTime <Modified>k__BackingField;
+    [CompilerGeneratedAttribute]
+private ulong <WorkshopDownload>k__BackingField;
+    public int DefinitionId { get; }
+    public string Name { get; }
+    public string Description { get; }
+    public string Type { get; }
+    public string IconUrl { get; }
+    public int LocalPrice { get; }
+    public string LocalPriceFormatted { get; }
+    public string PriceCategory { get; }
+    public bool IsGenerator { get; }
+    public bool IsTradable { get; }
+    public bool IsMarketable { get; }
+    public string StoreTags { get; }
+    public DateTime Created { get; }
+    public DateTime Modified { get; }
+    public string ItemShortName { get; }
+    public ulong WorkshopId { get; }
+    public ulong WorkshopDownload { get; }
+    public FakeSteamItemStub(SteamInventoryItem itemBacking);
+    public sealed virtual bool Equals(IPlayerItemDefinition other);
+    public sealed virtual int get_DefinitionId();
+    public sealed virtual string get_Name();
+    public sealed virtual string get_Description();
+    public sealed virtual string get_Type();
+    public sealed virtual string get_IconUrl();
+    public sealed virtual int get_LocalPrice();
+    public sealed virtual string get_LocalPriceFormatted();
+    public sealed virtual string get_PriceCategory();
+    public sealed virtual bool get_IsGenerator();
+    public sealed virtual bool get_IsTradable();
+    public sealed virtual bool get_IsMarketable();
+    public sealed virtual string get_StoreTags();
+    [CompilerGeneratedAttribute]
+public sealed virtual DateTime get_Created();
+    [CompilerGeneratedAttribute]
+public sealed virtual DateTime get_Modified();
+    public sealed virtual string get_ItemShortName();
+    public sealed virtual ulong get_WorkshopId();
+    [CompilerGeneratedAttribute]
+public sealed virtual ulong get_WorkshopDownload();
+    public sealed virtual IEnumerable`1<PlayerItemRecipe> GetRecipesContainingThis();
+}
 public class FavouriteRadioStation : MonoBehaviour {
     public RustText UrlText;
     public GameObject XmasRoot;
@@ -28626,6 +29187,25 @@ public static class FEasing : object {
     public static float EaseInOutExpo(float start, float end, float value, float ignore);
     public static float Linear(float start, float end, float value, float ignore);
     public static Function GetEasingFunction(EFease easingFunction);
+}
+public class FeedEntry : FacepunchBehaviour {
+    [HeaderAttribute("References")]
+public FlexElement Element;
+    [SerializeField]
+private FlexTransition transition;
+    public RectTransform TimeElement;
+    [HeaderAttribute("Text")]
+public RustText IndexText;
+    public RustText SoldText;
+    public RustText EarnedText;
+    [HeaderAttribute("Icons")]
+public Image IndexBacking;
+    public VirtualItemIcon SoldIcon;
+    public VirtualItemIcon EarnedIcon;
+    [HeaderAttribute("Tooltips")]
+public Tooltip SoldIconTooltip;
+    public Tooltip EarnedIconTooltip;
+    public Tooltip TimeTooltip;
 }
 public class FGroundFitter_Demo_RMCharacterController : FSimpleFitter {
     protected FAnimationClips clips;
@@ -29454,8 +30034,8 @@ public bool AutoBackbonesWeights;
 public bool CurveSpread;
     [TooltipAttribute("Configurable rotation weight placed over back bones - when you will use for example spine bones, here you can define how much will they rotate towards target in reference to other animated bones")]
 public AnimationCurve BackBonesFalloff;
-    [HeaderAttribute("bone is rotated by script (drag & drop here)")]
-[HeaderAttribute("If you don't want arms to be rotated when spine")]
+    [HeaderAttribute("If you don't want arms to be rotated when spine")]
+[HeaderAttribute("bone is rotated by script (drag & drop here)")]
 public List`1<CompensationBone> CompensationBones;
     [RangeAttribute("0", "1")]
 public float CompensationWeight;
@@ -31135,25 +31715,35 @@ public void TogglePilotLight(RPCMessage msg);
 		{
 			num4 |= 0x800;
 		}
-		DamageUtil.RadiusDamage(ownerPlayer, LookupPrefab(), hitInfo.point - ray.direction * 0.1f, flameRadius * 0.5f, flameRadius, damagePerSec, num4, useLineOfSight: true, ignoreAI: false, ignoreAttackingPlayer: true);
+		DamageUtil.RadiusDamage(ownerPlayer, LookupPrefab(), hitInfo.point - ray.direction * 0.1f, flameRadius * 0.5f, flameRadius, damagePerSec, num4, useLineOfSight: true, ignoreAI: false, ignoreAttackingPlayer: true, extendedLineOfSight: true);
 		damagePerSec[0].amount = damagePerSec[0].amount * playerDamageMultiplier;
-		DamageUtil.RadiusDamage(ownerPlayer, LookupPrefab(), hitInfo.point - ray.direction * 0.1f, flameRadius * 0.5f, flameRadius, damagePerSec, layers, useLineOfSight: true, ignoreAI: false, ignoreAttackingPlayer: true);
+		DamageUtil.RadiusDamage(ownerPlayer, LookupPrefab(), hitInfo.point - ray.direction * 0.1f, flameRadius * 0.5f, flameRadius, damagePerSec, layers, useLineOfSight: true, ignoreAI: false, ignoreAttackingPlayer: true, extendedLineOfSight: true);
 		damagePerSec[0].amount = amount;
 		if (num2 && UnityEngine.Time.realtimeSinceStartup >= nextFlameTime && hitInfo.distance > 1.1f)
 		{
 			nextFlameTime = UnityEngine.Time.realtimeSinceStartup + (ownerPlayer.IsNpc ? 0.25f : 0.45f);
-			Vector3 point = hitInfo.point;
-			BaseEntity baseEntity = GameManager.server.CreateEntity(fireballPrefab.resourcePath, point - ray.direction * 0.25f);
-			if ((bool)baseEntity)
+			Vector3 vector = hitInfo.point - ray.direction * 0.25f;
+			Vector3 vector2 = vector + new Vector3(0f, 0.2f, 0f);
+			bool flag = !GamePhysics.CheckSphere(vector, 0.1f, 1084293377);
+			if (!flag && GamePhysics.LineOfSight(vector, vector2, 1084293377))
 			{
-				Interface.CallHook("OnFlameThrowerBurn", this, baseEntity);
-				baseEntity.creatorEntity = ownerPlayer;
-				FireBall fireBall = baseEntity as FireBall;
-				if (fireBall != null && ownerPlayer.IsNpc)
+				vector = vector2;
+				flag = !GamePhysics.CheckSphere(vector, 0.1f, 1084293377);
+			}
+			if (flag)
+			{
+				BaseEntity baseEntity = GameManager.server.CreateEntity(fireballPrefab.resourcePath, vector);
+				if ((bool)baseEntity)
 				{
-					fireBall.ignoreNPC = true;
+					Interface.CallHook("OnFlameThrowerBurn", this, baseEntity);
+					baseEntity.creatorEntity = ownerPlayer;
+					FireBall fireBall = baseEntity as FireBall;
+					if (fireBall != null && ownerPlayer.IsNpc)
+					{
+						fireBall.ignoreNPC = true;
+					}
+					baseEntity.Spawn();
 				}
-				baseEntity.Spawn();
 			}
 		}
 		if (ammo == 0)
@@ -31833,8 +32423,8 @@ public class FuelGenerator : ContainerIOEntity {
 /// Hooks - OnSwitchToggle(FuelGenerator,BasePlayer),OnSwitchToggled(FuelGenerator,BasePlayer)
 /// </summary>
 
-	[RPC_Server]
 	[RPC_Server.IsVisible(3f)]
+	[RPC_Server]
 	public void RPC_EngineSwitch(RPCMessage msg)
 	{
 		if (Interface.CallHook("OnSwitchToggle", this, msg.player) == null)
@@ -32101,12 +32691,13 @@ public class GameSetup : MonoBehaviour {
     public string loadLevelScene;
     public bool loadSave;
     public string loadSaveFile;
+    public string initializationFile;
     public string initializationCommands;
     public bool normalRendering;
     protected void Awake();
-    [IteratorStateMachineAttribute("GameSetup/<DoGameSetup>d__11")]
+    [IteratorStateMachineAttribute("GameSetup/<DoGameSetup>d__12")]
 private IEnumerator DoGameSetup();
-    [IteratorStateMachineAttribute("GameSetup/<StartServer>d__12")]
+    [IteratorStateMachineAttribute("GameSetup/<StartServer>d__13")]
 private IEnumerator StartServer();
 }
 public class GameStat : MonoBehaviour {
@@ -34238,6 +34829,35 @@ public class HelicopterTurret : MonoBehaviour {
 
     public void UpdateTargetVisibility();
 }
+public class HexagonGridGenerator : BaseEntity {
+    public GameObjectRef[] hexTilePrefabs;
+    [SpaceAttribute]
+public int gridRadius;
+    public float tileSpacing;
+    [SpaceAttribute]
+public float levelCount;
+    public float levelSpacing;
+    private List`1<HexagonTile> hexTiles;
+    public static HexagonGridGenerator Instance;
+    public virtual void ServerInit();
+    public void GenerateHexGrid();
+    private void GenerateLevel(Vector3 basePos, int level);
+    [ServerVar]
+public static void generategrid(Arg args);
+}
+public class HexagonTile : BaseCombatEntity {
+    public GameObject[] variants;
+    public AnimationCurve tweenCurve;
+    private MeshRenderer mesh;
+    public sealed virtual bool ShouldTrigger();
+    public sealed virtual void OnObjects();
+    public sealed virtual void OnObjectAdded(GameObject obj, Collider col);
+    public sealed virtual void OnEmpty();
+    public virtual void OnKilled(HitInfo info);
+    public virtual void OnFlagsChanged(Flags old, Flags next);
+    [CompilerGeneratedAttribute]
+private void <OnFlagsChanged>b__8_0();
+}
 public class HiddenValue`1 : object {
     private T _value;
     public HiddenValue`1(T value);
@@ -34735,8 +35355,8 @@ public void RPC_OpenFuel(RPCMessage msg);
 /// Hooks - OnHotAirBalloonToggle(HotAirBalloon,BasePlayer),OnHotAirBalloonToggled(HotAirBalloon,BasePlayer)
 /// </summary>
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	public void EngineSwitch(RPCMessage msg)
 	{
 		if (Interface.CallHook("OnHotAirBalloonToggle", this, msg.player) != null)
@@ -34782,6 +35402,7 @@ public void RPC_OpenFuel(RPCMessage msg);
     [IsVisible("3")]
 [RPC_Server]
 public void RPC_ReqEquipItem(RPCMessage msg);
+    public sealed virtual bool IsValidHomingTarget();
 }
 public class HotAirBalloonArmor : HotAirBalloonEquipment {
     public float AdditionalHealth;
@@ -35079,7 +35700,7 @@ public interface IAIPathSpeedZone {
 public interface IAirSupply {
     public AirSupplyType AirType { get; }
     public abstract virtual AirSupplyType get_AirType();
-    public abstract virtual float GetAirTimeRemaining();
+    public abstract virtual float GetAirTimeRemaining(Item forItem);
 }
 public interface IAISenses {
     public abstract virtual bool IsThreat(BaseEntity entity);
@@ -35223,6 +35844,10 @@ public class IgnoreCollision : MonoBehaviour {
 }
 public interface IHLODMeshSource {
 }
+public interface IHostileWarningEntity {
+    public abstract virtual bool WarningEnabled(BaseEntity forEntity);
+    public abstract virtual float WarningRange();
+}
 public interface IHurtTrigger {
 }
 public interface IIdealSlotEntity {
@@ -35365,8 +35990,8 @@ public interface IMissionProvider {
 public interface IMountable {
 }
 [ExecuteInEditMode]
-[RequireComponent("UnityEngine.MeshRenderer")]
 [RequireComponent("UnityEngine.MeshFilter")]
+[RequireComponent("UnityEngine.MeshRenderer")]
 public class Impostor : MonoBehaviour {
     public ImpostorAsset asset;
     [HeaderAttribute("Baking")]
@@ -35565,8 +36190,8 @@ public class IndustrialConveyor : IndustrialEntity {
 /// </summary>
 
 	[RPC_Server]
-	[RPC_Server.MaxDistance(3f)]
 	[RPC_Server.CallsPerSecond(1uL)]
+	[RPC_Server.MaxDistance(3f)]
 	private void RPC_ChangeFilters(RPCMessage msg)
 	{
 		if (msg.player == null || !msg.player.CanBuild())
@@ -35601,9 +36226,9 @@ public class IndustrialConveyor : IndustrialEntity {
 /// Hooks - OnSwitchToggle(IndustrialConveyor,BasePlayer),OnSwitchToggled(IndustrialConveyor,BasePlayer)
 /// </summary>
 
+	[RPC_Server]
 	[RPC_Server.IsVisible(3f)]
 	[RPC_Server.CallsPerSecond(2uL)]
-	[RPC_Server]
 	private void SvSwitch(RPCMessage msg)
 	{
 		if (Interface.CallHook("OnSwitchToggle", this, msg.player) == null)
@@ -36706,9 +37331,9 @@ public float cooldownSeconds;
 /// Hooks - OnPhotoCapture(PhotoEntity,Item,BasePlayer,byte[]),OnPhotoCaptured(PhotoEntity,Item,BasePlayer,byte[])
 /// </summary>
 
-	[RPC_Server.FromOwner]
 	[RPC_Server.CallsPerSecond(3uL)]
 	[RPC_Server]
+	[RPC_Server.FromOwner]
 	private void TakePhoto(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -36954,6 +37579,7 @@ public static int backtracking;
 public static bool debugBudget;
     [ServerVar]
 public static float debugBudgetThreshold;
+    private static bool _infinitePower;
     public static Flags Flag_ShortCircuit;
     public static Flags Flag_HasPower;
     public IOSlot[] inputs;
@@ -36974,6 +37600,8 @@ public static float debugBudgetThreshold;
     public static int MaxContainerSourceCount;
     private List`1<Collider> spawnedColliders;
     public bool IsGravitySource { get; }
+    [ReplicatedVar]
+public static bool infiniteIoPower { get; public set; }
     protected bool PreventDuplicatesInQueue { get; }
     private bool HasBlockedUpdatedOutputsThisFrame { get; }
     public bool BlockFluidDraining { get; }
@@ -36997,6 +37625,8 @@ public static float debugBudgetThreshold;
     public virtual bool AllowDrainFrom(int outputSlot);
     public QueueType GetQueueType();
     public static float GetFrameBudgetForQueue(QueueType type);
+    public static bool get_infiniteIoPower();
+    public static void set_infiniteIoPower(bool value);
     public virtual bool IsPowered();
     public bool IsConnectedToAnySlot(IOEntity entity, int slot, int depth, bool defaultReturn);
     public bool IsConnectedTo(IOEntity entity, int slot, int depth, bool defaultReturn);
@@ -37013,6 +37643,7 @@ private void Server_RequestData(RPCMessage msg);
 public static void DebugQueue(Arg arg);
     public virtual void ResetIOState();
     public virtual void Init();
+    private void ApplyInfinitePower();
     internal virtual void DoServerDestroy();
     public void ClearConnections();
     public void Shutdown();
@@ -37045,9 +37676,13 @@ public static void DebugQueue(Arg arg);
 		UpdateHasPower(inputAmount, inputSlot);
 		lastEnergy = currentEnergy;
 		currentEnergy = CalculateCurrentEnergy(inputAmount, inputSlot);
-		int passthroughAmount = GetPassthroughAmount();
-		bool flag = lastPassthroughEnergy != passthroughAmount;
-		lastPassthroughEnergy = passthroughAmount;
+		int num = GetPassthroughAmount();
+		if (infiniteIoPower && GetQueueType() == QueueType.ElectricLowPriority)
+		{
+			num = 999;
+		}
+		bool flag = lastPassthroughEnergy != num;
+		lastPassthroughEnergy = num;
 		if (currentEnergy != lastEnergy || flag)
 		{
 			IOStateChanged(inputAmount, inputSlot);
@@ -37128,7 +37763,7 @@ public static void DebugQueue(Arg arg);
     public void RefreshIndustrialPreventBuilding();
     private void ClearIndustrialPreventBuilding();
     [CompilerGeneratedAttribute]
-internal static int <FindContainerSource>g__GetExistingCount|107_0(IIndustrialStorage storage, <>c__DisplayClass107_0& );
+internal static int <FindContainerSource>g__GetExistingCount|112_0(IIndustrialStorage storage, <>c__DisplayClass112_0& );
 }
 public class IOEntityInformationPanel : ItemInformationPanel {
     public ItemTextValue requiredPowerDisplay;
@@ -37291,6 +37926,13 @@ public interface ISignage {
     public abstract virtual NetworkableId get_NetworkID();
     public abstract virtual Type get_FileType();
     public abstract virtual void SetTextureCRCs(UInt32[] crcs);
+}
+public interface ISimpleUpgradable {
+    public abstract virtual bool UpgradingEnabled();
+    public abstract virtual bool CanUpgrade(BasePlayer player);
+    public abstract virtual bool CostIsItem();
+    public abstract virtual void DoUpgrade(BasePlayer player);
+    public abstract virtual ItemDefinition GetUpgradeItem();
 }
 public class IsMountedAIEvent : BaseAIEvent {
     public virtual void Execute(AIMemory memory, AIBrainSenses senses, StateStatus stateStatus);
@@ -37677,6 +38319,10 @@ public void remove_OnDirty(Action`1<Item> value);
 			if (baseEntity is DroppedItem droppedItem)
 			{
 				droppedItem.DroppedBy = droppedBy;
+				if (info.AdjustCenterOfMassOnDrop)
+				{
+					droppedItem.Rigidbody.centerOfMass = info.DropCenterOfMass;
+				}
 			}
 		}
 		else
@@ -38607,6 +39253,8 @@ public GameObjectRef worldModelPrefab;
     public bool treatAsComponentForRepairs;
     public bool AlignWorldModelOnDrop;
     public Vector3 WorldModelDropOffset;
+    public bool AdjustCenterOfMassOnDrop;
+    public Vector3 DropCenterOfMass;
     public ItemDefinition isRedirectOf;
     public RedirectVendingBehaviour redirectVendingBehaviour;
     public ItemMod[] itemMods;
@@ -38677,7 +39325,7 @@ private void set_CraftableWithSkin(bool value);
     public GameObjectRef GetWorldModel(int amount);
     public int GetWorldModelIndex(int amount);
     [CompilerGeneratedAttribute]
-private bool <Initialize>b__58_0(ItemDefinition x);
+private bool <Initialize>b__60_0(ItemDefinition x);
 }
 public class ItemDropCommand : MonoBehaviour {
     public string command;
@@ -39225,15 +39873,14 @@ public class ItemModGiveOxygen : ItemMod {
     public GameObjectRef inhaleEffect;
     public GameObjectRef exhaleEffect;
     public GameObjectRef bubblesEffect;
-    private float timeRemaining;
     private float cycleTime;
     private bool inhaled;
     public AirSupplyType AirType { get; }
     public sealed virtual AirSupplyType get_AirType();
-    public sealed virtual float GetAirTimeRemaining();
+    public sealed virtual float GetAirTimeRemaining(Item forItem);
     public virtual void ModInit();
     public virtual void DoAction(Item item, BasePlayer player);
-    public virtual void OnChanged(Item item);
+    private float ConditionToTime(Item item);
 }
 public class ItemModHABEquipment : ItemMod {
     public SlotType slot;
@@ -39427,6 +40074,13 @@ public class ItemModRFListener : ItemModAssociatedEntity`1<BaseEntity> {
     public GameObjectRef frequencyPanelPrefab;
     private static ItemModRFListener();
     public virtual void ServerCommand(Item item, string command, BasePlayer player);
+}
+public class ItemModSculpture : ItemModAssociatedEntity`1<AssociatedSculptureStorage> {
+    protected bool AllowNullParenting { get; }
+    protected bool ShouldAutoCreateEntity { get; }
+    protected virtual bool get_AllowNullParenting();
+    protected virtual bool get_ShouldAutoCreateEntity();
+    public void OnSculpturePickUp(NetworkableId id, UInt32 crc, Item item);
 }
 public class ItemModSetFrequency : ItemMod {
     public static Phrase RfOffTitle;
@@ -40000,7 +40654,9 @@ public class JunkPile : BaseEntity {
     public NPCSpawner NPCSpawn;
     private static float lifetimeMinutes;
     protected bool isSinking;
+    public bool DespawnIfAnyLootTaken { get; }
     public virtual bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg);
+    public virtual bool get_DespawnIfAnyLootTaken();
     public virtual void ServerInit();
     internal virtual void DoServerDestroy();
     private void SpawnInitial();
@@ -40010,6 +40666,7 @@ public class JunkPile : BaseEntity {
     public void TimeOut();
     public void SinkAndDestroy();
     public void KillMe();
+    public static void NotifyLootContainerLooted(BaseEntity entity);
 }
 public class JunkPileBuoyancyPoint : MonoBehaviour {
 }
@@ -40180,8 +40837,8 @@ public ItemDefinition keyItemType;
 /// Hooks - CanUnlock(BasePlayer,KeyLock)
 /// </summary>
 
-	[RPC_Server.MaxDistance(3f, CheckParent = true)]
 	[RPC_Server]
+	[RPC_Server.MaxDistance(3f, CheckParent = true)]
 	private void RPC_Unlock(RPCMessage rpc)
 	{
 		if (rpc.player.CanInteract() && IsLocked() && Interface.CallHook("CanUnlock", rpc.player, this) == null && HasLockPermission(rpc.player))
@@ -40283,14 +40940,14 @@ public class Landmine : BaseTrap {
 	[RPC_Server]
 	private void RPC_Disarm(RPCMessage rpc)
 	{
-		if ((ulong)rpc.player.userID != triggerPlayerID && Armed() && Interface.CallHook("OnTrapDisarm", this, rpc.player) == null)
+		if ((ulong)rpc.player.userID != triggerPlayerID && Armed() && Interface.CallHook("OnTrapDisarm", this, rpc.player) == null && Triggered())
 		{
-			SetFlag(Flags.On, b: false);
 			if (UnityEngine.Random.Range(0, 100) < 15)
 			{
 				Invoke(TryExplode, 0.05f);
 				return;
 			}
+			SetFlag(Flags.On, b: false);
 			rpc.player.GiveItem(ItemManager.CreateByName("trap.landmine", 1, 0uL), GiveItemReason.PickedUp);
 			Kill();
 		}
@@ -40318,8 +40975,11 @@ public class LargeShredder : BaseEntity {
     public Transform resourceSpawnPoint;
     private Quaternion entryRotation;
     public static string SHRED_STAT;
+    public static Flags IsShreddingFlag;
     public bool isShredding;
+    private float shreddingEntityNormalizedHealth;
     public float shredStartTime;
+    private float prevDelta;
     public virtual void OnEntityEnteredTrigger(BaseEntity ent);
     public void CreateShredResources();
     public void UpdateBonePosition(float delta);
@@ -40395,8 +41055,10 @@ public class LeavesBlowing : MonoBehaviour {
     private void Update();
 }
 public class LegacyShelter : DecayEntity {
-    private static Dictionary`2<ulong, List`1<LegacyShelter>> sheltersPerPlayer;
     public static int FpShelterDefault;
+    [ReplicatedVar]
+public static int max_shelters;
+    private static Dictionary`2<ulong, List`1<LegacyShelter>> sheltersPerPlayer;
     public static Phrase shelterLimitPhrase;
     public static Phrase shelterLimitReachedPhrase;
     [HeaderAttribute("Shelter References")]
@@ -40569,8 +41231,8 @@ public class Lift : AnimatedBuildingBlock {
 /// Hooks - OnLiftUse(Lift,BasePlayer)
 /// </summary>
 
-	[RPC_Server]
 	[RPC_Server.MaxDistance(3f)]
+	[RPC_Server]
 	private void RPC_UseLift(RPCMessage rpc)
 	{
 		if (rpc.player.CanInteract() && Interface.CallHook("OnLiftUse", this, rpc.player) == null)
@@ -40718,8 +41380,8 @@ public class LiquidContainer : ContainerIOEntity {
 /// Hooks - OnPlayerDrink(BasePlayer,LiquidContainer)
 /// </summary>
 
-	[RPC_Server]
 	[RPC_Server.MaxDistance(3f)]
+	[RPC_Server]
 	public void SVDrink(RPCMessage rpc)
 	{
 		if (!rpc.player.metabolism.CanConsume() || Interface.CallHook("OnPlayerDrink", rpc.player, this) != null)
@@ -40977,6 +41639,7 @@ private static string <Text>k__BackingField;
     public RustText serverMap;
     public RustLayout serverTagsSection;
     public ServerBrowserTagList serverTags;
+    public MenuTip menuTip;
     public RectTransform demoInfo;
     public RustText demoName;
     public RustText demoLength;
@@ -41287,8 +41950,10 @@ public class LODMasterMesh : LODComponent {
 }
 public static class LODUtil : object {
     public static float DefaultDistance;
+    public static float FarCameraDistance;
     public static float GetDistance(Transform transform, LODDistanceMode mode);
-    public static float GetDistance(Vector3 worldPos, LODDistanceMode mode);
+    public static float GetDistance(Vector3 meshPos, LODDistanceMode mode);
+    private static float GetDistanceInternal(Vector3 cameraPos, Vector3 worldPos, LODDistanceMode mode);
     public static float VerifyDistance(float distance);
     public static LODEnvironmentMode DetermineEnvironmentMode(Transform transform);
 }
@@ -41321,6 +41986,7 @@ public class LookAtIOEnt : MonoBehaviour {
     public RustText maxOutputText;
     public RustText activeOutputText;
     public RustText turretInterferenceText;
+    public RustText creativeModeText;
     public IOEntityUISlotEntry[] inputEntries;
     public IOEntityUISlotEntry[] outputEntries;
     public Color NoPowerColor;
@@ -41331,6 +41997,7 @@ public class LookAtIOEnt : MonoBehaviour {
     public GameObject TooManyInputsWarning;
     public GameObject TooManyOutputsWarning;
     public GameObject BuildPrivilegeWarning;
+    public GameObject InfinitePowerText;
     public CanvasGroup group;
     public HandleSet[] handleSets;
     public RectTransform clearNotification;
@@ -41499,12 +42166,14 @@ public class LootContainer : StorageContainer {
     public LootSpawnSlot[] LootSpawnSlots;
     public spawnType SpawnType;
     public ClanScoreEventType clanScoreEventForFirstLooter;
+    public bool HasBeenLooted;
     public ulong FirstLooterId;
     private static ItemDefinition scrapDef;
     public bool shouldRefreshContents { get; }
     public bool get_shouldRefreshContents();
     public virtual void ResetState();
     public virtual void ServerInit();
+    public virtual void OnItemAddedOrRemoved(Item item, bool added);
     public virtual void PostServerLoad();
     
 /// <summary>
@@ -41970,7 +42639,9 @@ public SoundDefinition engineStartSoundDef;
 }
 public class MagnetLiftable : EntityComponent`1<BaseEntity> {
     public ItemAmount[] shredResources;
+    public bool scaleScrapResourcesByHealth;
     public Vector3 shredDirection;
+    public bool requireObjectOff;
     [CompilerGeneratedAttribute]
 private BasePlayer <associatedPlayer>k__BackingField;
     public BasePlayer associatedPlayer { get; private set; }
@@ -41993,6 +42664,8 @@ public class Mailbox : StorageContainer {
     public ItemDefinition[] allowedItems;
     public bool autoSubmitWhenClosed;
     public bool shouldMarkAsFull;
+    public int InputSlotCount;
+    public ItemContainer InputContainer;
     public int mailInputSlot { get; }
     public virtual bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg);
     public int get_mailInputSlot();
@@ -42014,10 +42687,9 @@ public class Mailbox : StorageContainer {
     public bool IsFull();
     public void MarkFull(bool full);
     public virtual bool PlayerOpenLoot(BasePlayer player, string panelToOpen, bool doPositionChecks);
+    public virtual void AddContainers(PlayerLoot loot);
     public virtual bool CanOpenLootPanel(BasePlayer player, string panelName);
     private bool HasFreeSpace();
-    private int GetFreeSlot();
-    public virtual bool MoveItemToStorage(Item item);
     public virtual void PlayerStoppedLooting(BasePlayer player);
     [RPC_Server]
 public void RPC_Submit(RPCMessage msg);
@@ -42028,14 +42700,10 @@ public void RPC_Submit(RPCMessage msg);
 
 	public void SubmitInputItems(BasePlayer fromPlayer)
 	{
-		Item slot = base.inventory.GetSlot(mailInputSlot);
-		if (IsFull() || slot == null || Interface.CallHook("OnItemSubmit", slot, this, fromPlayer) != null)
+		for (int i = 0; i < InputContainer.capacity; i++)
 		{
-			return;
-		}
-		if (MoveItemToStorage(slot))
-		{
-			if (slot.position != mailInputSlot)
+			Item slot = InputContainer.GetSlot(i);
+			if (slot != null && Interface.CallHook("OnItemSubmit", slot, this, fromPlayer) == null && slot.MoveToContainer(base.inventory))
 			{
 				Effect.server.Run(mailDropSound.resourcePath, GetDropPosition());
 				if (fromPlayer != null && !PlayerIsOwner(fromPlayer))
@@ -42044,16 +42712,13 @@ public void RPC_Submit(RPCMessage msg);
 				}
 			}
 		}
-		else
-		{
-			slot.Drop(GetDropPosition(), GetDropVelocity());
-		}
 	}
 
     public virtual void OnItemAddedOrRemoved(Item item, bool added);
-    public virtual bool CanMoveFrom(BasePlayer player, Item item);
     public virtual bool ItemFilter(Item item, int targetSlot);
-    public virtual int GetIdealSlot(BasePlayer player, ItemContainer container, Item item);
+    public virtual void Save(SaveInfo info);
+    public virtual void Load(LoadInfo info);
+    public virtual void ServerInit();
 }
 [ExecuteInEditMode]
 public class MainCamera : RustCamera`1<MainCamera> {
@@ -42158,9 +42823,9 @@ public class MapEntity : HeldEntity {
 /// Hooks - OnMapImageUpdated()
 /// </summary>
 
-	[RPC_Server.CallsPerSecond(1uL)]
-	[RPC_Server]
 	[RPC_Server.FromOwner]
+	[RPC_Server]
+	[RPC_Server.CallsPerSecond(1uL)]
 	public void ImageUpdate(RPCMessage msg)
 	{
 		if (msg.player == null)
@@ -42193,6 +42858,14 @@ public class MapEntity : HeldEntity {
 		}
 	}
 
+}
+public static class MapHelper : object {
+    public static Nullable`1<Vector2i> StringToGrid(string text);
+    public static Vector3 GridToPosition(Vector2i grid);
+    public static Nullable`1<Vector3> StringToPosition(string text);
+    public static string PositionToString(Vector3 position);
+    public static Vector2i PositionToGrid(Vector3 position);
+    public static string GridToString(Vector2i grid);
 }
 public static class MapImageRenderer : object {
     private static Vector4 StartColor;
@@ -42738,13 +43411,16 @@ public class MenuServerPanel : MonoBehaviour {
 }
 public class MenuTip : MonoBehaviour {
     public RustText text;
+    public RustIcon icon;
     public LoadingScreen screen;
     public static Phrase[] MenuTips;
     private int currentTipIndex;
     private float nextTipTime;
+    private bool disabled;
     private static MenuTip();
     public void OnEnable();
     public void Update();
+    public void SetCustomTip(string iconString, string tip);
     public void UpdateTip();
 }
 public abstract class MeshBatch : MonoBehaviour {
@@ -45151,8 +45827,8 @@ public void RPC_DiedWithKeypadOpen(RPCMessage msg);
 /// Hooks - OnVehicleModuleDeselected(ModularCarGarage,BasePlayer)
 /// </summary>
 
-	[RPC_Server]
 	[RPC_Server.MaxDistance(3f)]
+	[RPC_Server]
 	public void RPC_DeselectedLootItem(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -45174,8 +45850,8 @@ public void RPC_StartKeycodeEntry(RPCMessage msg);
 /// Hooks - OnVehicleLockRequest(ModularCarGarage,BasePlayer,string)
 /// </summary>
 
-	[RPC_Server.MaxDistance(3f)]
 	[RPC_Server]
+	[RPC_Server.MaxDistance(3f)]
 	[RPC_Server.IsVisible(3f)]
 	public void RPC_RequestAddLock(RPCMessage msg)
 	{
@@ -45205,9 +45881,9 @@ public void RPC_StartKeycodeEntry(RPCMessage msg);
 /// Hooks - OnLockRemove(ModularCar,BasePlayer)
 /// </summary>
 
-	[RPC_Server.MaxDistance(3f)]
-	[RPC_Server]
 	[RPC_Server.IsVisible(3f)]
+	[RPC_Server]
+	[RPC_Server.MaxDistance(3f)]
 	public void RPC_RequestRemoveLock(RPCMessage msg)
 	{
 		if (HasOccupant && carOccupant.CarLock.HasALock && Interface.CallHook("OnLockRemove", carOccupant, msg.player) == null)
@@ -45222,9 +45898,9 @@ public void RPC_StartKeycodeEntry(RPCMessage msg);
 /// Hooks - OnCodeChange(ModularCar,BasePlayer,string)
 /// </summary>
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
 	[RPC_Server.MaxDistance(3f)]
+	[RPC_Server.IsVisible(3f)]
 	public void RPC_RequestNewCode(RPCMessage msg)
 	{
 		if (!HasOccupant || !carOccupant.CarLock.HasALock)
@@ -45267,6 +45943,23 @@ public class ModularCarOven : BaseOven {
 [CreateAssetMenuAttribute]
 public class ModularCarPresetConfig : ScriptableObject {
     public ItemModVehicleModule[] socketItemDefs;
+}
+public class ModularCarRadio : BaseCombatEntity {
+    public BoomBox CarRadio;
+    public virtual bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg);
+    public virtual void OnFlagsChanged(Flags old, Flags next);
+    public void TryForceOff();
+    public BaseVehicleModule GetParentModule();
+    public ModularCar GetParentCar();
+    private bool CanPickupRadio(BasePlayer player);
+    public virtual bool CanPickup(BasePlayer player);
+    [IsVisible("3")]
+[RPC_Server]
+public void ServerTogglePlay(RPCMessage msg);
+    [CallsPerSecond("2")]
+[IsVisible("3")]
+[RPC_Server]
+private void Server_UpdateRadioIP(RPCMessage msg);
 }
 public class ModularCarSeat : MouseSteerableSeat {
     [SerializeField]
@@ -47493,6 +48186,7 @@ public static float PriceDecreaseAmount;
     private static ItemDefinition _scrapItem;
     private TimeSince lastHourCheck;
     protected bool BlockOrderRefreshOnLoad { get; }
+    public bool ShouldRecordStats { get; }
     private static float ScaledByWipeUpdateFrequency { get; }
     public static float IntervalSeconds { get; }
     public static ItemDefinition ScrapItem { get; }
@@ -47539,7 +48233,7 @@ public static float PriceDecreaseAmount;
     public void ClearSellOrders();
     public void AddItemForSale(int itemID, int amountToSell, int currencyID, int currencyPerTransaction, byte bpState);
     public void RefreshStock();
-    protected virtual void RecordSaleAnalytics(Item itemSold, int orderId);
+    protected virtual void RecordSaleAnalytics(Item itemSold, int orderId, int currencyUsed);
     public virtual string GetTranslationToken();
     protected virtual bool CanRotate();
     
@@ -47557,6 +48251,7 @@ public static float PriceDecreaseAmount;
 		return false;
 	}
 
+    public virtual bool get_ShouldRecordStats();
     private static float get_ScaledByWipeUpdateFrequency();
     [ServerVar]
 public static void ResetFrequencyTags(Arg arg);
@@ -47567,10 +48262,11 @@ public static void resetDynamicPricing();
 public static void printAllPriceChanges(Arg arg);
     [ServerVar]
 public static void addHours(Arg arg);
-    public void RecordSale(int index, int count);
+    public void RecordSale(int index, int countReceived, int currencyUsed);
     private void CheckSalesDataLength(bool reset);
     public static ItemDefinition get_ScrapItem();
     protected virtual float GetDiscountForSlot(int sellOrderSlot, SellOrder forOrder);
+    protected virtual float GetReceivedQuantityMultiplier(int sellOrderSlot, SellOrder forOrder);
     private bool get_CanApplyDynamicPricing();
     private void DynamicPricingServerInit();
     private void ResetDynamicPricing();
@@ -47956,25 +48652,23 @@ public class OreResourceEntity : StagedResourceEntity {
     public GameObjectRef finishEffect;
     public GameObjectRef bonusFailEffect;
     public bool useHotspotMinigame;
-    public OreHotSpot _hotSpot;
     public SoundPlayer bonusSound;
     public float heightOffset;
-    public bool useManualStageCentre;
-    public List`1<Vector3> stageCentres;
     private int bonusesKilled;
     public int bonusesSpawned;
+    public OreHotSpot _hotSpot;
     public Vector3 lastNodeDir;
+    private Nullable`1<Ray> spawnBonusHitRay;
     public virtual bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg);
     public virtual void OnAttacked(HitInfo info);
     public virtual void UpdateNetworkStage();
     public void CleanupBonus();
     public virtual void DestroyShared();
     public virtual void OnKilled(HitInfo info);
-    public virtual void ServerInit();
-    private void InitialSpawnBonusSpot();
     public void FinishBonusAssigned();
     public void DelayedBonusSpawn();
     public void RespawnBonus();
+    private OreHotSpot SpawnBonusSpotOnRay(Ray r);
     public OreHotSpot SpawnBonusSpot(Vector3 lastDirection);
     public Vector3 RandomCircle(float distance, bool allowInside);
     public Vector3 RandomHemisphereDirection(Vector3 input, float degreesOffset, bool allowInside, bool changeHeight);
@@ -48155,8 +48849,8 @@ public class PagerEntity : BaseEntity {
 /// Hooks - OnRfFrequencyChange(PagerEntity,int,BasePlayer),OnRfFrequencyChanged(PagerEntity,int,BasePlayer)
 /// </summary>
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	public void ServerSetFrequency(RPCMessage msg)
 	{
 		if (!(msg.player == null) && msg.player.CanBuild() && !(UnityEngine.Time.time < nextChangeTime))
@@ -48203,8 +48897,8 @@ public class PaintedItemStorageEntity : BaseEntity {
 /// Hooks - OnItemPainted(PaintedItemStorageEntity,Item,BasePlayer,byte[])
 /// </summary>
 
-	[RPC_Server.CallsPerSecond(3uL)]
 	[RPC_Server]
+	[RPC_Server.CallsPerSecond(3uL)]
 	private void Server_UpdateImage(RPCMessage msg)
 	{
 		if (msg.player == null || (ulong)msg.player.userID != base.OwnerID)
@@ -49145,9 +49839,9 @@ private void StartOpenDesigner(RPCMessage rpc);
 /// Hooks - OnFireworkDesignChange(PatternFirework,ProtoBuf.PatternFirework.Design,BasePlayer),OnFireworkDesignChanged(PatternFirework,ProtoBuf.PatternFirework.Design,BasePlayer)
 /// </summary>
 
+	[RPC_Server.IsVisible(3f)]
 	[RPC_Server.CallsPerSecond(5uL)]
 	[RPC_Server]
-	[RPC_Server.IsVisible(3f)]
 	private void ServerSetFireworkDesign(RPCMessage rpc)
 	{
 		if (!PlayerCanModify(rpc.player))
@@ -49236,6 +49930,12 @@ public class PatternFireworkStar : MonoBehaviour {
     public ParticleSystem[] ParticleSystems;
     public void Initialize(Color color);
     public void Explode();
+}
+public class PeacekeeperHostileIcon : FacepunchBehaviour {
+    [SerializeField]
+private CanvasGroup turretWarningCanvasGroup;
+    [SerializeField]
+private GameObject noRespawnWarningGO;
 }
 public class PegConfig : object {
     public PegType Type;
@@ -49427,6 +50127,7 @@ public PhoneDirectory get_savedNumbers();
 public void set_savedNumbers(PhoneDirectory value);
     public BaseEntity get_ParentEntity();
     private Cassette get_cachedCassette();
+    public virtual void DestroyShared();
     private bool IsPowered();
     public bool IsSavedContactValid(string contactName, int contactNumber);
     public void OnFlagsChanged(Flags old, Flags next);
@@ -49560,13 +50261,12 @@ public void set_serverState(CallState value);
     public void OnReceivedVoiceFromUser(Byte[] data);
     public void OnReceivedDataFromConnectedPhone(Byte[] data);
     public void OnIncomingCallWhileBusy();
-    public virtual void DestroyShared();
+    private void DestroyServer();
     public void UpdatePhoneName(RPCMessage msg);
     public void Server_RequestPhoneDirectory(RPCMessage msg);
     public void Server_AddSavedNumber(RPCMessage msg);
     public void Server_RemoveSavedNumber(RPCMessage msg);
     public string GetDirectoryName();
-    public static string PositionToGridCoord(Vector3 position);
     public void WatchForDisconnects();
     public void OnParentChanged(BaseEntity newParent);
     private bool HasVoicemailSlot();
@@ -49739,8 +50439,8 @@ public class PhotoFrame : StorageContainer {
 /// </summary>
 
 	[RPC_Server.CallsPerSecond(3uL)]
-	[RPC_Server.MaxDistance(5f)]
 	[RPC_Server]
+	[RPC_Server.MaxDistance(5f)]
 	public void UpdateSign(RPCMessage msg)
 	{
 		if (!(msg.player == null) && CanUpdateSign(msg.player))
@@ -49762,8 +50462,8 @@ public class PhotoFrame : StorageContainer {
 /// Hooks - OnSignLocked(PhotoFrame,BasePlayer)
 /// </summary>
 
-	[RPC_Server.MaxDistance(3f)]
 	[RPC_Server]
+	[RPC_Server.MaxDistance(3f)]
 	public void LockSign(RPCMessage msg)
 	{
 		if (msg.player.CanInteract() && CanUpdateSign(msg.player))
@@ -50275,7 +50975,7 @@ private void StartDurationPlace(RPCMessage msg);
 		}
 		if (ConVar.AntiHack.objectplacement && ownerPlayer.TriggeredAntiHack())
 		{
-			ownerPlayer.ShowToast(GameTip.Styles.Error, ConstructionErrors.Antihack, false);
+			ownerPlayer.ShowToast(GameTip.Styles.Error, ConstructionErrors.AntihackWithReason, false, ownerPlayer.lastViolationType.ToString());
 			return;
 		}
 		Construction construction = PrefabAttribute.server.Find<Construction>(msg.blockID);
@@ -50664,6 +51364,7 @@ public class PlayerBelt : object {
 
     public Item GetItemInSlot(int slot);
     public Handcuffs GetRestraintItem();
+    public bool CanHoldItem();
 }
 public class PlayerBlueprints : EntityComponent`1<BasePlayer> {
     public SteamInventory steamInventory;
@@ -52264,8 +52965,8 @@ public class PowerCounter : IOEntity {
 /// Hooks - OnCounterTargetChange(PowerCounter,BasePlayer,int)
 /// </summary>
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	public void SERVER_SetTarget(RPCMessage msg)
 	{
 		int num = msg.read.Int32();
@@ -52874,8 +53575,8 @@ public class ProceduralLift : BaseEntity {
 /// Hooks - OnLiftUse(ProceduralLift,BasePlayer)
 /// </summary>
 
-	[RPC_Server.MaxDistance(3f)]
 	[RPC_Server]
+	[RPC_Server.MaxDistance(3f)]
 	private void RPC_UseLift(RPCMessage rpc)
 	{
 		if (rpc.player.CanInteract() && Interface.CallHook("OnLiftUse", this, rpc.player) == null && !IsBusy())
@@ -52932,6 +53633,11 @@ public class Profile : object {
     public Profile(string cat, string nam, float WarnTime);
     public void Start();
     public void Stop();
+}
+public static class ProfileExporter : object {
+    private static string OutputDir;
+    private static byte Preprocess(IList`1<Profile> profiles, UInt32[]& syncIndices);
+    private static UInt32 FindSyncpoint(Profile& threadProfile, UInt32 start);
 }
 public class ProgressBar : UIBehaviour {
     public static ProgressBar Instance;
@@ -53079,8 +53785,19 @@ public Modifier magazineCapacity;
     [HeaderAttribute("Burst")]
 public int burstCount;
     public float timeBetweenBursts;
+    [HeaderAttribute("Zoom")]
+public Single[] zoomLevels;
+    public GameObjectRef fovChangeEffect;
+    private int serverZoomLevel;
+    private bool hasZoomBeenInit;
+    public virtual bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg);
     public virtual void ServerInit();
     public virtual void PostServerLoad();
+    public virtual void Save(SaveInfo info);
+    [FromOwner]
+[RPC_Server]
+public void SetZoomLevel(int zoomLevel);
+    public virtual void Load(LoadInfo info);
     public static float Mult(BaseEntity parentEnt, Func`2<ProjectileWeaponMod, Modifier> selector_modifier, Func`2<Modifier, float> selector_value, float def);
     public static float Sum(BaseEntity parentEnt, Func`2<ProjectileWeaponMod, Modifier> selector_modifier, Func`2<Modifier, float> selector_value, float def);
     public static float Average(BaseEntity parentEnt, Func`2<ProjectileWeaponMod, Modifier> selector_modifier, Func`2<Modifier, float> selector_value, float def);
@@ -53262,7 +53979,8 @@ public class RadioDialog : UIDialog {
     public static RadioDialog Instance;
 }
 [CreateAssetMenuAttribute]
-public class RadioPlaylist : ScriptableObject {
+public class RadioPlaylist : BaseScriptableObject {
+    public string LocalName;
     public string Url;
     public AudioClip[] Playlist;
     public float PlaylistLength;
@@ -53848,8 +54566,8 @@ public float recycleEfficiency;
 /// Hooks - OnRecyclerToggle(Recycler,BasePlayer)
 /// </summary>
 
-	[RPC_Server.MaxDistance(3f)]
 	[RPC_Server]
+	[RPC_Server.MaxDistance(3f)]
 	private void SVSwitch(RPCMessage msg)
 	{
 		bool flag = msg.read.Bit();
@@ -55255,7 +55973,6 @@ public class RFBroadcaster : IOEntity {
     public static Flags Flag_Broadcasting;
     public bool playerUsable;
     private float nextChangeTime;
-    private float nextStopTime;
     public virtual bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg);
     public sealed virtual int GetFrequency();
     public virtual bool WantsPower(int inputIndex);
@@ -55295,7 +56012,7 @@ public class RFBroadcaster : IOEntity {
 
     public virtual bool CanUseNetworkCache(Connection connection);
     public virtual void Save(SaveInfo info);
-    public virtual void IOStateChanged(int inputAmount, int inputSlot);
+    public virtual void UpdateFromInput(int inputAmount, int inputSlot);
     public void StopBroadcasting();
     internal virtual void DoServerDestroy();
     public virtual void Load(LoadInfo info);
@@ -55430,8 +56147,8 @@ public class RFReceiver : IOEntity {
 /// Hooks - OnRfFrequencyChanged(RFReceiver,int,BasePlayer),OnRfFrequencyChange(RFReceiver,int,BasePlayer)
 /// </summary>
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	public void ServerSetFrequency(RPCMessage msg)
 	{
 		if (!(msg.player == null) && msg.player.CanBuild())
@@ -56070,18 +56787,6 @@ public class Rust.Ai.Gen2.AIArena2 : FacepunchBehaviour {
 [ExtensionAttribute]
 public static class Rust.Ai.Gen2.BaseEntityTargettingExtensions : object {
     [ExtensionAttribute]
-public static bool FindTarget(BaseEntity entity, BaseEntity& target);
-    [ExtensionAttribute]
-public static bool TrySetTarget(BaseEntity entity, BaseEntity newTarget);
-    [ExtensionAttribute]
-public static bool SetTarget(BaseEntity entity, BaseEntity newTarget);
-    [ExtensionAttribute]
-public static void ClearTarget(BaseEntity entity);
-    [ExtensionAttribute]
-public static bool GetTargetPosition(BaseEntity entity, Vector3& targetPos);
-    [ExtensionAttribute]
-public static bool IsTargetInRange(BaseEntity entity, float range);
-    [ExtensionAttribute]
 public static bool InSameNpcTeam(BaseEntity entity, BaseEntity other);
     [ExtensionAttribute]
 public static bool IsNonNpcPlayer(BaseEntity entity);
@@ -56124,7 +56829,8 @@ public static class Rust.Ai.Gen2.FireConstants : object {
     public static float fireCirclingRadius;
     public static string HitByFire;
 }
-[SoftRequireComponent("Rust.Ai.Gen2.SenseComponent")]
+[SoftRequireComponent("Rust.Ai.Gen2.BlackboardComponent", "Rust.Ai.Gen2.NPCEncounterTimer")]
+[SoftRequireComponent("Rust.Ai.Gen2.LimitedTurnNavAgent", "Rust.Ai.Gen2.RootMotionPlayer", "Rust.Ai.Gen2.SenseComponent")]
 public class Rust.Ai.Gen2.FSMComponent : EntityComponent`1<BaseEntity> {
     [CompilerGeneratedAttribute]
 private FSMStateBase <CurrentState>k__BackingField;
@@ -56134,7 +56840,7 @@ private FSMStateBase <CurrentState>k__BackingField;
 public static float minRefreshIntervalSeconds;
     [ServerVar]
 public static float maxRefreshIntervalSeconds;
-    private double lastTickTime;
+    private Nullable`1<double> _lastTickTime;
     private double nextRefreshTime;
     private static int maxStateChangesPerTick;
     private int numberOfStateChangesThisTick;
@@ -56145,6 +56851,7 @@ public static float frameBudgetMs;
     public FSMStateBase CurrentState { get; private set; }
     private SenseComponent Senses { get; }
     private float RefreshInterval { get; }
+    private double LastTickTime { get; private set; }
     private static FSMComponent();
     [CompilerGeneratedAttribute]
 public FSMStateBase get_CurrentState();
@@ -56152,6 +56859,8 @@ public FSMStateBase get_CurrentState();
 private void set_CurrentState(FSMStateBase value);
     private SenseComponent get_Senses();
     private float get_RefreshInterval();
+    private double get_LastTickTime();
+    private void set_LastTickTime(double value);
     public void Run();
     public void Stop();
     private void OnDestroy();
@@ -56182,10 +56891,12 @@ public List`1<ValueTuple`3<FSMTransitionBase, FSMStateBase, EFSMStateStatus>> en
     private SenseComponent _senses;
     private LimitedTurnNavAgent _agent;
     private RootMotionPlayer _animPlayer;
+    private BlackboardComponent _blackboard;
     public string Name { get; public set; }
     protected SenseComponent Senses { get; }
     protected LimitedTurnNavAgent Agent { get; }
     protected RootMotionPlayer AnimPlayer { get; }
+    protected BlackboardComponent Blackboard { get; }
     public string get_Name();
     public void set_Name(string value);
     public virtual EFSMStateStatus OnStateEnter();
@@ -56196,6 +56907,7 @@ public List`1<ValueTuple`3<FSMTransitionBase, FSMStateBase, EFSMStateStatus>> en
     protected SenseComponent get_Senses();
     protected LimitedTurnNavAgent get_Agent();
     protected RootMotionPlayer get_AnimPlayer();
+    protected BlackboardComponent get_Blackboard();
 }
 public abstract class Rust.Ai.Gen2.FSMTransitionBase : object {
     [SerializeField]
@@ -56224,12 +56936,6 @@ public interface Rust.Ai.Gen2.IParametrized`1 {
 public class Rust.Ai.Gen2.LimitedTurnNavAgent : EntityComponent`1<BaseEntity> {
     [SerializeField]
 private NavMeshAgent agent;
-    private static NavMeshPath path;
-    public UnityEvent onPathFailed;
-    private LockState movementLock;
-    private bool isNavMeshReady;
-    [CompilerGeneratedAttribute]
-private Nullable`1<Vector3> <lastValidDestination>k__BackingField;
     [HeaderAttribute("Speed")]
 [SerializeField]
 private float sneakSpeed;
@@ -56243,23 +56949,29 @@ private float runSpeed;
 private float sprintSpeed;
     [SerializeField]
 private float fullSprintSpeed;
-    private float desiredSpeed;
     [SerializeField]
 public ResettableFloat acceleration;
     [SerializeField]
 public ResettableFloat deceleration;
     [SerializeField]
 private float maxTurnRadius;
+    [SerializeField]
+private Enum preferedTopology;
+    [SerializeField]
+private Enum preferedBiome;
+    private static NavMeshPath path;
+    public UnityEvent onPathFailed;
+    private LockState movementLock;
+    private bool isNavMeshReady;
+    [CompilerGeneratedAttribute]
+private Nullable`1<Vector3> <lastValidDestination>k__BackingField;
+    private static ListHashSet`1<LimitedTurnNavAgent> steeringComponents;
     public float currentDeviation;
     public bool shouldStopAtDestination;
     private float cachedPathLength;
     private Nullable`1<Vector3> previousLocalPosition;
     private float curSpeed;
-    private static ListHashSet`1<LimitedTurnNavAgent> steeringComponents;
-    [SerializeField]
-private Enum preferedTopology;
-    [SerializeField]
-private Enum preferedBiome;
+    private float desiredSpeed;
     public bool IsNavmeshReady { get; }
     public Nullable`1<Vector3> lastValidDestination { get; private set; }
     public bool IsFollowingPath { get; }
@@ -56275,15 +56987,16 @@ private void set_lastValidDestination(Nullable`1<Vector3> value);
     public void ResetPath();
     public bool CanReach(Vector3 location, bool triggerPathFailed);
     public bool SetDestination(Vector3 newDestination, bool acceptPartialPaths);
-    public bool SetDestinationFromDirection(Vector3 normalizedDirection, float distance, float randomPct, bool restrictTerrain);
+    public bool SetDestinationFromDirection(Vector3 normalizedDirection, float distance, bool restrictTerrain);
     public virtual void InitShared();
     private void OnPaused();
     private void OnUnpaused();
     private void SetPath(NavMeshPath newPath);
-    private void FailPath(NavMeshPath failedPath);
+    private void ShowFailedPath(Nullable`1<Vector3> destination, NavMeshPath failedPath);
+    private void FailPath(Nullable`1<Vector3> destination, NavMeshPath failedPath);
+    public bool get_IsFollowingPath();
     public void SetSpeed(Speeds speed);
     public void SetSpeed(float ratio, Speeds minSpeed, Speeds maxSpeed, int offset);
-    public bool get_IsFollowingPath();
     private void OnEnable();
     private void OnDisable();
     public static void TickSteering();
@@ -56292,12 +57005,14 @@ private void set_lastValidDestination(Nullable`1<Vector3> value);
     private void SteerTowardsWaypoint();
     public bool IsPositionOnValidTerrain(Vector3 position);
     public bool IsPositionOnNavmesh(Vector3 position, Vector3& sample);
-    public bool SampleGroundPositionWithPhysics(Vector3 position, Vector3& sample, float maxDistance);
+    public bool SampleGroundPositionWithPhysics(Vector3 position, Vector3& sample, float maxDistance, float radius);
     public bool SamplePosition(Vector3 position, Vector3& sample, float maxDistance);
-    public bool SamplePositionsInDonutShape(Vector3 center, List`1<Vector3> sampledPositions, float outerRadius, float innerRadius, int numRings, int itemsPerRing);
+    public void SamplePositionsInDonutShape(Vector3 center, List`1<Vector3> sampledPositions, float outerRadius, float innerRadius, int numRings, int itemsPerRing);
     public bool CalculatePathCustom(Vector3 destination, NavMeshPath path);
     public bool GetFirstReachablePoint(List`1<Vector3> points, NavMeshPath& navPath);
-    public bool GetFirstReachablePointInShuffledTopPct(List`1<Vector3> points, NavMeshPath& navPath, float topPct);
+    public static bool IsPositionAtTopologyRequirement(BaseEntity baseEntity, Vector3 position, Enum topologyRequirement);
+    public static bool IsPositionABiomeRequirement(BaseEntity baseEntity, Vector3 position, Enum biomeRequirement);
+    public static bool IsAcceptableWaterDepth(BaseEntity baseEntity, Vector3 position, float maxDepth);
 }
 public class Rust.Ai.Gen2.LockState : object {
     private HashSet`1<LockHandle> locks;
@@ -56305,11 +57020,6 @@ public class Rust.Ai.Gen2.LockState : object {
     public bool get_IsLocked();
     public LockHandle AddLock();
     public bool RemoveLock(LockHandle& handle);
-}
-public static class Rust.Ai.Gen2.NavHelpers : object {
-    public static bool IsPositionAtTopologyRequirement(BaseEntity baseEntity, Vector3 position, Enum topologyRequirement);
-    public static bool IsPositionABiomeRequirement(BaseEntity baseEntity, Vector3 position, Enum biomeRequirement);
-    public static bool IsAcceptableWaterDepth(BaseEntity baseEntity, Vector3 position, float maxDepth);
 }
 [ExtensionAttribute]
 public static class Rust.Ai.Gen2.NavMeshPathEx : object {
@@ -56343,6 +57053,24 @@ private float maxPitchToConformToSlope;
 private string animationsPrefix;
     public virtual bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg);
 }
+[SoftRequireComponent("Rust.Ai.Gen2.SenseComponent")]
+public class Rust.Ai.Gen2.NPCEncounterTimer : EntityComponent`1<BaseEntity> {
+    public UnityEvent onShouldGiveUp;
+    private static float giveUpDurationSeconds;
+    private static float fireTimeMultiplier;
+    private static float mountedTimeMultiplier;
+    private Nullable`1<float> encounterRemainingTimeSeconds;
+    private Nullable`1<double> _lastTickTime;
+    private SenseComponent _senseComponent;
+    private double LastTickTime { get; private set; }
+    private SenseComponent Senses { get; }
+    private double get_LastTickTime();
+    private void set_LastTickTime(double value);
+    private SenseComponent get_Senses();
+    public void Tick();
+    private void StartTimer();
+    private void GiveUp();
+}
 public static class Rust.Ai.Gen2.NPCRangeConstants : object {
     public static float MeleeRange;
     public static float CloseRange;
@@ -56354,12 +57082,14 @@ public class Rust.Ai.Gen2.RootMotionPlayer : EntityComponent`1<BaseEntity> {
     [HeaderAttribute("Client")]
 [SerializeField]
 private Animator animator;
-    private LimitedTurnNavAgent agent;
+    private LimitedTurnNavAgent _agent;
     private PlayServerState currentPlayState;
     private Action _playServerTickAction;
     private LockHandle lockHandle;
+    private LimitedTurnNavAgent Agent { get; }
     private Action PlayServerTickAction { get; }
     public virtual bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg);
+    private LimitedTurnNavAgent get_Agent();
     private Action get_PlayServerTickAction();
     public void PlayServer(RootMotionData Data, Action onComplete);
     public void PlayServer(AnimationClip Data, Action onComplete);
@@ -56375,22 +57105,20 @@ private Cone ShortRangeVisionCone;
     [SerializeField]
 private float touchDistance;
     [SerializeField]
-private float TimeToForgetSightings;
-    [SerializeField]
-private float TimeToForgetNoises;
-    [SerializeField]
 private float hearingMultiplier;
+    public ResettableFloat timeToForgetSightings;
+    private static float timeToForgetNoises;
     private static HashSet`1<BaseEntity> entitiesUpdatedThisFrame;
     [ServerVar]
 public static float minRefreshIntervalSeconds;
     [ServerVar]
 public static float maxRefreshIntervalSeconds;
-    private double lastTickTime;
+    private Nullable`1<double> _lastTickTime;
     private double nextRefreshTime;
     [CompilerGeneratedAttribute]
 private bool <HasPlayerInVicinity>k__BackingField;
-    [CompilerGeneratedAttribute]
-private List`1<BaseEntity> <AlliesNearby>k__BackingField;
+    private double spawnTime;
+    private Dictionary`2<BaseEntity, double> _alliesWeAreAwareOf;
     private Dictionary`2<BaseEntity, VisibilityStatus> entitiesWeAreAwareOf;
     private static Dictionary`2<NpcNoiseIntensity, float> noiseRadii;
     private NpcNoiseEvent _currentNoise;
@@ -56410,22 +57138,21 @@ private float TargetingCooldown;
     private LockState lockState;
     private Nullable`1<DistanceCache> distanceCache;
     public float RefreshInterval { get; }
+    private double LastTickTime { get; private set; }
     public bool HasPlayerInVicinity { get; private set; }
     public bool ShouldRefreshFast { get; }
-    public List`1<BaseEntity> AlliesNearby { get; private set; }
     public NpcNoiseEvent currentNoise { get; }
     private bool ChangedTargetRecently { get; }
     private static SenseComponent();
     public float get_RefreshInterval();
+    private double get_LastTickTime();
+    private void set_LastTickTime(double value);
     [CompilerGeneratedAttribute]
 public bool get_HasPlayerInVicinity();
     [CompilerGeneratedAttribute]
 private void set_HasPlayerInVicinity(bool value);
     public bool get_ShouldRefreshFast();
-    [CompilerGeneratedAttribute]
-public List`1<BaseEntity> get_AlliesNearby();
-    [CompilerGeneratedAttribute]
-private void set_AlliesNearby(List`1<BaseEntity> value);
+    public void GetInitialAllies(List`1<BaseEntity> allies);
     public Nullable`1<Vector3> GetLKP(BaseEntity entity);
     public bool GetVisibilityStatus(BaseEntity entity, VisibilityStatus& status);
     public bool Forget(BaseEntity entity);
@@ -56433,9 +57160,11 @@ private void set_AlliesNearby(List`1<BaseEntity> value);
     public void GetSeenEntities(List`1<BaseEntity> perceivedEntities);
     public void GetOncePerceivedEntities(List`1<BaseEntity> perceivedEntities);
     private Matrix4x4 GetEyeTransform();
+    public virtual void InitShared();
     public void Tick();
-    private void ProcessEntity(BaseEntity e);
-    private float GetDistancePenalty(BaseEntity e);
+    private void GetModifiedSenses(BaseEntity entity, Single& modTouchDistance, Single& modHalfAngle, Single& modShortVisionRange, Vector3& modLongVisionRectangle);
+    private bool IsInAnyRange(BaseEntity entity);
+    private void ProcessEntity(BaseEntity entity);
     public NpcNoiseEvent get_currentNoise();
     private void TickHearing(float deltaTime);
     public bool ConsumeCurrentNoise();
@@ -56447,14 +57176,14 @@ private void set_AlliesNearby(List`1<BaseEntity> value);
     public LockHandle LockCurrentTarget();
     public bool UnlockTarget(LockHandle& handle);
     public bool CanTarget(BaseEntity entity);
-    public BaseEntity GetTarget();
+    public bool FindTarget(BaseEntity& target);
+    public bool FindTargetPosition(Vector3& targetPosition);
     public bool TrySetTarget(BaseEntity newTarget, bool bypassCooldown);
     public bool IsTargetInRange(float range);
     public bool IsTargetInRangeSq(float rangeSq);
     public void ClearTarget(bool forget);
     private void TickTargeting(float deltaTime);
 }
-[SoftRequireComponent("Rust.Ai.Gen2.LimitedTurnNavAgent")]
 public class Rust.Ai.Gen2.State_ApproachFire : State_CircleDynamic {
     public virtual EFSMStateStatus OnStateEnter();
     public virtual void OnStateExit();
@@ -56462,7 +57191,6 @@ public class Rust.Ai.Gen2.State_ApproachFire : State_CircleDynamic {
 [SoftRequireComponent("Rust.Ai.Gen2.LimitedTurnNavAgent", "Rust.Ai.Gen2.SenseComponent", "Rust.Ai.Gen2.BlackboardComponent")]
 public class Rust.Ai.Gen2.State_ApproachFood : State_MoveToTarget {
     public static string TriedToApproachUnreachableFood;
-    private SenseComponent sense;
     public virtual EFSMStateStatus OnStateEnter();
     protected virtual bool GetMoveDestination(Vector3& destination);
 }
@@ -56480,33 +57208,36 @@ public DamageType DamageType;
     public virtual void OnStateExit();
     private void DoDamage();
 }
-[SoftRequireComponent("Rust.Ai.Gen2.RootMotionPlayer")]
-[SoftRequireComponent("Rust.Ai.Gen2.LimitedTurnNavAgent")]
 public class Rust.Ai.Gen2.State_AttackUnreachable : FSMStateBase {
-    public AnimationClip animClip;
-    public float duration;
-    public float apexHeight;
-    public float damage;
-    public DamageType damageType;
-    public float groundCheckDistance;
+    private static float preJumpEnd;
+    private static float jumpEnd;
+    private static float attackEnd;
+    private static float jumpBackEnd;
+    private static float postJumpBackEnd;
+    private static float groundCheckDistance;
+    private static float damage;
+    private static float meleeAttackRange;
+    private static DamageType damageType;
+    public RootMotionData animClip;
     private Vector3 startLocation;
+    private Quaternion startRotation;
     private Vector3 destination;
-    private float startTime;
-    private bool goingBack;
+    private float elapsedTime;
     private LockHandle targetLock;
     private LockHandle movementLock;
+    private Phase phase;
+    private float previousOffsetZ;
+    public static bool SampleGroundPositionUnderTarget(LimitedTurnNavAgent agent, BasePlayer targetAsPlayer, Vector3& projectedLocation);
     public virtual EFSMStateStatus OnStateEnter();
+    private void SetPhase(Phase newPhase);
+    private Vector3 ThreePointLerp(Vector3 a, Vector3 b, Vector3 c, float t);
     public virtual EFSMStateStatus OnStateUpdate(float deltaTime);
     public virtual void OnStateExit();
 }
-[SoftRequireComponent("Rust.Ai.Gen2.BlackboardComponent")]
 public class Rust.Ai.Gen2.State_Bark : State_PlayAnimation {
-    [SerializeField]
-public float barkRange;
     public static string WolfNearbyAlreadyBarked;
     public virtual EFSMStateStatus OnStateEnter();
 }
-[SoftRequireComponent("Rust.Ai.Gen2.LimitedTurnNavAgent")]
 public class Rust.Ai.Gen2.State_Circle : FSMStateBase {
     [SerializeField]
 public float radius;
@@ -56541,7 +57272,6 @@ private Vector2 burstCooldownRange;
     private bool clockWise;
     private int burstSpeedIndexOffset;
     private float randomAngle;
-    private LimitedTurnNavAgent agent;
     private Action UpdateBurstAction { get; }
     private Action EndBurstAction { get; }
     private Action UpdateAngleAction { get; }
@@ -56569,9 +57299,8 @@ private GameObjectRef CorpsePrefab;
 public class Rust.Ai.Gen2.State_EatFood : FSMStateBase {
     [SerializeField]
 protected AnimationClip Animation;
-    [SerializeField]
-public float DamageToCorpsesPerLoop;
-    private SenseComponent sense;
+    private static float damageToCorpsesPerLoop;
+    private static float timeToForgetSightingWhileEating;
     private bool isAnimationPlaying;
     public virtual EFSMStateStatus OnStateEnter();
     private void PlayAnimation();
@@ -56579,7 +57308,6 @@ public float DamageToCorpsesPerLoop;
     public virtual EFSMStateStatus OnStateUpdate(float deltaTime);
     public virtual void OnStateExit();
 }
-[SoftRequireComponent("Rust.Ai.Gen2.BlackboardComponent")]
 public class Rust.Ai.Gen2.State_Flee : FSMStateBase {
     [SerializeField]
 public Speeds speed;
@@ -56605,21 +57333,14 @@ public class Rust.Ai.Gen2.State_FleeFire : State_Flee {
     public virtual EFSMStateStatus OnStateEnter();
     public virtual EFSMStateStatus OnStateUpdate(float deltaTime);
 }
-[SoftRequireComponent("Rust.Ai.Gen2.BlackboardComponent")]
 public class Rust.Ai.Gen2.State_Growl : State_PlayAnimationRM {
     public static string AlreadyGrowled;
     public virtual EFSMStateStatus OnStateEnter();
 }
-[SoftRequireComponent("Rust.Ai.Gen2.BlackboardComponent")]
 public class Rust.Ai.Gen2.State_Howl : State_PlayAnimation {
-    [SerializeField]
-private float howlRange;
     public static string WolfNearbyAlreadyHowled;
-    public float Range { get; }
-    public float get_Range();
     public virtual EFSMStateStatus OnStateEnter();
 }
-[SoftRequireComponent("Rust.Ai.Gen2.BlackboardComponent")]
 public class Rust.Ai.Gen2.State_Hurt : State_PlayAnimationRM {
     [SerializeField]
 private RootMotionData StrongHitL;
@@ -56629,20 +57350,16 @@ private RootMotionData StrongHitR;
 private RootMotionData WeakHit;
     [SerializeField]
 private float StaggerRatio;
-    [SerializeField]
-private float IntimidationRange;
     private HitInfo HitInfo;
     public sealed virtual void SetParameter(HitInfo parameter);
     public virtual EFSMStateStatus OnStateEnter();
     public virtual void OnStateExit();
 }
-[SoftRequireComponent("Rust.Ai.Gen2.SenseComponent")]
 public class Rust.Ai.Gen2.State_Intimidated : State_PlayAnimationRM {
     private static float facingAwayDotThreshold;
     private static State_Intimidated();
     public virtual EFSMStateStatus OnStateEnter();
 }
-[SoftRequireComponent("Rust.Ai.Gen2.LimitedTurnNavAgent")]
 public class Rust.Ai.Gen2.State_MoveToLastReachablePointNearTarget : State_MoveToTarget {
     private static float maxHorizontalDist;
     private static float maxVerticalDist;
@@ -56680,7 +57397,6 @@ public class Rust.Ai.Gen2.State_PlayAnimation : State_PlayAnimationBase {
 public AnimationClip Animation;
     public virtual EFSMStateStatus OnStateEnter();
 }
-[SoftRequireComponent("Rust.Ai.Gen2.RootMotionPlayer")]
 public abstract class Rust.Ai.Gen2.State_PlayAnimationBase : FSMStateBase {
     [SerializeField]
 public bool FaceTarget;
@@ -56722,7 +57438,6 @@ public class Rust.Ai.Gen2.State_PlayRandomAnimation : State_PlayAnimationBase {
 public AnimationClip[] animations;
     public virtual EFSMStateStatus OnStateEnter();
 }
-[SoftRequireComponent("Rust.Ai.Gen2.BlackboardComponent")]
 public class Rust.Ai.Gen2.State_Roam : FSMStateBase {
     [SerializeField]
 private Vector2 distanceRange;
@@ -56731,15 +57446,8 @@ private float homeRadius;
     private Nullable`1<Vector3> homePosition;
     public virtual EFSMStateStatus OnStateEnter();
     public virtual EFSMStateStatus OnStateUpdate(float deltaTime);
-}
-internal class Rust.Ai.Gen2.Trans_AlliesNearby : FSMTransitionBase {
-    [SerializeField]
-public float Range;
-    [SerializeField]
-public float MinAllyHealthFraction;
-    [SerializeField]
-public bool RequireNoTarget;
-    protected virtual bool EvaluateInternal();
+    public virtual void OnStateExit();
+    private void Reset();
 }
 public class Rust.Ai.Gen2.Trans_AlwaysValid : FSMTransitionBase {
     protected virtual bool EvaluateInternal();
@@ -56748,8 +57456,6 @@ public class Rust.Ai.Gen2.Trans_And : Trans_Composite {
     protected virtual bool EvaluateInternal();
     protected virtual string GetNameSeparator();
 }
-[SoftRequireComponent("Rust.Ai.Gen2.LimitedTurnNavAgent")]
-[SoftRequireComponent("Rust.Ai.Gen2.SenseComponent")]
 internal class Rust.Ai.Gen2.Trans_CanReachTarget_Slow : FSMSlowTransitionBase {
     protected virtual bool EvaluateAtInterval();
 }
@@ -56791,7 +57497,6 @@ public double MinDuration;
 public double MaxDuration;
     public virtual void OnStateEnter();
 }
-[SoftRequireComponent("Rust.Ai.Gen2.BlackboardComponent")]
 internal class Rust.Ai.Gen2.Trans_HasBlackboardBool : FSMTransitionBase {
     [SerializeField]
 public string Key;
@@ -56801,8 +57506,12 @@ public string Key;
     protected virtual bool EvaluateInternal();
     public virtual string GetName();
 }
-[SoftRequireComponent("Rust.Ai.Gen2.SenseComponent")]
 internal class Rust.Ai.Gen2.Trans_HasTarget : FSMTransitionBase {
+    protected virtual bool EvaluateInternal();
+}
+internal class Rust.Ai.Gen2.Trans_InitialAlliesNotFighting : FSMTransitionBase {
+    [SerializeField]
+public float MinAllyHealthFraction;
     protected virtual bool EvaluateInternal();
 }
 internal class Rust.Ai.Gen2.Trans_IsHealthBelowPercentage : FSMTransitionBase {
@@ -56811,7 +57520,6 @@ public float percentage;
     protected virtual bool EvaluateInternal();
     public virtual string GetName();
 }
-[SoftRequireComponent("Rust.Ai.Gen2.LimitedTurnNavAgent")]
 internal class Rust.Ai.Gen2.Trans_IsNavmeshReady : FSMTransitionBase {
     protected virtual bool EvaluateInternal();
 }
@@ -56820,7 +57528,6 @@ public class Rust.Ai.Gen2.Trans_Lambda : FSMTransitionBase {
     public Trans_Lambda(Func`2<BaseEntity, bool> evaluateFunc);
     protected virtual bool EvaluateInternal();
 }
-[SoftRequireComponent("Rust.Ai.Gen2.SenseComponent")]
 internal class Rust.Ai.Gen2.Trans_NoiseNearby : FSMTransitionBase {
     [SerializeField]
 public float distance;
@@ -56840,18 +57547,15 @@ public float chance;
     public virtual void OnStateExit();
     protected virtual bool EvaluateInternal();
 }
-[SoftRequireComponent("Rust.Ai.Gen2.SenseComponent")]
 internal class Rust.Ai.Gen2.Trans_SeesFood : FSMTransitionBase {
     protected virtual bool EvaluateInternal();
 }
-[SoftRequireComponent("Rust.Ai.Gen2.SenseComponent")]
 public class Rust.Ai.Gen2.Trans_TargetInFront : FSMTransitionBase {
     [SerializeField]
 public float Angle;
     protected virtual bool EvaluateInternal();
     public virtual string GetName();
 }
-[SoftRequireComponent("Rust.Ai.Gen2.SenseComponent")]
 public class Rust.Ai.Gen2.Trans_TargetInRange : FSMTransitionBase {
     [SerializeField]
 public float Range;
@@ -56860,14 +57564,11 @@ public float Range;
     protected virtual bool EvaluateInternal();
     public virtual string GetName();
 }
-[SoftRequireComponent("Rust.Ai.Gen2.BlackboardComponent")]
-[SoftRequireComponent("Rust.Ai.Gen2.SenseComponent")]
 internal class Rust.Ai.Gen2.Trans_TargetIsNearFire : FSMTransitionBase {
     public bool onlySeeFireWhenClose;
     protected virtual bool EvaluateInternal();
     public static bool Test(BaseEntity owner, SenseComponent senses, bool onlySeeFireWhenClose);
 }
-[SoftRequireComponent("Rust.Ai.Gen2.SenseComponent")]
 internal class Rust.Ai.Gen2.Trans_TargetOrSelfInWater : FSMTransitionBase {
     protected virtual bool EvaluateInternal();
 }
@@ -56902,7 +57603,6 @@ public class Rust.Ai.Gen2.Wolf2 : BaseNPC2 {
     public virtual void Hurt(HitInfo hitInfo);
     public virtual void OnKilled(HitInfo hitInfo);
 }
-[SoftRequireComponent("Rust.Ai.Gen2.LimitedTurnNavAgent", "Rust.Ai.Gen2.RootMotionPlayer", "Rust.Ai.Gen2.SenseComponent")]
 public class Rust.Ai.Gen2.Wolf2FSM : FSMComponent {
     [SerializeField]
 private WolfFSMData data;
@@ -57632,13 +58332,7 @@ private static void CompleteTransfers();
 internal static void <Handle>g__UpdateWithNewUid|7_0(UidType type, UInt64& prevUid);
 }
 public static class Rust.Numlock : object {
-    private static byte VK_NUMLOCK;
-    private static UInt32 KEYEVENTF_EXTENDEDKEY;
-    private static int KEYEVENTF_KEYUP;
-    private static int KEYEVENTF_KEYDOWN;
     public static bool IsOn { get; }
-    private static short GetKeyState(int keyCode);
-    private static void keybd_event(byte bVk, byte bScan, UInt32 dwFlags, int dwExtraInfo);
     public static bool get_IsOn();
     public static void TurnOn();
 }
@@ -57758,11 +58452,17 @@ public class Rust.UI.ServerAdmin.ServerAdminUGCEntryPattern : ServerAdminUGCEntr
     public GameObjectRef StarPrefab;
     public RectTransform StarRoot;
 }
+public class Rust.UI.ServerAdmin.ServerAdminUGCEntrySculpture : ServerAdminUGCEntry {
+    public Camera Camera;
+    public Material MaterialToUse;
+    public RawImage Target;
+}
 public class Rust.UI.ServerAdmin.ServerAdminUGCEntryStub : MonoBehaviour {
     public ServerAdminUGCEntryAudio AudioWidget;
     public ServerAdminUGCEntryImage ImageWidget;
     public ServerAdminUGCEntryPattern PatternWidget;
     public ServerAdminUGCEntryVendingMachine VendingWidget;
+    public ServerAdminUGCEntrySculpture SculptureWidget;
     public RustText PrefabName;
     public RustButton HistoryButton;
     public ServerAdminPlayerId[] HistoryIds;
@@ -58298,9 +58998,9 @@ public static float staticrepairseconds;
 /// Hooks - OnSamSiteModeToggle(SamSite,BasePlayer,bool)
 /// </summary>
 
-	[RPC_Server.CallsPerSecond(1uL)]
 	[RPC_Server]
 	[RPC_Server.IsVisible(3f)]
+	[RPC_Server.CallsPerSecond(1uL)]
 	private void ToggleDefenderMode(RPCMessage msg)
 	{
 		if (staticRespawn)
@@ -59113,6 +59813,7 @@ public class SellOrderEntry : MonoBehaviour {
     private IVendingMachineInterface vendingPanel;
     public UIIntegerEntry intEntry;
     public VendingPriceMultiplierWidget priceMultiplier;
+    public VendingPriceMultiplierWidget receivedCurrencyMultiplier;
 }
 public class SendMessageToEntityOnAnimationFinish : StateMachineBehaviour {
     public string messageToSendToEntity;
@@ -59337,9 +60038,6 @@ public class ServerBuildingManager : BuildingManager {
     protected virtual void DisposeBuilding(Building& building);
 }
 public class ServerConsole : SingletonComponent`1<ServerConsole> {
-    private ConsoleWindow console;
-    private ConsoleInput input;
-    private float nextUpdate;
     private static bool consoleEnabled { get; }
     private DateTime currentGameTime { get; }
     private int currentPlayerCount { get; }
@@ -59352,8 +60050,6 @@ public class ServerConsole : SingletonComponent`1<ServerConsole> {
     private void OnInputText(string obj);
     public static void PrintColoured(Object[] objects);
     private void HandleLog(string message, string stackTrace, LogType type);
-    private void Update();
-    private void UpdateStatus();
     private DateTime get_currentGameTime();
     private int get_currentPlayerCount();
     private int get_maxPlayerCount();
@@ -59615,7 +60311,7 @@ private void set_runFrameUpdate(bool value);
 			{
 				text7 = ConVar.Server.ping_region_code_override;
 			}
-			SteamServer.GameTags = ServerTagCompressor.CompressTags($"mp{ConVar.Server.maxplayers},cp{BasePlayer.activePlayerList.Count},pt{Network.Net.sv.ProtocolId},qp{SingletonComponent<ServerMgr>.Instance.connectionQueue.Queued},$r{text7},v{2567}{text3}{text5},{text},{text2},cs{text6}");
+			SteamServer.GameTags = ServerTagCompressor.CompressTags($"mp{ConVar.Server.maxplayers},cp{BasePlayer.activePlayerList.Count},pt{Network.Net.sv.ProtocolId},qp{SingletonComponent<ServerMgr>.Instance.connectionQueue.Queued},$r{text7},v{2570}{text3}{text5},{text},{text2},cs{text6}");
 			if (ConVar.Server.description != null && ConVar.Server.description.Length > 100)
 			{
 				string[] array = ConVar.Server.description.SplitToChunks(100).ToArray();
@@ -59885,14 +60581,14 @@ private IEnumerator ServerRestartWarning(string info, int iSeconds);
 			DebugEx.Log("Kicking " + packet.connection?.ToString() + " - their branch is '" + text + "' not '" + branch + "'");
 			Network.Net.sv.Kick(packet.connection, "Wrong Steam Beta: Requires '" + branch + "' branch!");
 		}
-		else if (packet.connection.protocol > 2567)
+		else if (packet.connection.protocol > 2570)
 		{
-			DebugEx.Log("Kicking " + packet.connection?.ToString() + " - their protocol is " + packet.connection.protocol + " not " + 2567);
+			DebugEx.Log("Kicking " + packet.connection?.ToString() + " - their protocol is " + packet.connection.protocol + " not " + 2570);
 			Network.Net.sv.Kick(packet.connection, "Wrong Connection Protocol: Server update required!");
 		}
-		else if (packet.connection.protocol < 2567)
+		else if (packet.connection.protocol < 2570)
 		{
-			DebugEx.Log("Kicking " + packet.connection?.ToString() + " - their protocol is " + packet.connection.protocol + " not " + 2567);
+			DebugEx.Log("Kicking " + packet.connection?.ToString() + " - their protocol is " + packet.connection.protocol + " not " + 2570);
 			Network.Net.sv.Kick(packet.connection, "Wrong Connection Protocol: Client update required!");
 		}
 		else
@@ -59913,7 +60609,7 @@ private IEnumerator ServerRestartWarning(string info, int iSeconds);
 
 }
 public static class ServerOcclusion : object {
-    public static float MaxY;
+    public static int MaxY;
     public static int ChunkCountX;
     public static int ChunkCountY;
     public static int ChunkCountZ;
@@ -59924,26 +60620,32 @@ public static class ServerOcclusion : object {
     public static BitArray[] OcclusionSubGridBlocked;
     [CompilerGeneratedAttribute]
 private static bool <OcclusionEnabled>k__BackingField;
+    [CompilerGeneratedAttribute]
+private static bool <OcclusionIncludeRocks>k__BackingField;
     public static int OcclusionChunkSize;
     public static int OcclusionChunkResolution;
+    public static Vector3[] GridOffsets;
     public static ValueTuple`3[] neighbours;
-    public static ValueTuple`3[] neighboursAndOrigin;
+    public static ValueTuple`3[] traversalNeighbours;
     private static Queue`1<SubGrid> floodFillQueue;
     private static Dictionary`2<SubGrid, bool> visited;
     public static HashSet`1<SubGrid> gridArea;
     public static bool OcclusionEnabled { get; public set; }
-    public static float OcclusionFade { get; }
+    public static bool OcclusionIncludeRocks { get; public set; }
     public static float OcclusionPollRate { get; }
-    public static float MinOcclusionDistance { get; }
+    public static int MinOcclusionDistance { get; }
     public static int OcclusionMaxBFSIterations { get; }
     private static ServerOcclusion();
     [CompilerGeneratedAttribute]
 public static bool get_OcclusionEnabled();
     [CompilerGeneratedAttribute]
 public static void set_OcclusionEnabled(bool value);
-    public static float get_OcclusionFade();
+    [CompilerGeneratedAttribute]
+public static bool get_OcclusionIncludeRocks();
+    [CompilerGeneratedAttribute]
+public static void set_OcclusionIncludeRocks(bool value);
     public static float get_OcclusionPollRate();
-    public static float get_MinOcclusionDistance();
+    public static int get_MinOcclusionDistance();
     public static int get_OcclusionMaxBFSIterations();
     public static int GetGridIndex(int x, int y, int z);
     public static int GetSubGridIndex(int x, int y, int z);
@@ -59956,12 +60658,16 @@ public static void set_OcclusionEnabled(bool value);
     public static bool IsValidGrid(int x, int y, int z);
     public static bool IsValidSubGrid(int x, int y, int z);
     public static bool PathBetweenFloodFill(SubGrid start, SubGrid end);
-    public static bool PathBetweenDirect(SubGrid start, SubGrid end);
-    public static bool PathBetweenDirectBresenham(SubGrid start, SubGrid end);
-    public static void SetFromGrids(SubGrid grid1, SubGrid grid2, int power);
+    public static void GenerateGridArea(SubGrid grid1, SubGrid grid2, Boolean& directPath, Boolean& anyPath);
     public static void SetupGrid();
+    [ServerVar]
+public static string serverocclusiondebug(Arg arg);
     [CompilerGeneratedAttribute]
-internal static void <SetupGrid>g__PopulateSubGrid|44_0(Grid cell);
+internal static void <GenerateGridArea>g__AddNeighbours|44_0(SubGrid grid, Boolean& blocked);
+    [CompilerGeneratedAttribute]
+internal static void <GenerateGridArea>g__AddToGridArea|44_1(SubGrid grid, Boolean& originBlocked, Boolean& neighboursBlocked);
+    [CompilerGeneratedAttribute]
+internal static void <SetupGrid>g__PopulateSubGrid|45_0(Grid cell, bool underTerrain);
 }
 public class ServerPerformance : BaseMonoBehaviour {
     public static ulong deaths;
@@ -59982,6 +60688,25 @@ public static class ServerPlayers : object {
     public static bool IsOnline(ulong userId);
     public static void GetAll(List`1<ulong> userIds);
     private static void RebuildIfNecessary();
+}
+[SuppressUnmanagedCodeSecurityAttribute]
+public static class ServerProfiler : object {
+    public static byte MaxFrames;
+    private static bool canBeActivated;
+    private static Action`1<IList`1<Profile>> onDoneCallback;
+    private static int mainThreadId;
+    [RuntimeInitializeOnLoadMethodAttribute("4")]
+public static void Init();
+    public static void RecordNextFrames(int frames, Action`1<IList`1<Profile>> onDone);
+    public static void ReleaseResources();
+    public static bool IsEnabled();
+    private static void OnFrameEnd();
+    public static TimeSpan TimestampToTimespan(long stamp);
+    public static long TimestampToMicros(long stamp);
+    public static string GetName(IntPtr methodPtr);
+    public static void AppenNameTo(IntPtr methodPtr, StringBuilder builder);
+    public static void SerializeNameTo(IntPtr methodPtr, MemoryStream stream);
+    public static int GetMainThreadId();
 }
 public class ServerProjectile : EntityComponent`1<BaseEntity> {
     public Vector3 initialVelocity;
@@ -60299,7 +61024,9 @@ public class ShopFrontLootPanel : LootPanel {
 public class ShoutcastStreamer : MonoBehaviour {
     public string Host;
     public AudioSource Source;
-    public RadioPlaylist[] BuiltinRadios;
+    public static RadioPlaylist[] BuiltinRadios;
+    public static Dictionary`2<string, string> ParsedLocalRadioList;
+    public static void CheckBuiltInRadios();
 }
 public class Shovel : BaseMelee {
 }
@@ -60372,8 +61099,8 @@ public class Signage : IOEntity {
 /// Hooks - OnSignLocked(Signage,BasePlayer)
 /// </summary>
 
-	[RPC_Server.MaxDistance(3f)]
 	[RPC_Server]
+	[RPC_Server.MaxDistance(3f)]
 	public void LockSign(RPCMessage msg)
 	{
 		if (msg.player.CanInteract() && CanUpdateSign(msg.player))
@@ -60510,6 +61237,19 @@ public class SignPanel : MonoBehaviour {
     public RustText DisabledSignsMessage;
 }
 public class SimpleBuildingBlock : StabilityEntity {
+    public ItemDefinition UpgradeItem;
+    public Option UpgradeMenu;
+    public virtual bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg);
+    public sealed virtual ItemDefinition GetUpgradeItem();
+    public sealed virtual bool CanUpgrade(BasePlayer player);
+    public sealed virtual void DoUpgrade(BasePlayer player);
+    public Option GetUpgradeMenuOption();
+    public sealed virtual bool UpgradingEnabled();
+    public sealed virtual bool CostIsItem();
+    [CallsPerSecond("5")]
+[IsVisible("3")]
+[RPC_Server]
+public void DoSimpleUpgrade(RPCMessage msg);
 }
 public class SimpleLight : IOEntity {
     public virtual void ResetIOState();
@@ -60634,6 +61374,13 @@ public class SimpleSplineTranslator : object {
     public SimpleSplineTranslator SetSpline(WorldSpline spline);
     public SimpleSplineTranslator SetDirection(int direction);
     public float GetCurrentDistance();
+}
+internal static class SimpleUpgrade : object {
+    public static bool CanUpgrade(BaseEntity entity, ItemDefinition upgradeItem, BasePlayer player);
+    public static bool CanAffordUpgrade(BaseEntity entity, ItemDefinition upgradeItem, BasePlayer player);
+    public static void PayForUpgrade(BaseEntity entity, ItemDefinition upgradeItem, BasePlayer player);
+    public static void DoUpgrade(BaseEntity entity, BasePlayer player);
+    public static bool IsUpgradeBlocked(BaseEntity entity, ItemDefinition upgradeItem, BasePlayer player);
 }
 public class SingleSpawn : SpawnGroup {
     public virtual bool WantsInitialSpawn();
@@ -60994,13 +61741,14 @@ public class SleepingBag : DecayEntity {
     public virtual void DoServerDestroy();
     public virtual void Save(SaveInfo info);
     public virtual bool CanUseNetworkCache(Connection connection);
+    public virtual bool ShouldUseCastNoClipChecks();
     
 /// <summary>
 /// Hooks - CanRenameBed(BasePlayer,SleepingBag,string)
 /// </summary>
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	public void Rename(RPCMessage msg)
 	{
 		if (!msg.player.CanInteract())
@@ -61148,8 +61896,8 @@ public class SleepingBag : DecayEntity {
 /// Hooks - OnBedMade(SleepingBag,BasePlayer)
 /// </summary>
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	public void RPC_MakeBed(RPCMessage msg)
 	{
 		if (!canBePublic || !IsPublic() || !msg.player.CanInteract())
@@ -61287,6 +62035,7 @@ public class SlidingProgressDoor : ProgressDoor {
     public virtual void Spawn();
     public virtual void NoEnergy();
     public virtual void AddEnergy(float amount);
+    public virtual bool ShouldUseCastNoClipChecks();
     public void ServerUpdate();
     public virtual void UpdateProgress();
     public virtual void Load(LoadInfo info);
@@ -61894,6 +62643,7 @@ public class SocketMod_AngleCheck : SocketMod {
     public bool wantsAngle;
     public Vector3 worldNormal;
     public float withinDegrees;
+    public bool usePlacementNormal;
     protected Phrase ErrorPhrase { get; }
     protected virtual Phrase get_ErrorPhrase();
     public virtual bool DoCheck(Placement place);
@@ -61916,6 +62666,9 @@ public class SocketMod_Attraction : SocketMod {
     public bool lockRotation;
     public bool ignoreRotationForRadiusCheck;
     public bool shiftDisableSnap;
+    public bool applyPostRotationSnapping;
+    private static Single[] PostSnapRotations;
+    private static SocketMod_Attraction();
     private void OnDrawGizmosSelected();
     public virtual bool DoCheck(Placement place);
     public virtual void ModifyPlacement(Placement& place);
@@ -62368,8 +63121,25 @@ public MonumentTier Tier;
     public BaseSpawnPoint[] spawnPoints;
     public List`1<SpawnPointInstance> spawnInstances;
     public LocalClock spawnClock;
+    [CompilerGeneratedAttribute]
+private int <ObjectsAdded>k__BackingField;
+    [CompilerGeneratedAttribute]
+private int <ObjectsRemoved>k__BackingField;
     public int currentPopulation { get; }
+    public IEnumerable`1<SpawnPointInstance> SpawnInstances { get; }
+    public int ObjectsAdded { get; private set; }
+    public int ObjectsRemoved { get; private set; }
+    public bool DoesGroupContainNPCs();
     public sealed virtual int get_currentPopulation();
+    public IEnumerable`1<SpawnPointInstance> get_SpawnInstances();
+    [CompilerGeneratedAttribute]
+public int get_ObjectsAdded();
+    [CompilerGeneratedAttribute]
+private void set_ObjectsAdded(int value);
+    [CompilerGeneratedAttribute]
+public int get_ObjectsRemoved();
+    [CompilerGeneratedAttribute]
+private void set_ObjectsRemoved(int value);
     public virtual bool WantsInitialSpawn();
     public virtual bool WantsTimedSpawn();
     public float GetSpawnDelta();
@@ -62392,7 +63162,7 @@ public MonumentTier Tier;
     private MonumentInfo FindMonument();
     protected virtual void OnDrawGizmos();
     [CompilerGeneratedAttribute]
-private int <GetPrefab>b__39_0(SpawnEntry x);
+private int <GetPrefab>b__50_0(SpawnEntry x);
 }
 public class SpawnHandler : SingletonComponent`1<SpawnHandler> {
     public float TickInterval;
@@ -62457,6 +63227,7 @@ public class SpawnIndividual : ValueType {
     public SpawnIndividual(UInt32 prefabID, Vector3 position, Quaternion rotation);
 }
 public class SpawnPointInstance : MonoBehaviour {
+    internal BaseEntity Entity;
     public ISpawnPointUser parentSpawnPointUser;
     public BaseSpawnPoint parentSpawnPoint;
     public void Notify();
@@ -62681,8 +63452,8 @@ private void BeginFreehandSpray(RPCMessage msg);
 /// </summary>
 
 	[RPC_Server.CallsPerSecond(2uL)]
-	[RPC_Server.IsActiveItem]
 	[RPC_Server]
+	[RPC_Server.IsActiveItem]
 	private void ChangeItemSkin(RPCMessage msg)
 	{
 		NetworkableId uid = msg.read.EntityID();
@@ -62729,6 +63500,7 @@ private void BeginFreehandSpray(RPCMessage msg);
 					baseEntity2.skinID = num;
 					baseEntity2.SendNetworkUpdate();
 					Facepunch.Rust.Analytics.Server.SkinUsed(def.shortname, targetSkin);
+					Facepunch.Rust.Analytics.Azure.OnEntitySkinChanged(msg.player, baseNetworkable, targetSkin);
 				}
 				else
 				{
@@ -62830,6 +63602,7 @@ private void BeginFreehandSpray(RPCMessage msg);
 							}
 						}
 						Facepunch.Rust.Analytics.Server.SkinUsed(def.shortname, targetSkin);
+						Facepunch.Rust.Analytics.Azure.OnEntitySkinChanged(msg.player, baseNetworkable, targetSkin);
 					}
 					if (flag)
 					{
@@ -62913,8 +63686,8 @@ private void ChangeWallpaper(RPCMessage msg);
 /// Hooks - OnSprayCreate(SprayCan,UnityEngine.Vector3,UnityEngine.Quaternion)
 /// </summary>
 
-	[RPC_Server.IsActiveItem]
 	[RPC_Server]
+	[RPC_Server.IsActiveItem]
 	private void CreateSpray(RPCMessage msg)
 	{
 		if (IsBusy())
@@ -63323,17 +64096,27 @@ public class StagedResourceBreakEffect : MonoBehaviour {
 }
 public class StagedResourceEntity : ResourceEntity {
     public List`1<ResourceStage> stages;
-    public int stage;
+    protected int stage;
     public GameObjectRef changeStageEffect;
+    public MeshLOD ResourceMeshLod;
+    public MeshCollider ResourceMeshCollider;
     public GameObject gibSourceTest;
+    private StagedResourceEntityInfo cachedInfo;
     public virtual bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg);
     public virtual void Load(LoadInfo info);
     public virtual void Save(SaveInfo info);
     protected virtual void OnHealthChanged();
     public virtual void UpdateNetworkStage();
     private int FindBestStage();
-    public T GetStageComponent();
+    private StagedResourceEntityInfo GetInfo();
     private void UpdateStage();
+}
+public class StagedResourceEntityInfo : PrefabAttribute {
+    public ResourceStage[] Stages;
+    public Mesh GetCollisionMesh(int index);
+    public Mesh[] GetVisualMeshLods(int index);
+    public float GetHealth(int index);
+    protected virtual Type GetIndexedType();
 }
 public class StampClanLogo : MonoBehaviour {
     public GameObject UiElement;
@@ -65273,6 +66056,7 @@ private static void set_Texturing(TerrainTexturing value);
     public static bool IsPointWithinTutorialBounds(Vector3 worldPos);
     public static bool RandomWaterPointInAnnulus(Vector3 centre, float minRadius, float maxRadius, Vector3& randomPoint);
     public static Vector3 RandomPointOffshore();
+    public static Vector3 RandomPoint(bool excludeWater);
     public static Vector3 Normalize(Vector3 worldPos);
     public static float NormalizeX(float x);
     public static float NormalizeY(float y);
@@ -65832,8 +66616,8 @@ public GameObjectRef prefabToThrow;
 /// Hooks - OnExplosiveDropped(BasePlayer,BaseEntity,ThrownWeapon)
 /// </summary>
 
-	[RPC_Server.IsActiveItem]
 	[RPC_Server]
+	[RPC_Server.IsActiveItem]
 	private void DoDrop(RPCMessage msg)
 	{
 		if (!HasItemAmount() || HasAttackCooldown() || (!canThrowUnderwater && msg.player.IsHeadUnderwater()))
@@ -66797,6 +67581,8 @@ private float shallowWaterCutoff;
     public virtual bool DoMovement();
     public virtual void InitializeVelocity(Vector3 overrideVel);
 }
+public class TraceTester : MonoBehaviour {
+}
 public class TrainCar : BaseVehicle {
     [HeaderAttribute("Train Car")]
 [SerializeField]
@@ -66864,6 +67650,9 @@ public Vector3 frontBogieLocalOffset;
     [ReadOnlyAttribute]
 [SerializeField]
 public Vector3 rearBogieLocalOffset;
+    [SerializeField]
+private GameObjectRef itemStoragePrefab;
+    private EntityRef`1<StorageContainer> itemStorageInstance;
     [ServerVar]
 public static float population;
     [ServerVar]
@@ -66950,6 +67739,11 @@ public void set_RearTrackSection(TrainTrackSpline value);
     public void UpdateCompleteTrain();
     public void SetNewCompleteTrain(CompleteTrain ct);
     public virtual void Hurt(HitInfo info);
+    [MaxDistance("3")]
+[RPC_Server]
+public void RPC_OpenItemStorage(RPCMessage msg);
+    protected virtual void OnChildAdded(BaseEntity child);
+    public StorageContainer GetItemContainer();
     public virtual void OnKilled(HitInfo info);
     public virtual Vector3 GetExplosionPos();
     public void ActualDeath();
@@ -67857,8 +68651,7 @@ public class TreadAnimator : MonoBehaviour {
     public Vector3[] vecShocksOffsetPosition;
     public Vector3[] wheelBoneOrigin;
     public float wheelBoneDistMax;
-    public Material leftTread;
-    public Material rightTread;
+    public TreadRenderer[] treadRenderers;
     public TreadEffects treadEffects;
     public float traceThickness;
     public float heightFudge;
@@ -68221,6 +69014,21 @@ public class TriggerForce : TriggerBase {
     public virtual void OnEntityLeave(BaseEntity ent);
     protected void FixedUpdate();
 }
+public class TriggerHostileWarningZone : TriggerBase {
+    public GameObject TargetGameObject;
+    [CompilerGeneratedAttribute]
+private Collider <triggerCollider>k__BackingField;
+    public Collider triggerCollider { get; private set; }
+    [CompilerGeneratedAttribute]
+public Collider get_triggerCollider();
+    [CompilerGeneratedAttribute]
+private void set_triggerCollider(Collider value);
+    protected void Awake();
+    protected void OnEnable();
+    private void ResizeTrigger();
+    internal virtual GameObject InterestedInObject(GameObject obj);
+    public bool WarningEnabled(BaseEntity forEntity);
+}
 public class TriggerHurt : TriggerBase {
     public float DamagePerSecond;
     public float DamageTickRate;
@@ -68453,11 +69261,13 @@ public class TriggerRadiation : TriggerBase {
     public bool BypassArmor;
     public float RadiationAmountOverride;
     public float falloff;
-    public bool UseColliderRadius;
+    [FormerlySerializedAsAttribute("UseColliderRadius")]
+public bool DontScaleRadiationSize;
     public bool UseLOSCheck;
     public bool ApplyLocalHeightCheck;
     public float MinLocalHeight;
     private SphereCollider sphereCollider;
+    private BoxCollider boxCollider;
     private float GetRadiationSize();
     private float GetTriggerRadiation();
     public float GetRadiation(Vector3 position, float radProtection);
@@ -69086,6 +69896,7 @@ public enum UGCType : Enum {
     public static UGCType ImageJpg;
     public static UGCType ImagePng;
     public static UGCType AudioOgg;
+    public static UGCType Sculpt;
     public static UGCType PatternBoomer;
     public static UGCType VendingMachine;
 }
@@ -73362,8 +74173,8 @@ public class VehiclePrivilege : SimplePrivilege {
 /// Hooks - OnCupboardDeauthorize(VehiclePrivilege,BasePlayer)
 /// </summary>
 
-	[RPC_Server.MaxDistance(3f)]
 	[RPC_Server]
+	[RPC_Server.MaxDistance(3f)]
 	private void RemoveSelfAuthorize(RPCMessage rpc)
 	{
 		RPCMessage rpc2 = rpc;
@@ -73463,15 +74274,26 @@ public static Phrase WaitForVendingMessage;
     private VendingMachineMapMarker myMarker;
     private bool industrialItemIncoming;
     public static Phrase TooManySellOrders;
+    [ServerVar]
+public static int max_returned;
+    [ServerVar]
+public static int max_processed;
+    [ServerVar]
+public static int max_history;
+    private List`1<PurchaseDetails> purchaseHistory;
+    private Dictionary`2<ulong, int> uniqueCustomers;
     public ItemDefinition blueprintBaseDef { get; }
     public UInt32[] GetContentCRCs { get; }
     public UGCType ContentType { get; }
     public List`1<ulong> EditingHistory { get; }
     public BaseNetworkable UgcEntity { get; }
     public string ContentString { get; }
+    public bool ShouldRecordStats { get; }
     private static VendingMachine();
     public virtual bool OnRpcMessage(BasePlayer player, UInt32 rpc, Message msg);
     public virtual void Load(LoadInfo info);
+    public static int GetTotalReceivedMerchandiseForOrder(SellOrder order);
+    public static int GetTotalReceivedMerchandiseForOrder(int merchAmountPerOrder, float multiplier);
     public static int GetTotalPriceForOrder(SellOrder order);
     public static int GetTotalPriceForOrder(int currencyAmountPerItem, float multiplier);
     public ItemDefinition get_blueprintBaseDef();
@@ -73479,6 +74301,7 @@ public static Phrase WaitForVendingMessage;
     public virtual void ServerInit();
     public virtual void DestroyShared();
     public virtual void OnItemAddedOrRemoved(Item item, bool added);
+    public virtual bool ShouldUseCastNoClipChecks();
     public void FullUpdate();
     protected virtual void OnInventoryDirty();
     
@@ -73497,6 +74320,11 @@ public static Phrase WaitForVendingMessage;
 			}
 			List<Item> obj = Facepunch.Pool.Get<List<Item>>();
 			GetItemsToSell(sellOrder, obj);
+			int num2 = sellOrder.itemToSellAmount;
+			if (ItemManager.FindItemDefinition(sellOrder.itemToSellID) == NPCVendingMachine.ScrapItem && sellOrder.receivedQuantityMultiplier != 1f)
+			{
+				num2 = GetTotalPriceForOrder(num2, sellOrder.receivedQuantityMultiplier);
+			}
 			int inStock;
 			if (obj.Count < 0)
 			{
@@ -73507,7 +74335,7 @@ public static Phrase WaitForVendingMessage;
 				List<Item> source = obj;
 				Func<Item, int> selector = (Item x) => x.amount;
 				Interface.CallHook("OnRefreshVendingStock", this, itemDef);
-				inStock = source.Sum(selector) / sellOrder.itemToSellAmount;
+				inStock = source.Sum(selector) / num2;
 			}
 			sellOrder.inStock = inStock;
 			float itemCondition = 0f;
@@ -73563,12 +74391,14 @@ public static Phrase WaitForVendingMessage;
 			sellOrder.attachmentsList = list;
 			sellOrder.totalAttachmentSlots = totalAttachmentSlots;
 			sellOrder.priceMultiplier = GetDiscountForSlot(num, sellOrder);
+			sellOrder.receivedQuantityMultiplier = GetReceivedQuantityMultiplier(num, sellOrder);
 			num++;
 			Facepunch.Pool.Free(ref obj, freeElements: false);
 		}
 	}
 
     protected virtual float GetDiscountForSlot(int sellOrderSlot, SellOrder forOrder);
+    protected virtual float GetReceivedQuantityMultiplier(int sellOrderSlot, SellOrder forOrder);
     public bool OutOfStock();
     public virtual void PostServerLoad();
     public void UpdateEmptyFlag();
@@ -73583,9 +74413,9 @@ public static Phrase WaitForVendingMessage;
 /// Hooks - OnBuyVendingItem(VendingMachine,BasePlayer,int,int)
 /// </summary>
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
 	[RPC_Server.CallsPerSecond(5uL)]
+	[RPC_Server.IsVisible(3f)]
 	public void BuyItem(RPCMessage rpc)
 	{
 		if (OccupiedCheck(rpc.player))
@@ -73610,7 +74440,7 @@ public static Phrase WaitForVendingMessage;
 public void TransactionStart(RPCMessage rpc);
     private void GetItemsToSell(SellOrder sellOrder, List`1<Item> items);
     public bool DoTransaction(BasePlayer buyer, int sellOrderId, int numberOfTransactions, ItemContainer targetContainer, Action`2<BasePlayer, Item> onCurrencyRemoved, Action`2<BasePlayer, Item> onItemPurchased, MarketTerminal droneMarketTerminal);
-    protected virtual void RecordSaleAnalytics(Item itemSold, int orderId);
+    protected virtual void RecordSaleAnalytics(Item itemSold, int orderId, int currencyUsed);
     
 /// <summary>
 /// Hooks - OnTakeCurrencyItem(VendingMachine,Item)
@@ -73667,8 +74497,8 @@ public void TransactionStart(RPCMessage rpc);
 /// Hooks - OnVendingShopRename(VendingMachine,string,BasePlayer)
 /// </summary>
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	public void RPC_UpdateShopName(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -73692,8 +74522,8 @@ public void RPC_OpenShopNoLOS(RPCMessage msg);
 /// Hooks - OnVendingShopOpen(VendingMachine,BasePlayer),OnVendingShopOpened(VendingMachine,BasePlayer)
 /// </summary>
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	public void RPC_OpenShop(RPCMessage msg)
 	{
 		if (OccupiedCheck(msg.player) && Interface.CallHook("OnVendingShopOpen", this, msg.player) == null)
@@ -73784,8 +74614,8 @@ public void RPC_OpenShopNoLOS(RPCMessage msg);
 /// Hooks - OnDeleteVendingOffer(VendingMachine,int)
 /// </summary>
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	public void RPC_DeleteSellOrder(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -73893,6 +74723,33 @@ public void RPC_AddSellOrder(RPCMessage msg);
 
     public virtual bool SupportsChildDeployables();
     public virtual string GetTranslationToken();
+    public virtual bool get_ShouldRecordStats();
+    [ServerVar]
+public static void ClearAllVendingHistory();
+    [ServerVar]
+public static void ClearAllVendingCustomerHistory();
+    [RPC_Server]
+public void SV_RequestLongTermData(RPCMessage msg);
+    [RPC_Server]
+public void SV_RequestPurchaseData(RPCMessage msg);
+    public void AddPurchaseHistory(int itemId, int amount, int priceId, int price, bool itemIsBp, bool priceIsBp);
+    public void RegisterCustomer(ulong userId);
+    public void RemovePurchaseHistory(int index);
+    public void ClearPurchaseHistory();
+    public void ClearCustomerHistory();
+    private VendingMachinePurchaseHistoryMessage GetProto(HistoryCategory category, int minutes);
+    private List`1<VendingMachinePurchaseHistoryEntryMessage> GetEntriesProto(List`1<PurchaseDetails> details);
+    private List`1<PurchaseDetails> GetListFromProto(List`1<VendingMachinePurchaseHistoryEntryMessage> details);
+    private List`1<VendingMachinePurchaseHistoryEntrySmallMessage> GetEntriesProtoSmall(List`1<PurchaseDetails> details);
+    private VendingMachinePurchaseHistoryEntryMessage GetEntryProto(PurchaseDetails details);
+    private VendingMachinePurchaseHistoryEntrySmallMessage GetEntryProtoSmall(PurchaseDetails details);
+    public List`1<PurchaseDetails> GetRecentPurchases(int seconds);
+    public List`1<PurchaseDetails> GetBestSoldItems(int seconds);
+    public List`1<PurchaseDetails> GetMostRevenueGeneratingItems(int seconds);
+    public long GetPeakSaleHourTimestamp(int seconds);
+    public int GetUniqueCustomers();
+    public int GetRepeatCustomers();
+    public int GetBestCustomer();
 }
 public class VendingMachineFront : BaseEntity {
     public VendingMachine vendingMachine;
@@ -73926,10 +74783,35 @@ public class VendingMachineScreen : MonoBehaviour {
     public bool isUpdatedWithNotifySystem;
 }
 public class VendingPanelAdmin : UIDialog {
+    public GameObjectRef statsPanelRef;
     public GameObject sellOrderAdminContainer;
     public GameObject sellOrderAdminPrefab;
+    public GameObject droneAccessible;
+    public GameObject droneInaccessible;
     public TMP_InputField storeNameInputField;
+    public DeliveryDroneConfig predictionConfig;
     public EmojiGallery emojiGallery;
+}
+public class VendingPanelAdminStats : UIDialog {
+    [HeaderAttribute("References")]
+public Transform Feed;
+    public TmProEmojiRedirector ShopName;
+    public Dropdown TimeDropdown;
+    public RustButton[] CategoryButtons;
+    public RustText TotalSalesLabel;
+    public RustText TotalSalesValue;
+    public RustText PeakSaleHourLabel;
+    public RustText PeakSaleHourValue;
+    public RustText UniqueCustomersLabel;
+    public RustText UniqueCustomersValue;
+    public RustText RepeatCustomersLabel;
+    public RustText RepeatCustomersValue;
+    public RustText BestCustomerLabel;
+    public RustText BestCustomerValue;
+    [HeaderAttribute("Prefabs")]
+public GameObjectRef FeedEntryPrefab;
+    public GameObjectRef SingleEntryPrefab;
+    public GameObjectRef EmptyFeedEntryPrefab;
 }
 public class VendingPriceMultiplierWidget : MonoBehaviour {
     public GameObject SurchargeRoot;
@@ -73940,6 +74822,7 @@ public class VendingPriceMultiplierWidget : MonoBehaviour {
     public Tooltip DiscountTooltip;
     public GameObject RegularTooltip;
     public GameObject AlwaysOnTopTooltip;
+    public bool Invert;
 }
 public class VendorList : MonoBehaviour {
     public GameObject singleHeader;
@@ -73958,26 +74841,13 @@ public RustText AvailableText;
     public RustText InStockAmount;
     public RustText InStockText;
     public VendingPriceMultiplierWidget PriceMultiplier;
+    public VendingPriceMultiplierWidget RecievedCurrencyMultiplier;
     [HeaderAttribute("Icons")]
-public Image AvaliableIcon;
-    public Image CostIcon;
-    [HeaderAttribute("BP Icons")]
-public Image AvaliableBPIcon;
-    public Image CostBPIcon;
-    [HeaderAttribute("Backing")]
-public Image AvaliableBPBacking;
-    public Image CostBPBacking;
+public VirtualItemIcon AvaliableIcon;
+    public VirtualItemIcon CostIcon;
     [HeaderAttribute("Tooltips")]
 public Tooltip avaliableIconTooltip;
     public Tooltip costIconTooltip;
-    [HeaderAttribute("Condition")]
-public CanvasGroup availableConditionGroup;
-    public Image availableCondition;
-    public Image availableMaxCondition;
-    public GameObject brokenIcon;
-    [HeaderAttribute("Slots")]
-public GameObject slots;
-    public Image[] slotImages;
     [SerializeField]
 private FlexTransition transition;
     public static Phrase inStockPhrase;
@@ -74426,8 +75296,8 @@ public class VLB.Config : ScriptableObject {
     [HighlightNullAttribute]
 [SerializeField]
 private Shader beamShader1Pass;
-    [FormerlySerializedAsAttribute("beamShader")]
-[FormerlySerializedAsAttribute("BeamShader")]
+    [FormerlySerializedAsAttribute("BeamShader")]
+[FormerlySerializedAsAttribute("beamShader")]
 [HighlightNullAttribute]
 [SerializeField]
 private Shader beamShader2Pass;
@@ -75050,9 +75920,9 @@ public enum WaterBodyType : Enum {
     public static WaterBodyType Radioactive;
 }
 [ExecuteInEditMode]
+[RequireComponent("UnityEngine.Camera")]
 [RequireComponent("CommandBufferManager")]
 [RequireComponent("PostOpaqueDepth")]
-[RequireComponent("UnityEngine.Camera")]
 public class WaterCamera : MonoBehaviour {
 }
 public class WaterCatcher : LiquidContainer {
@@ -76334,20 +77204,6 @@ public void remove_OnInputText(Action`1<string> value);
     internal void OnEnter();
     public void Update();
 }
-[SuppressUnmanagedCodeSecurityAttribute]
-public class Windows.ConsoleWindow : object {
-    private TextWriter oldOutput;
-    private static int STD_INPUT_HANDLE;
-    private static int STD_OUTPUT_HANDLE;
-    public void Initialize();
-    public void Shutdown();
-    public void SetTitle(string strName);
-    private static bool AttachConsole(UInt32 dwProcessId);
-    private static bool AllocConsole();
-    private static bool FreeConsole();
-    private static IntPtr GetStdHandle(int nStdHandle);
-    private static bool SetConsoleTitleA(string lpConsoleTitle);
-}
 public static class WindowsAffinityShim : object {
     public static bool SetProcessAffinityMask(IntPtr process, IntPtr mask);
     public static bool SetPriorityClass(IntPtr process, UInt32 mask);
@@ -76618,8 +77474,8 @@ public class Workbench : StorageContainer {
 /// Hooks - OnTechTreeNodeUnlocked(Workbench,TechTreeData.NodeInstance,BasePlayer),OnTechTreeNodeUnlock(Workbench,TechTreeData.NodeInstance,BasePlayer)
 /// </summary>
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	public void RPC_TechTreeUnlock(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -76676,8 +77532,8 @@ public class Workbench : StorageContainer {
 /// Hooks - OnExperimentStarted(Workbench,BasePlayer),OnExperimentStart(Workbench,BasePlayer)
 /// </summary>
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	public void RPC_BeginExperiment(RPCMessage msg)
 	{
 		BasePlayer player = msg.player;
@@ -77078,8 +77934,8 @@ public bool allowPickup;
 /// Hooks - CanLootEntity(BasePlayer,WorldItem)
 /// </summary>
 
-	[RPC_Server.IsVisible(3f)]
 	[RPC_Server]
+	[RPC_Server.IsVisible(3f)]
 	private void RPC_OpenLoot(RPCMessage rpc)
 	{
 		if (item == null || item.contents == null)
